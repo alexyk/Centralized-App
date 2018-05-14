@@ -169,6 +169,7 @@ class MainNav extends React.Component {
     }
 
     login(user, captchaToken).then((res) => {
+      console.log(res);
       if (res.success) {
         res.response.json().then((data) => {
           localStorage[Config.getValue('domainPrefix') + '.auth.locktrip'] = data.Authorization;
