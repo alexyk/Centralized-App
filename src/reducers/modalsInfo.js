@@ -5,11 +5,18 @@ const initialState = {
 };
 
 export default function reducer(state = initialState, action) {
+
+  console.log(state);
+  console.log("Action.type");
+  console.log(action.type);
+  console.log("Action.modal");
+  console.log(action.modal);
+
   switch (action.type) {
     case modalsInfo.SET_SHOW_LOGIN:
       return {
         ...state,
-        showLogin: action.showLogin
+        showLogin: action.showLogin,
       };
     case modalsInfo.OPEN_MODAL:
       return {

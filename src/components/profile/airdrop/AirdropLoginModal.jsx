@@ -8,15 +8,17 @@ import { AIRDROP_LOGIN, REGISTER, SEND_RECOVERY_EMAIL } from '../../../constants
 let captcha = undefined;
 
 export default function AirdropLoginModal(props) {
+  let isCloseMessage = false;
 
   return (
     <div>
-      <Modal show={props.isActive} onHide={() => props.closeModal(AIRDROP_LOGIN)} className="modal fade myModal">
+      <Modal show={props.isActive} onHide={() => {isCloseMessage = true}} className="modal fade myModal">
         <Modal.Header>
-          <h1>Login</h1>
+          <h1>Login airdrop</h1>
           <button type="button" className="close" onClick={() => props.closeModal(AIRDROP_LOGIN)}>&times;</button>
         </Modal.Header>
         <Modal.Body>
+          <div>Please first login in Locktrip page</div>
           <form onSubmit={(e) => { e.preventDefault(); captcha.execute(); }}>
             <div className="form-group" style={{ marginTop: '10px' }}>
               <img src={Config.getValue('basePath') + 'images/login-mail.png'} alt="mail" />

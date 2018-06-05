@@ -20,3 +20,10 @@ export function closeModal(modal) {
     modal
   };
 }
+
+export function airdropModals(modal) {
+  return {
+    type: modalsInfo.AIRDROP_MODALS,
+    modal
+  };
+}

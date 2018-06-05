@@ -10,9 +10,9 @@ import {
 } from '../../../requester';
 import { connect } from 'react-redux';
 import { setIsLogged } from '../../../actions/userInfo';
-import { openModal, closeModal } from '../../../actions/modalsInfo';
+import {openModal, closeModal, airdropModals} from '../../../actions/modalsInfo';
 import { Config } from '../../../config';
-import { setAirdropInfo } from '../../../actions/airdropInfo';
+import { setAirdropInfo, setAirdropModalTrue } from '../../../actions/airdropInfo';
 import { NotificationManager } from 'react-notifications';
 import NavProfile from '../NavProfile';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
@@ -22,7 +22,8 @@ import '../../../styles/css/components/profile/airdrop-page.css';
 
 import {
   LOGIN,
-  REGISTER
+  AIRDROP_LOGIN,
+  AIRDROP_REGISTER
 } from '../../../constants/modals.js';
 
 class AirdropPage extends Component {
@@ -101,7 +102,7 @@ class AirdropPage extends Component {
       e.preventDefault();
     }
 
-    this.props.dispatch(closeModal(modal));
+    this.props.dispatch(airdropModals(modal));
   }
 
   isUserLogged() {
@@ -144,7 +145,7 @@ class AirdropPage extends Component {
           if (airdropEmail !== loggedInUserEmail) {
             console.log('wrong user logged')
             this.logout();
-            this.openModal(LOGIN);
+            this.openModal(AIRDROP_LOGIN);
           } else {
             console.log('user is logged')
             // Post confirmation to backend /airdrop/participate/:token
@@ -169,13 +170,13 @@ class AirdropPage extends Component {
           }
         } else {
           console.log('no user logged')
-          this.openModal(LOGIN);
+          this.openModal(AIRDROP_LOGIN);
         }
       } else if (!user.exists) {
         // user profile doesn't exist
         console.log('user does not exist')
         this.logout();
-        this.openModal(REGISTER);
+        this.openModal(AIRDROP_REGISTER);
       } else {
         NotificationManager.warning('Token expired or invalid');
         this.props.location.href = '/airdrop';
@@ -354,7 +355,7 @@ class AirdropPage extends Component {
                   </div>
                   {this.state.facebookEdit &&
                   <div className="airdrop-profile-edit">
-                    <input type="text" placeholder="Facebook Profile" name="facebookProfile" value={this.state.facebookProfile} onChange={this.onChange} />
+                    <input type="text" placeholder="Facebook Profile Link" name="facebookProfile" value={this.state.facebookProfile} onChange={this.onChange} />
                     <button className="btn" onClick={() => this.handleEditSubmit('facebook')}>Save</button>
                   </div>
                   }

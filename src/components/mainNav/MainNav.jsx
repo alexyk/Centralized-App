@@ -11,13 +11,15 @@ import CreateWalletModal from './modals/CreateWalletModal';
 import SaveWalletModal from './modals/SaveWalletModal';
 import ConfirmWalletModal from './modals/ConfirmWalletModal';
 import LoginModal from './modals/LoginModal';
+import AirdropLoginModal from '../profile/airdrop/AirdropLoginModal';
 import RegisterModal from './modals/RegisterModal';
+import AirdropRegisterModal from '../profile/airdrop/AirdropRegisterModal';
 
 import { Config } from '../../config';
 import { Wallet } from '../../services/blockchain/wallet.js';
 import { setIsLogged, setUserInfo } from '../../actions/userInfo';
 import { openModal, closeModal } from '../../actions/modalsInfo';
-import { setAirdropInfo } from '../../actions/airdropInfo';
+import { setAirdropInfo, setAirdropModalTrue } from '../../actions/airdropInfo';
 
 import {
   getCountOfUnreadMessages,
@@ -40,7 +42,9 @@ import {
   ENTER_RECOVERY_TOKEN,
   CHANGE_PASSWORD,
   SAVE_WALLET,
-  CONFIRM_WALLET
+  CONFIRM_WALLET,
+  AIRDROP_LOGIN,
+  AIRDROP_REGISTER
 } from '../../constants/modals.js';
 
 import { PROFILE_SUCCESSFULLY_CREATED, PASSWORD_SUCCESSFULLY_CHANGED } from '../../constants/successMessages.js';
@@ -83,6 +87,8 @@ class MainNav extends React.Component {
     this.handleLogin = this.handleLogin.bind(this);
     this.logout = this.logout.bind(this);
     this.setUserInfo = this.setUserInfo.bind(this);
+    this.handleAirdropLogin = this.handleAirdropLogin.bind(this);
+    this.handleAirdropRegister = this.handleAirdropRegister.bind(this);
 
     this.openModal = this.openModal.bind(this);
     this.closeModal = this.closeModal.bind(this);
@@ -159,6 +165,37 @@ class MainNav extends React.Component {
     });
   }
 
+  handleAirdropRegister(captchaToken) {
+    let user = {
+      email: this.state.signUpEmail,
+      firstName: this.state.signUpFirstName,
+      lastName: this.state.signUpLastName,
+      password: this.state.signUpPassword,
+      locAddress: localStorage.walletAddress,
+      jsonFile: localStorage.walletJson,
+      image: Config.getValue('basePath') + 'images/default.png'
+    };
+
+    this.clearLocalStorage();
+
+    register(user, captchaToken).then((res) => {
+      if (res.success) {
+        this.openModal(AIRDROP_LOGIN);
+        NotificationManager.success(PROFILE_SUCCESSFULLY_CREATED);
+      }
+      else {
+        res.response.then(res => {
+          const errors = res.errors;
+          for (let key in errors) {
+            if (typeof errors[key] !== 'function') {
+              NotificationManager.warning(errors[key].message, 'Field: ' + key.toUpperCase());
+            }
+          }
+        });
+      }
+    });
+  }
+
   handleLogin(captchaToken) {
     let user = {
       email: this.state.loginEmail,
@@ -193,6 +230,58 @@ class MainNav extends React.Component {
             NotificationManager.warning(errors['JsonFileNull'].message);
             this.setState({ isUpdatingWallet: true }, () => {
               this.closeModal(LOGIN);
+              this.openModal(CREATE_WALLET);
+            });
+          } else {
+            for (let key in errors) {
+              if (typeof errors[key] !== 'function') {
+                NotificationManager.warning(errors[key].message);
+              }
+            }
+          }
+        }).catch(errors => {
+          for (var e in errors) {
+            NotificationManager.warning(errors[e].message);
+          }
+        });
+      }
+    });
+  }
+
+  handleAirdropLogin(captchaToken) {
+    let user = {
+      email: this.state.loginEmail,
+      password: this.state.loginPassword
+    };
+
+    if (this.state.isUpdatingWallet) {
+      user.locAddress = localStorage.walletAddress;
+      user.jsonFile = localStorage.walletJson;
+      this.clearLocalStorage();
+      this.setState({ isUpdatingWallet: false });
+    }
+
+    login(user, captchaToken).then((res) => {
+      if (res.success) {
+        res.response.json().then((data) => {
+          localStorage[Config.getValue('domainPrefix') + '.auth.locktrip'] = data.Authorization;
+          localStorage[Config.getValue('domainPrefix') + '.auth.username'] = user.email;
+
+          this.setUserInfo();
+          this.closeModal(AIRDROP_LOGIN);
+
+          if (this.props.location.pathname.indexOf('/airdrop') !== -1) {
+            this.handleAirdropUser();
+          }
+        });
+      } else {
+        res.response.then(res => {
+          const errors = res.errors;
+          console.log(errors);
+          if (errors.hasOwnProperty('JsonFileNull')) {
+            NotificationManager.warning(errors['JsonFileNull'].message);
+            this.setState({ isUpdatingWallet: true }, () => {
+              this.closeModal(AIRDROP_LOGIN);
               this.openModal(CREATE_WALLET);
             });
           } else {
@@ -394,7 +483,9 @@ class MainNav extends React.Component {
           <EnterRecoveryTokenModal isActive={this.props.modalsInfo.modals.get(ENTER_RECOVERY_TOKEN)} openModal={this.openModal} closeModal={this.closeModal} onChange={this.onChange} recoveryToken={this.state.recoveryToken} handleSubmitRecoveryToken={this.handleSubmitRecoveryToken} />
           <ChangePasswordModal isActive={this.props.modalsInfo.modals.get(CHANGE_PASSWORD)} openModal={this.openModal} closeModal={this.closeModal} newPassword={this.state.newPassword} confirmNewPassword={this.state.confirmNewPassword} onChange={this.onChange} handlePasswordChange={this.handlePasswordChange} />
           <LoginModal isActive={this.props.modalsInfo.modals.get(LOGIN)} openModal={this.openModal} closeModal={this.closeModal} loginEmail={this.state.loginEmail} loginPassword={this.state.loginPassword} onChange={this.onChange} handleLogin={this.handleLogin} />
+          <AirdropLoginModal isActive={this.props.modalsInfo.modals.get(AIRDROP_LOGIN)} openModal={this.openModal} closeModal={this.closeModal} loginEmail={this.state.loginEmail} loginPassword={this.state.loginPassword} onChange={this.onChange} handleLogin={this.handleAirdropLogin} />
           <RegisterModal isActive={this.props.modalsInfo.modals.get(REGISTER)} openModal={this.openModal} closeModal={this.closeModal} signUpEmail={this.state.signUpEmail} signUpFirstName={this.state.signUpFirstName} signUpLastName={this.state.signUpLastName} signUpPassword={this.state.signUpPassword} onChange={this.onChange} />
+          <AirdropRegisterModal isActive={this.props.modalsInfo.modals.get(AIRDROP_REGISTER)} openModal={this.openModal} closeModal={this.closeModal} signUpEmail={this.state.signUpEmail} signUpFirstName={this.state.signUpFirstName} signUpLastName={this.state.signUpLastName} signUpPassword={this.state.signUpPassword} onChange={this.onChange} />
 
           <Navbar>
             <Navbar.Header>
