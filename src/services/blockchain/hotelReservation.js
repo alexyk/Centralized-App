@@ -47,6 +47,7 @@ export class HotelReservation {
     const roomIdBytes = ethers.utils.toUtf8Bytes(roomId);
     let wallet = await ethers.Wallet.fromEncryptedWallet(jsonObj, password);
     const gasPrice = await getGasPrice();
+    let overrideOptions;
 
     await ReservationValidators.validateReservationParams(jsonObj,
       password,
@@ -66,11 +67,20 @@ export class HotelReservation {
 
     let HotelReservationFactoryContractWithWalletInstance = HotelReservationFactoryContractWithWallet(wallet);
 
-    const overrideOptions = {
-      gasLimit: gasConfig.hotelReservation.create,
-      gasPrice: gasPrice
-    };
+    if (daysBeforeStartForRefund.length > 2) {
+      overrideOptions = {
+        gasLimit: gasConfig.hotelReservation.complexCreate,
+        gasPrice: gasPrice
+      };
+    } else {
+      overrideOptions = {
+        gasLimit: gasConfig.hotelReservation.create,
+        gasPrice: gasPrice
+      };
+    }
 
+
+    console.log(overrideOptions.gasLimit.toString());
 
     const createReservationTxHash = await HotelReservationFactoryContractWithWalletInstance.createHotelReservation(hotelReservationIdBytes,
       reservationCostLOC,
