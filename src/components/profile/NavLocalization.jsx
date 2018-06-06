@@ -34,7 +34,7 @@ class NavLocalization extends Component {
     const { currency, locRate } = this.props.paymentInfo;
     const { locBalance, ethBalance, isLogged } = this.props.userInfo;
     if (!locRate) {
-      return <div className="loader"></div>;
+      return <div className="loader sm-none"></div>;
     }
 
     return (
@@ -45,6 +45,7 @@ class NavLocalization extends Component {
               && this.props.location.pathname !== '/homes'
               && (this.props.location.pathname.indexOf('/hotels/listings/book') === -1
               && this.props.location.pathname.indexOf('/profile') === -1)
+              && this.props.location.pathname.indexOf('/airdrop') === -1
               ? <ul className="tabset">
                 <li><NavLink to='/hotels' activeClassName="active">HOTELS</NavLink></li>
                 <li><NavLink to='/homes' activeClassName="active">HOMES</NavLink></li>

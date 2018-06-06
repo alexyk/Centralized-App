@@ -68,9 +68,8 @@ function SearchBar(props) {
   // }
 
   const { rooms } = props;
-
   return (
-    <div className="source-panel">
+    <form className="source-panel"  onSubmit={props.handleSearch}>
       <div className="source-panel-select source-panel-item">
         <Select.Async
           placeholder="Choose a location"
@@ -84,6 +83,8 @@ function SearchBar(props) {
           backspaceRemoves={true}
           arrowRenderer={null}
           onSelectResetsInput={false}
+          onOpen={props.handleOpenSelect}
+          onClose={props.handleCloseSelect}
         />
       </div>
 
@@ -96,7 +97,6 @@ function SearchBar(props) {
             onApply={props.handleDatePick}
             nights={calculateNights(props.startDate, props.endDate)} />
         </div>
-
 
         <div className="days-of-stay">
           <span className="icon-moon"></span>
@@ -132,14 +132,16 @@ function SearchBar(props) {
         </select>
 
         <div className="select-children" onClick={props.handleToggleChildren}>
-          {!props.hasChildren ?
-            <span>No children</span> :
-            <span>With children</span>
-          }
+          <div>
+            {!props.hasChildren
+              ? 'No children'
+              : 'With children'
+            }
+          </div>
         </div>
       </div>
-      <button type="submit" className="btn btn-primary btn-search" onClick={props.handleSearch}>Search</button>
-    </div>
+      <button type="submit" className="btn btn-primary btn-search">Search</button>
+    </form>
   );
 }
 

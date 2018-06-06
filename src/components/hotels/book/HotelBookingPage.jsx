@@ -7,6 +7,7 @@ import { connect } from 'react-redux';
 import moment from 'moment';
 import validator from 'validator';
 import { ROOMS_XML_CURRENCY } from '../../../constants/currencies.js';
+import { Config } from '../../../config';
 
 import { getHotelById, getHotelRooms, getLocRateInUserSelectedCurrency, getCurrencyRates } from '../../../requester';
 
@@ -20,6 +21,7 @@ class HotelBookingPage extends React.Component {
       loading: true,
     };
 
+    this.timeout = null;
     this.handleAdultChange = this.handleAdultChange.bind(this);
     this.handleChildAgeChange = this.handleChildAgeChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -58,6 +60,15 @@ class HotelBookingPage extends React.Component {
     getCurrencyRates().then((json) => {
       this.setState({ rates: json });
     });
+
+    this.timeout = setTimeout(() => {
+      NotificationManager.info('Your search has expired.', '', 600000);
+      this.props.history.push('/hotels');
+    }, 600000);
+  }
+
+  componentWillUnmount() {
+    clearTimeout(this.timeout);
   }
 
   getLocRate() {
@@ -210,7 +221,8 @@ class HotelBookingPage extends React.Component {
     const hotelMainAddress = this.state.hotel && this.state.hotel.additionalInfo.mainAddress;
     const hotelCityName = this.state.hotel && this.state.hotel.city.name;
     const rooms = this.state.rooms;
-    const hotelPicUrl = this.state.pictures && this.state.pictures.length > 0 && this.state.pictures[0].externalUrl;
+    console.log(this.state.pictures)
+    const hotelPicUrl = this.state.pictures && this.state.pictures.length > 0 ? this.state.pictures[0].url : '/listings/images/default.png';
     const priceInSelectedCurrency = this.state.rates && Number(this.state.totalPrice * this.state.rates[ROOMS_XML_CURRENCY][this.props.paymentInfo.currency]).toFixed(2);
     return (
       <div>
@@ -230,7 +242,7 @@ class HotelBookingPage extends React.Component {
                 <div className="col-md-5">
                   <div className="hotel-info">
                     <div className="hotel-picture">
-                      <img src={`http://roomsxml.com${hotelPicUrl}`} alt="Hotel" />
+                      <img src={`${Config.getValue('imgHost')}${hotelPicUrl}`} alt="Hotel" />
                     </div>
                     <h6>{hotelName}</h6>
                     <h6>{hotelMainAddress}, {hotelCityName}</h6>

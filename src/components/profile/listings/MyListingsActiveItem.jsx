@@ -3,6 +3,7 @@ import ListingItemRatingBox from '../../../components/common/listing/ListingItem
 import PropTypes from 'prop-types';
 import React from 'react';
 import DeletionModal from '../../common/modals/DeletionModal';
+import { Config } from '../../../config';
 
 export default class MyListingsActiveItem extends React.Component {
   constructor(props) {
@@ -30,6 +31,7 @@ export default class MyListingsActiveItem extends React.Component {
   }
 
   onOpen(id, name) {
+    console.log(id, name)
     this.setState(
       {
         isDeleting: true,
@@ -46,7 +48,7 @@ export default class MyListingsActiveItem extends React.Component {
         <DeletionModal
           deletingName={this.state.deletingName}
           filterListings={this.props.filterListings}
-          isDeleting={this.state.isDeleting}
+          isActive={this.state.isDeleting}
           deletingId={this.state.deletingId}
           onHide={this.onHide}
           onOpen={this.onOpen}
@@ -54,7 +56,7 @@ export default class MyListingsActiveItem extends React.Component {
         <ul className={`profile-mylistings-active ${listingStateBackgroundClass}`}>
           <li className="toggle off"></li>
           <li className="thumb"><span
-            style={{ backgroundImage: `url(${this.props.listing.thumbnail})` }}></span></li>
+            style={{ backgroundImage: `url(${Config.getValue('imgHost') + this.props.listing.thumbnail})` }}></span></li>
           <li className="details">
             <Link to={'/homes/listings/' + this.props.listing.id}>{this.props.listing.name}</Link>
             <ListingItemRatingBox

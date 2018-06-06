@@ -75,7 +75,7 @@ export default class ProfilePhotosPage extends React.Component {
             {this.state.uploadedFilesThumbUrls.length === 0 ? null :
               this.state.uploadedFilesThumbUrls.map((imageUrl, i) =>
                 <div key={i} className="uploaded-small-picture col-md-4">
-                  <img src={imageUrl} height={200} alt={`uploaded-${i}`} />
+                  <img src={`${Config.getValue('apiHost')}${imageUrl}`} height={200} alt={`uploaded-${i}`} />
                 </div>
               )
             }

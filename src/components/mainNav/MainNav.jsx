@@ -17,6 +17,7 @@ import { Config } from '../../config';
 import { Wallet } from '../../services/blockchain/wallet.js';
 import { setIsLogged, setUserInfo } from '../../actions/userInfo';
 import { openModal, closeModal } from '../../actions/modalsInfo';
+import { setAirdropInfo } from '../../actions/airdropInfo';
 
 import {
   getCountOfUnreadMessages,
@@ -26,6 +27,9 @@ import {
   register,
   getUserInfo,
   sendRecoveryToken,
+  getUserAirdropInfo,
+  verifyUserAirdropInfo,
+  checkIfAirdropUserExists
 } from '../../requester';
 
 import {
@@ -112,7 +116,7 @@ class MainNav extends React.Component {
     }
 
 
-    // this.messageListener();
+    this.messageListener();
   }
 
   onChange(e) {
@@ -134,7 +138,7 @@ class MainNav extends React.Component {
       jsonFile: localStorage.walletJson,
       image: Config.getValue('basePath') + 'images/default.png'
     };
-    
+
     this.clearLocalStorage();
 
     register(user, captchaToken).then((res) => {
@@ -176,6 +180,10 @@ class MainNav extends React.Component {
 
           this.setUserInfo();
           this.closeModal(LOGIN);
+
+          if (this.props.location.pathname.indexOf('/airdrop') !== -1) {
+            this.handleAirdropUser();
+          }
         });
       } else {
         res.response.then(res => {
@@ -194,9 +202,56 @@ class MainNav extends React.Component {
               }
             }
           }
+        }).catch(errors => {
+          for (var e in errors) {
+            NotificationManager.warning(errors[e].message);
+          }
         });
       }
     });
+  }
+
+  handleAirdropUser() {
+    getUserAirdropInfo().then(json => {
+      console.log(json)
+      if (json.participates) {
+        this.dispatchAirdropInfo(json);
+      } else {
+        console.log('user not yet moved from temp to main')
+        const token = this.props.location.search.split('=')[1];
+        checkIfAirdropUserExists(token).then(user => {
+          const currentEmail = localStorage[Config.getValue('domainPrefix') + '.auth.username'];
+          if (user.email === currentEmail && user.exists) {
+            console.log('users match')
+            verifyUserAirdropInfo(token).then(() => {
+              console.log('user moved from temp to main')
+              NotificationManager.info('Verification email has been sent. Please follow the link to confirm your email.');
+              getUserAirdropInfo().then(json => {
+                this.dispatchAirdropInfo(json);
+              });
+            });
+          } else {
+            console.log('users dont match', user.email, currentEmail)
+          }
+        });
+      }
+    }).catch(e => {
+      NotificationManager.warning('No airdrop information about this profile');
+      this.props.history.push('/airdrop');
+    });
+  }
+
+  dispatchAirdropInfo(info) {
+    const email = info.user;
+    const facebookProfile = info.facebookProfile;
+    const telegramProfile = info.telegramProfile;
+    const twitterProfile = info.twitterProfile;
+    const redditProfile = info.redditProfile;
+    const refLink = info.refLink;
+    const participates = info.participates;
+    const isVerifyEmail = info.isVerifyEmail;
+    this.props.dispatch(setAirdropInfo(email, facebookProfile, telegramProfile, twitterProfile, redditProfile, refLink, participates, isVerifyEmail));
+    console.log('user info dispatched')
   }
 
   clearLocalStorage() {
@@ -207,9 +262,7 @@ class MainNav extends React.Component {
 
   setUserInfo() {
     getUserInfo().then(res => {
-      console.log(res.locAddress)
       Wallet.getBalance(res.locAddress).then(eth => {
-        console.log(eth)
         const ethBalance = eth / (Math.pow(10, 18));
         Wallet.getTokenBalance(res.locAddress).then(loc => {
           const locBalance = loc / (Math.pow(10, 18));
@@ -365,10 +418,13 @@ class MainNav extends React.Component {
                     </div>
                   </NavItem>
                   <NavDropdown title={localStorage[Config.getValue('domainPrefix') + '.auth.username']} id="main-nav-dropdown">
-                    <MenuItem componentClass={Link} className="header" href="/profile/dashboard" to="/profile/dashboard">View Profile<img src={Config.getValue('basePath') + 'images/icon-dropdown/icon-user.png'} alt="view profile" /></MenuItem>
-                    <MenuItem componentClass={Link} href="/profile/me/edit" to="/profile/me/edit">Edit Profile</MenuItem>
-                    <MenuItem componentClass={Link} href="/profile/dashboard/#profile-dashboard-reviews" to="/profile/dashboard/#profile-dashboard-reviews">Reviews</MenuItem>
-                    <MenuItem componentClass={Link} className="header" href="/" to="/" onClick={this.logout}>Logout<img src={Config.getValue('basePath') + 'images/icon-dropdown/icon-logout.png'} style={{ top: 25 + 'px' }} alt="logout" /></MenuItem>
+                    <MenuItem componentClass={Link} href="/profile/dashboard" to="/profile/dashboard">Dashboard</MenuItem>
+                    <MenuItem componentClass={Link} href="/profile/listings" to="/profile/listings">My Listings</MenuItem>
+                    <MenuItem componentClass={Link} href="/profile/trips" to="/profile/trips">My Trips</MenuItem>
+                    <MenuItem componentClass={Link} href="/profile/reservations" to="/profile/reservations">My Guests</MenuItem>
+                    <MenuItem componentClass={Link} href="/profile/me/edit" to="/profile/me/edit">Profile</MenuItem>
+                    <MenuItem componentClass={Link} href="/airdrop" to="/airdrop">Airdrop</MenuItem>
+                    <MenuItem componentClass={Link} href="/" to="/" onClick={this.logout}>Logout</MenuItem>
                   </NavDropdown>
                 </Nav>
                 : <Nav pullRight={true}>
@@ -387,10 +443,11 @@ class MainNav extends React.Component {
 export default withRouter(connect(mapStateToProps)(MainNav));
 
 function mapStateToProps(state) {
-  const { userInfo, modalsInfo } = state;
+  const { userInfo, modalsInfo, airdropInfo } = state;
   return {
     userInfo,
-    modalsInfo
+    modalsInfo,
+    airdropInfo
   };
 }
 

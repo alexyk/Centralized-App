@@ -12,6 +12,9 @@
     #main-nav #second-nav .navbar-nav a {
         padding-bottom: 2px;
     }
+    #profile-nav {
+      display: none;
+    }
 }
 
 @media only screen and (max-width: 667px) {
@@ -146,6 +149,10 @@
 
     .home_page h1.home_title {
         margin-top: 35px;
+    }
+
+    .navbar-brand img {
+      height: 40px;
     }
 }
 
