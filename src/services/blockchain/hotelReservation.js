@@ -60,12 +60,6 @@ export class HotelReservation {
       hotelIdBytes,
       roomIdBytes,
       numberOfTravelers);
-    await TokenValidators.validateLocBalance(wallet.address, reservationCostLOC, wallet, gasConfig.hotelReservation.create);
-    await EtherValidators.validateEthBalance(wallet, gasConfig.hotelReservation.create);
-
-    await approveContract(wallet, reservationCostLOC, HotelReservationFactoryContract.address, gasPrice);
-
-    let HotelReservationFactoryContractWithWalletInstance = HotelReservationFactoryContractWithWallet(wallet);
 
     if (daysBeforeStartForRefund.length > 2) {
       overrideOptions = {
@@ -79,8 +73,12 @@ export class HotelReservation {
       };
     }
 
+    await TokenValidators.validateLocBalance(wallet.address, reservationCostLOC, wallet, gasConfig.hotelReservation.create);
+    await EtherValidators.validateEthBalance(wallet, overrideOptions.gasLimit);
 
-    console.log(overrideOptions.gasLimit.toString());
+    await approveContract(wallet, reservationCostLOC, HotelReservationFactoryContract.address, gasPrice);
+
+    let HotelReservationFactoryContractWithWalletInstance = HotelReservationFactoryContractWithWallet(wallet);
 
     const createReservationTxHash = await HotelReservationFactoryContractWithWalletInstance.createHotelReservation(hotelReservationIdBytes,
       reservationCostLOC,
