@@ -34,7 +34,8 @@ class HotelBookingConfirmPage extends React.Component {
       showRoomCanxDetails: [],
       loading: true,
       locRate: null,
-      password: ''
+      password: '',
+      confirmed: false
     };
 
     this.timeout = null;
@@ -241,7 +242,8 @@ class HotelBookingConfirmPage extends React.Component {
       console.log(daysBeforeStartOfRefund)
       console.log(refundPercentages)
 
-      NotificationManager.info(PROCESSING_TRANSACTION, 'Transactions', 20000);
+      NotificationManager.info(PROCESSING_TRANSACTION, 'Transactions', 60000);
+      this.setState({ confirmed: true });
       this.closeModal(PASSWORD_PROMPT);
 
       getCurrentlyLoggedUserJsonFile().then((json) => {
@@ -284,6 +286,7 @@ class HotelBookingConfirmPage extends React.Component {
             }
 
             this.closeModal(PASSWORD_PROMPT);
+            this.setState({ confirmed: false });
           });
         }, 1000);
       });
@@ -474,9 +477,11 @@ class HotelBookingConfirmPage extends React.Component {
                     </p>
                   </div>
                 </div>
-                <button className="btn btn-primary btn-book" onClick={(e) => this.openModal(PASSWORD_PROMPT, e)}>Confirm
-                  and Pay
-                </button>
+                {!this.state.confirmed
+                  ? <button className="btn btn-primary btn-book" onClick={(e) => this.openModal(PASSWORD_PROMPT, e)}>Confirm and Pay</button>
+                  : <button className="btn btn-primary btn-book" disabled>Processing Payment...</button>
+                }
+                
                 {/* <button className="btn btn-primary btn-book" onClick={() => this.getCancellationFees()}>Log Fees</button> */}
               </div>
               <PasswordModal
