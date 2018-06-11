@@ -1,7 +1,6 @@
 import { withRouter } from 'react-router-dom';
 import { NotificationManager } from 'react-notifications';
 import { Config } from '../../../config';
-import Lightbox from 'react-images';
 import PropTypes from 'prop-types';
 import HotelDetailsInfoSection from './HotelDetailsInfoSection';
 import React from 'react';
@@ -11,6 +10,13 @@ import moment from 'moment';
 import { parse } from 'query-string';
 import ChildrenModal from '../modals/ChildrenModal';
 import { ROOMS_XML_CURRENCY } from '../../../constants/currencies.js';
+import Lightbox from 'react-images';
+
+import '../../../styles/css/main.css';
+import '../../../styles/css/components/carousel-component.css';
+import Slider from 'react-slick';
+import 'slick-carousel/slick/slick.css';
+import 'slick-carousel/slick/slick-theme.css';
 
 import { getHotelById, getHotelRooms, getRegionNameById, getLocRateInUserSelectedCurrency, getCurrencyRates, testBook } from '../../../requester';
 
@@ -72,11 +78,16 @@ class HotelDetailsPage extends React.Component {
     this.redirectToSearchPage = this.redirectToSearchPage.bind(this);
     this.handleToggleChildren = this.handleToggleChildren.bind(this);
     this.handleBookRoom = this.handleBookRoom.bind(this);
+    this.next = this.next.bind(this);
+    this.previous = this.previous.bind(this);
+    this.handleOpenSelect = this.handleOpenSelect.bind(this);
+    this.handleCloseSelect = this.handleCloseSelect.bind(this);
   }
 
   componentDidMount() {
     const id = this.props.match.params.id;
     const search = this.props.location.search;
+    console.log(search);
     getHotelById(id, search).then((data) => {
       this.setState({ data: data, loading: false });
       const searchParams = this.getSearchParams(this.props.location.search);
@@ -258,10 +269,11 @@ class HotelDetailsPage extends React.Component {
     });
   }
 
-  openLightbox(event) {
+  openLightbox(event, index) {
     event.preventDefault();
     this.setState({
       lightboxIsOpen: true,
+      currentImage: index,
     });
   }
 
@@ -311,6 +323,18 @@ class HotelDetailsPage extends React.Component {
 
   handleSelectRegion(value) {
     this.setState({ region: value });
+  }
+
+  handleOpenSelect() {
+    if (!this.state.region) {
+      this.setState({ region: { query: '' } });
+    }
+  }
+
+  handleCloseSelect() {
+    if (this.state.region && this.state.region.query === '') {
+      this.setState({ region: null });
+    }
   }
 
   handleRoomsChange(event) {
@@ -497,22 +521,51 @@ class HotelDetailsPage extends React.Component {
     });
   }
 
+  next() {
+    this.slider.slickNext();
+  }
+  previous() {
+    this.slider.slickPrev();
+  }
+
   render() {
     let loading, images;
     if (!this.state.data) {
       loading = true;
     } else {
-      images = null;
-      if (this.state.data.hotelPhotos !== undefined) {
-        images = this.state.data.hotelPhotos.map(x => {
-          return { src: Config.getValue('imgHost') + x.url };
+      images = [];
+      if (this.state.data.hotelPhotos) {
+        images = this.state.data.hotelPhotos.map((x, i) => {
+          return { src: Config.getValue('imgHost') + x.url, index: i };
         });
       }
     }
 
+    if (images && images.length < 3) {
+      while (images.length < 3) {
+        images.push({ src: Config.getValue('imgHost') + '/listings/images/default.png' });
+      }
+    }
+
+    const settings = {
+      infinite: true,
+      accessibility: false,
+      speed: 500,
+      slidesToShow: 3,
+      slidesToScroll: 1,
+      responsive: [
+        {
+          breakpoint: 1024,
+          settings: {
+            slidesToShow: 1,
+          }
+        }
+      ]
+    };
+
     return (
       <div>
-        <div className="container">
+        <div className="container sm-none">
           <HotelsSearchBar
             startDate={this.state.startDate}
             endDate={this.state.endDate}
@@ -527,29 +580,66 @@ class HotelDetailsPage extends React.Component {
             handleDatePick={this.handleDatePick}
             handleSelectRegion={this.handleSelectRegion}
             handleToggleChildren={this.handleToggleChildren}
+            handleOpenSelect={this.handleOpenSelect}
+            handleCloseSelect={this.handleCloseSelect}
           />
         </div>
 
         {loading ?
           <div className="loader"></div> :
           <div>
-            <section className="hotel-gallery">
-              <div className="hotel-gallery-bgr" style={(images && images.length > 0) ? { 'backgroundImage': 'url("' + images[0].src + '")' } : { backgroundColor: '#AAA' }}>
-                <div className="container">
-                  <a onClick={(e => this.openLightbox(e))} className="btn btn-primary btn-gallery">Open Gallery</a>
-                  {images !== null && <Lightbox
-                    currentImage={this.state.currentImage}
-                    images={images}
-                    isOpen={this.state.lightboxIsOpen}
-                    onClickImage={this.handleClickImage}
-                    onClickNext={this.gotoNext}
-                    onClickPrev={this.gotoPrevious}
-                    onClickThumbnail={this.gotoImage}
-                    onClose={this.closeLightbox}
-                  />}
-                </div>
+            {images !== null && <Lightbox
+              currentImage={this.state.currentImage}
+              images={images}
+              isOpen={this.state.lightboxIsOpen}
+              // onClickImage={this.handleClickImage}
+              onClickNext={this.gotoNext}
+              onClickPrev={this.gotoPrevious}
+              onClickThumbnail={this.gotoImage}
+              onClose={this.closeLightbox}
+            />}
+            {/* <section className="hotel-gallery"> */}
+            {/* <div className="hotel-gallery-bgr lg-none" style={(images && images.length > 0) ? { 'backgroundImage': 'url("' + images[0].src + '")' } : { backgroundColor: '#AAA' }}>
+              <div className="container">
+                <a onClick={(e => this.openLightbox(e))} className="btn btn-primary btn-gallery">Open Gallery</a>
+                {images !== null && <Lightbox
+                  currentImage={this.state.currentImage}
+                  images={images}
+                  isOpen={this.state.lightboxIsOpen}
+                  onClickImage={this.handleClickImage}
+                  onClickNext={this.gotoNext}
+                  onClickPrev={this.gotoPrevious}
+                  onClickThumbnail={this.gotoImage}
+                  onClose={this.closeLightbox}
+                />}
               </div>
-            </section>
+            </div> */}
+            {/* </section> */}
+            <div className='hotel-details-carousel'>
+              <Slider
+                ref={c => (this.slider = c)}
+                {...settings}>
+                {images && images.map((image, index) => {
+                  return (
+                    <div key={index} onClick={(e) => this.openLightbox(e, image.index)}>
+                      <div className='slide' style={{ 'backgroundImage': 'url("' + image.src + '")' }}></div>
+                    </div>
+                  );
+                })}
+                {/* <div><div className='slide' style={{ 'backgroundImage': 'url("' + left + '")' }}></div></div>
+                <div><div className='slide' style={{ 'backgroundImage': 'url("' + right + '")' }}></div></div>
+                <div><div className='slide' style={{ 'backgroundImage': 'url("' + current + '")' }}></div></div>
+                <div><div className='slide' style={{ 'backgroundImage': 'url("' + right + '")' }}></div></div>
+                <div><div className='slide' style={{ 'backgroundImage': 'url("' + left + '")' }}></div></div>
+                <div><div className='slide' style={{ 'backgroundImage': 'url("' + current + '")' }}></div></div> */}
+              </Slider>
+            </div>
+            <div className="main-carousel">
+              <div className="carousel-nav">
+                <button className="prev icon-arrow-left" onClick={this.previous}></button>
+                <button className="next icon-arrow-right" onClick={this.next}></button>
+              </div>
+            </div>
             <nav id="hotel-nav">
               <div className="container">
                 <ul className="nav navbar-nav">

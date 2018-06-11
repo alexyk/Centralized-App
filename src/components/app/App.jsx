@@ -15,11 +15,13 @@ import { connect } from 'react-redux';
 import MainNav from '../mainNav/MainNav';
 import Footer from '../footer/Footer';
 import NavLocalization from '../profile/NavLocalization';
+import StyleTest from '../common/StyleTest';
 
 import ProfilePage from '../profile/ProfilePage';
 import PropTypes from 'prop-types';
 
 import '../../styles/css/main.css';
+import AirdropPage from '../profile/airdrop/AirdropPage';
 
 class App extends React.Component {
   constructor(props) {
@@ -52,6 +54,8 @@ class App extends React.Component {
           <Route path="/hotels" render={() => <HotelsRouterPage />} />
           <Route path="/profile/listings/create" render={() => !this.isAuthenticated() ? <Redirect to="/" /> : <CreateListingPage />} />
           <Route path="/profile/" render={() => !this.isAuthenticated() ? <Redirect to="/" /> : <ProfilePage location={this.props.location} />} />
+          <Route path="/airdrop" render={() => <AirdropPage />} />
+          <Route path="/test" render={() => <StyleTest />} />
           <Route render={() => <HomeRouterPage />} />
         </Switch>
         <Footer />

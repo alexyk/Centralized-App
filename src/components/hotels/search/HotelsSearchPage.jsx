@@ -1,8 +1,6 @@
-import Breadcrumb from '../../Breadcrumb';
 // import FilterPanel from './filter/FilterPanel';
 import Pagination, { DEFAULT_PAGE_SIZE } from '../../common/pagination/Pagination';
 import ResultsHolder from './ResultsHolder';
-import HotelItem from './HotelItem';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { withRouter } from 'react-router-dom';
@@ -76,6 +74,8 @@ class HotelsSearchPage extends React.Component {
     this.applyFilters = this.applyFilters.bind(this);
     this.handleToggleStar = this.handleToggleStar.bind(this);
     this.toggleMap = this.toggleMap.bind(this);
+    this.handleOpenSelect = this.handleOpenSelect.bind(this);
+    this.handleCloseSelect = this.handleCloseSelect.bind(this);
   }
 
   componentDidMount() {
@@ -309,6 +309,18 @@ class HotelsSearchPage extends React.Component {
 
   handleSelectRegion(value) {
     this.setState({ region: value });
+  }
+
+  handleOpenSelect() {
+    if (!this.state.region) {
+      this.setState({ region: { query: '' } });
+    }
+  }
+
+  handleCloseSelect() {
+    if (this.state.region && this.state.region.query === '') {
+      this.setState({ region: null });
+    }
   }
 
   handleDatePick(event, picker) {
@@ -550,10 +562,11 @@ class HotelsSearchPage extends React.Component {
             handleDatePick={this.handleDatePick}
             handleSelectRegion={this.handleSelectRegion}
             handleToggleChildren={this.handleToggleChildren}
+            handleOpenSelect={this.handleOpenSelect}
+            handleCloseSelect={this.handleCloseSelect}
           />
         </div>
 
-        <Breadcrumb />
         <section id="hotel-box">
           <div className="container">
             <div className="row">

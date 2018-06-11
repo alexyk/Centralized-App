@@ -3,10 +3,17 @@ import { withRouter, Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import '../../../styles/css/components/search-result-component.css';
-import { React_Bootstrap_Carousel as ReactBootstrapCarousel } from 'react-bootstrap-carousel';
 import { Config } from '../../../config';
 import { ROOMS_XML_CURRENCY } from '../../../constants/currencies.js';
 import ReactHtmlParser from 'react-html-parser';
+
+import Slider from 'react-slick';
+import 'slick-carousel/slick/slick.css';
+import 'slick-carousel/slick/slick-theme.css';
+
+import '../../../styles/css/components/hotels_search/results_holder__hotels.css';
+
+let slider = null;
 
 function Result(props) {
   const calculateStars = (ratingNumber) => {
@@ -19,9 +26,9 @@ function Result(props) {
     return starsElements;
   };
 
-  const leftButton = <button>Prev</button>;
-  const rightButton = <button>Next</button>;
-  
+  const leftButton = <button></button>;
+  const rightButton = <button></button>;
+
   let { id, name, description, photos, price, stars } = props.hotel;
   const pictures = photos.slice(0, 3).map(url => { return { thumbnail: `${Config.getValue('imgHost')}${url}` }; });
   const { locRate, rates } = props;
@@ -31,11 +38,19 @@ function Result(props) {
 
   description = description.substr(0, 250);
 
-  return (
-    <div className="result">
-      <div className="result-images">
-        {pictures &&
-          <ReactBootstrapCarousel
+  if (pictures.length < 1) {
+    pictures.push({ thumbnail: `${Config.getValue('imgHost')}/listings/images/default.png` });
+  }
+
+  const settings = {
+    infinite: true,
+    speed: 500,
+    slidesToShow: 1,
+    slidesToScroll: 1,
+    nextArrow: rightButton,
+    prevArrow: leftButton
+  };
+  {/* <ReactBootstrapCarousel
             animation={true}
             autoplay={false}
             leftIcon={leftButton}
@@ -51,7 +66,29 @@ function Result(props) {
                 </Link>
               );
             })}
-          </ReactBootstrapCarousel>
+          </ReactBootstrapCarousel> */}
+
+
+  return (
+
+
+    <div className="result" >
+      <div className="result-images">
+        {pictures &&
+
+          <Slider ref={s => slider = s}
+            {...settings}>
+            {pictures.map((picture, i) => {
+              return (
+                <div key={i}>
+                  <Link to={`/hotels/listings/${id}${props.location.search}`} key={i}>
+                    <div style={{ backgroundImage: 'url(' + picture.thumbnail + ')' }}>
+                    </div>
+                  </Link>
+                </div>
+              );
+            })}
+          </Slider>
         }
       </div>
       <div className="result-content">
@@ -89,7 +126,7 @@ function Result(props) {
         <span>(LOC {locPrice})</span>
         <Link className="btn" to={`/hotels/listings/${id}${props.location.search}`}>Book now</Link>
       </div>
-    </div>
+    </div >
   );
 }
 

@@ -14,5 +14,10 @@ export const paymentInfo = {
 export const modalsInfo = {
   SET_SHOW_LOGIN: 'SET_SHOW_LOGIN',
   OPEN_MODAL: 'OPEN_MODAL',
-  CLOSE_MODAL: 'CLOSE_MODAL',
+  CLOSE_MODAL: 'CLOSE_MODAL'
+};
+
+// airdrop action
+export const airdropInfo = {
+  SET_AIRDROP_INFO: 'SET_AIRDROP_INFO'
 };

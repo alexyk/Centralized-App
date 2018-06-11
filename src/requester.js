@@ -135,7 +135,7 @@ export async function getListingsByFilter(searchTerms) {
 }
 
 export async function getMyConversations(searchTerm) {
-  return sendRequest(`${host}users/me/conversations${searchTerm !== null && searchTerm !== undefined ? `${searchTerm}&` : '?'}sort=id,desc`, RequestMethod.GET).then(res => {
+  return sendRequest(`${host}users/me/conversations${searchTerm ? `${searchTerm}&` : '?'}sort=id,desc`, RequestMethod.GET).then(res => {
     return res.response.json();
   });
 }
@@ -381,6 +381,7 @@ export async function postRecoveryEmail(email, captchaToken) {
  *
  * @param {String} token
  */
+// eslint-disable-next-line linebreak-style
 export async function sendRecoveryToken(token) {
   return sendRequest(`${host}users/resetPassword/confirm?token=${token}`, RequestMethod.GET).then(res => {
     return {
@@ -390,7 +391,7 @@ export async function sendRecoveryToken(token) {
 }
 
 /**
- * 
+ *
  * Object should contain password and token
  * @param {obj} postObj
  */
@@ -463,6 +464,12 @@ export async function confirmBooking(bookingObj) {
   });
 }
 
+export async function cancelBooking(bookingObj) {
+  return sendRequest(`${host}api/hotels/booking/cancel`, RequestMethod.POST, bookingObj).then(res => {
+    return res.response.json();
+  });
+}
+
 export async function getLocRateFromCoinMarketCap(currency) {
   return sendRequest(`https://api.coinmarketcap.com/v1/ticker/lockchain/?convert=${currency}`, RequestMethod.GET).then(res => {
     return res.response.json();
@@ -498,4 +505,50 @@ export async function getMyHotelBookings(searchTerm, size = 10) {
   return sendRequest(`${host}users/me/bookings${searchTerm !== null && searchTerm !== undefined ? `${searchTerm}&` : '?'}sort=id,desc&size=${size}`, RequestMethod.GET).then(res => {
     return res.response.json();
   });
+}
+
+export async function checkIfAirdropUserExists(token) {
+  return sendRequest(`${host}userExists/${token}`, RequestMethod.GET).then(res => {
+    return res.response.json();
+  });
+}
+
+export async function getUserAirdropInfo() {
+  return sendRequest(`${host}airdrop`, RequestMethod.GET).then(res => {
+    return res.response.json();
+  });
+}
+
+export async function verifyUserAirdropInfo(token) {
+  return sendRequest(`${host}airdrop/participate/${token}`, RequestMethod.POST).then(res => {
+    return res.response.json();
+  });
+}
+
+export async function getCancellationFees(bookingId) {
+  return sendRequest(`${host}api/hotels/booking/${bookingId}/cancellationFee`, RequestMethod.GET).then(res => {
+    return res.response.json();
+  });
+}
+
+export async function saveAirdropSocialProfile(media, profile) {
+  return sendRequest(`${host}me/social/${media}`, RequestMethod.POST, profile).then(res => {
+    return res.response.json();
+  });
+}
+
+export async function verifyUserEmail(search) {
+  return sendRequest(`${host}airdrop/verifyEmail${search}`, RequestMethod.GET).then(res => {
+    return res.response.json();
+  });
+}
+
+export async function resendConfirmationEmail() {
+  const json = sendRequest(`${host}airdrop/sendVerifyEmailLink`, RequestMethod.GET).then(res => {
+    return res.response.json();
+  }).catch(error => {
+    console.log(error);
+  });
+
+  return json;
 }
