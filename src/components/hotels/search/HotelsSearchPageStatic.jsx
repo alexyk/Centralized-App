@@ -20,7 +20,7 @@ import { Config } from '../../../config.js';
 
 import { getRegionNameById, getCurrencyRates, getLocRateInUserSelectedCurrency } from '../../../requester';
 
-class HotelsSearchPage extends React.Component {
+class HotelsSearchPageStatic extends React.Component {
   constructor(props) {
     super(props);
 
@@ -649,7 +649,7 @@ class HotelsSearchPage extends React.Component {
   }
 }
 
-export default withRouter(connect(mapStateToProps)(HotelsSearchPage));
+export default withRouter(connect(mapStateToProps)(HotelsSearchPageStatic));
 
 function mapStateToProps(state) {
   const { paymentInfo, userInfo } = state;
@@ -659,7 +659,7 @@ function mapStateToProps(state) {
   };
 }
 
-HotelsSearchPage.propTypes = {
+HotelsSearchPageStatic.propTypes = {
   countries: PropTypes.array,
 
   // start Router props

@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import Select from 'react-select';
+import { NotificationManager } from 'react-notifications';
+import { getCurrentlyLoggedUserJsonFile } from '../../requester';
 
 export default class StyleTest extends Component {
   constructor(props) {
@@ -40,6 +42,11 @@ export default class StyleTest extends Component {
             { value: 'two', label: 'Two' },
           ]}
         />
+
+        <button onClick={() => {
+          const a = NotificationManager.info('afsd', 'asdf', 100000);
+          console.log(a);
+        }}>Test</button>
       </div>
     );
   }
