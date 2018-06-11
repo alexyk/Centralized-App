@@ -44,8 +44,8 @@ export default class StyleTest extends Component {
         />
 
         <button onClick={() => {
-          const a = NotificationManager.info('afsd', 'asdf', 100000);
-          console.log(a);
+          const a = 'abc';
+          console.log(a.match('^([^\\s][a-zA-Z].?[0-9][^\\s]|[^\\s][0-9].?[a-zA-Z][^\\s])$/'));
         }}>Test</button>
       </div>
     );

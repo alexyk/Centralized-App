@@ -52,7 +52,8 @@ import {
   PASSWORDS_DONT_MATCH,
   INVALID_PASSWORD,
   INVALID_TOKEN,
-  INVALID_EMAIL
+  INVALID_EMAIL,
+  PROFILE_PASSWORD_REQUIREMENTS
 } from '../../constants/warningMessages';
 import { NOT_FOUND } from '../../constants/errorMessages';
 
@@ -417,8 +418,13 @@ class MainNav extends React.Component {
       return;
     }
 
-    if (password.length < 6) {
+    if (password.length < 6 || password.length > 30) {
       NotificationManager.warning(INVALID_PASSWORD);
+      return;
+    }
+
+    if (!password.match('^([^\\s]*[a-zA-Z]+.*?[0-9]+[^\\s]*|[^\\s]*[0-9]+.*?[a-zA-Z]+[^\\s]*)$')) {
+      NotificationManager.warning(PROFILE_PASSWORD_REQUIREMENTS);
       return;
     }
 
