@@ -1,16 +1,19 @@
 import { NotificationManager } from 'react-notifications';
-import { changeListingStatus, contactHost, getAllPublishedListings, getCities, getCountries } from '../../../requester';
+import { changeListingStatus, contactHost, getAllUnpublishedListings, getCities, getCountries } from '../../../requester';
 
 import AllListingsFilter from './AllListingsFilter';
 import ContactHostModal from '../../common/modals/ContactHostModal';
+import DeletionModal from '../../common/modals/DeletionModal';
 import Pagination from '../../common/pagination/Pagination';
 import ListingRow from './ListingRow';
 import PropTypes from 'prop-types';
 import React from 'react';
 import queryString from 'query-string';
 import { withRouter } from 'react-router-dom';
+import filterListings from '../../../actions/filterListings';
+import UnpublishedItem from './UnpublishedItem';
 
-class AllPublishedListings extends React.Component {
+class UnpublishedListings extends React.Component {
   constructor(props) {
     super(props);
 
@@ -19,7 +22,7 @@ class AllPublishedListings extends React.Component {
       listings: [],
       loading: true,
       totalElements: 0,
-      currentPage: searchMap.page === undefined ? 1 : searchMap.page,
+      currentPage: !searchMap.page ? 0 : Number(searchMap.page),
       country: searchMap.countryId === undefined ? '' : searchMap.countryId,
       city: searchMap.cityId === undefined ? '' : searchMap.cityId,
       cities: [],
@@ -27,7 +30,9 @@ class AllPublishedListings extends React.Component {
       name: searchMap.listingName === undefined ? '' : searchMap.listingName,
       hostEmail: searchMap.host === undefined ? '' : searchMap.host,
       isShownContactHostModal: false,
-      selectedListing: '1'
+      isShownDeleteListingModal: false,
+      deletingId: -1,
+      deletingName: '',
     };
 
     this.onPageChange = this.onPageChange.bind(this);
@@ -41,11 +46,14 @@ class AllPublishedListings extends React.Component {
     this.openModal = this.openModal.bind(this);
     this.closeModal = this.closeModal.bind(this);
     this.sendMessageToHost = this.sendMessageToHost.bind(this);
+    this.handleDeleteListing = this.handleDeleteListing.bind(this);
+    this.handleCloseDeleteListing = this.handleCloseDeleteListing.bind(this);
+    this.filterListings = filterListings.bind(this);
   }
 
   componentDidMount() {
     let searchTerm = this.buildSearchTerm();
-    getAllPublishedListings(searchTerm).then((data) => {
+    getAllUnpublishedListings(searchTerm).then((data) => {
       this.setState({ listings: data.content, loading: false, totalElements: data.totalElements });
     });
 
@@ -66,14 +74,15 @@ class AllPublishedListings extends React.Component {
 
     let searchTerm = this.buildSearchTerm();
 
-    getAllPublishedListings(searchTerm).then((data) => {
-      this.props.history.push(`/profile/admin/listings/published${searchTerm}`);
+    getAllUnpublishedListings(searchTerm).then((data) => {
+      this.props.history.push(`/profile/admin/listings/unpublished${searchTerm}`);
       this.setState({ listings: data.content, loading: false, totalElements: data.totalElements });
     });
   }
 
+
   buildSearchTerm() {
-    let searchTerm = `?page=${this.state.currentPage - 1}`;
+    let searchTerm = `?page=${this.state.currentPage}`;
 
     if (this.state.city !== '') {
       searchTerm += `&cityId=${this.state.city}`;
@@ -95,7 +104,7 @@ class AllPublishedListings extends React.Component {
 
   onSelect(name, option) {
     this.setState({
-      [name]: (option ? option.value : '')
+      [name]: option.value
     });
   }
 
@@ -106,6 +115,10 @@ class AllPublishedListings extends React.Component {
   }
 
   async updateCountry(option) {
+    if (!option) {
+      return;
+    }
+
     await this.onSelect('country', option);
     this.updateCities();
   }
@@ -129,16 +142,16 @@ class AllPublishedListings extends React.Component {
 
   onPageChange(page) {
     this.setState({
-      currentPage: page,
+      currentPage: page - 1,
       loading: true
     });
 
     let searchTerm = queryString.parse(this.props.location.search);
 
-    searchTerm.page = this.state.currentPage;
+    searchTerm.page = page - 1;
 
     let newSearchTerm = queryString.stringify(searchTerm);
-    getAllPublishedListings('?' + newSearchTerm).then(data => {
+    getAllUnpublishedListings('?' + newSearchTerm).then(data => {
       this.props.history.push('?' + newSearchTerm);
       this.setState({
         listings: data.content,
@@ -149,14 +162,14 @@ class AllPublishedListings extends React.Component {
   }
 
   updateListingStatus(id) {
-    let unpublishObj = {
+    let publishObj = {
       listingId: id,
-      state: 'inactive'
+      state: 'active'
     };
 
-    changeListingStatus(unpublishObj).then((res) => {
+    changeListingStatus(publishObj).then((res) => {
       if (res.success) {
-        NotificationManager.success('Successfully changed status to inactive', 'Listings Operations');
+        NotificationManager.success('Successfully changed status to active', 'Listings Operations');
         let allListings = this.state.listings;
         this.setState({ listings: allListings.filter(x => x.id !== id) });
       }
@@ -186,6 +199,26 @@ class AllPublishedListings extends React.Component {
     this.setState({ isShownContactHostModal: false });
   }
 
+  handleDeleteListing(id, name) {
+    this.setState(
+      {
+        isShownDeleteListingModal: true,
+        deletingId: id,
+        deletingName: name
+      }
+    );
+  }
+
+  handleCloseDeleteListing() {
+    this.setState(
+      {
+        isShownDeleteListingModal: false,
+        deletingId: -1,
+        deletingName: ''
+      }
+    );
+  }
+
   render() {
     if (this.state.loading) {
       return <div className="loader"></div>;
@@ -208,49 +241,39 @@ class AllPublishedListings extends React.Component {
               loading={this.state.countries === [] || this.state.countries.length === 0}
               onChange={this.onChange} />
 
-            <ContactHostModal id={this.state.selectedListing} isActive={this.state.isShownContactHostModal} closeModal={this.closeModal} sendMessageToHost={this.sendMessageToHost} />
+            <ContactHostModal
+              id={this.state.selectedListing}
+              isActive={this.state.isShownContactHostModal}
+              closeModal={this.closeModal}
+              sendMessageToHost={this.sendMessageToHost}
+            />
 
-            {this.state.listings.length === 0 ? <div className="text-center p20"><h3>There isn&#39;t any published listings</h3></div> :
-              <div>
-                <div className="table-header bold">
-                  <div className="col-md-1">
-                  </div>
-                  <div className="col-md-4">
-                    <span>Name</span>
-                  </div>
-                  <div className="col-md-2">
-                    <span>Price</span>
-                  </div>
-                  <div className="col-md-3">
-                    <span>Actions</span>
-                  </div>
-                  <div className="col-md-2">
-                    <span>Contact host</span>
-                  </div>
-                </div>
+            <DeletionModal
+              isActive={this.state.isShownDeleteListingModal}
+              deletingName={this.state.deletingName}
+              filterListings={this.filterListings}
+              deletingId={this.state.deletingId}
+              onHide={this.handleCloseDeleteListing}
+            />
 
-                {/* TODO: Fix event emmiter warning from this piece of code */}
-                {this.state.listings.map((item, i) => {
+            {this.state.listings.length === 0 
+              ? <div className="text-center p20"><h3>There isn&#39;t any unpublished listings</h3></div> 
+              : <div>
+                {this.state.listings.map((l, i) => {
                   return (
-                    <ListingRow
-                      action="Unpublish"
-                      canDelete={false}
-                      updateListingStatus={this.updateListingStatus}
-                      actionClass="btn btn-danger"
-                      listing={item}
-                      key={i}
-                      openModal={this.openModal}
-                    />
+                    <UnpublishedItem key={i}/>
                   );
-                })}
+                })}                
 
                 <Pagination
                   loading={this.state.totalReservations === 0}
                   onPageChange={this.onPageChange}
-                  currentPage={this.state.currentPage}
+                  currentPage={this.state.currentPage + 1}
+                  pageSize={20}
                   totalElements={this.state.totalElements}
                 />
-              </div>}
+              </div>
+            }
           </div>
         </section>
       </div>
@@ -258,10 +281,9 @@ class AllPublishedListings extends React.Component {
   }
 }
 
-AllPublishedListings.propTypes = {
+UnpublishedListings.propTypes = {
   location: PropTypes.object,
-  history: PropTypes.object,
-
+  history: PropTypes.object
 };
 
-export default withRouter(AllPublishedListings);
+export default withRouter(UnpublishedListings);

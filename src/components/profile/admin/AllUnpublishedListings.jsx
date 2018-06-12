@@ -21,7 +21,7 @@ class AllUnpublishedListings extends React.Component {
       listings: [],
       loading: true,
       totalElements: 0,
-      currentPage: searchMap.page === undefined ? 1 : searchMap.page,
+      currentPage: !searchMap.page ? 0 : Number(searchMap.page),
       country: searchMap.countryId === undefined ? '' : searchMap.countryId,
       city: searchMap.cityId === undefined ? '' : searchMap.cityId,
       cities: [],
@@ -81,7 +81,7 @@ class AllUnpublishedListings extends React.Component {
 
 
   buildSearchTerm() {
-    let searchTerm = `?page=${this.state.currentPage - 1}`;
+    let searchTerm = `?page=${this.state.currentPage}`;
 
     if (this.state.city !== '') {
       searchTerm += `&cityId=${this.state.city}`;
@@ -141,13 +141,13 @@ class AllUnpublishedListings extends React.Component {
 
   onPageChange(page) {
     this.setState({
-      currentPage: page,
+      currentPage: page - 1,
       loading: true
     });
 
     let searchTerm = queryString.parse(this.props.location.search);
 
-    searchTerm.page = this.state.currentPage;
+    searchTerm.page = page - 1;
 
     let newSearchTerm = queryString.stringify(searchTerm);
     getAllUnpublishedListings('?' + newSearchTerm).then(data => {
@@ -288,7 +288,8 @@ class AllUnpublishedListings extends React.Component {
                 <Pagination
                   loading={this.state.totalReservations === 0}
                   onPageChange={this.onPageChange}
-                  currentPage={this.state.currentPage}
+                  currentPage={this.state.currentPage + 1}
+                  pageSize={20}
                   totalElements={this.state.totalElements}
                 />
 

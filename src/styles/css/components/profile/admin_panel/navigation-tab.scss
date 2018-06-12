@@ -1,0 +1,19 @@
+.navigation-tab {
+  margin: 20px 0;
+
+  li {
+    list-style-type: none;
+    display: inline-block;
+    margin-right: 25px;
+    text-align: center;
+
+    a h2 {
+      padding: 15px;
+    }
+  }
+}
+
+.navigation-tab>li>a.active>h2 {
+    // margin-bottom: 0;
+    border-bottom: 4px solid #A0C5BE;
+}

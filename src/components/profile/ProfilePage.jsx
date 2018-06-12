@@ -11,7 +11,7 @@ import MessagesPage from './messages/MessagesPage';
 import MessagesChatPage from './messages/MessagesChatPage';
 import ProfileEditPage from './me/ProfileEditPage';
 import WalletPage from './wallet/WalletIndexPage';
-import ListingsAdminPage from './admin/ListingsAdminPage';
+import AdminPage from './admin/AdminPage';
 
 import PropTypes from 'prop-types';
 
@@ -30,7 +30,7 @@ export default class ProfilePage extends React.Component {
           <Route path="/profile/reservations" render={() => <MyGuestsPage />} />
           <Route path="/profile/me/edit" render={() => <ProfileEditPage />} />
           <Route path="/profile/wallet" render={() => <WalletPage />} />
-          <Route path="/profile/admin" render={() => <ListingsAdminPage />} />
+          <Route path="/profile/admin" render={() => <AdminPage />} />
         </Switch>
       </div>
     );
