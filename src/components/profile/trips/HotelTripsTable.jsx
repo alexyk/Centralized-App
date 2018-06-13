@@ -61,7 +61,7 @@ function HotelTripsTable(props) {
                   }
                   &nbsp;
                   {trip.status && trip.status.toUpperCase() === 'FAILED' &&
-                    <span className="icon-question" title="message placeholder"></span>
+                    <span className="icon-question" title={trip.error ? trip.error : 'Transaction failed.'}></span>
                   }
                 </div>
                 {trip.status && trip.status.toUpperCase() === 'DONE' &&

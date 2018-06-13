@@ -93,9 +93,8 @@ export default class ProfileEditPage extends React.Component {
 
   updateUser(captchaToken) {
     let birthday;
-    if (this.state.day !== '' && this.state.month !== '' && this.state.year !== '') {
-      birthday = `${this.state.day}/${this.state.month}/${this.state.year}`;
-    }
+    birthday = `${this.state.day}/${this.state.month}/${this.state.year}`;
+    
     let userInfo = {
       firstName: this.state.firstName,
       lastName: this.state.lastName,
@@ -118,7 +117,11 @@ export default class ProfileEditPage extends React.Component {
         this.componentDidMount();
       }
       else {
-        NotificationManager.error('Error!', 'Update user profile');
+        NotificationManager.error('Something went wrong...');
+      }
+    }).catch(errors => {
+      for (var e in errors) {
+        NotificationManager.warning(errors[e].message);
       }
     });
   }
