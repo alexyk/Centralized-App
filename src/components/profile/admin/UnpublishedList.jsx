@@ -1,7 +1,7 @@
 import { NotificationManager } from 'react-notifications';
 import { changeListingStatus, contactHost, getAllUnpublishedListings, getCities, getCountries } from '../../../requester';
 
-import AllListingsFilter from './AllListingsFilter';
+import Filter from './Filter';
 import ContactHostModal from '../../common/modals/ContactHostModal';
 import DeletionModal from '../../common/modals/DeletionModal';
 import Pagination from '../../common/pagination/Pagination';
@@ -228,7 +228,7 @@ class UnpublishedListings extends React.Component {
       <div className="my-reservations">
         <section id="profile-my-reservations">
           <div>
-            <AllListingsFilter
+            <Filter
               countries={this.state.countries}
               cities={this.state.cities}
               city={this.state.city}

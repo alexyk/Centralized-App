@@ -3,7 +3,7 @@ import { Route, Redirect, Switch } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import React from 'react';
 import ListingsAdminNav from './ListingsAdminNav';
-import AllPublishedListings from './AllPublishedListings';
+import PublishedListings from './PublishedListings';
 import UnpublishedListings from './UnpublishedList';
 
 class AdminPage extends React.Component {
@@ -13,7 +13,7 @@ class AdminPage extends React.Component {
         <ListingsAdminNav />
         <Switch>
           <Redirect exact path="/profile/admin/listings" to="/profile/admin/listings/published" />
-          <Route exact path="/profile/admin/listings/published" render={() => <AllPublishedListings />} />
+          <Route exact path="/profile/admin/listings/published" render={() => <PublishedListings />} />
           <Route exact path="/profile/admin/listings/unpublished" render={() => <UnpublishedListings />} />
         </Switch>
       </div>
