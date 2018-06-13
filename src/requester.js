@@ -292,7 +292,7 @@ export async function getMyListingsInProgress(searchTerm) {
 }
 
 export async function getAllPublishedListings(searchTerm) {
-  return sendRequest(`${host}admin/listings/published${searchTerm !== null && searchTerm !== undefined ? `${searchTerm}&` : '?'}`, RequestMethod.GET).then(res => {
+  return sendRequest(`${host}admin/listings/published${searchTerm ? `${searchTerm}&` : '?'}`, RequestMethod.GET).then(res => {
     return res.response.json();
   });
 }

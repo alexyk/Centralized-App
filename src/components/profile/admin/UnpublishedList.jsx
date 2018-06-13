@@ -5,7 +5,6 @@ import Filter from './Filter';
 import ContactHostModal from '../../common/modals/ContactHostModal';
 import DeletionModal from '../../common/modals/DeletionModal';
 import Pagination from '../../common/pagination/Pagination';
-import ListingRow from './ListingRow';
 import PropTypes from 'prop-types';
 import React from 'react';
 import queryString from 'query-string';
@@ -37,10 +36,8 @@ class UnpublishedListings extends React.Component {
 
     this.onPageChange = this.onPageChange.bind(this);
     this.updateListingStatus = this.updateListingStatus.bind(this);
-    this.onSelect = this.onSelect.bind(this);
-    this.updateCities = this.updateCities.bind(this);
-    this.updateCountry = this.updateCountry.bind(this);
-    this.updateCities = this.updateCities.bind(this);
+    this.handleSelectCountry = this.handleSelectCountry.bind(this);
+    this.handleSelectCity = this.handleSelectCity.bind(this);
     this.onSearch = this.onSearch.bind(this);
     this.onChange = this.onChange.bind(this);
     this.openModal = this.openModal.bind(this);
@@ -82,30 +79,25 @@ class UnpublishedListings extends React.Component {
 
 
   buildSearchTerm() {
-    let searchTerm = `?page=${this.state.currentPage}`;
+    let searchTerm = `?`;
 
-    if (this.state.city !== '') {
+    if (this.state.city) {
       searchTerm += `&cityId=${this.state.city}`;
     }
 
-    if (this.state.name !== '') {
+    if (this.state.name) {
       searchTerm += `&listingName=${this.state.name}`;
     }
 
-    if (this.state.country !== '') {
+    if (this.state.country) {
       searchTerm += `&countryId=${this.state.country}`;
     }
 
-    if (this.state.hostEmail !== '') {
+    if (this.state.hostEmail) {
       searchTerm += `&host=${this.state.hostEmail}`;
     }
-    return searchTerm;
-  }
 
-  onSelect(name, option) {
-    this.setState({
-      [name]: option.value
-    });
+    return searchTerm;
   }
 
   onChange(e) {
@@ -114,30 +106,29 @@ class UnpublishedListings extends React.Component {
     });
   }
 
-  async updateCountry(option) {
-    if (!option) {
-      return;
-    }
-
-    await this.onSelect('country', option);
-    this.updateCities();
-  }
-
-  updateCities() {
-    getCities(this.state.country).then(data => {
-      this.setState({
-        city: '',
-        cities: data.content,
-      });
+  handleSelectCountry(option) {
+    this.setState({
+      country: option ? option.value : null,
+      city: null
+    }, () => {
+      if (option) {
+        getCities(option.value).then(data => {
+          this.setState({
+            cities: data.content,
+          });
+        });
+      } else {
+        this.setState({
+          cities: [],
+        });
+      }
     });
   }
 
-  async updateCity(option) {
-    if (!option) {
-      return;
-    }
-
-    await this.onSelect('city', option);
+  handleSelectCity(option) {
+    this.setState({
+      city: option ? option.value : null,
+    });
   }
 
   onPageChange(page) {
@@ -233,10 +224,10 @@ class UnpublishedListings extends React.Component {
               cities={this.state.cities}
               city={this.state.city}
               country={this.state.country}
-              onSelect={this.onSelect}
               name={this.state.name}
               hostEmail={this.state.hostEmail}
-              updateCountry={this.updateCountry}
+              handleSelectCountry={this.handleSelectCountry}
+              handleSelectCity={this.handleSelectCity}
               onSearch={this.onSearch}
               loading={this.state.countries === [] || this.state.countries.length === 0}
               onChange={this.onChange} />

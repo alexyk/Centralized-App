@@ -9,6 +9,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import queryString from 'query-string';
 import { withRouter } from 'react-router-dom';
+import NoEntriesMessage from '../common/NoEntriesMessage';
 
 class PublishedListings extends React.Component {
   constructor(props) {
@@ -19,7 +20,7 @@ class PublishedListings extends React.Component {
       listings: [],
       loading: true,
       totalElements: 0,
-      currentPage: searchMap.page === undefined ? 1 : searchMap.page,
+      currentPage: !searchMap.page ? 0 : Number(searchMap.page),
       country: searchMap.countryId === undefined ? '' : searchMap.countryId,
       city: searchMap.cityId === undefined ? '' : searchMap.cityId,
       cities: [],
@@ -32,10 +33,8 @@ class PublishedListings extends React.Component {
 
     this.onPageChange = this.onPageChange.bind(this);
     this.updateListingStatus = this.updateListingStatus.bind(this);
-    this.onSelect = this.onSelect.bind(this);
-    this.updateCities = this.updateCities.bind(this);
-    this.updateCountry = this.updateCountry.bind(this);
-    this.updateCities = this.updateCities.bind(this);
+    this.handleSelectCountry = this.handleSelectCountry.bind(this);
+    this.handleSelectCity = this.handleSelectCity.bind(this);
     this.onSearch = this.onSearch.bind(this);
     this.onChange = this.onChange.bind(this);
     this.openModal = this.openModal.bind(this);
@@ -73,30 +72,24 @@ class PublishedListings extends React.Component {
   }
 
   buildSearchTerm() {
-    let searchTerm = `?page=${this.state.currentPage - 1}`;
+    let searchTerm = `?`;
 
-    if (this.state.city !== '') {
+    if (this.state.city) {
       searchTerm += `&cityId=${this.state.city}`;
     }
 
-    if (this.state.name !== '') {
+    if (this.state.name) {
       searchTerm += `&listingName=${this.state.name}`;
     }
 
-    if (this.state.country !== '') {
+    if (this.state.country) {
       searchTerm += `&countryId=${this.state.country}`;
     }
 
-    if (this.state.hostEmail !== '') {
+    if (this.state.hostEmail) {
       searchTerm += `&host=${this.state.hostEmail}`;
     }
     return searchTerm;
-  }
-
-  onSelect(name, option) {
-    this.setState({
-      [name]: (option ? option.value : '')
-    });
   }
 
   onChange(e) {
@@ -105,37 +98,40 @@ class PublishedListings extends React.Component {
     });
   }
 
-  async updateCountry(option) {
-    await this.onSelect('country', option);
-    this.updateCities();
-  }
-
-  updateCities() {
-    getCities(this.state.country).then(data => {
-      this.setState({
-        city: '',
-        cities: data.content,
-      });
+  handleSelectCountry(option) {
+    this.setState({
+      country: option ? option.value : null,
+      city: null
+    }, () => {
+      if (option) {
+        getCities(option.value).then(data => {
+          this.setState({
+            cities: data.content,
+          });
+        });
+      } else {
+        this.setState({
+          cities: [],
+        });
+      }
     });
   }
 
-  async updateCity(option) {
-    if (!option) {
-      return;
-    }
-
-    await this.onSelect('city', option);
+  handleSelectCity(option) {
+    this.setState({
+      city: option ? option.value : null,
+    });
   }
 
   onPageChange(page) {
     this.setState({
-      currentPage: page,
+      currentPage: page - 1,
       loading: true
     });
 
     let searchTerm = queryString.parse(this.props.location.search);
 
-    searchTerm.page = this.state.currentPage;
+    searchTerm.page = page - 1;
 
     let newSearchTerm = queryString.stringify(searchTerm);
     getAllPublishedListings('?' + newSearchTerm).then(data => {
@@ -157,8 +153,10 @@ class PublishedListings extends React.Component {
     changeListingStatus(unpublishObj).then((res) => {
       if (res.success) {
         NotificationManager.success('Successfully changed status to inactive', 'Listings Operations');
-        let allListings = this.state.listings;
-        this.setState({ listings: allListings.filter(x => x.id !== id) });
+        const allListings = this.state.listings;
+        const newListings = allListings.filter(x => x.id !== id);
+        const totalElements = this.state.totalElements;
+        this.setState({ listings: newListings, totalElements: totalElements - 1 });
       }
       else {
         NotificationManager.error('Something went wrong', 'Listings Operations');
@@ -200,18 +198,19 @@ class PublishedListings extends React.Component {
               cities={this.state.cities}
               city={this.state.city}
               country={this.state.country}
-              onSelect={this.onSelect}
               name={this.state.name}
               hostEmail={this.state.hostEmail}
-              updateCountry={this.updateCountry}
+              handleSelectCountry={this.handleSelectCountry}
+              handleSelectCity={this.handleSelectCity}
               onSearch={this.onSearch}
               loading={this.state.countries === [] || this.state.countries.length === 0}
               onChange={this.onChange} />
 
             <ContactHostModal id={this.state.selectedListing} isActive={this.state.isShownContactHostModal} closeModal={this.closeModal} sendMessageToHost={this.sendMessageToHost} />
 
-            {this.state.listings.length === 0 ? <div className="text-center p20"><h3>There isn&#39;t any published listings</h3></div> :
-              <div>
+            {this.state.listings.length === 0 
+              ? <NoEntriesMessage text="No listings to show" />
+              : <div>
                 <div className="table-header bold">
                   <div className="col-md-1">
                   </div>
@@ -243,14 +242,17 @@ class PublishedListings extends React.Component {
                     />
                   );
                 })}
+              </div>
+            }
 
-                <Pagination
-                  loading={this.state.totalReservations === 0}
-                  onPageChange={this.onPageChange}
-                  currentPage={this.state.currentPage}
-                  totalElements={this.state.totalElements}
-                />
-              </div>}
+            <Pagination
+              loading={this.state.totalReservations === 0}
+              onPageChange={this.onPageChange}
+              currentPage={this.state.currentPage + 1}
+              pageSize={20}
+              totalElements={this.state.totalElements}
+            />
+
           </div>
         </section>
       </div>

@@ -41,7 +41,7 @@ export default class Filter extends React.Component {
             className="filter_select"
             style={{ border: 'none', boxShadow: 'none' }}
             value={this.props.country}
-            onChange={this.props.updateCountry}
+            onChange={this.props.handleSelectCountry}
             options={renderCountries}
           />
           <Select
@@ -50,7 +50,7 @@ export default class Filter extends React.Component {
             className="filter_select"
             style={{ border: 'none', boxShadow: 'none' }}
             value={this.props.city}
-            onChange={option => this.props.onSelect('city', option)}
+            onChange={this.props.handleSelectCity}
             options={renderCities}
           />
           <button type="submit" className="btn btn-primary">Search</button>
@@ -62,10 +62,11 @@ export default class Filter extends React.Component {
 
 Filter.propTypes = {
   onSelect: PropTypes.func,
-  city: PropTypes.string,
-  country: PropTypes.string,
+  city: PropTypes.number,
+  country: PropTypes.number,
   name: PropTypes.string,
-  updateCountry: PropTypes.func,
+  handleSelectCountry: PropTypes.func,
+  handleSelectCity: PropTypes.func,
   countries: PropTypes.array,
   cities: PropTypes.array,
   hostEmail: PropTypes.string,

@@ -42,16 +42,22 @@ $media-expressions: (
     }
   }
 
-  &_content {
-    width: 60%;
-    margin-right: 25px;
-  }
-
   &_actions {
-    margin: auto;
+    display: flex;
+    justify-content: space-between;
+
+    .major-actions, .minor-actions {
+      display: flex;
+
+      .delete {
+        border: 1px solid $moderate-red;
+        border-radius: 2px;
+        padding: 0 5px;
+      }
+    }
 
     div {
-      margin-bottom: 5px;
+      margin-right: 20px;
       // text-align: center;
 
       a {
