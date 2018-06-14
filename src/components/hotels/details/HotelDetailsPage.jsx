@@ -534,9 +534,9 @@ class HotelDetailsPage extends React.Component {
       loading = true;
     } else {
       images = [];
-      if (this.state.data.hotelPhotos) {
-        images = this.state.data.hotelPhotos.map((x, i) => {
-          return { src: Config.getValue('imgHost') + x.url, index: i };
+      if (this.state.data.photos) {
+        images = this.state.data.photos.map((x, i) => {
+          return { src: Config.getValue('imgHost') + x, index: i };
         });
       }
     }

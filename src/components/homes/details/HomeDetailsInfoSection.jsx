@@ -32,7 +32,7 @@ function HomeDetailsInfoSection(props) {
   const calendar = props.calendar;
   const mostPopularFacilities = allAmenities.filter(a => a.picture != null).slice(0, 5);
   const amenities = getAmenities(allAmenities);
-  const { street, city, country } = props.data;
+  const { street, city, region } = props.data;
   if (calendar === null) {
     return <div>Loading...</div>;
   }
@@ -44,7 +44,7 @@ function HomeDetailsInfoSection(props) {
 
           <h1> {props.data.name} </h1>
           <div className="clearfix" />
-          <p>{street}, {city.name}, {country.name}</p>
+          <p>{street}, {city}, {region.country.name}</p>
           <button className="btn btn-primary" onClick={props.openModal}>Contact Host</button>
 
           <HomeDetailsCalendar
