@@ -1,7 +1,9 @@
 import {
   HotelReservationFactoryContract,
   initHotelReservationContract,
-  HotelReservationFactoryContractWithWallet
+  HotelReservationFactoryContractWithWallet,
+  SimpleHotelReservationContract,
+  SimpleHotelReservationContractWithWallet
 } from "./config/contracts-config";
 import {
   ReservationValidators
@@ -157,5 +159,40 @@ export class HotelReservation {
     const openDisputeTxHash = await HotelReservationFactoryContractWithWalletInstance.dispute(hotelReservationIdBytes, overrideOptions);
 
     return openDisputeTxHash;
+  }
+
+  static async createSimpleReservation(jsonObj,
+    password,
+    hotelReservationId,
+    reservationCostLOC,
+    withdrawDate,
+    recipientAddress) {
+
+    const withdrawDateFormatted = formatStartDateTimestamp(withdrawDate);
+    const hotelReservationIdBytes = ethers.utils.toUtf8Bytes(hotelReservationId);
+    let wallet = await ethers.Wallet.fromEncryptedWallet(jsonObj, password);
+    const gasPrice = await getGasPrice();
+    let overrideOptions = {
+      gasLimit: gasConfig.hotelReservation.createSimple,
+      gasPrice: gasPrice
+    };
+
+    await ReservationValidators.validateSimpleReservationParams(jsonObj, password, hotelReservationIdBytes, reservationCostLOC, withdrawDateFormatted, recipientAddress)
+
+    await TokenValidators.validateLocBalance(wallet.address, reservationCostLOC, wallet, gasConfig.hotelReservation.createSimple);
+    await EtherValidators.validateEthBalance(wallet, overrideOptions.gasLimit);
+
+    let approve = await approveContract(wallet, reservationCostLOC, SimpleHotelReservationContract.address, gasPrice);
+
+    let SimpleHotelReservationContractWithWalletInstance = SimpleHotelReservationContractWithWallet(wallet);
+
+    const createSimpleReservationTxHash = await SimpleHotelReservationContractWithWalletInstance.createHotelReservation(hotelReservationIdBytes,
+      reservationCostLOC,
+      withdrawDateFormatted,
+      recipientAddress,
+      overrideOptions
+    );
+
+    return createSimpleReservationTxHash;
   }
 }

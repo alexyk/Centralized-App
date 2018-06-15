@@ -4,7 +4,8 @@ import {
   formatTimestamp
 } from "../utils/timeHelper";
 import {
-  HotelReservationFactoryContract
+  HotelReservationFactoryContract,
+  SimpleHotelReservationContract
 } from "../config/contracts-config";
 import {
   BaseValidators
@@ -79,6 +80,33 @@ export class ReservationValidators {
 
   }
 
+  static async validateSimpleReservationParams(jsonObj,
+    password,
+    hotelReservationId,
+    reservationCostLOC,
+    withdrawDate,
+    recipientAddress) {
+    if (!jsonObj ||
+      !password ||
+      !hotelReservationId ||
+      !reservationCostLOC ||
+      reservationCostLOC * 1 <= 0 ||
+      !withdrawDate ||
+      !recipientAddress
+    ) {
+      throw new Error(ERROR.INVALID_PARAMS);
+    }
+
+    if ((Date.now() / 1000 | 0) > withdrawDate) {
+      throw new Error(ERROR.INVALID_WITHDRAW_DATE);
+    }
+
+    await this.validateSimpleReservationDontExist(hotelReservationId);
+    this.validateWithdrawDate(withdrawDate)
+
+    return true;
+  }
+
   static async validateBookingExists(hotelReservationId) {
     await this.isHotelReservationIdEmpty(hotelReservationId);
     const bookingContractAddress = await HotelReservationFactoryContract.getHotelReservationContractAddress(
@@ -132,6 +160,24 @@ export class ReservationValidators {
       }
 
     return true;
+  }
+
+  static validateWithdrawDate(withdrawDate) {
+    const nowUnixFormatted = formatTimestamp(new Date().getTime() / 1000 | 0);
+    let day = 60 * 60 * 24;
+    let tenYearsPeriod = ((day * 356) + 2) * 10;
+
+    if (withdrawDate > (nowUnixFormatted + tenYearsPeriod) || withdrawDate.toString().length != 10) {
+      throw new Error(ERROR.INVALID_WITHDRAW_DATE);
+    }
+  }
+
+  static async validateSimpleReservationDontExist(hotelReservationId) {
+    let recipientAddress = await SimpleHotelReservationContract.hotelReservations(hotelReservationId);
+    if (recipientAddress[0] === '0x0000000000000000000000000000000000000000') {
+      return true;
+    }
+    throw new Error(ERROR.EXISTING_BOOKING);
   }
 
   static validateCancellation(refundPercentages,

@@ -1,20 +1,21 @@
 import {
-	Config
+  Config
 } from './../../../config';
 import ethers from 'ethers';
 import StandardToken from './contracts-json/StandardToken.json';
 import LOCExchangeContractJSON from './contracts-json/LOCExchange.json';
 import IHotelReservationFactory from './contracts-json/IHotelReservationFactory.json';
 import IHotelReservation from './contracts-json/IHotelReservation.json';
+import SimpleHotelReservationContractJSON from './contracts-json/SimpleHotelReservation.json';
 
 const providers = ethers.providers;
 
 export function getNodeProvider() {
-	let currentNetwork = Config.getValue('ETHERS_HTTP_PROVIDER_NETWORK')
-	if (currentNetwork === 'local') {
-		return new providers.JsonRpcProvider(Config.getValue('ETHERS_HTTP_PROVIDER_LOCAL'), providers.networks.unspecified);
-	}
-	return new providers.InfuraProvider(providers.networks[currentNetwork], Config.getValue('INFURA_API_KEY'));
+  let currentNetwork = Config.getValue('ETHERS_HTTP_PROVIDER_NETWORK')
+  if (currentNetwork === 'local') {
+    return new providers.JsonRpcProvider(Config.getValue('ETHERS_HTTP_PROVIDER_LOCAL'), providers.networks.unspecified);
+  }
+  return new providers.InfuraProvider(providers.networks[currentNetwork], Config.getValue('INFURA_API_KEY'));
 
 }
 
@@ -26,12 +27,11 @@ const nodeProvider = getNodeProvider();
  */
 
 export let LOCTokenContract = new ethers.Contract(
-	Config.getValue('LOCTokenContract'), StandardToken.abi, nodeProvider);
+  Config.getValue('LOCTokenContract'), StandardToken.abi, nodeProvider);
 
 export function LOCTokenContractWithWallet(wallet) {
-	wallet.provider = nodeProvider;
-
-	return new ethers.Contract(Config.getValue('LOCTokenContract'), StandardToken.abi, wallet);
+  wallet.provider = nodeProvider;
+  return new ethers.Contract(Config.getValue('LOCTokenContract'), StandardToken.abi, wallet);
 }
 
 /**
@@ -42,9 +42,9 @@ export function LOCTokenContractWithWallet(wallet) {
 export let LOCExchangeContract = new ethers.Contract(Config.getValue('LOCExchange'), LOCExchangeContractJSON.abi, nodeProvider);
 
 export function LOCExchangeContractWithWallet(wallet) {
-	wallet.provider = nodeProvider;
+  wallet.provider = nodeProvider;
 
-	return new ethers.Contract(Config.getValue('LOCExchange'), LOCExchangeContractJSON.abi, wallet);
+  return new ethers.Contract(Config.getValue('LOCExchange'), LOCExchangeContractJSON.abi, wallet);
 }
 
 /**
@@ -53,12 +53,12 @@ export function LOCExchangeContractWithWallet(wallet) {
  */
 
 export let HotelReservationFactoryContract = new ethers.Contract(
-	Config.getValue('HotelReservationFactoryProxy'), IHotelReservationFactory.abi, nodeProvider);
+  Config.getValue('HotelReservationFactoryProxy'), IHotelReservationFactory.abi, nodeProvider);
 
 
 export function HotelReservationFactoryContractWithWallet(wallet) {
-	wallet.provider = nodeProvider;
-	return new ethers.Contract(Config.getValue('HotelReservationFactoryProxy'), IHotelReservationFactory.abi, wallet);
+  wallet.provider = nodeProvider;
+  return new ethers.Contract(Config.getValue('HotelReservationFactoryProxy'), IHotelReservationFactory.abi, wallet);
 }
 
 /**
@@ -67,7 +67,20 @@ export function HotelReservationFactoryContractWithWallet(wallet) {
  */
 
 export function initHotelReservationContract(hotelReservationContractAddress) {
-	return new ethers.Contract(
-		hotelReservationContractAddress, IHotelReservation.abi, nodeProvider)
+  return new ethers.Contract(
+    hotelReservationContractAddress, IHotelReservation.abi, nodeProvider)
 
 };
+
+/**
+ * Creation of SimpleHotelReservationContract object
+ * @type {ethers.Contract}
+ */
+
+export let SimpleHotelReservationContract = new ethers.Contract(
+  Config.getValue('SimpleHotelReservation'), SimpleHotelReservationContractJSON.abi, nodeProvider);
+
+export function SimpleHotelReservationContractWithWallet(wallet) {
+  wallet.provider = nodeProvider;
+  return new ethers.Contract(Config.getValue('SimpleHotelReservation'), SimpleHotelReservationContractJSON.abi, wallet);
+}
