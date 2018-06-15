@@ -50,15 +50,20 @@ function HotelTripsTable(props) {
                 <div>{moment(new Date(trip.arrival_date)).format('DD MMM, YYYY')}<i aria-hidden="true" className="fa fa-long-arrow-right"></i>{moment(new Date(trip.arrival_date)).add(trip.nights, 'days').format('DD MMM, YYYY')}</div>
               </div>
               <div className="col-md-2" >
-                {/* {trip.accepted ? */}
-                {/* <div style={{ display: 'none' }} >Reservation is accepted and can&#39;t be undone</div> : */}
                 {trip.status && trip.status.toUpperCase() === 'DONE' &&
                   <div><button type="submit" onClick={e => { e.preventDefault(); props.onTripSelect(trip.id); props.handleCancelReservation(); }}>Cancel Trip</button></div>
                 }
-                {/* } */}
               </div>
               <div className="col-md-2">
-                <div className="reservation-status bold">{capitalize(trip.status != null && trip.status.length > 0 ? trip.status : 'PENDING')}</div>
+                <div className="reservation-status bold">
+                  {
+                    capitalize(trip.status != null && trip.status.length > 0 ? trip.status : 'PENDING')
+                  }
+                  &nbsp;
+                  {trip.status && trip.status.toUpperCase() === 'FAILED' &&
+                    <span className="icon-question" title={trip.error ? trip.error : 'Transaction failed.'}></span>
+                  }
+                </div>
                 {trip.status && trip.status.toUpperCase() === 'DONE' &&
                   <span>Reference No.: {trip.booking_id}</span>
                 }

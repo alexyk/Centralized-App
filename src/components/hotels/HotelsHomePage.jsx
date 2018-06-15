@@ -1,16 +1,11 @@
 import React from 'react';
-import { withRouter } from 'react-router-dom';
-import moment from 'moment';
-import HotelsSearchBar from './search/HotelsSearchBar';
-import PopularDestinationsCarousel from './carousel/PopularDestinationsCarousel';
-import ListingTypeNav from '../common/listingTypeNav/ListingTypeNav';
 import PropTypes from 'prop-types';
-import HeroComponent from './HeroComponent';
-
-import { getTestHotels } from '../../requester';
-import { connect } from 'react-redux';
-
+import moment from 'moment';
+import PopularDestinationsCarousel from './carousel/PopularDestinationsCarousel';
 import ChildrenModal from './modals/ChildrenModal';
+import HeroComponent from './HeroComponent';
+import { connect } from 'react-redux';
+import { withRouter } from 'react-router-dom';
 
 class HotelsHomePage extends React.Component {
   constructor(props) {
@@ -25,7 +20,6 @@ class HotelsHomePage extends React.Component {
       rooms: [{ adults: 1, children: [] }],
       adults: 2,
       hasChildren: false,
-      listings: undefined,
       childrenModal: false,
     };
 
@@ -36,7 +30,6 @@ class HotelsHomePage extends React.Component {
     this.handleChildAgeChange = this.handleChildAgeChange.bind(this);
     this.handleSearch = this.handleSearch.bind(this);
     this.handleDatePick = this.handleDatePick.bind(this);
-
     this.handleSelectRegion = this.handleSelectRegion.bind(this);
     this.handleOpenSelect = this.handleOpenSelect.bind(this);
     this.handleCloseSelect = this.handleCloseSelect.bind(this);
@@ -44,15 +37,7 @@ class HotelsHomePage extends React.Component {
     this.closeModal = this.closeModal.bind(this);
     this.redirectToSearchPage = this.redirectToSearchPage.bind(this);
     this.handleToggleChildren = this.handleToggleChildren.bind(this);
-
     this.handleDestinationPick = this.handleDestinationPick.bind(this);
-    
-  }
-
-  componentDidMount() {
-    getTestHotels().then((data) => {
-      this.setState({ listings: data.content });
-    });
   }
 
   onChange(e) {
@@ -81,7 +66,6 @@ class HotelsHomePage extends React.Component {
 
   handleSelectRegion(value) {
     this.setState({ region: value });
-    console.log(value);
   }
 
   handleOpenSelect() {

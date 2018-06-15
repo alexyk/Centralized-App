@@ -48,6 +48,7 @@ export default class StyleTest extends Component {
           const a = 'abc';
           console.log(a.match('^([^\\s][a-zA-Z].?[0-9][^\\s]|[^\\s][0-9].?[a-zA-Z][^\\s])$/'));
         }}>Test</button>
+        <span className="icon-question" title={`${123}`}></span>
       </div>
     );
   }
