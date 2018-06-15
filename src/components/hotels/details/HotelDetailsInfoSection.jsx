@@ -64,7 +64,7 @@ function HomeDetailsInfoSection(props) {
   const mostPopularFacilities = allAmenities.filter(a => a.picture != null).slice(0, 5);
   const amenities = getAmenities(allAmenities);
   const street = props.data.additionalInfo.mainAddress;
-  const city = props.data.city.name;
+  const city = props.data.city;
   const country = props.data.region.country.name;
   const rooms = props.hotelRooms;
   let roomsResults = [];
@@ -98,7 +98,7 @@ function HomeDetailsInfoSection(props) {
       <h2> {props.data.name} </h2>
       <div className="list-hotel-rating">
         <div className="list-hotel-rating-stars">
-          {calculateStars(props.data.star)}
+          {calculateStars(props.data.stars)}
         </div>
       </div>
       <div className="clearfix" />
@@ -145,7 +145,6 @@ function HomeDetailsInfoSection(props) {
       <div className="clearfix" />
 
       <div className="hotel-extras">
-
         {props.descriptionsAccessInfo &&
           <div id="hotel-rules">
             <h2>Access info</h2>
@@ -223,7 +222,7 @@ function HomeDetailsInfoSection(props) {
 
         <div id="map">
           <h2>Location</h2>
-          <iframe title="location" src={`https://maps.google.com/maps?q=${props.data.latitude},${props.data.longitude}&z=15&output=embed`}
+          <iframe title="location" src={`https://maps.google.com/maps?q=${props.data.lat},${props.data.lon}&z=15&output=embed`}
             width="100%" height="400" frameBorder="0" style={{ border: 0 }} />
           <hr />
         </div>
@@ -259,7 +258,7 @@ HomeDetailsInfoSection.propTypes = {
   loadingRooms: PropTypes.bool,
   currencySign: PropTypes.string,
   rates: PropTypes.object,
-  
+
   // Redux props
   paymentInfo: PropTypes.object,
   dispatch: PropTypes.func,
