@@ -75,7 +75,6 @@ function Result(props) {
     <div className="result" >
       <div className="result-images">
         {pictures &&
-
           <Slider ref={s => slider = s}
             {...settings}>
             {pictures.map((picture, i) => {

@@ -1,5 +1,5 @@
 import { NotificationManager } from 'react-notifications';
-import { changeListingStatus, contactHost, getAllUnpublishedListings, getCities, getCountries } from '../../../requester';
+import { changeListingStatus, contactHost, getAllUnpublishedListings, getCities, getCountries, deleteListing } from '../../../requester';
 
 import Filter from './Filter';
 import ContactHostModal from '../../common/modals/ContactHostModal';
@@ -11,11 +11,15 @@ import queryString from 'query-string';
 import { withRouter } from 'react-router-dom';
 import filterListings from '../../../actions/filterListings';
 import UnpublishedItem from './UnpublishedItem';
+import { Config } from '../../../config';
+import ReCAPTCHA from 'react-google-recaptcha';
+import NoEntriesMessage from '../common/NoEntriesMessage';
 
 class UnpublishedListings extends React.Component {
   constructor(props) {
     super(props);
 
+    this.captcha = null;
     let searchMap = queryString.parse(this.props.location.search);
     this.state = {
       listings: [],
@@ -30,6 +34,7 @@ class UnpublishedListings extends React.Component {
       hostEmail: searchMap.host === undefined ? '' : searchMap.host,
       isShownContactHostModal: false,
       isShownDeleteListingModal: false,
+      isDeleting: false,
       deletingId: -1,
       deletingName: '',
     };
@@ -40,12 +45,14 @@ class UnpublishedListings extends React.Component {
     this.handleSelectCity = this.handleSelectCity.bind(this);
     this.onSearch = this.onSearch.bind(this);
     this.onChange = this.onChange.bind(this);
-    this.openModal = this.openModal.bind(this);
-    this.closeModal = this.closeModal.bind(this);
-    this.sendMessageToHost = this.sendMessageToHost.bind(this);
+    this.openContactHostModal = this.openContactHostModal.bind(this);
+    this.closeContactHostModal = this.closeContactHostModal.bind(this);
+    this.handleContactHost = this.handleContactHost.bind(this);
     this.handleDeleteListing = this.handleDeleteListing.bind(this);
+    this.handleOpenDeleteListingModal = this.handleOpenDeleteListingModal.bind(this);
     this.handleCloseDeleteListing = this.handleCloseDeleteListing.bind(this);
     this.filterListings = filterListings.bind(this);
+    this.executeCaptcha = this.executeCaptcha.bind(this);
   }
 
   componentDidMount() {
@@ -106,6 +113,10 @@ class UnpublishedListings extends React.Component {
     });
   }
 
+  executeCaptcha() {
+    this.captcha.execute();
+  }
+
   handleSelectCountry(option) {
     this.setState({
       country: option ? option.value : null,
@@ -152,52 +163,89 @@ class UnpublishedListings extends React.Component {
     });
   }
 
-  updateListingStatus(id) {
+  updateListingStatus(event, id, status) {
+    if (event) {
+      event.preventDefault();
+    }
+
     let publishObj = {
       listingId: id,
-      state: 'active'
+      state: status
     };
 
     changeListingStatus(publishObj).then((res) => {
       if (res.success) {
-        NotificationManager.success('Successfully changed status to active', 'Listings Operations');
-        let allListings = this.state.listings;
-        this.setState({ listings: allListings.filter(x => x.id !== id) });
+        switch (status) {
+          case 'active': NotificationManager.success('Listing approved');
+            break;
+          case 'denied': NotificationManager.success('Listing denied');
+            break;
+        }
+
+        const allListings = this.state.listings;
+        const newListings = allListings.filter(x => x.id !== id);
+        const totalElements = this.state.totalElements;
+        this.setState({ listings: newListings, totalElements: totalElements - 1 });
       }
       else {
-        NotificationManager.error('Something went wrong', 'Listings Operations');
+        NotificationManager.error('Something went wrong');
       }
     });
   }
 
-  sendMessageToHost(id, message, captchaToken) {
-    this.setState({ loading: true });
+  handleContactHost(id, message, captchaToken) {
+    // this.setState({ loading: true });
     let contactHostObj = {
       message: message
     };
 
     contactHost(id, contactHostObj, captchaToken)
       .then(res => {
-        this.props.history.push(`/profile/messages/chat/${res.conversation}`);
+        // this.props.history.push(`/profile/messages/chat/${res.conversation}`);
+        NotificationManager.info('Message sent');
+        this.closeContactHostModal();
       });
   }
 
-  openModal(id) {
+  openContactHostModal(id) {
     this.setState({ isShownContactHostModal: true, selectedListing: id });
   }
 
-  closeModal() {
+  closeContactHostModal() {
     this.setState({ isShownContactHostModal: false });
   }
 
-  handleDeleteListing(id, name) {
-    this.setState(
-      {
-        isShownDeleteListingModal: true,
-        deletingId: id,
-        deletingName: name
-      }
-    );
+  handleOpenDeleteListingModal(event, id, name) {
+    if (event) {
+      event.preventDefault();
+    }
+
+    this.setState({
+      isShownDeleteListingModal: true,
+      deletingId: id,
+      deletingName: name
+    });
+  }
+
+  handleDeleteListing(token) {
+    this.setState({ isDeleting: true });
+    const { deletingId } = this.state;
+    deleteListing(deletingId, token)
+      .then(res => {
+        if (res.success) {
+          const allListings = this.state.listings;
+          const newListings = allListings.filter(x => x.id !== deletingId);
+          const totalElements = this.state.totalElements;
+          this.setState({ listings: newListings, totalElements: totalElements - 1 });
+          NotificationManager.success('Listing deleted');
+        } else {
+          NotificationManager.error('Cannot delete this property. It might have reservations or other irrevocable actions.');
+        }
+        this.handleCloseDeleteListing();
+      }).catch(e => {
+        console.log(e);
+        this.handleCloseDeleteListing();
+      });
   }
 
   handleCloseDeleteListing() {
@@ -205,6 +253,7 @@ class UnpublishedListings extends React.Component {
       {
         isShownDeleteListingModal: false,
         deletingId: -1,
+        isDeleting: false,
         deletingName: ''
       }
     );
@@ -218,6 +267,7 @@ class UnpublishedListings extends React.Component {
     return (
       <div className="my-reservations">
         <section id="profile-my-reservations">
+
           <div>
             <Filter
               countries={this.state.countries}
@@ -235,38 +285,54 @@ class UnpublishedListings extends React.Component {
             <ContactHostModal
               id={this.state.selectedListing}
               isActive={this.state.isShownContactHostModal}
-              closeModal={this.closeModal}
-              sendMessageToHost={this.sendMessageToHost}
+              closeModal={this.closeContactHostModal}
+              handleContactHost={this.handleContactHost}
             />
 
             <DeletionModal
               isActive={this.state.isShownDeleteListingModal}
               deletingName={this.state.deletingName}
-              filterListings={this.filterListings}
+              isDeleting={this.state.isDeleting}
+              // filterListings={this.filterListings}
+              handleDeleteListing={this.executeCaptcha}
               deletingId={this.state.deletingId}
               onHide={this.handleCloseDeleteListing}
             />
 
-            {this.state.listings.length === 0 
-              ? <div className="text-center p20"><h3>There isn&#39;t any unpublished listings</h3></div> 
+            {this.state.listings.length === 0
+              ? <NoEntriesMessage text="No listings to show" />
               : <div>
                 {this.state.listings.map((l, i) => {
                   return (
-                    <UnpublishedItem key={i}/>
+                    <UnpublishedItem
+                      key={i}
+                      item={l}
+                      isDeleting={this.state.isDeleting}
+                      openContactHostModal={this.openContactHostModal}
+                      updateListingStatus={this.updateListingStatus}
+                      handleOpenDeleteListingModal={this.handleOpenDeleteListingModal}
+                    />
                   );
-                })}                
-
-                <Pagination
-                  loading={this.state.totalReservations === 0}
-                  onPageChange={this.onPageChange}
-                  currentPage={this.state.currentPage + 1}
-                  pageSize={20}
-                  totalElements={this.state.totalElements}
-                />
+                })}
               </div>
             }
+
+            <Pagination
+              loading={this.state.totalReservations === 0}
+              onPageChange={this.onPageChange}
+              currentPage={this.state.currentPage + 1}
+              pageSize={20}
+              totalElements={this.state.totalElements}
+            />
           </div>
         </section>
+
+        <ReCAPTCHA
+          ref={el => this.captcha = el}
+          size="invisible"
+          sitekey={Config.getValue('recaptchaKey')}
+          onChange={token => { this.handleDeleteListing(token); this.captcha.reset(); }}
+        />
       </div>
     );
   }
