@@ -14,6 +14,7 @@ import UnpublishedItem from './UnpublishedItem';
 import { Config } from '../../../config';
 import ReCAPTCHA from 'react-google-recaptcha';
 import NoEntriesMessage from '../common/NoEntriesMessage';
+import Lightbox from 'react-images';
 
 class UnpublishedListings extends React.Component {
   constructor(props) {
@@ -23,6 +24,7 @@ class UnpublishedListings extends React.Component {
     let searchMap = queryString.parse(this.props.location.search);
     this.state = {
       listings: [],
+      expandedListings: [],
       loading: true,
       totalElements: 0,
       currentPage: !searchMap.page ? 0 : Number(searchMap.page),
@@ -53,6 +55,14 @@ class UnpublishedListings extends React.Component {
     this.handleCloseDeleteListing = this.handleCloseDeleteListing.bind(this);
     this.filterListings = filterListings.bind(this);
     this.executeCaptcha = this.executeCaptcha.bind(this);
+    this.handleExpandListing = this.handleExpandListing.bind(this);
+    this.handleShrinkListing = this.handleShrinkListing.bind(this);
+    this.closeLightbox = this.closeLightbox.bind(this);
+    this.gotoNext = this.gotoNext.bind(this);
+    this.gotoPrevious = this.gotoPrevious.bind(this);
+    this.gotoImage = this.gotoImage.bind(this);
+    this.handleClickImage = this.handleClickImage.bind(this);
+    this.openLightbox = this.openLightbox.bind(this);
   }
 
   componentDidMount() {
@@ -207,7 +217,11 @@ class UnpublishedListings extends React.Component {
       });
   }
 
-  openContactHostModal(id) {
+  openContactHostModal(event, id) {
+    if (event) {
+      event.preventDefault();
+    }
+    
     this.setState({ isShownContactHostModal: true, selectedListing: id });
   }
 
@@ -259,9 +273,79 @@ class UnpublishedListings extends React.Component {
     );
   }
 
+  handleExpandListing(event, id) {
+    if (event) {
+      event.preventDefault();
+    }
+
+    const { expandedListings } = this.state;
+    expandedListings[id] = true;
+    this.setState({ expandedListings });
+  }
+
+  handleShrinkListing(event, id) {
+    if (event) {
+      event.preventDefault();
+    }
+
+    const { expandedListings } = this.state;
+    expandedListings[id] = false;
+    this.setState({ expandedListings });
+  }
+
+  openLightbox(event, id, index) {
+    event.preventDefault();
+    console.log(id, index)
+    this.setState({
+      lightboxIsOpen: true,
+      imagesListingId: id,
+      currentImage: index,
+    });
+  }
+
+  closeLightbox() {
+    this.setState({
+      currentImage: 0,
+      lightboxIsOpen: false,
+    });
+  }
+
+  gotoPrevious() {
+    this.setState({
+      currentImage: this.state.currentImage - 1,
+    });
+  }
+
+  gotoNext() {
+    this.setState({
+      currentImage: this.state.currentImage + 1,
+    });
+  }
+
+  gotoImage(index) {
+    this.setState({
+      currentImage: index,
+    });
+  }
+
+  handleClickImage() {
+    if (this.state.currentImage === this.state.data.pictures.length - 1) return;
+    this.gotoNext();
+  }
+
   render() {
     if (this.state.loading) {
       return <div className="loader"></div>;
+    }
+
+    const { imagesListingId } = this.state;
+    console.log(imagesListingId);
+    let images = [];
+    if (this.state.lightboxIsOpen) {
+      images = this.state.listings.filter(l => l.id === imagesListingId)[0].pictures
+        .map(p => {
+          return { src: Config.getValue('imgHost') + p.original };
+        });
     }
 
     return (
@@ -307,10 +391,14 @@ class UnpublishedListings extends React.Component {
                     <UnpublishedItem
                       key={i}
                       item={l}
+                      isExpanded={this.state.expandedListings[l.id]}
                       isDeleting={this.state.isDeleting}
+                      openLightbox={this.openLightbox}
                       openContactHostModal={this.openContactHostModal}
                       updateListingStatus={this.updateListingStatus}
                       handleOpenDeleteListingModal={this.handleOpenDeleteListingModal}
+                      handleExpandListing={this.handleExpandListing}
+                      handleShrinkListing={this.handleShrinkListing}
                     />
                   );
                 })}
@@ -326,6 +414,19 @@ class UnpublishedListings extends React.Component {
             />
           </div>
         </section>
+
+
+        {this.state.lightboxIsOpen && images !== null &&
+          <Lightbox
+            currentImage={this.state.currentImage}
+            images={images}
+            isOpen={this.state.lightboxIsOpen}
+            onClickNext={this.gotoNext}
+            onClickPrev={this.gotoPrevious}
+            onClickThumbnail={this.gotoImage}
+            onClose={this.closeLightbox}
+          />
+        }
 
         <ReCAPTCHA
           ref={el => this.captcha = el}

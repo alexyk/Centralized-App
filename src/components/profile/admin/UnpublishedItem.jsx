@@ -7,7 +7,7 @@ let slider = null;
 
 export default function UnpublishedListing(props) {
   const { id, name, lastModify, descriptionText, pictures } = props.item;
-  const thumbnails = pictures.map(p => { return { thumbnail: `${Config.getValue('imgHost')}${p.thumbnail}` }; });
+  const thumbnails = pictures.map((p, i) => { return { thumbnail: `${Config.getValue('imgHost')}${p.thumbnail}`, index: i }; });
   if (thumbnails.length < 1) {
     pictures.push({ thumbnail: `${Config.getValue('imgHost')}/listings/images/default.png` });
   }
@@ -23,7 +23,10 @@ export default function UnpublishedListing(props) {
     prevArrow: leftButton
   };
 
-  const description = descriptionText.length < 300 ? descriptionText : descriptionText.substr(0, 300) + '...';
+  let description = descriptionText;
+  if (!props.isExpanded) {
+    description = description.length < 300 ? description : description.substr(0, 300) + '...';
+  }
 
   return (
     <div className="unpublished-item">
@@ -33,7 +36,7 @@ export default function UnpublishedListing(props) {
             {...settings}>
             {thumbnails.map((picture, i) => {
               return (
-                <div key={i}>
+                <div key={i} onClick={(e) => props.openLightbox(e, id, picture.index)}>
                   <div style={{ backgroundImage: 'url(' + picture.thumbnail + ')' }}>
                   </div>
                 </div>
@@ -53,13 +56,16 @@ export default function UnpublishedListing(props) {
         <p>Price - $225 (LOC104)</p>
         <div className="unpublished-item_actions">
           <div className="minor-actions">
-            <div><a href="#">Expand Details</a></div>
+            {!props.isExpanded 
+              ? <div><a href="#" onClick={(e) => props.handleExpandListing(e, id)}>Expand Description</a></div>
+              : <div><a href="#" onClick={(e) => props.handleShrinkListing(e, id)}>Hide Description</a></div>
+            }
             <div><a href="#" onClick={(e) => props.openContactHostModal(e, id)}>Contact Host</a></div>
             <div><a href="#" className="delete" onClick={(e) => props.handleOpenDeleteListingModal(e, id, name)}>Delete</a></div>
           </div>
           <div className="major-actions">
             <div><a href="#" onClick={(e) => props.updateListingStatus(e, id, 'active')}>Approve</a></div>
-            <div><a href="#">Deny</a></div>
+            <div><a href="#" onClick={(e) => props.updateListingStatus(e, id, 'denied')}>Deny</a></div>
           </div>
         </div>
       </div>
