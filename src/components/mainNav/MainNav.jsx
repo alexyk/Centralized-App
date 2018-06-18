@@ -22,6 +22,8 @@ import { setIsLogged, setUserInfo } from '../../actions/userInfo';
 import { openModal, closeModal } from '../../actions/modalsInfo';
 import { setAirdropInfo, setAirdropModalTrue } from '../../actions/airdropInfo';
 
+import '../../styles/css/components/captcha/captcha-container.css';
+
 import {
   getCountOfUnreadMessages,
   postNewPassword,
@@ -505,7 +507,7 @@ class MainNav extends React.Component {
     return (
       <nav id="main-nav" className="navbar">
         <div style={{ background: 'rgba(255,255,255, 0.8)' }}>
-          <div className="recaptcha-container">
+          <div className="captcha-container">
             <ReCAPTCHA
               ref={el => this.loginCaptcha = el}
               size="invisible"
