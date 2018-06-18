@@ -16,6 +16,7 @@ import MainNav from '../mainNav/MainNav';
 import Footer from '../footer/Footer';
 import NavLocalization from '../profile/NavLocalization';
 import StyleTest from '../common/StyleTest';
+import queryString from 'query-string';
 
 import ProfilePage from '../profile/ProfilePage';
 import PropTypes from 'prop-types';
@@ -31,12 +32,27 @@ class App extends React.Component {
     );
   }
 
+  componentWillMount() {
+    this.handleExternalAuthorization();
+  }
+
   isAuthenticated() {
     let token = localStorage.getItem(Config.getValue('domainPrefix') + '.auth.locktrip');
     if (token) {
       return true;
     }
     return false;
+  }
+  
+  handleExternalAuthorization() {
+    const queryStringParameters = queryString.parse(this.props.location.search);
+    const { authEmail, authToken } = queryStringParameters;
+    if (authEmail && authToken) {
+      localStorage[Config.getValue('domainPrefix') + '.auth.username'] = authEmail;
+      localStorage[Config.getValue('domainPrefix') + '.auth.locktrip'] = authToken;
+      const url = this.props.location.pathname;
+      this.props.history.push(url);
+    }
   }
 
   render() {

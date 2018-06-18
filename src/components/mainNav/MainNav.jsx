@@ -411,7 +411,9 @@ class MainNav extends React.Component {
   }
 
   getCountOfMessages() {
-    if (localStorage[Config.getValue('domainPrefix') + '.auth.locktrip']) {
+    if (
+      localStorage[Config.getValue('domainPrefix') + '.auth.locktrip']
+      && localStorage[Config.getValue('domainPrefix') + '.auth.username']) {
       getCountOfUnreadMessages().then(data => {
         this.setState({ unreadMessages: data.count });
       });
