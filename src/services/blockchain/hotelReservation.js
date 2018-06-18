@@ -78,7 +78,7 @@ export class HotelReservation {
 
     let HotelReservationFactoryContractWithWalletInstance = HotelReservationFactoryContractWithWallet(wallet);
 
-    const createReservationTxHash = await HotelReservationFactoryContractWithWalletInstance.createHotelReservation(hotelReservationIdBytes,
+    const createReservationTxResult = await HotelReservationFactoryContractWithWalletInstance.createHotelReservation(hotelReservationIdBytes,
       reservationCostLOC,
       reservationStartDateFormatted,
       reservationEndDateFormatted,
@@ -90,7 +90,7 @@ export class HotelReservation {
       overrideOptions
     );
 
-    return createReservationTxHash;
+    return createReservationTxResult;
   }
 
   static async cancelReservation(jsonObj,
@@ -121,9 +121,9 @@ export class HotelReservation {
       gasPrice: gasPrice
     };
 
-    const cancelReservationTxHash = await HotelReservationFactoryContractWithWalletInstance.cancelHotelReservation(hotelReservationIdBytes, overrideOptions);
+    const cancelReservationTxResult = await HotelReservationFactoryContractWithWalletInstance.cancelHotelReservation(hotelReservationIdBytes, overrideOptions);
 
-    return cancelReservationTxHash;
+    return cancelReservationTxResult;
   }
 
   static async getReservation(hotelReservationId) {
@@ -156,9 +156,9 @@ export class HotelReservation {
       gasPrice: gasPrice
     };
 
-    const openDisputeTxHash = await HotelReservationFactoryContractWithWalletInstance.dispute(hotelReservationIdBytes, overrideOptions);
+    const openDisputeTxResult = await HotelReservationFactoryContractWithWalletInstance.dispute(hotelReservationIdBytes, overrideOptions);
 
-    return openDisputeTxHash;
+    return openDisputeTxResult;
   }
 
   static async createSimpleReservation(jsonObj,
@@ -170,29 +170,31 @@ export class HotelReservation {
 
     const withdrawDateFormatted = formatStartDateTimestamp(withdrawDate);
     const hotelReservationIdBytes = ethers.utils.toUtf8Bytes(hotelReservationId);
+    console.log(hotelReservationIdBytes);
+
     let wallet = await ethers.Wallet.fromEncryptedWallet(jsonObj, password);
     const gasPrice = await getGasPrice();
     let overrideOptions = {
-      gasLimit: gasConfig.hotelReservation.createSimple,
+      gasLimit: gasConfig.hotelReservation.simpleCreate,
       gasPrice: gasPrice
     };
 
     await ReservationValidators.validateSimpleReservationParams(jsonObj, password, hotelReservationIdBytes, reservationCostLOC, withdrawDateFormatted, recipientAddress)
 
-    await TokenValidators.validateLocBalance(wallet.address, reservationCostLOC, wallet, gasConfig.hotelReservation.createSimple);
+    await TokenValidators.validateLocBalance(wallet.address, reservationCostLOC, wallet, gasConfig.hotelReservation.simpleCreate);
     await EtherValidators.validateEthBalance(wallet, overrideOptions.gasLimit);
 
     let approve = await approveContract(wallet, reservationCostLOC, SimpleHotelReservationContract.address, gasPrice);
 
     let SimpleHotelReservationContractWithWalletInstance = SimpleHotelReservationContractWithWallet(wallet);
 
-    const createSimpleReservationTxHash = await SimpleHotelReservationContractWithWalletInstance.createHotelReservation(hotelReservationIdBytes,
+    const createSimpleReservationTxResult = await SimpleHotelReservationContractWithWalletInstance.createHotelReservation(hotelReservationIdBytes,
       reservationCostLOC,
       withdrawDateFormatted,
       recipientAddress,
       overrideOptions
     );
 
-    return createSimpleReservationTxHash;
+    return createSimpleReservationTxResult;
   }
 }

@@ -30,7 +30,7 @@
     "cancel": 140000,
     "dispute": 120000,
     "complexCreate": 800000,
-    "createSimple": 200000
+    "simpleCreate": 200000
   },
   "owner": {
     "setMaxBookingPeriod": 57000

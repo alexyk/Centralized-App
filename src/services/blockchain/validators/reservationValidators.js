@@ -14,7 +14,10 @@ import ethers from 'ethers';
 
 const ERROR = require('./../config/errors.json');
 const {
-  maxRefundPeriods
+  maxRefundPeriods,
+  yearsForTimeValidation,
+  timestampInSecondsLength,
+  bytesParamsLength
 } = require('../config/constants.json');
 
 export class ReservationValidators {
@@ -51,6 +54,11 @@ export class ReservationValidators {
     if (daysBeforeStartForRefund.length != refundPercentages.length) {
       throw new Error(ERROR.INVALID_REFUND_PARAMS_LENGTH);
     }
+
+    if (hotelReservationId > bytesParamsLength || hotelId > bytesParamsLength || roomId > bytesParamsLength) {
+      throw new Error(ERROR.INVALID_ID_PARAM)
+    }
+
     if ((daysBeforeStartForRefund.length > maxRefundPeriods) ||
       (daysBeforeStartForRefund.length < 0) ||
       (refundPercentages.length > maxRefundPeriods) ||
@@ -101,6 +109,10 @@ export class ReservationValidators {
       throw new Error(ERROR.INVALID_WITHDRAW_DATE);
     }
 
+    if (withdrawDate > bytesParamsLength) {
+      throw new Error(ERROR.INVALID_ID_PARAM)
+    }
+
     await this.validateSimpleReservationDontExist(hotelReservationId);
     this.validateWithdrawDate(withdrawDate)
 
@@ -140,8 +152,8 @@ export class ReservationValidators {
   static validateReservationDates(reservationStartDate, reservationEndDate, daysBeforeStartForRefund) {
     const nowUnixFormatted = formatTimestamp(new Date().getTime() / 1000 | 0);
     let day = 60 * 60 * 24;
-    let tenYearsPeriod = ((day * 356) + 2) * 10;
-    if (reservationStartDate < nowUnixFormatted || reservationStartDate > (nowUnixFormatted + tenYearsPeriod) || reservationStartDate.toString().length != 10) {
+    let yearsPeriod = ((day * 356) + 2) * yearsForTimeValidation;
+    if (reservationStartDate < nowUnixFormatted || reservationStartDate > (nowUnixFormatted + yearsPeriod) || reservationStartDate.toString().length != timestampInSecondsLength) {
       throw new Error(ERROR.INVALID_PERIOD_START);
     }
 
@@ -149,7 +161,7 @@ export class ReservationValidators {
       throw new Error(ERROR.INVALID_PERIOD);
     }
 
-    if (reservationEndDate > (nowUnixFormatted + tenYearsPeriod) || reservationEndDate.toString().length != 10) {
+    if (reservationEndDate > (nowUnixFormatted + yearsPeriod) || reservationEndDate.toString().length != timestampInSecondsLength) {
       throw new Error(ERROR.INVALID_PERIOD_END);
     }
 
@@ -165,9 +177,9 @@ export class ReservationValidators {
   static validateWithdrawDate(withdrawDate) {
     const nowUnixFormatted = formatTimestamp(new Date().getTime() / 1000 | 0);
     let day = 60 * 60 * 24;
-    let tenYearsPeriod = ((day * 356) + 2) * 10;
+    let yearsPeriod = ((day * 356) + 2) * yearsForTimeValidation;
 
-    if (withdrawDate > (nowUnixFormatted + tenYearsPeriod) || withdrawDate.toString().length != 10) {
+    if (withdrawDate > (nowUnixFormatted + yearsPeriod) || withdrawDate.toString().length != timestampInSecondsLength) {
       throw new Error(ERROR.INVALID_WITHDRAW_DATE);
     }
   }

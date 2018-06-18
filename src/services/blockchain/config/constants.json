@@ -13,5 +13,7 @@
   "GAS_STATION_API": "https://ethgasstation.info/json/ethgasAPI.json",
   "JAVA_REST_API_SEND_FUNDS": "/sendFundsToAccount",
   "nonceMaxNumber": 5,
-  "maxRefundPeriods": 7
+  "maxRefundPeriods": 7,
+  "yearsForTimeValidation": 10,
+  "timestampInSecondsLength": 10
 }
