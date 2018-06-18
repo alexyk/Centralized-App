@@ -1,13 +1,13 @@
 import { NotificationManager } from 'react-notifications';
-import { Config } from '../../../config';
+// import { Config } from '../../../config';
 import { Modal } from 'react-bootstrap';
 import PropTypes from 'prop-types';
 import React from 'react';
-import ReCAPTCHA from 'react-google-recaptcha';
+// import ReCAPTCHA from 'react-google-recaptcha';
 import { CONFIRM_WALLET, SAVE_WALLET } from '../../../constants/modals.js';
 import { MNEMONIC_LAST_CALL, WRONG_MNEMONIC_WORDS } from '../../../constants/warningMessages.js';
 
-let captcha = undefined;
+// let captcha = undefined;
 
 export default function CreateWalletModal(props) {
 
@@ -24,7 +24,7 @@ export default function CreateWalletModal(props) {
       props.openModal(SAVE_WALLET);
     } else {
       props.closeModal(CONFIRM_WALLET);
-      captcha.execute();
+      props.handleConfirmWallet();
     }
   };
 
@@ -52,12 +52,12 @@ export default function CreateWalletModal(props) {
         </Modal.Body>
       </Modal>
 
-      <ReCAPTCHA
+      {/* <ReCAPTCHA
         ref={el => captcha = el}
         size="invisible"
         sitekey={Config.getValue('recaptchaKey')}
         onChange={(token) => { props.handleConfirmWallet(token); captcha.reset(); }}
-      />
+      /> */}
     </div>
   );
 }
