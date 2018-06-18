@@ -1,11 +1,8 @@
 import { Config } from '../../../config';
 import { Modal } from 'react-bootstrap';
 import PropTypes from 'prop-types';
-import ReCAPTCHA from 'react-google-recaptcha';
 import React from 'react';
 import { LOGIN, REGISTER, SEND_RECOVERY_EMAIL } from '../../../constants/modals.js';
-
-let captcha = undefined;
 
 export default function LoginModal(props) {
 
@@ -17,7 +14,7 @@ export default function LoginModal(props) {
           <button type="button" className="close" onClick={() => props.closeModal(LOGIN)}>&times;</button>
         </Modal.Header>
         <Modal.Body>
-          <form onSubmit={(e) => { e.preventDefault(); captcha.execute(); }}>
+          <form onSubmit={(e) => { e.preventDefault(); props.handleLogin(); }}>
             <div className="form-group" style={{ marginTop: '10px' }}>
               <img src={Config.getValue('basePath') + 'images/login-mail.png'} alt="mail" />
               <input type="email" name="loginEmail" value={props.loginEmail} onChange={props.onChange} className="form-control" placeholder="Email address" required autoFocus />
@@ -41,13 +38,6 @@ export default function LoginModal(props) {
           </div>
         </Modal.Body>
       </Modal>
-
-      <ReCAPTCHA
-        ref={el => captcha = el}
-        size="invisible"
-        sitekey={Config.getValue('recaptchaKey')}
-        onChange={(token) => { props.handleLogin(token); captcha.reset(); }}
-      />
     </div>
   );
 }

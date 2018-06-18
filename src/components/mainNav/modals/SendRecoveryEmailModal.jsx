@@ -1,11 +1,8 @@
 import { Config } from '../../../config';
 import { Modal } from 'react-bootstrap';
 import PropTypes from 'prop-types';
-import ReCAPTCHA from 'react-google-recaptcha';
 import React from 'react';
 import { SEND_RECOVERY_EMAIL, ENTER_RECOVERY_TOKEN } from '../../../constants/modals.js';
-
-let captcha = undefined;
 
 export default function SendRecoveryEmailModal(props) {
 
@@ -17,7 +14,7 @@ export default function SendRecoveryEmailModal(props) {
           <button type="button" className="close" onClick={(e) => props.closeModal(SEND_RECOVERY_EMAIL, e)}>&times;</button>
         </Modal.Header>
         <Modal.Body>
-          <form onSubmit={(e) => { e.preventDefault(); captcha.execute(); }}>
+          <form onSubmit={(e) => { e.preventDefault(); props.handleSubmitRecoveryEmail(); }}>
             <div className="form-group">
               <img src={Config.getValue('basePath') + 'images/login-mail.png'} alt="email" />
               <input type="email" name="recoveryEmail" value={props.recoveryEmail} onChange={props.onChange} className="form-control" placeholder="Email address" />
@@ -32,13 +29,6 @@ export default function SendRecoveryEmailModal(props) {
           </form>
         </Modal.Body>
       </Modal>
-
-      <ReCAPTCHA
-        ref={el => captcha = el}
-        size="invisible"
-        sitekey={Config.getValue('recaptchaKey')}
-        onChange={token => { props.handleSubmitRecoveryEmail(token); captcha.reset(); }}
-      />
     </div>
   );
 }

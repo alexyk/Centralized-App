@@ -14,6 +14,7 @@ import LoginModal from './modals/LoginModal';
 import AirdropLoginModal from '../profile/airdrop/AirdropLoginModal';
 import RegisterModal from './modals/RegisterModal';
 import AirdropRegisterModal from '../profile/airdrop/AirdropRegisterModal';
+import ReCAPTCHA from 'react-google-recaptcha';
 
 import { Config } from '../../config';
 import { Wallet } from '../../services/blockchain/wallet.js';
@@ -101,6 +102,11 @@ class MainNav extends React.Component {
     this.handleSubmitRecoveryToken = this.handleSubmitRecoveryToken.bind(this);
     this.handleSubmitRecoveryEmail = this.handleSubmitRecoveryEmail.bind(this);
     this.handleConfirmWallet = this.handleConfirmWallet.bind(this);
+
+    this.executeLoginCaptcha = this.executeLoginCaptcha.bind(this);
+    this.executeChangePasswordCaptcha = this.executeChangePasswordCaptcha.bind(this);
+    this.executeSendRecoveryEmailCaptcha = this.executeSendRecoveryEmailCaptcha.bind(this);
+    this.executeConfirmWalletCaptcha = this.executeConfirmWalletCaptcha.bind(this);
   }
 
   componentDidMount() {
@@ -459,6 +465,7 @@ class MainNav extends React.Component {
 
   handleSubmitRecoveryEmail(token) {
     const email = { email: this.state.recoveryEmail };
+    console.log(token, email);
     postRecoveryEmail(email, token).then((res) => {
       if (res.success) {
         this.closeModal(SEND_RECOVERY_EMAIL);
@@ -478,18 +485,60 @@ class MainNav extends React.Component {
     }
   }
 
+  executeLoginCaptcha() {
+    this.loginCaptcha.execute();
+  }
+
+  executeChangePasswordCaptcha() {
+    this.changePasswordCaptcha.execute();
+  }
+
+  executeSendRecoveryEmailCaptcha() {
+    this.sendRecoveryEmailCaptcha.execute();
+  }
+
+  executeConfirmWalletCaptcha() {
+    this.confirmWalletCaptcha.execute();
+  }
+
   render() {
     return (
       <nav id="main-nav" className="navbar">
         <div style={{ background: 'rgba(255,255,255, 0.8)' }}>
+          <div className="recaptcha-container">
+            <ReCAPTCHA
+              ref={el => this.loginCaptcha = el}
+              size="invisible"
+              sitekey={Config.getValue('recaptchaKey')}
+              onChange={(token) => { this.handleLogin(token); this.loginCaptcha.reset(); }}
+            />
+            <ReCAPTCHA
+              ref={el => this.changePasswordCaptcha = el}
+              size="invisible"
+              sitekey={Config.getValue('recaptchaKey')}
+              onChange={(token) => { this.handlePasswordChange(token); this.changePasswordCaptcha.reset(); }}
+            />
+            <ReCAPTCHA
+              ref={el => this.sendRecoveryEmailCaptcha = el}
+              size="invisible"
+              sitekey={Config.getValue('recaptchaKey')}
+              onChange={token => { this.handleSubmitRecoveryEmail(token); this.sendRecoveryEmailCaptcha.reset(); }}
+            />
+            <ReCAPTCHA
+              ref={el => this.confirmWalletCaptcha = el}
+              size="invisible"
+              sitekey={Config.getValue('recaptchaKey')}
+              onChange={(token) => { this.handleConfirmWallet(token); this.confirmWalletCaptcha.reset(); }}
+            />
+          </div>
           <NotificationContainer />
           <CreateWalletModal setUserInfo={this.setUserInfo} userToken={this.state.userToken} userName={this.state.userName} walletPassword={this.state.walletPassword} isActive={this.props.modalsInfo.modals.get(CREATE_WALLET)} openModal={this.openModal} closeModal={this.closeModal} onChange={this.onChange} />
           <SaveWalletModal setUserInfo={this.setUserInfo} userToken={this.state.userToken} userName={this.state.userName} isActive={this.props.modalsInfo.modals.get(SAVE_WALLET)} openModal={this.openModal} closeModal={this.closeModal} onChange={this.onChange} />
-          <ConfirmWalletModal isActive={this.props.modalsInfo.modals.get(CONFIRM_WALLET)} openModal={this.openModal} closeModal={this.closeModal} handleMnemonicWordsChange={this.handleMnemonicWordsChange} mnemonicWords={this.state.mnemonicWords} handleConfirmWallet={this.handleConfirmWallet} />
-          <SendRecoveryEmailModal isActive={this.props.modalsInfo.modals.get(SEND_RECOVERY_EMAIL)} openModal={this.openModal} closeModal={this.closeModal} recoveryEmail={this.state.recoveryEmail} handleSubmitRecoveryEmail={this.handleSubmitRecoveryEmail} onChange={this.onChange} />
+          <ConfirmWalletModal isActive={this.props.modalsInfo.modals.get(CONFIRM_WALLET)} openModal={this.openModal} closeModal={this.closeModal} handleMnemonicWordsChange={this.handleMnemonicWordsChange} mnemonicWords={this.state.mnemonicWords} handleConfirmWallet={this.executeConfirmWalletCaptcha} />
+          <SendRecoveryEmailModal isActive={this.props.modalsInfo.modals.get(SEND_RECOVERY_EMAIL)} openModal={this.openModal} closeModal={this.closeModal} recoveryEmail={this.state.recoveryEmail} handleSubmitRecoveryEmail={this.executeSendRecoveryEmailCaptcha} onChange={this.onChange} />
           <EnterRecoveryTokenModal isActive={this.props.modalsInfo.modals.get(ENTER_RECOVERY_TOKEN)} openModal={this.openModal} closeModal={this.closeModal} onChange={this.onChange} recoveryToken={this.state.recoveryToken} handleSubmitRecoveryToken={this.handleSubmitRecoveryToken} />
-          <ChangePasswordModal isActive={this.props.modalsInfo.modals.get(CHANGE_PASSWORD)} openModal={this.openModal} closeModal={this.closeModal} newPassword={this.state.newPassword} confirmNewPassword={this.state.confirmNewPassword} onChange={this.onChange} handlePasswordChange={this.handlePasswordChange} />
-          <LoginModal isActive={this.props.modalsInfo.modals.get(LOGIN)} openModal={this.openModal} closeModal={this.closeModal} loginEmail={this.state.loginEmail} loginPassword={this.state.loginPassword} onChange={this.onChange} handleLogin={this.handleLogin} />
+          <ChangePasswordModal isActive={this.props.modalsInfo.modals.get(CHANGE_PASSWORD)} openModal={this.openModal} closeModal={this.closeModal} newPassword={this.state.newPassword} confirmNewPassword={this.state.confirmNewPassword} onChange={this.onChange} handlePasswordChange={this.executeChangePasswordCaptcha} />
+          <LoginModal isActive={this.props.modalsInfo.modals.get(LOGIN)} openModal={this.openModal} closeModal={this.closeModal} loginEmail={this.state.loginEmail} loginPassword={this.state.loginPassword} onChange={this.onChange} handleLogin={this.executeLoginCaptcha} />
           <AirdropLoginModal isActive={this.props.modalsInfo.modals.get(AIRDROP_LOGIN)} openModal={this.openModal} closeModal={this.closeModal} loginEmail={this.state.loginEmail} loginPassword={this.state.loginPassword} onChange={this.onChange} handleLogin={this.handleAirdropLogin} />
           <RegisterModal isActive={this.props.modalsInfo.modals.get(REGISTER)} openModal={this.openModal} closeModal={this.closeModal} signUpEmail={this.state.signUpEmail} signUpFirstName={this.state.signUpFirstName} signUpLastName={this.state.signUpLastName} signUpPassword={this.state.signUpPassword} onChange={this.onChange} />
           <AirdropRegisterModal isActive={this.props.modalsInfo.modals.get(AIRDROP_REGISTER)} openModal={this.openModal} closeModal={this.closeModal} signUpEmail={this.state.signUpEmail} signUpFirstName={this.state.signUpFirstName} signUpLastName={this.state.signUpLastName} signUpPassword={this.state.signUpPassword} onChange={this.onChange} />
