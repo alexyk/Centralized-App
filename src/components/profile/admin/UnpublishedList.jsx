@@ -16,6 +16,8 @@ import ReCAPTCHA from 'react-google-recaptcha';
 import NoEntriesMessage from '../common/NoEntriesMessage';
 import Lightbox from 'react-images';
 
+import '../../../styles/css/components/captcha/captcha-container.css';
+
 class UnpublishedListings extends React.Component {
   constructor(props) {
     super(props);
@@ -428,12 +430,14 @@ class UnpublishedListings extends React.Component {
           />
         }
 
-        <ReCAPTCHA
-          ref={el => this.captcha = el}
-          size="invisible"
-          sitekey={Config.getValue('recaptchaKey')}
-          onChange={token => { this.handleDeleteListing(token); this.captcha.reset(); }}
-        />
+        <div className='captcha-container'>
+          <ReCAPTCHA
+            ref={el => this.captcha = el}
+            size="invisible"
+            sitekey={Config.getValue('recaptchaKey')}
+            onChange={token => { this.handleDeleteListing(token); this.captcha.reset(); }}
+          />
+        </div>
       </div>
     );
   }
