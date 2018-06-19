@@ -1,10 +1,17 @@
+@import '../../../vendors/include-media';
+
 .navigation-tab {
-  margin: 20px 0;
+  display: flex;
+	justify-content: space-around;
+
+  @include media('>=tablet') {
+    margin: 20px 0;
+    justify-content: left;
+  }
 
   li {
     list-style-type: none;
-    display: inline-block;
-    margin-right: 25px;
+    display: flex;
     text-align: center;
 
     a h2 {

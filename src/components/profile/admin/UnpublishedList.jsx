@@ -341,7 +341,6 @@ class UnpublishedListings extends React.Component {
     }
 
     const { imagesListingId } = this.state;
-    console.log(imagesListingId);
     let images = [];
     if (this.state.lightboxIsOpen) {
       images = this.state.listings.filter(l => l.id === imagesListingId)[0].pictures

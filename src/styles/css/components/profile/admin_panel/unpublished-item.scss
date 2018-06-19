@@ -24,22 +24,27 @@ $media-expressions: (
 
 .unpublished-item {
   display: flex;
+  flex-direction: column;
   border-radius: 3px;
   margin-bottom: 20px;
   padding: 10px;
   background-color: $white;
 
+  @include media(">=tablet") {
+		flex-direction: row;
+  }
+
   &_images {
 		position: relative;
     height: 190px;
-		display: flex;
-    margin-right: 25px;
-    width: 240px;
+    display: flex;
+    margin-bottom: 20px;
+    
+    @include media(">=desktop") {
+			margin: 0 25px 0 0;
+      width: 240px;
+    }
 
-		// @include media(">=desktop") {
-		// 	margin-right: 25px;
-    //   width: 240px !important;
-    // }
 		button {
 			// @include animate(opacity background);
 			position: absolute;
@@ -143,11 +148,21 @@ $media-expressions: (
 
   &_actions {
     display: flex;
+    flex-direction: column;
     justify-content: space-between;
     align-items: center;
 
+    @include media(">=tablet") {
+      flex-direction: row;
+    }
+
     .major-actions, .minor-actions {
       display: flex;
+      margin: 20px 0;
+
+      @include media(">=tablet") {
+        margin: 0;
+      }
 
       .delete {
         border: 1px solid $moderate-red;
