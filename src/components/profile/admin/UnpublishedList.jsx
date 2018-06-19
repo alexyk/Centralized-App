@@ -337,7 +337,7 @@ class UnpublishedListings extends React.Component {
 
   render() {
     if (this.state.loading) {
-      return <div className="loader"></div>;
+      return <div className="loader" style={{ 'margin-bottom': '40px'}}></div>;
     }
 
     const { imagesListingId } = this.state;

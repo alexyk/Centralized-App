@@ -6,7 +6,7 @@ import '../../../styles/css/components/profile/admin_panel/unpublished-item.css'
 let slider = null;
 
 export default function UnpublishedListing(props) {
-  const { id, name, lastModify, descriptionText, pictures, currencyCode, defaultDailyPrice } = props.item;
+  const { id, name, lastModify, descriptionText, pictures, currencyCode, defaultDailyPrice, state } = props.item;
   const thumbnails = pictures.map((p, i) => { return { thumbnail: `${Config.getValue('imgHost')}${p.thumbnail}`, index: i }; });
   if (thumbnails.length < 1) {
     pictures.push({ thumbnail: `${Config.getValue('imgHost')}/listings/images/default.png` });
@@ -61,11 +61,20 @@ export default function UnpublishedListing(props) {
               : <div><a href="#" onClick={(e) => props.handleShrinkListing(e, id)}>Hide</a></div>
             }
             <div><a href="#" onClick={(e) => props.openContactHostModal(e, id)}>Contact Host</a></div>
-            <div><a href="#" className="delete" onClick={(e) => props.handleOpenDeleteListingModal(e, id, name)}>Delete</a></div>
+            {state === 'inactive' && 
+              <div><a href="#" className="delete" onClick={(e) => props.handleOpenDeleteListingModal(e, id, name)}>Delete</a></div>
+            }
           </div>
           <div className="major-actions">
-            <div><a href="#" onClick={(e) => props.updateListingStatus(e, id, 'active')}>Approve</a></div>
-            <div><a href="#" onClick={(e) => props.updateListingStatus(e, id, 'denied')}>Deny</a></div>
+            {state === 'inactive' &&
+              <div><a href="#" onClick={(e) => props.updateListingStatus(e, id, 'active')}>Approve</a></div>
+            }
+            {state === 'inactive' &&
+              <div><a href="#" onClick={(e) => props.updateListingStatus(e, id, 'denied')}>Deny</a></div>
+            }
+            {state === 'active' && 
+              <div><a href="#" onClick={(e) => props.updateListingStatus(e, id, 'inactive')}>Unpublish</a></div>
+            }
           </div>
         </div>
       </div>

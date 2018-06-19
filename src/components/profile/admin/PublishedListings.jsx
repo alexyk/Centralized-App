@@ -4,12 +4,17 @@ import { changeListingStatus, contactHost, getAllPublishedListings, getCities, g
 import Filter from './Filter';
 import ContactHostModal from '../../common/modals/ContactHostModal';
 import Pagination from '../../common/pagination/Pagination';
-import ListingRow from './ListingRow';
 import PropTypes from 'prop-types';
 import React from 'react';
 import queryString from 'query-string';
 import { withRouter } from 'react-router-dom';
 import NoEntriesMessage from '../common/NoEntriesMessage';
+import UnpublishedItem from './UnpublishedItem';
+import Lightbox from 'react-images';
+import ReCAPTCHA from 'react-google-recaptcha';
+import { Config } from '../../../config';
+
+import '../../../styles/css/components/captcha/captcha-container.css';
 
 class PublishedListings extends React.Component {
   constructor(props) {
@@ -18,6 +23,7 @@ class PublishedListings extends React.Component {
     let searchMap = queryString.parse(this.props.location.search);
     this.state = {
       listings: [],
+      expandedListings: [],
       loading: true,
       totalElements: 0,
       currentPage: !searchMap.page ? 0 : Number(searchMap.page),
@@ -39,7 +45,17 @@ class PublishedListings extends React.Component {
     this.onChange = this.onChange.bind(this);
     this.openModal = this.openModal.bind(this);
     this.closeModal = this.closeModal.bind(this);
-    this.sendMessageToHost = this.sendMessageToHost.bind(this);
+    this.openContactHostModal = this.openContactHostModal.bind(this);
+    this.closeContactHostModal = this.closeContactHostModal.bind(this);
+    this.handleContactHost = this.handleContactHost.bind(this);
+    this.handleExpandListing = this.handleExpandListing.bind(this);
+    this.handleShrinkListing = this.handleShrinkListing.bind(this);
+    this.closeLightbox = this.closeLightbox.bind(this);
+    this.gotoNext = this.gotoNext.bind(this);
+    this.gotoPrevious = this.gotoPrevious.bind(this);
+    this.gotoImage = this.gotoImage.bind(this);
+    this.handleClickImage = this.handleClickImage.bind(this);
+    this.openLightbox = this.openLightbox.bind(this);
   }
 
   componentDidMount() {
@@ -144,15 +160,19 @@ class PublishedListings extends React.Component {
     });
   }
 
-  updateListingStatus(id) {
+  updateListingStatus(event, id, status) {
+    if (event) {
+      event.preventDefault();
+    }
+
     let unpublishObj = {
       listingId: id,
-      state: 'inactive'
+      state: status
     };
 
     changeListingStatus(unpublishObj).then((res) => {
       if (res.success) {
-        NotificationManager.success('Successfully changed status to inactive', 'Listings Operations');
+        NotificationManager.info('Listing unpublished');
         const allListings = this.state.listings;
         const newListings = allListings.filter(x => x.id !== id);
         const totalElements = this.state.totalElements;
@@ -164,15 +184,17 @@ class PublishedListings extends React.Component {
     });
   }
 
-  sendMessageToHost(id, message, captchaToken) {
-    this.setState({ loading: true });
+  handleContactHost(id, message, captchaToken) {
+    // this.setState({ loading: true });
     let contactHostObj = {
       message: message
     };
 
     contactHost(id, contactHostObj, captchaToken)
       .then(res => {
-        this.props.history.push(`/profile/messages/chat/${res.conversation}`);
+        // this.props.history.push(`/profile/messages/chat/${res.conversation}`);
+        NotificationManager.info('Message sent');
+        this.closeContactHostModal();
       });
   }
 
@@ -184,9 +206,90 @@ class PublishedListings extends React.Component {
     this.setState({ isShownContactHostModal: false });
   }
 
+  openContactHostModal(event, id) {
+    if (event) {
+      event.preventDefault();
+    }
+
+    this.setState({ isShownContactHostModal: true, selectedListing: id });
+  }
+
+  closeContactHostModal() {
+    this.setState({ isShownContactHostModal: false });
+  }
+
+  handleExpandListing(event, id) {
+    if (event) {
+      event.preventDefault();
+    }
+
+    const { expandedListings } = this.state;
+    expandedListings[id] = true;
+    this.setState({ expandedListings });
+  }
+
+  handleShrinkListing(event, id) {
+    if (event) {
+      event.preventDefault();
+    }
+
+    const { expandedListings } = this.state;
+    expandedListings[id] = false;
+    this.setState({ expandedListings });
+  }
+
+  openLightbox(event, id, index) {
+    event.preventDefault();
+    console.log(id, index)
+    this.setState({
+      lightboxIsOpen: true,
+      imagesListingId: id,
+      currentImage: index,
+    });
+  }
+
+  closeLightbox() {
+    this.setState({
+      currentImage: 0,
+      lightboxIsOpen: false,
+    });
+  }
+
+  gotoPrevious() {
+    this.setState({
+      currentImage: this.state.currentImage - 1,
+    });
+  }
+
+  gotoNext() {
+    this.setState({
+      currentImage: this.state.currentImage + 1,
+    });
+  }
+
+  gotoImage(index) {
+    this.setState({
+      currentImage: index,
+    });
+  }
+
+  handleClickImage() {
+    if (this.state.currentImage === this.state.data.pictures.length - 1) return;
+    this.gotoNext();
+  }
+
   render() {
     if (this.state.loading) {
-      return <div className="loader"></div>;
+      return <div className="loader" style={{ 'margin-bottom': '40px'}}></div>;
+    }
+
+    const { imagesListingId } = this.state;
+    let images = [];
+    if (this.state.lightboxIsOpen) {
+      images = this.state.listings.filter(l => l.id === imagesListingId)[0].pictures
+        .map(p => {
+          return { src: Config.getValue('imgHost') + p.original };
+        });
     }
 
     return (
@@ -206,12 +309,17 @@ class PublishedListings extends React.Component {
               loading={this.state.countries === [] || this.state.countries.length === 0}
               onChange={this.onChange} />
 
-            <ContactHostModal id={this.state.selectedListing} isActive={this.state.isShownContactHostModal} closeModal={this.closeModal} sendMessageToHost={this.sendMessageToHost} />
+            <ContactHostModal
+              id={this.state.selectedListing}
+              isActive={this.state.isShownContactHostModal}
+              closeModal={this.closeContactHostModal}
+              handleContactHost={this.handleContactHost}
+            />
 
-            {this.state.listings.length === 0 
+            {this.state.listings.length === 0
               ? <NoEntriesMessage text="No listings to show" />
               : <div>
-                <div className="table-header bold">
+                {/* <div className="table-header bold">
                   <div className="col-md-1">
                   </div>
                   <div className="col-md-4">
@@ -226,12 +334,11 @@ class PublishedListings extends React.Component {
                   <div className="col-md-2">
                     <span>Contact host</span>
                   </div>
-                </div>
+                </div> */}
 
                 {/* TODO: Fix event emmiter warning from this piece of code */}
-                {this.state.listings.map((item, i) => {
-                  return (
-                    <ListingRow
+
+                {/* <ListingRow
                       action="Unpublish"
                       canDelete={false}
                       updateListingStatus={this.updateListingStatus}
@@ -239,6 +346,18 @@ class PublishedListings extends React.Component {
                       listing={item}
                       key={i}
                       openModal={this.openModal}
+                    /> */}
+                {this.state.listings.map((l, i) => {
+                  return (
+                    <UnpublishedItem
+                      key={i}
+                      item={l}
+                      isExpanded={this.state.expandedListings[l.id]}
+                      openLightbox={this.openLightbox}
+                      openContactHostModal={this.openContactHostModal}
+                      updateListingStatus={this.updateListingStatus}
+                      handleExpandListing={this.handleExpandListing}
+                      handleShrinkListing={this.handleShrinkListing}
                     />
                   );
                 })}
@@ -253,17 +372,38 @@ class PublishedListings extends React.Component {
               totalElements={this.state.totalElements}
             />
 
+            {this.state.lightboxIsOpen && images !== null &&
+              <Lightbox
+                currentImage={this.state.currentImage}
+                images={images}
+                isOpen={this.state.lightboxIsOpen}
+                onClickNext={this.gotoNext}
+                onClickPrev={this.gotoPrevious}
+                onClickThumbnail={this.gotoImage}
+                onClose={this.closeLightbox}
+              />
+            }
+
+            <div className='captcha-container'>
+              <ReCAPTCHA
+                ref={el => this.captcha = el}
+                size="invisible"
+                sitekey={Config.getValue('recaptchaKey')}
+                onChange={token => { this.handleDeleteListing(token); this.captcha.reset(); }}
+              />
+
+            </div>
           </div>
         </section>
       </div>
-    );
-  }
-}
-
+        );
+      }
+    }
+    
 PublishedListings.propTypes = {
-  location: PropTypes.object,
-  history: PropTypes.object,
-
-};
-
+          location: PropTypes.object,
+        history: PropTypes.object,
+      
+      };
+      
 export default withRouter(PublishedListings);
