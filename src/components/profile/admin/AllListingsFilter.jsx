@@ -23,7 +23,7 @@ export default class AllListingsFilter extends React.Component {
             <div className="col-md-3">
               <div className="form-group">
                 <input
-                  type="text"
+                  type="search"
                   name="name"
                   placeholder="Name"
                   className="form-control"
@@ -34,7 +34,7 @@ export default class AllListingsFilter extends React.Component {
             <div className="col-md-2">
               <div className="form-group">
                 <input
-                  type="text"
+                  type="search"
                   name="hostEmail"
                   placeholder="Host email"
                   className="form-control"
