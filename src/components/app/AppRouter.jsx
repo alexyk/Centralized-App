@@ -5,6 +5,7 @@ import queryString from 'query-string';
 import { connect } from 'react-redux';
 import { Wallet } from '../../services/blockchain/wallet.js';
 import { setIsLogged, setUserInfo } from '../../actions/userInfo';
+import { NotificationContainer } from 'react-notifications';
 
 import App from './App';
 import MobileHotelsSearchPage from '../hotels/search/MobileHotelsSearchPage';
@@ -66,6 +67,7 @@ export class AppRouter extends React.Component {
   render() {
     return (
       <div>
+        <NotificationContainer />
         <Switch>
           <Route path="/mobile/search" render={() => <MobileHotelsSearchPage />} />
           <Route path="/mobile/details/:id" render={() => <MobileHotelDetailsPage />} />

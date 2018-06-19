@@ -239,7 +239,7 @@ class HotelBookingPage extends React.Component {
           <div>
             <section id="room-book">
               <div className="container">
-                <div className="col-md-5">
+                <div className="col-md-5" style={{ 'padding': '0', 'margin': '0' }}>
                   <div className="hotel-info">
                     <div className="hotel-picture">
                       <img src={`${Config.getValue('imgHost')}${hotelPicUrl}`} alt="Hotel" />
@@ -270,12 +270,12 @@ class HotelBookingPage extends React.Component {
                     <div className="clearfix"></div>
                   </div>
                 </div>
-                <div className="col-md-7">
+                <div className="col-md-7" style={{ 'padding': '0', 'margin': '20px 0' }}>
                   {rooms && rooms.map((room, roomIndex) => {
                     return (
                       <div className="form-group" key={roomIndex}>
                         <h4>Room</h4>
-                        <hr />
+                        <hr className="sm-none" />
                         {room && room.adults.map((adult, adultIndex) => {
                           return (
                             <div className="form-row" key={adultIndex}>
@@ -303,7 +303,7 @@ class HotelBookingPage extends React.Component {
                     );
                   })}
                 </div>
-                <div className="col col-md-12">
+                <div className="col col-md-12" style={{ 'padding': '0', 'margin': '10px 0' }}>
                   <button className="btn btn-primary btn-book" onClick={this.handleSubmit}>Proceed</button>
                 </div>
               </div>

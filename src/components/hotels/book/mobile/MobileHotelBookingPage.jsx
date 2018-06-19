@@ -61,10 +61,10 @@ class MobileHotelBookingPage extends React.Component {
       this.setState({ rates: json });
     });
 
-    this.timeout = setTimeout(() => {
-      NotificationManager.info('Your search has expired.', '', 600000);
-      this.props.history.push('/hotels');
-    }, 600000);
+    // this.timeout = setTimeout(() => {
+    //   NotificationManager.info('Your search has expired.', '', 600000);
+    //   this.props.history.push('/hotels');
+    // }, 600000);
   }
 
   componentWillUnmount() {
@@ -225,20 +225,20 @@ class MobileHotelBookingPage extends React.Component {
     const priceInSelectedCurrency = this.state.rates && Number(this.state.totalPrice * this.state.rates[ROOMS_XML_CURRENCY][this.props.paymentInfo.currency]).toFixed(2);
     return (
       <div>
-        <div className="booking-steps">
+        {/* <div className="booking-steps">
           <div className="container">
             <p>1. Provide Guest Information</p>
             <p>2. Review Room Details</p>
             <p>3. Confirm and Pay</p>
           </div>
-        </div>
+        </div> */}
 
         {!this.state.hotel ?
           <div className="loader"></div> :
           <div>
             <section id="room-book">
               <div className="container">
-                <div className="col-md-5">
+                <div className="col-md-5" style={{ 'padding': '0', 'margin': '10px 0' }}>
                   <div className="hotel-info">
                     <div className="hotel-picture">
                       <img src={`${Config.getValue('imgHost')}${hotelPicUrl}`} alt="Hotel" />
@@ -269,7 +269,7 @@ class MobileHotelBookingPage extends React.Component {
                     <div className="clearfix"></div>
                   </div>
                 </div>
-                <div className="col-md-7">
+                <div className="col-md-7" style={{ 'padding': '0', 'margin': '20px 0' }}>
                   {rooms && rooms.map((room, roomIndex) => {
                     return (
                       <div className="form-group" key={roomIndex}>
@@ -302,7 +302,7 @@ class MobileHotelBookingPage extends React.Component {
                     );
                   })}
                 </div>
-                <div className="col col-md-12">
+                <div className="col col-md-12" style={{ 'padding': '0', 'margin': '10px 0' }}>
                   <button className="btn btn-primary btn-book" onClick={this.handleSubmit}>Proceed</button>
                 </div>
               </div>

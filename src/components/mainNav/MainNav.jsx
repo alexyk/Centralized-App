@@ -1,7 +1,7 @@
 import { Link, withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { MenuItem, Nav, NavDropdown, NavItem, Navbar } from 'react-bootstrap/lib';
-import { NotificationManager, NotificationContainer } from 'react-notifications';
+import { NotificationManager } from 'react-notifications';
 import ChangePasswordModal from './modals/ChangePasswordModal';
 import EnterRecoveryTokenModal from './modals/EnterRecoveryTokenModal';
 import PropTypes from 'prop-types';
@@ -535,7 +535,6 @@ class MainNav extends React.Component {
               onChange={(token) => { this.handleConfirmWallet(token); this.confirmWalletCaptcha.reset(); }}
             />
           </div>
-          <NotificationContainer />
           <CreateWalletModal setUserInfo={this.setUserInfo} userToken={this.state.userToken} userName={this.state.userName} walletPassword={this.state.walletPassword} isActive={this.props.modalsInfo.modals.get(CREATE_WALLET)} openModal={this.openModal} closeModal={this.closeModal} onChange={this.onChange} />
           <SaveWalletModal setUserInfo={this.setUserInfo} userToken={this.state.userToken} userName={this.state.userName} isActive={this.props.modalsInfo.modals.get(SAVE_WALLET)} openModal={this.openModal} closeModal={this.closeModal} onChange={this.onChange} />
           <ConfirmWalletModal isActive={this.props.modalsInfo.modals.get(CONFIRM_WALLET)} openModal={this.openModal} closeModal={this.closeModal} handleMnemonicWordsChange={this.handleMnemonicWordsChange} mnemonicWords={this.state.mnemonicWords} handleConfirmWallet={this.executeConfirmWalletCaptcha} />
