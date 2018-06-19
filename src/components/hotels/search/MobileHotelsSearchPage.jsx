@@ -9,9 +9,6 @@ import { connect } from 'react-redux';
 import { ROOMS_XML_CURRENCY } from '../../../constants/currencies.js';
 
 import MultiMarkerGoogleMap from './google-map/MultiMarkerGoogleMap';
-import HotelsSearchBar from './HotelsSearchBar';
-import FilterPanel from './filter/FilterPanel';
-import ChildrenModal from '../modals/ChildrenModal';
 import SockJsClient from 'react-stomp';
 import uuid from 'uuid';
 

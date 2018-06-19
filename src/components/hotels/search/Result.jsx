@@ -50,6 +50,12 @@ function Result(props) {
     nextArrow: rightButton,
     prevArrow: leftButton
   };
+
+  const redirectURL = props.location.pathname.indexOf('mobile') === -1 
+    ? '/hotels/listings'
+    : '/mobile/details';
+
+  console.log(redirectURL);
   {/* <ReactBootstrapCarousel
             animation={true}
             autoplay={false}
@@ -81,7 +87,7 @@ function Result(props) {
             {pictures.map((picture, i) => {
               return (
                 <div key={i}>
-                  <Link to={`/hotels/listings/${id}${props.location.search}`} key={i}>
+                  <Link to={`${redirectURL}/${id}${props.location.search}`} key={i}>
                     <div style={{ backgroundImage: 'url(' + picture.thumbnail + ')' }}>
                     </div>
                   </Link>
@@ -92,7 +98,7 @@ function Result(props) {
         }
       </div>
       <div className="result-content">
-        <h4><Link to={`/hotels/listings/${id}${props.location.search}`}>{name}</Link></h4>
+        <h4><Link to={`${redirectURL}/${id}${props.location.search}`}>{name}</Link></h4>
         <div className="rating">
           <span>Rating: </span>
           <div className="rating-holder">
@@ -124,9 +130,9 @@ function Result(props) {
         <div className="price-for">Price for 1 night</div>
         <span className="price">{props.userInfo.isLogged && `${currencySign} ${priceInSelectedCurrency}`}</span>
         <span>(LOC {locPrice})</span>
-        <Link className="btn" to={`/hotels/listings/${id}${props.location.search}`}>Book now</Link>
+        <Link className="btn" to={`${redirectURL}/${id}${props.location.search}`}>Book now</Link>
       </div>
-    </div >
+    </div>
   );
 }
 
