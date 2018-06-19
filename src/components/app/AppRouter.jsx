@@ -19,6 +19,7 @@ import {
 
 export class AppRouter extends React.Component {
   componentWillMount() {
+    console.log(encodeURI(localStorage.getItem(Config.getValue('domainPrefix') + '.auth.locktrip')));
     this.handleInternalAuthorization();
     this.handleExternalAuthorization();
   }
@@ -53,14 +54,24 @@ export class AppRouter extends React.Component {
   }
   
   handleExternalAuthorization() {
+    
     const queryStringParameters = queryString.parse(this.props.location.search);
     const { authEmail, authToken } = queryStringParameters;
     if (authEmail && authToken) {
       localStorage[Config.getValue('domainPrefix') + '.auth.username'] = authEmail;
-      localStorage[Config.getValue('domainPrefix') + '.auth.locktrip'] = authToken;
+      localStorage[Config.getValue('domainPrefix') + '.auth.locktrip'] = decodeURI(authToken);
       this.setUserInfo();
       const url = this.props.location.pathname;
-      this.props.history.push(url);
+      let search = '?';
+      for (let key in queryStringParameters) {
+        if (key !== 'authEmail' && key !== 'authToken') {
+          const param = key + '=' + queryStringParameters[key] + '&';
+          search += encodeURI(param);
+        }
+        
+      }
+      
+      this.props.history.push(url + search.substr(0, search.length - 1));
     }
   }
 
