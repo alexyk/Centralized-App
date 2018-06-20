@@ -479,6 +479,7 @@ class MobileHotelBookingConfirmPage extends React.Component {
                     </p>
                   </div>
                 </div>
+                <button className="btn btn-primary btn-book" onClick={(e) => this.props.history.goBack()}>Back</button>
                 {!this.state.confirmed
                   ? <button className="btn btn-primary btn-book" onClick={(e) => this.openModal(PASSWORD_PROMPT, e)}>Confirm and Pay</button>
                   : <button className="btn btn-primary btn-book" disabled>Processing Payment...</button>

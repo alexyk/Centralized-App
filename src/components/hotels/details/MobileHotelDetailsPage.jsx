@@ -665,6 +665,9 @@ class MobileHotelDetailsPage extends React.Component {
                   loadingRooms={this.state.loadingRooms}
                 />
               </div>
+              <div className="container" style={{ 'margin-bottom': '40px' }}>
+                <button className="btn" style={{ 'width': '100%' }} onClick={(e) => this.props.history.goBack()}>Back</button>
+              </div>
             </section>
           </div>
         }

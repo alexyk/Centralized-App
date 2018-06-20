@@ -1,6 +1,7 @@
 // import FilterPanel from './filter/FilterPanel';
 import Pagination, { DEFAULT_PAGE_SIZE } from '../../common/pagination/Pagination';
 import ResultsHolder from './ResultsHolder';
+import FilterPanel from './filter/FilterPanel';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { withRouter } from 'react-router-dom';
@@ -546,7 +547,29 @@ class HotelsSearchPage extends React.Component {
       <div>
         <section id="hotel-box">
           <div className="container">
-            <div className="row">
+            {/* <div className="row"> */}
+              <div>
+                <FilterPanel
+                  stars={this.state.stars}
+                  orderBy={this.state.orderBy}
+                  isSearchReady={this.state.allElements}
+                  priceRange={this.state.priceRange}
+                  handlePriceRangeSelect={this.handlePriceRangeSelect}
+                  clearFilters={this.clearFilters}
+                  handleStopSearch={this.handleStopSearch}
+                  handleOrderBy={this.handleOrderBy}
+                  handleToggleStar={this.handleToggleStar}
+                />
+                {this.state.showMap
+                  ? <button onClick={this.toggleMap} className="btn btn-primary" style={{ width: '100%', marginBottom: '20px' }}>Show list</button>
+                  : <button onClick={this.toggleMap} className="btn btn-primary" style={{ width: '100%', marginBottom: '20px' }}>Show on map</button>
+                }
+
+                {this.state.loading && !this.state.allElements &&
+                  <div className="loader" style={{ marginBottom: '40px' }}></div>
+                }
+              </div>
+              <div>
               <div className="list-hotel-box" id="list-hotel-box">
                 {this.state.showMap
                   ? <div>

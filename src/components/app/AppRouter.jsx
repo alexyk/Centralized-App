@@ -54,7 +54,6 @@ export class AppRouter extends React.Component {
   }
   
   handleExternalAuthorization() {
-    
     const queryStringParameters = queryString.parse(this.props.location.search);
     const { authEmail, authToken } = queryStringParameters;
     if (authEmail && authToken) {
@@ -65,12 +64,13 @@ export class AppRouter extends React.Component {
       let search = '?';
       for (let key in queryStringParameters) {
         if (key !== 'authEmail' && key !== 'authToken') {
-          const param = key + '=' + queryStringParameters[key] + '&';
-          search += encodeURI(param);
+          const param = encodeURI(key + '=' + queryStringParameters[key]) + '&';
+          search += param;
+          // console.log(encodeURI(param));
         }
-        
       }
       
+      // console.log(search);
       this.props.history.push(url + search.substr(0, search.length - 1));
     }
   }
