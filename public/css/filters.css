@@ -2,6 +2,7 @@
   background: #fff;
   border-radius: 4px;
   padding: 10px;
+  margin-bottom: 10px;
 }
 .filter-box .filter-check-count {
   color: #898c8d;
@@ -11,7 +12,7 @@
 .filter-box .filter-check-label {
   display: block;
   font-size: 14px;
-  font-weight: 400;
+  font-weight: 200;
 }
 .filter-box .filter-check-label:hover .filter-check {
   -o-transition: all 0.5s ease-in-out;
@@ -39,11 +40,11 @@
   text-align: center;
   width: 19%;
 }
-.filter-box .filter-stars .star:hover {
+/* .filter-box .filter-stars .star:hover {
   background: #d87a61 url(../images/icon-star-filter-w.png) no-repeat center 31px;
   border: 1px solid #d87a61;
   color: #fff;
-}
+} */
 .filter-box .filter-stars .star.active {
   background: #d87a61 url(../images/icon-star-filter-w.png) no-repeat center 31px;
   border: 1px solid #d87a61;
@@ -94,7 +95,7 @@
 }
 .filter-box label {
   font-size: 17px;
-  font-weight: 700;
+  font-weight: 300;
   margin: 15px 5px;
 }
 .filter-box button {
