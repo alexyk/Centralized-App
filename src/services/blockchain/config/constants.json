@@ -16,5 +16,6 @@
   "maxRefundPeriods": 7,
   "yearsForTimeValidation": 10,
   "timestampInSecondsLength": 10,
+  "timestampInDaysLength": 5,
   "bytesParamsLength": 32
 }

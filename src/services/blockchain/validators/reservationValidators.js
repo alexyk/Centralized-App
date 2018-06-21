@@ -1,7 +1,8 @@
 import {
   addDaysToNow,
   formatStartDateTimestamp,
-  formatTimestamp
+  formatTimestamp,
+  formatTimestampToDays
 } from "../utils/timeHelper";
 import {
   HotelReservationFactoryContract,
@@ -17,7 +18,8 @@ const {
   maxRefundPeriods,
   yearsForTimeValidation,
   timestampInSecondsLength,
-  bytesParamsLength
+  bytesParamsLength,
+  timestampInDaysLength
 } = require('../config/constants.json');
 
 export class ReservationValidators {
@@ -88,7 +90,7 @@ export class ReservationValidators {
 
   }
 
-  static async validateSimpleReservationParams(jsonObj,
+  static async validateSimpleHotelReservationParams(jsonObj,
     password,
     hotelReservationId,
     reservationCostLOC,
@@ -109,7 +111,7 @@ export class ReservationValidators {
       throw new Error(ERROR.INVALID_WITHDRAW_DATE);
     }
 
-    if (withdrawDate > bytesParamsLength) {
+    if (hotelReservationId > bytesParamsLength) {
       throw new Error(ERROR.INVALID_ID_PARAM)
     }
 
@@ -118,6 +120,19 @@ export class ReservationValidators {
 
     return true;
   }
+
+  static async validateSimpleReservationParams(jsonObj, password, reservationCostLOC, withdrawDate) {
+    if (!jsonObj ||
+      !password ||
+      !reservationCostLOC ||
+      reservationCostLOC * 1 <= 0 ||
+      !withdrawDate
+    ) {
+      throw new Error(ERROR.INVALID_PARAMS);
+    }
+    this.validateWithdrawDateInDays(withdrawDate);
+  }
+
 
   static async validateBookingExists(hotelReservationId) {
     await this.isHotelReservationIdEmpty(hotelReservationId);
@@ -180,6 +195,15 @@ export class ReservationValidators {
     let yearsPeriod = ((day * 356) + 2) * yearsForTimeValidation;
 
     if (withdrawDate > (nowUnixFormatted + yearsPeriod) || withdrawDate.toString().length != timestampInSecondsLength) {
+      throw new Error(ERROR.INVALID_WITHDRAW_DATE);
+    }
+  }
+
+  static validateWithdrawDateInDays(withdrawDate) {
+    const nowDaysFormatted = formatTimestampToDays(new Date().getTime() / 1000 | 0);
+    let day = 60 * 60 * 24;
+    let yearsPeriod = ((day * 356) + 2) * yearsForTimeValidation;
+    if (withdrawDate > (nowDaysFormatted + yearsPeriod) || withdrawDate.toString().length != timestampInDaysLength) {
       throw new Error(ERROR.INVALID_WITHDRAW_DATE);
     }
   }
