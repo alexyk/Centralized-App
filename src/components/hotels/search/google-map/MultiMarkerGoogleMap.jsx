@@ -79,6 +79,14 @@ class MultiMarkerGoogleMap extends Component {
           infoWindow.open(this.mapInstance, marker);
         });
 
+        window.google.maps.event.addListener(marker, 'click', function () {
+          infoWindows.forEach(i => {
+            i.close();
+          });
+
+          infoWindow.open(this.mapInstance, marker);
+        });
+
         this.markers.push(marker);
         this.infoWindows.push(infoWindow);
       }
