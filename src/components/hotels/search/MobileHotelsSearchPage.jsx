@@ -7,6 +7,7 @@ import React from 'react';
 import { withRouter } from 'react-router-dom';
 import moment from 'moment';
 import { connect } from 'react-redux';
+import { setCurrency } from '../../../actions/paymentInfo';
 import { ROOMS_XML_CURRENCY } from '../../../constants/currencies.js';
 
 import MultiMarkerGoogleMap from './google-map/MultiMarkerGoogleMap';
@@ -548,6 +549,18 @@ class HotelsSearchPage extends React.Component {
         <section id="hotel-box">
           <div className="container">
             {/* <div className="row"> */}
+            <div className="select">
+              <select
+                className="currency"
+                value={this.props.paymentInfo.currency}
+                style={{ 'height': '30px', 'marginBottom': '10px', 'textAlignLast': 'right', 'paddingRight': '45%', 'direction': 'rtl' }}
+                onChange={(e) => this.props.dispatch(setCurrency(e.target.value))}
+              >
+                <option value="EUR">EUR</option>
+                <option value="USD">USD</option>
+                <option value="GBP">GBP</option>
+              </select>
+            </div>
             <div>
               <MobileFilterPanel
                 stars={this.state.stars}
