@@ -130,6 +130,12 @@ export class ReservationValidators {
     ) {
       throw new Error(ERROR.INVALID_PARAMS);
     }
+    let currentTimestamp = (Date.now() / 1000 | 0)
+
+    if (formatTimestampToDays(currentTimestamp) >= withdrawDate) {
+      throw new Error(ERROR.INVALID_WITHDRAW_DATE);
+    }
+
     this.validateWithdrawDateInDays(withdrawDate);
   }
 
