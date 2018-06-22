@@ -5,6 +5,7 @@ import { Config } from '../../../../config';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
+import { setCurrency } from '../../../../actions/paymentInfo';
 import moment from 'moment';
 import { ROOMS_XML_CURRENCY } from '../../../../constants/currencies.js';
 import { PASSWORD_PROMPT } from '../../../../constants/modals.js';
@@ -486,6 +487,16 @@ class MobileHotelBookingConfirmPage extends React.Component {
                 }
 
                 {/* <button className="btn btn-primary btn-book" onClick={() => this.getCancellationFees()}>Log Fees</button> */}
+                <select
+                  className="currency"
+                  value={this.props.paymentInfo.currency}
+                  style={{ 'height': '40px', 'marginBottom': '10px', 'textAlignLast': 'right', 'paddingRight': '45%', 'direction': 'rtl' }}
+                  onChange={(e) => this.props.dispatch(setCurrency(e.target.value))}
+                >
+                  <option value="EUR">EUR</option>
+                  <option value="USD">USD</option>
+                  <option value="GBP">GBP</option>
+                </select>
               </div>
               <PasswordModal
                 isActive={this.props.modalsInfo.modals.get(PASSWORD_PROMPT)}

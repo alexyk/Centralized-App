@@ -4,6 +4,7 @@ import { NotificationManager } from 'react-notifications';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
+import { setCurrency } from '../../../../actions/paymentInfo';
 import moment from 'moment';
 import validator from 'validator';
 import { ROOMS_XML_CURRENCY } from '../../../../constants/currencies.js';
@@ -305,21 +306,19 @@ class MobileHotelBookingPage extends React.Component {
                 <div className="col col-md-12" style={{ 'padding': '0', 'margin': '10px 0' }}>
                   <button className="btn btn-primary btn-book" onClick={(e) => this.props.history.goBack()}>Back</button>
                 </div>
-                <div className="col col-md-12" style={{ 'padding': '0', 'margin': '10px 0' }}>
+                <div className="col col-md-12" style={{ 'padding': '0', 'margin': '10px 0 20px 0' }}>
                   <button className="btn btn-primary btn-book" onClick={this.handleSubmit}>Proceed</button>
                 </div>
-                {/* <div className="select">
-                  <select
-                    className="currency"
-                    value={this.props.paymentInfo.currency}
-                    style={{ 'height': '30px', 'marginBottom': '10px', 'textAlignLast': 'right', 'paddingRight': '45%', 'direction': 'rtl' }}
-                    // onChange={(e) => this.props.dispatch(setCurrency(e.target.value))}
-                  >
-                    <option value="EUR">EUR</option>
-                    <option value="USD">USD</option>
-                    <option value="GBP">GBP</option>
-                  </select>
-                </div> */}
+                <select
+                  className="currency"
+                  value={this.props.paymentInfo.currency}
+                  style={{ 'height': '40px', 'marginBottom': '10px', 'textAlignLast': 'right', 'paddingRight': '45%', 'direction': 'rtl' }}
+                  onChange={(e) => this.props.dispatch(setCurrency(e.target.value))}
+                >
+                  <option value="EUR">EUR</option>
+                  <option value="USD">USD</option>
+                  <option value="GBP">GBP</option>
+                </select>
               </div>
             </section>
           </div>

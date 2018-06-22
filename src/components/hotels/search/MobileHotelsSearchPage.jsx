@@ -549,18 +549,6 @@ class HotelsSearchPage extends React.Component {
         <section id="hotel-box">
           <div className="container">
             {/* <div className="row"> */}
-            <div className="select">
-              <select
-                className="currency"
-                value={this.props.paymentInfo.currency}
-                style={{ 'height': '30px', 'marginBottom': '10px', 'textAlignLast': 'right', 'paddingRight': '45%', 'direction': 'rtl' }}
-                onChange={(e) => this.props.dispatch(setCurrency(e.target.value))}
-              >
-                <option value="EUR">EUR</option>
-                <option value="USD">USD</option>
-                <option value="GBP">GBP</option>
-              </select>
-            </div>
             <div>
               <MobileFilterPanel
                 stars={this.state.stars}
@@ -614,6 +602,17 @@ class HotelsSearchPage extends React.Component {
                       currentPage={this.state.currentPage + 1}
                       totalElements={totalElements}
                     />
+
+                    <select
+                      className="currency"
+                      value={this.props.paymentInfo.currency}
+                      style={{ 'height': '40px', 'marginBottom': '10px', 'textAlignLast': 'right', 'paddingRight': '45%', 'direction': 'rtl' }}
+                      onChange={(e) => this.props.dispatch(setCurrency(e.target.value))}
+                    >
+                      <option value="EUR">EUR</option>
+                      <option value="USD">USD</option>
+                      <option value="GBP">GBP</option>
+                    </select>
                   </div>
                 }
               </div>

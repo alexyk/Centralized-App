@@ -6,6 +6,7 @@ import HotelDetailsInfoSection from './HotelDetailsInfoSection';
 import React from 'react';
 import HotelsSearchBar from '../search/HotelsSearchBar';
 import { connect } from 'react-redux';
+import { setCurrency } from '../../../actions/paymentInfo';
 import moment from 'moment';
 import { parse } from 'query-string';
 import ChildrenModal from '../modals/ChildrenModal';
@@ -665,8 +666,19 @@ class MobileHotelDetailsPage extends React.Component {
                   loadingRooms={this.state.loadingRooms}
                 />
               </div>
-              <div className="container" style={{ 'margin-bottom': '40px' }}>
-                <button className="btn" style={{ 'width': '100%' }} onClick={(e) => this.props.history.goBack()}>Back</button>
+              <div className="container">
+                <button className="btn" style={{ 'width': '100%', 'marginBottom': '20px' }} onClick={(e) => this.props.history.goBack()}>Back</button><div className="select">
+                  <select
+                    className="currency"
+                    value={this.props.paymentInfo.currency}
+                    style={{ 'height': '40px', 'margin': '10px 0', 'textAlignLast': 'right', 'paddingRight': '45%', 'direction': 'rtl' }}
+                    onChange={(e) => this.props.dispatch(setCurrency(e.target.value))}
+                  >
+                    <option value="EUR">EUR</option>
+                    <option value="USD">USD</option>
+                    <option value="GBP">GBP</option>
+                  </select>
+                </div>
               </div>
             </section>
           </div>
