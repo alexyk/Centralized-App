@@ -12,14 +12,14 @@ export default class StyleTest extends Component {
 
   initStomp() {
     const url = 'ws://localhost:61614';
-    const login = '';
-    const passcode = '';
-    const destination = '';
-    this.client = Stomp.client(url);
+    const login = 'admin';
+    const passcode = 'admin';
+    const destination = 'pipilota/222666';
+    const client = Stomp.client(url);
 
-    this.client.connect(login, passcode, function(frame) {
+    client.connect(login, passcode, function(frame) {
       console.log("connected to Stomp");
-      this.client.subscribe(destination, function(message) {
+      client.subscribe(destination, function(message) {
         console.log(message);
       });
     });
