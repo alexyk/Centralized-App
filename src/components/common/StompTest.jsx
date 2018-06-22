@@ -34,7 +34,7 @@ export default class StyleTest extends Component {
     const uuid = '123';
     const msgObject = {
       uuid: uuid,
-      query: 'region=15664&currency=USD&startDate=23/06/2018&endDate=24/06/2018&rooms=%5B%7B"adults":2,"children":%5B%5D%7D%5D'
+      query: 'region=15664&currency=USD'
     };
 
     const msg = JSON.stringify(msgObject);
