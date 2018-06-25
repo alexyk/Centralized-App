@@ -121,7 +121,7 @@ export class ReservationValidators {
     return true;
   }
 
-  static async validateSimpleReservationParams(jsonObj, password, reservationCostLOC, withdrawDate) {
+  static async validateSimpleReservationParams(jsonObj, password, reservationCostLOC, withdrawDateInDays) {
     if (!jsonObj ||
       !password ||
       !reservationCostLOC ||
@@ -173,7 +173,7 @@ export class ReservationValidators {
   static validateReservationDates(reservationStartDate, reservationEndDate, daysBeforeStartForRefund) {
     const nowUnixFormatted = formatTimestamp(new Date().getTime() / 1000 | 0);
     let day = 60 * 60 * 24;
-    let yearsPeriod = ((day * 356) + 2) * yearsForTimeValidation;
+    let yearsPeriod = ((day * 365) + 2) * yearsForTimeValidation;
     if (reservationStartDate < nowUnixFormatted || reservationStartDate > (nowUnixFormatted + yearsPeriod) || reservationStartDate.toString().length != timestampInSecondsLength) {
       throw new Error(ERROR.INVALID_PERIOD_START);
     }
@@ -198,7 +198,7 @@ export class ReservationValidators {
   static validateWithdrawDate(withdrawDate) {
     const nowUnixFormatted = formatTimestamp(new Date().getTime() / 1000 | 0);
     let day = 60 * 60 * 24;
-    let yearsPeriod = ((day * 356) + 2) * yearsForTimeValidation;
+    let yearsPeriod = ((day * 365) + 2) * yearsForTimeValidation;
 
     if (withdrawDate > (nowUnixFormatted + yearsPeriod) || withdrawDate.toString().length != timestampInSecondsLength) {
       throw new Error(ERROR.INVALID_WITHDRAW_DATE);

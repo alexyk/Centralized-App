@@ -200,9 +200,9 @@ export class HotelReservation {
     return createSimpleHotelReservationTxResult;
   }
 
-  static async createSimpleReservation(jsonObj, password, reservationCostLOC, withdrawDate) {
+  static async createSimpleReservation(jsonObj, password, reservationCostLOC, withdrawDateInSeconds) {
 
-    const withdrawDateFormatted = formatTimestampToDays(withdrawDate);
+    const withdrawDateFormatted = formatTimestampToDays(withdrawDateInSeconds);
 
     let wallet = await ethers.Wallet.fromEncryptedWallet(jsonObj, password);
     const gasPrice = await getGasPrice();
