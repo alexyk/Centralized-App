@@ -20,13 +20,7 @@ export default class StyleTest extends Component {
     const receiveDestination = 'pipilota/' + uuid;
     const client = Stomp.client(url);
     this.client = client;
-    const headers = {
-      login: login,
-      passcode: passcode,
-      // additional header
-      'content-length': false
-    };
-    client.connect(headers, function (frame) {
+    client.connect(login, passcode, function (frame) {
       console.log("connected to Stomp");
       client.subscribe(receiveDestination, function (message) {
         console.log(message);
