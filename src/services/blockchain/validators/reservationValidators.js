@@ -19,7 +19,10 @@ const {
   yearsForTimeValidation,
   timestampInSecondsLength,
   bytesParamsLength,
-  timestampInDaysLength
+  timestampInDaysLength,
+  yearInDays,
+  leapYearDay,
+  secondsInMilliSeconds
 } = require('../config/constants.json');
 
 export class ReservationValidators {
@@ -107,7 +110,7 @@ export class ReservationValidators {
       throw new Error(ERROR.INVALID_PARAMS);
     }
 
-    if ((Date.now() / 1000 | 0) > withdrawDate) {
+    if ((Date.now() / secondsInMilliSeconds | 0) > withdrawDate) {
       throw new Error(ERROR.INVALID_WITHDRAW_DATE);
     }
 
@@ -126,17 +129,17 @@ export class ReservationValidators {
       !password ||
       !reservationCostLOC ||
       reservationCostLOC * 1 <= 0 ||
-      !withdrawDate
+      !withdrawDateInDays
     ) {
       throw new Error(ERROR.INVALID_PARAMS);
     }
-    let currentTimestamp = (Date.now() / 1000 | 0)
+    let currentTimestamp = (Date.now() / secondsInMilliSeconds | 0)
 
-    if (formatTimestampToDays(currentTimestamp) >= withdrawDate) {
+    if (formatTimestampToDays(currentTimestamp) >= withdrawDateInDays) {
       throw new Error(ERROR.INVALID_WITHDRAW_DATE);
     }
 
-    this.validateWithdrawDateInDays(withdrawDate);
+    this.validateWithdrawDateInDays(withdrawDateInDays);
   }
 
 
@@ -171,9 +174,9 @@ export class ReservationValidators {
   }
 
   static validateReservationDates(reservationStartDate, reservationEndDate, daysBeforeStartForRefund) {
-    const nowUnixFormatted = formatTimestamp(new Date().getTime() / 1000 | 0);
-    let day = 60 * 60 * 24;
-    let yearsPeriod = ((day * 365) + 2) * yearsForTimeValidation;
+    const nowUnixFormatted = formatTimestamp(new Date().getTime() / secondsInMilliSeconds | 0);
+    let dayInSeconds = 60 * 60 * 24;
+    let yearsPeriodInSeconds = ((dayInSeconds * yearInDays) + (leapYearDay * 2)) * yearsForTimeValidation;
     if (reservationStartDate < nowUnixFormatted || reservationStartDate > (nowUnixFormatted + yearsPeriod) || reservationStartDate.toString().length != timestampInSecondsLength) {
       throw new Error(ERROR.INVALID_PERIOD_START);
     }
@@ -196,9 +199,9 @@ export class ReservationValidators {
   }
 
   static validateWithdrawDate(withdrawDate) {
-    const nowUnixFormatted = formatTimestamp(new Date().getTime() / 1000 | 0);
-    let day = 60 * 60 * 24;
-    let yearsPeriod = ((day * 365) + 2) * yearsForTimeValidation;
+    const nowUnixFormatted = formatTimestamp(new Date().getTime() / secondsInMilliSeconds | 0);
+    let dayInSeconds = 60 * 60 * 24;
+    let yearsPeriodInSeconds = ((dayInSeconds * yearInDays) + (leapYearDay * 2)) * yearsForTimeValidation;
 
     if (withdrawDate > (nowUnixFormatted + yearsPeriod) || withdrawDate.toString().length != timestampInSecondsLength) {
       throw new Error(ERROR.INVALID_WITHDRAW_DATE);
@@ -206,9 +209,9 @@ export class ReservationValidators {
   }
 
   static validateWithdrawDateInDays(withdrawDate) {
-    const nowDaysFormatted = formatTimestampToDays(new Date().getTime() / 1000 | 0);
-    let day = 60 * 60 * 24;
-    let yearsPeriod = ((day * 356) + 2) * yearsForTimeValidation;
+    const nowDaysFormatted = formatTimestampToDays(new Date().getTime() / secondsInMilliSeconds | 0);
+    let dayInSeconds = 60 * 60 * 24;
+    let yearsPeriodInSeconds = ((dayInSeconds * yearInDays) + (leapYearDay * 2)) * yearsForTimeValidation;
     if (withdrawDate > (nowDaysFormatted + yearsPeriod) || withdrawDate.toString().length != timestampInDaysLength) {
       throw new Error(ERROR.INVALID_WITHDRAW_DATE);
     }
@@ -234,7 +237,7 @@ export class ReservationValidators {
     senderAddress = senderAddress.toLowerCase();
 
     for (let i = 0; i < daysBeforeStartForRefund.length; i++) {
-      let daysBeforeStartForRefundAddedToNow = addDaysToNow(+daysBeforeStartForRefund[i]).getTime() / 1000 | 0;
+      let daysBeforeStartForRefundAddedToNow = addDaysToNow(+daysBeforeStartForRefund[i]).getTime() / secondsInMilliSeconds | 0;
       if (refundPercentages[i] <= 0 ||
         daysBeforeStartForRefundAddedToNow > reservationStartDate ||
         customerAddress !== senderAddress) {
@@ -248,7 +251,7 @@ export class ReservationValidators {
 
     customerAddress = customerAddress.toLowerCase();
     senderAddress = senderAddress.toLowerCase();
-    const currentTimestamp = Date.now() / 1000 | 0;
+    const currentTimestamp = Date.now() / secondsInMilliSeconds | 0;
     if (customerAddress !== senderAddress || currentTimestamp < reservationStartDate || currentTimestamp > reservationEndDate) {
       throw new Error(ERROR.INVALID_DISPUTE);
     }
