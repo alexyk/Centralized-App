@@ -177,7 +177,7 @@ export class ReservationValidators {
     const nowUnixFormatted = formatTimestamp(new Date().getTime() / secondsInMilliSeconds | 0);
     let dayInSeconds = 60 * 60 * 24;
     let yearsPeriodInSeconds = ((dayInSeconds * yearInDays) + (leapYearDay * 2)) * yearsForTimeValidation;
-    if (reservationStartDate < nowUnixFormatted || reservationStartDate > (nowUnixFormatted + yearsPeriod) || reservationStartDate.toString().length != timestampInSecondsLength) {
+    if (reservationStartDate < nowUnixFormatted || reservationStartDate > (nowUnixFormatted + yearsPeriodInSeconds) || reservationStartDate.toString().length != timestampInSecondsLength) {
       throw new Error(ERROR.INVALID_PERIOD_START);
     }
 
@@ -185,13 +185,13 @@ export class ReservationValidators {
       throw new Error(ERROR.INVALID_PERIOD);
     }
 
-    if (reservationEndDate > (nowUnixFormatted + yearsPeriod) || reservationEndDate.toString().length != timestampInSecondsLength) {
+    if (reservationEndDate > (nowUnixFormatted + yearsPeriodInSeconds) || reservationEndDate.toString().length != timestampInSecondsLength) {
       throw new Error(ERROR.INVALID_PERIOD_END);
     }
 
 
     for (let i = 0; i < daysBeforeStartForRefund.length; i++)
-      if ((nowUnixFormatted + (daysBeforeStartForRefund[i] * day)) > reservationStartDate) {
+      if ((nowUnixFormatted + (daysBeforeStartForRefund[i] * dayInSeconds)) > reservationStartDate) {
         throw new Error(ERROR.INVALID_REFUND_DAYS);
       }
 
@@ -203,7 +203,7 @@ export class ReservationValidators {
     let dayInSeconds = 60 * 60 * 24;
     let yearsPeriodInSeconds = ((dayInSeconds * yearInDays) + (leapYearDay * 2)) * yearsForTimeValidation;
 
-    if (withdrawDate > (nowUnixFormatted + yearsPeriod) || withdrawDate.toString().length != timestampInSecondsLength) {
+    if (withdrawDate > (nowUnixFormatted + yearsPeriodInSeconds) || withdrawDate.toString().length != timestampInSecondsLength) {
       throw new Error(ERROR.INVALID_WITHDRAW_DATE);
     }
   }
@@ -212,7 +212,7 @@ export class ReservationValidators {
     const nowDaysFormatted = formatTimestampToDays(new Date().getTime() / secondsInMilliSeconds | 0);
     let dayInSeconds = 60 * 60 * 24;
     let yearsPeriodInSeconds = ((dayInSeconds * yearInDays) + (leapYearDay * 2)) * yearsForTimeValidation;
-    if (withdrawDate > (nowDaysFormatted + yearsPeriod) || withdrawDate.toString().length != timestampInDaysLength) {
+    if (withdrawDate > (nowDaysFormatted + yearsPeriodInSeconds) || withdrawDate.toString().length != timestampInDaysLength) {
       throw new Error(ERROR.INVALID_WITHDRAW_DATE);
     }
   }
