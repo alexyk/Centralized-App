@@ -303,11 +303,11 @@ class MobileHotelBookingPage extends React.Component {
                     );
                   })}
                 </div>
-                <div className="col col-md-12" style={{ 'padding': '0', 'margin': '10px 0' }}>
-                  <button className="btn btn-primary btn-book" onClick={(e) => this.props.history.goBack()}>Back</button>
-                </div>
                 <div className="col col-md-12" style={{ 'padding': '0', 'margin': '10px 0 20px 0' }}>
                   <button className="btn btn-primary btn-book" onClick={this.handleSubmit}>Proceed</button>
+                </div>
+                <div className="col col-md-12" style={{ 'padding': '0', 'margin': '10px 0' }}>
+                  <button className="btn btn-primary btn-book" onClick={(e) => this.props.history.goBack()}>Back</button>
                 </div>
                 <select
                   className="currency"

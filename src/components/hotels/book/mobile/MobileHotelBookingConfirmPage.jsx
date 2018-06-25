@@ -278,6 +278,7 @@ class MobileHotelBookingConfirmPage extends React.Component {
               }, 2000);
             });
           }).catch(error => {
+            console.log(error);
             if (error.hasOwnProperty('message')) {
               NotificationManager.warning(error.message, 'Send Tokens');
             } else if (error.hasOwnProperty('err') && error.err.hasOwnProperty('message')) {
@@ -480,11 +481,11 @@ class MobileHotelBookingConfirmPage extends React.Component {
                     </p>
                   </div>
                 </div>
-                <button className="btn btn-primary btn-book" onClick={(e) => this.props.history.goBack()}>Back</button>
                 {!this.state.confirmed
                   ? <button className="btn btn-primary btn-book" onClick={(e) => this.openModal(PASSWORD_PROMPT, e)}>Confirm and Pay</button>
                   : <button className="btn btn-primary btn-book" disabled>Processing Payment...</button>
                 }
+                <button className="btn btn-primary btn-book" onClick={(e) => this.props.history.goBack()}>Back</button>
 
                 {/* <button className="btn btn-primary btn-book" onClick={() => this.getCancellationFees()}>Log Fees</button> */}
                 <select
