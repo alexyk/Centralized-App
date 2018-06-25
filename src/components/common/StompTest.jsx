@@ -15,12 +15,18 @@ export default class StyleTest extends Component {
   initStomp() {
     const uuid = '123';
     const url = 'ws://localhost:61614';
-    const login = 'admin';
-    const passcode = 'admin';
+    const login = null;
+    const passcode = null;
     const receiveDestination = 'pipilota/' + uuid;
     const client = Stomp.client(url);
     this.client = client;
-    client.connect(login, passcode, function (frame) {
+    const headers = {
+      login: login,
+      passcode: passcode,
+      // additional header
+      'content-length': false
+    };
+    client.connect(headers, function (frame) {
       console.log("connected to Stomp");
       client.subscribe(receiveDestination, function (message) {
         console.log(message);
@@ -40,7 +46,10 @@ export default class StyleTest extends Component {
     const msg = JSON.stringify(msgObject);
 
     const sendDestination = 'pipilota';
-    this.client.send(sendDestination, {}, msg);
+    const headers = {
+      'content-length': false
+    };
+    this.client.send(sendDestination, headers, msg);
   }
 
   render() {
