@@ -32,6 +32,7 @@ class StaticHotelsSearchPage extends React.Component {
 
     let startDate = moment().add(1, 'day');
     let endDate = moment().add(2, 'day');
+    let queryParams = queryString.parse(this.props.location.search);
 
     this.state = {
       allElements: false,
@@ -50,7 +51,7 @@ class StaticHotelsSearchPage extends React.Component {
       filteredListings: null,
       isFiltered: false,
       loading: true,
-      currentPage: 0,
+      currentPage: !queryParams.page ? 0 : Number(queryParams.page),
       showMap: false,
     };
 
@@ -92,7 +93,7 @@ class StaticHotelsSearchPage extends React.Component {
     const queryParams = queryString.parse(this.props.location.search);
     const { region } = queryParams;
     getStaticHotels(region)
-      .then(json => this.setState({ listings: json.content, totalElements: json.totalElements }));
+      .then(json => this.setState({ listings: json.content, totalElements: json.totalElements, loading: false }));
 
     if (!localStorage.getItem('uuid')) {
       localStorage.setItem('uuid', `${uuid()}`);
@@ -343,31 +344,12 @@ class StaticHotelsSearchPage extends React.Component {
     this.updateParamsMap('endDate', picker.endDate.format('DD/MM/YYYY'));
   }
 
-  onPageChange(page) {
-    window.scrollTo(0, 0);
-    this.setState({
-      currentPage: page - 1,
-      // loading: true
-    });
-
-    // let searchTerms = this.props.location.search;
-
-    // const index = this.props.location.search.indexOf('&page=');
-    // if (index != -1) {
-    //     searchTerms = `${this.props.location.search.substr(0, index)}&page=${page - 1}`;
-    // } else {
-    //     searchTerms = `${this.props.location.search}&page=${page - 1}`;
-    // }
-
-    // testSearch(searchTerms, page - 1, localStorage.getItem('uuid')).then(json => {
-    //     this.setState({
-    //         listings: json.content,
-    //         loading: false
-    //     });
-    // });
-
-    // this.props.history.push(`/hotels/listings/${searchTerms}`);
-  }
+  // onPageChange(page) {
+  //   window.scrollTo(0, 0);
+  //   this.setState({
+  //     currentPage: page - 1,
+  //   });
+  // }
 
   getSearchTerms(searchParams) {
     let keys = Array.from(searchParams.keys());
@@ -549,6 +531,30 @@ class StaticHotelsSearchPage extends React.Component {
     });
   }
 
+  onPageChange(page) {
+    this.setState({
+      currentPage: page - 1,
+      loading: true
+    });
+
+    const searchParams = queryString.parse(this.props.location.search);
+    const { region } = searchParams;
+    
+    // searchParams.page = page - 1;
+    // const newSearchTerm = queryString.stringify(searchParams);
+
+    // this.props.history.push('?' + newSearchTerm);
+    window.scrollTo(0, 0);
+
+    getStaticHotels(region, page - 1).then(data => {
+      this.setState({
+        listings: data.content,
+        totalElements: data.totalElements,
+        loading: false
+      });
+    });
+  }
+
   render() {
     const { listings, totalElements } = this.state;
 
@@ -578,7 +584,7 @@ class StaticHotelsSearchPage extends React.Component {
           <div className="container">
             <div className="row">
               <div className="col-md-3">
-                <FilterPanel
+                {/* <FilterPanel
                   stars={this.state.stars}
                   orderBy={this.state.orderBy}
                   isSearchReady={this.state.allElements}
@@ -588,15 +594,15 @@ class StaticHotelsSearchPage extends React.Component {
                   handleStopSearch={this.handleStopSearch}
                   handleOrderBy={this.handleOrderBy}
                   handleToggleStar={this.handleToggleStar}
-                />
+                /> */}
                 {this.state.showMap
                   ? <button onClick={this.toggleMap} className="btn btn-primary" style={{ width: '100%', marginBottom: '20px' }}>Show list</button>
                   : <button onClick={this.toggleMap} className="btn btn-primary" style={{ width: '100%', marginBottom: '20px' }}>Show on map</button>
                 }
 
-                {this.state.loading && !this.state.allElements &&
+                {/* {this.state.loading && !this.state.allElements &&
                   <div className="loader" style={{ marginBottom: '40px' }}></div>
-                }
+                } */}
               </div>
               <div className="col-md-9">
                 <div className="list-hotel-box" id="list-hotel-box">
@@ -615,18 +621,22 @@ class StaticHotelsSearchPage extends React.Component {
                       />
                     </div>
                     : <div>
-                      <ResultsHolder
-                        hotels={listings}
-                        locRate={this.state.locRate} 
-                        rates={this.state.rates}
-                        nights={this.state.nights}
-                        loading={this.state.loading}
-                      />
+                      {this.state.loading 
+                        ? <div className="loader"></div>
+                        : <ResultsHolder
+                          hotels={listings}
+                          locRate={this.state.locRate} 
+                          rates={this.state.rates}
+                          nights={this.state.nights}
+                          loading={this.state.loading}
+                        />
+                      }
 
                       <Pagination
                         loading={this.state.loading}
                         onPageChange={this.onPageChange}
                         currentPage={this.state.currentPage + 1}
+                        pageSize={20}
                         totalElements={totalElements}
                       />
                     </div>

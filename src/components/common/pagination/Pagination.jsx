@@ -29,7 +29,7 @@ export default class Pagination extends React.Component {
             <RCPagination
               itemRender={textItemRender}
               className="pagination"
-              defaultPageSize={DEFAULT_PAGE_SIZE}
+              defaultPageSize={this.props.pageSize ? this.props.pageSize : DEFAULT_PAGE_SIZE}
               showTitle={false}
               onChange={this.props.onPageChange}
               current={this.props.currentPage}

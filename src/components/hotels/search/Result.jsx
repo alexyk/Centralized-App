@@ -33,6 +33,7 @@ function Result(props) {
   const pictures = photos.slice(0, 3).map(url => { return { thumbnail: `${Config.getValue('imgHost')}${url}` }; });
   const { locRate, rates } = props;
   const { currencySign } = props.paymentInfo;
+  const isPriceLoaded = !!price;
   const locPrice = ((price / locRate) / props.nights).toFixed(2);
   const priceInSelectedCurrency = rates && ((price * (rates[ROOMS_XML_CURRENCY][props.paymentInfo.currency])) / props.nights).toFixed(2);
 
@@ -128,8 +129,11 @@ function Result(props) {
       </div>
       <div className="result-pricing">
         <div className="price-for">Price for 1 night</div>
-        <span className="price">{props.userInfo.isLogged && `${currencySign} ${priceInSelectedCurrency}`}</span>
-        <span>(LOC {locPrice})</span>
+        {!isPriceLoaded 
+          ? <div className="loader" style={{width: '100%'}}></div>
+          : <span className="price">{props.userInfo.isLogged && `${currencySign} ${priceInSelectedCurrency}`}</span>
+        }
+        {isPriceLoaded && <span>(LOC {locPrice})</span>}
         <Link className="btn" to={`${redirectURL}/${id}${props.location.search}`}>Book now</Link>
       </div>
     </div>
