@@ -13,17 +13,21 @@ export default class StyleTest extends Component {
   }
 
   initStomp() {
-    const uuid = '123';
+    const uuid = '456';
     const url = 'ws://localhost:61614';
     const login = null;
     const passcode = null;
-    const receiveDestination = 'pipilota/' + uuid;
+    const receiveDestination = 'search/' + uuid;
     const client = Stomp.client(url);
     this.client = client;
     client.connect(login, passcode, function (frame) {
       console.log("connected to Stomp");
       client.subscribe(receiveDestination, function (message) {
         console.log(message);
+        if(JSON.parse(message.body).allElements){
+          console.log("ALL ELEMENTS");
+          client.disconnect();
+        }
       });
     });
 
@@ -31,15 +35,15 @@ export default class StyleTest extends Component {
   }
 
   sendMessage() {
-    const uuid = '123';
+    const uuid = '456';
     const msgObject = {
       uuid: uuid,
-      query: 'region=15664&currency=EUR&startDate=28/06/2018&endDate=29/06/2018&rooms=%5B%7B%22adults%22:2,%22children%22:%5B%5D%7D%5D'
+      query: 'region=52612&currency=EUR&startDate=28/06/2018&endDate=29/06/2018&rooms=%5B%7B%22adults%22:2,%22children%22:%5B%5D%7D%5D'
     };
 
     const msg = JSON.stringify(msgObject);
 
-    const sendDestination = 'pipilota';
+    const sendDestination = 'search';
     const headers = {
       'content-length': false
     };
