@@ -27,6 +27,7 @@ export default class StyleTest extends Component {
           name="form-field-name"
           value={selectedOption}
           onChange={this.handleChange}
+          clearable={true}
           onClose={() => {
             if (this.state.selectedOption && this.state.selectedOption.label === '') {
               this.setState({ selectedOption: null });

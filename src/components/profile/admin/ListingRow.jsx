@@ -21,8 +21,10 @@ export default class ListingRow extends React.Component {
 
   renderThumbnail() {
     let thumbnailURL = this.props.listing.thumbnail;
-    if (thumbnailURL.indexOf('fantasian') === -1) {
+    if (thumbnailURL && thumbnailURL.indexOf('fantasian') === -1) {
       thumbnailURL = `${Config.getValue('imgHost')}${this.props.listing.thumbnail}`;
+    } else if (!thumbnailURL) {
+      thumbnailURL = `${Config.getValue('imgHost')}/listings/images/default.png`;
     }
 
     return (
