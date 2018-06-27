@@ -1,0 +1,136 @@
+.hotel-trip-details {
+  max-width: 70%;
+  margin: auto;
+  .logo-container {
+  margin-top: 10%;
+    text-align: center;
+  }
+  .details-view {
+    .with-padding {
+      padding: 5%;
+    }
+    background-color: #fff;
+    border: 1px solid #cccccc;
+    margin: 5% 0;
+    h1 {
+      text-align: center;
+      margin: auto;
+      max-width: 70%;
+    }
+    .reffernce {
+      text-align: center;
+      margin-top: 5%;
+      .refference-id {
+        color: #E98B73;
+      }
+    }
+    .details-background {
+      margin: 5% 0;
+      width: 100%;
+    }
+    .stars {
+      display: flex;
+      margin-bottom: 5%;
+      img {
+        width: 26px;
+        margin-right: 1.3%;
+      }
+    }
+    hr {
+      border-color: #E1E1E1;
+    }
+    .visit-info {
+      display: flex;
+      flex-wrap: wrap;
+      margin-bottom: 8%;
+      .check-in-header, .check-out-header, .guests-header {
+        flex-grow: 1;
+        width: 33%;
+      }
+      .check-in-content, .check-out-content, .guests-content {
+        flex-grow: 1;
+        width: 33%;
+        div {
+          width: 70%;
+          .date-in-day {
+            color: #a2c5bf;
+          }
+          .date-out-day {
+            color: #d87a61;
+          }
+        }
+      }
+    }
+    .address-map {
+      width: 100%;
+    }
+    .directions {
+      margin: 5% 0;
+      text-align: center;
+      width: 100%;
+      background: #d97a5f;
+      display: block;
+      padding: 3% 0;
+      border-radius: 4px;
+      color: #fff;
+      text-decoration: none;
+    }
+    .contact-info {
+      text-align: center;
+    }
+    .essential-info {
+      padding: 26px 25px;
+      background: #f3f3f3;
+    }
+  }
+  .details-buttons {
+    margin: 5%;
+    display: flex;
+    justify-content: center;
+    .details-print, .details-back {
+      margin: 0 5% 2%;
+      background-color: #a2c5bf;
+    }
+  }
+}
+
+@media screen and (max-width: 1000px) {
+  .hotel-trip-details {
+    max-width: 80%;
+  }
+}
+
+@media screen and (max-width: 650px) {
+  .hotel-trip-details {
+    max-width: 90%;
+    .details-view {
+      .visit-info {
+        .check-in-header, .check-out-header, .guests-header {
+          width: 50%;
+        }
+        .check-in-content {
+          order: 1;
+        }
+        .check-out-header {
+          order: 2;
+        }
+        .check-out-content {
+          order: 3;
+        }
+        .guests-header {
+          order: 4;
+        }
+        .guests-content {
+          order: 5;
+        }
+        .check-in-content, .check-out-content, .guests-content {
+          width: 50%;
+          div {
+            width: 100%;
+          }
+        }
+      }
+    }
+  }
+}
+
