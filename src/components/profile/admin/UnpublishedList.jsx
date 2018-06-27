@@ -10,7 +10,7 @@ import React from 'react';
 import queryString from 'query-string';
 import { withRouter } from 'react-router-dom';
 import filterListings from '../../../actions/filterListings';
-import UnpublishedItem from './UnpublishedItem';
+import ListItem from './ListItem';
 import { Config } from '../../../config';
 import ReCAPTCHA from 'react-google-recaptcha';
 import NoEntriesMessage from '../common/NoEntriesMessage';
@@ -18,7 +18,7 @@ import Lightbox from 'react-images';
 
 import '../../../styles/css/components/captcha/captcha-container.css';
 
-class UnpublishedListings extends React.Component {
+class UnpublishedList extends React.Component {
   constructor(props) {
     super(props);
 
@@ -198,6 +198,9 @@ class UnpublishedListings extends React.Component {
         const newListings = allListings.filter(x => x.id !== id);
         const totalElements = this.state.totalElements;
         this.setState({ listings: newListings, totalElements: totalElements - 1 });
+        if (newListings.length === 0 && totalElements > 0) {
+          this.onPageChange(1);
+        }
       }
       else {
         NotificationManager.error('Something went wrong');
@@ -212,7 +215,7 @@ class UnpublishedListings extends React.Component {
     };
 
     contactHost(id, contactHostObj, captchaToken)
-      .then(res => {
+      .then(() => {
         // this.props.history.push(`/profile/messages/chat/${res.conversation}`);
         NotificationManager.info('Message sent');
         this.closeContactHostModal();
@@ -254,6 +257,9 @@ class UnpublishedListings extends React.Component {
           const totalElements = this.state.totalElements;
           this.setState({ listings: newListings, totalElements: totalElements - 1 });
           NotificationManager.success('Listing deleted');
+          if (newListings.length === 0 && totalElements > 0) {
+            this.onPageChange(1);
+          }
         } else {
           NotificationManager.error('Cannot delete this property. It might have reservations or other irrevocable actions.');
         }
@@ -297,7 +303,6 @@ class UnpublishedListings extends React.Component {
 
   openLightbox(event, id, index) {
     event.preventDefault();
-    console.log(id, index)
     this.setState({
       lightboxIsOpen: true,
       imagesListingId: id,
@@ -337,7 +342,7 @@ class UnpublishedListings extends React.Component {
 
   render() {
     if (this.state.loading) {
-      return <div className="loader" style={{ 'margin-bottom': '40px'}}></div>;
+      return <div className="loader" style={{ 'marginBottom': '40px'}}></div>;
     }
 
     const { imagesListingId } = this.state;
@@ -389,7 +394,7 @@ class UnpublishedListings extends React.Component {
               : <div>
                 {this.state.listings.map((l, i) => {
                   return (
-                    <UnpublishedItem
+                    <ListItem
                       key={i}
                       item={l}
                       isExpanded={this.state.expandedListings[l.id]}
@@ -442,9 +447,9 @@ class UnpublishedListings extends React.Component {
   }
 }
 
-UnpublishedListings.propTypes = {
+UnpublishedList.propTypes = {
   location: PropTypes.object,
   history: PropTypes.object
 };
 
-export default withRouter(UnpublishedListings);
+export default withRouter(UnpublishedList);

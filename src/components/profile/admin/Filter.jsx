@@ -62,8 +62,8 @@ export default class Filter extends React.Component {
 
 Filter.propTypes = {
   onSelect: PropTypes.func,
-  city: PropTypes.number,
-  country: PropTypes.number,
+  city: PropTypes.string,
+  country: PropTypes.string,
   name: PropTypes.string,
   handleSelectCountry: PropTypes.func,
   handleSelectCity: PropTypes.func,

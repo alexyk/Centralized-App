@@ -1,11 +1,12 @@
 import React from 'react';
 import Slider from 'react-slick';
 import { Config } from '../../../config.js';
+import PropTypes from 'prop-types';
 import '../../../styles/css/components/profile/admin_panel/unpublished-item.css';
 
 let slider = null;
 
-export default function UnpublishedListing(props) {
+export default function ListItem(props) {
   const { id, name, lastModify, descriptionText, pictures, currencyCode, defaultDailyPrice, state } = props.item;
   const thumbnails = pictures.map((p, i) => { return { thumbnail: `${Config.getValue('imgHost')}${p.thumbnail}`, index: i }; });
   if (thumbnails.length < 1) {
@@ -56,10 +57,13 @@ export default function UnpublishedListing(props) {
         <p>Price - {currencyCode} {defaultDailyPrice}</p>
         <div className="unpublished-item_actions">
           <div className="minor-actions">
-            {!props.isExpanded 
-              ? <div><a href="#" onClick={(e) => props.handleExpandListing(e, id)}>Expand</a></div>
-              : <div><a href="#" onClick={(e) => props.handleShrinkListing(e, id)}>Hide</a></div>
+            {descriptionText && descriptionText.length > 300 &&
+              (!props.isExpanded
+                ? <div>{ descriptionText.length > 300 && <a href="#" onClick={(e) => props.handleExpandListing(e, id)}>Expand</a>}</div>
+                : <div><a href="#" onClick={(e) => props.handleShrinkListing(e, id)}>Hide</a></div>
+              )
             }
+            
             <div><a href="#" onClick={(e) => props.openContactHostModal(e, id)}>Contact Host</a></div>
             {state === 'inactive' && 
               <div><a href="#" className="delete" onClick={(e) => props.handleOpenDeleteListingModal(e, id, name)}>Delete</a></div>
@@ -81,3 +85,13 @@ export default function UnpublishedListing(props) {
     </div>
   );
 }
+
+ListItem.propTypes = {
+  item: PropTypes.object,
+  isExpanded: PropTypes.bool,
+  handleExpandListing: PropTypes.func,
+  handleShrinkListing: PropTypes.func,
+  openContactHostModal: PropTypes.func,
+  handleOpenDeleteListingModal: PropTypes.func,
+  updateListingStatus: PropTypes.func
+};

@@ -9,14 +9,14 @@ import React from 'react';
 import queryString from 'query-string';
 import { withRouter } from 'react-router-dom';
 import NoEntriesMessage from '../common/NoEntriesMessage';
-import UnpublishedItem from './UnpublishedItem';
+import ListItem from './ListItem';
 import Lightbox from 'react-images';
 import ReCAPTCHA from 'react-google-recaptcha';
 import { Config } from '../../../config';
 
 import '../../../styles/css/components/captcha/captcha-container.css';
 
-class PublishedListings extends React.Component {
+class PublishedList extends React.Component {
   constructor(props) {
     super(props);
 
@@ -177,6 +177,9 @@ class PublishedListings extends React.Component {
         const newListings = allListings.filter(x => x.id !== id);
         const totalElements = this.state.totalElements;
         this.setState({ listings: newListings, totalElements: totalElements - 1 });
+        if (newListings.length === 0 && totalElements > 0) {
+          this.onPageChange(1);
+        }
       }
       else {
         NotificationManager.error('Something went wrong', 'Listings Operations');
@@ -240,7 +243,6 @@ class PublishedListings extends React.Component {
 
   openLightbox(event, id, index) {
     event.preventDefault();
-    console.log(id, index)
     this.setState({
       lightboxIsOpen: true,
       imagesListingId: id,
@@ -349,7 +351,7 @@ class PublishedListings extends React.Component {
                     /> */}
                 {this.state.listings.map((l, i) => {
                   return (
-                    <UnpublishedItem
+                    <ListItem
                       key={i}
                       item={l}
                       isExpanded={this.state.expandedListings[l.id]}
@@ -400,10 +402,10 @@ class PublishedListings extends React.Component {
       }
     }
     
-PublishedListings.propTypes = {
+PublishedList.propTypes = {
           location: PropTypes.object,
         history: PropTypes.object,
       
       };
       
-export default withRouter(PublishedListings);
+export default withRouter(PublishedList);

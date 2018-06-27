@@ -40,7 +40,7 @@ $media-expressions: (
     display: flex;
     margin-bottom: 20px;
     
-    @include media(">=desktop") {
+    @include media(">=tablet") {
 			margin: 0 25px 0 0;
       width: 240px;
     }
@@ -130,6 +130,11 @@ $media-expressions: (
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    flex-grow: 2;
+
+    @include media(">=tablet") {
+      max-width: 77%;
+    }
 
     .header {
       margin-bottom: 5px;
@@ -143,6 +148,7 @@ $media-expressions: (
 
     p {
       margin-bottom: 5px;
+      word-wrap: break-word;
     }
   }
 

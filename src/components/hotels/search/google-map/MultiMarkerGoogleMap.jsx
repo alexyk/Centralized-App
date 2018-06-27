@@ -119,6 +119,8 @@ class MultiMarkerGoogleMap extends Component {
     const { currency, currencySign } = this.props.paymentInfo;
     const locPrice = ((hotel.price / locRate) / this.props.nights).toFixed(2);
     const fiatPrice = rates && ((hotel.price * (rates[ROOMS_XML_CURRENCY][currency])) / nights).toFixed(2);
+    const isMobile = this.props.location.pathname.indexOf('/mobile') !== -1;
+    const rootUrl = isMobile ? '/mobile/details' : '/hotels/listings';
 
     const content = ReactDOMServer.renderToString(
       <MarkerInfoWindow
@@ -127,6 +129,7 @@ class MultiMarkerGoogleMap extends Component {
         locPrice={locPrice}
         fiatPrice={fiatPrice}
         isLogged={isLogged}
+        rootUrl={rootUrl}
         search={this.props.location.search}
       />
     );

@@ -4,7 +4,7 @@ import { NavLink } from 'react-router-dom';
 
 import '../../../styles/css/components/profile/admin_panel/navigation-tab.css';
 
-export default class ListingsAdminNav extends React.Component {
+export default class AdminNav extends React.Component {
   render() {
     return (
       <div>
