@@ -127,14 +127,18 @@ function Result(props) {
         </div> */}
         <p>{ReactHtmlParser(description + (description.length < 250 ? '' : '...'))}</p>
       </div>
+      
       <div className="result-pricing">
         <div className="price-for">Price for 1 night</div>
         {!isPriceLoaded 
-          ? <div className="loader" style={{width: '100%'}}></div>
+          ? (!props.allElements ? <div className="loader" style={{width: '100%'}}></div> : <span style={{padding: '20px 10px 10px 10px'}}>Unavailable</span>)
           : <span className="price">{props.userInfo.isLogged && `${currencySign} ${priceInSelectedCurrency}`}</span>
         }
         {isPriceLoaded && <span>(LOC {locPrice})</span>}
-        <Link className="btn" to={`${redirectURL}/${id}${props.location.search}`}>Book now</Link>
+        {!isPriceLoaded && props.allElements
+          ? <button disabled className="btn">Unavailable</button>
+          : <Link className="btn" to={`${redirectURL}/${id}${props.location.search}`}>Book now</Link>
+        }
       </div>
     </div>
   );

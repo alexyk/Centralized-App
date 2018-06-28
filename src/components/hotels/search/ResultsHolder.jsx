@@ -24,7 +24,7 @@ export default function ResultsHolder(props) {
         if (props.priceMap && props.priceMap[hotel.externalId]) {
           hotel.price = props.priceMap[hotel.externalId];
         }
-        return (<Result key={index} hotel={hotel} locRate={props.locRate} rates={props.rates} nights={props.nights} priceMap={props.priceMap} />);
+        return (<Result key={index} hotel={hotel} locRate={props.locRate} rates={props.rates} nights={props.nights} allElements={props.allElements} />);
       })}
     </div>
   );

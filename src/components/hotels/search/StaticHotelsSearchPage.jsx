@@ -116,6 +116,7 @@ class StaticHotelsSearchPage extends React.Component {
   handleReceiveHotelPrice(message) {
     if (JSON.parse(message.body).allElements) {
       console.log("ALL ELEMENTS");
+      this.setState({ allElements: true });
       this.client.disconnect();
     }
 
@@ -690,6 +691,7 @@ class StaticHotelsSearchPage extends React.Component {
                         : <ResultsHolder
                           hotels={listings}
                           priceMap={this.state.priceMap}
+                          allElements={this.state.allElements}
                           locRate={this.state.locRate}
                           rates={this.state.rates}
                           nights={this.state.nights}
