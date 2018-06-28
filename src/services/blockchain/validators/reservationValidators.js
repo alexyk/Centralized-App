@@ -1,7 +1,8 @@
 import {
   addDaysToNow,
   formatStartDateTimestamp,
-  formatTimestamp
+  formatTimestamp,
+  formatTimestampToDays
 } from "../utils/timeHelper";
 import {
   HotelReservationFactoryContract,
@@ -17,7 +18,11 @@ const {
   maxRefundPeriods,
   yearsForTimeValidation,
   timestampInSecondsLength,
-  bytesParamsLength
+  bytesParamsLength,
+  timestampInDaysLength,
+  yearInDays,
+  leapYearDay,
+  secondsInMilliSeconds
 } = require('../config/constants.json');
 
 export class ReservationValidators {
@@ -88,7 +93,7 @@ export class ReservationValidators {
 
   }
 
-  static async validateSimpleReservationParams(jsonObj,
+  static async validateSimpleHotelReservationParams(jsonObj,
     password,
     hotelReservationId,
     reservationCostLOC,
@@ -105,11 +110,11 @@ export class ReservationValidators {
       throw new Error(ERROR.INVALID_PARAMS);
     }
 
-    if ((Date.now() / 1000 | 0) > withdrawDate) {
+    if ((Date.now() / secondsInMilliSeconds | 0) > withdrawDate) {
       throw new Error(ERROR.INVALID_WITHDRAW_DATE);
     }
 
-    if (withdrawDate > bytesParamsLength) {
+    if (hotelReservationId > bytesParamsLength) {
       throw new Error(ERROR.INVALID_ID_PARAM)
     }
 
@@ -118,6 +123,25 @@ export class ReservationValidators {
 
     return true;
   }
+
+  static async validateSimpleReservationParams(jsonObj, password, reservationCostLOC, withdrawDateInDays) {
+    if (!jsonObj ||
+      !password ||
+      !reservationCostLOC ||
+      reservationCostLOC * 1 <= 0 ||
+      !withdrawDateInDays
+    ) {
+      throw new Error(ERROR.INVALID_PARAMS);
+    }
+    let currentTimestamp = (Date.now() / secondsInMilliSeconds | 0)
+
+    if (formatTimestampToDays(currentTimestamp) >= withdrawDateInDays) {
+      throw new Error(ERROR.INVALID_WITHDRAW_DATE);
+    }
+
+    this.validateWithdrawDateInDays(withdrawDateInDays);
+  }
+
 
   static async validateBookingExists(hotelReservationId) {
     await this.isHotelReservationIdEmpty(hotelReservationId);
@@ -150,10 +174,10 @@ export class ReservationValidators {
   }
 
   static validateReservationDates(reservationStartDate, reservationEndDate, daysBeforeStartForRefund) {
-    const nowUnixFormatted = formatTimestamp(new Date().getTime() / 1000 | 0);
-    let day = 60 * 60 * 24;
-    let yearsPeriod = ((day * 356) + 2) * yearsForTimeValidation;
-    if (reservationStartDate < nowUnixFormatted || reservationStartDate > (nowUnixFormatted + yearsPeriod) || reservationStartDate.toString().length != timestampInSecondsLength) {
+    const nowUnixFormatted = formatTimestamp(new Date().getTime() / secondsInMilliSeconds | 0);
+    let dayInSeconds = 60 * 60 * 24;
+    let yearsPeriodInSeconds = ((dayInSeconds * yearInDays) + (leapYearDay * 2)) * yearsForTimeValidation;
+    if (reservationStartDate < nowUnixFormatted || reservationStartDate > (nowUnixFormatted + yearsPeriodInSeconds) || reservationStartDate.toString().length != timestampInSecondsLength) {
       throw new Error(ERROR.INVALID_PERIOD_START);
     }
 
@@ -161,13 +185,13 @@ export class ReservationValidators {
       throw new Error(ERROR.INVALID_PERIOD);
     }
 
-    if (reservationEndDate > (nowUnixFormatted + yearsPeriod) || reservationEndDate.toString().length != timestampInSecondsLength) {
+    if (reservationEndDate > (nowUnixFormatted + yearsPeriodInSeconds) || reservationEndDate.toString().length != timestampInSecondsLength) {
       throw new Error(ERROR.INVALID_PERIOD_END);
     }
 
 
     for (let i = 0; i < daysBeforeStartForRefund.length; i++)
-      if ((nowUnixFormatted + (daysBeforeStartForRefund[i] * day)) > reservationStartDate) {
+      if ((nowUnixFormatted + (daysBeforeStartForRefund[i] * dayInSeconds)) > reservationStartDate) {
         throw new Error(ERROR.INVALID_REFUND_DAYS);
       }
 
@@ -175,11 +199,20 @@ export class ReservationValidators {
   }
 
   static validateWithdrawDate(withdrawDate) {
-    const nowUnixFormatted = formatTimestamp(new Date().getTime() / 1000 | 0);
-    let day = 60 * 60 * 24;
-    let yearsPeriod = ((day * 356) + 2) * yearsForTimeValidation;
+    const nowUnixFormatted = formatTimestamp(new Date().getTime() / secondsInMilliSeconds | 0);
+    let dayInSeconds = 60 * 60 * 24;
+    let yearsPeriodInSeconds = ((dayInSeconds * yearInDays) + (leapYearDay * 2)) * yearsForTimeValidation;
 
-    if (withdrawDate > (nowUnixFormatted + yearsPeriod) || withdrawDate.toString().length != timestampInSecondsLength) {
+    if (withdrawDate > (nowUnixFormatted + yearsPeriodInSeconds) || withdrawDate.toString().length != timestampInSecondsLength) {
+      throw new Error(ERROR.INVALID_WITHDRAW_DATE);
+    }
+  }
+
+  static validateWithdrawDateInDays(withdrawDate) {
+    const nowDaysFormatted = formatTimestampToDays(new Date().getTime() / secondsInMilliSeconds | 0);
+    let dayInSeconds = 60 * 60 * 24;
+    let yearsPeriodInSeconds = ((dayInSeconds * yearInDays) + (leapYearDay * 2)) * yearsForTimeValidation;
+    if (withdrawDate > (nowDaysFormatted + yearsPeriodInSeconds) || withdrawDate.toString().length != timestampInDaysLength) {
       throw new Error(ERROR.INVALID_WITHDRAW_DATE);
     }
   }
@@ -204,7 +237,7 @@ export class ReservationValidators {
     senderAddress = senderAddress.toLowerCase();
 
     for (let i = 0; i < daysBeforeStartForRefund.length; i++) {
-      let daysBeforeStartForRefundAddedToNow = addDaysToNow(+daysBeforeStartForRefund[i]).getTime() / 1000 | 0;
+      let daysBeforeStartForRefundAddedToNow = addDaysToNow(+daysBeforeStartForRefund[i]).getTime() / secondsInMilliSeconds | 0;
       if (refundPercentages[i] <= 0 ||
         daysBeforeStartForRefundAddedToNow > reservationStartDate ||
         customerAddress !== senderAddress) {
@@ -218,7 +251,7 @@ export class ReservationValidators {
 
     customerAddress = customerAddress.toLowerCase();
     senderAddress = senderAddress.toLowerCase();
-    const currentTimestamp = Date.now() / 1000 | 0;
+    const currentTimestamp = Date.now() / secondsInMilliSeconds | 0;
     if (customerAddress !== senderAddress || currentTimestamp < reservationStartDate || currentTimestamp > reservationEndDate) {
       throw new Error(ERROR.INVALID_DISPUTE);
     }
