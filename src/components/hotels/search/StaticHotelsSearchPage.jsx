@@ -109,7 +109,7 @@ class StaticHotelsSearchPage extends React.Component {
 
     const url = 'ws://localhost:61614';
     this.client = Stomp.client(url);
-    this.client.debug = () => {};
+    // this.client.debug = () => {};
     this.connectSocket();
   }
 
