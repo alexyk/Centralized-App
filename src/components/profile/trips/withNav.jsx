@@ -7,6 +7,7 @@ const withNav = function (WrappedComponent) {
     return (
       <div>
         <TripsNav />
+        <hr />
         <WrappedComponent />
       </div>
     );
