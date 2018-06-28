@@ -222,8 +222,8 @@ class HotelBookingConfirmPage extends React.Component {
       const wei = (this.tokensToWei(this.state.data.locPrice.toString()));
       // console.log(wei);
       const booking = this.state.data.booking.hotelBooking;
-      const startDate = moment(booking[0].arrivalDate, 'YYYY-MM-DD');
-      const endDate = moment(booking[0].arrivalDate, 'YYYY-MM-DD').add(booking[0].nights, 'days');
+      const startDate = moment.utc(booking[0].arrivalDate, 'YYYY-MM-DD');
+      const endDate = moment.utc(booking[0].arrivalDate, 'YYYY-MM-DD').add(booking[0].nights, 'days');
       // const daysBeforeStartOfRefund = ['0'];
       // const refundPercentages = ['100'];
       const hotelId = this.props.match.params.id;
