@@ -20,7 +20,11 @@ export default function ResultsHolder(props) {
   return (
     <div className="results-holder">
       {props.hotels.map((hotel, index) => {
-        return (<Result key={index} hotel={hotel} locRate={props.locRate} rates={props.rates} nights={props.nights} />);
+        let price = hotel.price;
+        if (props.priceMap && props.priceMap[hotel.externalId]) {
+          hotel.price = props.priceMap[hotel.externalId];
+        }
+        return (<Result key={index} hotel={hotel} locRate={props.locRate} rates={props.rates} nights={props.nights} priceMap={props.priceMap} />);
       })}
     </div>
   );

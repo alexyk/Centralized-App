@@ -34,7 +34,7 @@ function Result(props) {
   const { locRate, rates } = props;
   const { currencySign } = props.paymentInfo;
   const isPriceLoaded = !!price;
-  const locPrice = ((price / locRate) / props.nights).toFixed(2);
+  let locPrice = ((price / locRate) / props.nights).toFixed(2);
   const priceInSelectedCurrency = rates && ((price * (rates[ROOMS_XML_CURRENCY][props.paymentInfo.currency])) / props.nights).toFixed(2);
 
   description = description.substr(0, 250);

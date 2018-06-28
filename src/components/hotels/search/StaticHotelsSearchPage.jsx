@@ -15,13 +15,14 @@ import ChildrenModal from '../modals/ChildrenModal';
 import SockJsClient from 'react-stomp';
 import uuid from 'uuid';
 import queryString from 'query-string';
+import Stomp from 'stompjs';
 
 
 import { Config } from '../../../config.js';
 
-import { 
-  getRegionNameById, 
-  getCurrencyRates, 
+import {
+  getRegionNameById,
+  getCurrencyRates,
   getLocRateInUserSelectedCurrency,
   getStaticHotels,
 } from '../../../requester';
@@ -33,6 +34,8 @@ class StaticHotelsSearchPage extends React.Component {
     let startDate = moment().add(1, 'day');
     let endDate = moment().add(2, 'day');
     let queryParams = queryString.parse(this.props.location.search);
+
+    this.client = null;
 
     this.state = {
       allElements: false,
@@ -53,6 +56,7 @@ class StaticHotelsSearchPage extends React.Component {
       loading: true,
       currentPage: !queryParams.page ? 0 : Number(queryParams.page),
       showMap: false,
+      priceMap: {}
     };
 
     this.updateParamsMap = this.updateParamsMap.bind(this);
@@ -83,6 +87,10 @@ class StaticHotelsSearchPage extends React.Component {
     this.toggleMap = this.toggleMap.bind(this);
     this.handleOpenSelect = this.handleOpenSelect.bind(this);
     this.handleCloseSelect = this.handleCloseSelect.bind(this);
+
+    // SOCKET BINDINGS
+    this.handleReceiveHotelPrice = this.handleReceiveHotelPrice.bind(this);
+    this.connectSocket = this.connectSocket.bind(this);
   }
 
   componentDidMount() {
@@ -98,6 +106,62 @@ class StaticHotelsSearchPage extends React.Component {
     if (!localStorage.getItem('uuid')) {
       localStorage.setItem('uuid', `${uuid()}`);
     }
+
+    const url = 'ws://localhost:61614';
+    this.client = Stomp.client(url);
+    this.client.debug = () => {};
+    this.connectSocket();
+  }
+
+  handleReceiveHotelPrice(message) {
+    if (JSON.parse(message.body).allElements) {
+      console.log("ALL ELEMENTS");
+      this.client.disconnect();
+    }
+
+    const hotelPrice = JSON.parse(message.body);
+    const prevPriceMap = this.state.priceMap;
+    const priceMap = { ...prevPriceMap, [hotelPrice.externalId]: hotelPrice.bestPrice };
+    this.setState({ priceMap });
+    
+    // console.log(hotelPrice);
+    // const { listings } = this.state;
+    // const newListings = listings.map(l => {
+    //   if (l.externalId === hotelPrice.externalId) {
+    //     console.log('CHANGED PRICE');
+    //     return { ...l, price: hotelPrice.bestPrice };
+    //   }
+
+    //   return l;
+    // });
+
+    // this.setState({ listings: newListings });
+  }
+
+  connectSocket() {
+    const uuid = localStorage.getItem('uuid');
+    const destination = 'search/' + uuid;
+    const client = this.client;
+    const search = this.props.location.search;
+    const handleReceiveHotelPrice = this.handleReceiveHotelPrice;
+    client.connect(null, null, function (frame) {
+      console.log(">>> CONNECTED TO STOMP <<<");
+      client.subscribe(destination, handleReceiveHotelPrice);
+
+      const msgObject = {
+        uuid: uuid,
+        query: search
+      };
+
+      const msg = JSON.stringify(msgObject);
+
+      const sendDestination = 'search';
+      const headers = {
+        'content-length': false
+      };
+
+      client.send(sendDestination, headers, msg);
+    });
   }
 
   componentWillMount() {
@@ -539,7 +603,7 @@ class StaticHotelsSearchPage extends React.Component {
 
     const searchParams = queryString.parse(this.props.location.search);
     const { region } = searchParams;
-    
+
     // searchParams.page = page - 1;
     // const newSearchTerm = queryString.stringify(searchParams);
 
@@ -621,11 +685,12 @@ class StaticHotelsSearchPage extends React.Component {
                       />
                     </div>
                     : <div>
-                      {this.state.loading 
+                      {this.state.loading
                         ? <div className="loader"></div>
                         : <ResultsHolder
                           hotels={listings}
-                          locRate={this.state.locRate} 
+                          priceMap={this.state.priceMap}
+                          locRate={this.state.locRate}
                           rates={this.state.rates}
                           nights={this.state.nights}
                           loading={this.state.loading}
