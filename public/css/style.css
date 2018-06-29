@@ -2136,6 +2136,22 @@ li.dropdown {
     text-decoration: underline;
 }
 
+.my-reservations .reservation-box a {
+    padding-bottom: 10px;
+    /* font-weight: bold; */
+    /* font-family: 'FuturaStd-Light', sans-serif; */
+    color: #E98B73;
+    background: none;
+    border: none;
+    outline: none;
+    padding: 1px 6px 10px;
+}
+
+.my-reservations .reservation-box a:hover {
+    cursor: pointer;
+    text-decoration: underline;
+}
+
 .reservation-image-box {
     text-align: center;
 }
