@@ -271,15 +271,6 @@ class HotelsHomePage extends React.Component {
   }
 }
 
-export default withRouter(connect(mapStateToProps)(HotelsHomePage));
-
-function mapStateToProps(state) {
-  const { paymentInfo } = state;
-  return {
-    paymentInfo
-  };
-}
-
 HotelsHomePage.propTypes = {
   // start Router props
   location: PropTypes.object,
@@ -291,3 +282,12 @@ HotelsHomePage.propTypes = {
   paymentInfo: PropTypes.object,
   modalsInfo: PropTypes.object,
 };
+
+function mapStateToProps(state) {
+  const { paymentInfo } = state;
+  return {
+    paymentInfo
+  };
+}
+
+export default withRouter(connect(mapStateToProps)(HotelsHomePage));

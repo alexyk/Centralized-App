@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import NoEntriesMessage from '../common/NoEntriesMessage';
 import moment from 'moment';
 
-export default function HomeTripsTable(props) {
+function HomeTripsTable(props) {
 
   const renderTrips = () => {
     if (!props.trips) {
@@ -95,3 +95,5 @@ HomeTripsTable.propTypes = {
   currentTripId: PropTypes.number,
   trips: PropTypes.array
 };
+
+export default HomeTripsTable;

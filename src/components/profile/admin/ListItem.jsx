@@ -6,7 +6,7 @@ import '../../../styles/css/components/profile/admin_panel/unpublished-item.css'
 
 let slider = null;
 
-export default function ListItem(props) {
+function ListItem(props) {
   const { id, name, lastModify, descriptionText, pictures, currencyCode, defaultDailyPrice, state } = props.item;
   const thumbnails = pictures.map((p, i) => { return { thumbnail: `${Config.getValue('imgHost')}${p.thumbnail}`, index: i }; });
   if (thumbnails.length < 1) {
@@ -95,3 +95,5 @@ ListItem.propTypes = {
   handleOpenDeleteListingModal: PropTypes.func,
   updateListingStatus: PropTypes.func
 };
+
+export default ListItem;

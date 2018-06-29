@@ -56,8 +56,6 @@ class ContactHostModal extends React.Component {
   }
 }
 
-export default withRouter(ContactHostModal);
-
 ContactHostModal.propTypes = {
   isActive: PropTypes.bool,
   closeModal: PropTypes.func,
@@ -65,3 +63,5 @@ ContactHostModal.propTypes = {
   match: PropTypes.object,
   id: PropTypes.string
 };
+
+export default withRouter(ContactHostModal);

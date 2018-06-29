@@ -3,7 +3,7 @@ import React from 'react';
 import { Modal } from 'react-bootstrap';
 import PropTypes from 'prop-types';
 
-export default function DeletionModal(props) {
+function DeletionModal(props) {
   return (
     <div>
       <Modal show={props.isActive} onHide={props.onHide} className="modal fade myModal">
@@ -37,3 +37,5 @@ DeletionModal.propTypes = {
   onOpen: PropTypes.func,
   filterListings: PropTypes.func,
 };
+
+export default DeletionModal;

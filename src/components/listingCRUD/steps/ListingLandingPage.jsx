@@ -82,8 +82,6 @@ function ListingLandingPage(props) {
   );
 }
 
-export default withRouter(ListingLandingPage);
-
 function showComingSoonNotification() {
   NotificationManager.warning('Coming Soon...');
 }
@@ -113,3 +111,5 @@ ListingLandingPage.propTypes = {
   // Router props
   location: PropTypes.object,
 };
+
+export default withRouter(ListingLandingPage);

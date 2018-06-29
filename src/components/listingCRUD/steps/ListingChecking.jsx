@@ -5,7 +5,7 @@ import GuestSettingsAside from '../aside/GuestSettingsAside';
 import ListingCrudNav from '../navigation/ListingCrudNav';
 import FooterNav from '../navigation/FooterNav';
 
-export default function CreateListingChecking(props) {
+function ListingChecking(props) {
   const { checkinStart, checkinEnd, checkoutStart, checkoutEnd } = props.values;
   return (
     <div>
@@ -30,7 +30,7 @@ export default function CreateListingChecking(props) {
                       value={checkinStart}
                       required="required"
                       id="checkinStart">
-                      {CreateListingChecking.hours.map((item, i) => {
+                      {ListingChecking.hours.map((item, i) => {
                         return <option key={i} value={item}>{item}</option>;
                       })}
                     </select>
@@ -46,7 +46,7 @@ export default function CreateListingChecking(props) {
                       value={checkinEnd}
                       required="required"
                       id="checkinEnd">
-                      {CreateListingChecking.hours.map((item, i) => {
+                      {ListingChecking.hours.map((item, i) => {
                         return <option key={i} value={item}>{item}</option>;
                       })}
                     </select>
@@ -67,7 +67,7 @@ export default function CreateListingChecking(props) {
                       value={checkoutStart}
                       required="required"
                       id="checkoutStart">
-                      {CreateListingChecking.hours.map((item, i) => {
+                      {ListingChecking.hours.map((item, i) => {
                         return <option key={i} value={item}>{item}</option>;
                       })}
                     </select>
@@ -83,7 +83,7 @@ export default function CreateListingChecking(props) {
                       value={checkoutEnd}
                       required="required"
                       id="checkoutEnd">
-                      {CreateListingChecking.hours.map((item, i) => {
+                      {ListingChecking.hours.map((item, i) => {
                         return <option key={i} value={item}>{item}</option>;
                       })}
                     </select>
@@ -99,7 +99,7 @@ export default function CreateListingChecking(props) {
   );
 }
 
-CreateListingChecking.hours = [
+ListingChecking.hours = [
   '00:00',
   '01:00',
   '02:00',
@@ -126,7 +126,7 @@ CreateListingChecking.hours = [
   '23:00',
 ];
 
-CreateListingChecking.propTypes = {
+ListingChecking.propTypes = {
   values: PropTypes.any.isRequired,
   updateDropdown: PropTypes.func.isRequired,
   updateProgress: PropTypes.func.isRequired,
@@ -134,3 +134,5 @@ CreateListingChecking.propTypes = {
   next: PropTypes.string,
   routes: PropTypes.object,
 };
+
+export default ListingChecking;

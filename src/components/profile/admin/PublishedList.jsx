@@ -282,7 +282,7 @@ class PublishedList extends React.Component {
 
   render() {
     if (this.state.loading) {
-      return <div className="loader" style={{ 'margin-bottom': '40px'}}></div>;
+      return <div className="loader" style={{ 'margin-bottom': '40px' }}></div>;
     }
 
     const { imagesListingId } = this.state;
@@ -398,14 +398,14 @@ class PublishedList extends React.Component {
           </div>
         </section>
       </div>
-        );
-      }
-    }
-    
+    );
+  }
+}
+
 PublishedList.propTypes = {
-          location: PropTypes.object,
-        history: PropTypes.object,
-      
-      };
-      
+  location: PropTypes.object,
+  history: PropTypes.object,
+
+};
+
 export default withRouter(PublishedList);

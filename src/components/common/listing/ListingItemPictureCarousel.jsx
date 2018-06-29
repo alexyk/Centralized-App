@@ -49,8 +49,6 @@ function ListingItemPictureCarousel(props) {
   );
 }
 
-export default withRouter(ListingItemPictureCarousel);
-
 ListingItemPictureCarousel.propTypes = {
   pictures: PropTypes.any,
   id: PropTypes.number,
@@ -59,3 +57,5 @@ ListingItemPictureCarousel.propTypes = {
   // router props
   location: PropTypes.object
 };
+
+export default withRouter(ListingItemPictureCarousel);

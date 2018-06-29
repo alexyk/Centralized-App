@@ -9,7 +9,7 @@ import { ROOMS_XML_CURRENCY } from '../../../constants/currencies.js';
 import { openModal } from '../../../actions/modalsInfo.js';
 import { Config } from '../../../config';
 
-function HomeDetailsInfoSection(props) {
+function HotelDetailsInfoSection(props) {
   const getAmenities = (amenities) => {
     const result = new Array(3);
     for (let i = 0; i < 3; i++) {
@@ -120,7 +120,7 @@ function HomeDetailsInfoSection(props) {
                 item.picture != null && (
                   <div key={i} className="icon-facilities" tooltip={item.text}>
                     <span className="icon-image" style={{ textAlign: 'center', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                      <img src={Config.getValue('imgHost') + item.picture} style={{ width: '60%', height: '60%' }} />
+                      <img src={Config.getValue('imgHost') + item.picture} style={{ width: '60%', height: '60%' }} alt="" />
                       {/* <b>{item.picture}</b> */}
                     </span>
                   </div>
@@ -233,7 +233,7 @@ function HomeDetailsInfoSection(props) {
   );
 }
 
-HomeDetailsInfoSection.propTypes = {
+HotelDetailsInfoSection.propTypes = {
   data: PropTypes.object,
   hotelRooms: PropTypes.array,
   locRate: PropTypes.number,
@@ -264,8 +264,6 @@ HomeDetailsInfoSection.propTypes = {
   dispatch: PropTypes.func,
 };
 
-export default withRouter(connect(mapStateToProps)(HomeDetailsInfoSection));
-
 function mapStateToProps(state) {
   const { userInfo, paymentInfo } = state;
   return {
@@ -273,3 +271,5 @@ function mapStateToProps(state) {
     paymentInfo
   };
 }
+
+export default withRouter(connect(mapStateToProps)(HotelDetailsInfoSection));

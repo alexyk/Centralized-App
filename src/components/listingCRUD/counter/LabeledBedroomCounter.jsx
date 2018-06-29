@@ -2,7 +2,7 @@ import BedroomCounter from './BedroomCounter';
 import React from 'react';
 import PropTypes from 'prop-types';
 
-export default class LabeledBedroomCounter extends React.Component {
+class LabeledBedroomCounter extends React.Component {
   render() {
     const { label, name, bedroom, value, onChange, ...props } = this.props;
 
@@ -29,3 +29,5 @@ LabeledBedroomCounter.propTypes = {
   value: PropTypes.any,
   onChange: PropTypes.func,
 };
+
+export default LabeledBedroomCounter;

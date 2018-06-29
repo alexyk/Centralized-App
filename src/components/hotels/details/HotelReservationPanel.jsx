@@ -9,7 +9,7 @@ import { parse } from 'query-string';
 import { requestBooking } from '../../../requester';
 import { withRouter } from 'react-router-dom';
 
-class HomeReservationPanel extends React.Component {
+class HotelReservationPanel extends React.Component {
   constructor(props) {
     super(props);
     let guests = '';
@@ -167,7 +167,7 @@ class HomeReservationPanel extends React.Component {
   }
 }
 
-HomeReservationPanel.propTypes = {
+HotelReservationPanel.propTypes = {
   startDate: PropTypes.any,
   endDate: PropTypes.any,
   isLogged: PropTypes.bool,
@@ -188,8 +188,6 @@ HomeReservationPanel.propTypes = {
   paymentInfo: PropTypes.object
 };
 
-export default withRouter(connect(mapStateToProps)(HomeReservationPanel));
-
 function mapStateToProps(state) {
   const { userInfo, paymentInfo } = state;
   return {
@@ -197,3 +195,5 @@ function mapStateToProps(state) {
     paymentInfo
   };
 }
+
+export default withRouter(connect(mapStateToProps)(HotelReservationPanel));

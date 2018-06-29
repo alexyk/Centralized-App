@@ -4,7 +4,7 @@ import '../../styles/css/components/tabs-component.css';
 import HomesSearchBar from './search/HomesSearchBar';
 import ListingTypeNav from '../common/listingTypeNav/ListingTypeNav';
 
-export default function HomesHeroComponent(props) {
+function HomesHeroComponent(props) {
   return (
     <div className="hero">
       <div className="container">
@@ -28,3 +28,5 @@ export default function HomesHeroComponent(props) {
     </div>
   );
 }
+
+export default HomesHeroComponent;

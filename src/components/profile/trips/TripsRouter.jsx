@@ -6,7 +6,7 @@ import HomeTripsPage from './HomeTripsPage';
 import HotelTripDetails from './HotelTripDetails';
 import withNav from './withNav';
 
-export default function TripsRouter() {
+function TripsRouter() {
   return (
     <div className="my-reservations">
       <section id="profile-my-reservations">
@@ -22,3 +22,5 @@ export default function TripsRouter() {
     </div>
   );
 }
+
+export default TripsRouter;

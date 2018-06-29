@@ -8,7 +8,7 @@ import { CREATE_WALLET, SAVE_WALLET } from '../../../constants/modals.js';
 import { WALLET_INVALID_PASSWORD_LENGTH } from '../../../constants/warningMessages.js';
 import { SCREEN_FREEZE } from '../../../constants/infoMessages.js';
 
-export default function CreateWalletModal(props) {
+function CreateWalletModal(props) {
 
   const submitPassword = () => {
     if (props.walletPassword.length < 9) {
@@ -66,3 +66,5 @@ CreateWalletModal.propTypes = {
   onChange: PropTypes.func,
   isActive: PropTypes.bool
 };
+
+export default CreateWalletModal;

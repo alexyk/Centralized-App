@@ -4,12 +4,10 @@ import { Config } from '../../../config';
 import PropTypes from 'prop-types';
 import HotelDetailsInfoSection from './HotelDetailsInfoSection';
 import React from 'react';
-import HotelsSearchBar from '../search/HotelsSearchBar';
 import { connect } from 'react-redux';
 import { setCurrency } from '../../../actions/paymentInfo';
 import moment from 'moment';
 import { parse } from 'query-string';
-import ChildrenModal from '../modals/ChildrenModal';
 import { ROOMS_XML_CURRENCY } from '../../../constants/currencies.js';
 import Lightbox from 'react-images';
 
@@ -702,8 +700,6 @@ MobileHotelDetailsPage.propTypes = {
   paymentInfo: PropTypes.object
 };
 
-export default withRouter(connect(mapStateToProps)(MobileHotelDetailsPage));
-
 function mapStateToProps(state) {
   const { userInfo, paymentInfo, modalsInfo } = state;
   return {
@@ -712,3 +708,5 @@ function mapStateToProps(state) {
     modalsInfo
   };
 }
+
+export default withRouter(connect(mapStateToProps)(MobileHotelDetailsPage));
