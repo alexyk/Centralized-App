@@ -718,10 +718,10 @@ class EditListingPage extends React.Component {
   }
 }
 
-export default withRouter(EditListingPage);
-
 EditListingPage.propTypes = {
   history: PropTypes.object,
   location: PropTypes.object,
   match: PropTypes.object
 };
+
+export default withRouter(EditListingPage);

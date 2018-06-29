@@ -2,7 +2,7 @@ import React from 'react';
 import { NavLink } from 'react-router-dom';
 import PropTypes from 'prop-types';
 
-export default function GuestSettingsAside(props) {
+function GuestSettingsAside(props) {
   return (
     <div>
       <div className="host-step"><NavLink exact activeClassName="active" to={props.routes.houserules}>House Rules</NavLink></div>
@@ -15,3 +15,5 @@ export default function GuestSettingsAside(props) {
 GuestSettingsAside.propTypes = {
   routes: PropTypes.any,
 };
+
+export default GuestSettingsAside;

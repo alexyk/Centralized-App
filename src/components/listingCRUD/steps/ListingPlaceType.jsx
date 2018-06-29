@@ -7,7 +7,7 @@ import FooterNav from '../navigation/FooterNav';
 
 import { Config } from '../../../config';
 
-export default function CreateListingPlaceType(props) {
+function ListingPlaceType(props) {
   const { listingType, propertyType, propertyTypes, roomType, dedicatedSpace, propertySize } = props.values;
   return (
     <div>
@@ -141,7 +141,7 @@ export default function CreateListingPlaceType(props) {
   );
 }
 
-CreateListingPlaceType.propTypes = {
+ListingPlaceType.propTypes = {
   values: PropTypes.any,
   onChange: PropTypes.func,
   updateProgress: PropTypes.func,
@@ -149,3 +149,5 @@ CreateListingPlaceType.propTypes = {
   next: PropTypes.string,
   routes: PropTypes.object,
 };
+
+export default ListingPlaceType;

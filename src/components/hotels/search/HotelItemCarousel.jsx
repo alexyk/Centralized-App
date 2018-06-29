@@ -39,8 +39,6 @@ function HotelItemCarousel(props) {
   );
 }
 
-export default withRouter(HotelItemCarousel);
-
 HotelItemCarousel.propTypes = {
   pictures: PropTypes.string,
   id: PropTypes.number,
@@ -49,3 +47,5 @@ HotelItemCarousel.propTypes = {
   // Router props
   location: PropTypes.object,
 };
+
+export default withRouter(HotelItemCarousel);

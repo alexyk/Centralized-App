@@ -8,8 +8,6 @@ import HotelDetailsPage from './details/HotelDetailsPage';
 import HotelBookingPage from './book/HotelBookingPage';
 import HotelBookingConfirmPage from './book/HotelBookingConfirmPage';
 
-import MobileHotelsSearchPage from './search/MobileHotelsSearchPage';
-
 class HotelsRouterPage extends React.Component {
   constructor(props) {
     super(props);

@@ -2,7 +2,7 @@ import React from 'react';
 import { NavLink } from 'react-router-dom';
 import PropTypes from 'prop-types';
 
-export default function CreateListingAside(props) {
+function BasicAside(props) {
   return (
     <div>
       <div className="host-step"><NavLink exact activeClassName="active" to={props.routes.placetype}>Place Type</NavLink></div>
@@ -14,6 +14,8 @@ export default function CreateListingAside(props) {
   );
 }
 
-CreateListingAside.propTypes = {
+BasicAside.propTypes = {
   routes: PropTypes.any,
 };
+
+export default BasicAside;

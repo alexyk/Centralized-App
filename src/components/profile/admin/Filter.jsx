@@ -4,60 +4,58 @@ import Select from 'react-select';
 
 import '../../../styles/css/components/profile/admin_panel/filter.css';
 
-export default class Filter extends React.Component {
-  render() {
-    if (this.props.loading) {
-      return <div className="loader"></div>;
-    }
-
-    const renderCountries = this.props.countries.map((item) => {
-      return { value: item.id, label: item.name };
-    });
-
-    const renderCities = this.props.cities.map((item) => {
-      return { value: item.id, label: item.name };
-    });
-
-    return (
-      <div className="filter">
-        <form onSubmit={this.props.onSearch}>
-          <input
-            type="text"
-            name="name"
-            placeholder="Listing Title"
-            value={this.props.name}
-            onChange={this.props.onChange} />
-          <input
-            type="text"
-            name="hostEmail"
-            placeholder="Host Email"
-            value={this.props.hostEmail}
-            onChange={this.props.onChange} />
-          <Select
-            name="country"
-            placeholder="Country"
-            onSelectResetsInput={true}
-            clearable={true}
-            className="filter_select"
-            style={{ border: 'none', boxShadow: 'none' }}
-            value={this.props.country}
-            onChange={this.props.handleSelectCountry}
-            options={renderCountries}
-          />
-          <Select
-            name="city"
-            placeholder="City"
-            className="filter_select"
-            style={{ border: 'none', boxShadow: 'none' }}
-            value={this.props.city}
-            onChange={this.props.handleSelectCity}
-            options={renderCities}
-          />
-          <button type="submit" className="btn btn-primary">Search</button>
-        </form>
-      </div>
-    );
+function Filter(props) {
+  if (props.loading) {
+    return <div className="loader"></div>;
   }
+
+  const renderCountries = props.countries.map((item) => {
+    return { value: item.id, label: item.name };
+  });
+
+  const renderCities = props.cities.map((item) => {
+    return { value: item.id, label: item.name };
+  });
+
+  return (
+    <div className="filter">
+      <form onSubmit={props.onSearch}>
+        <input
+          type="text"
+          name="name"
+          placeholder="Listing Title"
+          value={props.name}
+          onChange={props.onChange} />
+        <input
+          type="text"
+          name="hostEmail"
+          placeholder="Host Email"
+          value={props.hostEmail}
+          onChange={props.onChange} />
+        <Select
+          name="country"
+          placeholder="Country"
+          onSelectResetsInput={true}
+          clearable={true}
+          className="filter_select"
+          style={{ border: 'none', boxShadow: 'none' }}
+          value={props.country}
+          onChange={props.handleSelectCountry}
+          options={renderCountries}
+        />
+        <Select
+          name="city"
+          placeholder="City"
+          className="filter_select"
+          style={{ border: 'none', boxShadow: 'none' }}
+          value={props.city}
+          onChange={props.handleSelectCity}
+          options={renderCities}
+        />
+        <button type="submit" className="btn btn-primary">Search</button>
+      </form>
+    </div>
+  );
 }
 
 Filter.propTypes = {
@@ -74,3 +72,5 @@ Filter.propTypes = {
   onSearch: PropTypes.func,
   onChange: PropTypes.func
 };
+
+export default Filter;

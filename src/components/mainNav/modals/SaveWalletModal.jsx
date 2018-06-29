@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { SAVE_WALLET, CONFIRM_WALLET } from '../../../constants/modals.js';
 
-export default function SaveWalletModal(props) {
+function SaveWalletModal(props) {
 
   const handleFocus = (e) => {
     e.target.select();
@@ -42,3 +42,5 @@ SaveWalletModal.propTypes = {
   closeModal: PropTypes.func,
   isActive: PropTypes.bool
 };
+
+export default SaveWalletModal;

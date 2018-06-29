@@ -2,7 +2,7 @@ import { Modal } from 'react-bootstrap';
 import PropTypes from 'prop-types';
 import React from 'react';
 
-export default function ChildrenModal(props) {
+function ChildrenModal(props) {
 
   const areChildrenAgesValid = () => {
     const rooms = props.rooms;
@@ -95,3 +95,5 @@ ChildrenModal.propTypes = {
   closeModal: PropTypes.func,
   isActive: PropTypes.bool
 };
+
+export default ChildrenModal;

@@ -5,7 +5,7 @@ import TripsNav from './TripsNav';
 import HotelTripsPage from './HotelTripsPage';
 import HomeTripsPage from './HomeTripsPage';
 
-export default function TripsRouter() {
+function TripsRouter() {
   return (
     <div className="my-reservations">
       <section id="profile-my-reservations">
@@ -22,3 +22,5 @@ export default function TripsRouter() {
     </div>
   );
 }
+
+export default TripsRouter;

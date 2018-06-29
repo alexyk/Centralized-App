@@ -5,7 +5,7 @@ import NoEntriesMessage from '../common/NoEntriesMessage';
 import MessagesItem from './MessagesItem';
 import React from 'react';
 
-export default class MessagesPage extends React.Component {
+class MessagesPage extends React.Component {
   constructor(props) {
     super(props);
 
@@ -22,7 +22,7 @@ export default class MessagesPage extends React.Component {
 
   componentDidMount() {
     getMyConversations('?page=0').then(data => {
-      console.log(data)
+      console.log(data);
       this.setState({ messages: data.content, loading: false, totalElements: data.totalElements });
     });
   }
@@ -107,3 +107,5 @@ export default class MessagesPage extends React.Component {
     );
   }
 }
+
+export default MessagesPage;

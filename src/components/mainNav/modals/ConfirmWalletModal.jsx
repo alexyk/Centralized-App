@@ -9,7 +9,7 @@ import { MNEMONIC_LAST_CALL, WRONG_MNEMONIC_WORDS } from '../../../constants/war
 
 // let captcha = undefined;
 
-export default function CreateWalletModal(props) {
+function ConfirmWalletModal(props) {
 
   const onWordsForget = () => {
     NotificationManager.warning(MNEMONIC_LAST_CALL);
@@ -62,7 +62,7 @@ export default function CreateWalletModal(props) {
   );
 }
 
-CreateWalletModal.propTypes = {
+ConfirmWalletModal.propTypes = {
   openModal: PropTypes.func,
   closeModal: PropTypes.func,
   handleConfirmWallet: PropTypes.func,
@@ -70,3 +70,5 @@ CreateWalletModal.propTypes = {
   mnemonicWords: PropTypes.string,
   isActive: PropTypes.bool
 };
+
+export default ConfirmWalletModal;

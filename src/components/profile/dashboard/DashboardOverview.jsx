@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default function DashboardOverview() {
+function DashboardOverview() {
   return (
     <section id="profile-dashboard-overview">
       <div className="container">
@@ -33,3 +33,5 @@ export default function DashboardOverview() {
     </section>
   );
 }
+
+export default DashboardOverview;

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import Stomp from 'stompjs';
 
-export default class StyleTest extends Component {
+class StompTest extends Component {
   constructor(props) {
     super(props);
 
@@ -58,3 +58,5 @@ export default class StyleTest extends Component {
     );
   }
 }
+
+export default StompTest;

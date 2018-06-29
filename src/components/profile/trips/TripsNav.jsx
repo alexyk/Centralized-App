@@ -4,7 +4,7 @@ import { NavLink } from 'react-router-dom';
 
 import '../../../styles/css/components/profile/admin_panel/navigation-tab.css';
 
-export default function TripsNav() {
+function TripsNav() {
   return (
     <div>
       <ul className="navigation-tab">
@@ -14,3 +14,5 @@ export default function TripsNav() {
     </div>
   );
 }
+
+export default TripsNav;

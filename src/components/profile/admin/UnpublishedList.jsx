@@ -192,6 +192,8 @@ class UnpublishedList extends React.Component {
             break;
           case 'denied': NotificationManager.success('Listing denied');
             break;
+          default:
+            break;
         }
 
         const allListings = this.state.listings;
@@ -226,7 +228,7 @@ class UnpublishedList extends React.Component {
     if (event) {
       event.preventDefault();
     }
-    
+
     this.setState({ isShownContactHostModal: true, selectedListing: id });
   }
 
@@ -342,7 +344,7 @@ class UnpublishedList extends React.Component {
 
   render() {
     if (this.state.loading) {
-      return <div className="loader" style={{ 'marginBottom': '40px'}}></div>;
+      return <div className="loader" style={{ 'marginBottom': '40px' }}></div>;
     }
 
     const { imagesListingId } = this.state;
