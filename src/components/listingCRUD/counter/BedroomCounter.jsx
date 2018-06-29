@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-export default function BedroomCounter(props) {
+function BedroomCounter(props) {
   const increment = (e) => {
     e.target.name = props.name;
     e.target.value = props.value + 1;
@@ -34,3 +34,5 @@ BedroomCounter.propTypes = {
   onChange: PropTypes.func.isRequired,
   value: PropTypes.number
 };
+
+export default BedroomCounter;

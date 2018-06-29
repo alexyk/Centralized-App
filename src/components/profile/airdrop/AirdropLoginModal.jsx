@@ -7,12 +7,12 @@ import { AIRDROP_LOGIN, REGISTER, SEND_RECOVERY_EMAIL } from '../../../constants
 
 let captcha = undefined;
 
-export default function AirdropLoginModal(props) {
+function AirdropLoginModal(props) {
   let isCloseMessage = false;
 
   return (
     <div>
-      <Modal show={props.isActive} onHide={() => {isCloseMessage = true}} className="modal fade myModal">
+      <Modal show={props.isActive} onHide={() => {isCloseMessage = true;}} className="modal fade myModal">
         <Modal.Header>
           <h1>Login airdrop</h1>
           <button type="button" className="close" onClick={() => props.closeModal(AIRDROP_LOGIN)}>&times;</button>
@@ -63,3 +63,5 @@ AirdropLoginModal.propTypes = {
   closeModal: PropTypes.func,
   isActive: PropTypes.bool
 };
+
+export default AirdropLoginModal;

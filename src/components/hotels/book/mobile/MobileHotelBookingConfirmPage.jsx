@@ -543,8 +543,6 @@ MobileHotelBookingConfirmPage.propTypes = {
   modalsInfo: PropTypes.object
 };
 
-export default withRouter(connect(mapStateToProps)(MobileHotelBookingConfirmPage));
-
 function mapStateToProps(state) {
   const { userInfo, paymentInfo, modalsInfo } = state;
   return {
@@ -553,3 +551,5 @@ function mapStateToProps(state) {
     modalsInfo,
   };
 }
+
+export default withRouter(connect(mapStateToProps)(MobileHotelBookingConfirmPage));

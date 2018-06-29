@@ -3,7 +3,7 @@ import { NavLink } from 'react-router-dom';
 import { PropTypes } from 'prop-types';
 import '../../../styles/css/components/listing_crud/footer-navigation.css';
 
-export default function FooterNav(props) {
+function FooterNav(props) {
   return (
     <div className="footer-navigation">
       <div className="container">
@@ -29,3 +29,5 @@ FooterNav.propTypes = {
   step: PropTypes.number,
   handleClickNext: PropTypes.func
 };
+
+export default FooterNav;

@@ -10,7 +10,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import FooterNav from '../navigation/FooterNav';
 
-function CreateListingLocation(props) {
+function ListingLocation(props) {
 
   const handleOnPlaceSelected = (place) => {
     if (place.address_components !== undefined) {
@@ -188,7 +188,7 @@ function showErrors(values) {
   }
 }
 
-CreateListingLocation.propTypes = {
+ListingLocation.propTypes = {
   values: PropTypes.any,
   onChange: PropTypes.func,
   onSelect: PropTypes.func,
@@ -203,4 +203,4 @@ CreateListingLocation.propTypes = {
   location: PropTypes.object,
 };
 
-export default withRouter(CreateListingLocation);
+export default withRouter(ListingLocation);

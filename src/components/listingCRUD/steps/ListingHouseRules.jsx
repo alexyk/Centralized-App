@@ -5,7 +5,7 @@ import GuestSettingsAside from '../aside/GuestSettingsAside';
 import ListingCrudNav from '../navigation/ListingCrudNav';
 import FooterNav from '../navigation/FooterNav';
 
-export default function CreateListingHouseRules(props) {
+function ListingHouseRules(props) {
   const { suitableForChildren, suitableForInfants, suitableForPets, smokingAllowed, eventsAllowed, otherHouseRules, otherRuleText } = props.values;
   return (
     <div>
@@ -185,7 +185,7 @@ export default function CreateListingHouseRules(props) {
   );
 }
 
-CreateListingHouseRules.propTypes = {
+ListingHouseRules.propTypes = {
   values: PropTypes.any.isRequired,
   onChange: PropTypes.func.isRequired,
   addRule: PropTypes.func.isRequired,
@@ -194,3 +194,5 @@ CreateListingHouseRules.propTypes = {
   next: PropTypes.string,
   routes: PropTypes.object,
 };
+
+export default ListingHouseRules;

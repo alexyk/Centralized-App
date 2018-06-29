@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default function DashboardReviews() {
+function DashboardReviews() {
   return (
     <section id="profile-dashboard-reviews">
       <div className="container">
@@ -22,3 +22,5 @@ export default function DashboardReviews() {
     </section>
   );
 }
+
+export default DashboardReviews;

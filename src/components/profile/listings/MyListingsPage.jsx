@@ -1,7 +1,6 @@
 import { deleeteInProgressListing, getMyListings, getMyListingsInProgress } from '../../../requester';
 
 import { NotificationManager } from 'react-notifications';
-import Pagination from '../../common/pagination/Pagination';
 import { Link } from 'react-router-dom';
 import MyListingsActiveItem from './MyListingsActiveItem';
 import MyListingsInProgressItem from './MyListingsInProgressItem';
@@ -13,7 +12,7 @@ import { Config } from '../../../config';
 import ReCAPTCHA from 'react-google-recaptcha';
 
 
-export default class MyListingsPage extends React.Component {
+class MyListingsPage extends React.Component {
   constructor(props) {
     super(props);
 
@@ -39,7 +38,7 @@ export default class MyListingsPage extends React.Component {
 
   componentDidMount() {
     getMyListings('?page=0').then((data) => {
-      console.log(data)
+      console.log(data);
       const active = data.content.filter(l => l.state === 'active');
       const denied = data.content.filter(l => l.state === 'denied');
       const inactive = data.content.filter(l => l.state === 'inactive');
@@ -199,3 +198,5 @@ export default class MyListingsPage extends React.Component {
     );
   }
 }
+
+export default MyListingsPage;

@@ -6,19 +6,17 @@ import AdminNav from './AdminNav';
 import PublishedList from './PublishedList';
 import UnpublishedList from './UnpublishedList';
 
-class AdminPage extends React.Component {
-  render() {
-    return (
-      <div className="container">
-        <AdminNav />
-        <Switch>
-          <Redirect exact path="/profile/admin/listings" to="/profile/admin/listings/published" />
-          <Route exact path="/profile/admin/listings/published" render={() => <PublishedList />} />
-          <Route exact path="/profile/admin/listings/unpublished" render={() => <UnpublishedList />} />
-        </Switch>
-      </div>
-    );
-  }
+function AdminPage() {
+  return (
+    <div className="container">
+      <AdminNav />
+      <Switch>
+        <Redirect exact path="/profile/admin/listings" to="/profile/admin/listings/published" />
+        <Route exact path="/profile/admin/listings/published" render={() => <PublishedList />} />
+        <Route exact path="/profile/admin/listings/unpublished" render={() => <UnpublishedList />} />
+      </Switch>
+    </div>
+  );
 }
 
 AdminPage.propTypes = {

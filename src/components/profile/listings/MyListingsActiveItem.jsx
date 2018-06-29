@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { Config } from '../../../config';
 
-export default function MyListingsActiveItem(props) {
+function MyListingsActiveItem(props) {
   return (
     <div>
       <ul className='profile-mylistings-active'>
@@ -41,3 +41,5 @@ MyListingsActiveItem.propTypes = {
   state: PropTypes.string,
   filterListings: PropTypes.func
 };
+
+export default MyListingsActiveItem;

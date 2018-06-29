@@ -3,7 +3,7 @@ import Result from './Result';
 import PropTypes from 'prop-types';
 import '../../../styles/css/components/search-result-component.css';
 
-export default function ResultsHolder(props) {
+function ResultsHolder(props) {
 
   if (!props.hotels) {
     return;
@@ -32,3 +32,5 @@ ResultsHolder.propTypes = {
   rates: PropTypes.object,
   nights: PropTypes.number
 };
+
+export default ResultsHolder;

@@ -7,7 +7,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import FooterNav from '../navigation/FooterNav';
 
-export default function CreateListingAccommodation(props) {
+function ListingAccommodations(props) {
   const { guestsIncluded, bedroomsCount, bedrooms, bathrooms } = props.values;
   const bedroomRows = bedrooms.map((bedroom, i) => {
     return <div key={i}>
@@ -115,7 +115,7 @@ export default function CreateListingAccommodation(props) {
   );
 }
 
-CreateListingAccommodation.propTypes = {
+ListingAccommodations.propTypes = {
   values: PropTypes.any,
   onChange: PropTypes.func,
   updateBedCount: PropTypes.func,
@@ -126,3 +126,5 @@ CreateListingAccommodation.propTypes = {
   next: PropTypes.string,
   routes: PropTypes.object,
 };
+
+export default ListingAccommodations;

@@ -9,7 +9,7 @@ import { deleteListing } from '../../../requester';
 
 import '../../../styles/css/components/profile/my-listings__progress-item.css';
 
-export default class MyListingsInProgressItem extends React.Component {
+class MyListingsInProgressItem extends React.Component {
   constructor(props) {
     super(props);
 
@@ -194,3 +194,5 @@ MyListingsInProgressItem.propTypes = {
   filterListings: PropTypes.func,
   deleteInProgressListing: PropTypes.func
 };
+
+export default MyListingsInProgressItem;
