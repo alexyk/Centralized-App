@@ -43,7 +43,7 @@ class ContactHostModal extends React.Component {
                 ref={el => this.captcha = el}
                 size="invisible"
                 sitekey={Config.getValue('recaptchaKey')}
-                onChange={token => { this.props.sendMessageToHost(this.props.id, this.state.message, token); }}
+                onChange={token => { this.props.handleContactHost(this.props.id, this.state.message, token); }}
               />
 
               <button type="submit" className="btn btn-primary">Send message</button>
@@ -56,12 +56,12 @@ class ContactHostModal extends React.Component {
   }
 }
 
-export default withRouter(ContactHostModal);
-
 ContactHostModal.propTypes = {
   isActive: PropTypes.bool,
   closeModal: PropTypes.func,
-  sendMessageToHost: PropTypes.func,
+  handleContactHost: PropTypes.func,
   match: PropTypes.object,
   id: PropTypes.string
 };
+
+export default withRouter(ContactHostModal);

@@ -20,7 +20,7 @@ import { Config } from '../../config';
 import { Wallet } from '../../services/blockchain/wallet.js';
 import { setIsLogged, setUserInfo } from '../../actions/userInfo';
 import { openModal, closeModal } from '../../actions/modalsInfo';
-import { setAirdropInfo, setAirdropModalTrue } from '../../actions/airdropInfo';
+import { setAirdropInfo } from '../../actions/airdropInfo';
 
 import '../../styles/css/components/captcha/captcha-container.css';
 
@@ -590,17 +590,6 @@ class MainNav extends React.Component {
   }
 }
 
-export default withRouter(connect(mapStateToProps)(MainNav));
-
-function mapStateToProps(state) {
-  const { userInfo, modalsInfo, airdropInfo } = state;
-  return {
-    userInfo,
-    modalsInfo,
-    airdropInfo
-  };
-}
-
 MainNav.propTypes = {
   // start Router props
   location: PropTypes.object,
@@ -611,3 +600,14 @@ MainNav.propTypes = {
   userInfo: PropTypes.object,
   modalsInfo: PropTypes.object,
 };
+
+function mapStateToProps(state) {
+  const { userInfo, modalsInfo, airdropInfo } = state;
+  return {
+    userInfo,
+    modalsInfo,
+    airdropInfo
+  };
+}
+
+export default withRouter(connect(mapStateToProps)(MainNav));

@@ -79,6 +79,9 @@ a.dropdown-toggle {
 .form-group {
   margin-bottom: 0 !important;
 }
-.Select-clear {
+.source-panel .Select-clear {
   display: none !important;
 }
+/* .Select-clear {
+  display: none !important;
+} */

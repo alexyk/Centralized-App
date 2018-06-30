@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { CHANGE_PASSWORD } from '../../../constants/modals.js';
 
-export default function ChangePasswordModal(props) {
+function ChangePasswordModal(props) {
 
   return (
     <div>
@@ -43,3 +43,5 @@ ChangePasswordModal.propTypes = {
   handlePasswordChange: PropTypes.func,
   isActive: PropTypes.bool
 };
+
+export default ChangePasswordModal;

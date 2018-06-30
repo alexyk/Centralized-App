@@ -649,16 +649,6 @@ class HotelsSearchPage extends React.Component {
   }
 }
 
-export default withRouter(connect(mapStateToProps)(HotelsSearchPage));
-
-function mapStateToProps(state) {
-  const { paymentInfo, userInfo } = state;
-  return {
-    paymentInfo,
-    userInfo
-  };
-}
-
 HotelsSearchPage.propTypes = {
   countries: PropTypes.array,
 
@@ -670,3 +660,13 @@ HotelsSearchPage.propTypes = {
   paymentInfo: PropTypes.object,
   userInfo: PropTypes.object
 };
+
+function mapStateToProps(state) {
+  const { paymentInfo, userInfo } = state;
+  return {
+    paymentInfo,
+    userInfo
+  };
+}
+
+export default withRouter(connect(mapStateToProps)(HotelsSearchPage));

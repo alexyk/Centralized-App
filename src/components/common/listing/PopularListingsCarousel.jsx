@@ -3,7 +3,7 @@ import PopularListingItem from './PopularListingItem';
 import OwlCarousel from 'react-owl-carousel';
 import PropTypes from 'prop-types';
 
-export default class PopularListingsCarousel extends React.Component {
+class PopularListingsCarousel extends React.Component {
   shouldComponentUpdate() {
     return false;
   }
@@ -55,3 +55,5 @@ PopularListingsCarousel.propTypes = {
   listings: PropTypes.array,
   listingsType: PropTypes.string,
 };
+
+export default PopularListingsCarousel;

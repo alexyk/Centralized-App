@@ -10,7 +10,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import FooterNav from '../navigation/FooterNav';
 
-function CreateListingLocation(props) {
+function ListingLocation(props) {
 
   const handleOnPlaceSelected = (place) => {
     if (place.address_components !== undefined) {
@@ -19,26 +19,32 @@ function CreateListingLocation(props) {
     }
   };
 
+  const getWarningMessage = (message) => {
+    NotificationManager.warning(message);
+    props.onChange({ target: { name: 'street', value: '' } });
+    props.onChange({ target: { name: 'lng', value: '' } });
+    props.onChange({ target: { name: 'lat', value: '' } });
+    props.onChange({ target: { name: 'isAddressSelected', value: false } });
+  };
+
   const handleStreetSelected = (place) => {
-    if (place.address_components !== undefined) {
+    if (place.address_components) {
       const addressComponentsMap = props.convertGoogleApiAddressComponents(place);
-      // console.log(place)
-      let address = '';
-      if (addressComponentsMap.filter(x => x.type === 'route')[0]) {
+      if (addressComponentsMap.filter(x => x.type === 'route')[0] && place.geometry.location.lng() && place.geometry.location.lat()) {
         const addressNumber = addressComponentsMap.filter(x => x.type === 'street_number')[0] ? addressComponentsMap.filter(x => x.type === 'street_number')[0].name : '';
         const addressRoute = addressComponentsMap.filter(x => x.type === 'route')[0].name;
-        address = `${addressNumber}, ${addressRoute}`;
-        props.onChange({ target: { name: 'street', value: address } });
-        props.onChange({ target: { name: 'isAddressSelected', value: true } });
-        props.onChange({ target: { name: 'lng', value: place.geometry.location.lng() } });
-        props.onChange({ target: { name: 'lat', value: place.geometry.location.lat() } });
-        changeAddressComponents(addressComponentsMap);
+        if (!addressNumber) {
+          getWarningMessage('Please fill valid address - location and number');
+        } else {
+          const address = `${addressNumber}, ${addressRoute}`;
+          props.onChange({ target: { name: 'street', value: address } });
+          props.onChange({ target: { name: 'isAddressSelected', value: true } });
+          props.onChange({ target: { name: 'lng', value: place.geometry.location.lng() } });
+          props.onChange({ target: { name: 'lat', value: place.geometry.location.lat() } });
+          changeAddressComponents(addressComponentsMap);
+        }
       } else {
-        NotificationManager.warning('Invalid address');
-        props.onChange({ target: { name: 'street', value: '' } });
-        props.onChange({ target: { name: 'lng', value: '' } });
-        props.onChange({ target: { name: 'lat', value: '' } });
-        props.onChange({ target: { name: 'isAddressSelected', value: false } });
+        getWarningMessage('Invalid address');
       }
     }
   };
@@ -111,7 +117,7 @@ function CreateListingLocation(props) {
                         onChange={onAddressChange}
                         name="street"
                         onPlaceSelected={handleStreetSelected}
-                        types={['geocode']}
+                        types={['address']}
                       />
                       {/* <input className="form-control" id="street" name="street" value={street} onChange={props.onChange} /> */}
                     </div>
@@ -182,7 +188,7 @@ function showErrors(values) {
   }
 }
 
-CreateListingLocation.propTypes = {
+ListingLocation.propTypes = {
   values: PropTypes.any,
   onChange: PropTypes.func,
   onSelect: PropTypes.func,
@@ -197,4 +203,4 @@ CreateListingLocation.propTypes = {
   location: PropTypes.object,
 };
 
-export default withRouter(CreateListingLocation);
+export default withRouter(ListingLocation);

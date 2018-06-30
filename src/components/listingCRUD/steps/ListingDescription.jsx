@@ -8,7 +8,7 @@ import ListingCrudNav from '../navigation/ListingCrudNav';
 import Textarea from '../textbox/Textarea';
 import FooterNav from '../navigation/FooterNav';
 
-function listingDescription(props) {
+function ListingDescription(props) {
   const { text, interaction } = props.values;  
   const next = validateInput(props.values) ? props.next : props.location.pathname;
   const handleClickNext = validateInput(props.values) 
@@ -99,7 +99,7 @@ function showErrors(values) {
   }
 }
 
-listingDescription.propTypes = {
+ListingDescription.propTypes = {
   values: PropTypes.any,
   onChange: PropTypes.func,
   updateProgress: PropTypes.func,
@@ -111,4 +111,4 @@ listingDescription.propTypes = {
   location: PropTypes.object,
 };
 
-export default withRouter(listingDescription);
+export default withRouter(ListingDescription);

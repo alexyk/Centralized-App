@@ -8,7 +8,7 @@ import moment from 'moment';
 import Select from 'react-select';
 import { getRegionsBySearchParameter } from '../../../requester';
 
-function SearchBar(props) {
+function HotelsSearchBar(props) {
 
 
   // const getAddressComponents = (place) => {
@@ -151,7 +151,7 @@ const calculateNights = (startDate, endDate) => {
   return (checkOut > checkIn) ? checkOut.diff(checkIn, 'days') : 0;
 };
 
-SearchBar.propTypes = {
+HotelsSearchBar.propTypes = {
   adults: PropTypes.number,
   rooms: PropTypes.array,
   region: PropTypes.object,
@@ -166,4 +166,4 @@ SearchBar.propTypes = {
   handleToggleChildren: PropTypes.func,
 };
 
-export default SearchBar;
+export default HotelsSearchBar;

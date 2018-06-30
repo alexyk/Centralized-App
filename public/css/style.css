@@ -2739,23 +2739,6 @@ select {
     display: none;
 }
 
-.tab-navigation {
-    border-bottom: 1px solid #DFDFE0;
-}
-
-.tab-navigation li {
-    list-style-type: none;
-    display: inline-block;
-    margin-right: 25px;
-    text-align: center;
-}
-
-.tab-navigation>li>a.active>h2 {
-    padding: 15px;
-    margin-bottom: 0;
-    border-bottom: 4px solid #A0C5BE;
-}
-
 .counter {
     width: 30px;
     height: 30px;

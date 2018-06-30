@@ -1,9 +1,7 @@
 import React, { Component } from 'react';
 import Select from 'react-select';
-import { NotificationManager } from 'react-notifications';
-import { getCurrentlyLoggedUserJsonFile } from '../../requester';
 
-export default class StyleTest extends Component {
+class StyleTest extends Component {
   constructor(props) {
     super(props);
     
@@ -27,6 +25,7 @@ export default class StyleTest extends Component {
           name="form-field-name"
           value={selectedOption}
           onChange={this.handleChange}
+          clearable={true}
           onClose={() => {
             if (this.state.selectedOption && this.state.selectedOption.label === '') {
               this.setState({ selectedOption: null });
@@ -52,3 +51,5 @@ export default class StyleTest extends Component {
     );
   }
 }
+
+export default StyleTest;

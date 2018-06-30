@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { Config } from '../../../config';
 
-export default function MessagesChatUser(props) {
+function MessagesChatUser(props) {
   return (
     <div id="card-user">
       <div className="top">
@@ -26,3 +26,5 @@ export default function MessagesChatUser(props) {
 MessagesChatUser.propTypes = {
   userInfo: PropTypes.object
 };
+
+export default MessagesChatUser;

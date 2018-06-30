@@ -221,7 +221,7 @@ class HotelBookingPage extends React.Component {
     const hotelMainAddress = this.state.hotel && this.state.hotel.additionalInfo.mainAddress;
     const hotelCityName = this.state.hotel && this.state.hotel.city;
     const rooms = this.state.rooms;
-    console.log(this.state.pictures);
+    // console.log(this.state.pictures);
     const hotelPicUrl = this.state.pictures && this.state.pictures.length > 0 ? this.state.pictures[0] : '/listings/images/default.png';
     const priceInSelectedCurrency = this.state.rates && Number(this.state.totalPrice * this.state.rates[ROOMS_XML_CURRENCY][this.props.paymentInfo.currency]).toFixed(2);
     return (
@@ -329,8 +329,6 @@ HotelBookingPage.propTypes = {
   paymentInfo: PropTypes.object
 };
 
-export default withRouter(connect(mapStateToProps)(HotelBookingPage));
-
 function mapStateToProps(state) {
   const { userInfo, paymentInfo } = state;
   return {
@@ -338,3 +336,5 @@ function mapStateToProps(state) {
     paymentInfo
   };
 }
+
+export default withRouter(connect(mapStateToProps)(HotelBookingPage));

@@ -3,7 +3,7 @@ import { getMyReservations, getMyTrips } from '../../../requester';
 import DashboardPending from './DashboardPending';
 import React from 'react';
 
-export default class DashboardPage extends React.Component {
+class DashboardPage extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -42,3 +42,5 @@ export default class DashboardPage extends React.Component {
     );
   }
 }
+
+export default DashboardPage;

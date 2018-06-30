@@ -59,16 +59,6 @@ function HotelItem(props) {
   );
 }
 
-export default withRouter(connect(mapStateToProps)(HotelItem));
-
-function mapStateToProps(state) {
-  const { paymentInfo, userInfo } = state;
-  return {
-    paymentInfo,
-    userInfo
-  };
-}
-
 HotelItem.propTypes = {
   listing: PropTypes.object,
   location: PropTypes.object,
@@ -81,3 +71,13 @@ HotelItem.propTypes = {
   paymentInfo: PropTypes.object,
   userInfo: PropTypes.object
 };
+
+function mapStateToProps(state) {
+  const { paymentInfo, userInfo } = state;
+  return {
+    paymentInfo,
+    userInfo
+  };
+}
+
+export default withRouter(connect(mapStateToProps)(HotelItem));

@@ -10,9 +10,9 @@ import {
 } from '../../../requester';
 import { connect } from 'react-redux';
 import { setIsLogged } from '../../../actions/userInfo';
-import {openModal, closeModal, airdropModals} from '../../../actions/modalsInfo';
+import {openModal, airdropModals} from '../../../actions/modalsInfo';
 import { Config } from '../../../config';
-import { setAirdropInfo, setAirdropModalTrue } from '../../../actions/airdropInfo';
+import { setAirdropInfo } from '../../../actions/airdropInfo';
 import { NotificationManager } from 'react-notifications';
 import NavProfile from '../NavProfile';
 import { CopyToClipboard } from 'react-copy-to-clipboard';

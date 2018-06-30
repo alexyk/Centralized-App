@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { LOGIN, REGISTER, SEND_RECOVERY_EMAIL } from '../../../constants/modals.js';
 
-export default function LoginModal(props) {
+function LoginModal(props) {
 
   return (
     <div>
@@ -51,3 +51,5 @@ LoginModal.propTypes = {
   closeModal: PropTypes.func,
   isActive: PropTypes.bool
 };
+
+export default LoginModal;

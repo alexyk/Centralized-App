@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { SEND_RECOVERY_EMAIL, ENTER_RECOVERY_TOKEN } from '../../../constants/modals.js';
 
-export default function SendRecoveryEmailModal(props) {
+function SendRecoveryEmailModal(props) {
 
   return (
     <div>
@@ -41,3 +41,5 @@ SendRecoveryEmailModal.propTypes = {
   handleSubmitRecoveryEmail: PropTypes.func,
   isActive: PropTypes.bool
 };
+
+export default SendRecoveryEmailModal;

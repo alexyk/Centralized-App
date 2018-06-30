@@ -628,8 +628,6 @@ class CreateListingPage extends React.Component {
   }
 }
 
-export default withRouter(CreateListingPage);
-
 const routes = {
   loc: '/profile/listings/create/loc',
   landing: '/profile/listings/create/landing/',
@@ -649,3 +647,5 @@ CreateListingPage.propTypes = {
   location: PropTypes.object,
   history: PropTypes.object
 };
+
+export default withRouter(CreateListingPage);
