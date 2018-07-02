@@ -4,8 +4,8 @@ import {
   HotelReservationFactoryContractWithWallet,
   SimpleHotelReservationContract,
   SimpleHotelReservationContractWithWallet,
-  SimpleReservationContract,
-  SimpleReservationContractWithWallet
+  SimpleReservationSingleWithdrawerContract,
+  SimpleReservationSingleWithdrawerContractWithWallet
 } from "./config/contracts-config";
 import {
   ReservationValidators
@@ -200,7 +200,7 @@ export class HotelReservation {
     return createSimpleHotelReservationTxResult;
   }
 
-  static async createSimpleReservation(jsonObj, password, reservationCostLOC, withdrawDateInSeconds) {
+  static async createSimpleReservationSingleWithdrawer(jsonObj, password, reservationCostLOC, withdrawDateInSeconds) {
 
     const withdrawDateFormatted = formatTimestampToDays(withdrawDateInSeconds);
 
@@ -215,16 +215,16 @@ export class HotelReservation {
     await TokenValidators.validateLocBalance(wallet.address, reservationCostLOC, wallet, gasConfig.simpleReservations.create);
     await EtherValidators.validateEthBalance(wallet, overrideOptions.gasLimit);
 
-    let approve = await approveContract(wallet, reservationCostLOC, SimpleReservationContract.address, gasPrice);
+    let approve = await approveContract(wallet, reservationCostLOC, SimpleReservationSingleWithdrawerContract.address, gasPrice);
 
-    let SimpleReservationContractWithWalletInstance = SimpleReservationContractWithWallet(wallet);
+    let reservationWithWalletInstance = SimpleReservationSingleWithdrawerContractWithWallet(wallet);
 
-    const createSimpleReservationTxResult = await SimpleReservationContractWithWalletInstance.createReservation(
+    const createReservationSingleWithdrawerTxResult = await reservationWithWalletInstance.createReservation(
       reservationCostLOC,
       withdrawDateFormatted,
       overrideOptions
     );
 
-    return createSimpleReservationTxResult;
+    return createReservationSingleWithdrawerTxResult;
   }
 }
