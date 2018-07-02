@@ -1,3 +1,4 @@
+import {getHotelBookingDetails} from '../../../requester';
 import React from 'react';
 import { Link } from 'react-router-dom';
 import DetailsBackground from '../../../styles/images/background.png';
@@ -13,7 +14,9 @@ export default class HotelTripDetails extends React.Component {
   }
 
   componentDidMount() {
-
+    getHotelBookingDetails().then((data) => {
+      console.log(data);
+    });
   }
 
   renderHotelStars() {
