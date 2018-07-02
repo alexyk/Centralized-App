@@ -130,11 +130,11 @@ class HotelTripDetails extends React.Component {
 
     return (
       <div>
-        <div className={styles.logoContainer}>
-          <img width="200" src={`${LogoLockTrip}`} alt="lock-trip-logo" />
-        </div>
-        <section className={styles.detailsView}>
+        <section className={styles.detailsView} id="details">
           <div className={`${styles.withPadding}`}>
+            <div className={styles.logoContainer}>
+              <img width="200" src={`${LogoLockTrip}`} alt="lock-trip-logo" />
+            </div>
             <h1 className={styles.headerOne}>Your reservation is confirmed</h1>
             <h3 className={styles.reffernce}>Booking Reference ID: <span className={styles.refferenceId}>{bookingData.bookingId}</span></h3>
             <img className={styles.detailsBackground} src={`${bookingData.hotelPhoto}`} alt="details" />
@@ -166,7 +166,7 @@ class HotelTripDetails extends React.Component {
           <iframe className={styles.addressMap} title="location" src={`https://maps.google.com/maps?q=${bookingData.latitude},${bookingData.longitude}&z=15&output=embed`} frameBorder="0" />
           <hr className={styles.horizonatName} />
           <div className={`${styles.withPadding}`}>
-            <h4><Link className={[styles.directions, styles.buttonRegular]} to="#">Get Directions</Link></h4>
+            <h4><a className={[styles.directions, styles.buttonRegular]} href={`https://www.google.com/maps/dir//${bookingData.hotelAddress}/@${bookingData.latitude},${bookingData.longitude},15z`} target="_blank" rel="noopener noreferrer">Get Directions</a></h4>
             <hr />
             <div className={styles.contactInfo}>
               <h4>Contact Hotel</h4>
@@ -191,8 +191,8 @@ class HotelTripDetails extends React.Component {
           </div>
         </section>
         <section className={styles.detailsButtonsWrapper}>
-          <Link className={`btn ${styles.buttonRegular}`} to="#">Print this page</Link>
           <Link className={`btn ${styles.buttonRegular}`} to="/profile/trips/hotels">Back to Hotels</Link>
+          <Link className={`btn ${styles.buttonRegular}`} to="#">Print this page</Link>
         </section>
       </div>
     );
