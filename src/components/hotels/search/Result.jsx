@@ -82,7 +82,6 @@ function Result(props) {
     <div className="result" >
       <div className="result-images">
         {pictures &&
-
           <Slider ref={s => slider = s}
             {...settings}>
             {pictures.map((picture, i) => {
@@ -131,7 +130,7 @@ function Result(props) {
       <div className="result-pricing">
         <div className="price-for">Price for 1 night</div>
         {!isPriceLoaded 
-          ? (!props.allElements ? <div className="loader" style={{width: '100%'}}></div> : <span style={{padding: '20px 10px 10px 10px'}}>Unavailable</span>)
+          ? (!props.allElements ? <div className="loader" style={{width: '100%'}}></div> : <span style={{padding: '20px 10px 10px 10px'}}>Kur</span>)
           : <span className="price">{props.userInfo.isLogged && `${currencySign} ${priceInSelectedCurrency}`}</span>
         }
         {isPriceLoaded && <span>(LOC {locPrice})</span>}

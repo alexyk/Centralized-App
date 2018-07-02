@@ -53,6 +53,11 @@ function HotelTripsTable(props) {
                 {trip.status && trip.status.toUpperCase() === 'DONE' &&
                   <div><button type="submit" onClick={e => { e.preventDefault(); props.onTripSelect(trip.id); props.handleCancelReservation(); }}>Cancel Trip</button></div>
                 }
+                {/* {trip.status && trip.status.toUpperCase() === 'DONE' &&
+                  <div>
+                    <Link to={`/profile/trips/hotels/${trip.id}`}>Details</Link>
+                  </div>
+                } */}
               </div>
               <div className="col-md-2">
                 <div className="reservation-status bold">

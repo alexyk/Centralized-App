@@ -244,10 +244,9 @@ class CalendarPage extends React.Component {
   }
 }
 
-
-export default withRouter(CalendarPage);
-
 CalendarPage.propTypes = {
   history: PropTypes.object,
   match: PropTypes.object
 };
+
+export default withRouter(CalendarPage);

@@ -6,7 +6,7 @@ import BasicsAside from '../aside/BasicsAside';
 import ListingCrudNav from '../navigation/ListingCrudNav';
 import FooterNav from '../navigation/FooterNav';
 
-export default function CreateListingSafetyAmenities(props) {
+function ListingSafetyFacilities(props) {
   const category = props.values.categories.filter(category => category.name === 'Safety Amenities');
   const safetyAmenities = [];
   category.forEach((c, j) => {
@@ -55,10 +55,12 @@ export default function CreateListingSafetyAmenities(props) {
   );
 }
 
-CreateListingSafetyAmenities.propTypes = {
+ListingSafetyFacilities.propTypes = {
   values: PropTypes.any,
   updateProgress: PropTypes.func,
   prev: PropTypes.string,
   next: PropTypes.string,
   routes: PropTypes.object,
 };
+
+export default ListingSafetyFacilities;

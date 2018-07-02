@@ -2136,6 +2136,22 @@ li.dropdown {
     text-decoration: underline;
 }
 
+.my-reservations .reservation-box a {
+    padding-bottom: 10px;
+    /* font-weight: bold; */
+    /* font-family: 'FuturaStd-Light', sans-serif; */
+    color: #E98B73;
+    background: none;
+    border: none;
+    outline: none;
+    padding: 1px 6px 10px;
+}
+
+.my-reservations .reservation-box a:hover {
+    cursor: pointer;
+    text-decoration: underline;
+}
+
 .reservation-image-box {
     text-align: center;
 }
@@ -2721,23 +2737,6 @@ select {
 
 .grecaptcha-badge {
     display: none;
-}
-
-.tab-navigation {
-    border-bottom: 1px solid #DFDFE0;
-}
-
-.tab-navigation li {
-    list-style-type: none;
-    display: inline-block;
-    margin-right: 25px;
-    text-align: center;
-}
-
-.tab-navigation>li>a.active>h2 {
-    padding: 15px;
-    margin-bottom: 0;
-    border-bottom: 4px solid #A0C5BE;
 }
 
 .counter {

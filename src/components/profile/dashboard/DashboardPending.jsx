@@ -4,7 +4,7 @@ import moment from 'moment';
 import { Config } from '../../../config';
 import NoEntriesMessage from '../common/NoEntriesMessage';
 
-export default function DashboardPending(props) {
+function DashboardPending(props) {
 
   const renderReservations = () => {
     if (!props.reservations) {
@@ -129,3 +129,5 @@ DashboardPending.propTypes = {
   reservations: PropTypes.array,
   trips: PropTypes.array
 };
+
+export default DashboardPending;

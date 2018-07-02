@@ -87,6 +87,7 @@ class StaticHotelsSearchPage extends React.Component {
     this.toggleMap = this.toggleMap.bind(this);
     this.handleOpenSelect = this.handleOpenSelect.bind(this);
     this.handleCloseSelect = this.handleCloseSelect.bind(this);
+    this.getQueryString = this.getQueryString.bind(this);
 
     // SOCKET BINDINGS
     this.handleReceiveHotelPrice = this.handleReceiveHotelPrice.bind(this);
@@ -102,46 +103,35 @@ class StaticHotelsSearchPage extends React.Component {
     const { region } = queryParams;
     getStaticHotels(region)
       .then(json => this.setState({ listings: json.content, totalElements: json.totalElements, loading: false }));
-
-    if (!localStorage.getItem('uuid')) {
-      localStorage.setItem('uuid', `${uuid()}`);
-    }
-
-    const url = 'ws://localhost:61614';
-    this.client = Stomp.client(url);
     // this.client.debug = () => {};
+    
     this.connectSocket();
   }
 
   handleReceiveHotelPrice(message) {
     if (JSON.parse(message.body).allElements) {
-      console.log("ALL ELEMENTS");
       this.setState({ allElements: true });
       this.client.disconnect();
     }
 
     const hotelPrice = JSON.parse(message.body);
     const prevPriceMap = this.state.priceMap;
-    const priceMap = { ...prevPriceMap, [hotelPrice.externalId]: hotelPrice.bestPrice };
+    const priceMap = { ...prevPriceMap, [hotelPrice.id]: hotelPrice.bestPrice };
     this.setState({ priceMap });
-    
-    // console.log(hotelPrice);
-    // const { listings } = this.state;
-    // const newListings = listings.map(l => {
-    //   if (l.externalId === hotelPrice.externalId) {
-    //     console.log('CHANGED PRICE');
-    //     return { ...l, price: hotelPrice.bestPrice };
-    //   }
-
-    //   return l;
-    // });
-
-    // this.setState({ listings: newListings });
   }
 
   connectSocket() {
-    const uuid = localStorage.getItem('uuid');
-    const destination = 'search/' + uuid;
+    if (!localStorage.getItem('uuid')) {
+      localStorage.setItem('uuid', `${uuid()}`);
+    }
+
+    const url = 'ws://localhost:61614';
+    this.client = Stomp.client(url);
+
+    const id = localStorage.getItem('uuid');
+
+    const queryString = this.getQueryString();
+    const destination = '/topic/search/' + id;
     const client = this.client;
     const search = this.props.location.search;
     const handleReceiveHotelPrice = this.handleReceiveHotelPrice;
@@ -150,13 +140,13 @@ class StaticHotelsSearchPage extends React.Component {
       client.subscribe(destination, handleReceiveHotelPrice);
 
       const msgObject = {
-        uuid: uuid,
+        uuid: id,
         query: search
       };
 
       const msg = JSON.stringify(msgObject);
 
-      const sendDestination = 'search';
+      const sendDestination = '/topic/search';
       const headers = {
         'content-length': false
       };
@@ -213,8 +203,8 @@ class StaticHotelsSearchPage extends React.Component {
       currentPage: 0,
     });
 
-    if (this.clientRef) {
-      this.clientRef.disconnect();
+    if (this.client) {
+      this.client.disconnect();
     }
   }
 
@@ -313,21 +303,29 @@ class StaticHotelsSearchPage extends React.Component {
     });
   }
 
-  redirectToSearchPage() {
-    if (this.clientRef) {
-      this.clientRef.disconnect();
-    }
-
+  getQueryString() {
     let queryString = '?';
     queryString += 'region=' + this.state.region.id;
     queryString += '&currency=' + this.props.paymentInfo.currency;
     queryString += '&startDate=' + this.state.startDate.format('DD/MM/YYYY');
     queryString += '&endDate=' + this.state.endDate.format('DD/MM/YYYY');
     queryString += '&rooms=' + encodeURI(JSON.stringify(this.state.rooms));
+    return queryString;
+  }
 
+  redirectToSearchPage() {
+    if (this.client) {
+      this.client.disconnect();
+    }
+
+    const queryString = this.getQueryString();
 
     const nights = this.calculateNights(this.state.startDate, this.state.endDate);
     this.props.history.push('/hotels/listings' + queryString);
+
+    const region = this.state.region.id;
+    getStaticHotels(region)
+      .then(json => this.setState({ listings: json.content, totalElements: json.totalElements, loading: false }));
 
     // this.clearFilters();
     this.setState({
@@ -335,14 +333,15 @@ class StaticHotelsSearchPage extends React.Component {
       childrenModal: false,
       currentPage: 0,
       listings: [],
+      priceMap: new Map(),
       filteredListings: null,
       isFiltered: false,
       allElements: false,
       nights: nights,
       stars: [false, false, false, false, false]
     }, () => {
-      if (this.clientRef) {
-        this.clientRef.connect();
+      if (this.client) {
+        this.connectSocket();
       }
     });
   }

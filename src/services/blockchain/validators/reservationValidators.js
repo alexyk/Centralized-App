@@ -47,7 +47,7 @@ export class ReservationValidators {
     ) {
       throw new Error(ERROR.INVALID_PARAMS);
     }
-    if (daysBeforeStartForRefund.length != refundPercentages.length) {
+    if (daysBeforeStartForRefund.length !== refundPercentages.length) {
       throw new Error(ERROR.INVALID_REFUND_PARAMS_LENGTH);
     }
     if ((daysBeforeStartForRefund.length > maxRefundPeriods) ||
@@ -113,7 +113,7 @@ export class ReservationValidators {
     const nowUnixFormatted = formatTimestamp(new Date().getTime() / 1000 | 0);
     let day = 60 * 60 * 24;
     let tenYearsPeriod = ((day * 356) + 2) * 10;
-    if (reservationStartDate < nowUnixFormatted || reservationStartDate > (nowUnixFormatted + tenYearsPeriod) || reservationStartDate.toString().length != 10) {
+    if (reservationStartDate < nowUnixFormatted || reservationStartDate > (nowUnixFormatted + tenYearsPeriod) || reservationStartDate.toString().length !== 10) {
       throw new Error(ERROR.INVALID_PERIOD_START);
     }
 
@@ -121,7 +121,7 @@ export class ReservationValidators {
       throw new Error(ERROR.INVALID_PERIOD);
     }
 
-    if (reservationEndDate > (nowUnixFormatted + tenYearsPeriod) || reservationEndDate.toString().length != 10) {
+    if (reservationEndDate > (nowUnixFormatted + tenYearsPeriod) || reservationEndDate.toString().length !== 10) {
       throw new Error(ERROR.INVALID_PERIOD_END);
     }
 
@@ -165,7 +165,7 @@ export class ReservationValidators {
       throw new Error(ERROR.INVALID_DISPUTE);
     }
 
-    if (isDisputeOpen == true) {
+    if (isDisputeOpen === true) {
       throw new Error(ERROR.ALREADY_OPENED_DISPUTE);
     }
     return true;

@@ -34,10 +34,10 @@ function MessagesItem(props) {
   );
 }
 
-export default withRouter(MessagesItem);
-
 MessagesItem.propTypes = {
   history: PropTypes.object,
   message: PropTypes.object,
   changeMessageFlag: PropTypes.func
 };
+
+export default withRouter(MessagesItem);

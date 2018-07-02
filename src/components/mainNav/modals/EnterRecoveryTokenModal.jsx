@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { ENTER_RECOVERY_TOKEN } from '../../../constants/modals.js';
 
-export default function EnterRecoveryTokenModal(props) {
+function EnterRecoveryTokenModal(props) {
 
   return (
     <div>
@@ -38,3 +38,5 @@ EnterRecoveryTokenModal.propTypes = {
   onChange: PropTypes.func,
   handleSubmitRecoveryToken: PropTypes.func
 };
+
+export default EnterRecoveryTokenModal;

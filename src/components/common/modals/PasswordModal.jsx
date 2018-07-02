@@ -4,7 +4,7 @@ import React from 'react';
 
 import { PASSWORD_PROMPT } from '../../../constants/modals.js';
 
-export default function PasswordModal(props) {
+function PasswordModal(props) {
 
   return (
     <div>
@@ -34,3 +34,5 @@ PasswordModal.propTypes = {
   handleSubmit: PropTypes.func,
   isActive: PropTypes.bool
 };
+
+export default PasswordModal;

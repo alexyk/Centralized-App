@@ -10,7 +10,7 @@ import moment from 'moment';
 
 import HomesSearchBar from './HomesSearchBar';
 
-class ListingSearchPage extends React.Component {
+class HomesSearchPage extends React.Component {
   constructor(props) {
     super(props);
 
@@ -330,10 +330,10 @@ class ListingSearchPage extends React.Component {
   }
 }
 
-ListingSearchPage.propTypes = {
+HomesSearchPage.propTypes = {
   countries: PropTypes.array,
   location: PropTypes.object,
   history: PropTypes.object
 };
 
-export default withRouter(ListingSearchPage);
+export default withRouter(HomesSearchPage);

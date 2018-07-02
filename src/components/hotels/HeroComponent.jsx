@@ -4,7 +4,7 @@ import '../../styles/css/components/tabs-component.css';
 import SearchBar from './search/HotelsSearchBar';
 import ListingTypeNav from '../common/listingTypeNav/ListingTypeNav';
 
-export default function HeroComponent(props) {
+function HeroComponent(props) {
   return (
     <div className="hero">
       <div className="container">
@@ -36,3 +36,5 @@ export default function HeroComponent(props) {
     </div>
   );
 }
+
+export default HeroComponent;
