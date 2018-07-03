@@ -30,16 +30,16 @@ function Result(props) {
   const rightButton = <button></button>;
 
   let { id, name, description, photos, price, stars } = props.hotel;
-  const pictures = photos.slice(0, 3).map(url => { return { thumbnail: `${Config.getValue('imgHost')}${url}` }; });
+  const pictures = photos && photos.slice(0, 3).map(url => { return { thumbnail: `${Config.getValue('imgHost')}${url}` }; });
   const { locRate, rates } = props;
   const { currencySign } = props.paymentInfo;
   const isPriceLoaded = !!price;
   let locPrice = ((price / locRate) / props.nights).toFixed(2);
   const priceInSelectedCurrency = rates && ((price * (rates[ROOMS_XML_CURRENCY][props.paymentInfo.currency])) / props.nights).toFixed(2);
 
-  description = description.substr(0, 250);
+  description = description && description.substr(0, 250);
 
-  if (pictures.length < 1) {
+  if (pictures && pictures.length < 1) {
     pictures.push({ thumbnail: `${Config.getValue('imgHost')}/listings/images/default.png` });
   }
 
@@ -55,6 +55,8 @@ function Result(props) {
   const redirectURL = props.location.pathname.indexOf('mobile') === -1 
     ? '/hotels/listings'
     : '/mobile/details';
+
+  console.log('render');
 
   return (
     <div className="result" >
@@ -83,13 +85,13 @@ function Result(props) {
             {calculateStars(stars)}
           </div>
         </div>
-        <p>{ReactHtmlParser(description + (description.length < 250 ? '' : '...'))}</p>
+        <p>{description && ReactHtmlParser(description + (description.length < 250 ? '' : '...'))}</p>
       </div>
       
       <div className="result-pricing">
         <div className="price-for">Price for 1 night</div>
         {!isPriceLoaded 
-          ? (!props.allElements ? <div className="loader" style={{width: '100%'}}></div> : <span style={{padding: '20px 10px 10px 10px'}}>Kur</span>)
+          ? (!props.allElements ? <div className="loader" style={{width: '100%'}}></div> : <span style={{padding: '20px 10px 10px 10px'}}>Unavailable</span>)
           : <span className="price">{props.userInfo.isLogged && `${currencySign} ${priceInSelectedCurrency}`}</span>
         }
         {isPriceLoaded && <span>(LOC {locPrice})</span>}
