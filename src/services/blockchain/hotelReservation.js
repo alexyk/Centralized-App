@@ -164,7 +164,7 @@ export class HotelReservation {
     return openDisputeTxResult;
   }
 
-  static async createSimpleHotelReservation(jsonObj,
+  static async createSimpleReservationMultipleWithdrawers(jsonObj,
     password,
     hotelReservationId,
     reservationCostLOC,
