@@ -36,7 +36,7 @@ class StaticHotelsSearchPage extends React.Component {
     let queryParams = queryString.parse(this.props.location.search);
 
     this.client = null;
-
+    this.counter = 0;
     this.state = {
       allElements: false,
       startDate: startDate,
@@ -104,7 +104,7 @@ class StaticHotelsSearchPage extends React.Component {
     getStaticHotels(region)
       .then(json => this.setState({ listings: json.content, totalElements: json.totalElements, loading: false }));
     // this.client.debug = () => {};
-    
+
     this.connectSocket();
   }
 
@@ -131,22 +131,26 @@ class StaticHotelsSearchPage extends React.Component {
     const id = localStorage.getItem('uuid');
 
     const queryString = this.getQueryString();
-    const destination = '/topic/search/' + id;
+    ++this.counter;
+    const usUnique = id + '&' + this.counter;
+    const destination = 'search/' + usUnique;
     const client = this.client;
     const search = this.props.location.search;
     const handleReceiveHotelPrice = this.handleReceiveHotelPrice;
-    client.connect(null, null, function (frame) {
+    let a = client.connect(null, null, function (frame) {
       console.log(">>> CONNECTED TO STOMP <<<");
+      const sess = frame.headers.session;
       client.subscribe(destination, handleReceiveHotelPrice);
 
       const msgObject = {
-        uuid: id,
-        query: search
+        uuid: usUnique,
+        query: search,
+        session:sess
       };
 
       const msg = JSON.stringify(msgObject);
 
-      const sendDestination = '/topic/search';
+      const sendDestination = 'search';
       const headers = {
         'content-length': false
       };
