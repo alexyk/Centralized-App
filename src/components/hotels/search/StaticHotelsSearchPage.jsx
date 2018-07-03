@@ -36,7 +36,9 @@ class StaticHotelsSearchPage extends React.Component {
     let queryParams = queryString.parse(this.props.location.search);
 
     this.client = null;
+    this.subscription = null;
     this.counter = 0;
+
     this.state = {
       allElements: false,
       startDate: startDate,
@@ -92,6 +94,8 @@ class StaticHotelsSearchPage extends React.Component {
     // SOCKET BINDINGS
     this.handleReceiveHotelPrice = this.handleReceiveHotelPrice.bind(this);
     this.connectSocket = this.connectSocket.bind(this);
+    this.onSuccessfulSocketConnect = this.onSuccessfulSocketConnect.bind(this);
+    this.unsubscribe = this.unsubscribe.bind(this);
   }
 
   componentDidMount() {
@@ -102,10 +106,10 @@ class StaticHotelsSearchPage extends React.Component {
     const queryParams = queryString.parse(this.props.location.search);
     const { region } = queryParams;
     getStaticHotels(region)
-      .then(json => this.setState({ listings: json.content, totalElements: json.totalElements, loading: false }));
-    // this.client.debug = () => {};
+      .then(json => this.setState({ listings: json.content, totalElements: json.totalElements, loading: false }, () => {
+        this.connectSocket();
+      }));
 
-    this.connectSocket();
   }
 
   handleReceiveHotelPrice(message) {
@@ -127,36 +131,37 @@ class StaticHotelsSearchPage extends React.Component {
 
     const url = 'ws://localhost:61614';
     this.client = Stomp.client(url);
+    // this.client.debug = () => {};
+    this.client.connect(null, null, this.onSuccessfulSocketConnect);
+  }
 
+  onSuccessfulSocketConnect(frame) {
     const id = localStorage.getItem('uuid');
-
-    const queryString = this.getQueryString();
-    ++this.counter;
+    this.counter += 1;
     const usUnique = id + '&' + this.counter;
     const destination = 'search/' + usUnique;
     const client = this.client;
     const search = this.props.location.search;
     const handleReceiveHotelPrice = this.handleReceiveHotelPrice;
-    let a = client.connect(null, null, function (frame) {
-      console.log(">>> CONNECTED TO STOMP <<<");
-      const sess = frame.headers.session;
-      client.subscribe(destination, handleReceiveHotelPrice);
 
-      const msgObject = {
-        uuid: usUnique,
-        query: search,
-        session:sess
-      };
+    const sess = frame.headers.session;
+    
+    this.subscription = client.subscribe(destination, handleReceiveHotelPrice);
 
-      const msg = JSON.stringify(msgObject);
+    const msgObject = {
+      uuid: usUnique,
+      query: search,
+      session:sess
+    };
 
-      const sendDestination = 'search';
-      const headers = {
-        'content-length': false
-      };
+    const msg = JSON.stringify(msgObject);
 
-      client.send(sendDestination, headers, msg);
-    });
+    const sendDestination = 'search';
+    const headers = {
+      'content-length': false
+    };
+
+    client.send(sendDestination, headers, msg);
   }
 
   componentWillMount() {
@@ -337,7 +342,7 @@ class StaticHotelsSearchPage extends React.Component {
       childrenModal: false,
       currentPage: 0,
       listings: [],
-      priceMap: new Map(),
+      priceMap: {},
       filteredListings: null,
       isFiltered: false,
       allElements: false,
@@ -623,6 +628,25 @@ class StaticHotelsSearchPage extends React.Component {
     });
   }
 
+  unsubscribe() {
+    const id = localStorage.getItem('uuid');
+    const usUnique = id + '&' + this.counter;
+    const msg = {
+      destination: 'search/' + usUnique
+    };
+
+    const object = JSON.stringify(msg);
+
+    const sendDestination = 'search';
+    const headers = {
+      'content-length': false
+    };
+
+    this.client.send(sendDestination, headers, object);
+
+    this.subscription.unsubscribe();
+  }
+
   render() {
     const { listings, totalElements } = this.state;
 
@@ -693,7 +717,6 @@ class StaticHotelsSearchPage extends React.Component {
                         ? <div className="loader"></div>
                         : <ResultsHolder
                           hotels={listings}
-                          priceMap={this.state.priceMap}
                           allElements={this.state.allElements}
                           locRate={this.state.locRate}
                           rates={this.state.rates}
@@ -727,11 +750,7 @@ class StaticHotelsSearchPage extends React.Component {
           handleSubmit={this.redirectToSearchPage}
         />
 
-        {/* <SockJsClient url={Config.getValue('apiHost') + 'handler'} topics={[`/topic/all/${localStorage.getItem('uuid')}${window.btoa(this.props.location.search)}`]}
-          onMessage={this.handleReceiveSingleHotel} ref={(client) => { this.clientRef = client; }}
-          onConnect={this.sendInitialWebsocketRequest}
-          getRetryInterval={() => { return 3000; }}
-          debug={false} /> */}
+        <button onClick={this.unsubscribe}>unsubscribe</button>
       </div>
     );
   }

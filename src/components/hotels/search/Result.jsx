@@ -56,29 +56,7 @@ function Result(props) {
     ? '/hotels/listings'
     : '/mobile/details';
 
-  console.log(redirectURL);
-  {/* <ReactBootstrapCarousel
-            animation={true}
-            autoplay={false}
-            leftIcon={leftButton}
-            rightIcon={rightButton}
-            indicators={false}
-            className="carousel-fade"
-            onSelect={() => console.log('click')}>
-            {pictures.map((item, i) => {
-              return (
-                <Link to={`/hotels/listings/${id}${props.location.search}`} key={i}>
-                  <div key={i} style={{ backgroundImage: 'url(' + item.thumbnail + ')' }}>
-                  </div>
-                </Link>
-              );
-            })}
-          </ReactBootstrapCarousel> */}
-
-
   return (
-
-
     <div className="result" >
       <div className="result-images">
         {pictures &&
@@ -102,28 +80,9 @@ function Result(props) {
         <div className="rating">
           <span>Rating: </span>
           <div className="rating-holder">
-            {/* <input type="radio" value="5" name="rating1.0" id="star20" />
-            <label htmlFor="star20" title="5 stars"><span className="fa"></span></label>
-            <input type="radio" value="4" name="rating1.0" id="star19" checked />
-            <label htmlFor="star19" title="4 stars"><span className="fa"></span></label>
-            <input type="radio" value="3" name="rating1.0" id="star18" />
-            <label htmlFor="star18" title="3 stars"><span className="fa"></span></label>
-            <input type="radio" value="2" name="rating1.0" id="star17" />
-            <label htmlFor="star17" title="2 stars"><span className="fa"></span></label>
-            <input type="radio" value="1" name="rating1.0" id="star16" />
-            <label htmlFor="star16" title="1 star"><span className="fa"></span></label> */}
             {calculateStars(stars)}
           </div>
-          {/* <span>73 Reviews</span> */}
         </div>
-        {/* <div className="result-homes-features">
-          <ul>
-            <li>Entire apartment</li>
-            <li>1 bedroom</li>
-            <li>1 bed</li>
-            <li>1.5 baths</li>
-          </ul>
-        </div> */}
         <p>{ReactHtmlParser(description + (description.length < 250 ? '' : '...'))}</p>
       </div>
       
