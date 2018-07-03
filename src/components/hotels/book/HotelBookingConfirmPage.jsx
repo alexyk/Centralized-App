@@ -345,7 +345,7 @@ class HotelBookingConfirmPage extends React.Component {
   }
 
   toggleCanxDetails(index) {
-    const showRoomCanxDetails = this.state.showRoomCanxDetails.slice(0);
+    let showRoomCanxDetails = this.state.showRoomCanxDetails;
     showRoomCanxDetails[index] = !showRoomCanxDetails[index];
     this.setState({ showRoomCanxDetails: showRoomCanxDetails });
   }
@@ -356,6 +356,7 @@ class HotelBookingConfirmPage extends React.Component {
       booking.forEach((booking, index) => {
         rows.push(
           <tr key={(1 + index) * 1000} className="booking-room">
+            <td>{index + 1}</td>
             <td>{booking.room.roomType.text}</td>
             <td><span
               className="booking-price">{this.props.paymentInfo.currency} {this.state.rates && (booking.room.totalSellingPrice.amt * this.state.rates[ROOMS_XML_CURRENCY][this.props.paymentInfo.currency]).toFixed(2)} ({(booking.room.totalSellingPrice.locPrice).toFixed(4)} LOC)</span>
@@ -366,58 +367,89 @@ class HotelBookingConfirmPage extends React.Component {
             </td>
           </tr>
         );
-
-        const fees = booking.room.canxFees;
-        if (fees.length === 0) {
-          rows.push(
-            <tr key={(2 + index) * 1000}
-              className={`booking-room-canx-fee ${this.state.showRoomCanxDetails[index] ? '' : 'room-cancellation-hidden'}`}>
-              <td>No cancellation fees</td>
-              <td>No fee</td>
-              <td></td>
-            </tr>
-          );
-        } else if (fees.length === 1) {
-          rows.push(
-            <tr key={(3 + index) * 1000}
-              className={`booking-room-canx-fee ${this.state.showRoomCanxDetails[index] ? '' : 'room-cancellation-hidden'}`}>
-              <td>Cancellation fee</td>
-              <td><span
-                className="booking-price">{this.props.paymentInfo.currency} {this.state.rates && (fees[0].amount.amt * this.state.rates[ROOMS_XML_CURRENCY][this.props.paymentInfo.currency]).toFixed(2)} ({(fees[0].locPrice).toFixed(4)} LOC)</span>
-              </td>
-              <td></td>
-            </tr>
-          );
-        } else {
-          fees.forEach((fee, feeIndex) => {
-            rows.push(
-              <tr key={(3 + index) * 1000 + feeIndex + 1}
-                className={`booking-room-canx-fee ${this.state.showRoomCanxDetails[index] ? '' : 'room-cancellation-hidden'}`}>
-                <td>{`Cancel up to ${moment(fee.from).format('DD MM YYYY')}`}</td>
-                <td><span
-                  className="booking-price">{this.props.paymentInfo.currency} {this.state.rates && (fee.amount.amt * this.state.rates[ROOMS_XML_CURRENCY][this.props.paymentInfo.currency]).toFixed(2)} ({(fee.locPrice).toFixed(4)} LOC)</span>
-                </td>
-                <td></td>
-              </tr>
-            );
-          });
-
-          rows.push(
-            <tr key={(4 + index) * 1000}
-              className={`booking-room-canx-fee ${this.state.showRoomCanxDetails[index] ? '' : 'room-cancellation-hidden'}`}>
-              <td
-                key={fees.length}>{`Cancel on or after ${moment(this.getLastDate(fees).from).format('DD MM YYYY')}`}</td>
-              <td><span
-                className="booking-price">{this.props.paymentInfo.currency} {this.state.rates && (fees[0].amount.amt * this.state.rates[ROOMS_XML_CURRENCY][this.props.paymentInfo.currency]).toFixed(2)} ({(fees[0].locPrice).toFixed(4)} LOC)</span>
-              </td>
-              <td></td>
-            </tr>
-          );
-        }
       });
+
+      return rows;
+    }
+  }
+
+  getRoomFees(booking) {
+    let hasShowFees = false;
+    const rows = [];
+    booking.forEach((booking, index) => {
+      if (this.state.showRoomCanxDetails[index] && !hasShowFees) {
+        hasShowFees = this.state.showRoomCanxDetails[index];
+      }
+      const fees = booking.room.canxFees;
+      if (fees.length === 0) {
+        rows.push(
+          <tr key={(2 + index) * 1000}
+            className={`booking-room-canx-fee ${this.state.showRoomCanxDetails[index] ? '' : 'room-cancellation-hidden'}`}>
+            <td>{index + 1}</td>
+            <td>No cancellation fees</td>
+            <td>No fee</td>
+            <td></td>
+          </tr>
+        );
+      } else if (fees.length === 1) {
+        rows.push(
+          <tr key={(3 + index) * 1000}
+            className={`booking-room-canx-fee ${this.state.showRoomCanxDetails[index] ? '' : 'room-cancellation-hidden'}`}>
+            <td>{index + 1}</td>
+            <td>Cancellation fee</td>
+            <td><span
+              className="booking-price">{this.props.paymentInfo.currency} {this.state.rates && (fees[0].amount.amt * this.state.rates[ROOMS_XML_CURRENCY][this.props.paymentInfo.currency]).toFixed(2)} ({(fees[0].locPrice).toFixed(4)} LOC)</span>
+            </td>
+          </tr>
+        );
+      } else {
+        fees.forEach((fee, feeIndex) => {
+          rows.push(
+            <tr key={(3 + index) * 1000 + feeIndex + 1}
+              className={`booking-room-canx-fee ${this.state.showRoomCanxDetails[index] ? '' : 'room-cancellation-hidden'}`}>
+              <td>{index + 1}</td>
+              <td>{`Cancel up to ${moment(fee.from).format('DD MM YYYY')}`}</td>
+              <td><span
+                className="booking-price">{this.props.paymentInfo.currency} {this.state.rates && (fee.amount.amt * this.state.rates[ROOMS_XML_CURRENCY][this.props.paymentInfo.currency]).toFixed(2)} ({(fee.locPrice).toFixed(4)} LOC)</span>
+              </td>
+            </tr>
+          );
+        });
+
+        rows.push(
+          <tr key={(4 + index) * 1000}
+            className={`booking-room-canx-fee ${this.state.showRoomCanxDetails[index] ? '' : 'room-cancellation-hidden'}`}>
+            <td>{index + 1}</td>
+            <td
+              key={fees.length}>{`Cancel on or after ${moment(this.getLastDate(fees).from).format('DD MM YYYY')}`}</td>
+            <td><span
+              className="booking-price">{this.props.paymentInfo.currency} {this.state.rates && (fees[0].amount.amt * this.state.rates[ROOMS_XML_CURRENCY][this.props.paymentInfo.currency]).toFixed(2)} ({(fees[0].locPrice).toFixed(4)} LOC)</span>
+            </td>
+          </tr>
+        );
+      }
+    });
+
+    if (!hasShowFees) {
+      return null;
     }
 
-    return rows;
+    return (
+      <div className="row cancelation-table">
+        <table>
+          <thead>
+            <tr>
+              <th>Room #</th>
+              <th>Cancelation condition</th>
+              <th>Price</th>
+            </tr>
+          </thead>
+          <tbody>
+            {rows}
+          </tbody>
+        </table>
+      </div>
+    );
   }
 
   getLastDate(fees) {
@@ -447,14 +479,15 @@ class HotelBookingConfirmPage extends React.Component {
                 <div className="booking-details">
                   <h2>Confirm and Pay</h2>
                   <hr />
-                  <div className="row text-center">
+                  <div className="row text-center room-dates">
                     {moment(booking[0].arrivalDate, 'YYYY-MM-DD').format('DD MMM, YYYY')} <i
                       className="fa fa-long-arrow-right"></i> {moment(booking[0].arrivalDate, 'YYYY-MM-DD').add(booking[0].nights, 'days').format('DD MMM, YYYY')}
                   </div>
-                  <div className="row">
+                  <div className="row room-table">
                     <table>
                       <thead>
                         <tr>
+                          <th>Room #</th>
                           <th>Room Type</th>
                           <th>Price</th>
                           <th>Cancellation Fees</th>
@@ -465,7 +498,7 @@ class HotelBookingConfirmPage extends React.Component {
                       </tbody>
                     </table>
                   </div>
-
+                  {this.getRoomFees(booking)}
                   <hr />
                   <div className="row order-name">
                     <p>Name: <span
