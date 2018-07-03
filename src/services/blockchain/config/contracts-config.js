@@ -7,7 +7,7 @@ import LOCExchangeContractJSON from './contracts-json/LOCExchange.json';
 import IHotelReservationFactory from './contracts-json/IHotelReservationFactory.json';
 import IHotelReservation from './contracts-json/IHotelReservation.json';
 import SimpleHotelReservationContractJSON from './contracts-json/SimpleHotelReservation.json';
-import SimpleReservationContractJSON from './contracts-json/SimpleReservation.json'
+import SimpleReservationSingleWithdrawerJSON from './contracts-json/SimpleReservationSingleWithdrawer.json'
 
 const providers = ethers.providers;
 
@@ -91,10 +91,10 @@ export function SimpleHotelReservationContractWithWallet(wallet) {
  * @type {ethers.Contract}
  */
 
-export let SimpleReservationContract = new ethers.Contract(
-  Config.getValue('SimpleReservation'), SimpleReservationContractJSON.abi, nodeProvider);
+export let SimpleReservationSingleWithdrawerContract = new ethers.Contract(
+  Config.getValue('SimpleReservationSingleWithdrawer'), SimpleReservationSingleWithdrawerJSON.abi, nodeProvider);
 
-export function SimpleReservationContractWithWallet(wallet) {
+export function SimpleReservationSingleWithdrawerContractWithWallet(wallet) {
   wallet.provider = nodeProvider;
-  return new ethers.Contract(Config.getValue('SimpleReservation'), SimpleReservationContractJSON.abi, wallet);
+  return new ethers.Contract(Config.getValue('SimpleReservationSingleWithdrawer'), SimpleReservationSingleWithdrawerJSON.abi, wallet);
 }
