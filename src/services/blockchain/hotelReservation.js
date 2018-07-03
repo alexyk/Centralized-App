@@ -200,6 +200,15 @@ export class HotelReservation {
     return createSimpleHotelReservationTxResult;
   }
 
+  /**
+   * Function to create simple reservation with one withdrawer
+   * @param {String} jsonObj  - User's wallet jsonObj as string
+   * @param {String} password  - User's wallet password as string 
+   * @param {String} reservationCostLOC  - The price of the reservation in Wei, as String
+   * @param {Timestamp} withdrawDateInSeconds  - The date after which the funds can be withdrawn (check out date of the booking). Should be timestamp in seconds.
+   * @returns {JSONObject} createReservationSingleWithdrawerTxResult - The result from the transaction when creating a reservation.
+   */
+
   static async createSimpleReservationSingleWithdrawer(jsonObj, password, reservationCostLOC, withdrawDateInSeconds) {
 
     const withdrawDateFormatted = formatTimestampToDays(withdrawDateInSeconds);
@@ -207,12 +216,12 @@ export class HotelReservation {
     let wallet = await ethers.Wallet.fromEncryptedWallet(jsonObj, password);
     const gasPrice = await getGasPrice();
     let overrideOptions = {
-      gasLimit: gasConfig.simpleReservations.create,
+      gasLimit: gasConfig.simpleReservationSingleWithdrawer.create,
       gasPrice: gasPrice
     };
     await ReservationValidators.validateSimpleReservationParams(jsonObj, password, reservationCostLOC, withdrawDateFormatted)
 
-    await TokenValidators.validateLocBalance(wallet.address, reservationCostLOC, wallet, gasConfig.simpleReservations.create);
+    await TokenValidators.validateLocBalance(wallet.address, reservationCostLOC, wallet, gasConfig.simpleReservationSingleWithdrawer.create);
     await EtherValidators.validateEthBalance(wallet, overrideOptions.gasLimit);
 
     let approve = await approveContract(wallet, reservationCostLOC, SimpleReservationSingleWithdrawerContract.address, gasPrice);

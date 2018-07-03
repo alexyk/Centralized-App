@@ -37,7 +37,7 @@
   },
   "MIN_TIMES_GAS_AMOUNT": 1,
   "TIMES_GAS_AMOUNT": 1,
-  "simpleReservations": {
+  "simpleReservationSingleWithdrawer": {
     "create": 70000
   }
 
