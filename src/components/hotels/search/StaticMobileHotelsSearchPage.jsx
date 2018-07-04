@@ -6,15 +6,13 @@ import React from 'react';
 import { withRouter } from 'react-router-dom';
 import moment from 'moment';
 import { connect } from 'react-redux';
+import { setCurrency } from '../../../actions/paymentInfo';
 import { ROOMS_XML_CURRENCY } from '../../../constants/currencies.js';
 
-import MultiMarkerGoogleMap from './google-map/MultiMarkerGoogleMap';
-import HotelsSearchBar from './HotelsSearchBar';
-import ChildrenModal from '../modals/ChildrenModal';
 import uuid from 'uuid';
 import queryString from 'query-string';
 import Stomp from 'stompjs';
-import _ from 'lodash'; 
+import _ from 'lodash';
 
 import { Config } from '../../../config';
 
@@ -25,7 +23,7 @@ import {
   getStaticHotels,
 } from '../../../requester';
 
-class StaticHotelsSearchPage extends React.Component {
+class StaticMobileHotelsSearchPage extends React.Component {
   constructor(props) {
     super(props);
 
@@ -134,7 +132,7 @@ class StaticHotelsSearchPage extends React.Component {
     } else {
       const hotel = json;
       console.log(json);
-      const { id, bestPrice, lat, lon } = hotel;  
+      const { id, bestPrice, lat, lon } = hotel;
       this.pricesByHotelId[id] = bestPrice;
       const listing = this.state && this.state.listingsById ? this.state.listingsById[id] : null;
       if (listing) {
@@ -144,7 +142,7 @@ class StaticHotelsSearchPage extends React.Component {
         console.log('RECEIVE HOTEL', listingsById);
         console.log("_____________UPDATE____________");
         this.setState({ listingsById });
-      } 
+      }
     }
   }
 
@@ -169,13 +167,13 @@ class StaticHotelsSearchPage extends React.Component {
     const handleReceiveHotelPrice = this.handleReceiveHotelPrice;
 
     const sess = frame.headers.session;
-    
+
     this.subscription = client.subscribe(destination, handleReceiveHotelPrice);
 
     const msgObject = {
       uuid: usUnique,
       query: search,
-      session:sess
+      session: sess
     };
 
     const msg = JSON.stringify(msgObject);
@@ -625,99 +623,53 @@ class StaticHotelsSearchPage extends React.Component {
   }
 
   render() {
-    const { listings, listingsById, totalElements } = this.state;
+    const { listingsById, totalElements } = this.state;
 
     return (
       <div>
-        <div className="container">
-          <HotelsSearchBar
-            startDate={this.state.startDate}
-            endDate={this.state.endDate}
-            region={this.state.region}
-            rooms={this.state.rooms}
-            adults={this.state.adults}
-            hasChildren={this.state.hasChildren}
-            guests={this.state.guests}
-            onChange={this.onChange}
-            handleRoomsChange={this.handleRoomsChange}
-            handleSearch={this.handleSearch}
-            handleDatePick={this.handleDatePick}
-            handleSelectRegion={this.handleSelectRegion}
-            handleToggleChildren={this.handleToggleChildren}
-            handleOpenSelect={this.handleOpenSelect}
-            handleCloseSelect={this.handleCloseSelect}
-          />
-        </div>
-
         <section id="hotel-box">
           <div className="container">
             <div className="row">
-              <div className="col-md-3">
-                {this.state.showMap
-                  ? <button onClick={this.toggleMap} className="btn btn-primary" style={{ width: '100%', marginBottom: '20px' }}>Show list</button>
-                  : <button onClick={this.toggleMap} className="btn btn-primary" style={{ width: '100%', marginBottom: '20px' }}>Show on map</button>
+              <div>
+                {this.state.loading
+                  ? <div className="loader"></div>
+                  : <ResultsHolder
+                    hotels={listingsById}
+                    priceMap={[]}
+                    allElements={this.state.allElements}
+                    locRate={this.state.locRate}
+                    rates={this.state.rates}
+                    nights={this.state.nights}
+                    loading={this.state.loading}
+                  />
                 }
-              </div>
-              <div className="col-md-9">
-                <div className="list-hotel-box" id="list-hotel-box">
-                  {this.state.showMap
-                    ? <div>
-                      <MultiMarkerGoogleMap
-                        lat={this.state.lat}
-                        lon={this.state.lon}
-                        hotels={listings}
-                        isFiltered={this.state.isFiltered}
-                        locRate={this.state.locRate}
-                        rates={this.state.rates}
-                        paymentInfo={this.props.paymentInfo}
-                        isLogged={this.props.userInfo.isLogged}
-                        nights={this.state.nights}
-                      />
-                    </div>
-                    : <div>
-                      {this.state.loading
-                        ? <div className="loader"></div>
-                        : <ResultsHolder
-                          hotels={listingsById}
-                          priceMap={[]}
-                          allElements={this.state.allElements}
-                          locRate={this.state.locRate}
-                          rates={this.state.rates}
-                          nights={this.state.nights}
-                          loading={this.state.loading}
-                        />
-                      }
 
-                      <Pagination
-                        loading={this.state.loading}
-                        onPageChange={this.onPageChange}
-                        currentPage={this.state.currentPage + 1}
-                        pageSize={20}
-                        totalElements={totalElements}
-                      />
-                    </div>
-                  }
-                </div>
+                <Pagination
+                  loading={this.state.loading}
+                  onPageChange={this.onPageChange}
+                  currentPage={this.state.currentPage + 1}
+                  pageSize={20}
+                  totalElements={totalElements}
+                />
+
+                <select
+                  className="currency"
+                  value={this.props.paymentInfo.currency}
+                  style={{ 'height': '40px', 'marginBottom': '10px', 'textAlignLast': 'right', 'paddingRight': '45%', 'direction': 'rtl' }}
+                  onChange={(e) => this.props.dispatch(setCurrency(e.target.value))}
+                >
+                  <option value="EUR">EUR</option>
+                  <option value="USD">USD</option>
+                  <option value="GBP">GBP</option>
+                </select>
               </div>
             </div>
           </div>
         </section>
-
-        <ChildrenModal
-          modalId="childrenModal"
-          rooms={this.state.rooms}
-          handleChildrenChange={this.handleChildrenChange}
-          handleChildAgeChange={this.handleChildAgeChange}
-          isActive={this.state.childrenModal}
-          closeModal={this.closeModal}
-          handleSubmit={this.redirectToSearchPage}
-        />
       </div>
     );
   }
 }
-
-export default withRouter(connect(mapStateToProps)(StaticHotelsSearchPage));
 
 function mapStateToProps(state) {
   const { paymentInfo, userInfo } = state;
@@ -727,7 +679,7 @@ function mapStateToProps(state) {
   };
 }
 
-StaticHotelsSearchPage.propTypes = {
+StaticMobileHotelsSearchPage.propTypes = {
   countries: PropTypes.array,
 
   // start Router props
@@ -738,3 +690,6 @@ StaticHotelsSearchPage.propTypes = {
   paymentInfo: PropTypes.object,
   userInfo: PropTypes.object
 };
+
+export default withRouter(connect(mapStateToProps)(StaticMobileHotelsSearchPage));
+

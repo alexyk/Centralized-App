@@ -21,7 +21,7 @@ function ResultsHolder(props) {
   return (
     <div className="results-holder">
       {_.map(props.hotels, (hotel, index) => {
-        return (<Result key={index} hotel={hotel} locRate={props.locRate} rates={props.rates} nights={props.nights} allElements={props.allElements} />);
+        return (<Result key={index} hotel={hotel} locRate={props.locRate} rates={props.rates} nights={props.nights} allElements={props.allElements} price={hotel.price} />);
       })}
     </div>
   );

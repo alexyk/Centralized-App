@@ -29,7 +29,8 @@ function Result(props) {
   const leftButton = <button></button>;
   const rightButton = <button></button>;
 
-  let { id, name, description, photos, price, stars } = props.hotel;
+  let { id, name, description, photos, stars } = props.hotel;
+  let { price } = props;
   const pictures = photos && photos.slice(0, 3).map(url => { return { thumbnail: `${Config.getValue('imgHost')}${url}` }; });
   const { locRate, rates } = props;
   const { currencySign } = props.paymentInfo;
@@ -56,7 +57,7 @@ function Result(props) {
     ? '/hotels/listings'
     : '/mobile/details';
 
-  console.log('render');
+  console.log('render', price);
 
   return (
     <div className="result" >

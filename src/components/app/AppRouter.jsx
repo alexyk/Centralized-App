@@ -8,7 +8,7 @@ import { setIsLogged, setUserInfo } from '../../actions/userInfo';
 import { NotificationContainer } from 'react-notifications';
 
 import App from './App';
-import MobileHotelsSearchPage from '../hotels/search/MobileHotelsSearchPage';
+import StaticMobileHotelsSearchPage from '../hotels/search/StaticMobileHotelsSearchPage';
 import MobileHotelDetailsPage from '../hotels/details/MobileHotelDetailsPage';
 import MobileHotelBookingPage from '../hotels/book/mobile/MobileHotelBookingPage';
 import MobileHotelBookingConfirmPage from '../hotels/book/mobile/MobileHotelBookingConfirmPage';
@@ -80,7 +80,7 @@ export class AppRouter extends React.Component {
       <div>
         <NotificationContainer />
         <Switch>
-          <Route path="/mobile/search" render={() => <MobileHotelsSearchPage />} />
+          <Route path="/mobile/search" render={() => <StaticMobileHotelsSearchPage />} />
           <Route path="/mobile/details/:id" render={() => <MobileHotelDetailsPage />} />
           <Route path="/mobile/book/confirm/:id" render={() => <MobileHotelBookingConfirmPage />} />
           <Route path="/mobile/book/:id" render={() => <MobileHotelBookingPage />} />
