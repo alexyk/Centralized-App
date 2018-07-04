@@ -88,9 +88,9 @@ class StaticHotelsSearchPage extends React.Component {
     this.updateListingsPrices = this.updateListingsPrices.bind(this);
 
     // SOCKET BINDINGS
-    this.handleReceiveHotelPrice = this.handleReceiveHotelPrice.bind(this);
+    this.handleReceiveMessage = this.handleReceiveMessage.bind(this);
     this.connectSocket = this.connectSocket.bind(this);
-    this.onSuccessfulSocketConnect = this.onSuccessfulSocketConnect.bind(this);
+    this.subscribe = this.subscribe.bind(this);
     this.unsubscribe = this.unsubscribe.bind(this);
     this.disconnect = this.disconnect.bind(this);
   }
@@ -125,11 +125,11 @@ class StaticHotelsSearchPage extends React.Component {
     }));
   }
 
-  handleReceiveHotelPrice(message) {
+  handleReceiveMessage(message) {
     const json = JSON.parse(message.body);
     if (json.allElements) {
       this.setState({ allElements: true });
-      this.disconnect();
+      this.unsubscribe();
     } else {
       const hotel = json;
       // console.log(json);
@@ -155,25 +155,23 @@ class StaticHotelsSearchPage extends React.Component {
     const url = Config.getValue('socketHost');
     this.client = Stomp.client(url);
     this.client.debug = () => {};
-    this.client.connect(null, null, this.onSuccessfulSocketConnect);
+    this.client.connect(null, null, this.subscribe);
   }
 
-  onSuccessfulSocketConnect(frame) {
+  subscribe(frame) {
     const id = localStorage.getItem('uuid');
     const search = this.props.location.search;
-    const queueId = id + '&' + search;
+    const queueId = id + '&' + window.btoa(search);
     const destination = 'search/' + queueId;
+    console.log(destination);
     const client = this.client;
-    const handleReceiveHotelPrice = this.handleReceiveHotelPrice;
+    const handleReceiveHotelPrice = this.handleReceiveMessage;
 
-    const sess = frame.headers.session;
-    
     this.subscription = client.subscribe(destination, handleReceiveHotelPrice);
 
     const msgObject = {
       uuid: queueId,
       query: search,
-      session:sess
     };
 
     const msg = JSON.stringify(msgObject);
@@ -234,6 +232,7 @@ class StaticHotelsSearchPage extends React.Component {
       currentPage: 0,
     });
 
+    this.unsubscribe();
     this.disconnect();
   }
 
@@ -343,7 +342,7 @@ class StaticHotelsSearchPage extends React.Component {
   }
 
   redirectToSearchPage() {
-    this.disconnect();
+    this.unsubscribe();
 
     const queryString = this.getQueryString();
 
@@ -372,7 +371,7 @@ class StaticHotelsSearchPage extends React.Component {
         // });
         const listingsById = _.mapKeys(listings, 'id');
         this.setState({ listingsById, totalElements: json.totalElements, loading: false }, () => {
-          this.connectSocket();
+          this.subscribe();
         });
       });
     });
