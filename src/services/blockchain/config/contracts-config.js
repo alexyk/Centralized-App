@@ -81,7 +81,7 @@ export function initHotelReservationContract(hotelReservationContractAddress) {
 export let SimpleReservationMultipleWithdrawersContract = new ethers.Contract(
   Config.getValue('SimpleReservationMultipleWithdrawers'), SimpleReservationMultipleWithdrawersJSON.abi, nodeProvider);
 
-export function SimpleReservationMultipleWithdrawersContractWWithWallet(wallet) {
+export function SimpleReservationMultipleWithdrawersContractWithWallet(wallet) {
   wallet.provider = nodeProvider;
   return new ethers.Contract(Config.getValue('SimpleReservationMultipleWithdrawers'), SimpleReservationMultipleWithdrawersJSON.abi, wallet);
 }
