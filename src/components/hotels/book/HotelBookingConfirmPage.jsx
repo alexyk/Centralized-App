@@ -31,7 +31,7 @@ class HotelBookingConfirmPage extends React.Component {
 
     this.state = {
       data: null,
-      showRoomCanxDetails: [],
+      showRoomsCanxDetails: false,
       loading: true,
       locRate: null,
       password: '',
@@ -126,73 +126,110 @@ class HotelBookingConfirmPage extends React.Component {
     return numberOfTravelers;
   }
 
-  // getCancellationFees() {
+  getCancellationFees() {
+    // const totalPrice = this.state.data.locPrice;
+    const hotelBooking = this.state.data.booking.hotelBooking;
+    // const hotelBooking = bookingTestJson.booking.hotelBooking;
+    let feeTable = Array(30).fill(0); // jagged array for storing all rooms fees
+    const cancellationFees = [];
+    let maxDaysBefore = 0;
 
-  // const totalPrice = this.state.data.locPrice;
-  // const hotelBooking = this.state.data.booking.hotelBooking;
-  // const feeTable = []; // jagged array for storing all rooms fees
-  // const cancellationFees = {};
-  // let maxDaysBefore = 0;
-  //
-  // for (let i = 0; i < hotelBooking.length; i++) {
-  //   const earliestToLatestRoomCancellationFees = hotelBooking[i].room.canxFees.sort((x, y) => {
-  //     return x.from >= y.from ? 1 : -1; // sort ascending by 'from date'
-  //   });
-  //
-  //   const arrivalDate = moment(hotelBooking[i].arrivalDate, 'YYYY-MM-DD');
-  //   // console.log(arrivalDate.format())
-  //   const earliestDate = moment(earliestToLatestRoomCancellationFees[0].from);
-  //   // console.log(earliestDate.format())
-  //
-  //   const roomMaxDaysBefore = Math.abs(moment(arrivalDate).diff(earliestDate, 'days'));
-  //   if (roomMaxDaysBefore > maxDaysBefore) {
-  //     maxDaysBefore = roomMaxDaysBefore;
-  //   }
-  //   // console.log(roomMaxDaysBefore)
-  //
-  //   const roomFeesByDaysBefore = Array(roomMaxDaysBefore + 1).fill(0);
-  //   // console.log(roomFeesByDaysBefore)
-  //
-  //   // roomCancellationFees.forEach(x => {
-  //   //   console.log(moment(x.from).format())
-  //   // });
-  //
-  //   for (let j = 0; j < earliestToLatestRoomCancellationFees.length; j++) {
-  //     const cancellation = earliestToLatestRoomCancellationFees[j];
-  //     const fromDate = moment(cancellation.from);
-  //     const daysBefore = moment(arrivalDate).diff(fromDate, 'days');
-  //     // console.log(daysBefore)
-  //
-  //     const locPrice = cancellation.locPrice;
-  //
-  //     roomFeesByDaysBefore.fill(locPrice, 0, daysBefore + 1);
-  //   }
-  //
-  //   feeTable.push(roomFeesByDaysBefore);
-  // }
-  //
-  // // console.log(feeTable);
-  //
-  // for (let i = 0; i < maxDaysBefore + 1; i++) {
-  //   let fee = 0;
-  //   for (let j = 0; j < feeTable.length; j++) {
-  //     if (feeTable[j][i]) {
-  //       fee += feeTable[j][i];
-  //     }
-  //   }
-  //
-  //   // console.log('fee: ', fee);
-  //   // console.log('total price: ', totalPrice)
-  //
-  //   const percentageRefund = (parseInt(Math.abs((totalPrice - fee) / totalPrice) * 100)).toString();
-  //   // console.log('percentage refund: ', percentageRefund)
-  //   cancellationFees[i] = percentageRefund;
-  // }
-  //
-  // // console.log(feeTable)
-  // // console.log(cancellationFees)
+    let arrivalDateString = '';
 
-  // }
+    for (let i = 0; i < hotelBooking.length; i++) {
+      if (hotelBooking[i].room.canxFees.length === 0) {
+        continue;
+      }
+      const earliestToLatestRoomCancellationFees = hotelBooking[i].room.canxFees.sort((x, y) => {
+        return x.from >= y.from ? 1 : -1; // sort ascending by 'from date'
+      });
+
+      const arrivalDate = moment(hotelBooking[i].arrivalDate, 'YYYY-MM-DD');
+      if (!arrivalDateString) {
+        arrivalDateString = hotelBooking[i].arrivalDate;
+      }
+
+      const earliestDate = moment(earliestToLatestRoomCancellationFees[0].from);
+
+      const roomMaxDaysBefore = Math.abs(moment(arrivalDate).diff(earliestDate, 'days'));
+      if (roomMaxDaysBefore > maxDaysBefore) {
+        maxDaysBefore = roomMaxDaysBefore;
+      }
+
+      const roomFeesByDaysBefore = Array(30).fill(0);
+
+      // roomCancellationFees.forEach(x => {
+      //   console.log(moment(x.from).format());
+      // });
+
+      for (let j = 0; j < earliestToLatestRoomCancellationFees.length; j++) {
+        const cancellation = earliestToLatestRoomCancellationFees[j];
+        const fromDate = moment(cancellation.from);
+        const daysBefore = moment(arrivalDate).diff(fromDate, 'days');
+
+        const locPrice = cancellation.locPrice;
+
+        roomFeesByDaysBefore.fill(locPrice, 0, daysBefore + 1);
+      }
+
+      feeTable = feeTable.map(function (num, idx) {
+        return num + roomFeesByDaysBefore[idx];
+      });
+    }
+
+    if (Array.from(new Set(feeTable))[0] === 0) {
+      return cancellationFees;
+    }
+
+    let arrivalDate = moment(arrivalDateString, 'YYYY-MM-DD');
+
+    cancellationFees.push({
+      from: arrivalDate,
+      amt: feeTable[0],
+      loc: feeTable[0]
+    });
+
+    for (let i = 2; i < feeTable.length; i++) {
+      if (feeTable[i] !== feeTable[i - 1]) {
+        arrivalDate = moment(arrivalDateString, 'YYYY-MM-DD');
+        cancellationFees.push({
+          from: arrivalDate.subtract(i, 'days'),
+          amt: feeTable[i - 1],
+          loc: feeTable[i - 1]
+        });
+      }
+    }
+
+    if (feeTable.length >= 2) {
+      arrivalDate = moment(arrivalDateString, 'YYYY-MM-DD');
+      cancellationFees.push({
+        from: arrivalDate.subtract(feeTable.length, 'days'),
+        amt: feeTable[feeTable.length - 1],
+        loc: feeTable[feeTable.length - 1]
+      });
+    }
+
+    return cancellationFees.reverse();
+
+    //   for (let i = 0; i < maxDaysBefore + 1; i++) {
+    //     let fee = 0;
+    //     for (let j = 0; j < feeTable.length; j++) {
+    //       if (feeTable[j][i]) {
+    //         fee += feeTable[j][i];
+    //       }
+    //     }
+
+    //     // console.log('fee: ', fee);
+    //     // console.log('total price: ', totalPrice);
+
+    //     const percentageRefund = (parseInt(Math.abs((totalPrice - fee) / totalPrice) * 100)).toString();
+    //     // console.log('percentage refund: ', percentageRefund);
+    //     cancellationFees[i] = percentageRefund;
+    //   }
+
+    //   // console.log(cancellationFees);
+
+  }
 
   tokensToWei(tokens) {
     let index = tokens.indexOf('.');
@@ -239,8 +276,8 @@ class HotelBookingConfirmPage extends React.Component {
         refundPercentages.unshift(cancellationFees[key].toString());
       }
 
-      console.log(daysBeforeStartOfRefund)
-      console.log(refundPercentages)
+      console.log(daysBeforeStartOfRefund);
+      console.log(refundPercentages);
 
       NotificationManager.info(PROCESSING_TRANSACTION, 'Transactions', 60000);
       this.setState({ confirmed: true });
@@ -344,10 +381,8 @@ class HotelBookingConfirmPage extends React.Component {
     this.setState({ [e.target.name]: e.target.value });
   }
 
-  toggleCanxDetails(index) {
-    let showRoomCanxDetails = this.state.showRoomCanxDetails;
-    showRoomCanxDetails[index] = !showRoomCanxDetails[index];
-    this.setState({ showRoomCanxDetails: showRoomCanxDetails });
+  toggleCanxDetails() {
+    this.setState({ showRoomsCanxDetails: !this.state.showRoomsCanxDetails });
   }
 
   getRoomRows(booking) {
@@ -356,14 +391,9 @@ class HotelBookingConfirmPage extends React.Component {
       booking.forEach((booking, index) => {
         rows.push(
           <tr key={(1 + index) * 1000} className="booking-room">
-            <td>{index + 1}</td>
             <td>{booking.room.roomType.text}</td>
             <td><span
               className="booking-price">{this.props.paymentInfo.currency} {this.state.rates && (booking.room.totalSellingPrice.amt * this.state.rates[ROOMS_XML_CURRENCY][this.props.paymentInfo.currency]).toFixed(2)} ({(booking.room.totalSellingPrice.locPrice).toFixed(4)} LOC)</span>
-            </td>
-            <td>
-              <button
-                onClick={() => this.toggleCanxDetails(index)}>{this.state.showRoomCanxDetails[index] ? 'Hide' : 'Show'}</button>
             </td>
           </tr>
         );
@@ -373,73 +403,78 @@ class HotelBookingConfirmPage extends React.Component {
     }
   }
 
-  getRoomFees(booking) {
-    let hasShowFees = false;
+  addFreeClauseRow(rows, fees) {
+    rows.push(
+      <tr key={1}>
+        <td>{`No cancelation fee to ${moment(fees[0].from).subtract(1, 'days').format('DD MMM YYYY')}`}</td>
+        <td><span
+          className="booking-price">{this.props.paymentInfo.currency} 0 (0 LOC)</span>
+        </td>
+      </tr>
+    );
+  }
+
+  getRoomFees() {
     const rows = [];
-    booking.forEach((booking, index) => {
-      if (this.state.showRoomCanxDetails[index] && !hasShowFees) {
-        hasShowFees = this.state.showRoomCanxDetails[index];
-      }
-      const fees = booking.room.canxFees;
-      if (fees.length === 0) {
-        rows.push(
-          <tr key={(2 + index) * 1000}
-            className={`booking-room-canx-fee ${this.state.showRoomCanxDetails[index] ? '' : 'room-cancellation-hidden'}`}>
-            <td>{index + 1}</td>
-            <td>No cancellation fees</td>
-            <td>No fee</td>
-            <td></td>
-          </tr>
-        );
-      } else if (fees.length === 1) {
-        rows.push(
-          <tr key={(3 + index) * 1000}
-            className={`booking-room-canx-fee ${this.state.showRoomCanxDetails[index] ? '' : 'room-cancellation-hidden'}`}>
-            <td>{index + 1}</td>
-            <td>Cancellation fee</td>
-            <td><span
-              className="booking-price">{this.props.paymentInfo.currency} {this.state.rates && (fees[0].amount.amt * this.state.rates[ROOMS_XML_CURRENCY][this.props.paymentInfo.currency]).toFixed(2)} ({(fees[0].locPrice).toFixed(4)} LOC)</span>
-            </td>
-          </tr>
-        );
-      } else {
-        fees.forEach((fee, feeIndex) => {
+    // const fees = booking.room.canxFees.sort((fee1, fee2) => fee1.from - fee2.from);
+    const fees = this.getCancellationFees();
+    if (fees.length === 0) {
+      rows.push(
+        <tr key={2 * 1000}
+        // className={`booking-room-canx-fee ${this.state.showRoomCanxDetails[index] ? '' : 'room-cancellation-hidden'}`}
+        >
+          <td>No cancellation fees</td>
+          <td>No fee</td>
+          <td></td>
+        </tr>
+      );
+    } else if (fees.length === 1) {
+      this.addFreeClauseRow(rows, fees);
+      rows.push(
+        <tr key={2}
+        // className={`booking-room-canx-fee ${this.state.showRoomCanxDetails[index] ? '' : 'room-cancellation-hidden'}`}
+        >
+          <td>Cancellation fee</td>
+          <td><span
+            className="booking-price">{this.props.paymentInfo.currency} {this.state.rates && (fees[0].amt * this.state.rates[ROOMS_XML_CURRENCY][this.props.paymentInfo.currency]).toFixed(2)} ({(fees[0].loc).toFixed(4)} LOC)</span>
+          </td>
+        </tr>
+      );
+    } else {
+      this.addFreeClauseRow(rows, fees);
+      fees.forEach((fee, feeIndex) => {
+        if (feeIndex !== fees.length - 1) {
           rows.push(
-            <tr key={(3 + index) * 1000 + feeIndex + 1}
-              className={`booking-room-canx-fee ${this.state.showRoomCanxDetails[index] ? '' : 'room-cancellation-hidden'}`}>
-              <td>{index + 1}</td>
-              <td>{`Cancel up to ${moment(fee.from).format('DD MM YYYY')}`}</td>
+            <tr key={3 * 1000 + feeIndex + 1}
+            // className={`booking-room-canx-fee ${this.state.showRoomCanxDetails[index] ? '' : 'room-cancellation-hidden'}`}
+            >
+              <td>{`Cancel up to ${moment(fee.from).format('DD MMM YYYY')}`}</td>
               <td><span
-                className="booking-price">{this.props.paymentInfo.currency} {this.state.rates && (fee.amount.amt * this.state.rates[ROOMS_XML_CURRENCY][this.props.paymentInfo.currency]).toFixed(2)} ({(fee.locPrice).toFixed(4)} LOC)</span>
+                className="booking-price">{this.props.paymentInfo.currency} {this.state.rates && (fee.amt * this.state.rates[ROOMS_XML_CURRENCY][this.props.paymentInfo.currency]).toFixed(2)} ({(fee.loc).toFixed(4)} LOC)</span>
               </td>
             </tr>
           );
-        });
+        }
+      });
 
-        rows.push(
-          <tr key={(4 + index) * 1000}
-            className={`booking-room-canx-fee ${this.state.showRoomCanxDetails[index] ? '' : 'room-cancellation-hidden'}`}>
-            <td>{index + 1}</td>
-            <td
-              key={fees.length}>{`Cancel on or after ${moment(this.getLastDate(fees).from).format('DD MM YYYY')}`}</td>
-            <td><span
-              className="booking-price">{this.props.paymentInfo.currency} {this.state.rates && (fees[0].amount.amt * this.state.rates[ROOMS_XML_CURRENCY][this.props.paymentInfo.currency]).toFixed(2)} ({(fees[0].locPrice).toFixed(4)} LOC)</span>
-            </td>
-          </tr>
-        );
-      }
-    });
-
-    if (!hasShowFees) {
-      return null;
+      rows.push(
+        <tr key={4 * 1000}
+        // className={`booking-room-canx-fee ${this.state.showRoomCanxDetails[index] ? '' : 'room-cancellation-hidden'}`}
+        >
+          <td
+            key={fees.length}>{`Cancel up to ${moment(fees[fees.length - 1].from).format('DD MMM YYYY')}`}</td>
+          <td><span
+            className="booking-price">{this.props.paymentInfo.currency} {this.state.rates && (fees[fees.length - 1].amt * this.state.rates[ROOMS_XML_CURRENCY][this.props.paymentInfo.currency]).toFixed(2)} ({(fees[fees.length - 1].loc).toFixed(4)} LOC)</span>
+          </td>
+        </tr>
+      );
     }
 
     return (
-      <div className="row cancelation-table">
+      <div className="row cancelation-table" >
         <table>
           <thead>
             <tr>
-              <th>Room #</th>
               <th>Cancelation condition</th>
               <th>Price</th>
             </tr>
@@ -458,6 +493,7 @@ class HotelBookingConfirmPage extends React.Component {
 
   render() {
     const booking = this.state.data && this.state.data.booking.hotelBooking;
+    // const booking = bookingTestJson.booking.hotelBooking;
     const fiatPrice = this.state.data && this.state.data.fiatPrice;
     const locPrice = this.state.data && this.state.data.locPrice;
 
@@ -487,10 +523,8 @@ class HotelBookingConfirmPage extends React.Component {
                     <table>
                       <thead>
                         <tr>
-                          <th>Room #</th>
                           <th>Room Type</th>
                           <th>Price</th>
-                          <th>Cancellation Fees</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -498,7 +532,12 @@ class HotelBookingConfirmPage extends React.Component {
                       </tbody>
                     </table>
                   </div>
-                  {this.getRoomFees(booking)}
+                  <hr />
+                  <div className="cancelation-fees">
+                    <h4>Cancelation Fees</h4>
+                    <button onClick={() => this.toggleCanxDetails()}>{this.state.showRoomsCanxDetails ? 'Hide' : 'Show'}</button>
+                  </div>
+                  {this.state.showRoomsCanxDetails ? this.getRoomFees(booking) : null}
                   <hr />
                   <div className="row order-name">
                     <p>Name: <span
@@ -515,7 +554,7 @@ class HotelBookingConfirmPage extends React.Component {
                   : <button className="btn btn-primary btn-book" disabled>Processing Payment...</button>
                 }
 
-                {/* <button className="btn btn-primary btn-book" onClick={() => this.getCancellationFees()}>Log Fees</button> */}
+                <button className="btn btn-primary btn-book" onClick={() => this.getCancellationFees()}>Log Fees</button>
               </div>
               <PasswordModal
                 isActive={this.props.modalsInfo.modals.get(PASSWORD_PROMPT)}

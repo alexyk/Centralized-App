@@ -2946,6 +2946,7 @@ h3 {
 }
 
 #room-book-confirm table {
+    max-width: 70%;
     margin: 0 auto;
 }
 
@@ -2954,6 +2955,10 @@ h3 {
     color: #d87a61;
     border: 0;
     outline: none;
+}
+
+#room-book-confirm .cancelation-fees {
+    text-align: center;
 }
 
 #room-book-confirm table th,
