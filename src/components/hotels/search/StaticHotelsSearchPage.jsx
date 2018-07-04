@@ -35,7 +35,6 @@ class StaticHotelsSearchPage extends React.Component {
 
     this.client = null;
     this.subscription = null;
-    this.counter = 0;
     this.pricesByHotelId = {};
 
     this.state = {
@@ -112,7 +111,7 @@ class StaticHotelsSearchPage extends React.Component {
       });
 
       const listingsById = _.mapKeys(listings, 'id');
-      console.log('COMPONENT DID MOUNT', listingsById);
+      // console.log('COMPONENT DID MOUNT', listingsById);
       this.setState({ listingsById, totalElements: json.totalElements, loading: false }, () => {
         this.connectSocket();
       });
@@ -133,16 +132,16 @@ class StaticHotelsSearchPage extends React.Component {
       this.disconnect();
     } else {
       const hotel = json;
-      console.log(json);
+      // console.log(json);
       const { id, bestPrice, lat, lon } = hotel;  
       this.pricesByHotelId[id] = bestPrice;
       const listing = this.state && this.state.listingsById ? this.state.listingsById[id] : null;
       if (listing) {
-        console.log(listing);
+        // console.log(listing);
         listing.price = bestPrice;
         const listingsById = { ...this.state.listingsById, [id]: listing };
-        console.log('RECEIVE HOTEL', listingsById);
-        console.log("_____________UPDATE____________");
+        // console.log('RECEIVE HOTEL', listingsById);
+        // console.log("_____________UPDATE____________");
         this.setState({ listingsById });
       } 
     }
@@ -155,17 +154,16 @@ class StaticHotelsSearchPage extends React.Component {
 
     const url = Config.getValue('socketHost');
     this.client = Stomp.client(url);
-    // this.client.debug = () => {};
+    this.client.debug = () => {};
     this.client.connect(null, null, this.onSuccessfulSocketConnect);
   }
 
   onSuccessfulSocketConnect(frame) {
     const id = localStorage.getItem('uuid');
-    this.counter += 1;
-    const usUnique = id + '&' + this.counter;
-    const destination = 'search/' + usUnique;
-    const client = this.client;
     const search = this.props.location.search;
+    const queueId = id + '&' + search;
+    const destination = 'search/' + queueId;
+    const client = this.client;
     const handleReceiveHotelPrice = this.handleReceiveHotelPrice;
 
     const sess = frame.headers.session;
@@ -173,7 +171,7 @@ class StaticHotelsSearchPage extends React.Component {
     this.subscription = client.subscribe(destination, handleReceiveHotelPrice);
 
     const msgObject = {
-      uuid: usUnique,
+      uuid: queueId,
       query: search,
       session:sess
     };

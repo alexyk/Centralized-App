@@ -57,7 +57,7 @@ function Result(props) {
     ? '/hotels/listings'
     : '/mobile/details';
 
-  console.log('render', price);
+  // console.log('render', price);
 
   return (
     <div className="result" >
