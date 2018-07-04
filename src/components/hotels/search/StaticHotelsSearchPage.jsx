@@ -100,9 +100,10 @@ class StaticHotelsSearchPage extends React.Component {
     getCurrencyRates()
       .then((json) => this.setState({ rates: json }));
 
-    const queryParams = queryString.parse(this.props.location.search);
+    const queryString = this.props.location;
+    const queryParams = queryString.parse(queryString);
     const { region } = queryParams;
-    getStaticHotels(region).then(json => {
+    getStaticHotels(region, queryString).then(json => {
       const listings = json.content;
       listings.forEach(l => {
         if (this.pricesByHotelId[l.id]) {
@@ -112,7 +113,7 @@ class StaticHotelsSearchPage extends React.Component {
 
       const listingsById = _.mapKeys(listings, 'id');
       // console.log('COMPONENT DID MOUNT', listingsById);
-      this.setState({ listingsById, totalElements: json.totalElements, loading: false }, () => {
+      this.setState({ listingsById, totalElements: json.totalElements, loading: false,  }, () => {
         this.connectSocket();
       });
     });
@@ -362,7 +363,7 @@ class StaticHotelsSearchPage extends React.Component {
       nights: nights,
       stars: [false, false, false, false, false]
     }, () => {
-      getStaticHotels(region).then(json => {
+      getStaticHotels(region, queryString).then(json => {
         const listings = json.content;
         // listings.forEach(l => {
         //   if (this.pricesByHotelId[l.id]) {
@@ -582,12 +583,13 @@ class StaticHotelsSearchPage extends React.Component {
       loading: true
     });
 
-    const searchParams = queryString.parse(this.props.location.search);
+    const queryString = this.props.location.search;
+    const searchParams = queryString.parse(queryString);
     const { region } = searchParams;
 
     window.scrollTo(0, 0);
 
-    getStaticHotels(region, page - 1).then(json => {
+    getStaticHotels(region, queryString, page - 1).then(json => {
       const listings = json.content;
       listings.forEach(l => {
         if (this.pricesByHotelId[l.id]) {
