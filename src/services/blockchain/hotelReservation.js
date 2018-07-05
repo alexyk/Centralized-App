@@ -212,6 +212,39 @@ export class HotelReservation {
   }
 
   /**
+   * Function to withdraw 
+   * @param {String} jsonObj  - User's wallet jsonObj as string
+   * @param {String} password  - User's wallet password as string 
+   * @param {Array} reservationIdsArray - Array of of reservations ids, as strings.
+   * @returns {JSONObject} withdrawReservationTxResult - The result from the transaction when withdrawing funds.
+   */
+  static async withdrawFundsFromReservation(jsonObj, password, reservationIdsArray) {
+
+    let reservationIdsArrayBytes;
+
+    for (let i = 0; i < reservationIdsArray.length; i++) {
+      const reservationIdBytes = ethers.utils.toUtf8Bytes(reservationIdsArray[i]);
+      reservationIdsArrayBytes.push(reservationIdBytes);
+    }
+
+    let wallet = await ethers.Wallet.fromEncryptedWallet(jsonObj, password);
+
+    //TODO: Check how much withdraw cost and dynamically set the gas limit, based on the length of the booking array
+    let overrideOptions = {
+      gasLimit: gasConfig.simpleReservationMultipleWithdrawers.withdraw,
+      gasPrice: gasPrice
+    };
+
+    await ReservationValidators.validateWithdrawFunds(jsonObj, password, reservationIdsArrayBytes, wallet.address);
+    await EtherValidators.validateEthBalance(wallet, overrideOptions.gasLimit);
+
+    let reservationCustomWithdrawerWithWalletInstance = SimpleReservationMultipleWithdrawersContractWithWallet(wallet);
+    const withdrawReservationTxResult = await reservationCustomWithdrawerWithWalletInstance.withdraw(reservationIdsArrayBytes, overrideOptions);
+
+    return withdrawReservationTxResult;
+  }
+
+  /**
    * Function to create simple reservation with one withdrawer
    * @param {String} jsonObj  - User's wallet jsonObj as string
    * @param {String} password  - User's wallet password as string 

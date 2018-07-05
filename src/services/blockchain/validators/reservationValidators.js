@@ -93,7 +93,7 @@ export class ReservationValidators {
 
   }
 
-  static async validateSimpleReservationMultipleWithdrawersParams(jsonObj,
+  static async validateSimpleReservationCustomWithdrawerParams(jsonObj,
     password,
     hotelReservationId,
     reservationCostLOC,
@@ -259,6 +259,34 @@ export class ReservationValidators {
     if (isDisputeOpen == true) {
       throw new Error(ERROR.ALREADY_OPENED_DISPUTE);
     }
+    return true;
+  }
+
+  static validateWithdrawFunds(jsonObj, password, reservationIdsArrayBytes, senderAddress) {
+    if (!jsonObj || !password || !reservationIdsArrayBytes) {
+      throw new Error(ERROR.INVALID_PARAMS);
+    }
+    const currentTimestamp = Date.now() / secondsInMilliSeconds | 0;
+
+    for (let i = 0; i < reservationIdsArrayBytes.length; i++) {
+      if (reservationIdsArrayBytes[i] > bytesParamsLength) {
+        throw new Error(ERROR.INVALID_ID_PARAM)
+      }
+      let reservationMapping = await SimpleReservationMultipleWithdrawersContract.reservations(hotelReservationId);
+      if (reservationMapping[2] > currentTimestamp) {
+        throw new Error(ERROR.INVALID_RESERVATION_FOR_WITHDRAW + hotelReservationId)
+      }
+
+      if (reservationMapping[0] != senderAddress) {
+        throw new Error(ERROR.INVALID_WITHDRAWER)
+      }
+    }
+
+    let maxAllowedCyclesForWithdraw = await SimpleReservationMultipleWithdrawersContract.maxAllowedWithdrawCyclesCount.call();
+    if (reservationIdsArrayBytes.length > maxAllowedCyclesForWithdraw) {
+      throw new Error(ERROR.WITHDRAW_ARRAY_GREATER_THAN_POSSIBLE)
+    }
+
     return true;
   }
 }
