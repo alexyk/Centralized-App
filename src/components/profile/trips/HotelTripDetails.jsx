@@ -203,7 +203,7 @@ class HotelTripDetails extends React.Component {
         </section>
         <section className="details-buttons-wrapper">
           <Link className="btn button-regular" to="/profile/trips/hotels">Back to Hotels</Link>
-          <Link className="btn button-regular" to="#">Print this page</Link>
+          {/* <Link className="btn button-regular" to="#">Print this page</Link> */}
         </section>
       </div>
     );
