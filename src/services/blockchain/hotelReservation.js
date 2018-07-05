@@ -165,7 +165,7 @@ export class HotelReservation {
   }
 
   /**
-   * Function to create simple reservation with multiple withdrawers
+   * Function to create simple reservation where the withdrawer can be custom address passed as a parameter
    * @param {String} jsonObj  - User's wallet jsonObj as string
    * @param {String} password  - User's wallet password as string
    * @param {String} hotelReservationId - The Id of the reservations, shouldn't be more than 32 symbols 
@@ -175,7 +175,7 @@ export class HotelReservation {
    * @returns {JSONObject} createReservationMultipleWithdrawersTxResult - The result from the transaction when creating a reservation.
    */
 
-  static async createSimpleReservationMultipleWithdrawers(jsonObj,
+  static async createSimpleReservationCustomWithdrawer(jsonObj,
     password,
     hotelReservationId,
     reservationCostLOC,
@@ -192,23 +192,23 @@ export class HotelReservation {
       gasPrice: gasPrice
     };
 
-    await ReservationValidators.validateSimpleReservationMultipleWithdrawersParams(jsonObj, password, hotelReservationIdBytes, reservationCostLOC, withdrawDateFormatted, recipientAddress)
+    await ReservationValidators.validateSimpleReservationCustomWithdrawerParams(jsonObj, password, hotelReservationIdBytes, reservationCostLOC, withdrawDateFormatted, recipientAddress)
 
     await TokenValidators.validateLocBalance(wallet.address, reservationCostLOC, wallet, gasConfig.simpleReservationMultipleWithdrawers.create);
     await EtherValidators.validateEthBalance(wallet, overrideOptions.gasLimit);
 
     let approve = await approveContract(wallet, reservationCostLOC, SimpleReservationMultipleWithdrawersContract.address, gasPrice);
 
-    let reservationMultipleWithWalletInstance = SimpleReservationMultipleWithdrawersContractWithWallet(wallet);
+    let reservationCustomWithdrawerWithWalletInstance = SimpleReservationMultipleWithdrawersContractWithWallet(wallet);
 
-    const createReservationMultipleWithdrawersTxResult = await reservationMultipleWithWalletInstance.createReservation(hotelReservationIdBytes,
+    const createReservationCustomWithdrawerTxResult = await reservationCustomWithdrawerWithWalletInstance.createReservation(hotelReservationIdBytes,
       reservationCostLOC,
       withdrawDateFormatted,
       recipientAddress,
       overrideOptions
     );
 
-    return createReservationMultipleWithdrawersTxResult;
+    return createReservationCustomWithdrawerTxResult;
   }
 
   /**

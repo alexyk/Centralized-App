@@ -124,7 +124,7 @@ export class ReservationValidators {
     return true;
   }
 
-  static async validateSimpleReservationParams(jsonObj, password, reservationCostLOC, withdrawDateInDays) {
+  static async validateSimpleReservationSingleWithdrawerParams(jsonObj, password, reservationCostLOC, withdrawDateInDays) {
     if (!jsonObj ||
       !password ||
       !reservationCostLOC ||
@@ -218,7 +218,7 @@ export class ReservationValidators {
   }
 
   static async validateSimpleReservationMultipleWithdrawersDontExist(hotelReservationId) {
-    let recipientAddress = await SimpleReservationMultipleWithdrawersContract.hotelReservations(hotelReservationId);
+    let recipientAddress = await SimpleReservationMultipleWithdrawersContract.reservations(hotelReservationId);
     if (recipientAddress[0] === '0x0000000000000000000000000000000000000000') {
       return true;
     }
