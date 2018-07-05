@@ -86,6 +86,7 @@ class StaticHotelsSearchPage extends React.Component {
     this.handleCloseSelect = this.handleCloseSelect.bind(this);
     this.getQueryString = this.getQueryString.bind(this);
     this.updateListingsPrices = this.updateListingsPrices.bind(this);
+    this.getRandomInt = this.getRandomInt.bind(this);
 
     // SOCKET BINDINGS
     this.handleReceiveMessage = this.handleReceiveMessage.bind(this);
@@ -100,10 +101,10 @@ class StaticHotelsSearchPage extends React.Component {
     getCurrencyRates()
       .then((json) => this.setState({ rates: json }));
 
-    const queryString = this.props.location;
-    const queryParams = queryString.parse(queryString);
+    const query = this.props.location.search;
+    const queryParams = queryString.parse(query);
     const { region } = queryParams;
-    getStaticHotels(region, queryString).then(json => {
+    getStaticHotels(region).then(json => {
       const listings = json.content;
       listings.forEach(l => {
         if (this.pricesByHotelId[l.id]) {
@@ -155,14 +156,15 @@ class StaticHotelsSearchPage extends React.Component {
 
     const url = Config.getValue('socketHost');
     this.client = Stomp.client(url);
-    this.client.debug = () => {};
+    // this.client.debug = () => {};
     this.client.connect(null, null, this.subscribe);
   }
 
   subscribe(frame) {
     const id = localStorage.getItem('uuid');
+    const rnd = this.getRandomInt();
     const search = this.props.location.search;
-    const queueId = id + '&' + window.btoa(search);
+    const queueId = `${id}&${rnd}`;
     const destination = 'search/' + queueId;
     console.log(destination);
     const client = this.client;
@@ -345,10 +347,10 @@ class StaticHotelsSearchPage extends React.Component {
   redirectToSearchPage() {
     this.unsubscribe();
 
-    const queryString = this.getQueryString();
+    const query = this.getQueryString();
 
     const nights = this.calculateNights(this.state.startDate, this.state.endDate);
-    this.props.history.push('/hotels/listings' + queryString);
+    this.props.history.push('/hotels/listings' + query);
 
     const region = this.state.region.id;
 
@@ -363,7 +365,7 @@ class StaticHotelsSearchPage extends React.Component {
       nights: nights,
       stars: [false, false, false, false, false]
     }, () => {
-      getStaticHotels(region, queryString).then(json => {
+      getStaticHotels(region).then(json => {
         const listings = json.content;
         // listings.forEach(l => {
         //   if (this.pricesByHotelId[l.id]) {
@@ -583,13 +585,13 @@ class StaticHotelsSearchPage extends React.Component {
       loading: true
     });
 
-    const queryString = this.props.location.search;
-    const searchParams = queryString.parse(queryString);
+    const query = this.props.location.search;
+    const searchParams = queryString.parse(query);
     const { region } = searchParams;
 
     window.scrollTo(0, 0);
 
-    getStaticHotels(region, queryString, page - 1).then(json => {
+    getStaticHotels(region, page - 1).then(json => {
       const listings = json.content;
       listings.forEach(l => {
         if (this.pricesByHotelId[l.id]) {
@@ -608,6 +610,11 @@ class StaticHotelsSearchPage extends React.Component {
         loading: false
       });
     });
+  }
+
+  getRandomInt() {
+    const MAX = 999999999999;
+    return Math.floor(Math.random() * Math.floor(MAX));
   }
 
   unsubscribe() {
