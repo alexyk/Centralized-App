@@ -505,6 +505,12 @@ export async function getMyHotelBookings(searchTerm, size = 10) {
   });
 }
 
+export async function getHotelBookingDetails(id) {
+  return sendRequest(`${host}users/me/bookings/${id}`, RequestMethod.GET).then(res => {
+    return res.response.json();
+  }).catch(err => console.log(err));
+}
+
 export async function checkIfAirdropUserExists(token) {
   return sendRequest(`${host}userExists/${token}`, RequestMethod.GET).then(res => {
     return res.response.json();
