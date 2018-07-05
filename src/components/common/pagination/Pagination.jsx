@@ -33,6 +33,7 @@ function Pagination(props) {
             onChange={props.onPageChange}
             current={props.currentPage}
             total={props.totalElements}
+            showLessItems={true}
           />
         }
       </div>

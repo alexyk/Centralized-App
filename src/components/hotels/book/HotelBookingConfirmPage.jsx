@@ -272,12 +272,12 @@ class HotelBookingConfirmPage extends React.Component {
         refundPercentages.unshift(cancellationFees[key].toString());
       }
 
-      console.log(daysBeforeStartOfRefund);
-      console.log(refundPercentages);
-
       NotificationManager.info(PROCESSING_TRANSACTION, 'Transactions', 60000);
       this.setState({ confirmed: true });
       this.closeModal(PASSWORD_PROMPT);
+
+      const queryString = this.props.location.search;
+      console.log((queryString));
 
       getCurrentlyLoggedUserJsonFile().then((json) => {
         // console.log(json);
@@ -297,7 +297,8 @@ class HotelBookingConfirmPage extends React.Component {
           ).then(transaction => {
             const bookingConfirmObj = {
               bookingId: preparedBookingId,
-              transactionHash: transaction.hash
+              transactionHash: transaction.hash,
+              queryString: queryString
             };
 
             console.log(bookingConfirmObj);
@@ -323,36 +324,6 @@ class HotelBookingConfirmPage extends React.Component {
           });
         }, 1000);
       });
-
-      //     TokenTransactions.sendTokens(json.jsonFile, password, recipient, amount.toString()).then((transactionHash) => {
-      //       const bookingConfirmObj = {
-      //         bookingId: preparedBookingId,
-      //         transactionHash: transactionHash.transactionHash
-      //       };
-
-      //       console.log(bookingConfirmObj);
-      //       confirmBooking(bookingConfirmObj).then(() => {
-      //         NotificationManager.success('LOC Payment has been initiated. We will send you a confirmation message once it has been processed by the Blockchain.');
-      //         setTimeout(() => {
-      //           this.props.history.push('/profile/trips/hotels');
-      //         }, 2000);
-      //       });
-      //     }).catch(error => {
-      //       if (error.hasOwnProperty('message')) {
-      //         NotificationManager.warning(error.message, 'Send Tokens');
-      //       } else if (error.hasOwnProperty('err') && error.err.hasOwnProperty('message')) {
-      //         NotificationManager.warning(error.err.message, 'Send Tokens');
-      //       } else if (typeof x === 'string') {
-      //         NotificationManager.warning(error, 'Send Tokens');
-      //       } else {
-      //         NotificationManager.warning(error);
-      //       }
-
-      //       this.closeModal(ENTER_WALLET_PASSWORD);
-      //     });
-      //   }, 1000);
-      // });
-
     });
   }
 

@@ -420,6 +420,12 @@ export async function getCalendarByListingIdAndDateRange(listingId, startDate, e
   });
 }
 
+export async function getStaticHotels(regionId, page = 0) { 
+  return sendRequest(`${host}regions/${regionId}?page=${page}`, RequestMethod.GET).then(res => {
+    return res.response.json();
+  });
+}
+
 export async function getHotelById(id, search) {
   return sendRequest(`${host}api/hotels/${id}${search}`, RequestMethod.GET).then(res => {
     return res.response.json();
@@ -497,6 +503,12 @@ export async function getMyHotelBookings(searchTerm, size = 10) {
   return sendRequest(`${host}users/me/bookings${searchTerm !== null && searchTerm !== undefined ? `${searchTerm}&` : '?'}sort=id,desc&size=${size}`, RequestMethod.GET).then(res => {
     return res.response.json();
   });
+}
+
+export async function getHotelBookingDetails(id) {
+  return sendRequest(`${host}users/me/bookings/${id}`, RequestMethod.GET).then(res => {
+    return res.response.json();
+  }).catch(err => console.log(err));
 }
 
 export async function checkIfAirdropUserExists(token) {

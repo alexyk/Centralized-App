@@ -8,7 +8,7 @@ import { setIsLogged, setUserInfo } from '../../actions/userInfo';
 import { NotificationContainer } from 'react-notifications';
 
 import App from './App';
-import MobileHotelsSearchPage from '../hotels/search/MobileHotelsSearchPage';
+import StaticMobileHotelsSearchPage from '../hotels/search/StaticMobileHotelsSearchPage';
 import MobileHotelDetailsPage from '../hotels/details/MobileHotelDetailsPage';
 import MobileHotelBookingPage from '../hotels/book/mobile/MobileHotelBookingPage';
 import MobileHotelBookingConfirmPage from '../hotels/book/mobile/MobileHotelBookingConfirmPage';
@@ -61,18 +61,20 @@ export class AppRouter extends React.Component {
       localStorage[Config.getValue('domainPrefix') + '.auth.locktrip'] = decodeURI(authToken);
       this.setUserInfo();
       const url = this.props.location.pathname;
-      let search = '?';
-      for (let key in queryStringParameters) {
-        if (key !== 'authEmail' && key !== 'authToken') {
-          const param = encodeURI(key + '=' + queryStringParameters[key]) + '&';
-          search += param;
-          // console.log(encodeURI(param));
-        }
-      }
-      
-      // console.log(search);
-      this.props.history.push(url + search.substr(0, search.length - 1));
+      const search = this.getQueryString(queryStringParameters);
+      console.log(url + search);
+      this.props.history.push(url + search);
     }
+  }
+
+  getQueryString(queryStringParameters) {
+    let queryString = '?';
+    queryString += 'region=' + encodeURI(queryStringParameters.region);
+    queryString += '&currency=' + encodeURI(queryStringParameters.currency);
+    queryString += '&startDate=' + encodeURI(queryStringParameters.startDate);
+    queryString += '&endDate=' + encodeURI(queryStringParameters.endDate);
+    queryString += '&rooms=' + encodeURI(queryStringParameters.rooms);
+    return queryString;
   }
 
   render() {
@@ -80,7 +82,7 @@ export class AppRouter extends React.Component {
       <div>
         <NotificationContainer />
         <Switch>
-          <Route path="/mobile/search" render={() => <MobileHotelsSearchPage />} />
+          <Route path="/mobile/search" render={() => <StaticMobileHotelsSearchPage />} />
           <Route path="/mobile/details/:id" render={() => <MobileHotelDetailsPage />} />
           <Route path="/mobile/book/confirm/:id" render={() => <MobileHotelBookingConfirmPage />} />
           <Route path="/mobile/book/:id" render={() => <MobileHotelBookingPage />} />
