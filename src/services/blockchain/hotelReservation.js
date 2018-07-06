@@ -220,7 +220,7 @@ export class HotelReservation {
    */
   static async withdrawFundsFromReservation(jsonObj, password, reservationIdsArray) {
 
-    let reservationIdsArrayBytes;
+    let reservationIdsArrayBytes = [];
 
     for (let i = 0; i < reservationIdsArray.length; i++) {
       const reservationIdBytes = ethers.utils.toUtf8Bytes(reservationIdsArray[i]);
@@ -228,6 +228,7 @@ export class HotelReservation {
     }
 
     let wallet = await ethers.Wallet.fromEncryptedWallet(jsonObj, password);
+    const gasPrice = await getGasPrice();
 
     //TODO: Check how much withdraw cost and dynamically set the gas limit, based on the length of the booking array
     let overrideOptions = {

@@ -262,8 +262,8 @@ export class ReservationValidators {
     return true;
   }
 
-  static validateWithdrawFunds(jsonObj, password, reservationIdsArrayBytes, senderAddress) {
-    if (!jsonObj || !password || !reservationIdsArrayBytes) {
+  static async validateWithdrawFunds(jsonObj, password, reservationIdsArrayBytes, senderAddress) {
+    if (!jsonObj || !password || !reservationIdsArrayBytes || reservationIdsArrayBytes.length < 1) {
       throw new Error(ERROR.INVALID_PARAMS);
     }
     const currentTimestamp = Date.now() / secondsInMilliSeconds | 0;
@@ -272,9 +272,12 @@ export class ReservationValidators {
       if (reservationIdsArrayBytes[i] > bytesParamsLength) {
         throw new Error(ERROR.INVALID_ID_PARAM)
       }
-      let reservationMapping = await SimpleReservationMultipleWithdrawersContract.reservations(hotelReservationId);
-      if (reservationMapping[2] > currentTimestamp) {
-        throw new Error(ERROR.INVALID_RESERVATION_FOR_WITHDRAW + hotelReservationId)
+      let reservationMapping = await SimpleReservationMultipleWithdrawersContract.reservations(reservationIdsArrayBytes[i]);
+      console.log(reservationMapping[2].toString());
+      console.log(currentTimestamp);
+
+      if (reservationMapping[2].toString() > currentTimestamp) {
+        throw new Error(ERROR.INVALID_DATE_FOR_WITHDRAW)
       }
 
       if (reservationMapping[0] != senderAddress) {
@@ -283,7 +286,8 @@ export class ReservationValidators {
     }
 
     let maxAllowedCyclesForWithdraw = await SimpleReservationMultipleWithdrawersContract.maxAllowedWithdrawCyclesCount.call();
-    if (reservationIdsArrayBytes.length > maxAllowedCyclesForWithdraw) {
+
+    if (reservationIdsArrayBytes.length > maxAllowedCyclesForWithdraw.toString()) {
       throw new Error(ERROR.WITHDRAW_ARRAY_GREATER_THAN_POSSIBLE)
     }
 
