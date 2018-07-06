@@ -73,10 +73,8 @@ class StaticHotelsSearchPage extends React.Component {
     this.handleSelectRegion = this.handleSelectRegion.bind(this);
     this.openModal = this.openModal.bind(this);
     this.closeModal = this.closeModal.bind(this);
-    this.getLocRate = this.getLocRate.bind(this);
     this.redirectToSearchPage = this.redirectToSearchPage.bind(this);
     this.handleToggleChildren = this.handleToggleChildren.bind(this);
-    this.getLocRate = this.getLocRate.bind(this);
     this.handlePriceRangeSelect = this.handlePriceRangeSelect.bind(this);
     this.handleOrderBy = this.handleOrderBy.bind(this);
     this.applyFilters = this.applyFilters.bind(this);
@@ -85,7 +83,6 @@ class StaticHotelsSearchPage extends React.Component {
     this.handleOpenSelect = this.handleOpenSelect.bind(this);
     this.handleCloseSelect = this.handleCloseSelect.bind(this);
     this.getQueryString = this.getQueryString.bind(this);
-    this.updateListingsPrices = this.updateListingsPrices.bind(this);
     this.getRandomInt = this.getRandomInt.bind(this);
 
     // SOCKET BINDINGS
@@ -97,9 +94,14 @@ class StaticHotelsSearchPage extends React.Component {
   }
 
   componentDidMount() {
-    this.getLocRate();
-    getCurrencyRates()
-      .then((json) => this.setState({ rates: json }));
+    
+    getLocRateInUserSelectedCurrency(ROOMS_XML_CURRENCY).then((json) => {
+      this.setState({ locRate: Number(json[0][`price_${ROOMS_XML_CURRENCY.toLowerCase()}`]) });
+    });
+
+    getCurrencyRates().then((json) => { 
+      this.setState({ rates: json });
+    });
 
     const query = this.props.location.search;
     const queryParams = queryString.parse(query);
@@ -113,18 +115,10 @@ class StaticHotelsSearchPage extends React.Component {
       });
 
       const listingsById = _.mapKeys(listings, 'id');
-      // console.log('COMPONENT DID MOUNT', listingsById);
       this.setState({ listingsById, totalElements: json.totalElements, loading: false,  }, () => {
         this.connectSocket();
       });
     });
-  }
-
-  updateListingsPrices(listings) {
-    return listings.map(l => ({
-      id: l.id,
-      price: this.pricesByHotelId[l.id]
-    }));
   }
 
   handleReceiveMessage(message) {
@@ -254,12 +248,6 @@ class StaticHotelsSearchPage extends React.Component {
       }
     }
     return false;
-  }
-
-  getLocRate() {
-    getLocRateInUserSelectedCurrency(ROOMS_XML_CURRENCY).then((json) => {
-      this.setState({ locRate: Number(json[0][`price_${ROOMS_XML_CURRENCY.toLowerCase()}`]) });
-    });
   }
 
   calculateNights(startDate, endDate) {

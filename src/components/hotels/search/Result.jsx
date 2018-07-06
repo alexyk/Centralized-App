@@ -29,16 +29,16 @@ function Result(props) {
   const leftButton = <button></button>;
   const rightButton = <button></button>;
 
-  let { id, name, description, photos, stars } = props.hotel;
+  let { id, name, generalDescription, hotelPhotos, star } = props.hotel;
   let { price } = props;
-  const pictures = photos && photos.slice(0, 3).map(url => { return { thumbnail: `${Config.getValue('imgHost')}${url}` }; });
+  const pictures = hotelPhotos && hotelPhotos.slice(0, 3).map(pic => { return { thumbnail: `${Config.getValue('imgHost')}${pic.url}` }; });
   const { locRate, rates } = props;
   const { currencySign } = props.paymentInfo;
   const isPriceLoaded = !!price;
   let locPrice = ((price / locRate) / props.nights).toFixed(2);
   const priceInSelectedCurrency = rates && ((price * (rates[ROOMS_XML_CURRENCY][props.paymentInfo.currency])) / props.nights).toFixed(2);
 
-  description = description && description.substr(0, 250);
+  generalDescription = generalDescription && generalDescription.substr(0, 250);
 
   if (pictures && pictures.length < 1) {
     pictures.push({ thumbnail: `${Config.getValue('imgHost')}/listings/images/default.png` });
@@ -83,10 +83,10 @@ function Result(props) {
         <div className="rating">
           <span>Rating: </span>
           <div className="rating-holder">
-            {calculateStars(stars)}
+            {calculateStars(star)}
           </div>
         </div>
-        <p>{description && ReactHtmlParser(description + (description.length < 250 ? '' : '...'))}</p>
+        <p>{generalDescription && ReactHtmlParser(generalDescription + (generalDescription.length < 250 ? '' : '...'))}</p>
       </div>
       
       <div className="result-pricing">
