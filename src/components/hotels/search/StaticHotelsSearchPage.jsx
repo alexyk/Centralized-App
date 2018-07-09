@@ -25,6 +25,8 @@ import {
   getStaticHotels,
 } from '../../../requester';
 
+const DEBUG_SOCKET = false;
+
 class StaticHotelsSearchPage extends React.Component {
   constructor(props) {
     super(props);
@@ -150,7 +152,10 @@ class StaticHotelsSearchPage extends React.Component {
 
     const url = Config.getValue('socketHost');
     this.client = Stomp.client(url);
-    // this.client.debug = () => {};
+    if (!DEBUG_SOCKET) {
+      this.client.debug = () => {};
+    }
+
     this.client.connect(null, null, this.subscribe);
   }
 
@@ -160,7 +165,6 @@ class StaticHotelsSearchPage extends React.Component {
     const search = this.props.location.search;
     const queueId = `${id}&${rnd}`;
     const destination = 'search/' + queueId;
-    console.log(destination);
     const client = this.client;
     const handleReceiveHotelPrice = this.handleReceiveMessage;
 

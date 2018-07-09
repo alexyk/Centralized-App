@@ -41,7 +41,7 @@ class MobileHotelBookingPage extends React.Component {
         hotel: data,
         nights: nights,
         rooms: rooms,
-        pictures: data.photos,
+        pictures: data.hotelPhotos,
         loading: false,
         quoteId: quoteId
       });
@@ -222,7 +222,7 @@ class MobileHotelBookingPage extends React.Component {
     const hotelMainAddress = this.state.hotel && this.state.hotel.additionalInfo.mainAddress;
     const hotelCityName = this.state.hotel && this.state.hotel.city;
     const rooms = this.state.rooms;
-    const hotelPicUrl = this.state.pictures && this.state.pictures.length > 0 ? this.state.pictures[0] : '/listings/images/default.png';
+    const hotelPicUrl = this.state.pictures && this.state.pictures.length > 0 ? this.state.pictures[0].url : '/listings/images/default.png';
     const priceInSelectedCurrency = this.state.rates && Number(this.state.totalPrice * this.state.rates[ROOMS_XML_CURRENCY][this.props.paymentInfo.currency]).toFixed(2);
     return (
       <div>
@@ -245,7 +245,7 @@ class MobileHotelBookingPage extends React.Component {
                       <img src={`${Config.getValue('imgHost')}${hotelPicUrl}`} alt="Hotel" />
                     </div>
                     <h6>{hotelName}</h6>
-                    <h6>{hotelMainAddress}, {hotelCityName}</h6>
+                    <h6>{hotelMainAddress} {hotelCityName}</h6>
                     <hr />
                     {this.state.roomResults && this.state.roomResults.map((room, index) => {
                       if (!this.props.userInfo.isLogged) {

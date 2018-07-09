@@ -87,7 +87,6 @@ class HotelDetailsPage extends React.Component {
   componentDidMount() {
     const id = this.props.match.params.id;
     const search = this.props.location.search;
-    console.log(search);
     getHotelById(id, search).then((data) => {
       this.setState({ data: data, loading: false });
       const searchParams = this.getSearchParams(this.props.location.search);
@@ -534,9 +533,9 @@ class HotelDetailsPage extends React.Component {
       loading = true;
     } else {
       images = [];
-      if (this.state.data.photos) {
-        images = this.state.data.photos.map((x, i) => {
-          return { src: Config.getValue('imgHost') + x, index: i };
+      if (this.state.data.hotelPhotos) {
+        images = this.state.data.hotelPhotos.map((image, index) => {
+          return { src: Config.getValue('imgHost') + image.url, index: index };
         });
       }
     }
@@ -598,23 +597,6 @@ class HotelDetailsPage extends React.Component {
               onClickThumbnail={this.gotoImage}
               onClose={this.closeLightbox}
             />}
-            {/* <section className="hotel-gallery"> */}
-            {/* <div className="hotel-gallery-bgr lg-none" style={(images && images.length > 0) ? { 'backgroundImage': 'url("' + images[0].src + '")' } : { backgroundColor: '#AAA' }}>
-              <div className="container">
-                <a onClick={(e => this.openLightbox(e))} className="btn btn-primary btn-gallery">Open Gallery</a>
-                {images !== null && <Lightbox
-                  currentImage={this.state.currentImage}
-                  images={images}
-                  isOpen={this.state.lightboxIsOpen}
-                  onClickImage={this.handleClickImage}
-                  onClickNext={this.gotoNext}
-                  onClickPrev={this.gotoPrevious}
-                  onClickThumbnail={this.gotoImage}
-                  onClose={this.closeLightbox}
-                />}
-              </div>
-            </div> */}
-            {/* </section> */}
             <div className='hotel-details-carousel'>
               <Slider
                 ref={c => (this.slider = c)}

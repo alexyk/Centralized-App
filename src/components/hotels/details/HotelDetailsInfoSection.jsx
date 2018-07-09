@@ -45,10 +45,6 @@ function HotelDetailsInfoSection(props) {
       starsElements.push(<span key={i} className="full-star"></span>);
     }
 
-    // for (let i = 0; i < 5 - rating; i++) {
-    //     starsElements.push(<span key={100 - i} className="empty-star"></span>);
-    // }
-
     return starsElements;
   };
 
@@ -60,12 +56,10 @@ function HotelDetailsInfoSection(props) {
     }
   };
 
-  const allAmenities = props.data.amenities;
-  const mostPopularFacilities = allAmenities.filter(a => a.picture != null).slice(0, 5);
-  const amenities = getAmenities(allAmenities);
-  const street = props.data.additionalInfo.mainAddress;
-  const city = props.data.city;
-  const country = props.data.region.country.name;
+  const { hotelAmenities, city, country, generalDescription } = props.data;
+  const mostPopularFacilities = hotelAmenities.filter(a => a.picture != null).slice(0, 5);
+  const amenities = getAmenities(hotelAmenities);
+  const address = props.data.additionalInfo.mainAddress;
   const rooms = props.hotelRooms;
   let roomsResults = [];
   if (rooms) {
@@ -102,10 +96,10 @@ function HotelDetailsInfoSection(props) {
         </div>
       </div>
       <div className="clearfix" />
-      <p>{street}, {city}, {country}</p>
+      <p>{address} {city}, {country}</p>
       <div className="list-hotel-description">
         <h2>Description</h2>
-        <span dangerouslySetInnerHTML={{ __html: props.data.descriptions.filter(x => x.type === 'PropertyInformation')[0] ? props.data.descriptions.filter(x => x.type === 'PropertyInformation')[0].text : (props.data.descriptions.filter(x => x.type === 'General')[0] ? props.data.descriptions.filter(x => x.type === 'General')[0].text : '') }}></span>
+        <span dangerouslySetInnerHTML={{ __html: generalDescription }}></span>
       </div>
 
 
@@ -121,17 +115,11 @@ function HotelDetailsInfoSection(props) {
                   <div key={i} className="icon-facilities" tooltip={item.text}>
                     <span className="icon-image" style={{ textAlign: 'center', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                       <img src={Config.getValue('imgHost') + item.picture} style={{ width: '60%', height: '60%' }} alt="" />
-                      {/* <b>{item.picture}</b> */}
                     </span>
                   </div>
                 )
               );
             })}
-            {/* <div className="icon-facilities">
-              <a href='#' className="icon-extend" style={{ textAlign: 'center', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                +23
-              </a>
-            </div> */}
             <div className="clearfix" />
           </div>
           <div className="row">
