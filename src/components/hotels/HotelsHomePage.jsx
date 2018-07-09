@@ -17,8 +17,8 @@ class HotelsHomePage extends React.Component {
     this.state = {
       startDate: startDate,
       endDate: endDate,
-      rooms: [{ adults: 1, children: [] }],
-      adults: 2,
+      rooms: [{ adults: '2', children: [] }],
+      adults: '2',
       hasChildren: false,
       childrenModal: false,
     };

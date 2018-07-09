@@ -28,7 +28,7 @@ function ResultsHolder(props) {
 }
 
 ResultsHolder.propTypes = {
-  hotels: PropTypes.array,
+  hotels: PropTypes.any,
   locRate: PropTypes.number,
   rates: PropTypes.object,
   nights: PropTypes.number

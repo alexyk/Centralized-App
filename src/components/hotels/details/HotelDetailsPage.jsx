@@ -42,7 +42,7 @@ class HotelDetailsPage extends React.Component {
       searchEndDate: endDate,
       calendarStartDate: startDate,
       calendarEndDate: endDate,
-      rooms: [{ adults: 1, children: [] }],
+      rooms: [{ adults: '2', children: [] }],
       adults: '2',
       children: '0',
       nights: nights,
@@ -141,7 +141,7 @@ class HotelDetailsPage extends React.Component {
     for (let i = 0; i < rooms.length; i++) {
       adults += Number(rooms[i].adults);
     }
-    return adults;
+    return adults.toString();
   }
 
   getHasChildren(rooms) {
@@ -591,7 +591,6 @@ class HotelDetailsPage extends React.Component {
               currentImage={this.state.currentImage}
               images={images}
               isOpen={this.state.lightboxIsOpen}
-              // onClickImage={this.handleClickImage}
               onClickNext={this.gotoNext}
               onClickPrev={this.gotoPrevious}
               onClickThumbnail={this.gotoImage}
@@ -608,12 +607,6 @@ class HotelDetailsPage extends React.Component {
                     </div>
                   );
                 })}
-                {/* <div><div className='slide' style={{ 'backgroundImage': 'url("' + left + '")' }}></div></div>
-                <div><div className='slide' style={{ 'backgroundImage': 'url("' + right + '")' }}></div></div>
-                <div><div className='slide' style={{ 'backgroundImage': 'url("' + current + '")' }}></div></div>
-                <div><div className='slide' style={{ 'backgroundImage': 'url("' + right + '")' }}></div></div>
-                <div><div className='slide' style={{ 'backgroundImage': 'url("' + left + '")' }}></div></div>
-                <div><div className='slide' style={{ 'backgroundImage': 'url("' + current + '")' }}></div></div> */}
               </Slider>
             </div>
             <div className="main-carousel">

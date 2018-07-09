@@ -100,7 +100,7 @@ $media-expressions: (
 			&.prev {
 				left: 0;
 				&:before {
-					transform: rotate(90deg);
+          transform: rotate(90deg);
 				}
 			}
 			&.next {

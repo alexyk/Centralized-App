@@ -1,71 +1,22 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import HotelsSearchBarDatePicker from './HotelsSearchBarDatePicker';
-import moment from 'moment';
-
-// import Autocomplete from 'react-google-autocomplete';
-
 import Select from 'react-select';
+import moment from 'moment';
+import HotelsSearchBarDatePicker from './HotelsSearchBarDatePicker';
 import { getRegionsBySearchParameter } from '../../../requester';
 
 function HotelsSearchBar(props) {
-
-
-  // const getAddressComponents = (place) => {
-  //     let components = place.address_components;
-  //     let result = [];
-  //     for (let i = 0; i < components.length; i++) {
-  //         let addressComponent = {
-  //             name: components[i].long_name,
-  //             shortName: components[i].short_name,
-  //             type: components[i].types[0]
-  //         };
-  //         result.push(addressComponent);
-  //     }
-  //     return result;
-  // };
-
-  // const setAddressComponents = (addressComponentsMap) => {
-  //     let addressCountry = addressComponentsMap.filter(x => x.type === 'country')[0];
-  //     let addressCityName = addressComponentsMap.filter(x => x.type === 'locality')[0];
-  //     let addressStateName = addressComponentsMap.filter(x => x.type === 'administrative_area_level_1')[0];
-
-  //     props.onChange({ target: { name: 'country', value: addressCountry ? addressCountry.name : '' }});
-  //     props.onChange({ target: { name: 'city', value: addressCityName ? addressCityName.name : '' }});
-  //     props.onChange({ target: { name: 'state', value: addressStateName ? addressStateName.name : '' }});
-  //     props.onChange({ target: { name: 'countryCode', value: addressCountry ? addressCountry.shortName : '' }});
-  // };
-
-  // const handlePlaceSelect = (place) => {
-  //     console.log(place);
-  //     if (place.address_components !== undefined) {
-  //         let addressComponentsMap = getAddressComponents(place);
-  //         setAddressComponents(addressComponentsMap);
-  //     }
-  // };
 
   const getRegions = (param) => {
     if (!param) {
       return Promise.resolve({ options: [] });
     }
 
-    // if (query.length < 3) {
-    //     return Promise.resolve({ options: [] });
-    // }
-
     return getRegionsBySearchParameter(param)
       .then((json) => {
         return { options: json };
       });
   };
-
-  // function onInputKeyDown(event) {
-  //     switch (event.keyCode) {
-  //     case 9:   // TAB
-  //         document.getElementsByName('stay')[0].click();
-  //         break;
-  //     }
-  // }
 
   const { rooms } = props;
   return (
@@ -152,7 +103,7 @@ const calculateNights = (startDate, endDate) => {
 };
 
 HotelsSearchBar.propTypes = {
-  adults: PropTypes.number,
+  adults: PropTypes.string,
   rooms: PropTypes.array,
   region: PropTypes.object,
   startDate: PropTypes.any,
@@ -164,6 +115,8 @@ HotelsSearchBar.propTypes = {
   handleRoomsChange: PropTypes.func,
   handleSelectRegion: PropTypes.func,
   handleToggleChildren: PropTypes.func,
+  handleOpenSelect: PropTypes.func,
+  handleCloseSelect: PropTypes.func
 };
 
 export default HotelsSearchBar;
