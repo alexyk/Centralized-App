@@ -1,4 +1,3 @@
-import ethers from 'ethers';
 import {
   getGasPrice
 } from "../utils/ethFuncs"

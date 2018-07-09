@@ -200,7 +200,7 @@ export class HotelReservation {
     await TokenValidators.validateLocBalance(wallet.address, reservationCostLOC, wallet, gasConfig.simpleReservationMultipleWithdrawers.create);
     await EtherValidators.validateEthBalance(wallet, overrideOptions.gasLimit);
 
-    let approve = await approveContract(wallet, reservationCostLOC, SimpleReservationMultipleWithdrawersContract.address, gasPrice);
+    await approveContract(wallet, reservationCostLOC, SimpleReservationMultipleWithdrawersContract.address, gasPrice);
 
     let reservationCustomWithdrawerWithWalletInstance = SimpleReservationMultipleWithdrawersContractWithWallet(wallet);
 
@@ -273,7 +273,7 @@ export class HotelReservation {
     await TokenValidators.validateLocBalance(wallet.address, reservationCostLOC, wallet, gasConfig.simpleReservationSingleWithdrawer.create);
     await EtherValidators.validateEthBalance(wallet, overrideOptions.gasLimit);
 
-    let approve = await approveContract(wallet, reservationCostLOC, SimpleReservationSingleWithdrawerContract.address, gasPrice);
+    await approveContract(wallet, reservationCostLOC, SimpleReservationSingleWithdrawerContract.address, gasPrice);
 
     let reservationWithWalletInstance = SimpleReservationSingleWithdrawerContractWithWallet(wallet);
 

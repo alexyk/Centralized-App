@@ -1,6 +1,5 @@
 import {
   addDaysToNow,
-  formatStartDateTimestamp,
   formatTimestamp,
   formatTimestampToDays
 } from "../utils/timeHelper";
@@ -8,9 +7,6 @@ import {
   HotelReservationFactoryContract,
   SimpleReservationMultipleWithdrawersContract
 } from "../config/contracts-config";
-import {
-  BaseValidators
-} from "./baseValidators";
 import ethers from 'ethers';
 
 const ERROR = require('./../config/errors.json');
@@ -56,7 +52,7 @@ export class ReservationValidators {
     ) {
       throw new Error(ERROR.INVALID_PARAMS);
     }
-    if (daysBeforeStartForRefund.length != refundPercentages.length) {
+    if (daysBeforeStartForRefund.length !== refundPercentages.length) {
       throw new Error(ERROR.INVALID_REFUND_PARAMS_LENGTH);
     }
 
@@ -256,7 +252,7 @@ export class ReservationValidators {
       throw new Error(ERROR.INVALID_DISPUTE);
     }
 
-    if (isDisputeOpen == true) {
+    if (isDisputeOpen === true) {
       throw new Error(ERROR.ALREADY_OPENED_DISPUTE);
     }
     return true;
