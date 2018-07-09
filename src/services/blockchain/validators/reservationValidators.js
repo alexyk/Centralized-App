@@ -273,8 +273,6 @@ export class ReservationValidators {
         throw new Error(ERROR.INVALID_ID_PARAM)
       }
       let reservationMapping = await SimpleReservationMultipleWithdrawersContract.reservations(reservationIdsArrayBytes[i]);
-      console.log(reservationMapping[2].toString());
-      console.log(currentTimestamp);
 
       if (reservationMapping[2].toString() > currentTimestamp) {
         throw new Error(ERROR.INVALID_DATE_FOR_WITHDRAW)
@@ -282,6 +280,10 @@ export class ReservationValidators {
 
       if (reservationMapping[0] != senderAddress) {
         throw new Error(ERROR.INVALID_WITHDRAWER)
+      }
+
+      if (reservationMapping[1] == 0) {
+        throw new Error(ERROR.INVALID_BOOKING_FOR_WITHDRAW)
       }
     }
 

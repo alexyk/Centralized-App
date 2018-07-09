@@ -31,6 +31,9 @@ import {
 
 const gasConfig = require('./config/gas-config.json');
 const errors = require('./config/errors.json');
+const {
+  singleReservationWithdrawGas
+} = require('./config/constants.json');
 
 export class HotelReservation {
   static async createReservation(jsonObj,
@@ -230,13 +233,14 @@ export class HotelReservation {
     let wallet = await ethers.Wallet.fromEncryptedWallet(jsonObj, password);
     const gasPrice = await getGasPrice();
 
-    //TODO: Check how much withdraw cost and dynamically set the gas limit, based on the length of the booking array
+    await ReservationValidators.validateWithdrawFunds(jsonObj, password, reservationIdsArrayBytes, wallet.address);
+
+    let gasLimitWithdraw = gasConfig.simpleReservationMultipleWithdrawers.withdrawInitial + (reservationIdsArray.length * singleReservationWithdrawGas);
     let overrideOptions = {
-      gasLimit: gasConfig.simpleReservationMultipleWithdrawers.withdraw,
+      gasLimit: gasLimitWithdraw,
       gasPrice: gasPrice
     };
 
-    await ReservationValidators.validateWithdrawFunds(jsonObj, password, reservationIdsArrayBytes, wallet.address);
     await EtherValidators.validateEthBalance(wallet, overrideOptions.gasLimit);
 
     let reservationCustomWithdrawerWithWalletInstance = SimpleReservationMultipleWithdrawersContractWithWallet(wallet);

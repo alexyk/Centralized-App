@@ -20,5 +20,6 @@
   "bytesParamsLength": 32,
   "yearInDays": 365,
   "leapYearDay": 1,
-  "secondsInMilliSeconds": 1000
+  "secondsInMilliSeconds": 1000,
+  "singleReservationWithdrawGas": 3000
 }

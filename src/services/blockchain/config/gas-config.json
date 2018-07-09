@@ -42,7 +42,7 @@
   },
   "simpleReservationMultipleWithdrawers": {
     "create": 150000,
-    "withdraw": 4500000
+    "withdrawInitial": 50000
   }
 
 }
