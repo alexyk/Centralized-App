@@ -2919,8 +2919,21 @@ h3 {
     font-size: 24px;
 }
 
+.room-dates i {
+    margin: 0 3%;
+}
+
 #room-book-confirm {
     margin-top: 20px;
+}
+
+#room-book-confirm .room-table {
+    margin-top: 3%;
+}
+
+#room-book-confirm .cancelation-table {
+    margin-top: 3%;
+    margin-bottom: 3%;
 }
 
 #room-book-confirm .booking-details {
@@ -2933,6 +2946,7 @@ h3 {
 }
 
 #room-book-confirm table {
+    max-width: 70%;
     margin: 0 auto;
 }
 
@@ -2941,6 +2955,10 @@ h3 {
     color: #d87a61;
     border: 0;
     outline: none;
+}
+
+#room-book-confirm .cancelation-fees {
+    text-align: center;
 }
 
 #room-book-confirm table th,
@@ -2953,11 +2971,19 @@ td {
     border-bottom: 1px solid #ccc;
 }
 
+#room-book-confirm table td {
+    width: 15%;
+    padding: 10px;
+    text-align: center;
+}
+
 #room-book-confirm table tr td:last-child {
     text-align: center;
 }
 
 #room-book-confirm table tr.booking-room-canx-fee td {
+    width: 15%;
+    padding: 10px;
     background-color: #F5F5F5;
     color: #d87a61;
 }
