@@ -22,7 +22,8 @@ import {
   approveContract
 } from "./utils/approveContract";
 import {
-  getGasPrice
+  getGasPrice,
+  arrayToUtf8BytesArrayConverter
 } from "./utils/ethFuncs"
 import ethers from 'ethers';
 import {
@@ -223,13 +224,10 @@ export class HotelReservation {
    */
   static async withdrawFundsFromReservation(jsonObj, password, reservationIdsArray) {
 
-    let reservationIdsArrayBytes = [];
+    console.log(reservationIdsArray);
 
-    for (let i = 0; i < reservationIdsArray.length; i++) {
-      const reservationIdBytes = ethers.utils.toUtf8Bytes(reservationIdsArray[i]);
-      reservationIdsArrayBytes.push(reservationIdBytes);
-    }
-
+    let reservationIdsArrayBytes = await arrayToUtf8BytesArrayConverter(reservationIdsArray);
+    console.log(reservationIdsArrayBytes)
     let wallet = await ethers.Wallet.fromEncryptedWallet(jsonObj, password);
     const gasPrice = await getGasPrice();
 

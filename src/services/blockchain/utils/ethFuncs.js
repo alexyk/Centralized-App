@@ -139,3 +139,13 @@ async function checkIfFundingIsNeeded(walletAddress, actionGas = 0) {
   }
   return 0;
 }
+
+export async function arrayToUtf8BytesArrayConverter(arrayToConvert) {
+  let arrayInBytes = [];
+
+  for (let i = 0; i < arrayToConvert.length; i++) {
+    const itemInBytes = ethers.utils.toUtf8Bytes(arrayToConvert[i]);
+    arrayInBytes.push(itemInBytes);
+  }
+  return arrayInBytes
+}

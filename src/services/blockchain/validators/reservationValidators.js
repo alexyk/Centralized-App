@@ -283,7 +283,7 @@ export class ReservationValidators {
       }
     }
 
-    let maxAllowedCyclesForWithdraw = await SimpleReservationMultipleWithdrawersContract.maxAllowedWithdrawCyclesCount.call();
+    let maxAllowedCyclesForWithdraw = await SimpleReservationMultipleWithdrawersContract.maxAllowedWithdrawCyclesCount();
 
     if (reservationIdsArrayBytes.length > maxAllowedCyclesForWithdraw.toString()) {
       throw new Error(ERROR.WITHDRAW_ARRAY_GREATER_THAN_POSSIBLE)
