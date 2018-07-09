@@ -61,18 +61,20 @@ export class AppRouter extends React.Component {
       localStorage[Config.getValue('domainPrefix') + '.auth.locktrip'] = decodeURI(authToken);
       this.setUserInfo();
       const url = this.props.location.pathname;
-      let search = '?';
-      for (let key in queryStringParameters) {
-        if (key !== 'authEmail' && key !== 'authToken') {
-          const param = encodeURI(key + '=' + queryStringParameters[key]) + '&';
-          search += param;
-          // console.log(encodeURI(param));
-        }
-      }
-      
-      // console.log(search);
-      this.props.history.push(url + search.substr(0, search.length - 1));
+      const search = this.getQueryString(queryStringParameters);
+      console.log(url + search);
+      this.props.history.push(url + search);
     }
+  }
+
+  getQueryString(queryStringParameters) {
+    let queryString = '?';
+    queryString += 'region=' + encodeURI(queryStringParameters.region);
+    queryString += '&currency=' + encodeURI(queryStringParameters.currency);
+    queryString += '&startDate=' + encodeURI(queryStringParameters.startDate);
+    queryString += '&endDate=' + encodeURI(queryStringParameters.endDate);
+    queryString += '&rooms=' + encodeURI(queryStringParameters.rooms);
+    return queryString;
   }
 
   render() {

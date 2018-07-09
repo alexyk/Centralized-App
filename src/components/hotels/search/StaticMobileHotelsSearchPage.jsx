@@ -84,6 +84,7 @@ class StaticMobileHotelsSearchPage extends React.Component {
     this.handleCloseSelect = this.handleCloseSelect.bind(this);
     this.getQueryString = this.getQueryString.bind(this);
     this.updateListingsPrices = this.updateListingsPrices.bind(this);
+    this.getRandomInt = this.getRandomInt.bind(this);
 
     // SOCKET BINDINGS
     this.handleReceiveMessage = this.handleReceiveMessage.bind(this);
@@ -98,7 +99,8 @@ class StaticMobileHotelsSearchPage extends React.Component {
     getCurrencyRates()
       .then((json) => this.setState({ rates: json }));
 
-    const queryParams = queryString.parse(this.props.location.search);
+    const query = this.props.location.search;
+    const queryParams = queryString.parse(query);
     const { region } = queryParams;
     getStaticHotels(region).then(json => {
       const listings = json.content;
@@ -110,7 +112,7 @@ class StaticMobileHotelsSearchPage extends React.Component {
 
       const listingsById = _.mapKeys(listings, 'id');
       // console.log('COMPONENT DID MOUNT', listingsById);
-      this.setState({ listingsById, totalElements: json.totalElements, loading: false }, () => {
+      this.setState({ listingsById, totalElements: json.totalElements, loading: false,  }, () => {
         this.connectSocket();
       });
     });
@@ -152,15 +154,17 @@ class StaticMobileHotelsSearchPage extends React.Component {
 
     const url = Config.getValue('socketHost');
     this.client = Stomp.client(url);
-    this.client.debug = () => {};
+    // this.client.debug = () => {};
     this.client.connect(null, null, this.subscribe);
   }
 
   subscribe(frame) {
     const id = localStorage.getItem('uuid');
+    const rnd = this.getRandomInt();
     const search = this.props.location.search;
-    const queueId = id + '&' + search;
+    const queueId = `${id}&${rnd}`;
     const destination = 'search/' + queueId;
+    console.log(destination);
     const client = this.client;
     const handleReceiveHotelPrice = this.handleReceiveMessage;
 
@@ -344,7 +348,7 @@ class StaticMobileHotelsSearchPage extends React.Component {
     const queryString = this.getQueryString();
 
     const nights = this.calculateNights(this.state.startDate, this.state.endDate);
-    this.props.history.push('/hotels/listings' + queryString);
+    this.props.history.push('/mobile/search' + queryString);
 
     const region = this.state.region.id;
 
@@ -579,8 +583,8 @@ class StaticMobileHotelsSearchPage extends React.Component {
       loading: true
     });
 
-    const searchParams = queryString.parse(this.props.location.search);
-    const { region } = searchParams;
+    const query = queryString.parse(this.props.location.search);
+    const { region } = query;
 
     window.scrollTo(0, 0);
 
@@ -603,6 +607,11 @@ class StaticMobileHotelsSearchPage extends React.Component {
         loading: false
       });
     });
+  }
+
+  getRandomInt() {
+    const MAX = 999999999999;
+    return Math.floor(Math.random() * Math.floor(MAX));
   }
 
   unsubscribe() {
