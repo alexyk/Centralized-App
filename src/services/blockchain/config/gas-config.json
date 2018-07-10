@@ -39,6 +39,9 @@
   "TIMES_GAS_AMOUNT": 1,
   "simpleReservationSingleWithdrawer": {
     "create": 70000
+  },
+  "simpleReservationMultipleWithdrawers": {
+    "create": 200000
   }
 
 }

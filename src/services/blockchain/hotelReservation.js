@@ -2,8 +2,8 @@ import {
   HotelReservationFactoryContract,
   initHotelReservationContract,
   HotelReservationFactoryContractWithWallet,
-  SimpleHotelReservationContract,
-  SimpleHotelReservationContractWithWallet,
+  SimpleReservationMultipleWithdrawersContract,
+  SimpleReservationMultipleWithdrawersContractWithWallet,
   SimpleReservationSingleWithdrawerContract,
   SimpleReservationSingleWithdrawerContractWithWallet
 } from "./config/contracts-config";
@@ -164,40 +164,51 @@ export class HotelReservation {
     return openDisputeTxResult;
   }
 
-  static async createSimpleHotelReservation(jsonObj,
+  /**
+   * Function to create simple reservation where the withdrawer can be custom address passed as a parameter
+   * @param {String} jsonObj  - User's wallet jsonObj as string
+   * @param {String} password  - User's wallet password as string
+   * @param {String} hotelReservationId - The Id of the reservations, shouldn't be more than 32 symbols 
+   * @param {String} reservationCostLOC  - The price of the reservation in Wei, as String
+   * @param {Timestamp} withdrawDateInSeconds  - The date after which the funds can be withdrawn (check out date of the booking). Should be timestamp in seconds.
+   * @param {String} recipientAddress - The address of the person that should withdraw the funds after reservation checkout.
+   * @returns {JSONObject} createReservationMultipleWithdrawersTxResult - The result from the transaction when creating a reservation.
+   */
+
+  static async createSimpleReservationCustomWithdrawer(jsonObj,
     password,
     hotelReservationId,
     reservationCostLOC,
-    withdrawDate,
+    withdrawDateInSeconds,
     recipientAddress) {
 
-    const withdrawDateFormatted = formatEndDateTimestamp(withdrawDate);
+    const withdrawDateFormatted = formatEndDateTimestamp(withdrawDateInSeconds);
     const hotelReservationIdBytes = ethers.utils.toUtf8Bytes(hotelReservationId);
 
     let wallet = await ethers.Wallet.fromEncryptedWallet(jsonObj, password);
     const gasPrice = await getGasPrice();
     let overrideOptions = {
-      gasLimit: gasConfig.hotelReservation.simpleCreate,
+      gasLimit: gasConfig.simpleReservationMultipleWithdrawers.create,
       gasPrice: gasPrice
     };
 
-    await ReservationValidators.validateSimpleHotelReservationParams(jsonObj, password, hotelReservationIdBytes, reservationCostLOC, withdrawDateFormatted, recipientAddress)
+    await ReservationValidators.validateSimpleReservationCustomWithdrawerParams(jsonObj, password, hotelReservationIdBytes, reservationCostLOC, withdrawDateFormatted, recipientAddress)
 
-    await TokenValidators.validateLocBalance(wallet.address, reservationCostLOC, wallet, gasConfig.hotelReservation.simpleCreate);
+    await TokenValidators.validateLocBalance(wallet.address, reservationCostLOC, wallet, gasConfig.simpleReservationMultipleWithdrawers.create);
     await EtherValidators.validateEthBalance(wallet, overrideOptions.gasLimit);
 
-    let approve = await approveContract(wallet, reservationCostLOC, SimpleHotelReservationContract.address, gasPrice);
+    let approve = await approveContract(wallet, reservationCostLOC, SimpleReservationMultipleWithdrawersContract.address, gasPrice);
 
-    let SimpleHotelReservationContractWithWalletInstance = SimpleHotelReservationContractWithWallet(wallet);
+    let reservationCustomWithdrawerWithWalletInstance = SimpleReservationMultipleWithdrawersContractWithWallet(wallet);
 
-    const createSimpleHotelReservationTxResult = await SimpleHotelReservationContractWithWalletInstance.createHotelReservation(hotelReservationIdBytes,
+    const createReservationCustomWithdrawerTxResult = await reservationCustomWithdrawerWithWalletInstance.createReservation(hotelReservationIdBytes,
       reservationCostLOC,
       withdrawDateFormatted,
       recipientAddress,
       overrideOptions
     );
 
-    return createSimpleHotelReservationTxResult;
+    return createReservationCustomWithdrawerTxResult;
   }
 
   /**
@@ -219,7 +230,7 @@ export class HotelReservation {
       gasLimit: gasConfig.simpleReservationSingleWithdrawer.create,
       gasPrice: gasPrice
     };
-    await ReservationValidators.validateSimpleReservationParams(jsonObj, password, reservationCostLOC, withdrawDateFormatted)
+    await ReservationValidators.validateSimpleReservationSingleWithdrawerParams(jsonObj, password, reservationCostLOC, withdrawDateFormatted)
 
     await TokenValidators.validateLocBalance(wallet.address, reservationCostLOC, wallet, gasConfig.simpleReservationSingleWithdrawer.create);
     await EtherValidators.validateEthBalance(wallet, overrideOptions.gasLimit);

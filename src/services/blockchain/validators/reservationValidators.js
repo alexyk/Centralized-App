@@ -6,7 +6,7 @@ import {
 } from "../utils/timeHelper";
 import {
   HotelReservationFactoryContract,
-  SimpleHotelReservationContract
+  SimpleReservationMultipleWithdrawersContract
 } from "../config/contracts-config";
 import {
   BaseValidators
@@ -93,24 +93,24 @@ export class ReservationValidators {
 
   }
 
-  static async validateSimpleHotelReservationParams(jsonObj,
+  static async validateSimpleReservationMultipleWithdrawersParams(jsonObj,
     password,
     hotelReservationId,
     reservationCostLOC,
-    withdrawDate,
+    withdrawDateInSecondsFormatted,
     recipientAddress) {
     if (!jsonObj ||
       !password ||
       !hotelReservationId ||
       !reservationCostLOC ||
       reservationCostLOC * 1 <= 0 ||
-      !withdrawDate ||
+      !withdrawDateInSecondsFormatted ||
       !recipientAddress
     ) {
       throw new Error(ERROR.INVALID_PARAMS);
     }
 
-    if ((Date.now() / secondsInMilliSeconds | 0) > withdrawDate) {
+    if ((Date.now() / secondsInMilliSeconds | 0) > withdrawDateInSecondsFormatted) {
       throw new Error(ERROR.INVALID_WITHDRAW_DATE);
     }
 
@@ -118,13 +118,13 @@ export class ReservationValidators {
       throw new Error(ERROR.INVALID_ID_PARAM)
     }
 
-    await this.validateSimpleReservationDontExist(hotelReservationId);
-    this.validateWithdrawDate(withdrawDate)
+    await this.validateSimpleReservationMultipleWithdrawersDontExist(hotelReservationId);
+    this.validateWithdrawDate(withdrawDateInSecondsFormatted)
 
     return true;
   }
 
-  static async validateSimpleReservationParams(jsonObj, password, reservationCostLOC, withdrawDateInDays) {
+  static async validateSimpleReservationSingleWithdrawerParams(jsonObj, password, reservationCostLOC, withdrawDateInDays) {
     if (!jsonObj ||
       !password ||
       !reservationCostLOC ||
@@ -217,8 +217,8 @@ export class ReservationValidators {
     }
   }
 
-  static async validateSimpleReservationDontExist(hotelReservationId) {
-    let recipientAddress = await SimpleHotelReservationContract.hotelReservations(hotelReservationId);
+  static async validateSimpleReservationMultipleWithdrawersDontExist(hotelReservationId) {
+    let recipientAddress = await SimpleReservationMultipleWithdrawersContract.reservations(hotelReservationId);
     if (recipientAddress[0] === '0x0000000000000000000000000000000000000000') {
       return true;
     }
