@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import Select from 'react-select';
 
-export default class StyleTest extends Component {
+class StyleTest extends Component {
   constructor(props) {
     super(props);
     
@@ -25,6 +25,7 @@ export default class StyleTest extends Component {
           name="form-field-name"
           value={selectedOption}
           onChange={this.handleChange}
+          clearable={true}
           onClose={() => {
             if (this.state.selectedOption && this.state.selectedOption.label === '') {
               this.setState({ selectedOption: null });
@@ -40,7 +41,15 @@ export default class StyleTest extends Component {
             { value: 'two', label: 'Two' },
           ]}
         />
+
+        <button onClick={() => {
+          const a = 'abc';
+          console.log(a.match('^([^\\s][a-zA-Z].?[0-9][^\\s]|[^\\s][0-9].?[a-zA-Z][^\\s])$/'));
+        }}>Test</button>
+        <span className="icon-question" title={`${123}`}></span>
       </div>
     );
   }
 }
+
+export default StyleTest;

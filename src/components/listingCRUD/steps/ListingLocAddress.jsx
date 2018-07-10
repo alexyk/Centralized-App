@@ -11,7 +11,7 @@ import React from 'react';
 
 let captcha;
 
-export default function ListingLocAddress(props) {
+function ListingLocAddress(props) {
   const { locAddress } = props.values;
   return <div>
     <ListingCrudNav progress='0%' />
@@ -83,3 +83,5 @@ ListingLocAddress.propTypes = {
   next: PropTypes.string,
   routes: PropTypes.array,
 };
+
+export default ListingLocAddress;

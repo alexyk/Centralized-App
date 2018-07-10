@@ -40,11 +40,11 @@
   text-align: center;
   width: 19%;
 }
-.filter-box .filter-stars .star:hover {
+/* .filter-box .filter-stars .star:hover {
   background: #d87a61 url(../images/icon-star-filter-w.png) no-repeat center 31px;
   border: 1px solid #d87a61;
   color: #fff;
-}
+} */
 .filter-box .filter-stars .star.active {
   background: #d87a61 url(../images/icon-star-filter-w.png) no-repeat center 31px;
   border: 1px solid #d87a61;

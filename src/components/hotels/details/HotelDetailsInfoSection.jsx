@@ -9,7 +9,7 @@ import { ROOMS_XML_CURRENCY } from '../../../constants/currencies.js';
 import { openModal } from '../../../actions/modalsInfo.js';
 import { Config } from '../../../config';
 
-function HomeDetailsInfoSection(props) {
+function HotelDetailsInfoSection(props) {
   const getAmenities = (amenities) => {
     const result = new Array(3);
     for (let i = 0; i < 3; i++) {
@@ -45,10 +45,6 @@ function HomeDetailsInfoSection(props) {
       starsElements.push(<span key={i} className="full-star"></span>);
     }
 
-    // for (let i = 0; i < 5 - rating; i++) {
-    //     starsElements.push(<span key={100 - i} className="empty-star"></span>);
-    // }
-
     return starsElements;
   };
 
@@ -60,12 +56,10 @@ function HomeDetailsInfoSection(props) {
     }
   };
 
-  const allAmenities = props.data.amenities;
-  const mostPopularFacilities = allAmenities.filter(a => a.picture != null).slice(0, 5);
-  const amenities = getAmenities(allAmenities);
-  const street = props.data.additionalInfo.mainAddress;
-  const city = props.data.city.name;
-  const country = props.data.region.country.name;
+  const { hotelAmenities, city, country, generalDescription } = props.data;
+  const mostPopularFacilities = hotelAmenities.filter(a => a.picture != null).slice(0, 5);
+  const amenities = getAmenities(hotelAmenities);
+  const address = props.data.additionalInfo.mainAddress;
   const rooms = props.hotelRooms;
   let roomsResults = [];
   if (rooms) {
@@ -98,14 +92,14 @@ function HomeDetailsInfoSection(props) {
       <h2> {props.data.name} </h2>
       <div className="list-hotel-rating">
         <div className="list-hotel-rating-stars">
-          {calculateStars(props.data.star)}
+          {calculateStars(props.data.stars)}
         </div>
       </div>
       <div className="clearfix" />
-      <p>{street}, {city}, {country}</p>
+      <p>{address} {city}, {country}</p>
       <div className="list-hotel-description">
         <h2>Description</h2>
-        <span dangerouslySetInnerHTML={{ __html: props.data.descriptions.filter(x => x.type === 'PropertyInformation')[0] ? props.data.descriptions.filter(x => x.type === 'PropertyInformation')[0].text : (props.data.descriptions.filter(x => x.type === 'General')[0] ? props.data.descriptions.filter(x => x.type === 'General')[0].text : '') }}></span>
+        <span dangerouslySetInnerHTML={{ __html: generalDescription }}></span>
       </div>
 
 
@@ -120,18 +114,12 @@ function HomeDetailsInfoSection(props) {
                 item.picture != null && (
                   <div key={i} className="icon-facilities" tooltip={item.text}>
                     <span className="icon-image" style={{ textAlign: 'center', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                      <img src={Config.getValue('imgHost') + item.picture} style={{ width: '60%', height: '60%' }} />
-                      {/* <b>{item.picture}</b> */}
+                      <img src={Config.getValue('imgHost') + item.picture} style={{ width: '60%', height: '60%' }} alt="" />
                     </span>
                   </div>
                 )
               );
             })}
-            {/* <div className="icon-facilities">
-              <a href='#' className="icon-extend" style={{ textAlign: 'center', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                +23
-              </a>
-            </div> */}
             <div className="clearfix" />
           </div>
           <div className="row">
@@ -145,7 +133,6 @@ function HomeDetailsInfoSection(props) {
       <div className="clearfix" />
 
       <div className="hotel-extras">
-
         {props.descriptionsAccessInfo &&
           <div id="hotel-rules">
             <h2>Access info</h2>
@@ -223,7 +210,7 @@ function HomeDetailsInfoSection(props) {
 
         <div id="map">
           <h2>Location</h2>
-          <iframe title="location" src={`https://maps.google.com/maps?q=${props.data.latitude},${props.data.longitude}&z=15&output=embed`}
+          <iframe title="location" src={`https://maps.google.com/maps?q=${props.data.lat},${props.data.lon}&z=15&output=embed`}
             width="100%" height="400" frameBorder="0" style={{ border: 0 }} />
           <hr />
         </div>
@@ -234,7 +221,7 @@ function HomeDetailsInfoSection(props) {
   );
 }
 
-HomeDetailsInfoSection.propTypes = {
+HotelDetailsInfoSection.propTypes = {
   data: PropTypes.object,
   hotelRooms: PropTypes.array,
   locRate: PropTypes.number,
@@ -259,13 +246,11 @@ HomeDetailsInfoSection.propTypes = {
   loadingRooms: PropTypes.bool,
   currencySign: PropTypes.string,
   rates: PropTypes.object,
-  
+
   // Redux props
   paymentInfo: PropTypes.object,
   dispatch: PropTypes.func,
 };
-
-export default withRouter(connect(mapStateToProps)(HomeDetailsInfoSection));
 
 function mapStateToProps(state) {
   const { userInfo, paymentInfo } = state;
@@ -274,3 +259,5 @@ function mapStateToProps(state) {
     paymentInfo
   };
 }
+
+export default withRouter(connect(mapStateToProps)(HotelDetailsInfoSection));

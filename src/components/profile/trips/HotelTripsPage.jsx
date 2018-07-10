@@ -1,6 +1,5 @@
-import {cancelTrip, getMyHotelBookings, getCurrentlyLoggedUserJsonFile, cancelBooking} from '../../../requester';
+import {getMyHotelBookings, getCurrentlyLoggedUserJsonFile, cancelBooking} from '../../../requester';
 import {Config} from '../../../config';
-import CancellationModal from '../../common/modals/CancellationModal';
 import Pagination from '../../common/pagination/Pagination';
 import {Link} from 'react-router-dom';
 import HotelTripsTable from './HotelTripsTable';

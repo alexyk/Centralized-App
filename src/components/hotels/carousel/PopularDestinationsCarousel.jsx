@@ -82,11 +82,11 @@ PopularDestinationsCarousel.propTypes = {
   paymentInfo: PropTypes.object,
 };
 
-export default connect(mapStateToProps)(PopularDestinationsCarousel);
-
 function mapStateToProps(state) {
   const { paymentInfo } = state;
   return {
     paymentInfo
   };
 }
+
+export default connect(mapStateToProps)(PopularDestinationsCarousel);

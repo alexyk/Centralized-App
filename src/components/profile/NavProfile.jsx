@@ -2,7 +2,7 @@ import { NavLink } from 'react-router-dom';
 import React from 'react';
 import { getUserInfo } from '../../requester';
 
-export default class NavProfile extends React.Component {
+class NavProfile extends React.Component {
   constructor(props) {
     super(props);
 
@@ -46,3 +46,5 @@ export default class NavProfile extends React.Component {
     );
   }
 }
+
+export default NavProfile;

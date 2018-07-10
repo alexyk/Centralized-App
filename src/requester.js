@@ -292,7 +292,7 @@ export async function getMyListingsInProgress(searchTerm) {
 }
 
 export async function getAllPublishedListings(searchTerm) {
-  return sendRequest(`${host}admin/listings/published${searchTerm !== null && searchTerm !== undefined ? `${searchTerm}&` : '?'}`, RequestMethod.GET).then(res => {
+  return sendRequest(`${host}admin/listings/published${searchTerm ? `${searchTerm}&` : '?'}`, RequestMethod.GET).then(res => {
     return res.response.json();
   });
 }
@@ -420,10 +420,8 @@ export async function getCalendarByListingIdAndDateRange(listingId, startDate, e
   });
 }
 
-// Test routes
-export async function getTestHotels(searchTerms) {
-  return sendRequest(`${host}api/hotels?${searchTerms}`, RequestMethod.GET).then(res => {
-
+export async function getStaticHotels(regionId, page = 0) { 
+  return sendRequest(`${host}regions/${regionId}?page=${page}`, RequestMethod.GET).then(res => {
     return res.response.json();
   });
 }
@@ -505,6 +503,12 @@ export async function getMyHotelBookings(searchTerm, size = 10) {
   return sendRequest(`${host}users/me/bookings${searchTerm !== null && searchTerm !== undefined ? `${searchTerm}&` : '?'}sort=id,desc&size=${size}`, RequestMethod.GET).then(res => {
     return res.response.json();
   });
+}
+
+export async function getHotelBookingDetails(id) {
+  return sendRequest(`${host}users/me/bookings/${id}`, RequestMethod.GET).then(res => {
+    return res.response.json();
+  }).catch(err => console.log(err));
 }
 
 export async function checkIfAirdropUserExists(token) {

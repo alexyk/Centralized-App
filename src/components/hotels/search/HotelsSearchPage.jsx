@@ -1,8 +1,6 @@
-import Breadcrumb from '../../Breadcrumb';
 // import FilterPanel from './filter/FilterPanel';
 import Pagination, { DEFAULT_PAGE_SIZE } from '../../common/pagination/Pagination';
 import ResultsHolder from './ResultsHolder';
-import HotelItem from './HotelItem';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { withRouter } from 'react-router-dom';
@@ -35,7 +33,7 @@ class HotelsSearchPage extends React.Component {
       endDate: endDate,
       adults: '2',
       children: '0',
-      rooms: [{ adults: 1, children: [] }],
+      rooms: [{ adults: '2', children: [] }],
       priceRange: [0, 5000],
       orderBy: '',
       stars: [false, false, false, false, false],
@@ -149,7 +147,7 @@ class HotelsSearchPage extends React.Component {
     for (let i = 0; i < rooms.length; i++) {
       adults += Number(rooms[i].adults);
     }
-    return adults;
+    return adults.toString();
   }
 
   getHasChildren(rooms) {
@@ -284,7 +282,7 @@ class HotelsSearchPage extends React.Component {
     while (adults > 0) {
       // console.log(`${adults} / ${rooms.length - index} = ${Math.ceil(adults / (rooms.length - index))}`)
       const quotient = Math.ceil(adults / (rooms.length - index));
-      rooms[index].adults = quotient;
+      rooms[index].adults = quotient.toString();
       adults -= quotient;
       index++;
     }
@@ -403,7 +401,7 @@ class HotelsSearchPage extends React.Component {
     let rooms = this.state.rooms.slice();
     if (rooms.length < value) {
       while (rooms.length < value) {
-        rooms.push({ adults: 1, children: [] });
+        rooms.push({ adults: '2', children: [] });
       }
     } else if (rooms.length > value) {
       rooms = rooms.slice(0, value);
@@ -651,16 +649,6 @@ class HotelsSearchPage extends React.Component {
   }
 }
 
-export default withRouter(connect(mapStateToProps)(HotelsSearchPage));
-
-function mapStateToProps(state) {
-  const { paymentInfo, userInfo } = state;
-  return {
-    paymentInfo,
-    userInfo
-  };
-}
-
 HotelsSearchPage.propTypes = {
   countries: PropTypes.array,
 
@@ -672,3 +660,13 @@ HotelsSearchPage.propTypes = {
   paymentInfo: PropTypes.object,
   userInfo: PropTypes.object
 };
+
+function mapStateToProps(state) {
+  const { paymentInfo, userInfo } = state;
+  return {
+    paymentInfo,
+    userInfo
+  };
+}
+
+export default withRouter(connect(mapStateToProps)(HotelsSearchPage));

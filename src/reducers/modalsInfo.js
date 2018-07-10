@@ -9,7 +9,7 @@ export default function reducer(state = initialState, action) {
     case modalsInfo.SET_SHOW_LOGIN:
       return {
         ...state,
-        showLogin: action.showLogin
+        showLogin: action.showLogin,
       };
     case modalsInfo.OPEN_MODAL:
       return {
