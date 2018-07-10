@@ -3,6 +3,7 @@ import { Route, Switch, withRouter } from 'react-router-dom';
 import { Config } from '../../config';
 import queryString from 'query-string';
 import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
 import { Wallet } from '../../services/blockchain/wallet.js';
 import { setIsLogged, setUserInfo } from '../../actions/userInfo';
 import { NotificationContainer } from 'react-notifications';
@@ -48,11 +49,11 @@ export class AppRouter extends React.Component {
 
   handleInternalAuthorization() {
     if (localStorage[Config.getValue('domainPrefix') + '.auth.username']
-    && localStorage[Config.getValue('domainPrefix') + '.auth.locktrip']) {
+      && localStorage[Config.getValue('domainPrefix') + '.auth.locktrip']) {
       this.setUserInfo();
     }
   }
-  
+
   handleExternalAuthorization() {
     const queryStringParameters = queryString.parse(this.props.location.search);
     const { authEmail, authToken } = queryStringParameters;
@@ -92,6 +93,15 @@ export class AppRouter extends React.Component {
     );
   }
 }
+
+AppRouter.propTypes = {
+  // start Router props
+  location: PropTypes.object,
+  history: PropTypes.object,
+
+  // start Redux props
+  dispatch: PropTypes.func,
+};
 
 function mapStateToProps(state) {
   const { paymentInfo } = state;
