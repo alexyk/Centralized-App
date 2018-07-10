@@ -15,11 +15,11 @@ class MultiMarkerGoogleMap extends Component {
 
     this.markers = [];
     this.infoWindows = [];
-    if (this.props.hotels) {
-      this.placeMarkers(this.props.hotels, this.infoWindows, 0, this.props.hotels.length);
-    }
+    // if (this.props.mapInfo) {
+    //   this.placeMarkers(this.props.mapInfo, this.infoWindows);
+    // }
 
-    this.placeMarkers = this.placeMarkers.bind(this);
+    // this.placeMarkers = this.placeMarkers.bind(this);
   }
 
   shouldComponentUpdate() {
@@ -35,40 +35,80 @@ class MultiMarkerGoogleMap extends Component {
       this.mapInstance.panTo(latLng);
     }
 
-    const { hotels } = props;
-    if (hotels) {
-      if (props.isFiltered) {
-        this.infoWindows = [];
-        this.markers.forEach((marker) => {
-          marker.setMap(null);
-        });
+    // const { mapInfo } = props;
+    // if (mapInfo) {
+    //   if (props.isFiltered) {
+    //     this.infoWindows = [];
+    //     this.markers.forEach((marker) => {
+    //       marker.setMap(null);
+    //     });
 
-        this.placeMarkers(hotels, this.infoWindows);
-      } else {
-        this.placeMarkers(hotels, this.infoWindows, hotels.length - 1);
-      }
-    }
+    //     this.placeMarkers(mapInfo, this.infoWindows);
+    //   } else {
+    //     this.placeMarkers(mapInfo, this.infoWindows);
+    //   }
+    // }
   }
 
   componentWillUnmount() {
-    this.infoWindows = [];
-    this.markers.forEach((marker) => {
-      marker.setMap(null);
-    });
+    // this.infoWindows = [];
+    // this.markers.forEach((marker) => {
+    //   marker.setMap(null);
+    // });
   }
 
-  placeMarkers(hotels, infoWindows, from, to) {
-    if (hotels && hotels.length > 0) {
-      from = from ? from : 0;
-      to = to ? to : hotels.length;
+  // placeMarkers(hotels, infoWindows, from, to) {
+  //   if (hotels && hotels.length > 0) {
+  //     from = from ? from : 0;
+  //     to = to ? to : hotels.length;
+
+  //     // TODO: create a single info window to be displayed
+  //     // (function iife(info) {
+
+  //     // })(this.info);
+
+  //     for (let i = from; i < to; i++) {
+  //       const hotel = hotels[i];
+  //       const marker = this.createMarker(hotel);
+  //       const infoWindow = this.createInfoWindow(hotel);
+  //       window.google.maps.event.addListener(marker, 'mouseover', function () {
+  //         infoWindows.forEach(i => {
+  //           i.close();
+  //         });
+
+  //         infoWindow.open(this.mapInstance, marker);
+  //       });
+
+  //       window.google.maps.event.addListener(marker, 'click', function () {
+  //         infoWindows.forEach(i => {
+  //           i.close();
+  //         });
+
+  //         infoWindow.open(this.mapInstance, marker);
+  //       });
+
+  //       this.markers.push(marker);
+  //       this.infoWindows.push(infoWindow);
+  //     }
+
+  //     window.google.maps.event.addListener(this.mapInstance, 'click', function () {
+  //       infoWindows.forEach(i => {
+  //         i.close();
+  //       });
+  //     });
+  //   }
+  // }
+
+  placeMarkers(hotels, infoWindows) {
+    if (hotels) {
 
       // TODO: create a single info window to be displayed
       // (function iife(info) {
 
       // })(this.info);
 
-      for (let i = from; i < to; i++) {
-        const hotel = hotels[i];
+      Object.keys(hotels).forEach(key => {
+        const hotel = hotels[key];
         const marker = this.createMarker(hotel);
         const infoWindow = this.createInfoWindow(hotel);
         window.google.maps.event.addListener(marker, 'mouseover', function () {
@@ -89,7 +129,7 @@ class MultiMarkerGoogleMap extends Component {
 
         this.markers.push(marker);
         this.infoWindows.push(infoWindow);
-      }
+      });
 
       window.google.maps.event.addListener(this.mapInstance, 'click', function () {
         infoWindows.forEach(i => {
@@ -140,6 +180,9 @@ class MultiMarkerGoogleMap extends Component {
   }
 
   render() {
+    if (Object.keys(this.props.mapInfo).length < 1) {
+      return <div className="loader"></div>;
+    }
     return (
       <div ref={(map) => this.map = map} id='hotels-search-map' style={{ height: '470px', marginBottom: '80px' }}></div>
     );

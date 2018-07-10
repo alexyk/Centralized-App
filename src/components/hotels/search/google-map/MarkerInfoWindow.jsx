@@ -13,17 +13,17 @@ function MarkerInfoWindow(props) {
     return starsElements;
   };
   
-  const photoURL = `${Config.getValue('imgHost')}${props.hotel.photos[0]}`;
-  const { id, name, stars } = props.hotel;
+  // const photoURL = `${Config.getValue('imgHost')}${props.hotel.photos[0]}`;
+  // const { id, name, stars } = props.hotel;
   const { isLogged, currencySign, fiatPrice, locPrice, rootUrl } = props;
   
   return (
     <div>
       <BrowserRouter>
-        <Link to={rootUrl + `/${id}${props.search}`}>
+        {/* <Link to={rootUrl + `/${id}${props.search}`}> */}
           <div className={'marker-hotel'}>
-            <div className={'marker-hotel-thumbnail'} style={{ backgroundImage: 'url(' + photoURL + ')' }}></div>
-            <div className={'marker-hotel-title'}>{name}</div>
+            {/* <div className={'marker-hotel-thumbnail'} style={{ backgroundImage: 'url(' + photoURL + ')' }}></div> */}
+            {/* <div className={'marker-hotel-title'}>{name}</div> */}
             <div className="marker-hotel-price">
               {isLogged
                 ? `${currencySign} ${fiatPrice} (LOC ${locPrice}) / Night`
@@ -31,13 +31,13 @@ function MarkerInfoWindow(props) {
               }
             </div>
             <div className="marker-hotel-rating">
-              <div className="marker-hotel-rating-stars">
+              {/* <div className="marker-hotel-rating-stars">
                 {calculateStars(stars)}
-              </div>
+              </div> */}
             </div>
             <div className="marker-hotel-price-loc"></div>
           </div>
-        </Link>
+        {/* </Link> */}
       </BrowserRouter>
     </div>
   );
