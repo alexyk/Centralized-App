@@ -1,6 +1,5 @@
 import {
   addDaysToNow,
-  formatStartDateTimestamp,
   formatTimestamp,
   formatTimestampToDays
 } from "../utils/timeHelper";
@@ -8,9 +7,6 @@ import {
   HotelReservationFactoryContract,
   SimpleReservationMultipleWithdrawersContract
 } from "../config/contracts-config";
-import {
-  BaseValidators
-} from "./baseValidators";
 import ethers from 'ethers';
 
 const ERROR = require('./../config/errors.json');
@@ -56,7 +52,7 @@ export class ReservationValidators {
     ) {
       throw new Error(ERROR.INVALID_PARAMS);
     }
-    if (daysBeforeStartForRefund.length != refundPercentages.length) {
+    if (daysBeforeStartForRefund.length !== refundPercentages.length) {
       throw new Error(ERROR.INVALID_REFUND_PARAMS_LENGTH);
     }
 
@@ -93,7 +89,7 @@ export class ReservationValidators {
 
   }
 
-  static async validateSimpleReservationMultipleWithdrawersParams(jsonObj,
+  static async validateSimpleReservationCustomWithdrawerParams(jsonObj,
     password,
     hotelReservationId,
     reservationCostLOC,
@@ -256,9 +252,43 @@ export class ReservationValidators {
       throw new Error(ERROR.INVALID_DISPUTE);
     }
 
-    if (isDisputeOpen == true) {
+    if (isDisputeOpen === true) {
       throw new Error(ERROR.ALREADY_OPENED_DISPUTE);
     }
+    return true;
+  }
+
+  static async validateWithdrawFunds(jsonObj, password, reservationIdsArrayBytes, senderAddress) {
+    if (!jsonObj || !password || !reservationIdsArrayBytes || reservationIdsArrayBytes.length < 1) {
+      throw new Error(ERROR.INVALID_PARAMS);
+    }
+    const currentTimestamp = Date.now() / secondsInMilliSeconds | 0;
+
+    for (let i = 0; i < reservationIdsArrayBytes.length; i++) {
+      if (reservationIdsArrayBytes[i] > bytesParamsLength) {
+        throw new Error(ERROR.INVALID_ID_PARAM)
+      }
+      let reservationMapping = await SimpleReservationMultipleWithdrawersContract.reservations(reservationIdsArrayBytes[i]);
+
+      if (reservationMapping[2].toString() > currentTimestamp) {
+        throw new Error(ERROR.INVALID_DATE_FOR_WITHDRAW)
+      }
+
+      if (reservationMapping[0] != senderAddress) {
+        throw new Error(ERROR.INVALID_WITHDRAWER)
+      }
+
+      if (reservationMapping[1] == 0) {
+        throw new Error(ERROR.INVALID_BOOKING_FOR_WITHDRAW)
+      }
+    }
+
+    let maxAllowedCyclesForWithdraw = await SimpleReservationMultipleWithdrawersContract.maxAllowedWithdrawCyclesCount();
+
+    if (reservationIdsArrayBytes.length > maxAllowedCyclesForWithdraw.toString()) {
+      throw new Error(ERROR.WITHDRAW_ARRAY_GREATER_THAN_POSSIBLE)
+    }
+
     return true;
   }
 }

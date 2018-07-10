@@ -22,7 +22,8 @@ import {
   approveContract
 } from "./utils/approveContract";
 import {
-  getGasPrice
+  getGasPrice,
+  arrayToUtf8BytesArrayConverter
 } from "./utils/ethFuncs"
 import ethers from 'ethers';
 import {
@@ -31,6 +32,9 @@ import {
 
 const gasConfig = require('./config/gas-config.json');
 const errors = require('./config/errors.json');
+const {
+  singleReservationWithdrawGas
+} = require('./config/constants.json');
 
 export class HotelReservation {
   static async createReservation(jsonObj,
@@ -197,7 +201,7 @@ export class HotelReservation {
     await TokenValidators.validateLocBalance(wallet.address, reservationCostLOC, wallet, gasConfig.simpleReservationMultipleWithdrawers.create);
     await EtherValidators.validateEthBalance(wallet, overrideOptions.gasLimit);
 
-    let approve = await approveContract(wallet, reservationCostLOC, SimpleReservationMultipleWithdrawersContract.address, gasPrice);
+    await approveContract(wallet, reservationCostLOC, SimpleReservationMultipleWithdrawersContract.address, gasPrice);
 
     let reservationCustomWithdrawerWithWalletInstance = SimpleReservationMultipleWithdrawersContractWithWallet(wallet);
 
@@ -209,6 +213,38 @@ export class HotelReservation {
     );
 
     return createReservationCustomWithdrawerTxResult;
+  }
+
+  /**
+   * Function to withdraw 
+   * @param {String} jsonObj  - User's wallet jsonObj as string
+   * @param {String} password  - User's wallet password as string 
+   * @param {Array} reservationIdsArray - Array of of reservations ids, as strings.
+   * @returns {JSONObject} withdrawReservationTxResult - The result from the transaction when withdrawing funds.
+   */
+  static async withdrawFundsFromReservation(jsonObj, password, reservationIdsArray) {
+
+    console.log(reservationIdsArray);
+
+    let reservationIdsArrayBytes = await arrayToUtf8BytesArrayConverter(reservationIdsArray);
+    console.log(reservationIdsArrayBytes)
+    let wallet = await ethers.Wallet.fromEncryptedWallet(jsonObj, password);
+    const gasPrice = await getGasPrice();
+
+    await ReservationValidators.validateWithdrawFunds(jsonObj, password, reservationIdsArrayBytes, wallet.address);
+
+    let gasLimitWithdraw = gasConfig.simpleReservationMultipleWithdrawers.withdrawInitial + (reservationIdsArray.length * singleReservationWithdrawGas);
+    let overrideOptions = {
+      gasLimit: gasLimitWithdraw,
+      gasPrice: gasPrice
+    };
+
+    await EtherValidators.validateEthBalance(wallet, overrideOptions.gasLimit);
+
+    let reservationCustomWithdrawerWithWalletInstance = SimpleReservationMultipleWithdrawersContractWithWallet(wallet);
+    const withdrawReservationTxResult = await reservationCustomWithdrawerWithWalletInstance.withdraw(reservationIdsArrayBytes, overrideOptions);
+
+    return withdrawReservationTxResult;
   }
 
   /**
@@ -235,7 +271,7 @@ export class HotelReservation {
     await TokenValidators.validateLocBalance(wallet.address, reservationCostLOC, wallet, gasConfig.simpleReservationSingleWithdrawer.create);
     await EtherValidators.validateEthBalance(wallet, overrideOptions.gasLimit);
 
-    let approve = await approveContract(wallet, reservationCostLOC, SimpleReservationSingleWithdrawerContract.address, gasPrice);
+    await approveContract(wallet, reservationCostLOC, SimpleReservationSingleWithdrawerContract.address, gasPrice);
 
     let reservationWithWalletInstance = SimpleReservationSingleWithdrawerContractWithWallet(wallet);
 

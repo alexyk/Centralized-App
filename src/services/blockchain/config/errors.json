@@ -54,5 +54,10 @@
   "INVALID_DISPUTE": "Its not allowed to open a dispute",
   "ALREADY_OPENED_DISPUTE": "Dispute for this reservation is already opened",
   "INVALID_WITHDRAW_DATE": "The withdraw date is not valid",
-  "INVALID_ID_PARAM": "The id parameters are too long"
+  "INVALID_ID_PARAM": "The id parameters are too long",
+  "INVALID_DATE_FOR_WITHDRAW": "The reservation is not ready for withdraw",
+  "WITHDRAW_ARRAY_GREATER_THAN_POSSIBLE": "The withdraw dates array is greater than the maximum possible",
+  "INVALID_WITHDRAWER": "The withdrawer and the address from the reservations are different",
+  "INVALID_BOOKING_FOR_WITHDRAW": "The reservation was already withdrawed"
+
 }

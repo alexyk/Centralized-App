@@ -14,9 +14,6 @@ import {
   getNodeProvider
 } from './config/contracts-config.js';
 import {
-  Config
-} from '../../config';
-import {
   getGasPrice
 } from "./utils/ethFuncs";
 const gasConfig = require('./config/gas-config.json');
