@@ -50,7 +50,7 @@ class NavLocalization extends Component {
                 <li><NavLink to='/hotels' activeClassName="active">HOTELS</NavLink></li>
                 <li><NavLink to='/homes' activeClassName="active">HOMES</NavLink></li>
               </ul>
-              : <div>&nbsp;</div>
+              : <div className="sm-none">&nbsp;</div>
             }
 
             <div className="info-details">

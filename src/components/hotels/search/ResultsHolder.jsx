@@ -1,9 +1,10 @@
 import React from 'react';
 import Result from './Result';
 import PropTypes from 'prop-types';
+import _ from 'lodash';
 import '../../../styles/css/components/search-result-component.css';
 
-export default function ResultsHolder(props) {
+function ResultsHolder(props) {
 
   if (!props.hotels) {
     return;
@@ -19,16 +20,18 @@ export default function ResultsHolder(props) {
 
   return (
     <div className="results-holder">
-      {props.hotels.map((hotel, index) => {
-        return (<Result key={index} hotel={hotel} locRate={props.locRate} rates={props.rates} nights={props.nights} />);
+      {_.map(props.hotels, (hotel, index) => {
+        return (<Result key={index} hotel={hotel} locRate={props.locRate} rates={props.rates} nights={props.nights} allElements={props.allElements} price={hotel.price} />);
       })}
     </div>
   );
 }
 
 ResultsHolder.propTypes = {
-  hotels: PropTypes.array,
+  hotels: PropTypes.any,
   locRate: PropTypes.number,
   rates: PropTypes.object,
   nights: PropTypes.number
 };
+
+export default ResultsHolder;

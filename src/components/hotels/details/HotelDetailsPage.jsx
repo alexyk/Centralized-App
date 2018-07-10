@@ -42,7 +42,7 @@ class HotelDetailsPage extends React.Component {
       searchEndDate: endDate,
       calendarStartDate: startDate,
       calendarEndDate: endDate,
-      rooms: [{ adults: 1, children: [] }],
+      rooms: [{ adults: '2', children: [] }],
       adults: '2',
       children: '0',
       nights: nights,
@@ -87,7 +87,6 @@ class HotelDetailsPage extends React.Component {
   componentDidMount() {
     const id = this.props.match.params.id;
     const search = this.props.location.search;
-    console.log(search);
     getHotelById(id, search).then((data) => {
       this.setState({ data: data, loading: false });
       const searchParams = this.getSearchParams(this.props.location.search);
@@ -142,7 +141,7 @@ class HotelDetailsPage extends React.Component {
     for (let i = 0; i < rooms.length; i++) {
       adults += Number(rooms[i].adults);
     }
-    return adults;
+    return adults.toString();
   }
 
   getHasChildren(rooms) {
@@ -535,8 +534,8 @@ class HotelDetailsPage extends React.Component {
     } else {
       images = [];
       if (this.state.data.hotelPhotos) {
-        images = this.state.data.hotelPhotos.map((x, i) => {
-          return { src: Config.getValue('imgHost') + x.url, index: i };
+        images = this.state.data.hotelPhotos.map((image, index) => {
+          return { src: Config.getValue('imgHost') + image.url, index: index };
         });
       }
     }
@@ -592,29 +591,11 @@ class HotelDetailsPage extends React.Component {
               currentImage={this.state.currentImage}
               images={images}
               isOpen={this.state.lightboxIsOpen}
-              // onClickImage={this.handleClickImage}
               onClickNext={this.gotoNext}
               onClickPrev={this.gotoPrevious}
               onClickThumbnail={this.gotoImage}
               onClose={this.closeLightbox}
             />}
-            {/* <section className="hotel-gallery"> */}
-            {/* <div className="hotel-gallery-bgr lg-none" style={(images && images.length > 0) ? { 'backgroundImage': 'url("' + images[0].src + '")' } : { backgroundColor: '#AAA' }}>
-              <div className="container">
-                <a onClick={(e => this.openLightbox(e))} className="btn btn-primary btn-gallery">Open Gallery</a>
-                {images !== null && <Lightbox
-                  currentImage={this.state.currentImage}
-                  images={images}
-                  isOpen={this.state.lightboxIsOpen}
-                  onClickImage={this.handleClickImage}
-                  onClickNext={this.gotoNext}
-                  onClickPrev={this.gotoPrevious}
-                  onClickThumbnail={this.gotoImage}
-                  onClose={this.closeLightbox}
-                />}
-              </div>
-            </div> */}
-            {/* </section> */}
             <div className='hotel-details-carousel'>
               <Slider
                 ref={c => (this.slider = c)}
@@ -626,12 +607,6 @@ class HotelDetailsPage extends React.Component {
                     </div>
                   );
                 })}
-                {/* <div><div className='slide' style={{ 'backgroundImage': 'url("' + left + '")' }}></div></div>
-                <div><div className='slide' style={{ 'backgroundImage': 'url("' + right + '")' }}></div></div>
-                <div><div className='slide' style={{ 'backgroundImage': 'url("' + current + '")' }}></div></div>
-                <div><div className='slide' style={{ 'backgroundImage': 'url("' + right + '")' }}></div></div>
-                <div><div className='slide' style={{ 'backgroundImage': 'url("' + left + '")' }}></div></div>
-                <div><div className='slide' style={{ 'backgroundImage': 'url("' + current + '")' }}></div></div> */}
               </Slider>
             </div>
             <div className="main-carousel">
@@ -717,8 +692,6 @@ HotelDetailsPage.propTypes = {
   paymentInfo: PropTypes.object
 };
 
-export default withRouter(connect(mapStateToProps)(HotelDetailsPage));
-
 function mapStateToProps(state) {
   const { userInfo, paymentInfo, modalsInfo } = state;
   return {
@@ -727,3 +700,5 @@ function mapStateToProps(state) {
     modalsInfo
   };
 }
+
+export default withRouter(connect(mapStateToProps)(HotelDetailsPage));

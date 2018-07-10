@@ -1,0 +1,23 @@
+$breakpoints: (
+	'xs-phone': 320px,
+	'phone': 480px,
+	'tablet': 768px,
+	'desktop': 1024px,
+	'widescreen': 1200px
+);
+
+@import '../../vendors/include-media';
+
+.captcha-container {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  margin: 0 auto;
+  -webkit-transform: translateY(-50%) translateX(-50%);
+  -ms-transform: translateY(-50%) translateX(-50%);
+  transform: translateY(-50%) translateX(-50%);
+  @include media("<tablet") {
+    width: 100%;
+    top: 30%;
+  }
+}

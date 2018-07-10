@@ -8,7 +8,7 @@ import { Config } from '../../../config';
 TimeAgo.locale(en);
 const timeAgo = new TimeAgo('en-US');
 
-export default function MessagesChat(props) {
+function MessagesChat(props) {
   let messageCreatedAt = moment(props.message.createdAt, 'DD/MM/YYYY HH:mm:ss');
   return (
     <div className={(props.sender ? 'to' : 'from') + ' message'}>
@@ -29,3 +29,5 @@ MessagesChat.propTypes = {
   queueMessage: PropTypes.bool,
   children: PropTypes.object
 };
+
+export default MessagesChat;

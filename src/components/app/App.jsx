@@ -15,7 +15,8 @@ import { connect } from 'react-redux';
 import MainNav from '../mainNav/MainNav';
 import Footer from '../footer/Footer';
 import NavLocalization from '../profile/NavLocalization';
-import StyleTest from '../common/StyleTest';
+import StompTest from '../common/StompTest';
+import queryString from 'query-string';
 
 import ProfilePage from '../profile/ProfilePage';
 import PropTypes from 'prop-types';
@@ -31,12 +32,27 @@ class App extends React.Component {
     );
   }
 
+  componentWillMount() {
+    this.handleExternalAuthorization();
+  }
+
   isAuthenticated() {
     let token = localStorage.getItem(Config.getValue('domainPrefix') + '.auth.locktrip');
     if (token) {
       return true;
     }
     return false;
+  }
+  
+  handleExternalAuthorization() {
+    const queryStringParameters = queryString.parse(this.props.location.search);
+    const { authEmail, authToken } = queryStringParameters;
+    if (authEmail && authToken) {
+      localStorage[Config.getValue('domainPrefix') + '.auth.username'] = authEmail;
+      localStorage[Config.getValue('domainPrefix') + '.auth.locktrip'] = authToken;
+      const url = this.props.location.pathname;
+      this.props.history.push(url);
+    }
   }
 
   render() {
@@ -55,7 +71,7 @@ class App extends React.Component {
           <Route path="/profile/listings/create" render={() => !this.isAuthenticated() ? <Redirect to="/" /> : <CreateListingPage />} />
           <Route path="/profile/" render={() => !this.isAuthenticated() ? <Redirect to="/" /> : <ProfilePage location={this.props.location} />} />
           <Route path="/airdrop" render={() => <AirdropPage />} />
-          <Route path="/test" render={() => <StyleTest />} />
+          <Route path="/test" render={() => <StompTest />} />
           <Route render={() => <HomeRouterPage />} />
         </Switch>
         <Footer />
@@ -73,11 +89,11 @@ App.propTypes = {
   paymentInfo: PropTypes.object
 };
 
-export default withRouter(connect(mapStateToProps)(App));
-
 function mapStateToProps(state) {
   const { paymentInfo } = state;
   return {
     paymentInfo
   };
 }
+
+export default withRouter(connect(mapStateToProps)(App));

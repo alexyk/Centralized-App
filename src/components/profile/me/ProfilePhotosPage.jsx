@@ -7,7 +7,7 @@ import request from 'superagent';
 const host = Config.getValue('apiHost');
 const LOCKTRIP_UPLOAD_URL = `${host}users/me/images/upload`;
 
-export default class ProfilePhotosPage extends React.Component {
+class ProfilePhotosPage extends React.Component {
   constructor(props) {
     super(props);
 
@@ -95,3 +95,5 @@ export default class ProfilePhotosPage extends React.Component {
     );
   }
 }
+
+export default ProfilePhotosPage;

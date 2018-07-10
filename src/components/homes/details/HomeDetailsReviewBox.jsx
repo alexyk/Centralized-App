@@ -50,9 +50,9 @@ function HomeDetailsReviewBox(props) {
   );
 }
 
-export default withRouter(HomeDetailsReviewBox);
-
 HomeDetailsReviewBox.propTypes = {
   rating: PropTypes.number,
   text: PropTypes.string,
 };
+
+export default withRouter(HomeDetailsReviewBox);

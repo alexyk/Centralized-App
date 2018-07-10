@@ -219,9 +219,9 @@ class HotelBookingPage extends React.Component {
   render() {
     const hotelName = this.state.hotel && this.state.hotel.name;
     const hotelMainAddress = this.state.hotel && this.state.hotel.additionalInfo.mainAddress;
-    const hotelCityName = this.state.hotel && this.state.hotel.city.name;
+    const hotelCityName = this.state.hotel && this.state.hotel.city;
     const rooms = this.state.rooms;
-    console.log(this.state.pictures)
+    // console.log(this.state.pictures);
     const hotelPicUrl = this.state.pictures && this.state.pictures.length > 0 ? this.state.pictures[0].url : '/listings/images/default.png';
     const priceInSelectedCurrency = this.state.rates && Number(this.state.totalPrice * this.state.rates[ROOMS_XML_CURRENCY][this.props.paymentInfo.currency]).toFixed(2);
     return (
@@ -239,13 +239,13 @@ class HotelBookingPage extends React.Component {
           <div>
             <section id="room-book">
               <div className="container">
-                <div className="col-md-5">
+                <div className="col-md-5" style={{ 'padding': '0', 'margin': '0' }}>
                   <div className="hotel-info">
                     <div className="hotel-picture">
                       <img src={`${Config.getValue('imgHost')}${hotelPicUrl}`} alt="Hotel" />
                     </div>
                     <h6>{hotelName}</h6>
-                    <h6>{hotelMainAddress}, {hotelCityName}</h6>
+                    <h6>{hotelMainAddress}&nbsp;{hotelCityName}</h6>
                     <hr />
                     {this.state.roomResults && this.state.roomResults.map((room, index) => {
                       if (!this.props.userInfo.isLogged) {
@@ -270,12 +270,12 @@ class HotelBookingPage extends React.Component {
                     <div className="clearfix"></div>
                   </div>
                 </div>
-                <div className="col-md-7">
+                <div className="col-md-7" style={{ 'padding': '0', 'margin': '20px 0' }}>
                   {rooms && rooms.map((room, roomIndex) => {
                     return (
                       <div className="form-group" key={roomIndex}>
                         <h4>Room</h4>
-                        <hr />
+                        <hr className="sm-none" />
                         {room && room.adults.map((adult, adultIndex) => {
                           return (
                             <div className="form-row" key={adultIndex}>
@@ -303,7 +303,7 @@ class HotelBookingPage extends React.Component {
                     );
                   })}
                 </div>
-                <div className="col col-md-12">
+                <div className="col col-md-12" style={{ 'padding': '0', 'margin': '10px 0' }}>
                   <button className="btn btn-primary btn-book" onClick={this.handleSubmit}>Proceed</button>
                 </div>
               </div>
@@ -329,8 +329,6 @@ HotelBookingPage.propTypes = {
   paymentInfo: PropTypes.object
 };
 
-export default withRouter(connect(mapStateToProps)(HotelBookingPage));
-
 function mapStateToProps(state) {
   const { userInfo, paymentInfo } = state;
   return {
@@ -338,3 +336,5 @@ function mapStateToProps(state) {
     paymentInfo
   };
 }
+
+export default withRouter(connect(mapStateToProps)(HotelBookingPage));

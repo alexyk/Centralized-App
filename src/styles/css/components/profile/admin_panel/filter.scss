@@ -1,0 +1,55 @@
+@import '../../../vendors/include-media';
+
+.filter {
+  margin-bottom: 30px;
+
+  form {
+    display: flex;
+    justify-content: space-between;
+    flex-direction: column;
+
+    @include media('>=tablet') {
+      flex-direction: row;
+    }
+
+    input {
+      border: 0;
+      margin-bottom: 10px;
+      padding-left: 20px;
+      color: #000;
+
+      &[type='text'] {
+        height: 60px;
+      }
+
+      @include media('>=tablet') {
+        width: 20%;
+        margin-right: 10px;
+        margin-bottom: 0px;
+      }
+    }
+  }
+
+  &_select {
+    margin-bottom: 10px;
+    padding: 12px 12px;
+    // font-size: 14px;
+    line-height: 1.42857143;
+    color: #555;
+    background-color: #fff;
+    background-image: none;
+    border: none;
+    @include media('>=tablet') {
+      width: 20%;
+      margin-right: 10px;
+      margin-bottom: 0px;
+    }
+  }
+
+  button {
+    height: 60px;
+    @include media('>=tablet') {
+      width: 20%;
+    }
+  }
+}

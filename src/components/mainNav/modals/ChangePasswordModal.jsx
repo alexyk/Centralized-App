@@ -1,13 +1,10 @@
 import { Config } from '../../../config';
 import { Modal } from 'react-bootstrap';
 import PropTypes from 'prop-types';
-import ReCAPTCHA from 'react-google-recaptcha';
 import React from 'react';
 import { CHANGE_PASSWORD } from '../../../constants/modals.js';
 
-let captcha = undefined;
-
-export default function ChangePasswordModal(props) {
+function ChangePasswordModal(props) {
 
   return (
     <div>
@@ -17,7 +14,7 @@ export default function ChangePasswordModal(props) {
           <button type="button" className="close" onClick={(e) => props.closeModal(CHANGE_PASSWORD, e)}>&times;</button>
         </Modal.Header>
         <Modal.Body>
-          <form onSubmit={(e) => { e.preventDefault(); captcha.execute(); }}>
+          <form onSubmit={(e) => { e.preventDefault(); props.handlePasswordChange(); }}>
             <div className="form-group">
               <img src={Config.getValue('basePath') + 'images/login-mail.png'} alt="email" />
               <input type="password" name="newPassword" value={props.newPassword} onChange={props.onChange} className="form-control" placeholder="New password" />
@@ -33,13 +30,6 @@ export default function ChangePasswordModal(props) {
           </form>
         </Modal.Body>
       </Modal>
-
-      <ReCAPTCHA
-        ref={el => captcha = el}
-        size="invisible"
-        sitekey={Config.getValue('recaptchaKey')}
-        onChange={(token) => { props.handlePasswordChange(token); captcha.reset(); }}
-      />
     </div>
   );
 }
@@ -53,3 +43,5 @@ ChangePasswordModal.propTypes = {
   handlePasswordChange: PropTypes.func,
   isActive: PropTypes.bool
 };
+
+export default ChangePasswordModal;

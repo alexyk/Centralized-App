@@ -1,9 +1,10 @@
-import { getMyReservations, getMyTrips } from '../../../requester';
+import { getMyReservations, getMyTrips, getMyHotelBookings } from '../../../requester';
 
 import DashboardPending from './DashboardPending';
 import React from 'react';
+import moment from 'moment';
 
-export default class DashboardPage extends React.Component {
+class DashboardPage extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -16,17 +17,43 @@ export default class DashboardPage extends React.Component {
 
   componentDidMount() {
     getMyReservations('?page=0').then((dataReservations) => {
-      getMyTrips('?page=0').then((dataTrips) => {
-        this.setState({
-          trips: dataTrips.content,
-          loading: false,
-          reservations: dataReservations.content,
-          totalReservations: dataReservations.totalElements
-        }
-        );
+      getMyTrips('?page=0').then((dataHomeTrips) => {
+        getMyHotelBookings().then((dataHotelTrips) => {
+          const homeTrips = dataHomeTrips.content.map(trip => {
+            return {
+              ...trip,
+              sortDate: moment(new Date(trip.startDate)).utc().valueOf(),
+              displayStartDate: moment(new Date(trip.startDate)).format('DD MMM, YYYY'),
+              displayEndDate: moment(new Date(trip.endDate)).format('DD MMM, YYYY'),
+              status: trip.accepted ? 'ACCEPTED' : 'PENDING'
+            };
+          });
+
+          const hotelTrips = dataHotelTrips.content.map(trip => {
+            return {
+              ...trip,
+              sortDate: moment(trip.arrival_date, 'YYYY-MM-DD').utc().valueOf(),
+              displayStartDate: moment(trip.arrival_date, 'YYYY-MM-DD').format('DD MMM, YYYY'),
+              displayEndDate: moment(trip.arrival_date, 'YYYY-MM-DD').add(trip.nights, 'days').format('DD MMM, YYYY'),
+              userImage: JSON.parse(trip.hotel_photo).original,
+              hostName: trip.hotel_name
+            };
+          });
+
+          const trips = homeTrips.concat(hotelTrips).sort((x, y) => {
+            return x.sortDate >= y.sortDate ? -1 : 1;
+          }).slice(0, 5);
+
+          console.log(trips);
+          
+          this.setState({
+            trips: trips,
+            loading: false,
+            reservations: dataReservations.content
+          });
+        });
       });
     });
-
   }
 
   render() {
@@ -34,11 +61,12 @@ export default class DashboardPage extends React.Component {
       <div>
         {this.state.loading ?
           <div className="loader"></div> :
-          <DashboardPending reservations={this.state.reservations} trips={this.state.trips}
-            totalReservations={this.state.totalReservations} />
+          <DashboardPending reservations={this.state.reservations} trips={this.state.trips} hotel />
         }
         <br />
       </div>
     );
   }
 }
+
+export default DashboardPage;

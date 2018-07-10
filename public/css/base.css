@@ -88,8 +88,9 @@ ul {
     padding: 0;
 }
 
-a, a:hover, a:focus {
+a, a:hover, a:focus, a:active {
     text-decoration: none;
+    outline: none;
 }
 
 /* .btn-primary {
