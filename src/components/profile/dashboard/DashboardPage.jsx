@@ -1,7 +1,6 @@
-import { getMyReservations, getMyTrips } from '../../../requester';
-
 import DashboardPending from './DashboardPending';
 import React from 'react';
+import requester from '../../../initDependencies';
 
 export default class DashboardPage extends React.Component {
   constructor(props) {
@@ -15,19 +14,22 @@ export default class DashboardPage extends React.Component {
   }
 
   componentDidMount() {
-    getMyReservations('?page=0').then((dataReservations) => {
-      getMyTrips('?page=0').then((dataTrips) => {
-        this.setState({
-          trips: dataTrips.content,
-          loading: false,
-          reservations: dataReservations.content,
-          totalReservations: dataReservations.totalElements
-        }
-        );
+    requester.getMyReservations(['page=0']).then(res => {
+      res.body.then(dataReservations => {
+        requester.getMyTrips(['page=0']).then(res => {
+          res.body.then(dataTrips => {
+            this.setState({
+              trips: dataTrips.content,
+              loading: false,
+              reservations: dataReservations.content,
+              totalReservations: dataReservations.totalElements
+            });
+          });
+        });
       });
     });
-
   }
+
 
   render() {
     return (

@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { NavLink, withRouter } from 'react-router-dom';
 import { setCurrency, setLocRate } from '../../actions/paymentInfo';
-import { getLocRateInUserSelectedCurrency } from '../../requester';
+import requester from '../../initDependencies';
 
 import '../../styles/css/components/tabs-component.css';
 
@@ -25,8 +25,10 @@ class NavLocalization extends Component {
   }
 
   getAndSetLocRate(currency) {
-    getLocRateInUserSelectedCurrency(currency).then((data) => {
-      this.props.dispatch(setLocRate(data[0][`price_${currency.toLowerCase()}`]));
+    requester.getLocRateByCurrency(currency).then(res => {
+      res.body.then(data => {
+        this.props.dispatch(setLocRate(data[0][`price_${currency.toLowerCase()}`]));
+      });
     });
   }
 
@@ -44,7 +46,7 @@ class NavLocalization extends Component {
             {this.props.location.pathname !== '/hotels'
               && this.props.location.pathname !== '/homes'
               && (this.props.location.pathname.indexOf('/hotels/listings/book') === -1
-              && this.props.location.pathname.indexOf('/profile') === -1)
+                && this.props.location.pathname.indexOf('/profile') === -1)
               && this.props.location.pathname.indexOf('/airdrop') === -1
               ? <ul className="tabset">
                 <li><NavLink to='/hotels' activeClassName="active">HOTELS</NavLink></li>
@@ -83,10 +85,10 @@ class NavLocalization extends Component {
                 </select>
               </div>
               <div className="select">
-                <select 
+                <select
                   className="currency"
                   value={this.props.paymentInfo.currency}
-                  onChange={(e) => this.props.dispatch(setCurrency(e.target.value))} 
+                  onChange={(e) => this.props.dispatch(setCurrency(e.target.value))}
                 >
                   <option value="EUR">EUR</option>
                   <option value="USD">USD</option>

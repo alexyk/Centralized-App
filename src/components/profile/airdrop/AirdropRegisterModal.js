@@ -5,8 +5,8 @@ import { Modal } from 'react-bootstrap';
 import { NotificationManager } from 'react-notifications';
 
 import { Config } from '../../../config';
-import { getEmailFreeResponse } from '../../../requester';
 import { AIRDROP_REGISTER, CREATE_WALLET } from '../../../constants/modals.js';
+import requester from '../../../initDependencies';
 
 import {
   INVALID_EMAIL,
@@ -20,30 +20,32 @@ import {
 export default function AirdropRegisterModal(props) {
 
   const openWalletInfo = () => {
-    getEmailFreeResponse(props.signUpEmail).then(res => {
-      let isEmailFree = false;
-      if (res.exist) {
-        isEmailFree = false;
-      } else {
-        isEmailFree = true;
-      }
+    requester.getEmailFreeResponse(props.signUpEmail).then(res => {
+      res.body.then(data => {
+        let isEmailFree = false;
+        if (data.exist) {
+          isEmailFree = false;
+        } else {
+          isEmailFree = true;
+        }
 
-      if (!validator.isEmail(props.signUpEmail)) {
-        NotificationManager.warning(INVALID_EMAIL);
-      } else if (!isEmailFree) {
-        NotificationManager.warning(EMAIL_ALREADY_EXISTS);
-      } else if (validator.isEmpty(props.signUpFirstName)) {
-        NotificationManager.warning(INVALID_FIRST_NAME);
-      } else if (validator.isEmpty(props.signUpLastName)) {
-        NotificationManager.warning(INVALID_LAST_NAME);
-      } else if (props.signUpPassword.length < 6) {
-        NotificationManager.warning(PROFILE_INVALID_PASSWORD_LENGTH);
-      } else if (!props.signUpPassword.match('^([^\\s]*[a-zA-Z]+.*?[0-9]+[^\\s]*|[^\\s]*[0-9]+.*?[a-zA-Z]+[^\\s]*)$')) {
-        NotificationManager.warning(PROFILE_PASSWORD_REQUIREMENTS);
-      } else {
-        props.closeModal(AIRDROP_REGISTER);
-        props.openModal(CREATE_WALLET);
-      }
+        if (!validator.isEmail(props.signUpEmail)) {
+          NotificationManager.warning(INVALID_EMAIL);
+        } else if (!isEmailFree) {
+          NotificationManager.warning(EMAIL_ALREADY_EXISTS);
+        } else if (validator.isEmpty(props.signUpFirstName)) {
+          NotificationManager.warning(INVALID_FIRST_NAME);
+        } else if (validator.isEmpty(props.signUpLastName)) {
+          NotificationManager.warning(INVALID_LAST_NAME);
+        } else if (props.signUpPassword.length < 6) {
+          NotificationManager.warning(PROFILE_INVALID_PASSWORD_LENGTH);
+        } else if (!props.signUpPassword.match('^([^\\s]*[a-zA-Z]+.*?[0-9]+[^\\s]*|[^\\s]*[0-9]+.*?[a-zA-Z]+[^\\s]*)$')) {
+          NotificationManager.warning(PROFILE_PASSWORD_REQUIREMENTS);
+        } else {
+          props.closeModal(AIRDROP_REGISTER);
+          props.openModal(CREATE_WALLET);
+        }
+      });
     });
   };
 

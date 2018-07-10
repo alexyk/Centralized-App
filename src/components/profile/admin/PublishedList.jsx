@@ -1,5 +1,4 @@
 import { NotificationManager } from 'react-notifications';
-import { changeListingStatus, contactHost, getAllPublishedListings, getCities, getCountries } from '../../../requester';
 
 import Filter from './Filter';
 import ContactHostModal from '../../common/modals/ContactHostModal';
@@ -13,6 +12,7 @@ import ListItem from './ListItem';
 import Lightbox from 'react-images';
 import ReCAPTCHA from 'react-google-recaptcha';
 import { Config } from '../../../config';
+import requester from '../../../initDependencies';
 
 import '../../../styles/css/components/captcha/captcha-container.css';
 
@@ -60,18 +60,24 @@ class PublishedList extends React.Component {
 
   componentDidMount() {
     let searchTerm = this.buildSearchTerm();
-    getAllPublishedListings(searchTerm).then((data) => {
-      this.setState({ listings: data.content, loading: false, totalElements: data.totalElements });
+    requester.getAllPublishedListings([searchTerm]).then((res) => {
+      res.body.then(data => {
+        this.setState({ listings: data.content, loading: false, totalElements: data.totalElements });
+      });
     });
 
     if (this.state.country !== '') {
-      getCities(this.state.country).then(data => {
-        this.setState({ cities: data.content });
+      requester.getCities(this.state.country).then(res => {
+        res.body.then(data => {
+          this.setState({ cities: data.content });
+        });
       });
     }
 
-    getCountries().then(data => {
-      this.setState({ countries: data.content });
+    requester.getCountries().then(res => {
+      res.body.then(data => {
+        this.setState({ countries: data.content });
+      });
     });
 
   }
@@ -81,9 +87,11 @@ class PublishedList extends React.Component {
 
     let searchTerm = this.buildSearchTerm();
 
-    getAllPublishedListings(searchTerm).then((data) => {
-      this.props.history.push(`/profile/admin/listings/published${searchTerm}`);
-      this.setState({ listings: data.content, loading: false, totalElements: data.totalElements });
+    requester.getAllPublishedListings([searchTerm]).then((res) => {
+      res.body.then(data => {
+        this.props.history.push(`/profile/admin/listings/published${searchTerm}`);
+        this.setState({ listings: data.content, loading: false, totalElements: data.totalElements });
+      });
     });
   }
 
@@ -120,9 +128,11 @@ class PublishedList extends React.Component {
       city: null
     }, () => {
       if (option) {
-        getCities(option.value).then(data => {
-          this.setState({
-            cities: data.content,
+        requester.getCities(option.value).then(res => {
+          res.body.then(data => {
+            this.setState({
+              cities: data.content,
+            });
           });
         });
       } else {
@@ -150,12 +160,14 @@ class PublishedList extends React.Component {
     searchTerm.page = page - 1;
 
     let newSearchTerm = queryString.stringify(searchTerm);
-    getAllPublishedListings('?' + newSearchTerm).then(data => {
-      this.props.history.push('?' + newSearchTerm);
-      this.setState({
-        listings: data.content,
-        totalElements: data.totalElements,
-        loading: false
+    requester.getAllPublishedListings([newSearchTerm]).then(res => {
+      res.body.then(data => {
+        this.props.history.push('?' + newSearchTerm);
+        this.setState({
+          listings: data.content,
+          totalElements: data.totalElements,
+          loading: false
+        });
       });
     });
   }
@@ -170,7 +182,7 @@ class PublishedList extends React.Component {
       state: status
     };
 
-    changeListingStatus(unpublishObj).then((res) => {
+    requester.changeListingStatus(unpublishObj).then((res) => {
       if (res.success) {
         NotificationManager.info('Listing unpublished');
         const allListings = this.state.listings;
@@ -193,12 +205,10 @@ class PublishedList extends React.Component {
       message: message
     };
 
-    contactHost(id, contactHostObj, captchaToken)
-      .then(res => {
-        // this.props.history.push(`/profile/messages/chat/${res.conversation}`);
-        NotificationManager.info('Message sent');
-        this.closeContactHostModal();
-      });
+    requester.contactHost(id, contactHostObj, captchaToken).then(() => {
+      NotificationManager.info('Message sent');
+      this.closeContactHostModal();
+    });
   }
 
   openModal(id) {
@@ -282,7 +292,7 @@ class PublishedList extends React.Component {
 
   render() {
     if (this.state.loading) {
-      return <div className="loader" style={{ 'margin-bottom': '40px'}}></div>;
+      return <div className="loader" style={{ 'margin-bottom': '40px' }}></div>;
     }
 
     const { imagesListingId } = this.state;
@@ -398,14 +408,14 @@ class PublishedList extends React.Component {
           </div>
         </section>
       </div>
-        );
-      }
-    }
-    
+    );
+  }
+}
+
 PublishedList.propTypes = {
-          location: PropTypes.object,
-        history: PropTypes.object,
-      
-      };
-      
+  location: PropTypes.object,
+  history: PropTypes.object,
+
+};
+
 export default withRouter(PublishedList);

@@ -18,8 +18,7 @@ import '../../../styles/css/components/carousel-component.css';
 import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
-
-import { getHotelById, getHotelRooms, getRegionNameById, getLocRateInUserSelectedCurrency, getCurrencyRates, testBook } from '../../../requester';
+import requester from '../../../initDependencies';
 
 class MobileHotelDetailsPage extends React.Component {
   constructor(props) {
@@ -89,22 +88,30 @@ class MobileHotelDetailsPage extends React.Component {
     const id = this.props.match.params.id;
     const search = this.props.location.search;
     console.log(search);
-    getHotelById(id, search).then((data) => {
-      this.setState({ data: data, loading: false });
-      const searchParams = this.getSearchParams(this.props.location.search);
-      const regionId = searchParams.get('region') || data.region.externalId;
-      getRegionNameById(regionId).then((json) => {
-        this.setState({ region: json });
+    requester.getHotelById(id, search).then(res => {
+      res.body.then(data => {
+        this.setState({ data: data, loading: false });
+        const searchParams = this.getSearchParams(this.props.location.search);
+        const regionId = searchParams.get('region') || data.region.externalId;
+        requester.getRegionNameById(regionId).then((res) => {
+          res.body.then(data => {
+            this.setState({ region: data });
+          });
+        });
       });
     });
 
-    getHotelRooms(id, search).then((data) => {
-      this.setState({ hotelRooms: data, loadingRooms: false });
+    requester.getHotelRooms(id, search).then(res => {
+      res.body.then(data => {
+        this.setState({ hotelRooms: data, loadingRooms: false });
+      });
     });
 
     this.getLocRate();
-    getCurrencyRates().then((json) => {
-      this.setState({ rates: json });
+    requester.getCurrencyRates().then(res => {
+      res.body.then(data => {
+        this.setState({ rates: data });
+      });
     });
   }
 
@@ -156,8 +163,10 @@ class MobileHotelDetailsPage extends React.Component {
   }
 
   getLocRate() {
-    getLocRateInUserSelectedCurrency(ROOMS_XML_CURRENCY).then((json) => {
-      this.setState({ locRate: Number(json[0][`price_${ROOMS_XML_CURRENCY.toLowerCase()}`]) });
+    requester.getLocRateByCurrency(ROOMS_XML_CURRENCY).then(res => {
+      res.body.then(data => {
+        this.setState({ locRate: Number(data[0][`price_${ROOMS_XML_CURRENCY.toLowerCase()}`]) });
+      });
     });
   }
 
@@ -435,9 +444,9 @@ class MobileHotelDetailsPage extends React.Component {
     const roomAvailability = new Map(this.state.roomAvailability);
     roomAvailability.set(quoteId, 'loading');
     this.setState({ roomAvailability: roomAvailability }, () => {
-      testBook(booking).then((res) => {
+      requester.createReservation(booking).then((res) => {
         const updatedRoomAvailability = new Map(this.state.roomAvailability);
-        if (res.ok) {
+        if (res.success) {
           updatedRoomAvailability.set(quoteId, true);
         } else {
           updatedRoomAvailability.set(quoteId, false);
@@ -504,8 +513,8 @@ class MobileHotelDetailsPage extends React.Component {
     }
 
     booking.quoteId = allRooms[index].quoteId;
-    testBook(booking).then((res) => {
-      if (res.ok) {
+    requester.createReservation(booking).then((res) => {
+      if (res.success) {
         if (index !== 0) {
           NotificationManager.info('The room that you requested is no longer available. You were given a similar room which may have slightly different price and extras.', '', 5000);
         }

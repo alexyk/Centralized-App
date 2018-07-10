@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import Select from 'react-select';
 import { NotificationManager } from 'react-notifications';
-import { getCurrentlyLoggedUserJsonFile } from '../../requester';
 
 export default class StyleTest extends Component {
   constructor(props) {

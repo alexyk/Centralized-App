@@ -5,7 +5,7 @@ import React from 'react';
 import HomesHomePage from './HomesHomePage';
 import HomesSearchPage from './search/HomesSearchPage';
 import HomeDetailsPage from './details/HomeDetailsPage';
-import { getCountries } from '../../requester';
+import requester from '../../initDependencies';
 
 class HomesRouterPage extends React.Component {
   constructor(props) {
@@ -17,8 +17,10 @@ class HomesRouterPage extends React.Component {
   }
 
   componentDidMount() {
-    getCountries(true).then(data => {
-      this.setState({ countries: data.content });
+    requester.getCountries(true).then(res => {
+      res.body.then(data => {
+        this.setState({ countries: data.content });
+      });
     });
   }
 

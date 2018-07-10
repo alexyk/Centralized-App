@@ -8,8 +8,7 @@ import moment from 'moment';
 import validator from 'validator';
 import { ROOMS_XML_CURRENCY } from '../../../constants/currencies.js';
 import { Config } from '../../../config';
-
-import { getHotelById, getHotelRooms, getLocRateInUserSelectedCurrency, getCurrencyRates } from '../../../requester';
+import requester from '../../../initDependencies';
 
 class HotelBookingPage extends React.Component {
   constructor(props) {
@@ -35,30 +34,36 @@ class HotelBookingPage extends React.Component {
     const rooms = this.getRooms(searchParams);
     const nights = this.getNights(searchParams);
     search = search.substr(0, search.indexOf('&quoteId='));
-    getHotelById(id, search).then((data) => {
-      this.setState({
-        hotel: data,
-        nights: nights,
-        rooms: rooms,
-        pictures: data.photos,
-        loading: false,
-        quoteId: quoteId
+    requester.getHotelById(id, search).then(res => {
+      res.body.then(data => {
+        this.setState({
+          hotel: data,
+          nights: nights,
+          rooms: rooms,
+          pictures: data.photos,
+          loading: false,
+          quoteId: quoteId
+        });
       });
     });
 
-    getHotelRooms(id, search).then((data) => {
-      const roomResults = data.filter(x => x.quoteId === quoteId)[0].roomsResults;
-      const totalPrice = this.getTotalPrice(roomResults);
-      this.setState({
-        roomResults: roomResults,
-        totalPrice: totalPrice,
-        loading: false,
+    requester.getHotelRooms(id, search).then(res => {
+      res.body.then(data => {
+        const roomResults = data.filter(x => x.quoteId === quoteId)[0].roomsResults;
+        const totalPrice = this.getTotalPrice(roomResults);
+        this.setState({
+          roomResults: roomResults,
+          totalPrice: totalPrice,
+          loading: false,
+        });
       });
     });
 
     this.getLocRate();
-    getCurrencyRates().then((json) => {
-      this.setState({ rates: json });
+    requester.getCurrencyRates().then(res => {
+      res.body.then(data => {
+        this.setState({ rates: data });
+      });
     });
 
     this.timeout = setTimeout(() => {
@@ -72,8 +77,10 @@ class HotelBookingPage extends React.Component {
   }
 
   getLocRate() {
-    getLocRateInUserSelectedCurrency(ROOMS_XML_CURRENCY).then((json) => {
-      this.setState({ locRate: Number(json[0][`price_${ROOMS_XML_CURRENCY.toLowerCase()}`]) });
+    requester.getLocRateByCurrency(ROOMS_XML_CURRENCY).then((res) => {
+      res.body.then(data => {
+        this.setState({ locRate: Number(data[0][`price_${ROOMS_XML_CURRENCY.toLowerCase()}`]) });
+      });
     });
   }
 

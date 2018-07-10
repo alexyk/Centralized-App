@@ -21,22 +21,9 @@ import { Wallet } from '../../services/blockchain/wallet.js';
 import { setIsLogged, setUserInfo } from '../../actions/userInfo';
 import { openModal, closeModal } from '../../actions/modalsInfo';
 import { setAirdropInfo, setAirdropModalTrue } from '../../actions/airdropInfo';
+import requester from '../../initDependencies';
 
 import '../../styles/css/components/captcha/captcha-container.css';
-
-import {
-  getCountOfUnreadMessages,
-  postNewPassword,
-  postRecoveryEmail,
-  login,
-  register,
-  getUserInfo,
-  sendRecoveryToken,
-  getUserAirdropInfo,
-  verifyUserAirdropInfo,
-  checkIfAirdropUserExists
-} from '../../requester';
-
 import {
   LOGIN,
   REGISTER,
@@ -156,13 +143,13 @@ class MainNav extends React.Component {
 
     this.clearLocalStorage();
 
-    register(user, captchaToken).then((res) => {
+    requester.register(user, captchaToken).then((res) => {
       if (res.success) {
         this.openModal(LOGIN);
         NotificationManager.success(PROFILE_SUCCESSFULLY_CREATED);
       }
       else {
-        res.response.then(res => {
+        res.body.then(res => {
           const errors = res.errors;
           for (let key in errors) {
             if (typeof errors[key] !== 'function') {
@@ -187,14 +174,14 @@ class MainNav extends React.Component {
 
     this.clearLocalStorage();
 
-    register(user, captchaToken).then((res) => {
+    requester.register(user, captchaToken).then((res) => {
       if (res.success) {
         this.openModal(AIRDROP_LOGIN);
         NotificationManager.success(PROFILE_SUCCESSFULLY_CREATED);
       }
       else {
-        res.response.then(res => {
-          const errors = res.errors;
+        res.errors.then(res => {
+          const errors = res;
           for (let key in errors) {
             if (typeof errors[key] !== 'function') {
               NotificationManager.warning(errors[key].message, 'Field: ' + key.toUpperCase());
@@ -218,10 +205,9 @@ class MainNav extends React.Component {
       this.setState({ isUpdatingWallet: false });
     }
 
-    login(user, captchaToken).then((res) => {
-      console.log(res);
+    requester.login(user, captchaToken).then((res) => {
       if (res.success) {
-        res.response.json().then((data) => {
+        res.body.then((data) => {
           localStorage[Config.getValue('domainPrefix') + '.auth.locktrip'] = data.Authorization;
           localStorage[Config.getValue('domainPrefix') + '.auth.username'] = user.email;
 
@@ -233,7 +219,7 @@ class MainNav extends React.Component {
           }
         });
       } else {
-        res.response.then(res => {
+        res.errors.then(res => {
           const errors = res.errors;
           console.log(errors);
           if (errors.hasOwnProperty('JsonFileNull')) {
@@ -245,6 +231,8 @@ class MainNav extends React.Component {
           } else {
             for (let key in errors) {
               if (typeof errors[key] !== 'function') {
+                console.log(key);
+                console.log(errors[key]);
                 NotificationManager.warning(errors[key].message);
               }
             }
@@ -271,9 +259,9 @@ class MainNav extends React.Component {
       this.setState({ isUpdatingWallet: false });
     }
 
-    login(user, captchaToken).then((res) => {
+    requester.login(user, captchaToken).then((res) => {
       if (res.success) {
-        res.response.json().then((data) => {
+        res.body.then((data) => {
           localStorage[Config.getValue('domainPrefix') + '.auth.locktrip'] = data.Authorization;
           localStorage[Config.getValue('domainPrefix') + '.auth.username'] = user.email;
 
@@ -285,8 +273,8 @@ class MainNav extends React.Component {
           }
         });
       } else {
-        res.response.then(res => {
-          const errors = res.errors;
+        res.errors.then(res => {
+          const errors = res;
           console.log(errors);
           if (errors.hasOwnProperty('JsonFileNull')) {
             NotificationManager.warning(errors['JsonFileNull'].message);
@@ -311,32 +299,37 @@ class MainNav extends React.Component {
   }
 
   handleAirdropUser() {
-    getUserAirdropInfo().then(json => {
-      console.log(json)
-      if (json.participates) {
-        this.dispatchAirdropInfo(json);
-      } else {
-        console.log('user not yet moved from temp to main')
-        const token = this.props.location.search.split('=')[1];
-        checkIfAirdropUserExists(token).then(user => {
-          const currentEmail = localStorage[Config.getValue('domainPrefix') + '.auth.username'];
-          if (user.email === currentEmail && user.exists) {
-            console.log('users match')
-            verifyUserAirdropInfo(token).then(() => {
-              console.log('user moved from temp to main')
-              NotificationManager.info('Verification email has been sent. Please follow the link to confirm your email.');
-              getUserAirdropInfo().then(json => {
-                this.dispatchAirdropInfo(json);
-              });
+    requester.getUserAirdropInfo().then(res => {
+      res.body.then(data => {
+        if (data.participates) {
+          this.dispatchAirdropInfo(data);
+        } else {
+          console.log('user not yet moved from temp to main')
+          const token = this.props.location.search.split('=')[1];
+          requester.checkIfAirdropUserExists(token).then(res => {
+            res.body.then(user => {
+              const currentEmail = localStorage[Config.getValue('domainPrefix') + '.auth.username'];
+              if (user.email === currentEmail && user.exists) {
+                console.log('users match')
+                requester.verifyUserAirdropInfo(token).then(() => {
+                  console.log('user moved from temp to main')
+                  NotificationManager.info('Verification email has been sent. Please follow the link to confirm your email.');
+                  requester.getUserAirdropInfo().then(res => {
+                    res.body.then(data => {
+                      this.dispatchAirdropInfo(data);
+                    });
+                  });
+                });
+              } else {
+                console.log('users dont match', user.email, currentEmail)
+              }
             });
-          } else {
-            console.log('users dont match', user.email, currentEmail)
-          }
-        });
-      }
-    }).catch(e => {
-      NotificationManager.warning('No airdrop information about this profile');
-      this.props.history.push('/airdrop');
+          });
+        }
+      }).catch(e => {
+        NotificationManager.warning('No airdrop information about this profile');
+        this.props.history.push('/airdrop');
+      });
     });
   }
 
@@ -360,14 +353,16 @@ class MainNav extends React.Component {
   }
 
   setUserInfo() {
-    getUserInfo().then(res => {
-      Wallet.getBalance(res.locAddress).then(eth => {
-        const ethBalance = eth / (Math.pow(10, 18));
-        Wallet.getTokenBalance(res.locAddress).then(loc => {
-          const locBalance = loc / (Math.pow(10, 18));
-          const { firstName, lastName, phoneNumber, email, locAddress } = res;
-          this.props.dispatch(setIsLogged(true));
-          this.props.dispatch(setUserInfo(firstName, lastName, phoneNumber, email, locAddress, ethBalance, locBalance));
+    requester.getUserInfo().then(res => {
+      res.body.then(data => {
+        Wallet.getBalance(data.locAddress).then(eth => {
+          const ethBalance = eth / (Math.pow(10, 18));
+          Wallet.getTokenBalance(data.locAddress).then(loc => {
+            const locBalance = loc / (Math.pow(10, 18));
+            const { firstName, lastName, phoneNumber, email, locAddress } = data;
+            this.props.dispatch(setIsLogged(true));
+            this.props.dispatch(setUserInfo(firstName, lastName, phoneNumber, email, locAddress, ethBalance, locBalance));
+          });
         });
       });
     });
@@ -414,8 +409,10 @@ class MainNav extends React.Component {
     if (
       localStorage[Config.getValue('domainPrefix') + '.auth.locktrip']
       && localStorage[Config.getValue('domainPrefix') + '.auth.username']) {
-      getCountOfUnreadMessages().then(data => {
-        this.setState({ unreadMessages: data.count });
+      requester.getCountOfMyUnreadMessages().then(res => {
+        res.body.then(data => {
+          this.setState({ unreadMessages: data.count });
+        });
       });
     }
   }
@@ -443,7 +440,7 @@ class MainNav extends React.Component {
       password: password,
     };
 
-    postNewPassword(postObj, token).then((res) => {
+    requester.sendNewPassword(postObj, token).then((res) => {
       if (res.success) {
         this.closeModal(CHANGE_PASSWORD);
         this.openModal(LOGIN);
@@ -456,7 +453,7 @@ class MainNav extends React.Component {
   }
 
   handleSubmitRecoveryToken() {
-    sendRecoveryToken(this.state.recoveryToken).then((res) => {
+    requester.sendRecoveryToken(this.state.recoveryToken).then((res) => {
       if (res.success) {
         this.closeModal(ENTER_RECOVERY_TOKEN);
         this.openModal(CHANGE_PASSWORD);
@@ -469,8 +466,8 @@ class MainNav extends React.Component {
 
   handleSubmitRecoveryEmail(token) {
     const email = { email: this.state.recoveryEmail };
-    console.log(token, email);
-    postRecoveryEmail(email, token).then((res) => {
+
+    requester.sendRecoveryEmail(email, token).then((res) => {
       if (res.success) {
         this.closeModal(SEND_RECOVERY_EMAIL);
         this.openModal(ENTER_RECOVERY_TOKEN);

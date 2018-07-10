@@ -1,5 +1,3 @@
-import { getChatMessages, sendMessage } from '../../../requester';
-
 import { Config } from '../../../config';
 // import InfiniteList from 'react-infinite-scroll-list';
 import Message from './Message';
@@ -10,6 +8,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import moment from 'moment';
 import { withRouter } from 'react-router-dom';
+import requester from '../../../initDependencies';
 
 class MessagesChatPage extends React.Component {
   constructor(props) {
@@ -40,22 +39,24 @@ class MessagesChatPage extends React.Component {
 
   fetchMessages(page = 0) {
     this.setState({ infinityLoading: true });
-    getChatMessages(this.props.match.params.id, page).then((data) => {
-      let recipient = data.content[0].recipient.email === localStorage[Config.getValue('domainPrefix') + '.auth.username'] ? data.content[0].sender : data.content[0].recipient;
-      let totalMessages = this.state.messages;
-      data.content.forEach((item) => {
-        totalMessages.push(item);
-      });
+    requester.getChatMessages(this.props.match.params.id, page).then((data) => {
+      data.body.then(res => {
+        let recipient = res.content[0].recipient.email === localStorage[Config.getValue('domainPrefix') + '.auth.username'] ? res.content[0].sender : res.content[0].recipient;
+        let totalMessages = this.state.messages;
+        res.content.forEach((item) => {
+          totalMessages.push(item);
+        });
 
-      this.setState({
-        messages: totalMessages,
-        loading: false,
-        recipient: recipient.fullName,
-        recipientId: recipient.id,
-        recipientImage: recipient.image,
-        totalPages: data.totalPages,
-        infinityLoading: false
-      });
+        this.setState({
+          messages: totalMessages,
+          loading: false,
+          recipient: recipient.fullName,
+          recipientId: recipient.id,
+          recipientImage: recipient.image,
+          totalPages: res.totalPages,
+          infinityLoading: false
+        });
+      })
     });
   }
 
@@ -73,11 +74,13 @@ class MessagesChatPage extends React.Component {
       message: this.state.message
     };
 
-    sendMessage(message, this.props.match.params.id).then((data) => {
-      let messages = this.state.messages;
-      messages.splice(0, 0, data);
+    requester.sendMessage(message, this.props.match.params.id).then((res) => {
+      res.body.then(data => {
+        let messages = this.state.messages;
+        messages.splice(0, 0, data);
 
-      this.setState({ sending: false, messages: messages, message: '' });
+        this.setState({ sending: false, messages: messages, message: '' });
+      });
     });
   }
 

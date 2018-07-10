@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import ReCAPTCHA from 'react-google-recaptcha';
 import React from 'react';
-import { deleteListing } from '../../../requester';
+import requester from '../../../initDependencies';
 
 import '../../../styles/css/components/profile/my-listings__progress-item.css';
 
@@ -85,8 +85,7 @@ export default class MyListingsInProgressItem extends React.Component {
 
     this.setState({ sending: true });
 
-    deleteListing(this.state.deletingId, token)
-      .then(res => {
+    requester.deleteListing(this.state.deletingId, token).then(res => {
         if (res.success) {
           this.props.filterListings(this.state.deletingId);
         } else {

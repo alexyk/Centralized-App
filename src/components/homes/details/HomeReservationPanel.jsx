@@ -8,8 +8,8 @@ import React from 'react';
 import { connect } from 'react-redux';
 import moment from 'moment';
 import { parse } from 'query-string';
-import { requestBooking } from '../../../requester';
 import { withRouter } from 'react-router-dom';
+import requester from '../../../initDependencies';
 
 class HomeReservationPanel extends React.Component {
   constructor(props) {
@@ -73,9 +73,9 @@ class HomeReservationPanel extends React.Component {
         phone: this.state.phone,
       };
 
-      requestBooking(requestInfo, captchaToken).then((res) => {
+      requester.requestBooking(requestInfo, captchaToken).then((res) => {
         this.setState({ sending: false });
-        if (res.status === 403) {
+        if (!res.success) {
           this.setState({ error: 'Please sign-in/register to able to make bookings' });
         } else {
           res.body.then(data => {

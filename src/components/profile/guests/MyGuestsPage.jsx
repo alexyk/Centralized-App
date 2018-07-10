@@ -1,4 +1,3 @@
-import { acceptReservation, cancelReservation, cancelTrip, getMyReservations, getMyListings } from '../../../requester';
 import { Config } from '../../../config';
 import CancellationModal from '../../common/modals/CancellationModal';
 import Pagination from '../../common/pagination/Pagination';
@@ -8,6 +7,7 @@ import { NotificationManager } from 'react-notifications';
 import ReCAPTCHA from 'react-google-recaptcha';
 import React from 'react';
 import { withRouter } from 'react-router-dom';
+import requester from '../../../initDependencies';
 
 class MyGuestsPage extends React.Component {
   constructor(props) {
@@ -36,14 +36,18 @@ class MyGuestsPage extends React.Component {
   }
 
   componentDidMount() {
-    getMyReservations('?page=0').then((data) => {
-      this.setState({ reservations: data.content, totalReservations: data.totalElements, loading: false });
+    requester.getMyReservations(['page=0']).then(res => {
+      res.body.then(data => {
+        this.setState({ reservations: data.content, totalReservations: data.totalElements, loading: false });
+      });
     });
 
-    getMyListings().then((data) => {
-      if (data.totalElements === 0) {
-        this.props.history.push('/profile/listings/create/landing');
-      }
+    requester.getMyListings().then(res => {
+      res.body.then(data => {
+        if (data.totalElements === 0) {
+          this.props.history.push('/profile/listings/create/landing');
+        }
+      });
     });
   }
 
@@ -61,42 +65,46 @@ class MyGuestsPage extends React.Component {
 
   acceptReservation(captchaToken) {
     const id = this.state.selectedReservationId;
-    acceptReservation(id, captchaToken)
-      .then(response => {
-        if (response.success) {
+    requester.acceptReservation(id, captchaToken).then(res => {
+      res.body.then(data => {
+        if (res.success) {
           this.setReservationIsAccepted(id, true);
-          NotificationManager.success(response.message, 'Reservation Operations');
+          NotificationManager.success(data.message, 'Reservation Operations');
         } else {
-          NotificationManager.error(response.message, 'Reservation Operations');
+          NotificationManager.error(data.message, 'Reservation Operations');
         }
       });
+    });
   }
 
   cancelReservation(captchaToken) {
     const id = this.state.selectedReservationId;
-    cancelReservation(id, captchaToken)
-      .then(response => {
-        if (response.success) {
+    requester.cancelReservation(id, captchaToken).then(res => {
+      res.body.then(data => {
+        if (res.success) {
           this.setReservationIsAccepted(id, false);
-          NotificationManager.success(response.message, 'Reservation Operations');
+          NotificationManager.success(data.message, 'Reservation Operations');
         } else {
-          NotificationManager.error(response.message, 'Reservation Operations');
+          NotificationManager.error(data.message, 'Reservation Operations');
         }
       });
+    });
   }
 
   rejectReservation(captchaToken) {
     const id = this.state.selectedReservationId;
     const message = this.state.cancellationText;
     let messageObj = { message: message };
-    cancelTrip(id, messageObj, captchaToken)
-      .then(response => {
-        if (response.success) {
-          this.deleteReservationFromState(id);
-          NotificationManager.success(response.message, 'Reservation Operations');
-        } else {
-          NotificationManager.error(response.message, 'Reservation Operations');
-        }
+    requester.cancelTrip(id, messageObj, captchaToken)
+      .then(res => {
+        res.body.then(data => {
+          if (res.success) {
+            this.deleteReservationFromState(id);
+            NotificationManager.success(data.message, 'Reservation Operations');
+          } else {
+            NotificationManager.error(data.message, 'Reservation Operations');
+          }
+        });
       });
   }
 
@@ -121,11 +129,13 @@ class MyGuestsPage extends React.Component {
       loading: true
     });
 
-    getMyReservations(`?page=${page - 1}`).then(data => {
-      this.setState({
-        reservations: data.content,
-        totalReservations: data.totalElements,
-        loading: false
+    requester.getMyReservations([`page=${page - 1}`]).then(res => {
+      res.body.then(data => {
+        this.setState({
+          reservations: data.content,
+          totalReservations: data.totalElements,
+          loading: false
+        });
       });
     });
   }

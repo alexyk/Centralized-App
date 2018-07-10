@@ -1,5 +1,4 @@
 import { NotificationManager } from 'react-notifications';
-import { changeListingStatus, contactHost, getAllUnpublishedListings, getCities, getCountries, deleteListing } from '../../../requester';
 
 import Filter from './Filter';
 import ContactHostModal from '../../common/modals/ContactHostModal';
@@ -15,6 +14,7 @@ import { Config } from '../../../config';
 import ReCAPTCHA from 'react-google-recaptcha';
 import NoEntriesMessage from '../common/NoEntriesMessage';
 import Lightbox from 'react-images';
+import requester from '../../../initDependencies';
 
 import '../../../styles/css/components/captcha/captcha-container.css';
 
@@ -68,19 +68,25 @@ class UnpublishedList extends React.Component {
   }
 
   componentDidMount() {
-    let searchTerm = this.buildSearchTerm();
-    getAllUnpublishedListings(searchTerm).then((data) => {
-      this.setState({ listings: data.content, loading: false, totalElements: data.totalElements });
+    let search = this.buildSearchTerm();
+    requester.getAllUnpublishedListings(search.searchTermMap).then((res) => {
+      res.body.then(data => {
+        this.setState({ listings: data.content, loading: false, totalElements: data.totalElements });
+      });
     });
 
     if (this.state.country !== '') {
-      getCities(this.state.country).then(data => {
-        this.setState({ cities: data.content });
+      requester.getCities(this.state.country).then(res => {
+        res.body.then(data => {
+          this.setState({ cities: data.content });
+        });
       });
     }
 
-    getCountries().then(data => {
-      this.setState({ countries: data.content });
+    requester.getCountries().then(res => {
+      res.body.then(data => {
+        this.setState({ countries: data.content });
+      });
     });
 
   }
@@ -88,35 +94,45 @@ class UnpublishedList extends React.Component {
   onSearch() {
     this.setState({ loading: true });
 
-    let searchTerm = this.buildSearchTerm();
+    let search = this.buildSearchTerm();
 
-    getAllUnpublishedListings(searchTerm).then((data) => {
-      this.props.history.push(`/profile/admin/listings/unpublished${searchTerm}`);
-      this.setState({ listings: data.content, loading: false, totalElements: data.totalElements });
+    requester.getAllUnpublishedListings(search.searchTermMap).then((res) => {
+      res.body.then(data => {
+        this.props.history.push(`/profile/admin/listings/unpublished${search.searchTerm}`);
+        this.setState({ listings: data.content, loading: false, totalElements: data.totalElements });
+      });
     });
   }
 
 
   buildSearchTerm() {
+    let searchTermMap = [];
     let searchTerm = `?`;
 
     if (this.state.city) {
+      searchTermMap.push(`cityId=${this.state.city}`);
       searchTerm += `&cityId=${this.state.city}`;
     }
 
     if (this.state.name) {
+      searchTermMap.push(`listingName=${this.state.name}`);
       searchTerm += `&listingName=${this.state.name}`;
     }
 
     if (this.state.country) {
+      searchTermMap.push(`countryId=${this.state.country}`);
       searchTerm += `&countryId=${this.state.country}`;
     }
 
     if (this.state.hostEmail) {
+      searchTermMap.push(`host=${this.state.hostEmail}`);
       searchTerm += `&host=${this.state.hostEmail}`;
     }
 
-    return searchTerm;
+    return {
+      searchTerm,
+      searchTermMap 
+    };
   }
 
   onChange(e) {
@@ -135,9 +151,11 @@ class UnpublishedList extends React.Component {
       city: null
     }, () => {
       if (option) {
-        getCities(option.value).then(data => {
-          this.setState({
-            cities: data.content,
+        requester.getCities(option.value).then(res => {
+          res.body.then(data => {
+            this.setState({
+              cities: data.content,
+            });
           });
         });
       } else {
@@ -161,16 +179,18 @@ class UnpublishedList extends React.Component {
     });
 
     let searchTerm = queryString.parse(this.props.location.search);
-
+    console.log(searchTerm);
     searchTerm.page = page - 1;
 
     let newSearchTerm = queryString.stringify(searchTerm);
-    getAllUnpublishedListings('?' + newSearchTerm).then(data => {
-      this.props.history.push('?' + newSearchTerm);
-      this.setState({
-        listings: data.content,
-        totalElements: data.totalElements,
-        loading: false
+    requester.getAllUnpublishedListings([newSearchTerm]).then(res => {
+      res.body.then(data => {
+        this.props.history.push('?' + newSearchTerm);
+        this.setState({
+          listings: data.content,
+          totalElements: data.totalElements,
+          loading: false
+        });
       });
     });
   }
@@ -185,7 +205,7 @@ class UnpublishedList extends React.Component {
       state: status
     };
 
-    changeListingStatus(publishObj).then((res) => {
+    requester.changeListingStatus(publishObj).then((res) => {
       if (res.success) {
         switch (status) {
           case 'active': NotificationManager.success('Listing approved');
@@ -214,9 +234,7 @@ class UnpublishedList extends React.Component {
       message: message
     };
 
-    contactHost(id, contactHostObj, captchaToken)
-      .then(() => {
-        // this.props.history.push(`/profile/messages/chat/${res.conversation}`);
+    requester.contactHost(id, contactHostObj, captchaToken).then(() => {
         NotificationManager.info('Message sent');
         this.closeContactHostModal();
       });
@@ -226,7 +244,7 @@ class UnpublishedList extends React.Component {
     if (event) {
       event.preventDefault();
     }
-    
+
     this.setState({ isShownContactHostModal: true, selectedListing: id });
   }
 
@@ -249,7 +267,7 @@ class UnpublishedList extends React.Component {
   handleDeleteListing(token) {
     this.setState({ isDeleting: true });
     const { deletingId } = this.state;
-    deleteListing(deletingId, token)
+    requester.deleteListing(deletingId, token)
       .then(res => {
         if (res.success) {
           const allListings = this.state.listings;
@@ -342,7 +360,7 @@ class UnpublishedList extends React.Component {
 
   render() {
     if (this.state.loading) {
-      return <div className="loader" style={{ 'marginBottom': '40px'}}></div>;
+      return <div className="loader" style={{ 'marginBottom': '40px' }}></div>;
     }
 
     const { imagesListingId } = this.state;

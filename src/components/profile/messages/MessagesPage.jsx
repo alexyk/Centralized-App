@@ -1,9 +1,8 @@
-import { changeMessageStatus, getMyConversations } from '../../../requester';
-
 import Pagination from '../../common/pagination/Pagination';
 import NoEntriesMessage from '../common/NoEntriesMessage';
 import MessagesItem from './MessagesItem';
 import React from 'react';
+import requester from '../../../initDependencies';
 
 export default class MessagesPage extends React.Component {
   constructor(props) {
@@ -21,9 +20,10 @@ export default class MessagesPage extends React.Component {
   }
 
   componentDidMount() {
-    getMyConversations('?page=0').then(data => {
-      console.log(data)
-      this.setState({ messages: data.content, loading: false, totalElements: data.totalElements });
+    requester.getMyConversations(['page=0']).then(res => {
+      res.body.then((data) => {
+        this.setState({ messages: data.content, loading: false, totalElements: data.totalElements });
+      })
     });
   }
 
@@ -33,7 +33,7 @@ export default class MessagesPage extends React.Component {
       unread: unread === 'true' ? 'false' : 'true'
     };
 
-    changeMessageStatus(conversationObj).then(() => {
+    requester.changeMessageStatus(conversationObj).then(() => {
       let messages = this.state.messages;
 
       let message = messages.find(x => x.id === id);
@@ -54,11 +54,13 @@ export default class MessagesPage extends React.Component {
       loading: true
     });
 
-    getMyConversations(`?page=${page - 1}`).then(data => {
-      this.setState({
-        messages: data.content,
-        totalElements: data.totalElements,
-        loading: false
+    requester.getMyConversations([`?page=${page - 1}`]).then(res => {
+      res.body.then(data => {
+        this.setState({
+          messages: data.content,
+          totalElements: data.totalElements,
+          loading: false
+        });
       });
     });
   }

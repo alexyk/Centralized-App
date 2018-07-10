@@ -1,11 +1,10 @@
-import { getListings, getCountries } from '../../requester';
-
 import React from 'react';
 import { withRouter } from 'react-router-dom';
 import moment from 'moment';
 import PopularListingsCarousel from '../common/listing/PopularListingsCarousel';
 import PropTypes from 'prop-types';
 import HomesHeroComponent from './HomesHeroComponent';
+import requester from '../../initDependencies';
 
 class HomesHomePage extends React.Component {
   constructor(props) {
@@ -29,12 +28,16 @@ class HomesHomePage extends React.Component {
   }
 
   componentDidMount() {
-    getListings().then(data => {
-      this.setState({ listings: data.content });
+    requester.getTopListings().then(res => {
+      res.body.then(data => {
+        this.setState({ listings: data.content });
+      });
     });
 
-    getCountries(true).then(data => {
-      this.setState({ countries: data.content });
+    requester.getCountries(true).then(res => {
+      res.body.then(data => {
+        this.setState({ countries: data.content });
+      });
     });
   }
 

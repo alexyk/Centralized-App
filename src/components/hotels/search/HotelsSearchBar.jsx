@@ -2,11 +2,11 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import HotelsSearchBarDatePicker from './HotelsSearchBarDatePicker';
 import moment from 'moment';
+import requester from '../../../initDependencies';
 
 // import Autocomplete from 'react-google-autocomplete';
 
 import Select from 'react-select';
-import { getRegionsBySearchParameter } from '../../../requester';
 
 function SearchBar(props) {
 
@@ -53,10 +53,11 @@ function SearchBar(props) {
     //     return Promise.resolve({ options: [] });
     // }
 
-    return getRegionsBySearchParameter(param)
-      .then((json) => {
-        return { options: json };
-      });
+    return requester.getRegionsBySearchParameter(param).then(res => {
+      res.body.then(data => {
+        return { options: data };
+      })
+    });
   };
 
   // function onInputKeyDown(event) {
@@ -69,7 +70,7 @@ function SearchBar(props) {
 
   const { rooms } = props;
   return (
-    <form className="source-panel"  onSubmit={props.handleSearch}>
+    <form className="source-panel" onSubmit={props.handleSearch}>
       <div className="source-panel-select source-panel-item">
         <Select.Async
           placeholder="Choose a location"

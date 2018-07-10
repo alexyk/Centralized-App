@@ -1,8 +1,8 @@
 import { Config } from '../../../config';
 import Dropzone from 'react-dropzone';
 import React from 'react';
-import { getUserInfo } from '../../../requester';
 import request from 'superagent';
+import requester from '../../../initDependencies';
 
 const host = Config.getValue('apiHost');
 const LOCKTRIP_UPLOAD_URL = `${host}users/me/images/upload`;
@@ -24,8 +24,10 @@ export default class ProfilePhotosPage extends React.Component {
   }
 
   componentDidMount() {
-    getUserInfo().then((data) => {
-      this.setState({ uploadedFilesThumbUrls: [data.image], loading: false });
+    requester.getUserInfo().then(res => {
+      res.body.then(data => {
+        this.setState({ uploadedFilesThumbUrls: [data.image], loading: false });
+      });
     });
   }
 

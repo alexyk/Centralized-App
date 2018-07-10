@@ -3,7 +3,7 @@ import React from 'react';
 import 'react-notifications/lib/notifications.css';
 
 import { NotificationManager } from 'react-notifications';
-import { getUserInfo, getCurrentlyLoggedUserJsonFile } from '../../../requester';
+import requester from '../../../initDependencies';
 
 import { Config } from '../../../config';
 import { TokenTransactions } from '../../../services/blockchain/tokenTransactions';
@@ -61,10 +61,14 @@ export default class WalletIndexPage extends React.Component {
   }
 
   componentDidMount() {
-    getUserInfo().then(info => {
-      this.setState({ locAddress: info.locAddress }, () => {
-        getCurrentlyLoggedUserJsonFile().then(res => {
-          this.setState({ jsonFile: res.jsonFile });
+    requester.getUserInfo().then(res => {
+      res.body.then(data => {
+        this.setState({ locAddress: data.locAddress }, () => {
+          requester.getMyJsonFile().then(res => {
+            res.body.then(data => {
+              this.setState({ jsonFile: data.jsonFile });
+            })
+          });
         });
       });
     });

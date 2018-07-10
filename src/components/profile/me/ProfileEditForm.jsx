@@ -1,12 +1,12 @@
 import 'react-notifications/lib/notifications.css';
 
 import { NotificationManager } from 'react-notifications';
-import { getCities, getCountries, getUserInfo, updateUserInfo } from '../../../requester';
 
 import { Config } from '../../../config';
 import ReCAPTCHA from 'react-google-recaptcha';
 import React from 'react';
 import moment from 'moment';
+import requester from '../../../initDependencies';
 
 export default class ProfileEditPage extends React.Component {
   constructor(props) {
@@ -41,40 +41,46 @@ export default class ProfileEditPage extends React.Component {
   }
 
   componentDidMount() {
-    getCountries().then(data => {
-      this.setState({ countries: data.content });
+    requester.getCountries().then(res => {
+      res.body.then(data => {
+        this.setState({ countries: data.content });
+      });
     });
 
-    getUserInfo().then((data) => {
-      let day = '';
-      let month = '';
-      let year = '';
+    requester.getUserInfo().then(res => {
+      res.body.then(data => {
+        let day = '';
+        let month = '';
+        let year = '';
 
-      if (data.birthday !== null) {
-        let birthday = moment.utc(data.birthday);
-        day = birthday.add(1, 'days').format('D');
-        month = birthday.format('MM');
-        year = birthday.format('YYYY');
-      }
+        if (data.birthday !== null) {
+          let birthday = moment.utc(data.birthday);
+          day = birthday.add(1, 'days').format('D');
+          month = birthday.format('MM');
+          year = birthday.format('YYYY');
+        }
 
-      this.setState({
-        firstName: data.firstName !== null ? data.firstName : '',
-        lastName: data.lastName !== null ? data.lastName : '',
-        phoneNumber: data.phoneNumber !== null ? data.phoneNumber : '',
-        preferredLanguage: data.preferredLanguage !== null ? data.preferredLanguage : '',
-        preferredCurrency: data.preferredCurrency !== null ? data.preferredCurrency.id : '',
-        gender: data.gender !== null ? data.gender : '',
-        country: data.country !== null ? data.country.id : '1',
-        city: data.city !== null ? data.city.id : '1',
-        locAddress: data.locAddress !== null ? data.locAddress : '',
-        jsonFile: data.jsonFile !== null ? data.jsonFile : '',
-        currencies: data.currencies,
-        day: day,
-        month: month,
-        year: year
-      }, () => {
-        getCities(this.state.country).then(data => {
-          this.setState({ cities: data.content });
+        this.setState({
+          firstName: data.firstName !== null ? data.firstName : '',
+          lastName: data.lastName !== null ? data.lastName : '',
+          phoneNumber: data.phoneNumber !== null ? data.phoneNumber : '',
+          preferredLanguage: data.preferredLanguage !== null ? data.preferredLanguage : '',
+          preferredCurrency: data.preferredCurrency !== null ? data.preferredCurrency.id : '',
+          gender: data.gender !== null ? data.gender : '',
+          country: data.country !== null ? data.country.id : '1',
+          city: data.city !== null ? data.city.id : '1',
+          locAddress: data.locAddress !== null ? data.locAddress : '',
+          jsonFile: data.jsonFile !== null ? data.jsonFile : '',
+          currencies: data.currencies,
+          day: day,
+          month: month,
+          year: year
+        }, () => {
+          requester.getCities(this.state.country).then(res => {
+            res.body.then(data => {
+              this.setState({ cities: data.content });
+            });
+          });
         });
       });
     }).then(() => {
@@ -94,7 +100,7 @@ export default class ProfileEditPage extends React.Component {
   updateUser(captchaToken) {
     let birthday;
     birthday = `${this.state.day}/${this.state.month}/${this.state.year}`;
-    
+
     let userInfo = {
       firstName: this.state.firstName,
       lastName: this.state.lastName,
@@ -111,7 +117,7 @@ export default class ProfileEditPage extends React.Component {
 
     Object.keys(userInfo).forEach((key) => (userInfo[key] === null || userInfo[key] === '') && delete userInfo[key]);
 
-    updateUserInfo(userInfo, captchaToken).then((res) => {
+    requester.updateUserInfo(userInfo, captchaToken).then((res) => {
       if (res.success) {
         NotificationManager.success('Successfully updated your profile', 'Update user profile');
         this.componentDidMount();
@@ -135,10 +141,12 @@ export default class ProfileEditPage extends React.Component {
   }
 
   updateCities() {
-    getCities(this.state.country).then(data => {
-      this.setState({
-        city: '1',
-        cities: data.content,
+    requester.getCities(this.state.country).then(res => {
+      res.body.then(data => {
+        this.setState({
+          city: '1',
+          cities: data.content,
+        });
       });
     });
   }

@@ -4,9 +4,9 @@ import Pagination from '../../common/pagination/Pagination';
 import HomeItem from './HomeItem';
 import PropTypes from 'prop-types';
 import React from 'react';
-import { getListingsByFilter } from '../../../requester';
 import { withRouter } from 'react-router-dom';
 import moment from 'moment';
+import requester from '../../../initDependencies';
 
 import HomesSearchBar from './HomesSearchBar';
 
@@ -44,18 +44,16 @@ class ListingSearchPage extends React.Component {
   }
 
   componentDidMount() {
-    // getCountries(true).then(data => {
-    //     this.setState({ countries: data.content });
-    // });
-
     const searchTerms = this.getSearchTerms(this.state.searchParams);
-    getListingsByFilter(searchTerms + `&page=${this.state.currentPage - 1}`).then(data => {
-      this.setState({
-        listings: data.filteredListings.content,
-        totalItems: data.filteredListings.totalElements,
-        loading: false,
-        cities: data.cities,
-        propertyTypes: data.types
+    requester.getListingsByFilter(searchTerms + `&page=${this.state.currentPage - 1}`).then(res => {
+      res.body.then(data => {
+        this.setState({
+          listings: data.filteredListings.content,
+          totalItems: data.filteredListings.totalElements,
+          loading: false,
+          cities: data.cities,
+          propertyTypes: data.types
+        });
       });
     });
   }
@@ -105,14 +103,16 @@ class ListingSearchPage extends React.Component {
 
     this.clearFilters(e);
     const searchTerms = this.getSearchTerms(this.state.searchParams);
-    getListingsByFilter(searchTerms).then(data => {
-      this.setState({
-        listings: data.filteredListings.content,
-        loading: false,
-        totalItems: data.filteredListings.totalElements,
-        countryId: this.getSearchParams().get('countryId'),
-        cities: data.cities,
-        propertyTypes: data.types
+    requester.getListingsByFilter(searchTerms).then(res => {
+      res.body.then(data => {
+        this.setState({
+          listings: data.filteredListings.content,
+          loading: false,
+          totalItems: data.filteredListings.totalElements,
+          countryId: this.getSearchParams().get('countryId'),
+          cities: data.cities,
+          propertyTypes: data.types
+        });
       });
     });
     const url = `/homes/listings/?${searchTerms}`;
@@ -130,12 +130,14 @@ class ListingSearchPage extends React.Component {
     });
 
     let searchTerms = this.getSearchTerms(this.state.searchParams);
-    getListingsByFilter(searchTerms).then(data => {
-      this.setState({
-        listings: data.filteredListings.content,
-        loading: false,
-        totalItems: data.filteredListings.totalElements,
-        countryId: this.getSearchParams().get('countryId'),
+    requester.getListingsByFilter(searchTerms).then(res => {
+      res.body.then(data => {
+        this.setState({
+          listings: data.filteredListings.content,
+          loading: false,
+          totalItems: data.filteredListings.totalElements,
+          countryId: this.getSearchParams().get('countryId'),
+        });
       });
     });
     let url = `/homes/listings/?${searchTerms}`;
@@ -187,11 +189,13 @@ class ListingSearchPage extends React.Component {
     });
 
     const searchTerms = this.getSearchTerms(this.state.searchParams);
-    getListingsByFilter(searchTerms + `&page=${page - 1}`).then(data => {
-      this.setState({
-        listings: data.filteredListings.content,
-        loading: false,
-        totalItems: data.filteredListings.totalElements
+    requester.getListingsByFilter(searchTerms + `&page=${page - 1}`).then(res => {
+      res.body.then(data => {
+        this.setState({
+          listings: data.filteredListings.content,
+          loading: false,
+          totalItems: data.filteredListings.totalElements
+        });
       });
     });
   }
@@ -202,6 +206,8 @@ class ListingSearchPage extends React.Component {
     for (let i = 0; i < keys.length; i++) {
       pairs.push(keys[i] + '=' + this.createParam(searchParams.get(keys[i])));
     }
+
+    console.log(pairs);
 
     return pairs.join('&');
   }
