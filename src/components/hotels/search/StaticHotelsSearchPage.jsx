@@ -51,7 +51,7 @@ class StaticHotelsSearchPage extends React.Component {
       stars: [false, false, false, false, false],
       city: '',
       hotels: {},
-      mapInfo: {},
+      mapInfo: [],
       searchParams: null,
       // listings: [],
       filteredListings: null,
@@ -98,7 +98,6 @@ class StaticHotelsSearchPage extends React.Component {
   }
 
   componentDidMount() {
-    
     getLocRateInUserSelectedCurrency(ROOMS_XML_CURRENCY).then((json) => {
       this.setState({ locRate: Number(json[0][`price_${ROOMS_XML_CURRENCY.toLowerCase()}`]) });
     });
@@ -134,7 +133,7 @@ class StaticHotelsSearchPage extends React.Component {
     } else {
       const { id } = messageBody;  
       this.hotelInfoById[id] = messageBody;
-      this.updateMapInfo();
+      this.updateMapInfo(messageBody);
       const listing = this.state && this.state.hotels ? this.state.hotels[id] : null;
       if (listing) {
         listing.price = this.hotelInfoById[id].bestPrice;
@@ -147,9 +146,11 @@ class StaticHotelsSearchPage extends React.Component {
   }
 
   updateMapInfo() {
-    if (Object.keys(this.hotelInfoById).length % 20 === 0) {
-      this.setState({ mapInfo: this.hotelInfoById });
-    }
+    // const timeout = Object.keys(this.hotelInfoById).length * 1000;
+    // const mapInfo = this.hotelInfoById;
+    // setTimeout(() => {
+    //   this.setState({ mapInfo });
+    // }, timeout);
   }
 
   connectSocket() {
@@ -360,7 +361,7 @@ class StaticHotelsSearchPage extends React.Component {
       childrenModal: false,
       currentPage: 0,
       hotels: {},
-      mapInfo: {},
+      mapInfo: [],
       allElements: false,
       nights: nights,
       stars: [false, false, false, false, false]
@@ -673,6 +674,7 @@ class StaticHotelsSearchPage extends React.Component {
                         paymentInfo={this.props.paymentInfo}
                         isLogged={this.props.userInfo.isLogged}
                         nights={this.state.nights}
+                        loading={this.state.loading}
                       />
                     </div>
                     : <div>

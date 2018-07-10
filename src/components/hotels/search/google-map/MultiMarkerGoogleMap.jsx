@@ -15,11 +15,13 @@ class MultiMarkerGoogleMap extends Component {
 
     this.markers = [];
     this.infoWindows = [];
-    // if (this.props.mapInfo) {
-    //   this.placeMarkers(this.props.mapInfo, this.infoWindows);
-    // }
+    if (this.props.mapInfo) {
+      this.placeMarkers(this.props.mapInfo, this.infoWindows);
+    }
 
-    // this.placeMarkers = this.placeMarkers.bind(this);
+    this.placeMarkers = this.placeMarkers.bind(this);
+    this.clearAll = this.clearAll.bind(this);
+    this.closeAll = this.closeAll.bind(this);
   }
 
   shouldComponentUpdate() {
@@ -35,114 +37,67 @@ class MultiMarkerGoogleMap extends Component {
       this.mapInstance.panTo(latLng);
     }
 
-    // const { mapInfo } = props;
-    // if (mapInfo) {
-    //   if (props.isFiltered) {
-    //     this.infoWindows = [];
-    //     this.markers.forEach((marker) => {
-    //       marker.setMap(null);
-    //     });
-
-    //     this.placeMarkers(mapInfo, this.infoWindows);
-    //   } else {
-    //     this.placeMarkers(mapInfo, this.infoWindows);
-    //   }
-    // }
+    if (props.mapInfo) {
+      this.placeMarkers(props.mapInfo, this.infoWindows);
+    }
   }
 
   componentWillUnmount() {
-    // this.infoWindows = [];
-    // this.markers.forEach((marker) => {
-    //   marker.setMap(null);
-    // });
+    console.log('map unmounted');
+    this.clearAll();
   }
-
-  // placeMarkers(hotels, infoWindows, from, to) {
-  //   if (hotels && hotels.length > 0) {
-  //     from = from ? from : 0;
-  //     to = to ? to : hotels.length;
-
-  //     // TODO: create a single info window to be displayed
-  //     // (function iife(info) {
-
-  //     // })(this.info);
-
-  //     for (let i = from; i < to; i++) {
-  //       const hotel = hotels[i];
-  //       const marker = this.createMarker(hotel);
-  //       const infoWindow = this.createInfoWindow(hotel);
-  //       window.google.maps.event.addListener(marker, 'mouseover', function () {
-  //         infoWindows.forEach(i => {
-  //           i.close();
-  //         });
-
-  //         infoWindow.open(this.mapInstance, marker);
-  //       });
-
-  //       window.google.maps.event.addListener(marker, 'click', function () {
-  //         infoWindows.forEach(i => {
-  //           i.close();
-  //         });
-
-  //         infoWindow.open(this.mapInstance, marker);
-  //       });
-
-  //       this.markers.push(marker);
-  //       this.infoWindows.push(infoWindow);
-  //     }
-
-  //     window.google.maps.event.addListener(this.mapInstance, 'click', function () {
-  //       infoWindows.forEach(i => {
-  //         i.close();
-  //       });
-  //     });
-  //   }
-  // }
 
   placeMarkers(hotels, infoWindows) {
     if (hotels) {
 
-      // TODO: create a single info window to be displayed
-      // (function iife(info) {
-
-      // })(this.info);
-
       Object.keys(hotels).forEach(key => {
         const hotel = hotels[key];
-        const marker = this.createMarker(hotel);
-        const infoWindow = this.createInfoWindow(hotel);
-        window.google.maps.event.addListener(marker, 'mouseover', function () {
-          infoWindows.forEach(i => {
-            i.close();
-          });
-
-          infoWindow.open(this.mapInstance, marker);
-        });
-
-        window.google.maps.event.addListener(marker, 'click', function () {
-          infoWindows.forEach(i => {
-            i.close();
-          });
-
-          infoWindow.open(this.mapInstance, marker);
-        });
-
-        this.markers.push(marker);
-        this.infoWindows.push(infoWindow);
-      });
-
-      window.google.maps.event.addListener(this.mapInstance, 'click', function () {
-        infoWindows.forEach(i => {
-          i.close();
-        });
+        this.placeSingleMarker(hotel, infoWindows);
       });
     }
+  }
+
+  placeSingleMarker(hotel, infoWindows) {
+    const marker = this.createMarker(hotel);
+    const infoWindow = this.createInfoWindow(hotel);
+    window.google.maps.event.addListener(marker, 'mouseover', function () {
+      infoWindows.forEach(i => {
+        i.close();
+      });
+
+      infoWindow.open(this.mapInstance, marker);
+    });
+
+    window.google.maps.event.addListener(marker, 'click', function () {
+      infoWindows.forEach(i => {
+        i.close();
+      });
+
+      infoWindow.open(this.mapInstance, marker);
+    });
+
+    this.markers.push(marker);
+    this.infoWindows.push(infoWindow);
+
+    window.google.maps.event.addListener(this.mapInstance, 'click', function () {
+      infoWindows[infoWindows.length - 1].close();
+    });
   }
 
   closeAll() {
     this.markers.forEach((marker) => {
       marker.infoWindow.close(this.mapInstance, marker);
     });
+  }
+
+  clearAll() {
+    this.infoWindows = [];
+    if (this.markers) {
+      this.markers.forEach((marker) => {
+        marker.setMap(null);
+        console.log('marker cleared');
+      });
+    }
   }
 
   createMarker(hotel) {
@@ -157,8 +112,8 @@ class MultiMarkerGoogleMap extends Component {
     // console.log(hotel);
     const { locRate, rates, isLogged, nights } = this.props;
     const { currency, currencySign } = this.props.paymentInfo;
-    const locPrice = ((hotel.price / locRate) / this.props.nights).toFixed(2);
-    const fiatPrice = rates && ((hotel.price * (rates[ROOMS_XML_CURRENCY][currency])) / nights).toFixed(2);
+    const locPrice = ((hotel.bestPrice / locRate) / this.props.nights).toFixed(2);
+    const fiatPrice = rates && ((hotel.bestPrice * (rates[ROOMS_XML_CURRENCY][currency])) / nights).toFixed(2);
     const isMobile = this.props.location.pathname.indexOf('/mobile') !== -1;
     const rootUrl = isMobile ? '/mobile/details' : '/hotels/listings';
 
@@ -180,9 +135,6 @@ class MultiMarkerGoogleMap extends Component {
   }
 
   render() {
-    if (Object.keys(this.props.mapInfo).length < 1) {
-      return <div className="loader"></div>;
-    }
     return (
       <div ref={(map) => this.map = map} id='hotels-search-map' style={{ height: '470px', marginBottom: '80px' }}></div>
     );
