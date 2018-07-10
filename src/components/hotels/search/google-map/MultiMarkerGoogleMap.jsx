@@ -31,27 +31,25 @@ class MultiMarkerGoogleMap extends Component {
   componentWillReceiveProps(props) {
     const hasNewCoordinates = props.lat && props.lon && (props.lat !== this.lat || props.lon !== this.lon);
     if (hasNewCoordinates) {
+      this.clearAll();
       this.lat = props.lat;
       this.lon = props.lon;
       const latLng = new window.google.maps.LatLng(props.lat, props.lon);
       this.mapInstance.panTo(latLng);
-    }
-
-    if (props.mapInfo) {
       this.placeMarkers(props.mapInfo, this.infoWindows);
+    } else if (props.mapInfo && props.mapInfo.length > 0) {
+      this.placeSingleMarker(props.mapInfo[props.mapInfo.length - 1], this.infoWindows);
     }
   }
 
   componentWillUnmount() {
     console.log('map unmounted');
-    this.clearAll();
+    // this.clearAll();
   }
 
   placeMarkers(hotels, infoWindows) {
     if (hotels) {
-
-      Object.keys(hotels).forEach(key => {
-        const hotel = hotels[key];
+      hotels.forEach(hotel => {
         this.placeSingleMarker(hotel, infoWindows);
       });
     }

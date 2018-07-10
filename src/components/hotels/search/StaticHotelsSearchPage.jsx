@@ -26,6 +26,7 @@ import {
 } from '../../../requester';
 
 const DEBUG_SOCKET = false;
+const DELAY_INTERVAL = 100;
 
 class StaticHotelsSearchPage extends React.Component {
   constructor(props) {
@@ -37,7 +38,10 @@ class StaticHotelsSearchPage extends React.Component {
 
     this.client = null;
     this.subscription = null;
+    this.hotelInfo = [];
     this.hotelInfoById = {};
+    this.counter = 0;
+    this.delayIntervals = [];
 
     this.state = {
       allElements: false,
@@ -88,6 +92,7 @@ class StaticHotelsSearchPage extends React.Component {
     this.getQueryString = this.getQueryString.bind(this);
     this.getRandomInt = this.getRandomInt.bind(this);
     this.updateMapInfo = this.updateMapInfo.bind(this);
+    this.clearIntervals = this.clearIntervals.bind(this);
 
     // SOCKET BINDINGS
     this.handleReceiveMessage = this.handleReceiveMessage.bind(this);
@@ -133,6 +138,7 @@ class StaticHotelsSearchPage extends React.Component {
     } else {
       const { id } = messageBody;  
       this.hotelInfoById[id] = messageBody;
+      this.hotelInfo.push(messageBody);
       this.updateMapInfo(messageBody);
       const listing = this.state && this.state.hotels ? this.state.hotels[id] : null;
       if (listing) {
@@ -145,12 +151,23 @@ class StaticHotelsSearchPage extends React.Component {
     }
   }
 
-  updateMapInfo() {
-    // const timeout = Object.keys(this.hotelInfoById).length * 1000;
-    // const mapInfo = this.hotelInfoById;
-    // setTimeout(() => {
-    //   this.setState({ mapInfo });
-    // }, timeout);
+  updateMapInfo(hotel) {
+    if (this.state.showMap) {
+      this.counter += 1;
+      const timeout = this.counter * DELAY_INTERVAL;
+      const delayInterval = setTimeout(() => {
+        this.setState(prev => {
+          const mapInfo = prev.mapInfo.slice(0);
+          mapInfo.push(hotel);
+          console.log('set', timeout);
+          return {
+            mapInfo
+          };
+        });
+      }, timeout);
+  
+      this.delayIntervals.push(delayInterval);
+    }
   }
 
   connectSocket() {
@@ -243,6 +260,9 @@ class StaticHotelsSearchPage extends React.Component {
 
     this.unsubscribe();
     this.disconnect();
+    this.clearIntervals();
+    this.hotelInfo = [];
+    this.hotelInfoById = {};
   }
 
   getAdults(rooms) {
@@ -346,6 +366,9 @@ class StaticHotelsSearchPage extends React.Component {
 
   redirectToSearchPage() {
     this.unsubscribe();
+    this.clearIntervals();
+    this.hotelInfoById = {};
+    this.hotelInfo = [];
 
     const query = this.getQueryString();
 
@@ -353,8 +376,6 @@ class StaticHotelsSearchPage extends React.Component {
     this.props.history.push('/hotels/listings' + query);
 
     const region = this.state.region.id;
-
-    this.hotelInfoById = {};
 
     this.setState({
       loading: true,
@@ -570,7 +591,14 @@ class StaticHotelsSearchPage extends React.Component {
 
   toggleMap() {
     this.setState(prev => {
-      return { showMap: !prev.showMap };
+      if (prev.showMap) {
+        this.counter = 0;
+        this.clearIntervals();
+      }
+      return { 
+        showMap: !prev.showMap,
+        mapInfo: this.hotelInfo
+      };
     });
   }
 
@@ -623,6 +651,13 @@ class StaticHotelsSearchPage extends React.Component {
     if (this.client) {
       this.client.disconnect();
     }
+  }
+
+  clearIntervals() {
+    this.counter = 0;
+    this.delayIntervals.forEach(interval => {
+      clearInterval(interval);
+    });
   }
 
   render() {
