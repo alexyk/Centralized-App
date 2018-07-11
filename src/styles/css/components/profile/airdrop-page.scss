@@ -96,6 +96,31 @@ $padding-sm: 15px 10px;
         //   right: 30px;
         // }
       }
+
+      .save-vote-url {
+        position: absolute;
+        right: 5px;
+        bottom: 5px;
+        padding: 10px 10px;
+        border-radius: 3px;
+        color: $white;
+        background: $moderate-red;
+        width: 145px;
+
+        @include media(">=tablet") {
+          bottom: 15px;
+        }
+      }
+
+      input {
+        outline: none;
+        border: none;
+        color: $moderate-red;
+      }
+
+       a {
+        color: $moderate-red;
+       }
     }
   }
 

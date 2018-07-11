@@ -115,6 +115,7 @@ class StaticHotelsSearchPage extends React.Component {
     const queryParams = queryString.parse(query);
     const { region } = queryParams;
     getStaticHotels(region).then(json => {
+      console.log(json);
       const { content } = json;
       content.forEach(l => {
         if (this.hotelInfoById[l.id]) {
