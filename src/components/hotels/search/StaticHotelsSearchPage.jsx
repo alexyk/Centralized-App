@@ -25,6 +25,9 @@ import {
   getStaticHotels,
 } from '../../../requester';
 
+const DEBUG_SOCKET = false;
+const DELAY_INTERVAL = 100;
+
 class StaticHotelsSearchPage extends React.Component {
   constructor(props) {
     super(props);
@@ -35,7 +38,10 @@ class StaticHotelsSearchPage extends React.Component {
 
     this.client = null;
     this.subscription = null;
-    this.pricesByHotelId = {};
+    this.hotelInfo = [];
+    this.hotelInfoById = {};
+    this.counter = 0;
+    this.delayIntervals = [];
 
     this.state = {
       allElements: false,
@@ -43,12 +49,13 @@ class StaticHotelsSearchPage extends React.Component {
       endDate: endDate,
       adults: '2',
       children: '0',
-      rooms: [{ adults: 1, children: [] }],
+      rooms: [{ adults: '2', children: [] }],
       priceRange: [0, 5000],
       orderBy: '',
       stars: [false, false, false, false, false],
       city: '',
-      state: '',
+      hotels: {},
+      mapInfo: [],
       searchParams: null,
       // listings: [],
       filteredListings: null,
@@ -84,6 +91,8 @@ class StaticHotelsSearchPage extends React.Component {
     this.handleCloseSelect = this.handleCloseSelect.bind(this);
     this.getQueryString = this.getQueryString.bind(this);
     this.getRandomInt = this.getRandomInt.bind(this);
+    this.updateMapInfo = this.updateMapInfo.bind(this);
+    this.clearIntervals = this.clearIntervals.bind(this);
 
     // SOCKET BINDINGS
     this.handleReceiveMessage = this.handleReceiveMessage.bind(this);
@@ -94,7 +103,6 @@ class StaticHotelsSearchPage extends React.Component {
   }
 
   componentDidMount() {
-    
     getLocRateInUserSelectedCurrency(ROOMS_XML_CURRENCY).then((json) => {
       this.setState({ locRate: Number(json[0][`price_${ROOMS_XML_CURRENCY.toLowerCase()}`]) });
     });
@@ -107,39 +115,59 @@ class StaticHotelsSearchPage extends React.Component {
     const queryParams = queryString.parse(query);
     const { region } = queryParams;
     getStaticHotels(region).then(json => {
-      const listings = json.content;
-      listings.forEach(l => {
-        if (this.pricesByHotelId[l.id]) {
-          l.price = this.pricesByHotelId[l.id];
+      console.log(json);
+      const { content } = json;
+      content.forEach(l => {
+        if (this.hotelInfoById[l.id]) {
+          l.price = this.hotelInfoById[l.id];
         }
       });
 
-      const listingsById = _.mapKeys(listings, 'id');
-      this.setState({ listingsById, totalElements: json.totalElements, loading: false,  }, () => {
+      const hotels = _.mapKeys(content, 'id');
+      console.log(hotels);
+      this.setState({ hotels, totalElements: json.totalElements, loading: false }, () => {
         this.connectSocket();
       });
     });
   }
 
   handleReceiveMessage(message) {
-    const json = JSON.parse(message.body);
-    if (json.allElements) {
+    const messageBody = JSON.parse(message.body);
+    if (messageBody.allElements) {
       this.setState({ allElements: true });
       this.unsubscribe();
     } else {
-      const hotel = json;
-      // console.log(json);
-      const { id, bestPrice, lat, lon } = hotel;  
-      this.pricesByHotelId[id] = bestPrice;
-      const listing = this.state && this.state.listingsById ? this.state.listingsById[id] : null;
+      const { id } = messageBody;  
+      this.hotelInfoById[id] = messageBody;
+      this.hotelInfo.push(messageBody);
+      this.updateMapInfo(messageBody);
+      const listing = this.state && this.state.hotels ? this.state.hotels[id] : null;
       if (listing) {
-        // console.log(listing);
-        listing.price = bestPrice;
-        const listingsById = { ...this.state.listingsById, [id]: listing };
+        listing.price = this.hotelInfoById[id].bestPrice;
+        const hotels = { ...this.state.hotels, [id]: listing };
         // console.log('RECEIVE HOTEL', listingsById);
         // console.log("_____________UPDATE____________");
-        this.setState({ listingsById });
+        this.setState({ hotels });
       } 
+    }
+  }
+
+  updateMapInfo(hotel) {
+    if (this.state.showMap) {
+      this.counter += 1;
+      const timeout = this.counter * DELAY_INTERVAL;
+      const delayInterval = setTimeout(() => {
+        this.setState(prev => {
+          const mapInfo = prev.mapInfo.slice(0);
+          mapInfo.push(hotel);
+          console.log('set', timeout);
+          return {
+            mapInfo
+          };
+        });
+      }, timeout);
+  
+      this.delayIntervals.push(delayInterval);
     }
   }
 
@@ -150,7 +178,10 @@ class StaticHotelsSearchPage extends React.Component {
 
     const url = Config.getValue('socketHost');
     this.client = Stomp.client(url);
-    // this.client.debug = () => {};
+    if (!DEBUG_SOCKET) {
+      this.client.debug = () => {};
+    }
+
     this.client.connect(null, null, this.subscribe);
   }
 
@@ -160,7 +191,6 @@ class StaticHotelsSearchPage extends React.Component {
     const search = this.props.location.search;
     const queueId = `${id}&${rnd}`;
     const destination = 'search/' + queueId;
-    console.log(destination);
     const client = this.client;
     const handleReceiveHotelPrice = this.handleReceiveMessage;
 
@@ -231,6 +261,9 @@ class StaticHotelsSearchPage extends React.Component {
 
     this.unsubscribe();
     this.disconnect();
+    this.clearIntervals();
+    this.hotelInfo = [];
+    this.hotelInfoById = {};
   }
 
   getAdults(rooms) {
@@ -238,7 +271,7 @@ class StaticHotelsSearchPage extends React.Component {
     for (let i = 0; i < rooms.length; i++) {
       adults += Number(rooms[i].adults);
     }
-    return adults;
+    return adults.toString();
   }
 
   getHasChildren(rooms) {
@@ -334,6 +367,9 @@ class StaticHotelsSearchPage extends React.Component {
 
   redirectToSearchPage() {
     this.unsubscribe();
+    this.clearIntervals();
+    this.hotelInfoById = {};
+    this.hotelInfo = [];
 
     const query = this.getQueryString();
 
@@ -342,26 +378,19 @@ class StaticHotelsSearchPage extends React.Component {
 
     const region = this.state.region.id;
 
-    this.pricesByHotelId = {};
-
     this.setState({
       loading: true,
       childrenModal: false,
       currentPage: 0,
-      listingsById: {},
+      hotels: {},
+      mapInfo: [],
       allElements: false,
       nights: nights,
       stars: [false, false, false, false, false]
     }, () => {
       getStaticHotels(region).then(json => {
-        const listings = json.content;
-        // listings.forEach(l => {
-        //   if (this.pricesByHotelId[l.id]) {
-        //     l.price = this.pricesByHotelId[l.id];
-        //   }
-        // });
-        const listingsById = _.mapKeys(listings, 'id');
-        this.setState({ listingsById, totalElements: json.totalElements, loading: false }, () => {
+        const hotels = _.mapKeys(json.content, 'id');
+        this.setState({ hotels, totalElements: json.totalElements, loading: false }, () => {
           this.subscribe();
         });
       });
@@ -471,7 +500,7 @@ class StaticHotelsSearchPage extends React.Component {
     let rooms = this.state.rooms.slice();
     if (rooms.length < value) {
       while (rooms.length < value) {
-        rooms.push({ adults: 1, children: [] });
+        rooms.push({ adults: '2', children: [] });
       }
     } else if (rooms.length > value) {
       rooms = rooms.slice(0, value);
@@ -563,7 +592,14 @@ class StaticHotelsSearchPage extends React.Component {
 
   toggleMap() {
     this.setState(prev => {
-      return { showMap: !prev.showMap };
+      if (prev.showMap) {
+        this.counter = 0;
+        this.clearIntervals();
+      }
+      return { 
+        showMap: !prev.showMap,
+        mapInfo: this.hotelInfo
+      };
     });
   }
 
@@ -582,18 +618,18 @@ class StaticHotelsSearchPage extends React.Component {
     getStaticHotels(region, page - 1).then(json => {
       const listings = json.content;
       listings.forEach(l => {
-        if (this.pricesByHotelId[l.id]) {
-          l.price = this.pricesByHotelId[l.id];
+        if (this.hotelInfoById[l.id]) {
+          l.price = this.hotelInfoById[l.id].bestPrice;
         }
       });
 
       console.log(listings);
 
-      const listingsById = _.mapKeys(listings, 'id');
-      console.log(listingsById);
+      const hotels = _.mapKeys(listings, 'id');
+      console.log(hotels);
 
       this.setState({
-        listingsById,
+        hotels,
         totalElements: json.totalElements,
         loading: false
       });
@@ -618,8 +654,15 @@ class StaticHotelsSearchPage extends React.Component {
     }
   }
 
+  clearIntervals() {
+    this.counter = 0;
+    this.delayIntervals.forEach(interval => {
+      clearInterval(interval);
+    });
+  }
+
   render() {
-    const { listings, listingsById, totalElements } = this.state;
+    const { hotels, totalElements } = this.state;
 
     return (
       <div>
@@ -659,20 +702,22 @@ class StaticHotelsSearchPage extends React.Component {
                       <MultiMarkerGoogleMap
                         lat={this.state.lat}
                         lon={this.state.lon}
-                        hotels={listings}
+                        hotels={hotels}
+                        mapInfo={this.state.mapInfo}
                         isFiltered={this.state.isFiltered}
                         locRate={this.state.locRate}
                         rates={this.state.rates}
                         paymentInfo={this.props.paymentInfo}
                         isLogged={this.props.userInfo.isLogged}
                         nights={this.state.nights}
+                        loading={this.state.loading}
                       />
                     </div>
                     : <div>
                       {this.state.loading
                         ? <div className="loader"></div>
                         : <ResultsHolder
-                          hotels={listingsById}
+                          hotels={hotels}
                           priceMap={[]}
                           allElements={this.state.allElements}
                           locRate={this.state.locRate}

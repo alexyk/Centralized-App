@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import NoEntriesMessage from '../common/NoEntriesMessage';
 import moment from 'moment';
+import { Config } from '../../../config';
 
 function HomeTripsTable(props) {
 
@@ -25,7 +26,7 @@ function HomeTripsTable(props) {
             <div className="col-md-12">
               <div className="col-md-1">
                 <div className="reservation-image-box">
-                  <span className="session-nav-user-thumb"><img src={trip.userImage} alt="host-profile" /></span>
+                  <span className="session-nav-user-thumb"><img src={Config.getValue('imgHost') + trip.userImage} alt="host-profile" /></span>
                 </div>
               </div>
               <div className="col-md-2">

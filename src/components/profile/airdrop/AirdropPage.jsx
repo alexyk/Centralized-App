@@ -17,6 +17,7 @@ import { NotificationManager } from 'react-notifications';
 import NavProfile from '../NavProfile';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import NoEntriesMessage from '../common/NoEntriesMessage';
+import validator from 'validator';
 
 import '../../../styles/css/components/profile/airdrop-page.css';
 
@@ -33,10 +34,12 @@ class AirdropPage extends Component {
     this.state = {
       isUserLogged: false,
       isAirdropUser: false,
+      isVoteUrlEdited: false,
       didPostUserInfo: false,
       loginEmail: '',
       loginPassword: '',
       token: null,
+      voteUrl: '',
       userParticipates: false,
       loading: true,
     };
@@ -46,6 +49,7 @@ class AirdropPage extends Component {
     this.isUserLogged = this.isUserLogged.bind(this);
     this.handleEdit = this.handleEdit.bind(this);
     this.handleEditSubmit = this.handleEditSubmit.bind(this);
+    this.handleSaveVoteUrl = this.handleSaveVoteUrl.bind(this);
     this.onChange = this.onChange.bind(this);
   }
 
@@ -236,7 +240,21 @@ class AirdropPage extends Component {
     });
   }
 
+  handleSaveVoteUrl() {
+    if (!validator.isURL(this.state.voteUrl)) {
+      NotificationManager.info('Enter a valid URL.');
+    } else  {
+
+      this.setState({ isVoteUrlEdited: false });
+      NotificationManager.info('Vote URL saved.');
+    }
+  }
+
   onChange(e) {
+    if (e.target.name === 'voteUrl') {
+      this.setState({ isVoteUrlEdited: true });
+    }
+
     this.setState({ [e.target.name]: e.target.value });
   }
 
@@ -282,8 +300,6 @@ class AirdropPage extends Component {
               <div className="balance-row">
                 <div className="balance-row__label"><span className="emphasized-text">Unverified Balance</span></div>
                 <div className="balance-row__content">${this.props.airdropInfo.isCampaignSuccessfullyCompleted ? this.props.airdropInfo.referralCount * 5 + 10 : this.props.airdropInfo.referralCount * 5 }</div>
-
-
               </div>
 
               <div className="balance-row">
@@ -292,10 +308,13 @@ class AirdropPage extends Component {
                 <CopyToClipboard text={this.props.airdropInfo.refLink.toString().replace('alpha.','')} onCopy={() => { NotificationManager.info('Copied to clipboard.'); }}><button className="referral-url-copy">Copy to Clipboard</button></CopyToClipboard>
               </div>
 
-              {/* <div className="balance-row">
-                <div className="balance-row__label"><span className="emphasized-text">Number of Referred People</span></div>
-                <div className="balance-row__content">101</div>
-              </div> */}
+              <div className="balance-row">
+                <div className="balance-row__label"><span className="emphasized-text">Your LockTrip listing vote screenshot URL (<a href="#" className="referral-url">read more</a>)</span></div>
+                <input name="voteUrl" className="balance-row__content" onChange={this.onChange}></input>
+                {this.state.isVoteUrlEdited && this.state.voteUrl &&
+                  <button className="save-vote-url" onClick={this.handleSaveVoteUrl}>Save</button>
+                }
+              </div>
             </div>
 
             <div className="airdrop-info">

@@ -26,8 +26,16 @@ function Result(props) {
     return starsElements;
   };
 
-  const leftButton = <button></button>;
-  const rightButton = <button></button>;
+  const SlickButton = props => {
+    const {currentSlide, slideCount, ...arrowProps} = props;
+    return (
+      <button type="button" {...arrowProps}>
+      </button>
+    );
+  };
+
+  // const leftButton = <button type="button" data-role="none" className="slick-arrow slick-next" style={{ display: 'block' }}></button>;
+  // const rightButton = <button></button>;
 
   let { id, name, generalDescription, hotelPhotos, star } = props.hotel;
   let { price } = props;
@@ -49,11 +57,11 @@ function Result(props) {
     speed: 500,
     slidesToShow: 1,
     slidesToScroll: 1,
-    nextArrow: rightButton,
-    prevArrow: leftButton
+    nextArrow: <SlickButton />,
+    prevArrow: <SlickButton />
   };
 
-  const redirectURL = props.location.pathname.indexOf('mobile') === -1 
+  const redirectURL = props.location.pathname.indexOf('mobile') === -1
     ? '/hotels/listings'
     : '/mobile/details';
 
@@ -88,11 +96,11 @@ function Result(props) {
         </div>
         <p>{generalDescription && ReactHtmlParser(generalDescription + (generalDescription.length < 250 ? '' : '...'))}</p>
       </div>
-      
+
       <div className="result-pricing">
         <div className="price-for">Price for 1 night</div>
-        {!isPriceLoaded 
-          ? (!props.allElements ? <div className="loader" style={{width: '100%'}}></div> : <span style={{padding: '20px 10px 10px 10px'}}>Unavailable</span>)
+        {!isPriceLoaded
+          ? (!props.allElements ? <div className="loader" style={{ width: '100%' }}></div> : <span style={{ padding: '20px 10px 10px 10px' }}>Unavailable</span>)
           : <span className="price">{props.userInfo.isLogged && `${currencySign} ${priceInSelectedCurrency}`}</span>
         }
         {isPriceLoaded && <span>(LOC {locPrice})</span>}
