@@ -13,7 +13,7 @@ function MarkerInfoWindow(props) {
     return starsElements;
   };
   
-  // const photoURL = `${Config.getValue('imgHost')}${props.hotel.photos[0]}`;
+  const photoURL = props.hotel.thumbnail && `${Config.getValue('imgHost')}${props.hotel.thumbnail.url}`;
   const { id, name, stars } = props.hotel;
   const { isLogged, currencySign, fiatPrice, locPrice, rootUrl } = props;
   
@@ -22,7 +22,7 @@ function MarkerInfoWindow(props) {
       <BrowserRouter>
         <Link to={rootUrl + `/${id}${props.search}`}>
           <div className={'marker-hotel'}>
-            {/* <div className={'marker-hotel-thumbnail'} style={{ backgroundImage: 'url(' + photoURL + ')' }}></div> */}
+            <div className={'marker-hotel-thumbnail'} style={{ backgroundImage: 'url(' + photoURL + ')' }}></div>
             <div className={'marker-hotel-title'}>{name}</div>
             <div className="marker-hotel-price">
               {isLogged
