@@ -25,7 +25,7 @@ import {
   getStaticHotels,
 } from '../../../requester';
 
-const DEBUG_SOCKET = true;
+const DEBUG_SOCKET = false;
 const DELAY_INTERVAL = 100;
 
 class StaticHotelsSearchPage extends React.Component {
