@@ -3,7 +3,6 @@ import { Route, Switch } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import React from 'react';
 import HotelsHomePage from './HotelsHomePage';
-import HotelsSearchPage from './search/HotelsSearchPage';
 import HotelDetailsPage from './details/HotelDetailsPage';
 import HotelBookingPage from './book/HotelBookingPage';
 import HotelBookingConfirmPage from './book/HotelBookingConfirmPage';

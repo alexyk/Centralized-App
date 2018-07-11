@@ -19,6 +19,7 @@ import NavProfile from '../NavProfile';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import NoEntriesMessage from '../common/NoEntriesMessage';
 import validator from 'validator';
+import PropTypes from 'prop-types';
 
 import '../../../styles/css/components/profile/airdrop-page.css';
 
@@ -56,7 +57,6 @@ class AirdropPage extends Component {
 
   componentWillMount() {
     if (this.props.location.search && this.props.location.search.indexOf('emailtoken') !== -1) {
-      console.log('email token received', this.props.location.search)
       verifyUserEmail(this.props.location.search).then(() => {
         console.log('verifying user email');
         NotificationManager.info('Email verified.');
@@ -148,25 +148,25 @@ class AirdropPage extends Component {
 
         if (this.isUserLogged()) {
           if (airdropEmail !== loggedInUserEmail) {
-            console.log('wrong user logged')
+            // console.log('wrong user logged')
             this.logout();
             this.openModal(AIRDROP_LOGIN);
           } else {
-            console.log('user is logged')
+            // console.log('user is logged')
             // Post confirmation to backend /airdrop/participate/:token
             getUserAirdropInfo().then(json => {
               if (json.user) {
-                console.log('user already participates')
+                // console.log('user already participates')
                 this.dispatchAirdropInfo(json);
-                console.log('user info dispatched')
+                // console.log('user info dispatched')
               } else {
-                console.log('user has not participated yet', json)
+                // console.log('user has not participated yet', json)
                 verifyUserAirdropInfo(token).then(() => {
                   // then set airdrop info in redux
-                  console.log('user moved from temp to main')
+                  // console.log('user moved from temp to main')
                   getUserAirdropInfo().then(json => {
                     this.dispatchAirdropInfo(json);
-                    console.log('user info dispatched')
+                    // console.log('user info dispatched')
                     NotificationManager.info('Verification email has been sent. Please follow the link to confirm your email.');
                   });
                 });
@@ -174,12 +174,12 @@ class AirdropPage extends Component {
             });
           }
         } else {
-          console.log('no user logged')
+          // console.log('no user logged')
           this.openModal(AIRDROP_LOGIN);
         }
       } else if (!user.exists) {
         // user profile doesn't exist
-        console.log('user does not exist')
+        // console.log('user does not exist')
         this.logout();
         this.openModal(AIRDROP_REGISTER);
       } else {
@@ -252,7 +252,7 @@ class AirdropPage extends Component {
         this.setState({ isVoteUrlEdited: false });
         NotificationManager.info('Vote URL saved.');
       }).catch(error => {
-
+        console.log(error);
       });
     }
   }
@@ -425,5 +425,19 @@ function mapStateToProps(state) {
     airdropInfo
   };
 }
+
+AirdropPage.propTypes = {
+  countries: PropTypes.array,
+
+  // start Router props
+  location: PropTypes.object,
+  history: PropTypes.object,
+
+  // start Redux props
+  paymentInfo: PropTypes.object,
+  userInfo: PropTypes.object,
+  airdropInfo: PropTypes.object,
+  dispatch: PropTypes.func,
+};
 
 export default withRouter(connect(mapStateToProps)(AirdropPage));
