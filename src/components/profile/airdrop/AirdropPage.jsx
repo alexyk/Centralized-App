@@ -6,7 +6,8 @@ import {
   verifyUserAirdropInfo,
   saveAirdropSocialProfile,
   verifyUserEmail,
-  resendConfirmationEmail
+  resendConfirmationEmail,
+  editAirdropVoteUrl
 } from '../../../requester';
 import { connect } from 'react-redux';
 import { setIsLogged } from '../../../actions/userInfo';
@@ -192,6 +193,7 @@ class AirdropPage extends Component {
   }
 
   dispatchAirdropInfo(info) {
+    console.log(info);
     const email = info.user;
     const facebookProfile = info.facebookProfile;
     const telegramProfile = info.telegramProfile;
@@ -202,10 +204,11 @@ class AirdropPage extends Component {
     const isVerifyEmail = info.isVerifyEmail;
     const referralCount = info.referralCount;
     const isCampaignSuccessfullyCompleted = info.isCampaignSuccessfullyCompleted;
-    this.props.dispatch(setAirdropInfo(email, facebookProfile, telegramProfile, twitterProfile, redditProfile, refLink, participates, isVerifyEmail,referralCount,isCampaignSuccessfullyCompleted));
+    const voteUrl = info.voteUrl;
+    this.props.dispatch(setAirdropInfo(email, facebookProfile, telegramProfile, twitterProfile, redditProfile, refLink, participates, isVerifyEmail,referralCount,isCampaignSuccessfullyCompleted, voteUrl));
     this.props.airdropInfo.referralCount = referralCount;
     this.props.airdropInfo.isCampaignSuccessfullyCompleted = isCampaignSuccessfullyCompleted;
-    this.setState({ loading: false });
+    this.setState({ voteUrl: voteUrl, loading: false });
   }
 
   handleEdit(media, e) {
@@ -244,9 +247,13 @@ class AirdropPage extends Component {
     if (!validator.isURL(this.state.voteUrl)) {
       NotificationManager.info('Enter a valid URL.');
     } else  {
+      const { voteUrl } = this.state;
+      editAirdropVoteUrl({ voteUrl }).then(json => {
+        this.setState({ isVoteUrlEdited: false });
+        NotificationManager.info('Vote URL saved.');
+      }).catch(error => {
 
-      this.setState({ isVoteUrlEdited: false });
-      NotificationManager.info('Vote URL saved.');
+      });
     }
   }
 
@@ -309,8 +316,8 @@ class AirdropPage extends Component {
               </div>
 
               <div className="balance-row">
-                <div className="balance-row__label"><span className="emphasized-text">Your LockTrip listing vote screenshot URL (<a href="#" className="referral-url">read more</a>)</span></div>
-                <input name="voteUrl" className="balance-row__content" onChange={this.onChange}></input>
+                <div className="balance-row__label"><span className="emphasized-text">Your LockTrip listing vote screenshot URL (<a href="https://medium.com/@LockChainCo/vote-for-locktrip-on-kucoin-now-f89448556aac" target="_blank" rel='noreferrer noopener' className="referral-url">read more</a>)</span></div>
+                <input name="voteUrl" value={this.state.voteUrl} className="balance-row__content" onChange={this.onChange}></input>
                 {this.state.isVoteUrlEdited && this.state.voteUrl &&
                   <button className="save-vote-url" onClick={this.handleSaveVoteUrl}>Save</button>
                 }
