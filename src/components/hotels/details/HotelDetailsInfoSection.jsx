@@ -210,7 +210,7 @@ function HotelDetailsInfoSection(props) {
 
         <div id="map">
           <h2>Location</h2>
-          <iframe title="location" src={`https://maps.google.com/maps?q=${props.data.lat},${props.data.lon}&z=15&output=embed`}
+          <iframe title="location" src={`https://maps.google.com/maps?q=${props.data.latitude},${props.data.longitude}&z=15&output=embed`}
             width="100%" height="400" frameBorder="0" style={{ border: 0 }} />
           <hr />
         </div>
