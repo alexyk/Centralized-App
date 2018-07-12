@@ -3,12 +3,13 @@ import PropTypes from 'prop-types';
 import { withRouter } from 'react-router-dom';
 import PopularDestinationsCarousel from './carousel/PopularDestinationsCarousel';
 import HeroComponent from './HeroComponent';
+import { connect } from 'react-redux';
 
 import { setRegion } from '../../actions/searchInfo';
 
 function HotelsHomePage(props) {
   const handleDestinationPick = (region) => {
-    this.props.dispatch(setRegion(region));
+    props.dispatch(setRegion(region));
     document.getElementsByName('stay')[0].click();
   };
 
@@ -37,8 +38,11 @@ function HotelsHomePage(props) {
 }
 
 HotelsHomePage.propTypes = {
-  // start Router props
+  // Router props
   history: PropTypes.object,
+
+  // Redux props
+  dispatch: PropTypes.func
 };
 
-export default withRouter(HotelsHomePage);
+export default connect()(withRouter(HotelsHomePage));
