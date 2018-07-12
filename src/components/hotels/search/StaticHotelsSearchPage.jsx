@@ -116,7 +116,6 @@ class StaticHotelsSearchPage extends React.Component {
     const queryParams = queryString.parse(query);
     const { region } = queryParams;
     getStaticHotels(region).then(json => {
-      console.log(json);
       const { content } = json;
       content.forEach(l => {
         if (this.hotelInfoById[l.id]) {
@@ -141,7 +140,6 @@ class StaticHotelsSearchPage extends React.Component {
       this.hotelInfoById[id] = messageBody;
       this.hotelInfo.push(messageBody);
       this.updateMapInfo(messageBody);
-      console.log(this.hotelInfoById);
       const listing = this.state && this.state.hotels ? this.state.hotels[id] : null;
       if (listing) {
         listing.price = this.hotelInfoById[id].price;

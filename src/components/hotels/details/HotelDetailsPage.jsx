@@ -677,7 +677,8 @@ class HotelDetailsPage extends React.Component {
 
               {this.props.location.pathname.indexOf('/mobile') !== -1 && 
                 <div className="container">
-                  <button className="btn" style={{ 'width': '100%', 'marginBottom': '20px' }} onClick={(e) => this.props.history.goBack()}>Back</button><div className="select">
+                  <button className="btn" style={{ 'width': '100%', 'marginBottom': '20px' }} onClick={(e) => this.props.history.goBack()}>Back</button>
+                  <div className="select">
                     <select
                       className="currency"
                       value={this.props.paymentInfo.currency}
