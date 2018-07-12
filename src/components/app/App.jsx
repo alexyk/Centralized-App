@@ -36,6 +36,8 @@ import {
 } from '../../requester';
 
 import '../../styles/css/main.css';
+import SoftUniCampaign from "../external/SoftUniCampaign";
+import {NotificationContainer} from "react-notifications";
 
 class App extends React.Component {
   constructor(props) {
@@ -117,6 +119,8 @@ class App extends React.Component {
           <NavLocalization />
         }
 
+        <NotificationContainer/>
+
         <Switch>
           <Route exact path="/" render={() => <HomeRouterPage />} />
           <Route exact path="/profile/listings/edit/:step/:id" render={() => !this.isAuthenticated() ? <Redirect to="/" /> : <EditListingPage />} />
@@ -129,6 +133,7 @@ class App extends React.Component {
           <Route path="/profile/" render={() => !this.isAuthenticated() ? <Redirect to="/" /> : <ProfilePage location={this.props.location} />} />
           <Route path="/airdrop" render={() => <AirdropPage />} />
           <Route path="/test" render={() => <StyleTest />} />
+          <Route path="/softuni" render={() => <SoftUniCampaign />} />
 
           {/* MOBILE ONLY START */}
           <Route path="/mobile/search" render={() => <StaticHotelsSearchPage />} />
@@ -139,7 +144,7 @@ class App extends React.Component {
 
           <Route render={() => <HomeRouterPage />} />
         </Switch>
-        
+
         {!isWebView &&
           <Footer />
         }
