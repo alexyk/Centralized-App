@@ -21,3 +21,14 @@ export const modalsInfo = {
 export const airdropInfo = {
   SET_AIRDROP_INFO: 'SET_AIRDROP_INFO'
 };
+
+// searchInfo actions
+export const searchInfo = {
+  SET_DATES: 'SET_DATES',
+  SET_REGION: 'SET_REGION',
+  SET_ROOMS_BY_COUNT_OF_ROOMS: 'SET_ROOMS_BY_COUNT_OF_ROOMS',
+  SET_ROOMS: 'SET_ROOMS',
+  SET_ADULTS: 'SET_ADULTS',
+  SET_CHILDREN: 'SET_CHILDREN',
+  SET_SEARCH_INFO: 'SET_SEARCH_INFO'
+};
