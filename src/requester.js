@@ -420,7 +420,7 @@ export async function getCalendarByListingIdAndDateRange(listingId, startDate, e
   });
 }
 
-export async function getStaticHotels(regionId, page = 0) { 
+export async function getStaticHotels(regionId, page = 0) {
   return sendRequest(`${host}regions/${regionId}?page=${page}`, RequestMethod.GET).then(res => {
     return res.response.json();
   });
@@ -561,4 +561,8 @@ export async function resendConfirmationEmail() {
   });
 
   return json;
+}
+
+export async function participateSoftUniCampaign(participantInfo) {
+  return sendRequest(`${host}airdrop/softuni`, RequestMethod.POST, participantInfo).then(res => res.response.json());
 }
