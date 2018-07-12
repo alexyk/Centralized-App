@@ -110,8 +110,8 @@ class MultiMarkerGoogleMap extends Component {
     // console.log(hotel);
     const { locRate, rates, isLogged, nights } = this.props;
     const { currency, currencySign } = this.props.paymentInfo;
-    const locPrice = ((hotel.bestPrice / locRate) / this.props.nights).toFixed(2);
-    const fiatPrice = rates && ((hotel.bestPrice * (rates[ROOMS_XML_CURRENCY][currency])) / nights).toFixed(2);
+    const locPrice = ((hotel.price / locRate) / this.props.nights).toFixed(2);
+    const fiatPrice = rates && ((hotel.price * (rates[ROOMS_XML_CURRENCY][currency])) / nights).toFixed(2);
     const isMobile = this.props.location.pathname.indexOf('/mobile') !== -1;
     const rootUrl = isMobile ? '/mobile/details' : '/hotels/listings';
 

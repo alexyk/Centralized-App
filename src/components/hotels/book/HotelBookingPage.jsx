@@ -8,6 +8,7 @@ import moment from 'moment';
 import validator from 'validator';
 import { ROOMS_XML_CURRENCY } from '../../../constants/currencies.js';
 import { Config } from '../../../config';
+import { setCurrency } from '../../../actions/paymentInfo';
 
 import { getHotelById, getHotelRooms, getLocRateInUserSelectedCurrency, getCurrencyRates } from '../../../requester';
 
@@ -159,6 +160,7 @@ class HotelBookingPage extends React.Component {
   }
 
   handleSubmit() {
+    
     if (!this.isValidNames()) {
       NotificationManager.warning('Names should be at least 3 characters long and contain only characters');
     } else if (!this.isValidAges()) {
@@ -176,7 +178,9 @@ class HotelBookingPage extends React.Component {
       const encodedBooking = encodeURI(JSON.stringify(booking));
       const id = this.props.match.params.id;
       const query = `?booking=${encodedBooking}`;
-      this.props.history.push(`/hotels/listings/book/confirm/${id}${query}`);
+      const isWebView = this.props.location.pathname.indexOf('/mobile') !== -1;
+      const rootURL = !isWebView ? '/hotels/listings/book/confirm' : '/mobile/book/confirm';
+      this.props.history.push(`${rootURL}/${id}${query}`);
       // window.location.href = `/hotels/listings/book/confirm/${id}${query}`;
     }
   }
@@ -306,6 +310,23 @@ class HotelBookingPage extends React.Component {
                 <div className="col col-md-12" style={{ 'padding': '0', 'margin': '10px 0' }}>
                   <button className="btn btn-primary btn-book" onClick={this.handleSubmit}>Proceed</button>
                 </div>
+                {this.props.location.pathname.indexOf('/mobile') !== -1 &&
+                  <div>
+                    <div className="col col-md-12" style={{ 'padding': '0', 'margin': '10px 0' }}>
+                      <button className="btn btn-primary btn-book" onClick={(e) => this.props.history.goBack()}>Back</button>
+                    </div>
+                    <select
+                      className="currency"
+                      value={this.props.paymentInfo.currency}
+                      style={{ 'height': '40px', 'marginBottom': '10px', 'textAlignLast': 'right', 'paddingRight': '45%', 'direction': 'rtl' }}
+                      onChange={(e) => this.props.dispatch(setCurrency(e.target.value))}
+                    >
+                      <option value="EUR">EUR</option>
+                      <option value="USD">USD</option>
+                      <option value="GBP">GBP</option>
+                    </select>
+                  </div>
+                }
               </div>
             </section>
           </div>

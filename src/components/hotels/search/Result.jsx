@@ -37,9 +37,9 @@ function Result(props) {
   // const leftButton = <button type="button" data-role="none" className="slick-arrow slick-next" style={{ display: 'block' }}></button>;
   // const rightButton = <button></button>;
 
-  let { id, name, generalDescription, hotelPhotos, star } = props.hotel;
+  let { id, name, generalDescription, hotelPhoto, star } = props.hotel;
   let { price } = props;
-  const pictures = hotelPhotos && hotelPhotos.slice(0, 3).map(pic => { return { thumbnail: `${Config.getValue('imgHost')}${pic.url}` }; });
+  const pictures = hotelPhoto ? [ { thumbnail: `${Config.getValue('imgHost')}${hotelPhoto.url}` }, { thumbnail: `${Config.getValue('imgHost')}${hotelPhoto.url}` } ] : [];
   const { locRate, rates } = props;
   const { currencySign } = props.paymentInfo;
   const isPriceLoaded = !!price;

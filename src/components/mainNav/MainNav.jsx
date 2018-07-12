@@ -84,6 +84,7 @@ class MainNav extends React.Component {
       recoveryEmail: '',
       unreadMessages: '',
       isUpdatingWallet: false,
+      confirmedRegistration: false,
     };
 
     this.onChange = this.onChange.bind(this);
@@ -158,6 +159,10 @@ class MainNav extends React.Component {
 
     register(user, captchaToken).then((res) => {
       if (res.success) {
+        this.closeModal(CONFIRM_WALLET);    
+        this.setState({
+          confirmedRegistration: false,
+        });
         this.openModal(LOGIN);
         NotificationManager.success(PROFILE_SUCCESSFULLY_CREATED);
       }
@@ -484,6 +489,9 @@ class MainNav extends React.Component {
     if (this.state.isUpdatingWallet) {
       this.handleLogin(token);
     } else {
+      this.setState({
+        confirmedRegistration: true,
+      });
       this.handleRegister(token);
     }
   }
@@ -536,7 +544,7 @@ class MainNav extends React.Component {
           </div>
           <CreateWalletModal setUserInfo={this.setUserInfo} userToken={this.state.userToken} userName={this.state.userName} walletPassword={this.state.walletPassword} isActive={this.props.modalsInfo.modals.get(CREATE_WALLET)} openModal={this.openModal} closeModal={this.closeModal} onChange={this.onChange} />
           <SaveWalletModal setUserInfo={this.setUserInfo} userToken={this.state.userToken} userName={this.state.userName} isActive={this.props.modalsInfo.modals.get(SAVE_WALLET)} openModal={this.openModal} closeModal={this.closeModal} onChange={this.onChange} />
-          <ConfirmWalletModal isActive={this.props.modalsInfo.modals.get(CONFIRM_WALLET)} openModal={this.openModal} closeModal={this.closeModal} handleMnemonicWordsChange={this.handleMnemonicWordsChange} mnemonicWords={this.state.mnemonicWords} handleConfirmWallet={this.executeConfirmWalletCaptcha} />
+          <ConfirmWalletModal isActive={this.props.modalsInfo.modals.get(CONFIRM_WALLET)} openModal={this.openModal} closeModal={this.closeModal} handleMnemonicWordsChange={this.handleMnemonicWordsChange} mnemonicWords={this.state.mnemonicWords} handleConfirmWallet={this.executeConfirmWalletCaptcha} confirmedRegistration={this.state.confirmedRegistration} />
           <SendRecoveryEmailModal isActive={this.props.modalsInfo.modals.get(SEND_RECOVERY_EMAIL)} openModal={this.openModal} closeModal={this.closeModal} recoveryEmail={this.state.recoveryEmail} handleSubmitRecoveryEmail={this.executeSendRecoveryEmailCaptcha} onChange={this.onChange} />
           <EnterRecoveryTokenModal isActive={this.props.modalsInfo.modals.get(ENTER_RECOVERY_TOKEN)} openModal={this.openModal} closeModal={this.closeModal} onChange={this.onChange} recoveryToken={this.state.recoveryToken} handleSubmitRecoveryToken={this.handleSubmitRecoveryToken} />
           <ChangePasswordModal isActive={this.props.modalsInfo.modals.get(CHANGE_PASSWORD)} openModal={this.openModal} closeModal={this.closeModal} newPassword={this.state.newPassword} confirmNewPassword={this.state.confirmNewPassword} onChange={this.onChange} handlePasswordChange={this.executeChangePasswordCaptcha} />

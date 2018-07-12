@@ -3,12 +3,14 @@ import userInfo from './userInfo';
 import paymentInfo from './paymentInfo';
 import modalsInfo from './modalsInfo';
 import airdropInfo from './airdropInfo';
+import searchInfo from './searchInfo';
 
 const rootReducer = combineReducers({
   userInfo,
   paymentInfo,
   modalsInfo,
-  airdropInfo
+  airdropInfo,
+  searchInfo
 });
 
 export default rootReducer;

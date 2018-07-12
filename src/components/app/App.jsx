@@ -17,12 +17,25 @@ import Footer from '../footer/Footer';
 import NavLocalization from '../profile/NavLocalization';
 import StompTest from '../common/StompTest';
 import queryString from 'query-string';
+import { Wallet } from '../../services/blockchain/wallet.js';
 
 import ProfilePage from '../profile/ProfilePage';
+import AirdropPage from '../profile/airdrop/AirdropPage';
 import PropTypes from 'prop-types';
+import { setIsLogged, setUserInfo } from '../../actions/userInfo';
+
+// MOBILE ONLY START
+import StaticHotelsSearchPage from '../hotels/search/StaticHotelsSearchPage';
+import HotelDetailsPage from '../hotels/details/HotelDetailsPage';
+import HotelBookingPage from '../hotels/book/HotelBookingPage';
+import HotelBookingConfirmPage from '../hotels/book/HotelBookingConfirmPage';
+// MOBILE ONLY END
+
+import {
+  getUserInfo
+} from '../../requester';
 
 import '../../styles/css/main.css';
-import AirdropPage from '../profile/airdrop/AirdropPage';
 
 class App extends React.Component {
   constructor(props) {
@@ -33,6 +46,8 @@ class App extends React.Component {
   }
 
   componentWillMount() {
+    console.log(encodeURI(localStorage.getItem(Config.getValue('domainPrefix') + '.auth.locktrip')));
+    this.handleInternalAuthorization();
     this.handleExternalAuthorization();
   }
 
@@ -43,23 +58,65 @@ class App extends React.Component {
     }
     return false;
   }
-  
+
+  setUserInfo() {
+    getUserInfo().then(res => {
+      Wallet.getBalance(res.locAddress).then(eth => {
+        const ethBalance = eth / (Math.pow(10, 18));
+        Wallet.getTokenBalance(res.locAddress).then(loc => {
+          const locBalance = loc / (Math.pow(10, 18));
+          const { firstName, lastName, phoneNumber, email, locAddress } = res;
+          this.props.dispatch(setIsLogged(true));
+          this.props.dispatch(setUserInfo(firstName, lastName, phoneNumber, email, locAddress, ethBalance, locBalance));
+        });
+      });
+    });
+  }
+
+  handleInternalAuthorization() {
+    if (localStorage[Config.getValue('domainPrefix') + '.auth.username']
+      && localStorage[Config.getValue('domainPrefix') + '.auth.locktrip']) {
+      this.setUserInfo();
+    }
+  }
+
   handleExternalAuthorization() {
     const queryStringParameters = queryString.parse(this.props.location.search);
     const { authEmail, authToken } = queryStringParameters;
     if (authEmail && authToken) {
       localStorage[Config.getValue('domainPrefix') + '.auth.username'] = authEmail;
-      localStorage[Config.getValue('domainPrefix') + '.auth.locktrip'] = authToken;
+      localStorage[Config.getValue('domainPrefix') + '.auth.locktrip'] = decodeURI(authToken);
+      this.setUserInfo();
       const url = this.props.location.pathname;
-      this.props.history.push(url);
+      const search = this.getQueryString(queryStringParameters);
+      console.log(url + search);
+      this.props.history.push(url + search);
     }
   }
 
+  getQueryString(queryStringParameters) {
+    let queryString = '?';
+    queryString += 'region=' + encodeURI(queryStringParameters.region);
+    queryString += '&currency=' + encodeURI(queryStringParameters.currency);
+    queryString += '&startDate=' + encodeURI(queryStringParameters.startDate);
+    queryString += '&endDate=' + encodeURI(queryStringParameters.endDate);
+    queryString += '&rooms=' + encodeURI(queryStringParameters.rooms);
+    return queryString;
+  }
+
   render() {
+    const isWebView = this.props.location.pathname.indexOf('/mobile') !== -1;
+
     return (
       <div>
-        <MainNav />
-        <NavLocalization />
+        {!isWebView &&
+          <MainNav />
+        }
+
+        {!isWebView &&
+          <NavLocalization />
+        }
+
         <Switch>
           <Route exact path="/" render={() => <HomeRouterPage />} />
           <Route exact path="/profile/listings/edit/:step/:id" render={() => !this.isAuthenticated() ? <Redirect to="/" /> : <EditListingPage />} />
@@ -72,9 +129,20 @@ class App extends React.Component {
           <Route path="/profile/" render={() => !this.isAuthenticated() ? <Redirect to="/" /> : <ProfilePage location={this.props.location} />} />
           <Route path="/airdrop" render={() => <AirdropPage />} />
           <Route path="/test" render={() => <StompTest />} />
+
+          {/* MOBILE ONLY START */}
+          <Route path="/mobile/search" render={() => <StaticHotelsSearchPage />} />
+          <Route path="/mobile/details/:id" render={() => <HotelDetailsPage />} />
+          <Route path="/mobile/book/confirm/:id" render={() => <HotelBookingConfirmPage />} />
+          <Route path="/mobile/book/:id" render={() => <HotelBookingPage />} />
+          {/* MOBILE ONLY END */}
+
           <Route render={() => <HomeRouterPage />} />
         </Switch>
-        <Footer />
+        
+        {!isWebView &&
+          <Footer />
+        }
       </div>
     );
   }
