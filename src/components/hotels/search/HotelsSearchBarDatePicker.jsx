@@ -8,11 +8,7 @@ function HotelsSearchBarDatePicker(props) {
   const start = (startDate && startDate.format('DD/MM/YYYY')) || '';
   const end = (endDate && endDate.format('DD/MM/YYYY')) || '';
 
-  let label = '';
-  label = start + ' - ' + end;
-  if (start === end) {
-    label = start;
-  }
+  let label = start + ' - ' + end;
 
   const pickerProps = {
     startDate,
