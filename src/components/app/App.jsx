@@ -15,7 +15,7 @@ import { connect } from 'react-redux';
 import MainNav from '../mainNav/MainNav';
 import Footer from '../footer/Footer';
 import NavLocalization from '../profile/NavLocalization';
-import StompTest from '../common/StompTest';
+import StyleTest from '../common/StyleTest';
 import queryString from 'query-string';
 import { Wallet } from '../../services/blockchain/wallet.js';
 
@@ -128,7 +128,7 @@ class App extends React.Component {
           <Route path="/profile/listings/create" render={() => !this.isAuthenticated() ? <Redirect to="/" /> : <CreateListingPage />} />
           <Route path="/profile/" render={() => !this.isAuthenticated() ? <Redirect to="/" /> : <ProfilePage location={this.props.location} />} />
           <Route path="/airdrop" render={() => <AirdropPage />} />
-          <Route path="/test" render={() => <StompTest />} />
+          <Route path="/test" render={() => <StyleTest />} />
 
           {/* MOBILE ONLY START */}
           <Route path="/mobile/search" render={() => <StaticHotelsSearchPage />} />
