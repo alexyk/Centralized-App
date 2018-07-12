@@ -10,6 +10,7 @@ import moment from 'moment';
 import { parse } from 'query-string';
 import { ROOMS_XML_CURRENCY } from '../../../constants/currencies.js';
 import Lightbox from 'react-images';
+import { setCurrency } from '../../../actions/paymentInfo';
 
 import '../../../styles/css/main.css';
 import '../../../styles/css/components/carousel-component.css';
@@ -324,10 +325,12 @@ class HotelDetailsPage extends React.Component {
   }
 
   checkNextRoom(allRooms, index, booking) {
+    const isWebView = this.props.location.pathname.indexOf('/mobile') !== -1;
     if (index >= allRooms.length) {
       NotificationManager.warning('Unfortunatelly all rooms in that hotel were already taken, please try another one.', '', 5000);
       const search = this.props.location.search;
-      const URL = `/hotels/listings/${search}`;
+      const rootURL = !isWebView ? '/hotels/listings' : '/mobile/search';
+      const URL = `${rootURL}/${search}`;
       this.props.history.push(URL);
       return;
     }
@@ -341,7 +344,8 @@ class HotelDetailsPage extends React.Component {
 
         const id = this.props.match.params.id;
         const search = this.props.location.search;
-        const URL = `/hotels/listings/book/${id}${search}&quoteId=${booking.quoteId}`;
+        const rootURL = !isWebView ? '/hotels/listings/book' : '/mobile/book';
+        const URL = `${rootURL}/${id}${search}&quoteId=${booking.quoteId}`;
         this.props.history.push(URL);
       } else {
         this.checkNextRoom(allRooms, index + 1, booking);
@@ -475,6 +479,27 @@ class HotelDetailsPage extends React.Component {
                   loadingRooms={this.state.loadingRooms}
                 />
               </div>
+
+              {/* MOBILE ONLY START */}
+              {this.props.location.pathname.indexOf('/mobile') !== -1 &&
+                <div className="container">
+                  <button className="btn" style={{ 'width': '100%', 'marginBottom': '20px' }} onClick={(e) => this.props.history.goBack()}>Back</button>
+                  <div className="select">
+                    <select
+                      className="currency"
+                      value={this.props.paymentInfo.currency}
+                      style={{ 'height': '40px', 'margin': '10px 0', 'textAlignLast': 'right', 'paddingRight': '45%', 'direction': 'rtl' }}
+                      onChange={(e) => this.props.dispatch(setCurrency(e.target.value))}
+                    >
+                      <option value="EUR">EUR</option>
+                      <option value="USD">USD</option>
+                      <option value="GBP">GBP</option>
+                    </select>
+                  </div>
+                </div>
+              }
+              {/* MOBILE ONLY END */}
+
             </section>
           </div>
         }

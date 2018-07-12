@@ -523,6 +523,12 @@ export async function getUserAirdropInfo() {
   });
 }
 
+export async function editAirdropVoteUrl(voteUrl) {
+  return sendRequest(`${host}airdrop/editVoteUrl`, RequestMethod.POST, voteUrl).then(res => {
+    return res.response.json();
+  });
+}
+
 export async function verifyUserAirdropInfo(token) {
   return sendRequest(`${host}airdrop/participate/${token}`, RequestMethod.POST).then(res => {
     return res.response.json();

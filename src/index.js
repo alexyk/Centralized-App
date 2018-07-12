@@ -1,6 +1,6 @@
 import 'babel-polyfill';
 
-import AppRouter from './components/app/AppRouter.jsx';
+import App from './components/app/App.jsx';
 import { BrowserRouter } from 'react-router-dom';
 import React from 'react';
 import { render } from 'react-dom';
@@ -14,7 +14,7 @@ const createStoreWithMiddleware = applyMiddleware()(createStore);
 render(
   <Provider store={createStoreWithMiddleware(reducers)}>
     <BrowserRouter>
-      <AppRouter />
+      <App />
     </BrowserRouter>
   </Provider>
   , document.getElementById('app')

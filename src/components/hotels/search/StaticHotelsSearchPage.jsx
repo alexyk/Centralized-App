@@ -5,6 +5,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { withRouter } from 'react-router-dom';
 import moment from 'moment';
+import { setCurrency } from '../../../actions/paymentInfo';
 import { connect } from 'react-redux';
 import { ROOMS_XML_CURRENCY } from '../../../constants/currencies.js';
 
@@ -120,7 +121,7 @@ class StaticHotelsSearchPage extends React.Component {
       this.updateMapInfo(messageBody);
       const listing = this.state && this.state.hotels ? this.state.hotels[id] : null;
       if (listing) {
-        listing.price = this.hotelInfoById[id].bestPrice;
+        listing.price = this.hotelInfoById[id].price;
         const hotels = { ...this.state.hotels, [id]: listing };
         this.setState({ hotels });
       }
@@ -417,9 +418,13 @@ class StaticHotelsSearchPage extends React.Component {
       const listings = json.content;
       listings.forEach(l => {
         if (this.hotelInfoById[l.id]) {
-          l.price = this.hotelInfoById[l.id].bestPrice;
+          l.price = this.hotelInfoById[l.id].price;
         }
       });
+<<<<<<< HEAD
+=======
+
+>>>>>>> b703aec1f5feba85e14bd94bc9132a2f83f49bdd
       const hotels = _.mapKeys(listings, 'id');
 
       this.setState({
@@ -518,6 +523,22 @@ class StaticHotelsSearchPage extends React.Component {
             </div>
           </div>
         </section>
+
+        {/* MOBILE ONLY START */}
+        {this.props.location.pathname.indexOf('/mobile') !== -1 &&
+          <select
+            className="currency"
+            value={this.props.paymentInfo.currency}
+            style={{ 'height': '40px', 'marginBottom': '10px', 'textAlignLast': 'right', 'paddingRight': '45%', 'direction': 'rtl' }}
+            onChange={(e) => this.props.dispatch(setCurrency(e.target.value))}
+          >
+            <option value="EUR">EUR</option>
+            <option value="USD">USD</option>
+            <option value="GBP">GBP</option>
+          </select>
+        }
+        {/* MOBILE ONLY END */}
+
       </div>
     );
   }

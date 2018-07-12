@@ -11,6 +11,7 @@ import { PASSWORD_PROMPT } from '../../../constants/modals.js';
 import { openModal, closeModal } from '../../../actions/modalsInfo.js';
 import { PROCESSING_TRANSACTION } from '../../../constants/infoMessages.js';
 import ReCAPTCHA from 'react-google-recaptcha';
+import { setCurrency } from '../../../actions/paymentInfo';
 
 import {
   testBook,
@@ -147,7 +148,7 @@ class HotelBookingConfirmPage extends React.Component {
       for (let j = 0; j < earliestToLatestRoomCancellationFees.length; j++) {
         const cancellation = earliestToLatestRoomCancellationFees[j];
         let fromDate = moment(cancellation.from);
-        
+
         const daysBefore = moment(fromDate).diff(creationDate, 'days');
 
         const amt = cancellation.amount.amt;
@@ -384,7 +385,7 @@ class HotelBookingConfirmPage extends React.Component {
           );
         }
       });
-      
+
       if (fees[fees.length - 1].from !== arrivalDate && fees[fees.length - 1].loc !== this.state.data.locPrice) {
         this.addCheckInClauseRow(fees, rows, arrivalDate);
       }
@@ -473,7 +474,21 @@ class HotelBookingConfirmPage extends React.Component {
                   : <button className="btn btn-primary btn-book" disabled>Processing Payment...</button>
                 }
 
-                {/* <button className="btn btn-primary btn-book" onClick={() => this.getCancellationFees()}>Log Fees</button> */}
+                {this.props.location.pathname.indexOf('/mobile') !== -1 &&
+                  <div>
+                    <button className="btn btn-primary btn-book" onClick={(e) => this.props.history.goBack()}>Back</button>
+                    <select
+                      className="currency"
+                      value={this.props.paymentInfo.currency}
+                      style={{ 'height': '40px', 'marginBottom': '10px', 'textAlignLast': 'right', 'paddingRight': '45%', 'direction': 'rtl' }}
+                      onChange={(e) => this.props.dispatch(setCurrency(e.target.value))}
+                    >
+                      <option value="EUR">EUR</option>
+                      <option value="USD">USD</option>
+                      <option value="GBP">GBP</option>
+                    </select>
+                  </div>
+                }
               </div>
               <PasswordModal
                 isActive={this.props.modalsInfo.modals.get(PASSWORD_PROMPT)}
