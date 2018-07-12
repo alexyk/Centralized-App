@@ -1,4 +1,5 @@
 import React from 'react';
+import { withRouter } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import Select from 'react-select';
 import moment from 'moment';
@@ -6,6 +7,9 @@ import HotelsSearchBarDatePicker from './HotelsSearchBarDatePicker';
 import { getRegionsBySearchParameter } from '../../../requester';
 
 function HotelsSearchBar(props) {
+  if (props.location.pathname.indexOf('/mobile') !== -1) {
+    return null;
+  }
 
   const getRegions = (param) => {
     if (!param) {
@@ -119,4 +123,4 @@ HotelsSearchBar.propTypes = {
   handleCloseSelect: PropTypes.func
 };
 
-export default HotelsSearchBar;
+export default withRouter(HotelsSearchBar);

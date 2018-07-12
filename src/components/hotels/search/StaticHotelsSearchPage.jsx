@@ -5,6 +5,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { withRouter } from 'react-router-dom';
 import moment from 'moment';
+import { setCurrency } from '../../../actions/paymentInfo';
 import { connect } from 'react-redux';
 import { ROOMS_XML_CURRENCY } from '../../../constants/currencies.js';
 
@@ -14,7 +15,7 @@ import ChildrenModal from '../modals/ChildrenModal';
 import uuid from 'uuid';
 import queryString from 'query-string';
 import Stomp from 'stompjs';
-import _ from 'lodash'; 
+import _ from 'lodash';
 
 import { Config } from '../../../config';
 
@@ -107,7 +108,7 @@ class StaticHotelsSearchPage extends React.Component {
       this.setState({ locRate: Number(json[0][`price_${ROOMS_XML_CURRENCY.toLowerCase()}`]) });
     });
 
-    getCurrencyRates().then((json) => { 
+    getCurrencyRates().then((json) => {
       this.setState({ rates: json });
     });
 
@@ -136,10 +137,11 @@ class StaticHotelsSearchPage extends React.Component {
       this.setState({ allElements: true });
       this.unsubscribe();
     } else {
-      const { id } = messageBody;  
+      const { id } = messageBody;
       this.hotelInfoById[id] = messageBody;
       this.hotelInfo.push(messageBody);
       this.updateMapInfo(messageBody);
+      console.log(this.hotelInfoById);
       const listing = this.state && this.state.hotels ? this.state.hotels[id] : null;
       if (listing) {
         listing.price = this.hotelInfoById[id].price;
@@ -147,7 +149,7 @@ class StaticHotelsSearchPage extends React.Component {
         // console.log('RECEIVE HOTEL', listingsById);
         // console.log("_____________UPDATE____________");
         this.setState({ hotels });
-      } 
+      }
     }
   }
 
@@ -164,7 +166,7 @@ class StaticHotelsSearchPage extends React.Component {
           };
         });
       }, timeout);
-  
+
       this.delayIntervals.push(delayInterval);
     }
   }
@@ -177,7 +179,7 @@ class StaticHotelsSearchPage extends React.Component {
     const url = Config.getValue('socketHost');
     this.client = Stomp.client(url);
     if (!DEBUG_SOCKET) {
-      this.client.debug = () => {};
+      this.client.debug = () => { };
     }
 
     this.client.connect(null, null, this.subscribe);
@@ -594,7 +596,7 @@ class StaticHotelsSearchPage extends React.Component {
         this.counter = 0;
         this.clearIntervals();
       }
-      return { 
+      return {
         showMap: !prev.showMap,
         mapInfo: this.hotelInfo
       };
@@ -736,6 +738,21 @@ class StaticHotelsSearchPage extends React.Component {
             </div>
           </div>
         </section>
+
+        {/* MOBILE ONLY START */}
+        {this.props.location.pathname.indexOf('/mobile') !== -1 &&
+          <select
+            className="currency"
+            value={this.props.paymentInfo.currency}
+            style={{ 'height': '40px', 'marginBottom': '10px', 'textAlignLast': 'right', 'paddingRight': '45%', 'direction': 'rtl' }}
+            onChange={(e) => this.props.dispatch(setCurrency(e.target.value))}
+          >
+            <option value="EUR">EUR</option>
+            <option value="USD">USD</option>
+            <option value="GBP">GBP</option>
+          </select>
+        }
+        {/* MOBILE ONLY END */}
 
         <ChildrenModal
           modalId="childrenModal"

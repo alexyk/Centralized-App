@@ -19,10 +19,17 @@ import StompTest from '../common/StompTest';
 import queryString from 'query-string';
 
 import ProfilePage from '../profile/ProfilePage';
+import AirdropPage from '../profile/airdrop/AirdropPage';
 import PropTypes from 'prop-types';
 
+// MOBILE ONLY START
+import StaticHotelsSearchPage from '../hotels/search/StaticHotelsSearchPage';
+import HotelDetailsPage from '../hotels/details/HotelDetailsPage';
+import HotelBookingPage from '../hotels/book/HotelBookingPage';
+import HotelBookingConfirmPage from '../hotels/book/HotelBookingConfirmPage';
+// MOBILE ONLY END
+
 import '../../styles/css/main.css';
-import AirdropPage from '../profile/airdrop/AirdropPage';
 
 class App extends React.Component {
   constructor(props) {
@@ -56,10 +63,18 @@ class App extends React.Component {
   }
 
   render() {
+    const isWebView = this.props.location.pathname.indexOf('/mobile') !== -1;
+
     return (
       <div>
-        <MainNav />
-        <NavLocalization />
+        {!isWebView &&
+          <MainNav />
+        }
+
+        {!isWebView &&
+          <NavLocalization />
+        }
+
         <Switch>
           <Route exact path="/" render={() => <HomeRouterPage />} />
           <Route exact path="/profile/listings/edit/:step/:id" render={() => !this.isAuthenticated() ? <Redirect to="/" /> : <EditListingPage />} />
@@ -72,9 +87,20 @@ class App extends React.Component {
           <Route path="/profile/" render={() => !this.isAuthenticated() ? <Redirect to="/" /> : <ProfilePage location={this.props.location} />} />
           <Route path="/airdrop" render={() => <AirdropPage />} />
           <Route path="/test" render={() => <StompTest />} />
+
+          {/* MOBILE ONLY START */}
+          <Route path="/mobile/search" render={() => <StaticHotelsSearchPage />} />
+          <Route path="/mobile/details/:id" render={() => <HotelDetailsPage />} />
+          <Route path="/mobile/book/confirm/:id" render={() => <HotelBookingConfirmPage />} />
+          <Route path="/mobile/book/:id" render={() => <HotelBookingPage />} />
+          {/* MOBILE ONLY END */}
+
           <Route render={() => <HomeRouterPage />} />
         </Switch>
-        <Footer />
+        
+        {!isWebView &&
+          <Footer />
+        }
       </div>
     );
   }

@@ -83,10 +83,10 @@ export class AppRouter extends React.Component {
       <div>
         <NotificationContainer />
         <Switch>
-          <Route path="/mobile/search" render={() => <StaticMobileHotelsSearchPage />} />
+          {/* <Route path="/mobile/search" render={() => <StaticMobileHotelsSearchPage />} />
           <Route path="/mobile/details/:id" render={() => <MobileHotelDetailsPage />} />
           <Route path="/mobile/book/confirm/:id" render={() => <MobileHotelBookingConfirmPage />} />
-          <Route path="/mobile/book/:id" render={() => <MobileHotelBookingPage />} />
+          <Route path="/mobile/book/:id" render={() => <MobileHotelBookingPage />} /> */}
           <Route path="/" render={() => <App />} />
         </Switch>
       </div>
