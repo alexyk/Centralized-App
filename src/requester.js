@@ -426,6 +426,15 @@ export async function getStaticHotels(regionId, page = 0) {
   });
 }
 
+export async function getStaticHotelsByFilter(regionId, search, filters, page = 0, sort = '', size = 10) {
+  page = `&page=${page}`;
+  sort = sort ? `&sort=${sort}` : '';
+  size = `&size=${size}`;
+  return sendRequest(`${host}hotels/filtered${search}${filters}${page}${sort}${size}`, RequestMethod.GET).then(res => {
+    return res.response.json();
+  });
+}
+
 export async function getHotelById(id, search) {
   return sendRequest(`${host}api/hotels/${id}${search}`, RequestMethod.GET).then(res => {
     return res.response.json();

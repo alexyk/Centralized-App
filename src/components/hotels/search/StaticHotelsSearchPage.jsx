@@ -25,6 +25,7 @@ import {
   getCurrencyRates,
   getLocRateInUserSelectedCurrency,
   getStaticHotels,
+  getStaticHotelsByFilter
 } from '../../../requester';
 
 const DEBUG_SOCKET = false;
@@ -457,6 +458,15 @@ class StaticHotelsSearchPage extends React.Component {
     });
   }
 
+  getFilteredHotels() {
+    const region = `15664`;
+    const search = `?region=15664&currency=EUR&startDate=14/07/2018&endDate=20/07/2018&rooms=%5B%7B"adults":2,"children":%5B%5D%7D%5D`;
+    const filters = `filters=%7B%22name%22:%22marinela%22,%22minPrice%22:10,%22maxPrice%22:500,%22stars%22:%5B0,1,2,3,4,5%5D%7D`;
+    getStaticHotelsByFilter(region, search, filters).then(json => {
+      console.log(json);
+    });
+  }
+
   render() {
     const { hotels, totalElements } = this.state;
 
@@ -473,6 +483,7 @@ class StaticHotelsSearchPage extends React.Component {
                   ? <button onClick={this.toggleMap} className="btn btn-primary" style={{ width: '100%', marginBottom: '20px' }}>Show list</button>
                   : <button onClick={this.toggleMap} className="btn btn-primary" style={{ width: '100%', marginBottom: '20px' }}>Show on map</button>
                 }
+                <button onClick={this.getFilteredHotels} className="btn btn-primary" style={{ width: '100%', marginBottom: '20px' }}>Get Filtered Hotels</button>
               </div>
               <div className="col-md-9">
                 <div className="list-hotel-box" id="list-hotel-box">
