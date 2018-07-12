@@ -421,10 +421,6 @@ class StaticHotelsSearchPage extends React.Component {
           l.price = this.hotelInfoById[l.id].price;
         }
       });
-<<<<<<< HEAD
-=======
-
->>>>>>> b703aec1f5feba85e14bd94bc9132a2f83f49bdd
       const hotels = _.mapKeys(listings, 'id');
 
       this.setState({

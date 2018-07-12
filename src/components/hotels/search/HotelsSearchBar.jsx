@@ -3,7 +3,6 @@ import { withRouter } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import Select from 'react-select';
 import { connect } from 'react-redux';
-import { withRouter } from 'react-router-dom';
 import HotelsSearchBarDatePicker from './HotelsSearchBarDatePicker';
 import ChildrenModal from '../modals/ChildrenModal';
 
@@ -177,6 +176,9 @@ function HotelsSearchBar(props) {
 
 HotelsSearchBar.propTypes = {
   redirectToSearchPage: PropTypes.func,
+
+  // start Router props
+  location: PropTypes.object,
 
   // Redux props
   dispatch: PropTypes.func,
