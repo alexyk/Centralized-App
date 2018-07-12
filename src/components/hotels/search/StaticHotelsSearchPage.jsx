@@ -461,7 +461,7 @@ class StaticHotelsSearchPage extends React.Component {
   getFilteredHotels() {
     const region = `15664`;
     const search = `?region=15664&currency=EUR&startDate=14/07/2018&endDate=20/07/2018&rooms=%5B%7B"adults":2,"children":%5B%5D%7D%5D`;
-    const filters = `filters=%7B%22name%22:%22marinela%22,%22minPrice%22:10,%22maxPrice%22:500,%22stars%22:%5B0,1,2,3,4,5%5D%7D`;
+    const filters = `filters=%7B%22showUnavailable%22:false,%22name%22:%22marinela%22,%22minPrice%22:10,%22maxPrice%22:500,%22stars%22:%5B0,1,2,3,4,5%5D%7D`;
     getStaticHotelsByFilter(region, search, filters).then(json => {
       console.log(json);
     });
