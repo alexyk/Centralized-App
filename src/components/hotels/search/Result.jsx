@@ -11,7 +11,7 @@ import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 
-import '../../../styles/css/components/hotels_search/results_holder__hotels.css';
+import '../../../styles/css/components/hotels_search/result/results_holder__hotels.css';
 
 let slider = null;
 
@@ -39,7 +39,8 @@ function Result(props) {
 
   let { id, name, generalDescription, hotelPhoto, star } = props.hotel;
   let { price } = props;
-  const pictures = hotelPhoto ? [ { thumbnail: `${Config.getValue('imgHost')}${hotelPhoto.url}` }, { thumbnail: `${Config.getValue('imgHost')}${hotelPhoto.url}` } ] : [];
+  const photoUrl = hotelPhoto && hotelPhoto.url ? hotelPhoto.url : hotelPhoto;
+  const pictures = photoUrl ? [ { thumbnail: `${Config.getValue('imgHost')}${photoUrl}` }, { thumbnail: `${Config.getValue('imgHost')}${photoUrl}` } ] : [];
   const { locRate, rates } = props;
   const { currencySign } = props.paymentInfo;
   const isPriceLoaded = !!price;

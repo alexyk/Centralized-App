@@ -3,39 +3,55 @@ import PropTypes from 'prop-types';
 import ReactBootstrapSlider from 'react-bootstrap-slider';
 import FilterStarCheckbox from './FilterStarCheckbox';
 
+import '../../../../styles/css/components/hotels_search/filter/filter.css';
+
 function FilterPanel(props) {
+  if (!props.isSearchReady) {
+    return (
+      <div className="filter-box">
+        <div className="form-group">
+          <h5 className="filter-info">Search in progress, filtering will be possible after it is completed</h5>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="filter-box">
+      {props.isSearchReady}
       <div>
-        <div className="form-group">
-          <label>Name</label>
+        <div>
 
-          <div className="filter-order">
-            <input type='text' name={'hotelName'} className="form-control" value={props.hotelName} onChange={props.handleFilterByName}></input>
-            <div className="clearfix" />
+          <div className="text-filters">
+            <h5>Name</h5>
+            <input type='text' name='hotelName' value={props.hotelName} onChange={props.handleFilterByName}></input>
           </div>
 
-          <label>Show Unavailable</label>
-
-          <div className="filter-order">
-            <input type='checkbox' name={'showUnavailable'} className="form-control" value={props.hotelName} onChange={props.handleOrderBy}></input>
-            <div className="clearfix" />
+          <div className="checkbox-filters">
+            <h5>Availability</h5>
+            <ul>
+              <li onClick={props.handleShowUnavailable}>
+                <div className="key">
+                  <input type="checkbox" name='showUnavailable' checked={props.showUnavailable} />
+                  <label htmlFor="showUnavailable">Show Unavailable</label>
+                </div>
+              </li>
+            </ul>
           </div>
 
-          <label>Filters</label>
-
-          <div className="filter-order">
-            <select name={'orderBy'} className="form-control filter-select" value={props.orderBy} onChange={props.handleOrderBy}>
-              {/* <option value=''>Order by</option> */}
-              <option value='asc'>Lowest price</option>
-              <option value='desc'>Highest price</option>
-            </select>
-            <div className="clearfix" />
+          <div className='order-filters'>
+            <h5>Order By</h5>
+            <div className='select'>
+              <select name={'orderBy'} value={props.orderBy} onChange={props.handleOrderBy}>
+                <option value='asc'>Lowest price</option>
+                <option value='desc'>Highest price</option>
+              </select>
+            </div>
           </div>
 
-          <label>Star Rating</label>
 
-          <div className="filter-stars">
+          <div className="star-filters">
+            <h5>Star Rating</h5>
             <FilterStarCheckbox
               name='star-one'
               value={0}
@@ -66,11 +82,11 @@ function FilterPanel(props) {
               text={'5'}
               checked={props.stars[4]}
               handleToggleStar={props.handleToggleStar} />
+            <div className='clearfix'></div>
           </div>
 
-          <label>Pricing</label>
-
-          <div className="filter-slider">
+          <div className="range-filters">
+            <h5>Pricing</h5>
             <ReactBootstrapSlider
               value={props.priceRange}
               slideStop={(e) => { props.handlePriceRangeSelect(e); }}
@@ -79,14 +95,14 @@ function FilterPanel(props) {
               min={1}
               orientation="horizontal"
               range={true} />
-            <div className="clearfix" />
+            <div className="labels">
+              <label>$ 100</label>
+              <label>$10.000</label>
+            </div>
           </div>
         </div>
-        <div className="clearfix" />
 
-        <div className="form-group">
-          <button type="submit" onClick={props.clearFilters} className="btn btn">Clear Filters</button>
-        </div>
+        <button type="submit" onClick={props.clearFilters} className="btn btn">Clear Filters</button>
       </div>
     </div>
   );

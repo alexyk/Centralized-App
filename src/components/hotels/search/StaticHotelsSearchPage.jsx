@@ -54,8 +54,7 @@ class StaticHotelsSearchPage extends React.Component {
       hotels: {},
       mapInfo: [],
       searchParams: null,
-      filteredListings: null,
-      isFiltered: false,
+      showUnavailable: false,
       loading: true,
       currentPage: !queryParams.page ? 0 : Number(queryParams.page),
       showMap: false,
@@ -77,6 +76,7 @@ class StaticHotelsSearchPage extends React.Component {
     this.clearIntervals = this.clearIntervals.bind(this);
     this.redirectToSearchPage = this.redirectToSearchPage.bind(this);
     this.handleFilterByName = this.handleFilterByName.bind(this);
+    this.handleShowUnavailable = this.handleShowUnavailable.bind(this);
 
     // SOCKET BINDINGS
     this.handleReceiveMessage = this.handleReceiveMessage.bind(this);
@@ -373,6 +373,13 @@ class StaticHotelsSearchPage extends React.Component {
     });
   }
 
+  handleShowUnavailable(e) {
+    const showUnavailable = !this.state.showUnavailable;
+    this.setState({ showUnavailable }, () => {
+      this.applyFilters();
+    });
+  }
+
   mapStars(stars) {
     let hasStars = false;
     let mappedStars = [];
@@ -421,7 +428,7 @@ class StaticHotelsSearchPage extends React.Component {
     this.setState({ loading: true, });
 
     getStaticHotelsByFilter(search, filters, page, sort).then(json => {
-      this.setState({ loading: false, hotels: json.content });
+      this.setState({ loading: false, hotels: json.content, totalElements: json.totalElements });
     });
   }
 
@@ -514,14 +521,16 @@ class StaticHotelsSearchPage extends React.Component {
               <div className="col-md-3">
                 <FilterPanel
                   priceRange={this.state.priceRange}
-                  isSearcheReady={false}
+                  isSearchReady={true}
                   orderBy={this.state.orderBy}
                   stars={this.state.stars}
+                  showUnavailable={this.state.showUnavailable}
                   handleOrderBy={this.handleOrderBy}
                   clearFilters={() => { }}
                   handlePriceRangeSelect={this.handlePriceRangeSelect}
                   handleToggleStar={this.handleToggleStar}
                   handleFilterByName={this.handleFilterByName}
+                  handleShowUnavailable={this.handleShowUnavailable}
                 />
                 {this.state.showMap
                   ? <button onClick={this.toggleMap} className="btn btn-primary" style={{ width: '100%', marginBottom: '20px' }}>Show list</button>
@@ -560,13 +569,15 @@ class StaticHotelsSearchPage extends React.Component {
                         />
                       }
 
-                      <Pagination
-                        loading={this.state.loading}
-                        onPageChange={this.onPageChange}
-                        currentPage={this.state.currentPage + 1}
-                        pageSize={20}
-                        totalElements={totalElements}
-                      />
+                      {!this.state.loading && 
+                        <Pagination
+                          loading={this.state.loading}
+                          onPageChange={this.onPageChange}
+                          currentPage={this.state.currentPage + 1}
+                          pageSize={20}
+                          totalElements={totalElements}
+                        />
+                      }
                     </div>
                   }
                 </div>
