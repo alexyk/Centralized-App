@@ -38,6 +38,7 @@ import {
 import '../../styles/css/main.css';
 import SoftUniCampaign from "../external/SoftUniCampaign";
 import {NotificationContainer} from "react-notifications";
+import WorldKuCoinCampaign from "../external/WorldKuCoinCampaign";
 
 class App extends React.Component {
   constructor(props) {
@@ -134,6 +135,7 @@ class App extends React.Component {
           <Route path="/airdrop" render={() => <AirdropPage />} />
           <Route path="/test" render={() => <StyleTest />} />
           <Route path="/softuni" render={() => <SoftUniCampaign />} />
+          <Route path="/vote" render={() => <WorldKuCoinCampaign />} />
 
           {/* MOBILE ONLY START */}
           <Route path="/mobile/search" render={() => <StaticHotelsSearchPage />} />

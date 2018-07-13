@@ -563,6 +563,6 @@ export async function resendConfirmationEmail() {
   return json;
 }
 
-export async function participateSoftUniCampaign(participantInfo) {
-  return sendRequest(`${host}airdrop/softuni`, RequestMethod.POST, participantInfo).then(res => res.response.json());
+export async function participateExternalCampaign(participantInfo) {
+  return sendRequest(`${host}airdrop/external`, RequestMethod.POST, participantInfo).then(res => res.response.json());
 }
