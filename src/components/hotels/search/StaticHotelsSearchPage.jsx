@@ -27,6 +27,7 @@ import {
   getStaticHotels,
   getStaticHotelsByFilter
 } from '../../../requester';
+import FilterPanel from './filter/FilterPanel';
 
 const DEBUG_SOCKET = false;
 const DELAY_INTERVAL = 100;
@@ -47,7 +48,7 @@ class StaticHotelsSearchPage extends React.Component {
     this.state = {
       allElements: false,
       priceRange: [0, 5000],
-      orderBy: '',
+      orderBy: 'asc',
       stars: [false, false, false, false, false],
       city: '',
       hotels: {},
@@ -58,6 +59,7 @@ class StaticHotelsSearchPage extends React.Component {
       loading: true,
       currentPage: !queryParams.page ? 0 : Number(queryParams.page),
       showMap: false,
+      hotelName: ''
     };
 
     this.updateParamsMap = this.updateParamsMap.bind(this);
@@ -74,6 +76,7 @@ class StaticHotelsSearchPage extends React.Component {
     this.updateMapInfo = this.updateMapInfo.bind(this);
     this.clearIntervals = this.clearIntervals.bind(this);
     this.redirectToSearchPage = this.redirectToSearchPage.bind(this);
+    this.handleFilterByName = this.handleFilterByName.bind(this);
 
     // SOCKET BINDINGS
     this.handleReceiveMessage = this.handleReceiveMessage.bind(this);
@@ -352,7 +355,12 @@ class StaticHotelsSearchPage extends React.Component {
 
   handlePriceRangeSelect(event) {
     const priceRange = event.target.value;
-    this.setState({ priceRange }, () => {
+    this.setState({ priceRange });
+  }
+
+  handleFilterByName(event) {
+    const hotelName = event.target.value;
+    this.setState({ hotelName }, () => {
       this.applyFilters();
     });
   }
@@ -365,22 +373,56 @@ class StaticHotelsSearchPage extends React.Component {
     });
   }
 
-  applyFilters() {
-    const currentPage = 0;
-    const { priceRange, orderBy } = this.state;
-    const userCurrencyRate = this.state.rates[ROOMS_XML_CURRENCY][this.props.paymentInfo.currency];
-    const stars = this.state.stars.filter(x => x).length > 0 ? this.state.stars.slice(0) : [true, true, true, true, true];
-    const filteredListings = this.state.listings
-      .slice(0)
-      .filter(x => (priceRange[0] <= x.price * userCurrencyRate && x.price * userCurrencyRate <= priceRange[1]) && stars[x.stars - 1]);
+  mapStars(stars) {
+    let hasStars = false;
+    let mappedStars = [];
+    stars.forEach(s => {
+      if (s) {
+        hasStars = true;
+      }
+    });
 
-    if (orderBy === 'asc') {
-      filteredListings.sort((x, y) => x.price > y.price ? 1 : -1);
-    } else if (orderBy === 'desc') {
-      filteredListings.sort((x, y) => x.price > y.price ? -1 : 1);
+    if (!hasStars) {
+      for (let i = 0; i <= 5; i++) {
+        mappedStars.push(i);
+      }
+    } else {
+      mappedStars.push(0);
+      stars.forEach((s, i) => {
+        if (s) {
+          mappedStars.push(i + 1);
+        }
+      });
     }
 
-    this.setState({ filteredListings, currentPage, isFiltered: true });
+    return mappedStars;
+  }
+
+  applyFilters() {
+    const queryParams = queryString.parse(this.props.location.search);
+    let search = `?region=${encodeURI(queryParams.region)}`;
+    search += `&currency=${encodeURI(queryParams.currency)}`;
+    search += `&startDate=${encodeURI(queryParams.startDate)}`;
+    search += `&endDate=${encodeURI(queryParams.endDate)}`;
+    search += `&rooms=${encodeURI(queryParams.rooms)}`;
+
+    const filtersObj = {
+      showUnavailable: this.state.showUnavailable,
+      name: this.state.hotelName,
+      minPrice: this.state.priceRange[0],
+      maxPrice: this.state.priceRange[1],
+      stars: this.mapStars(this.state.stars)
+    };
+
+    const filters = `&filters=${encodeURI(JSON.stringify(filtersObj))}`;
+    const page = queryParams.page ? queryParams.page : 0;
+    const sort = this.state.orderBy;
+
+    this.setState({ loading: true, });
+
+    getStaticHotelsByFilter(search, filters, page, sort).then(json => {
+      this.setState({ loading: false, hotels: json.content });
+    });
   }
 
   clearFilters() {
@@ -458,15 +500,6 @@ class StaticHotelsSearchPage extends React.Component {
     });
   }
 
-  getFilteredHotels() {
-    const region = `15664`;
-    const search = `?region=15664&currency=EUR&startDate=14/07/2018&endDate=20/07/2018&rooms=%5B%7B"adults":2,"children":%5B%5D%7D%5D`;
-    const filters = `filters=%7B%22showUnavailable%22:false,%22name%22:%22marinela%22,%22minPrice%22:10,%22maxPrice%22:500,%22stars%22:%5B0,1,2,3,4,5%5D%7D`;
-    getStaticHotelsByFilter(region, search, filters).then(json => {
-      console.log(json);
-    });
-  }
-
   render() {
     const { hotels, totalElements } = this.state;
 
@@ -479,11 +512,21 @@ class StaticHotelsSearchPage extends React.Component {
           <div className="container">
             <div className="row">
               <div className="col-md-3">
+                <FilterPanel
+                  priceRange={this.state.priceRange}
+                  isSearcheReady={false}
+                  orderBy={this.state.orderBy}
+                  stars={this.state.stars}
+                  handleOrderBy={this.handleOrderBy}
+                  clearFilters={() => { }}
+                  handlePriceRangeSelect={this.handlePriceRangeSelect}
+                  handleToggleStar={this.handleToggleStar}
+                  handleFilterByName={this.handleFilterByName}
+                />
                 {this.state.showMap
                   ? <button onClick={this.toggleMap} className="btn btn-primary" style={{ width: '100%', marginBottom: '20px' }}>Show list</button>
                   : <button onClick={this.toggleMap} className="btn btn-primary" style={{ width: '100%', marginBottom: '20px' }}>Show on map</button>
                 }
-                <button onClick={this.getFilteredHotels} className="btn btn-primary" style={{ width: '100%', marginBottom: '20px' }}>Get Filtered Hotels</button>
               </div>
               <div className="col-md-9">
                 <div className="list-hotel-box" id="list-hotel-box">
