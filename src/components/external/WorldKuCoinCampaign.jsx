@@ -19,7 +19,8 @@ class WorldKuCoinCampaign extends React.Component {
       canProceed: false,
       success: false,
       referredBy: params.ref,
-      referralUrl: null
+      referralUrl: null,
+      telegram: ''
     };
     this.onChange = this.onChange.bind(this);
     this.send = this.send.bind(this);
@@ -31,7 +32,7 @@ class WorldKuCoinCampaign extends React.Component {
   onChange(e) {
     const value = e.target.type === 'checkbox' ? e.target.checked : e.target.value;
     this.setState({[e.target.name]: value}, () => {
-      this.setState({canProceed: this.state.ethAddress !== '' && this.state.email !== '' && this.state.screenshotUrl !== ''});
+      this.setState({canProceed: this.state.ethAddress !== '' && this.state.email !== '' && this.state.screenshotUrl !== '' && this.state.telegram !== ''});
     });
   }
 
@@ -46,7 +47,8 @@ class WorldKuCoinCampaign extends React.Component {
       ethAddress: this.state.ethAddress,
       internshipInterested: this.state.internshipInterested,
       referredBy: this.state.referredBy,
-      campaignUrl: this.props.location.pathname
+      campaignUrl: this.props.location.pathname,
+      telegram: this.state.telegram
     })
       .then(participant => {
         NotificationManager.success('Your participation has been recorded successfully. Thank you for your support!', 'KuCoin Vote');
@@ -78,6 +80,11 @@ class WorldKuCoinCampaign extends React.Component {
                     <label htmlFor="email">Email</label>
                     <input className="form-control" id="email" name="email" onChange={this.onChange}
                            type="email" value={this.state.email} placeholder="Your email..."/>
+                  </div>
+                  <div className="name">
+                    <label htmlFor="telegram">Telegram</label>
+                    <input className="form-control" id="telegram" name="telegram" onChange={this.onChange}
+                           type="email" value={this.state.telegram} placeholder="Your telegram username..."/>
                   </div>
                   <div className="name">
                     <label htmlFor="ethAddress">ETH address</label>
