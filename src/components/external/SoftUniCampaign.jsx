@@ -3,7 +3,7 @@ import React from 'react';
 import 'react-notifications/lib/notifications.css';
 import {NotificationManager} from 'react-notifications';
 import {participateExternalCampaign} from '../../requester'
-import {Link} from "react-router-dom";
+import {Link, withRouter} from "react-router-dom";
 
 class SoftUniCampaign extends React.Component {
   constructor(props) {
@@ -106,4 +106,4 @@ class SoftUniCampaign extends React.Component {
   }
 }
 
-export default SoftUniCampaign;
+export default withRouter(SoftUniCampaign);
