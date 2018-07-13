@@ -17,7 +17,7 @@ export default function reducer(state = initialState, action) {
     case searchInfo.SET_DATES:
       return Object.assign({}, state, {
         startDate: action.startDate,
-        endDate: action.endDate,
+        endDate: action.endDate.diff(action.startDate, 'days') === 0 ? action.endDate.add(1, 'day') : action.endDate,
         nights: calculateNights(action.startDate, action.endDate)
       });
     case searchInfo.SET_REGION:
@@ -44,7 +44,7 @@ export default function reducer(state = initialState, action) {
     case searchInfo.SET_SEARCH_INFO:
       return Object.assign({}, state, {
         startDate: action.startDate,
-        endDate: action.endDate,
+        endDate: action.endDate.diff(action.startDate, 'days') === 0 ? action.endDate.add(1, 'day') : action.endDate,
         nights: calculateNights(action.startDate, action.endDate),
         region: action.region,
         rooms: action.rooms,

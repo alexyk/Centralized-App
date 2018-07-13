@@ -3,6 +3,7 @@ import { getMyReservations, getMyTrips, getMyHotelBookings } from '../../../requ
 import DashboardPending from './DashboardPending';
 import React from 'react';
 import moment from 'moment';
+import { Config } from '../../../config';
 
 class DashboardPage extends React.Component {
   constructor(props) {
@@ -35,7 +36,7 @@ class DashboardPage extends React.Component {
               sortDate: moment(trip.arrival_date, 'YYYY-MM-DD').utc().valueOf(),
               displayStartDate: moment(trip.arrival_date, 'YYYY-MM-DD').format('DD MMM, YYYY'),
               displayEndDate: moment(trip.arrival_date, 'YYYY-MM-DD').add(trip.nights, 'days').format('DD MMM, YYYY'),
-              userImage: JSON.parse(trip.hotel_photo).original,
+              userImage: trip.hotel_photo ? JSON.parse(trip.hotel_photo).original : Config.getValue('imgHost') + 'users/images/default.png',
               hostName: trip.hotel_name
             };
           });

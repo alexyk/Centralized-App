@@ -318,6 +318,7 @@ class AirdropPage extends Component {
               <div className="balance-row">
                 <div className="balance-row__label"><span className="emphasized-text">Your LockTrip listing vote screenshot URL (<a href="https://medium.com/@LockChainCo/vote-for-locktrip-on-kucoin-now-f89448556aac" target="_blank" rel='noreferrer noopener' className="referral-url">read more</a>)</span></div>
                 <input name="voteUrl" value={this.state.voteUrl} className="balance-row__content" onChange={this.onChange}></input>
+                <span className={`step-check${this.state.voteUrl ? ' checked' : ' unchecked'}`}></span>
                 {this.state.isVoteUrlEdited && this.state.voteUrl &&
                   <button className="save-vote-url" onClick={this.handleSaveVoteUrl}>Save</button>
                 }
