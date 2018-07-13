@@ -3,22 +3,30 @@ import React from 'react';
 import 'react-notifications/lib/notifications.css';
 import {NotificationManager} from 'react-notifications';
 import {participateExternalCampaign} from '../../requester'
-import {Link} from "react-router-dom";
+import {Link, withRouter} from "react-router-dom";
+import queryString from 'query-string';
+import {Config} from "../../config";
 
-class SoftUniCampaign extends React.Component {
+class WorldKuCoinCampaign extends React.Component {
   constructor(props) {
     super(props);
+    const params = queryString.parse(this.props.location.search);
     this.state = {
       ethAddress: '',
       email: '',
       screenshotUrl: '',
       internshipInterested: false,
       canProceed: false,
-      success: false
+      success: false,
+      referredBy: params.ref,
+      referralUrl: null
     };
     this.onChange = this.onChange.bind(this);
     this.send = this.send.bind(this);
+    console.log(this.state);
   }
+
+
 
   onChange(e) {
     const value = e.target.type === 'checkbox' ? e.target.checked : e.target.value;
@@ -37,14 +45,15 @@ class SoftUniCampaign extends React.Component {
       screenshotUrl: this.state.screenshotUrl,
       ethAddress: this.state.ethAddress,
       internshipInterested: this.state.internshipInterested,
+      referredBy: this.state.referredBy,
       campaignUrl: this.props.location.pathname
     })
-      .then(() => {
-        NotificationManager.success('Your participation has been recorded successfully. Thank you for your support!', 'SoftUni KuCoin');
-        this.setState({success: true});
+      .then(participant => {
+        NotificationManager.success('Your participation has been recorded successfully. Thank you for your support!', 'KuCoin Vote');
+        this.setState({success: true, referralUrl: Config.getValue("basePath") + "vote?ref=" + participant.id});
       })
       .catch(() => {
-        NotificationManager.error("There was a problem recording your participation. Please try again", "SoftUni KuCoin");
+        NotificationManager.error("There was a problem recording your participation. Please try again", "KuCoin Vote");
       })
     ;
   }
@@ -57,7 +66,7 @@ class SoftUniCampaign extends React.Component {
             <div className="after-header"/>
             <div className="col-md-11">
               <div id="profile-edit-form">
-                <h2>Your SoftUni KuCoin Campaign Support</h2>
+                <h2>Your LockTrip KuCoin Listing Support</h2>
                 <br/>
                 <span>Please fill in the following form to confirm your vote and submit your wallet for the LockTrip prize.</span>
                 <hr/>
@@ -81,15 +90,13 @@ class SoftUniCampaign extends React.Component {
                     <input className="form-control" id="screenshotUrl" name="screenshotUrl" onChange={this.onChange}
                            type="text" value={this.state.screenshotUrl} placeholder="Your voting screenshot URL..."/>
                   </div>
-                  <div>
-                    Are you interested in LockTrip internship?
-                    <input value={this.state.internshipInterested} style={{width: "10%"}}
-                           id="internshipInterested"
-                           name="internshipInterested"
-                           onChange={this.onChange}
-                           checked={this.state.internshipInterested}
-                           type="checkbox"/>
+                  {this.state.referralUrl &&
+                  <div className="name">
+                    <label htmlFor="referralUrl">Your referral URL</label>
+                    <input className="form-control form-control-disabled" id="referralUrl" name="referralUrl"
+                           type="text" value={this.state.referralUrl} disabled="disabled"/>
                   </div>
+                  }
                   {this.state.canProceed ?
                     <button className="btn btn-primary" type="submit">Submit your campaign support</button> :
                     <button className="btn btn-primary" disabled="disabled">Submit your campaign support</button>}
@@ -106,4 +113,4 @@ class SoftUniCampaign extends React.Component {
   }
 }
 
-export default SoftUniCampaign;
+export default withRouter(WorldKuCoinCampaign);
