@@ -159,7 +159,7 @@ class MainNav extends React.Component {
 
     register(user, captchaToken).then((res) => {
       if (res.success) {
-        this.closeModal(CONFIRM_WALLET);    
+        this.closeModal(CONFIRM_WALLET);
         this.setState({
           confirmedRegistration: false,
         });
@@ -385,7 +385,11 @@ class MainNav extends React.Component {
 
     // reflect that the user is logged out, both in Redux and in the local component state
     this.props.dispatch(setIsLogged(false));
-    this.setState({ userName: '' });
+    this.setState({
+      userName: '',
+      loginEmail: '',
+      loginPassword: '',
+    });
 
     this.props.history.push('/');
   }
