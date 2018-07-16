@@ -96,8 +96,8 @@ function FilterPanel(props) {
               orientation="horizontal"
               range={true} />
             <div className="labels">
-              <label>$ 100</label>
-              <label>$10.000</label>
+              <label>$0.000</label>
+              <label>$5.000</label>
             </div>
           </div>
         </div>

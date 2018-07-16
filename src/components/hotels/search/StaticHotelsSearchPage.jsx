@@ -47,18 +47,18 @@ class StaticHotelsSearchPage extends React.Component {
 
     this.state = {
       allElements: false,
-      priceRange: [0, 5000],
+      hotelName: '',
+      showUnavailable: false,
       orderBy: 'asc',
       stars: [false, false, false, false, false],
+      priceRange: [0, 5000],
       city: '',
       hotels: {},
       mapInfo: [],
       searchParams: null,
-      showUnavailable: false,
       loading: true,
-      currentPage: !queryParams.page ? 0 : Number(queryParams.page),
+      page: !queryParams.page ? 0 : Number(queryParams.page),
       showMap: false,
-      hotelName: ''
     };
 
     this.updateParamsMap = this.updateParamsMap.bind(this);
@@ -68,7 +68,7 @@ class StaticHotelsSearchPage extends React.Component {
 
     this.handlePriceRangeSelect = this.handlePriceRangeSelect.bind(this);
     this.handleOrderBy = this.handleOrderBy.bind(this);
-    this.applyFilters = this.applyFilters.bind(this);
+    this.applyFilters = _.debounce(this.applyFilters.bind(this), 500);
     this.handleToggleStar = this.handleToggleStar.bind(this);
     this.toggleMap = this.toggleMap.bind(this);
     this.getRandomInt = this.getRandomInt.bind(this);
@@ -77,6 +77,7 @@ class StaticHotelsSearchPage extends React.Component {
     this.redirectToSearchPage = this.redirectToSearchPage.bind(this);
     this.handleFilterByName = this.handleFilterByName.bind(this);
     this.handleShowUnavailable = this.handleShowUnavailable.bind(this);
+    this.isFiltered = this.isFiltered.bind(this);
 
     // SOCKET BINDINGS
     this.handleReceiveMessage = this.handleReceiveMessage.bind(this);
@@ -118,6 +119,7 @@ class StaticHotelsSearchPage extends React.Component {
     const messageBody = JSON.parse(message.body);
     if (messageBody.allElements) {
       this.setState({ allElements: true });
+      this.applyFilters();
       this.unsubscribe();
     } else {
       const { id } = messageBody;
@@ -208,7 +210,7 @@ class StaticHotelsSearchPage extends React.Component {
       this.setState({
         searchParams: searchParams,
         nights: this.props.searchInfo.nights,
-        currentPage: page ? Number(page) : 0,
+        page: page ? Number(page) : 0,
       });
 
       this.geocoder = new window.google.maps.Geocoder();
@@ -233,7 +235,7 @@ class StaticHotelsSearchPage extends React.Component {
       listings: null,
       filteredListings: null,
       loading: true,
-      currentPage: 0,
+      page: 0,
     });
 
     this.unsubscribe();
@@ -280,7 +282,7 @@ class StaticHotelsSearchPage extends React.Component {
     this.setState({
       loading: true,
       childrenModal: false,
-      currentPage: 0,
+      page: 0,
       hotels: {},
       mapInfo: [],
       allElements: false,
@@ -348,19 +350,21 @@ class StaticHotelsSearchPage extends React.Component {
 
   handleOrderBy(event) {
     const orderBy = event.target.value;
-    this.setState({ orderBy }, () => {
+    this.setState({ orderBy, page: 0 }, () => {
       this.applyFilters();
     });
   }
 
   handlePriceRangeSelect(event) {
     const priceRange = event.target.value;
-    this.setState({ priceRange });
+    this.setState({ priceRange, page: 0 }, () => {
+      this.applyFilters();
+    });
   }
 
   handleFilterByName(event) {
     const hotelName = event.target.value;
-    this.setState({ hotelName }, () => {
+    this.setState({ hotelName, page: 0 }, () => {
       this.applyFilters();
     });
   }
@@ -368,14 +372,14 @@ class StaticHotelsSearchPage extends React.Component {
   handleToggleStar(star) {
     const stars = this.state.stars;
     stars[star] = !stars[star];
-    this.setState({ stars }, () => {
+    this.setState({ stars, page: 0 }, () => {
       this.applyFilters();
     });
   }
 
-  handleShowUnavailable(e) {
+  handleShowUnavailable() {
     const showUnavailable = !this.state.showUnavailable;
-    this.setState({ showUnavailable }, () => {
+    this.setState({ showUnavailable, page: 0 }, () => {
       this.applyFilters();
     });
   }
@@ -422,22 +426,29 @@ class StaticHotelsSearchPage extends React.Component {
     };
 
     const filters = `&filters=${encodeURI(JSON.stringify(filtersObj))}`;
-    const page = queryParams.page ? queryParams.page : 0;
+    const page = this.state.page ? this.state.page : 0;
     const sort = this.state.orderBy;
+    const pagination = `&page=${page}&sort=${sort}`;
 
     this.setState({ loading: true, });
+    this.props.history.push('/hotels/listings' + search + filters + pagination);
 
     getStaticHotelsByFilter(search, filters, page, sort).then(json => {
-      this.setState({ loading: false, hotels: json.content, totalElements: json.totalElements });
+      this.setState({ loading: false, hotels: json.content, page, totalElements: json.totalElements });
+    }).catch(() => {
     });
   }
 
   clearFilters() {
-    const defaultPriceRange = { target: { value: [0, 5000] } };
-    const defaultOrderBy = { target: { value: '' } };
-    this.handlePriceRangeSelect(defaultPriceRange);
-    this.handleOrderBy(defaultOrderBy);
-    this.setState({ stars: [false, false, false, false, false], isFiltered: false });
+    this.setState({
+      hotelName: '',
+      showUnavailable: false,
+      orderBy: 'asc',
+      stars: [false, false, false, false, false],
+      priceRange: [0, 5000],
+    }, () => {
+      this.applyFilters();
+    });
   }
 
   toggleMap() {
@@ -454,8 +465,9 @@ class StaticHotelsSearchPage extends React.Component {
   }
 
   onPageChange(page) {
+    console.log(page);
     this.setState({
-      currentPage: page - 1,
+      page: page - 1,
       loading: true
     });
 
@@ -465,21 +477,29 @@ class StaticHotelsSearchPage extends React.Component {
 
     window.scrollTo(0, 0);
 
-    getStaticHotels(region, page - 1).then(json => {
-      const listings = json.content;
-      listings.forEach(l => {
-        if (this.hotelInfoById[l.id]) {
-          l.price = this.hotelInfoById[l.id].price;
-        }
-      });
-      const hotels = _.mapKeys(listings, 'id');
+    if (this.isFiltered()) {
+      this.applyFilters();
+    } else {
+      getStaticHotels(region, page - 1).then(json => {
+        const listings = json.content;
+        listings.forEach(l => {
+          if (this.hotelInfoById[l.id]) {
+            l.price = this.hotelInfoById[l.id].price;
+          }
+        });
+        const hotels = _.mapKeys(listings, 'id');
 
-      this.setState({
-        hotels,
-        totalElements: json.totalElements,
-        loading: false
+        this.setState({
+          hotels,
+          totalElements: json.totalElements,
+          loading: false
+        });
       });
-    });
+    }
+  }
+
+  isFiltered() {
+    return this.props.location.search.indexOf('&filters=') !== -1;
   }
 
   getRandomInt() {
@@ -526,7 +546,7 @@ class StaticHotelsSearchPage extends React.Component {
                   stars={this.state.stars}
                   showUnavailable={this.state.showUnavailable}
                   handleOrderBy={this.handleOrderBy}
-                  clearFilters={() => { }}
+                  clearFilters={this.clearFilters}
                   handlePriceRangeSelect={this.handlePriceRangeSelect}
                   handleToggleStar={this.handleToggleStar}
                   handleFilterByName={this.handleFilterByName}
@@ -546,7 +566,6 @@ class StaticHotelsSearchPage extends React.Component {
                         lon={this.state.lon}
                         hotels={hotels}
                         mapInfo={this.state.mapInfo}
-                        isFiltered={this.state.isFiltered}
                         locRate={this.state.locRate}
                         rates={this.state.rates}
                         paymentInfo={this.props.paymentInfo}
@@ -569,12 +588,12 @@ class StaticHotelsSearchPage extends React.Component {
                         />
                       }
 
-                      {!this.state.loading && 
+                      {!this.state.loading &&
                         <Pagination
                           loading={this.state.loading}
                           onPageChange={this.onPageChange}
-                          currentPage={this.state.currentPage + 1}
-                          pageSize={20}
+                          currentPage={this.state.page + 1}
+                          pageSize={10}
                           totalElements={totalElements}
                         />
                       }
