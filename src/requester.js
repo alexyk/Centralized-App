@@ -566,3 +566,7 @@ export async function resendConfirmationEmail() {
 export async function participateExternalCampaign(participantInfo) {
   return sendRequest(`${host}airdrop/external`, RequestMethod.POST, participantInfo).then(res => res.response.json());
 }
+
+export async function getExternalCampaignBalance(email) {
+  return sendRequest(`${host}airdrop/campaigns/balance`, RequestMethod.POST, {"email":email}).then(res => res.response.json())
+}
