@@ -403,7 +403,7 @@ class CreateListingPage extends React.Component {
 
   handleImageUpload(files) {
     files.forEach((file) => {
-      console.log(file)
+      console.log(file);
       let upload = request.post(LOCKTRIP_UPLOAD_URL)
         .field('image', file);
 
@@ -621,7 +621,7 @@ class CreateListingPage extends React.Component {
           ref={(el) => this.captcha = el}
           size="invisible"
           sitekey={Config.getValue('recaptchaKey')}
-          onChange={token => { this.createListing(token); }}
+          onChange={token => { this.createListing(token); this.captcha.reset(); }}
         />
       </div>
     );
