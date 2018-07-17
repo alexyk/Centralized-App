@@ -408,7 +408,11 @@ class StaticHotelsSearchPage extends React.Component {
     getStaticHotelsByFilter(search, filters, page, sort).then(res => {
       if (res.success) {
         res.response.json().then(json => {
-          this.setState({ loading: false, hotels: json.content, page, totalElements: json.totalElements });
+          this.setState({ loading: false, hotels: json.content, page, totalElements: json.totalElements }, () => {
+            return new Promise((resolve) => {
+              resolve();
+            });
+          });
         });
       } else {
         NotificationManager.info('Search expired');
@@ -430,7 +434,7 @@ class StaticHotelsSearchPage extends React.Component {
     });
   }
 
-  toggleMap() {
+  async toggleMap() {
     const showMap = this.state.showMap;
 
     if (showMap) {
@@ -440,23 +444,31 @@ class StaticHotelsSearchPage extends React.Component {
 
     if (this.isFiltered()) {
       getMapInfo(this.props.location.search).then(json => {
-        let mapInfo = [];
-        mapInfo = json.content.map(hotel => {
-          return {
-            id: hotel.id,
-            lat: hotel.latitude,
-            lon: hotel.longitude,
-            name: hotel.name,
-            price: hotel.price,
-            stars: hotel.star,
-            thumbnail: { url: hotel.hotelPhoto }
-          };
-        });
-
-        this.setState({
-          mapInfo: mapInfo,
-          showMap: !showMap,
-        });
+        if (!json.isCacheExpired) {
+          let mapInfo = [];
+          mapInfo = json.content.map(hotel => {
+            return {
+              id: hotel.id,
+              lat: hotel.latitude,
+              lon: hotel.longitude,
+              name: hotel.name,
+              price: hotel.price,
+              stars: hotel.star,
+              thumbnail: { url: hotel.hotelPhoto }
+            };
+          });
+  
+          this.setState({
+            mapInfo: mapInfo,
+            showMap: !showMap,
+          });
+        } else {
+          this.applyFilters().then(() => {
+            this.setState({
+              showMap: !showMap,
+            });
+          });
+        }
       });
     } else {
       this.setState({
