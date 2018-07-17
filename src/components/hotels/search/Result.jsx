@@ -66,7 +66,8 @@ function Result(props) {
     ? '/hotels/listings'
     : '/mobile/details';
 
-  // console.log('render', price);
+  const search = props.location.search;
+  const endOfSearch = search.indexOf('&filters=') !== -1 ? search.indexOf('&filters=') : search.length;
 
   return (
     <div className="result" >
@@ -77,7 +78,7 @@ function Result(props) {
             {pictures.map((picture, i) => {
               return (
                 <div key={i}>
-                  <Link to={`${redirectURL}/${id}${props.location.search}`} key={i}>
+                  <Link to={`${redirectURL}/${id}${search.substr(0, endOfSearch)}`} key={i}>
                     <div style={{ backgroundImage: 'url(' + picture.thumbnail + ')' }}>
                     </div>
                   </Link>
@@ -88,7 +89,7 @@ function Result(props) {
         }
       </div>
       <div className="result-content">
-        <h4><Link to={`${redirectURL}/${id}${props.location.search}`}>{name}</Link></h4>
+        <h4><Link to={`${redirectURL}/${id}${search.substr(0, endOfSearch)}`}>{name}</Link></h4>
         <div className="rating">
           <span>Rating: </span>
           <div className="rating-holder">
@@ -107,7 +108,7 @@ function Result(props) {
         {isPriceLoaded && <span>(LOC {locPrice})</span>}
         {!isPriceLoaded && props.allElements
           ? <button disabled className="btn">Unavailable</button>
-          : <Link className="btn" to={`${redirectURL}/${id}${props.location.search}`}>Book now</Link>
+          : <Link className="btn" to={`${redirectURL}/${id}${search.substr(0, endOfSearch)}`}>Book now</Link>
         }
       </div>
     </div>

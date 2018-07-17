@@ -18,6 +18,7 @@ import NavLocalization from '../profile/NavLocalization';
 import StyleTest from '../common/StyleTest';
 import queryString from 'query-string';
 import { Wallet } from '../../services/blockchain/wallet.js';
+import { NotificationContainer } from 'react-notifications';
 
 import ProfilePage from '../profile/ProfilePage';
 import AirdropPage from '../profile/airdrop/AirdropPage';
@@ -116,6 +117,8 @@ class App extends React.Component {
         {!isWebView &&
           <NavLocalization />
         }
+
+        <NotificationContainer />
 
         <Switch>
           <Route exact path="/" render={() => <HomeRouterPage />} />

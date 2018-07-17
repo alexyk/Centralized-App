@@ -10,7 +10,7 @@ function FilterPanel(props) {
     return (
       <div className="filter-box">
         <div className="form-group">
-          <h5 className="filter-info">Search in progress, filtering will be possible after it is completed</h5>
+          <h6 className="filter-info">Search in progress, filtering will be possible after it is completed</h6>
         </div>
       </div>
     );
@@ -43,8 +43,8 @@ function FilterPanel(props) {
             <h5>Order By</h5>
             <div className='select'>
               <select name={'orderBy'} value={props.orderBy} onChange={props.handleOrderBy}>
-                <option value='asc'>Lowest price</option>
-                <option value='desc'>Highest price</option>
+                <option value='priceForSort,asc'>Lowest price</option>
+                <option value='priceForSort,desc'>Highest price</option>
               </select>
             </div>
           </div>
