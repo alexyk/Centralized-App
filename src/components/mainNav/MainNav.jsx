@@ -85,6 +85,7 @@ class MainNav extends React.Component {
       unreadMessages: '',
       isUpdatingWallet: false,
       confirmedRegistration: false,
+      currentReCaptcha: '',
     };
 
     this.onChange = this.onChange.bind(this);
@@ -106,10 +107,12 @@ class MainNav extends React.Component {
     this.handleSubmitRecoveryEmail = this.handleSubmitRecoveryEmail.bind(this);
     this.handleConfirmWallet = this.handleConfirmWallet.bind(this);
 
-    this.executeLoginCaptcha = this.executeLoginCaptcha.bind(this);
-    this.executeChangePasswordCaptcha = this.executeChangePasswordCaptcha.bind(this);
-    this.executeSendRecoveryEmailCaptcha = this.executeSendRecoveryEmailCaptcha.bind(this);
-    this.executeConfirmWalletCaptcha = this.executeConfirmWalletCaptcha.bind(this);
+    this.executeReCaptcha = this.executeReCaptcha.bind(this);
+    // this.executeLoginCaptcha = this.executeLoginCaptcha.bind(this);
+    // this.executeChangePasswordCaptcha = this.executeChangePasswordCaptcha.bind(this);
+    // this.executeSendRecoveryEmailCaptcha = this.executeSendRecoveryEmailCaptcha.bind(this);
+    // this.executeConfirmWalletCaptcha = this.executeConfirmWalletCaptcha.bind(this);
+    this.getReCaptchaFunction = this.getReCaptchaFunction.bind(this);
   }
 
   componentDidMount() {
@@ -165,6 +168,7 @@ class MainNav extends React.Component {
         });
         this.openModal(LOGIN);
         NotificationManager.success(PROFILE_SUCCESSFULLY_CREATED);
+        // this.captcha.reset();
       }
       else {
         res.response.then(res => {
@@ -174,6 +178,7 @@ class MainNav extends React.Component {
               NotificationManager.warning(errors[key].message, 'Field: ' + key.toUpperCase());
             }
           }
+          // this.captcha.reset();
         });
       }
     });
@@ -235,6 +240,7 @@ class MainNav extends React.Component {
           if (this.props.location.pathname.indexOf('/airdrop') !== -1) {
             this.handleAirdropUser();
           }
+          // this.captcha.reset();
         });
       } else {
         res.response.then(res => {
@@ -253,10 +259,12 @@ class MainNav extends React.Component {
               }
             }
           }
+          // this.captcha.reset();
         }).catch(errors => {
           for (var e in errors) {
             NotificationManager.warning(errors[e].message);
           }
+          // this.captcha.reset();
         });
       }
     });
@@ -316,29 +324,29 @@ class MainNav extends React.Component {
 
   handleAirdropUser() {
     getUserAirdropInfo().then(json => {
-      console.log(json)
+      console.log(json);
       if (json.participates) {
         this.dispatchAirdropInfo(json);
       } else {
-        console.log('user not yet moved from temp to main')
+        console.log('user not yet moved from temp to main');
         const token = this.props.location.search.split('=')[1];
         checkIfAirdropUserExists(token).then(user => {
           const currentEmail = localStorage[Config.getValue('domainPrefix') + '.auth.username'];
           if (user.email === currentEmail && user.exists) {
-            console.log('users match')
+            console.log('users match');
             verifyUserAirdropInfo(token).then(() => {
-              console.log('user moved from temp to main')
+              console.log('user moved from temp to main');
               NotificationManager.info('Verification email has been sent. Please follow the link to confirm your email.');
               getUserAirdropInfo().then(json => {
                 this.dispatchAirdropInfo(json);
               });
             });
           } else {
-            console.log('users dont match', user.email, currentEmail)
+            console.log('users dont match', user.email, currentEmail);
           }
         });
       }
-    }).catch(e => {
+    }).catch(() => {
       NotificationManager.warning('No airdrop information about this profile');
       this.props.history.push('/airdrop');
     });
@@ -354,7 +362,7 @@ class MainNav extends React.Component {
     const participates = info.participates;
     const isVerifyEmail = info.isVerifyEmail;
     this.props.dispatch(setAirdropInfo(email, facebookProfile, telegramProfile, twitterProfile, redditProfile, refLink, participates, isVerifyEmail));
-    console.log('user info dispatched')
+    console.log('user info dispatched');
   }
 
   clearLocalStorage() {
@@ -460,6 +468,7 @@ class MainNav extends React.Component {
       else {
         NotificationManager.error(NOT_FOUND);
       }
+      // this.captcha.reset();
     });
   }
 
@@ -486,6 +495,7 @@ class MainNav extends React.Component {
       else {
         NotificationManager.warning(INVALID_EMAIL);
       }
+      // this.captcha.reset();
     });
   }
 
@@ -500,28 +510,64 @@ class MainNav extends React.Component {
     }
   }
 
-  executeLoginCaptcha() {
-    this.loginCaptcha.execute();
+  executeReCaptcha(currentReCaptcha) {
+    this.setState({
+      currentReCaptcha
+    }, () => this.captcha.execute());
   }
 
-  executeChangePasswordCaptcha() {
-    this.changePasswordCaptcha.execute();
-  }
+  // executeChangePasswordCaptcha() {
+  //   this.changePasswordCaptcha.execute();
+  // }
 
-  executeSendRecoveryEmailCaptcha() {
-    this.sendRecoveryEmailCaptcha.execute();
-  }
+  // executeSendRecoveryEmailCaptcha() {
+  //   this.sendRecoveryEmailCaptcha.execute();
+  // }
 
-  executeConfirmWalletCaptcha() {
-    this.confirmWalletCaptcha.execute();
+  // executeConfirmWalletCaptcha() {
+  //   this.confirmWalletCaptcha.execute();
+  // }
+
+  getReCaptchaFunction(currentReCaptcha) {
+    switch (currentReCaptcha) {
+      case 'login':
+        return this.handleLogin;
+      case 'recoveryEmail':
+        return this.handleSubmitRecoveryEmail;
+      case 'confirmWallet':
+        return this.handleConfirmWallet;
+      case 'changePassword':
+        return this.handlePasswordChange;
+    }
   }
 
   render() {
+    const { currentReCaptcha } = this.state;
     return (
       <nav id="main-nav" className="navbar">
         <div style={{ background: 'rgba(255,255,255, 0.8)' }}>
           <div className="captcha-container">
-            <ReCAPTCHA
+            {
+              currentReCaptcha && (
+                <ReCAPTCHA
+                  ref={el => this.captcha = el}
+                  size="invisible"
+                  sitekey={Config.getValue('recaptchaKey')}
+                  onChange={(token) => {
+                    const reCaptchaFunc = this.getReCaptchaFunction(currentReCaptcha);
+                    
+                    reCaptchaFunc(token);
+                    
+                    this.captcha.reset();
+
+                    this.setState({
+                      currentReCaptcha: ''
+                    });
+                  }}
+                />
+              )
+            }
+            {/* <ReCAPTCHA
               ref={el => this.loginCaptcha = el}
               size="invisible"
               sitekey={Config.getValue('recaptchaKey')}
@@ -544,15 +590,15 @@ class MainNav extends React.Component {
               size="invisible"
               sitekey={Config.getValue('recaptchaKey')}
               onChange={(token) => { this.handleConfirmWallet(token); this.confirmWalletCaptcha.reset(); }}
-            />
+            /> */}
           </div>
           <CreateWalletModal setUserInfo={this.setUserInfo} userToken={this.state.userToken} userName={this.state.userName} walletPassword={this.state.walletPassword} isActive={this.props.modalsInfo.modals.get(CREATE_WALLET)} openModal={this.openModal} closeModal={this.closeModal} onChange={this.onChange} />
           <SaveWalletModal setUserInfo={this.setUserInfo} userToken={this.state.userToken} userName={this.state.userName} isActive={this.props.modalsInfo.modals.get(SAVE_WALLET)} openModal={this.openModal} closeModal={this.closeModal} onChange={this.onChange} />
-          <ConfirmWalletModal isActive={this.props.modalsInfo.modals.get(CONFIRM_WALLET)} openModal={this.openModal} closeModal={this.closeModal} handleMnemonicWordsChange={this.handleMnemonicWordsChange} mnemonicWords={this.state.mnemonicWords} handleConfirmWallet={this.executeConfirmWalletCaptcha} confirmedRegistration={this.state.confirmedRegistration} />
-          <SendRecoveryEmailModal isActive={this.props.modalsInfo.modals.get(SEND_RECOVERY_EMAIL)} openModal={this.openModal} closeModal={this.closeModal} recoveryEmail={this.state.recoveryEmail} handleSubmitRecoveryEmail={this.executeSendRecoveryEmailCaptcha} onChange={this.onChange} />
+          <ConfirmWalletModal isActive={this.props.modalsInfo.modals.get(CONFIRM_WALLET)} openModal={this.openModal} closeModal={this.closeModal} handleMnemonicWordsChange={this.handleMnemonicWordsChange} mnemonicWords={this.state.mnemonicWords} handleConfirmWallet={() => this.executeReCaptcha('confirmWallet')} confirmedRegistration={this.state.confirmedRegistration} />
+          <SendRecoveryEmailModal isActive={this.props.modalsInfo.modals.get(SEND_RECOVERY_EMAIL)} openModal={this.openModal} closeModal={this.closeModal} recoveryEmail={this.state.recoveryEmail} handleSubmitRecoveryEmail={() => this.executeReCaptcha('recoveryEmail')} onChange={this.onChange} />
           <EnterRecoveryTokenModal isActive={this.props.modalsInfo.modals.get(ENTER_RECOVERY_TOKEN)} openModal={this.openModal} closeModal={this.closeModal} onChange={this.onChange} recoveryToken={this.state.recoveryToken} handleSubmitRecoveryToken={this.handleSubmitRecoveryToken} />
-          <ChangePasswordModal isActive={this.props.modalsInfo.modals.get(CHANGE_PASSWORD)} openModal={this.openModal} closeModal={this.closeModal} newPassword={this.state.newPassword} confirmNewPassword={this.state.confirmNewPassword} onChange={this.onChange} handlePasswordChange={this.executeChangePasswordCaptcha} />
-          <LoginModal isActive={this.props.modalsInfo.modals.get(LOGIN)} openModal={this.openModal} closeModal={this.closeModal} loginEmail={this.state.loginEmail} loginPassword={this.state.loginPassword} onChange={this.onChange} handleLogin={this.executeLoginCaptcha} />
+          <ChangePasswordModal isActive={this.props.modalsInfo.modals.get(CHANGE_PASSWORD)} openModal={this.openModal} closeModal={this.closeModal} newPassword={this.state.newPassword} confirmNewPassword={this.state.confirmNewPassword} onChange={this.onChange} handlePasswordChange={() => this.executeReCaptcha('changePassword')} />
+          <LoginModal isActive={this.props.modalsInfo.modals.get(LOGIN)} openModal={this.openModal} closeModal={this.closeModal} loginEmail={this.state.loginEmail} loginPassword={this.state.loginPassword} onChange={this.onChange} handleLogin={() => this.executeReCaptcha('login')} />
           <AirdropLoginModal isActive={this.props.modalsInfo.modals.get(AIRDROP_LOGIN)} openModal={this.openModal} closeModal={this.closeModal} loginEmail={this.state.loginEmail} loginPassword={this.state.loginPassword} onChange={this.onChange} handleLogin={this.handleAirdropLogin} />
           <RegisterModal isActive={this.props.modalsInfo.modals.get(REGISTER)} openModal={this.openModal} closeModal={this.closeModal} signUpEmail={this.state.signUpEmail} signUpFirstName={this.state.signUpFirstName} signUpLastName={this.state.signUpLastName} signUpPassword={this.state.signUpPassword} onChange={this.onChange} />
           <AirdropRegisterModal isActive={this.props.modalsInfo.modals.get(AIRDROP_REGISTER)} openModal={this.openModal} closeModal={this.closeModal} signUpEmail={this.state.signUpEmail} signUpFirstName={this.state.signUpFirstName} signUpLastName={this.state.signUpLastName} signUpPassword={this.state.signUpPassword} onChange={this.onChange} />
