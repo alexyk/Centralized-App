@@ -210,7 +210,7 @@ class HotelBookingConfirmPage extends React.Component {
     return wei;
   }
 
-  handleSubmit(token) {
+  handleSubmit() {
     getCancellationFees(this.state.data.preparedBookingId).then((json) => {
       const password = this.state.password;
       const preparedBookingId = this.state.data.preparedBookingId;
@@ -413,6 +413,8 @@ class HotelBookingConfirmPage extends React.Component {
   }
 
   render() {
+    const isMobile = this.props.location.pathname.indexOf('/mobile') !== -1;
+    
     const booking = this.state.data && this.state.data.booking.hotelBooking;
     const fiatPrice = this.state.data && this.state.data.fiatPrice;
     const locPrice = this.state.data && this.state.data.locPrice;
@@ -474,7 +476,7 @@ class HotelBookingConfirmPage extends React.Component {
                   : <button className="btn btn-primary btn-book" disabled>Processing Payment...</button>
                 }
 
-                {this.props.location.pathname.indexOf('/mobile') !== -1 &&
+                {isMobile &&
                   <div>
                     <button className="btn btn-primary btn-book" onClick={(e) => this.props.history.goBack()}>Back</button>
                     <select
@@ -494,21 +496,22 @@ class HotelBookingConfirmPage extends React.Component {
                 isActive={this.props.modalsInfo.modals.get(PASSWORD_PROMPT)}
                 text={'Enter your wallet password'}
                 placeholder={'Wallet password'}
-                handleSubmit={() => this.captcha.execute()}
+                handleSubmit={() => this.handleSubmit()}
                 closeModal={this.closeModal}
                 password={this.state.password}
                 onChange={this.onChange}
               />
 
-              <ReCAPTCHA
-                ref={el => this.captcha = el}
-                size="invisible"
-                sitekey={Config.getValue('recaptchaKey')}
-                onChange={(token) => {
-                  this.handleSubmit(token);
-                  this.captcha.reset();
-                }}
-              />
+              {/* {!isMobile && (
+                <ReCAPTCHA
+                  ref={el => this.captcha = el}
+                  size="invisible"
+                  sitekey={Config.getValue('recaptchaKey')}
+                  onChange={(token) => {
+                    this.handleSubmit(token);
+                    this.captcha.reset();
+                  }}
+                />)} */}
             </div>
           }
         </div>
