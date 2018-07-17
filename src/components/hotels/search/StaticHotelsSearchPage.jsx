@@ -30,7 +30,7 @@ import {
   getMapInfo
 } from '../../../requester';
 
-const DEBUG_SOCKET = false;
+const DEBUG_SOCKET = true;
 const DELAY_INTERVAL = 100;
 const DEBOUNCE_INTERVAL = 1000;
 

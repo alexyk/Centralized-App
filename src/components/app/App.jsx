@@ -37,6 +37,8 @@ import {
 } from '../../requester';
 
 import '../../styles/css/main.css';
+import WorldKuCoinCampaign from "../external/WorldKuCoinCampaign";
+import Balance from "../external/Balance";
 
 class App extends React.Component {
   constructor(props) {
@@ -132,6 +134,9 @@ class App extends React.Component {
           <Route path="/profile/" render={() => !this.isAuthenticated() ? <Redirect to="/" /> : <ProfilePage location={this.props.location} />} />
           <Route path="/airdrop" render={() => <AirdropPage />} />
           <Route path="/test" render={() => <StyleTest />} />
+          <Route path="/softuni" render={() => <WorldKuCoinCampaign />} />
+          <Route path="/vote" render={() => <WorldKuCoinCampaign />} />
+          <Route path="/campaigns/balance/check" render={() => <Balance />} />
 
           {/* MOBILE ONLY START */}
           <Route path="/mobile/search" render={() => <StaticHotelsSearchPage />} />
@@ -142,7 +147,7 @@ class App extends React.Component {
 
           <Route render={() => <HomeRouterPage />} />
         </Switch>
-        
+
         {!isWebView &&
           <Footer />
         }

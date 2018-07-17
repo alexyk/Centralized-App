@@ -420,7 +420,7 @@ export async function getCalendarByListingIdAndDateRange(listingId, startDate, e
   });
 }
 
-export async function getStaticHotels(regionId, page = 0) { 
+export async function getStaticHotels(regionId, page = 0) {
   return sendRequest(`${host}regions/${regionId}?page=${page}`, RequestMethod.GET).then(res => {
     return res.response.json();
   });
@@ -576,4 +576,12 @@ export async function resendConfirmationEmail() {
   });
 
   return json;
+}
+
+export async function participateExternalCampaign(participantInfo) {
+  return sendRequest(`${host}airdrop/external`, RequestMethod.POST, participantInfo).then(res => res.response.json());
+}
+
+export async function getExternalCampaignBalance(email) {
+  return sendRequest(`${host}airdrop/campaigns/balance`, RequestMethod.POST, {"email":email}).then(res => res.response.json())
 }

@@ -118,9 +118,48 @@ $padding-sm: 15px 10px;
         color: $moderate-red;
       }
 
-       a {
-        color: $moderate-red;
-       }
+      a {
+      color: $moderate-red;
+      }
+
+      .step-check {
+        width: 30px;
+        height: 30px;
+        display: inline-block;
+        position: absolute;
+        background: $light-cyan;
+        border-radius: 50%;
+        margin-right: 10px;
+        top: 17px;
+        right: 17px;
+      }
+
+      .step-check.checked:before {
+        font-size: 0.5em;
+        padding: 5px;
+        position: absolute;
+        left: 6px;
+        top: 6px;
+        font-family: FontAwesome;
+        color: $white;
+        content: "\f00c";
+      }
+
+      .step-check.unchecked {
+        opacity: 0.5;
+        background: $moderate-red;
+      }
+
+      .step-check.unchecked:before {
+        font-size: 0.5em;
+        padding: 5px;
+        position: absolute;
+        left: 7px;
+        top: 6px;
+        font-family: FontAwesome;
+        color: $white;
+        content: "\f00d";
+      }
     }
   }
 
