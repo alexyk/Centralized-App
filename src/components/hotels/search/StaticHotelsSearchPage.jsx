@@ -30,6 +30,8 @@ import {
   getMapInfo
 } from '../../../requester';
 
+import '../../../styles/css/components/hotels_search/sidebar/sidebar.css';
+
 const DEBUG_SOCKET = true;
 const DELAY_INTERVAL = 100;
 const DEBOUNCE_INTERVAL = 1000;
@@ -61,6 +63,8 @@ class StaticHotelsSearchPage extends React.Component {
       loading: true,
       page: !queryParams.page ? 0 : Number(queryParams.page),
       showMap: false,
+      windowWidth: 0,
+      showFiltersMobile: false
     };
 
     this.onPageChange = this.onPageChange.bind(this);
@@ -80,7 +84,7 @@ class StaticHotelsSearchPage extends React.Component {
     this.isFiltered = this.isFiltered.bind(this);
     this.populateFilters = this.populateFilters.bind(this);
     this.getCityLocation = this.getCityLocation.bind(this);
-    // this.updateFilteredMapInfo = this.updateFilteredMapInfo.bind(this);
+    this.handleShowFilters= this.handleShowFilters.bind(this);
 
     // SOCKET BINDINGS
     this.handleReceiveMessage = this.handleReceiveMessage.bind(this);
@@ -88,6 +92,9 @@ class StaticHotelsSearchPage extends React.Component {
     this.subscribe = this.subscribe.bind(this);
     this.unsubscribe = this.unsubscribe.bind(this);
     this.disconnect = this.disconnect.bind(this);
+
+    // WINDOW WIDTH BINGINGS
+    this.updateWindowWidth = this.updateWindowWidth.bind(this);
   }
 
   componentDidMount() {
@@ -120,6 +127,9 @@ class StaticHotelsSearchPage extends React.Component {
         this.connectSocket();
       });
     });
+
+    this.updateWindowWidth();
+    window.addEventListener('resize', this.updateWindowWidth);
   }
 
   componentWillMount() {
@@ -158,6 +168,10 @@ class StaticHotelsSearchPage extends React.Component {
     this.clearIntervals();
     this.hotelInfo = [];
     this.hotelInfoById = {};
+  }
+
+  updateWindowWidth() {
+    this.setState({ windowWidth: window.innerWidth });
   }
 
   handleReceiveMessage(message) {
@@ -336,6 +350,11 @@ class StaticHotelsSearchPage extends React.Component {
     });
   }
 
+  handleShowFilters() {
+    console.log('handled');
+    this.setState({ showFiltersMobile: true });
+  }
+
   mapStars(stars) {
     let hasStars = false;
     let mappedStars = [];
@@ -416,6 +435,9 @@ class StaticHotelsSearchPage extends React.Component {
         });
       } else {
         NotificationManager.info('Search expired');
+        return new Promise((reject) => {
+          reject();
+        });
       }
     });
   }
@@ -434,7 +456,11 @@ class StaticHotelsSearchPage extends React.Component {
     });
   }
 
-  async toggleMap() {
+  async toggleMap(e) {
+    if (e) {
+      e.preventDefault();
+    }
+
     const showMap = this.state.showMap;
 
     if (showMap) {
@@ -457,7 +483,7 @@ class StaticHotelsSearchPage extends React.Component {
               thumbnail: { url: hotel.hotelPhoto }
             };
           });
-  
+
           this.setState({
             mapInfo: mapInfo,
             showMap: !showMap,
@@ -467,6 +493,8 @@ class StaticHotelsSearchPage extends React.Component {
             this.setState({
               showMap: !showMap,
             });
+          }).catch(e => {
+            console.log(e);
           });
         }
       });
@@ -622,8 +650,10 @@ class StaticHotelsSearchPage extends React.Component {
         <section id="hotel-box">
           <div className="container">
             <div className="row">
-              <div className="col-md-3">
+              <div className="hotels-search-sidebar col-md-3">
                 <FilterPanel
+                  windowWidth={this.state.windowWidth}
+                  showFiltersMobile={this.state.showFiltersMobile}
                   hotelName={this.state.hotelName}
                   priceRange={this.state.priceRange}
                   isSearchReady={this.state.allElements}
@@ -636,11 +666,14 @@ class StaticHotelsSearchPage extends React.Component {
                   handleToggleStar={this.handleToggleStar}
                   handleFilterByName={this.handleFilterByName}
                   handleShowUnavailable={this.handleShowUnavailable}
+                  handleShowFilters={this.handleShowFilters}
                 />
-                {this.state.showMap
-                  ? <button onClick={this.toggleMap} className="btn btn-primary" style={{ width: '100%', marginBottom: '20px' }}>Show list</button>
-                  : <button onClick={this.toggleMap} className="btn btn-primary" style={{ width: '100%', marginBottom: '20px' }}>Show on map</button>
-                }
+
+                <div className="map">
+                  <div className="img-holder">
+                    <a href="#" onClick={this.toggleMap}>See Results {this.state.showMap ? 'List' : 'on Map'}</a>
+                  </div>
+                </div>
               </div>
               <div className="col-md-9">
                 <div className="list-hotel-box" id="list-hotel-box">

@@ -133,10 +133,28 @@ class HotelTripDetails extends React.Component {
     );
   }
 
+  renderHeading() {
+    switch(this.state.bookingData.bookingStatus) {
+      case 'PENDING':
+        return 'Your reservation is being confirmed';
+      case 'DONE':
+        return 'Your reservation is confirmed';
+      case 'FAILED':
+      case 'FAIL':
+        return 'Your reservation failed. Please contact our support';
+      case 'CANCELLED':
+        return 'Your reservation has been canelled';
+      default:
+        return 'Reservation details';
+    }
+  }
+
   render() {
     const { bookingData } = this.state;
     const checkInData = bookingData.checkIn;
     const checkOutData = bookingData.checkOut;
+
+    console.log(bookingData.latitude);
 
     return (
       <div>
@@ -145,7 +163,7 @@ class HotelTripDetails extends React.Component {
             <div className="logo-container">
               <img width="200" src={`${LogoLockTrip}`} alt="lock-trip-logo" />
             </div>
-            <h1>Your reservation is confirmed</h1>
+            <h2>{this.renderHeading()}</h2>
             {bookingData.bookingId ?
               <h3 className="reffernce">Booking Reference ID: <span className="refference-id">{bookingData.bookingId}</span></h3>
               : null}

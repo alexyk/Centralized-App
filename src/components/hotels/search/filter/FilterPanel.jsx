@@ -16,6 +16,15 @@ function FilterPanel(props) {
     );
   }
 
+  console.log(props.showFiltersMobile);
+  if (props.windowWidth <= 991 && !props.showFiltersMobile) {
+    return (
+      <div className="filter-box">
+        <div onClick={props.handleShowFilters} className='show-filters'>Show Filters</div>
+      </div>
+    );
+  }
+
   return (
     <div className="filter-box">
       {props.isSearchReady}

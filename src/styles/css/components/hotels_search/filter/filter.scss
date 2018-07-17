@@ -43,7 +43,7 @@ $white: #fff;
 		font-weight: 400;
 		padding-left: 10px;
 		margin-bottom: 17px;
-	}
+  }
   
   .select {
 		&:after {
@@ -217,5 +217,28 @@ $white: #fff;
 
   button {
     width: 100%;
+  }
+
+  .show-filters {
+    position: relative;
+    font-size: 1em;
+    padding: 0px 20px;
+    &:after {
+			position: absolute;
+			content: "\e900";
+			font-family: 'icomoon' !important;
+			padding: 0 8px;
+			font-size: 0.4em;
+			right: 16px;
+			top: 50%;
+			transform: translateY(-50%);
+			z-index: 1;
+			text-align: center;
+			pointer-events: none;
+			box-sizing: border-box;
+			@include media(">=desktop") {
+				font-size: 7px;
+			}
+		}
   }
 }
