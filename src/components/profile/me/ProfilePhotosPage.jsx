@@ -4,6 +4,8 @@ import React from 'react';
 import { getUserInfo } from '../../../requester';
 import request from 'superagent';
 
+import '../../../styles/css/components/profile/me/profile-photos.css';
+
 const host = Config.getValue('apiHost');
 const LOCKTRIP_UPLOAD_URL = `${host}users/me/images/upload`;
 

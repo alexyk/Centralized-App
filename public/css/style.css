@@ -41,9 +41,9 @@
     clear: both;
 }
 
-.after-header {
+/* .after-header {
     height: 60px;
-}
+} */
 
 .before-footer {
     height: 2em;
@@ -1654,7 +1654,7 @@ ul.profile-messages-item>li:nth-child(5)>span {
     font-weight: normal;
 }
 
-#profile-edit-form {
+/* #profile-edit-form {
     width: 785px;
     margin-left: 60px;
 }
@@ -1690,7 +1690,7 @@ ul.profile-messages-item>li:nth-child(5)>span {
     font-size: 18px;
     padding: 15px;
     width: 100%;
-}
+} */
 
 .dropdown {
     list-style-type: none;
@@ -1705,13 +1705,13 @@ li.dropdown {
     background-repeat: no-repeat;
     background-position: center right;
 }
-
+/*
 #profile-edit-form .lock {
     vertical-align: baseline;
     margin-left: 5px;
-}
+} */
 
-#profile-edit-form>form>div {
+/* #profile-edit-form>form>div {
     clear: both;
     margin-bottom: 20px;
 }
@@ -1776,7 +1776,7 @@ li.dropdown {
     letter-spacing: .1em;
     width: auto;
     margin: 50px 0 30px 0;
-}
+} */
 
 #profile-mylistings ul.profile-mylistings-active {
     border: 1px solid #CCCCCC;
@@ -2524,8 +2524,8 @@ input[type="checkbox"].tick:checked+label:after {
 
 /* END */
 
-.host-step {
-    /* padding: 10px 10px 10px 20px; */
+/* .host-step {
+    padding: 10px 10px 10px 20px;
     margin-bottom: 10px;
     font-size: 16px;
     display: block;
@@ -2534,23 +2534,23 @@ input[type="checkbox"].tick:checked+label:after {
 .host-step a {
     padding: 10px 10px 10px 20px;
     font-size: 16px;
-    /* font-weight: bold; */
+    font-weight: bold;
     display: block;
-}
+}*/
 
 .list-hotel .carousel-fade {
     max-height: 190px;
     overflow: hidden;
 }
 
-.host-step a.active {
+/* .host-step a.active {
     padding: 10px 10px 10px 20px;
     background-color: #A2C5BF;
     border-radius: 3px;
     color: #FFFFFF;
     font-weight: normal;
     display: block;
-}
+} */
 
 /* Override daterangepicker */
 
@@ -2646,7 +2646,7 @@ input[type="checkbox"].tick:checked+label:after {
     width: 100%;
 }
 
-#profile-photos .pictures-upload {
+/* #profile-photos .pictures-upload {
     width: 30%;
     padding: 70px 0;
     margin: 0;
@@ -2658,7 +2658,7 @@ input[type="checkbox"].tick:checked+label:after {
 
 #profile-photos .uploaded-small-picture>img {
     margin: 0;
-}
+} */
 
 .pictures-upload {
     width: 90%;
