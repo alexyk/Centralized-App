@@ -4,8 +4,6 @@ import { Route, Switch } from 'react-router-dom';
 import ProfileNav from './ProfileNav';
 import ProfileEditForm from './ProfileEditForm';
 import ProfilePhotosPage from './ProfilePhotosPage';
-import MyProfileEditForm from './MyProfileEditForm';
-
 
 
 function ProfileEditPage() {
@@ -21,7 +19,6 @@ function ProfileEditPage() {
             <div className="col-md-8">
               <Switch>
                 <Route exact path="/profile/me/edit" render={() => <ProfileEditForm />} />
-                <Route exact path="/profile/me/edit/niki" render={() => <MyProfileEditForm />} />
                 <Route exact path="/profile/me/edit/photos" render={() => <ProfilePhotosPage />} />
               </Switch>
             </div>

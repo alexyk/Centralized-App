@@ -1,0 +1,27 @@
+.host-step {
+  /* padding: 10px 10px 10px 20px; */
+  margin-bottom: 10px;
+  font-size: 16px;
+  display: block;
+}
+
+.host-step a {
+  padding: 10px 10px 10px 20px;
+  font-size: 16px;
+  /* font-weight: bold; */
+  display: block;
+}
+
+.list-hotel .carousel-fade {
+  max-height: 190px;
+  overflow: hidden;
+}
+
+.host-step a.active {
+  padding: 10px 10px 10px 20px;
+  background-color: #A2C5BF;
+  border-radius: 3px;
+  color: #FFFFFF;
+  font-weight: normal;
+  display: block;
+}
