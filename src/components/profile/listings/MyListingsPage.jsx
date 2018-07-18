@@ -10,7 +10,9 @@ import { deleteListing } from '../../../requester';
 import DeletionModal from '../../common/modals/DeletionModal';
 import { Config } from '../../../config';
 import ReCAPTCHA from 'react-google-recaptcha';
+import MyListingsItemRow from './MyListingsItemRow';
 
+import './my-listings-page.css';
 
 class MyListingsPage extends React.Component {
   constructor(props) {
@@ -144,7 +146,14 @@ class MyListingsPage extends React.Component {
             <h2>Active ({this.state.activeListings.length})</h2>
             <hr className="profile-line" />
             {this.state.activeListings.map((item, i) => {
-              return <MyListingsActiveItem handleOpenDeleteListingModal={this.handleOpenDeleteListingModal} state={item.state} filterListings={this.filterListings} listing={item} key={i} />;
+              <MyListingsItemRow
+                key={i}
+                styleClass="my-listings-flex-container"
+                handleOpenDeleteListingModal={this.handleOpenDeleteListingModal}
+                state={item.state}
+                filterListings={this.filterListings}
+                listing={item}
+              />;
             })}
           </div>
 
@@ -152,7 +161,14 @@ class MyListingsPage extends React.Component {
             <h2>Inactive ({this.state.inactiveListings.length})</h2>
             <hr className="profile-line" />
             {this.state.deniedListings && this.state.inactiveListings.map((item, i) => {
-              return <MyListingsActiveItem handleOpenDeleteListingModal={this.handleOpenDeleteListingModal} state={item.state} filterListings={this.filterListings} listing={item} key={i} />;
+              return <MyListingsItemRow
+                key={i}
+                styleClass="my-listings-flex-container"
+                handleOpenDeleteListingModal={this.handleOpenDeleteListingModal}
+                state={item.state}
+                filterListings={this.filterListings}
+                listing={item}
+              />;
             })}
           </div>
 
@@ -160,7 +176,14 @@ class MyListingsPage extends React.Component {
             <h2>Denied ({this.state.deniedListings.length})</h2>
             <hr className="profile-line" />
             {this.state.deniedListings && this.state.deniedListings.map((item, i) => {
-              return <MyListingsActiveItem handleOpenDeleteListingModal={this.handleOpenDeleteListingModal} state={item.state} filterListings={this.filterListings} listing={item} key={i} />;
+              <MyListingsItemRow
+                key={i}
+                styleClass="my-listings-flex-container"
+                handleOpenDeleteListingModal={this.handleOpenDeleteListingModal}
+                state={item.state}
+                filterListings={this.filterListings}
+                listing={item}
+              />;
             })}
           </div>
 

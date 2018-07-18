@@ -1,0 +1,26 @@
+.dashboard-flex-container {
+  &.dashboard-flex-row {
+    font-size: 18px;
+  }
+  .dashboard-image-host {
+    width: 30px;
+    height: 45px;
+    border-radius: 5px;
+  }
+  
+  .dashboard-image-width {
+    width: 7%;
+  }
+  
+  .dashboard-host-width {
+    width: 40%;
+  }
+  
+  .dashboard-dates-width {
+    width: 28%;
+  }
+  
+  .dashboard-status-width {
+    width: 25%;
+  }
+}

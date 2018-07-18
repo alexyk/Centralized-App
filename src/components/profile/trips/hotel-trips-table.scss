@@ -1,0 +1,49 @@
+.trips-flex-container {
+  .trips-image-host {
+    border-radius: 5px;
+    width: 45px;
+    height: 45px;
+  }
+  
+  .trips-image-width {
+    width: 7%;
+  }
+  
+  .trips-host-width {
+    width: 17%;
+  }
+  
+  .trips-property-width {
+    width: 17%;
+    .trips-property-link {
+      padding-bottom: 10px;
+      color: #E98B73;
+      background: none;
+      border: none;
+      outline: none;
+      padding: 1px 6px 10px;
+    }
+  }
+  
+  .trips-dates-width {
+    width: 28%;
+    i {
+      padding: 0 2%;
+    }
+  }
+  
+  .trips-actions-width {
+    width: 13%;
+    button {
+      padding-bottom: 10px;
+      color: #E98B73;
+      background: none;
+      border: none;
+      outline: none;
+    }
+  }
+  
+  .trips-status-width {
+    width: 18%;
+  }
+}

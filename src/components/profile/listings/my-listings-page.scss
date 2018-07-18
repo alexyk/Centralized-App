@@ -1,0 +1,68 @@
+.my-listings-flex-container {
+  .toggle {
+    width: 0.5%;
+    height: 100px;
+    background-repeat: no-repeat;
+    background-position: 0px;
+    background-image: url(../../../styles/images/arrow-right.png);
+  }
+  .thumb {
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    width: 8%;
+    height: 60px;
+    background-color: silver;
+    border-radius: 2px;
+  }
+  .details {
+    width: 35%;
+    a {
+      font-size: 24px;
+      font-family: 'FuturaStd-Medium', sans-serif;
+    }
+  }
+  .price {
+    font-size: 18px;
+    width: 11%;
+  }
+  .edit {
+    width: 12%;
+    font-size: 20px;
+    font-family: 'FuturaStd-Medium', sans-serif;
+  }
+  .calendar {
+    width: 210px;
+    padding-top: 20px;
+    margin-top: 0;
+    margin-bottom: 0;
+    margin-left: 0;
+    display: block;
+    a {
+      background-color: #d87a61;
+      border: none;
+      color: white;
+      font-weight: bold;
+      padding: 18px 22px;
+      text-align: center;
+      text-decoration: none;
+      font-size: 16px;
+      cursor: pointer;
+      border-radius: 5px;
+      letter-spacing: .1em;
+      line-height: 3.6;
+      font-family: sans-serif;
+    }
+  }
+  .remove {
+    span {
+      display: block;
+      background-position: center center;
+      background-image: url(../../../styles/images/icon-remove.png);
+      width: 39px;
+      height: 39px;
+      border-radius: 2px;
+      cursor: pointer;
+    }
+  }
+}
