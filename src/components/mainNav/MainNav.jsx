@@ -1,52 +1,50 @@
-import { Link, withRouter } from 'react-router-dom';
-import { connect } from 'react-redux';
-import { MenuItem, Nav, NavDropdown, NavItem, Navbar } from 'react-bootstrap/lib';
-import { NotificationManager } from 'react-notifications';
-import ChangePasswordModal from './modals/ChangePasswordModal';
-import EnterRecoveryTokenModal from './modals/EnterRecoveryTokenModal';
-import PropTypes from 'prop-types';
-import React from 'react';
-import SendRecoveryEmailModal from './modals/SendRecoveryEmailModal';
-import CreateWalletModal from './modals/CreateWalletModal';
-import SaveWalletModal from './modals/SaveWalletModal';
-import ConfirmWalletModal from './modals/ConfirmWalletModal';
-import LoginModal from './modals/LoginModal';
-import AirdropLoginModal from '../profile/airdrop/AirdropLoginModal';
-import RegisterModal from './modals/RegisterModal';
-import AirdropRegisterModal from '../profile/airdrop/AirdropRegisterModal';
-import ReCAPTCHA from 'react-google-recaptcha';
-
-import { Config } from '../../config';
-import { Wallet } from '../../services/blockchain/wallet.js';
-import { setIsLogged, setUserInfo } from '../../actions/userInfo';
-import { openModal, closeModal } from '../../actions/modalsInfo';
-import { setAirdropInfo, setAirdropModalTrue } from '../../actions/airdropInfo';
-import requester from '../../initDependencies';
-
 import '../../styles/css/components/captcha/captcha-container.css';
+
 import {
+  AIRDROP_LOGIN,
+  AIRDROP_REGISTER,
+  CHANGE_PASSWORD,
+  CONFIRM_WALLET,
+  CREATE_WALLET,
+  ENTER_RECOVERY_TOKEN,
   LOGIN,
   REGISTER,
-  CREATE_WALLET,
-  SEND_RECOVERY_EMAIL,
-  ENTER_RECOVERY_TOKEN,
-  CHANGE_PASSWORD,
   SAVE_WALLET,
-  CONFIRM_WALLET,
-  AIRDROP_LOGIN,
-  AIRDROP_REGISTER
+  SEND_RECOVERY_EMAIL
 } from '../../constants/modals.js';
-
-import { PROFILE_SUCCESSFULLY_CREATED, PASSWORD_SUCCESSFULLY_CHANGED } from '../../constants/successMessages.js';
 import {
-  PASSWORDS_DONT_MATCH,
+  INVALID_EMAIL,
   INVALID_PASSWORD,
   INVALID_TOKEN,
-  INVALID_EMAIL,
+  PASSWORDS_DONT_MATCH,
   PROFILE_PASSWORD_REQUIREMENTS
 } from '../../constants/warningMessages';
-import { NOT_FOUND } from '../../constants/errorMessages';
+import { Link, withRouter } from 'react-router-dom';
+import { MenuItem, Nav, NavDropdown, NavItem, Navbar } from 'react-bootstrap/lib';
+import { PASSWORD_SUCCESSFULLY_CHANGED, PROFILE_SUCCESSFULLY_CREATED } from '../../constants/successMessages.js';
+import { closeModal, openModal } from '../../actions/modalsInfo';
+import { setAirdropInfo, setAirdropModalTrue } from '../../actions/airdropInfo';
+import { setIsLogged, setUserInfo } from '../../actions/userInfo';
 
+import AirdropLoginModal from '../profile/airdrop/AirdropLoginModal';
+import AirdropRegisterModal from '../profile/airdrop/AirdropRegisterModal';
+import ChangePasswordModal from './modals/ChangePasswordModal';
+import { Config } from '../../config';
+import ConfirmWalletModal from './modals/ConfirmWalletModal';
+import CreateWalletModal from './modals/CreateWalletModal';
+import EnterRecoveryTokenModal from './modals/EnterRecoveryTokenModal';
+import LoginModal from './modals/LoginModal';
+import { NOT_FOUND } from '../../constants/errorMessages';
+import { NotificationManager } from 'react-notifications';
+import PropTypes from 'prop-types';
+import ReCAPTCHA from 'react-google-recaptcha';
+import React from 'react';
+import RegisterModal from './modals/RegisterModal';
+import SaveWalletModal from './modals/SaveWalletModal';
+import SendRecoveryEmailModal from './modals/SendRecoveryEmailModal';
+import { Wallet } from '../../services/blockchain/wallet.js';
+import { connect } from 'react-redux';
+import requester from '../../initDependencies';
 
 class MainNav extends React.Component {
   constructor(props) {
@@ -143,7 +141,7 @@ class MainNav extends React.Component {
 
     this.clearLocalStorage();
 
-    requester.register(user, captchaToken).then((res) => {
+    requester.register(user, captchaToken).then(res => {
       if (res.success) {
         this.openModal(LOGIN);
         NotificationManager.success(PROFILE_SUCCESSFULLY_CREATED);
@@ -174,7 +172,7 @@ class MainNav extends React.Component {
 
     this.clearLocalStorage();
 
-    requester.register(user, captchaToken).then((res) => {
+    requester.register(user, captchaToken).then(res => {
       if (res.success) {
         this.openModal(AIRDROP_LOGIN);
         NotificationManager.success(PROFILE_SUCCESSFULLY_CREATED);
@@ -205,9 +203,9 @@ class MainNav extends React.Component {
       this.setState({ isUpdatingWallet: false });
     }
 
-    requester.login(user, captchaToken).then((res) => {
+    requester.login(user, captchaToken).then(res => {
       if (res.success) {
-        res.body.then((data) => {
+        res.body.then(data => {
           localStorage[Config.getValue('domainPrefix') + '.auth.locktrip'] = data.Authorization;
           localStorage[Config.getValue('domainPrefix') + '.auth.username'] = user.email;
 
@@ -259,9 +257,9 @@ class MainNav extends React.Component {
       this.setState({ isUpdatingWallet: false });
     }
 
-    requester.login(user, captchaToken).then((res) => {
+    requester.login(user, captchaToken).then(res => {
       if (res.success) {
-        res.body.then((data) => {
+        res.body.then(data => {
           localStorage[Config.getValue('domainPrefix') + '.auth.locktrip'] = data.Authorization;
           localStorage[Config.getValue('domainPrefix') + '.auth.username'] = user.email;
 
@@ -440,7 +438,7 @@ class MainNav extends React.Component {
       password: password,
     };
 
-    requester.sendNewPassword(postObj, token).then((res) => {
+    requester.sendNewPassword(postObj, token).then(res => {
       if (res.success) {
         this.closeModal(CHANGE_PASSWORD);
         this.openModal(LOGIN);
@@ -453,7 +451,7 @@ class MainNav extends React.Component {
   }
 
   handleSubmitRecoveryToken() {
-    requester.sendRecoveryToken(this.state.recoveryToken).then((res) => {
+    requester.sendRecoveryToken(this.state.recoveryToken).then(res => {
       if (res.success) {
         this.closeModal(ENTER_RECOVERY_TOKEN);
         this.openModal(CHANGE_PASSWORD);
@@ -467,7 +465,7 @@ class MainNav extends React.Component {
   handleSubmitRecoveryEmail(token) {
     const email = { email: this.state.recoveryEmail };
 
-    requester.sendRecoveryEmail(email, token).then((res) => {
+    requester.sendRecoveryEmail(email, token).then(res => {
       if (res.success) {
         this.closeModal(SEND_RECOVERY_EMAIL);
         this.openModal(ENTER_RECOVERY_TOKEN);

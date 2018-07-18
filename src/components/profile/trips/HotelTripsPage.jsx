@@ -1,19 +1,19 @@
-import { Config } from '../../../config';
+import { closeModal, openModal } from '../../../actions/modalsInfo.js';
+
 import CancellationModal from '../../common/modals/CancellationModal';
-import Pagination from '../../common/pagination/Pagination';
-import { Link } from 'react-router-dom';
+import { Config } from '../../../config';
+import { HotelReservation } from '../../../services/blockchain/hotelReservation';
 import HotelTripsTable from './HotelTripsTable';
+import { Link } from 'react-router-dom';
 import { NotificationManager } from 'react-notifications';
+import { PASSWORD_PROMPT } from '../../../constants/modals.js';
+import Pagination from '../../common/pagination/Pagination';
+import PasswordModal from '../../common/modals/PasswordModal';
 import PropTypes from 'prop-types';
 import ReCAPTCHA from 'react-google-recaptcha';
 import React from 'react';
-import PasswordModal from '../../common/modals/PasswordModal';
 import { connect } from 'react-redux';
-import { PASSWORD_PROMPT } from '../../../constants/modals.js';
-import { openModal, closeModal } from '../../../actions/modalsInfo.js';
-import { HotelReservation } from '../../../services/blockchain/hotelReservation';
 import requester from '../../../initDependencies';
-
 import { withRouter } from 'react-router-dom';
 
 class HotelTripsPage extends React.Component {
@@ -85,7 +85,7 @@ class HotelTripsPage extends React.Component {
     console.log(bookingForCancellation);
     requester.cancelBooking(bookingForCancellation).then(res => {
       if (res.success === true) {
-        requester.getMyJsonFile().then((res) => {
+        requester.getMyJsonFile().then(res => {
           res.body.then(data => {
             NotificationManager.info('Your reservation is being cancelled...', 'Transactions', 10000);
             this.closeModal(PASSWORD_PROMPT);

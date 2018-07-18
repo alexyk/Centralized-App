@@ -1,4 +1,3 @@
-import { NotificationManager } from 'react-notifications';
 import { Route, Switch, withRouter } from 'react-router-dom';
 
 import { Config } from '../../config';
@@ -14,14 +13,15 @@ import ListingPhotos from './steps/ListingPhotos';
 import ListingPlaceType from './steps/ListingPlaceType';
 import ListingPrice from './steps/ListingPrice';
 import ListingSafetyFacilities from './steps/ListingSafetyFacilities';
-import ReCAPTCHA from 'react-google-recaptcha';
+import { NotificationManager } from 'react-notifications';
 import PropTypes from 'prop-types';
+import ReCAPTCHA from 'react-google-recaptcha';
 import React from 'react';
 import { arrayMove } from 'react-sortable-hoc';
 import moment from 'moment';
 import request from 'superagent';
-import update from 'react-addons-update';
 import requester from '../../initDependencies';
+import update from 'react-addons-update';
 
 const host = Config.getValue('apiHost');
 const LOCKTRIP_UPLOAD_URL = `${host}images/upload`;
@@ -118,7 +118,7 @@ class CreateListingPage extends React.Component {
     });
 
     requester.getCurrencies().then(res => {
-      res.body.then((data) => {
+      res.body.then(data => {
         this.setState({ currencies: data.content });
       });
     });
@@ -289,7 +289,7 @@ class CreateListingPage extends React.Component {
     let listing = this.createListingObject();
     this.setState({ loading: true });
 
-    requester.createListing(listing, captchaToken).then((res) => {
+    requester.createListing(listing, captchaToken).then(res => {
       if (res.success) {
         this.setState({ loading: false });
         res.body.then(data => {

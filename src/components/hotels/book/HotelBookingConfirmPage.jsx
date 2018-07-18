@@ -1,19 +1,19 @@
-import { withRouter } from 'react-router-dom';
-import { NotificationManager } from 'react-notifications';
-import PasswordModal from '../../common/modals/PasswordModal';
+import { closeModal, openModal } from '../../../actions/modalsInfo.js';
+
 import { Config } from '../../../config';
+import { HotelReservation } from '../../../services/blockchain/hotelReservation';
+import { NotificationManager } from 'react-notifications';
+import { PASSWORD_PROMPT } from '../../../constants/modals.js';
+import { PROCESSING_TRANSACTION } from '../../../constants/infoMessages.js';
+import PasswordModal from '../../common/modals/PasswordModal';
 import PropTypes from 'prop-types';
+import { ROOMS_XML_CURRENCY } from '../../../constants/currencies.js';
+import ReCAPTCHA from 'react-google-recaptcha';
 import React from 'react';
 import { connect } from 'react-redux';
 import moment from 'moment';
-import { ROOMS_XML_CURRENCY } from '../../../constants/currencies.js';
-import { PASSWORD_PROMPT } from '../../../constants/modals.js';
-import { openModal, closeModal } from '../../../actions/modalsInfo.js';
-import { PROCESSING_TRANSACTION } from '../../../constants/infoMessages.js';
-import ReCAPTCHA from 'react-google-recaptcha';
 import requester from '../../../initDependencies';
-
-import { HotelReservation } from '../../../services/blockchain/hotelReservation';
+import { withRouter } from 'react-router-dom';
 
 class HotelBookingConfirmPage extends React.Component {
   constructor(props) {
@@ -45,18 +45,18 @@ class HotelBookingConfirmPage extends React.Component {
     const searchParams = this.getSearchParams(search);
     const booking = JSON.parse(decodeURI(searchParams.get('booking')));
     console.log(booking);
-    requester.createReservation(booking).then((res) => {
+    requester.createReservation(booking).then(res => {
       if (res.success) {
         res.body.then(data => {
           this.setState({ data: data, booking: booking });
 
-          requester.getLocRateByCurrency(data.currency).then((res) => {
+          requester.getLocRateByCurrency(data.currency).then(res => {
             res.body.then(data => {
               this.setState({ locRate: data[0]['price_' + data.currency.toLowerCase()] });
             });
           });
 
-          requester.getCurrencyRates().then((res) => {
+          requester.getCurrencyRates().then(res => {
             res.body.then(data => {
               this.setState({ rates: data });
             });
@@ -210,7 +210,7 @@ class HotelBookingConfirmPage extends React.Component {
   }
 
   handleSubmit(token) {
-    requester.getCancellationFees(this.state.data.preparedBookingId).then((res) => {
+    requester.getCancellationFees(this.state.data.preparedBookingId).then(res => {
       res.body.then(json => {
         const password = this.state.password;
         const preparedBookingId = this.state.data.preparedBookingId;
@@ -235,14 +235,14 @@ class HotelBookingConfirmPage extends React.Component {
           refundPercentages.unshift(cancellationFees[key].toString());
         }
 
-        console.log(daysBeforeStartOfRefund)
-        console.log(refundPercentages)
+        console.log(daysBeforeStartOfRefund);
+        console.log(refundPercentages);
 
         NotificationManager.info(PROCESSING_TRANSACTION, 'Transactions', 60000);
         this.setState({ confirmed: true });
         this.closeModal(PASSWORD_PROMPT);
 
-        requester.getMyJsonFile().then((res) => {
+        requester.getMyJsonFile().then(res => {
           res.body.then(data => {
             setTimeout(() => {
               HotelReservation.createReservation(

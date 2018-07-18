@@ -1,14 +1,13 @@
-import { withRouter } from 'react-router-dom';
+import { Config } from '../../../config';
 import { NotificationManager } from 'react-notifications';
-
 import PropTypes from 'prop-types';
+import { ROOMS_XML_CURRENCY } from '../../../constants/currencies.js';
 import React from 'react';
 import { connect } from 'react-redux';
 import moment from 'moment';
-import validator from 'validator';
-import { ROOMS_XML_CURRENCY } from '../../../constants/currencies.js';
-import { Config } from '../../../config';
 import requester from '../../../initDependencies';
+import validator from 'validator';
+import { withRouter } from 'react-router-dom';
 
 class HotelBookingPage extends React.Component {
   constructor(props) {
@@ -77,7 +76,7 @@ class HotelBookingPage extends React.Component {
   }
 
   getLocRate() {
-    requester.getLocRateByCurrency(ROOMS_XML_CURRENCY).then((res) => {
+    requester.getLocRateByCurrency(ROOMS_XML_CURRENCY).then(res => {
       res.body.then(data => {
         this.setState({ locRate: Number(data[0][`price_${ROOMS_XML_CURRENCY.toLowerCase()}`]) });
       });

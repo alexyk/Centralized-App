@@ -1,13 +1,13 @@
-import { NotificationManager } from 'react-notifications';
-import Pagination from '../../common/pagination/Pagination';
+import { Config } from '../../../config';
+import DeletionModal from '../../common/modals/DeletionModal';
 import { Link } from 'react-router-dom';
 import MyListingsActiveItem from './MyListingsActiveItem';
 import MyListingsInProgressItem from './MyListingsInProgressItem';
+import { NotificationManager } from 'react-notifications';
+import Pagination from '../../common/pagination/Pagination';
+import ReCAPTCHA from 'react-google-recaptcha';
 import React from 'react';
 import filterListings from '../../../actions/filterListings';
-import DeletionModal from '../../common/modals/DeletionModal';
-import { Config } from '../../../config';
-import ReCAPTCHA from 'react-google-recaptcha';
 import requester from '../../../initDependencies';
 
 export default class MyListingsPage extends React.Component {
@@ -57,7 +57,7 @@ export default class MyListingsPage extends React.Component {
   }
 
   deleteInProgressListing(id) {
-    requester.deleteInProgressListing(id).then((res) => {
+    requester.deleteInProgressListing(id).then(res => {
       if (res.success) {
         let listingsInProgress = this.state.listingsInProgress;
         listingsInProgress = listingsInProgress.filter(x => x.id !== id);

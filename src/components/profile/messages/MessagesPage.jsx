@@ -1,6 +1,6 @@
-import Pagination from '../../common/pagination/Pagination';
-import NoEntriesMessage from '../common/NoEntriesMessage';
 import MessagesItem from './MessagesItem';
+import NoEntriesMessage from '../common/NoEntriesMessage';
+import Pagination from '../../common/pagination/Pagination';
 import React from 'react';
 import requester from '../../../initDependencies';
 
@@ -21,9 +21,9 @@ export default class MessagesPage extends React.Component {
 
   componentDidMount() {
     requester.getMyConversations(['page=0']).then(res => {
-      res.body.then((data) => {
+      res.body.then(data => {
         this.setState({ messages: data.content, loading: false, totalElements: data.totalElements });
-      })
+      });
     });
   }
 

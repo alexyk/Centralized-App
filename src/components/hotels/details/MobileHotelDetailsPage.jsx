@@ -1,24 +1,24 @@
-import { withRouter } from 'react-router-dom';
-import { NotificationManager } from 'react-notifications';
-import { Config } from '../../../config';
-import PropTypes from 'prop-types';
-import HotelDetailsInfoSection from './HotelDetailsInfoSection';
-import React from 'react';
-import HotelsSearchBar from '../search/HotelsSearchBar';
-import { connect } from 'react-redux';
-import { setCurrency } from '../../../actions/paymentInfo';
-import moment from 'moment';
-import { parse } from 'query-string';
-import ChildrenModal from '../modals/ChildrenModal';
-import { ROOMS_XML_CURRENCY } from '../../../constants/currencies.js';
-import Lightbox from 'react-images';
-
 import '../../../styles/css/main.css';
 import '../../../styles/css/components/carousel-component.css';
-import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
+
+import ChildrenModal from '../modals/ChildrenModal';
+import { Config } from '../../../config';
+import HotelDetailsInfoSection from './HotelDetailsInfoSection';
+import HotelsSearchBar from '../search/HotelsSearchBar';
+import Lightbox from 'react-images';
+import { NotificationManager } from 'react-notifications';
+import PropTypes from 'prop-types';
+import { ROOMS_XML_CURRENCY } from '../../../constants/currencies.js';
+import React from 'react';
+import Slider from 'react-slick';
+import { connect } from 'react-redux';
+import moment from 'moment';
+import { parse } from 'query-string';
 import requester from '../../../initDependencies';
+import { setCurrency } from '../../../actions/paymentInfo';
+import { withRouter } from 'react-router-dom';
 
 class MobileHotelDetailsPage extends React.Component {
   constructor(props) {
@@ -93,7 +93,7 @@ class MobileHotelDetailsPage extends React.Component {
         this.setState({ data: data, loading: false });
         const searchParams = this.getSearchParams(this.props.location.search);
         const regionId = searchParams.get('region') || data.region.externalId;
-        requester.getRegionNameById(regionId).then((res) => {
+        requester.getRegionNameById(regionId).then(res => {
           res.body.then(data => {
             this.setState({ region: data });
           });
@@ -444,7 +444,7 @@ class MobileHotelDetailsPage extends React.Component {
     const roomAvailability = new Map(this.state.roomAvailability);
     roomAvailability.set(quoteId, 'loading');
     this.setState({ roomAvailability: roomAvailability }, () => {
-      requester.createReservation(booking).then((res) => {
+      requester.createReservation(booking).then(res => {
         const updatedRoomAvailability = new Map(this.state.roomAvailability);
         if (res.success) {
           updatedRoomAvailability.set(quoteId, true);
@@ -513,7 +513,7 @@ class MobileHotelDetailsPage extends React.Component {
     }
 
     booking.quoteId = allRooms[index].quoteId;
-    requester.createReservation(booking).then((res) => {
+    requester.createReservation(booking).then(res => {
       if (res.success) {
         if (index !== 0) {
           NotificationManager.info('The room that you requested is no longer available. You were given a similar room which may have slightly different price and extras.', '', 5000);

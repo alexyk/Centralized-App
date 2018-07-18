@@ -1,8 +1,7 @@
 import 'react-notifications/lib/notifications.css';
 
-import { NotificationManager } from 'react-notifications';
-
 import { Config } from '../../../config';
+import { NotificationManager } from 'react-notifications';
 import ReCAPTCHA from 'react-google-recaptcha';
 import React from 'react';
 import moment from 'moment';
@@ -117,7 +116,7 @@ export default class ProfileEditPage extends React.Component {
 
     Object.keys(userInfo).forEach((key) => (userInfo[key] === null || userInfo[key] === '') && delete userInfo[key]);
 
-    requester.updateUserInfo(userInfo, captchaToken).then((res) => {
+    requester.updateUserInfo(userInfo, captchaToken).then(res => {
       if (res.success) {
         NotificationManager.success('Successfully updated your profile', 'Update user profile');
         this.componentDidMount();

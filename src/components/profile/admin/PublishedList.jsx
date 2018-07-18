@@ -1,20 +1,19 @@
-import { NotificationManager } from 'react-notifications';
+import '../../../styles/css/components/captcha/captcha-container.css';
 
-import Filter from './Filter';
+import { Config } from '../../../config';
 import ContactHostModal from '../../common/modals/ContactHostModal';
+import Filter from './Filter';
+import Lightbox from 'react-images';
+import ListItem from './ListItem';
+import NoEntriesMessage from '../common/NoEntriesMessage';
+import { NotificationManager } from 'react-notifications';
 import Pagination from '../../common/pagination/Pagination';
 import PropTypes from 'prop-types';
+import ReCAPTCHA from 'react-google-recaptcha';
 import React from 'react';
 import queryString from 'query-string';
-import { withRouter } from 'react-router-dom';
-import NoEntriesMessage from '../common/NoEntriesMessage';
-import ListItem from './ListItem';
-import Lightbox from 'react-images';
-import ReCAPTCHA from 'react-google-recaptcha';
-import { Config } from '../../../config';
 import requester from '../../../initDependencies';
-
-import '../../../styles/css/components/captcha/captcha-container.css';
+import { withRouter } from 'react-router-dom';
 
 class PublishedList extends React.Component {
   constructor(props) {
@@ -60,7 +59,7 @@ class PublishedList extends React.Component {
 
   componentDidMount() {
     let searchTerm = this.buildSearchTerm();
-    requester.getAllPublishedListings([searchTerm]).then((res) => {
+    requester.getAllPublishedListings([searchTerm]).then(res => {
       res.body.then(data => {
         this.setState({ listings: data.content, loading: false, totalElements: data.totalElements });
       });
@@ -87,7 +86,7 @@ class PublishedList extends React.Component {
 
     let searchTerm = this.buildSearchTerm();
 
-    requester.getAllPublishedListings([searchTerm]).then((res) => {
+    requester.getAllPublishedListings([searchTerm]).then(res => {
       res.body.then(data => {
         this.props.history.push(`/profile/admin/listings/published${searchTerm}`);
         this.setState({ listings: data.content, loading: false, totalElements: data.totalElements });
@@ -182,7 +181,7 @@ class PublishedList extends React.Component {
       state: status
     };
 
-    requester.changeListingStatus(unpublishObj).then((res) => {
+    requester.changeListingStatus(unpublishObj).then(res => {
       if (res.success) {
         NotificationManager.info('Listing unpublished');
         const allListings = this.state.listings;

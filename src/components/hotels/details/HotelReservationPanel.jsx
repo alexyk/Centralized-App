@@ -6,8 +6,8 @@ import ReCAPTCHA from 'react-google-recaptcha';
 import React from 'react';
 import { connect } from 'react-redux';
 import { parse } from 'query-string';
-import { withRouter } from 'react-router-dom';
 import requester from '../../../initDependencies';
+import { withRouter } from 'react-router-dom';
 
 class HomeReservationPanel extends React.Component {
   constructor(props) {
@@ -71,7 +71,7 @@ class HomeReservationPanel extends React.Component {
         phone: this.state.phone,
       };
 
-      requester.requestBooking(requestInfo, captchaToken).then((res) => {
+      requester.requestBooking(requestInfo, captchaToken).then(res => {
         this.setState({ sending: false });
         if (!res.success) {
           this.setState({ error: 'Please sign-in/register to able to make bookings' });

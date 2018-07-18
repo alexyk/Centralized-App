@@ -1,9 +1,10 @@
 // import { DropdownButton, MenuItem } from 'react-bootstrap';
-import React from 'react';
-import { connect } from 'react-redux';
-import PropTypes from 'prop-types';
 
 import { setCurrency, setLocRate } from '../../actions/paymentInfo';
+
+import PropTypes from 'prop-types';
+import React from 'react';
+import { connect } from 'react-redux';
 import requester from '../../initDependencies';
 
 class AttachedFooter extends React.Component {
@@ -24,7 +25,7 @@ class AttachedFooter extends React.Component {
   }
 
   getAndSetLocRate(currency) {
-    requester.getLocRateByCurrency(currency).then((res) => {
+    requester.getLocRateByCurrency(currency).then(res => {
       res.body.then(data => {
         this.props.dispatch(setLocRate(data[0][`price_${currency.toLowerCase()}`]));
       });

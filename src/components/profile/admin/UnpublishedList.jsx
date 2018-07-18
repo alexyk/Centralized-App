@@ -1,22 +1,21 @@
-import { NotificationManager } from 'react-notifications';
+import '../../../styles/css/components/captcha/captcha-container.css';
 
-import Filter from './Filter';
+import { Config } from '../../../config';
 import ContactHostModal from '../../common/modals/ContactHostModal';
 import DeletionModal from '../../common/modals/DeletionModal';
+import Filter from './Filter';
+import Lightbox from 'react-images';
+import ListItem from './ListItem';
+import NoEntriesMessage from '../common/NoEntriesMessage';
+import { NotificationManager } from 'react-notifications';
 import Pagination from '../../common/pagination/Pagination';
 import PropTypes from 'prop-types';
-import React from 'react';
-import queryString from 'query-string';
-import { withRouter } from 'react-router-dom';
-import filterListings from '../../../actions/filterListings';
-import ListItem from './ListItem';
-import { Config } from '../../../config';
 import ReCAPTCHA from 'react-google-recaptcha';
-import NoEntriesMessage from '../common/NoEntriesMessage';
-import Lightbox from 'react-images';
+import React from 'react';
+import filterListings from '../../../actions/filterListings';
+import queryString from 'query-string';
 import requester from '../../../initDependencies';
-
-import '../../../styles/css/components/captcha/captcha-container.css';
+import { withRouter } from 'react-router-dom';
 
 class UnpublishedList extends React.Component {
   constructor(props) {
@@ -69,7 +68,7 @@ class UnpublishedList extends React.Component {
 
   componentDidMount() {
     let search = this.buildSearchTerm();
-    requester.getAllUnpublishedListings(search.searchTermMap).then((res) => {
+    requester.getAllUnpublishedListings(search.searchTermMap).then(res => {
       res.body.then(data => {
         this.setState({ listings: data.content, loading: false, totalElements: data.totalElements });
       });
@@ -96,7 +95,7 @@ class UnpublishedList extends React.Component {
 
     let search = this.buildSearchTerm();
 
-    requester.getAllUnpublishedListings(search.searchTermMap).then((res) => {
+    requester.getAllUnpublishedListings(search.searchTermMap).then(res => {
       res.body.then(data => {
         this.props.history.push(`/profile/admin/listings/unpublished${search.searchTerm}`);
         this.setState({ listings: data.content, loading: false, totalElements: data.totalElements });
@@ -205,7 +204,7 @@ class UnpublishedList extends React.Component {
       state: status
     };
 
-    requester.changeListingStatus(publishObj).then((res) => {
+    requester.changeListingStatus(publishObj).then(res => {
       if (res.success) {
         switch (status) {
           case 'active': NotificationManager.success('Listing approved');

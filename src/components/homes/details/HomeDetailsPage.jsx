@@ -1,16 +1,15 @@
-import { withRouter } from 'react-router-dom';
-import { NotificationManager } from 'react-notifications';
-
 import { Config } from '../../../config';
-import Lightbox from 'react-images';
-import PropTypes from 'prop-types';
 import HomeDetailsInfoSection from './HomeDetailsInfoSection';
-import React from 'react';
 import HomesSearchBar from '../search/HomesSearchBar';
+import Lightbox from 'react-images';
+import { NotificationManager } from 'react-notifications';
+import PropTypes from 'prop-types';
+import React from 'react';
 import { connect } from 'react-redux';
 import moment from 'moment';
 import { parse } from 'query-string';
 import requester from '../../../initDependencies';
+import { withRouter } from 'react-router-dom';
 
 class HomeDetailsPage extends React.Component {
   constructor(props) {
@@ -224,11 +223,11 @@ class HomeDetailsPage extends React.Component {
     const DAY_INTERVAL = 90;
     end.setUTCHours(now.getUTCHours() + 24 * DAY_INTERVAL);
 
-    requester.getListing(this.props.match.params.id).then((data) => {
+    requester.getListing(this.props.match.params.id).then(res => {
 
-      data.body.then(res => {
-        this.setState({ data: res });
-      })
+      res.body.then(data => {
+        this.setState({ data: data });
+      });
 
       let searchTermMap = [];
       const startDateParam = `${now.getUTCDate()}/${now.getUTCMonth() + 1}/${now.getUTCFullYear()}`;

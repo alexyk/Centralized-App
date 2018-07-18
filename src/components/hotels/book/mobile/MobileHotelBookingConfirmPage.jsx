@@ -1,22 +1,22 @@
-import { withRouter } from 'react-router-dom';
-import { NotificationManager } from 'react-notifications';
-import PasswordModal from '../../../common/modals/PasswordModal';
-import { Config } from '../../../../config';
-import PropTypes from 'prop-types';
-import React from 'react';
-import { connect } from 'react-redux';
-import { setCurrency } from '../../../../actions/paymentInfo';
-import moment from 'moment';
-import { ROOMS_XML_CURRENCY } from '../../../../constants/currencies.js';
-import { PASSWORD_PROMPT } from '../../../../constants/modals.js';
-import { openModal, closeModal } from '../../../../actions/modalsInfo.js';
-import { PROCESSING_TRANSACTION } from '../../../../constants/infoMessages.js';
-import ReCAPTCHA from 'react-google-recaptcha';
-import requester from '../../../../initDependencies';
-
 import '../../../../styles/css/components/captcha/captcha-container.css';
 
+import { closeModal, openModal } from '../../../../actions/modalsInfo.js';
+
+import { Config } from '../../../../config';
 import { HotelReservation } from '../../../../services/blockchain/hotelReservation';
+import { NotificationManager } from 'react-notifications';
+import { PASSWORD_PROMPT } from '../../../../constants/modals.js';
+import { PROCESSING_TRANSACTION } from '../../../../constants/infoMessages.js';
+import PasswordModal from '../../../common/modals/PasswordModal';
+import PropTypes from 'prop-types';
+import { ROOMS_XML_CURRENCY } from '../../../../constants/currencies.js';
+import ReCAPTCHA from 'react-google-recaptcha';
+import React from 'react';
+import { connect } from 'react-redux';
+import moment from 'moment';
+import requester from '../../../../initDependencies';
+import { setCurrency } from '../../../../actions/paymentInfo';
+import { withRouter } from 'react-router-dom';
 
 class MobileHotelBookingConfirmPage extends React.Component {
   constructor(props) {
@@ -48,7 +48,7 @@ class MobileHotelBookingConfirmPage extends React.Component {
     const searchParams = this.getSearchParams(search);
     const booking = JSON.parse(decodeURI(searchParams.get('booking')));
     console.log(booking);
-    requester.createReservation(booking).then((res) => {
+    requester.createReservation(booking).then(res => {
       if (res.success) {
         res.body.then(data => {
           
@@ -214,7 +214,7 @@ class MobileHotelBookingConfirmPage extends React.Component {
   }
 
   handleSubmit(token) {
-    requester.getCancellationFees(this.state.data.preparedBookingId).then((res) => {
+    requester.getCancellationFees(this.state.data.preparedBookingId).then(res => {
       res.body.then(json => {
         const password = this.state.password;
         const preparedBookingId = this.state.data.preparedBookingId;
@@ -246,7 +246,7 @@ class MobileHotelBookingConfirmPage extends React.Component {
         this.setState({ confirmed: true });
         this.closeModal(PASSWORD_PROMPT);
 
-        requester.getMyJsonFile().then((res) => {
+        requester.getMyJsonFile().then(res => {
           res.body.then(data => {
             setTimeout(() => {
               HotelReservation.createReservation(

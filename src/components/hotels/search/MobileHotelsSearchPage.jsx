@@ -1,20 +1,21 @@
 // import FilterPanel from './filter/FilterPanel';
-import Pagination, { DEFAULT_PAGE_SIZE } from '../../common/pagination/Pagination';
-import ResultsHolder from './ResultsHolder';
-import MobileFilterPanel from './filter/MobileFilterPanel';
-import PropTypes from 'prop-types';
-import React from 'react';
-import { withRouter } from 'react-router-dom';
-import moment from 'moment';
-import { connect } from 'react-redux';
-import { setCurrency } from '../../../actions/paymentInfo';
-import { ROOMS_XML_CURRENCY } from '../../../constants/currencies.js';
 
-import MultiMarkerGoogleMap from './google-map/MultiMarkerGoogleMap';
-import SockJsClient from 'react-stomp';
-import uuid from 'uuid';
-import requester from '../../../initDependencies';
+import Pagination, { DEFAULT_PAGE_SIZE } from '../../common/pagination/Pagination';
+
 import { Config } from '../../../config.js';
+import MobileFilterPanel from './filter/MobileFilterPanel';
+import MultiMarkerGoogleMap from './google-map/MultiMarkerGoogleMap';
+import PropTypes from 'prop-types';
+import { ROOMS_XML_CURRENCY } from '../../../constants/currencies.js';
+import React from 'react';
+import ResultsHolder from './ResultsHolder';
+import SockJsClient from 'react-stomp';
+import { connect } from 'react-redux';
+import moment from 'moment';
+import requester from '../../../initDependencies';
+import { setCurrency } from '../../../actions/paymentInfo';
+import uuid from 'uuid';
+import { withRouter } from 'react-router-dom';
 
 class HotelsSearchPage extends React.Component {
   constructor(props) {
@@ -111,7 +112,7 @@ class HotelsSearchPage extends React.Component {
       });
 
       this.geocoder = new window.google.maps.Geocoder();
-      requester.getRegionNameById(regionId).then((res) => {
+      requester.getRegionNameById(regionId).then(res => {
         res.body.then(data => {
           this.setState({ region: data });
           const address = data.query;

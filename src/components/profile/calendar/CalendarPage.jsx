@@ -4,8 +4,8 @@ import Calendar from './Calendar';
 import PropTypes from 'prop-types';
 import React from 'react';
 import moment from 'moment';
-import { withRouter } from 'react-router-dom';
 import requester from '../../../initDependencies';
+import { withRouter } from 'react-router-dom';
 
 class CalendarPage extends React.Component {
   constructor(props) {
@@ -36,7 +36,7 @@ class CalendarPage extends React.Component {
 
 
   componentDidMount() {
-    requester.getListing(this.props.match.params.id).then((res) => {
+    requester.getListing(this.props.match.params.id).then(res => {
       res.body.then(data => {
         let currencyCode = data.currencyCode;
         let currencySign = '';
@@ -168,7 +168,7 @@ class CalendarPage extends React.Component {
       price: this.state.price,
       available: this.state.available
     };
-    requester.publishCalendarSlot(listingId, slotInfo, captchaToken).then((res) => {
+    requester.publishCalendarSlot(listingId, slotInfo, captchaToken).then(res => {
       if (res.success) {
         this.setState({ selectedDay: null, date: null, price: null, available: 'true' });
         this.componentDidMount();

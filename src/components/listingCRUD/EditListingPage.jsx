@@ -1,5 +1,5 @@
-import { NotificationManager } from 'react-notifications';
 import { Route, Switch, withRouter } from 'react-router-dom';
+
 import { Config } from '../../config';
 import DefaultListing from './DefaultListing';
 import ListingAccommodations from './steps/ListingAccommodations';
@@ -13,14 +13,15 @@ import ListingPhotos from './steps/ListingPhotos';
 import ListingPlaceType from './steps/ListingPlaceType';
 import ListingPrice from './steps/ListingPrice';
 import ListingSafetyFacilities from './steps/ListingSafetyFacilities';
+import { NotificationManager } from 'react-notifications';
 import PropTypes from 'prop-types';
+import ReCAPTCHA from 'react-google-recaptcha';
 import React from 'react';
 import { arrayMove } from 'react-sortable-hoc';
 import moment from 'moment';
 import request from 'superagent';
-import update from 'react-addons-update';
-import ReCAPTCHA from 'react-google-recaptcha';
 import requester from '../../initDependencies';
+import update from 'react-addons-update';
 
 const host = Config.getValue('apiHost');
 const LOCKTRIP_UPLOAD_URL = `${host}images/upload`;
@@ -392,7 +393,7 @@ class EditListingPage extends React.Component {
     this.setState({ loading: true });
     let listing = this.createListingObject();
     if (this.state.isInProgress) {
-      requester.createListing(listing, captchaToken).then((res) => {
+      requester.createListing(listing, captchaToken).then(res => {
         if (res.success) {
           this.setState({ loading: false });
           res.body.then(data => {
@@ -414,7 +415,7 @@ class EditListingPage extends React.Component {
         }
       });
     } else {
-      requester.editListing(this.state.listingId, listing, captchaToken).then((res) => {
+      requester.editListing(this.state.listingId, listing, captchaToken).then(res => {
         if (res.success) {
           this.setState({ loading: false });
           this.props.history.push('/profile/listings');
