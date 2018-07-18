@@ -44,7 +44,7 @@ class CalendarAside extends React.Component {
                 ref={el => this.captcha = el}
                 size="invisible"
                 sitekey={Config.getValue('recaptchaKey')}
-                onChange={token => this.props.onSubmit(token)}
+                onChange={token => { this.props.onSubmit(token); this.captcha.reset(); }}
               />
 
               <div className="col-md-12 controls">

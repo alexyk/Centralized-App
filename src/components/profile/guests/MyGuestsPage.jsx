@@ -1,4 +1,5 @@
 import { acceptReservation, cancelReservation, cancelTrip, getMyReservations, getMyListings } from '../../../requester';
+import PropTypes from 'prop-types';
 import { Config } from '../../../config';
 import CancellationModal from '../../common/modals/CancellationModal';
 import Pagination from '../../common/pagination/Pagination';
@@ -20,6 +21,7 @@ class MyGuestsPage extends React.Component {
       currentPage: 1,
       selectedReservationId: 0,
       showRejectReservationModal: false,
+      currentReCaptcha: '',
     };
 
     this.onPageChange = this.onPageChange.bind(this);
@@ -27,9 +29,13 @@ class MyGuestsPage extends React.Component {
     this.openModal = this.openModal.bind(this);
     this.closeModal = this.closeModal.bind(this);
     this.onReservationSelect = this.onReservationSelect.bind(this);
-    this.onReservationAccept = this.onReservationAccept.bind(this);
-    this.onReservationCancel = this.onReservationCancel.bind(this);
-    this.onReservationReject = this.onReservationReject.bind(this);
+    // this.onReservationAccept = this.onReservationAccept.bind(this);
+    // this.onReservationCancel = this.onReservationCancel.bind(this);
+    // this.onReservationReject = this.onReservationReject.bind(this);
+
+    this.executeReCaptcha = this.executeReCaptcha.bind(this);
+    this.getReCaptchaFunction = this.getReCaptchaFunction.bind(this);
+
     this.acceptReservation = this.acceptReservation.bind(this);
     this.cancelReservation = this.cancelReservation.bind(this);
     this.rejectReservation = this.rejectReservation.bind(this);
@@ -47,17 +53,23 @@ class MyGuestsPage extends React.Component {
     });
   }
 
-  onReservationAccept() {
-    this.acceptCaptcha.execute();
+  executeReCaptcha(currentReCaptcha) {
+    this.setState({
+      currentReCaptcha
+    }, () => this.captcha.execute());
   }
 
-  onReservationCancel() {
-    this.cancelCaptcha.execute();
-  }
+  // onReservationAccept() {
+  //   this.acceptCaptcha.execute();
+  // }
 
-  onReservationReject() {
-    this.rejectCaptcha.execute();
-  }
+  // onReservationCancel() {
+  //   this.cancelCaptcha.execute();
+  // }
+
+  // onReservationReject() {
+  //   this.rejectCaptcha.execute();
+  // }
 
   acceptReservation(captchaToken) {
     const id = this.state.selectedReservationId;
@@ -146,14 +158,49 @@ class MyGuestsPage extends React.Component {
     this.setState({ selectedReservationId: id });
   }
 
+  getReCaptchaFunction(currentReCaptcha) {
+    switch (currentReCaptcha) {
+      case 'accept':
+        return this.acceptReservation;
+      case 'cancel':
+        return this.cancelReservation;
+      case 'reject':
+        return this.rejectReservation;
+    }
+  }
+
   render() {
+    const { currentReCaptcha } = this.state;
+
     if (this.state.loading) {
       return <div className="loader"></div>;
     }
 
     return (
       <div className="my-reservations">
-        <ReCAPTCHA
+
+        {
+          currentReCaptcha && (
+            <ReCAPTCHA
+              ref={el => this.captcha = el}
+              size="invisible"
+              sitekey={Config.getValue('recaptchaKey')}
+              onChange={(token) => {
+                const reCaptchaFunc = this.getReCaptchaFunction(currentReCaptcha);
+
+                reCaptchaFunc(token);
+
+                this.captcha.reset();
+
+                this.setState({
+                  currentReCaptcha: ''
+                });
+              }}
+            />
+          )
+        }
+
+        {/* <ReCAPTCHA
           ref={el => this.acceptCaptcha = el}
           size="invisible"
           sitekey={Config.getValue('recaptchaKey')}
@@ -167,7 +214,7 @@ class MyGuestsPage extends React.Component {
           ref={el => this.rejectCaptcha = el}
           size="invisible"
           sitekey={Config.getValue('recaptchaKey')}
-          onChange={token => { this.rejectReservation(token); this.rejectCaptcha.reset(); }} />
+          onChange={token => { this.rejectReservation(token); this.rejectCaptcha.reset(); }} /> */}
 
         <CancellationModal
           name={'showRejectReservationModal'}
@@ -185,9 +232,9 @@ class MyGuestsPage extends React.Component {
             <hr />
             <MyGuestsTable
               reservations={this.state.reservations}
-              onReservationAccept={this.onReservationAccept}
-              onReservationCancel={this.onReservationCancel}
-              onReservationSelect={this.onReservationSelect}
+              onReservationAccept={() => this.executeReCaptcha('accept')}
+              onReservationCancel={() => this.executeReCaptcha('cancel')}
+              onReservationSelect={() => this.executeReCaptcha('reject')}
               onReservationReject={() => { this.openModal('showRejectReservationModal'); }} />
 
             <Pagination
@@ -206,5 +253,10 @@ class MyGuestsPage extends React.Component {
     );
   }
 }
+
+MyGuestsPage.propTypes = {
+  // start Router props
+  history: PropTypes.object,
+};
 
 export default withRouter(MyGuestsPage);

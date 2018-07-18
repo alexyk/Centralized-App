@@ -38,6 +38,7 @@ function ChildrenModal(props) {
 
     rooms[roomIndex].children = children;
     props.dispatch(setRooms(rooms));
+    console.log(rooms);
   };
 
   const handleChildAgeChange = (event, roomIndex, childIndex) => {
@@ -45,6 +46,7 @@ function ChildrenModal(props) {
     const rooms = props.searchInfo.rooms.slice();
     rooms[roomIndex].children[childIndex].age = value;
     props.dispatch(setRooms(rooms));
+    console.log(rooms);
   };
 
   return (

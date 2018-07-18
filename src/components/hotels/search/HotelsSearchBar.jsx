@@ -29,13 +29,13 @@ function HotelsSearchBar(props) {
       });
   };
 
-  const getQueryString = (rooms) => {
+  const getQueryString = () => {
     let queryString = '?';
     queryString += 'region=' + props.searchInfo.region.id;
     queryString += '&currency=' + props.paymentInfo.currency;
     queryString += '&startDate=' + props.searchInfo.startDate.format('DD/MM/YYYY');
     queryString += '&endDate=' + props.searchInfo.endDate.format('DD/MM/YYYY');
-    queryString += '&rooms=' + encodeURI(JSON.stringify(rooms));
+    queryString += '&rooms=' + encodeURI(JSON.stringify(props.searchInfo.rooms));
     return queryString;
   };
 

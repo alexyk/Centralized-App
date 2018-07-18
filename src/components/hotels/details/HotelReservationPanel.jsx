@@ -125,7 +125,7 @@ class HotelReservationPanel extends React.Component {
                 ref={el => this.captcha = el}
                 size="invisible"
                 sitekey={Config.getValue('recaptchaKey')}
-                onChange={token => this.onSubmit(token)}
+                onChange={token => { this.onSubmit(token); this.captcha.reset(); }}
               />
               <br />
 
