@@ -299,7 +299,7 @@ header form button {
     margin-top: 0;
 }
 
-.form-control {
+/* .form-control {
     height: 60px;
     border: 0;
     -webkit-box-shadow: none;
@@ -307,7 +307,7 @@ header form button {
 }
 
 .form-control-select {
-    /* height: 34px; */
+    height: 34px;
     padding: 12px 12px;
     font-size: 14px;
     line-height: 1.42857143;
@@ -315,7 +315,7 @@ header form button {
     background-color: #fff;
     background-image: none;
     border: none;
-}
+} */
 
 .icon {
     content: "";
@@ -3106,9 +3106,9 @@ td {
     margin: 0 auto;
 }
 
-.form-control-disabled {
+/* .form-control-disabled {
     background-color: lightgrey !important;
-}
+} */
 
 .content-center {
     text-align: center;
