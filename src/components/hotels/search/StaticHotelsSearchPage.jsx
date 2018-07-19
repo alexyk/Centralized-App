@@ -403,6 +403,7 @@ class StaticHotelsSearchPage extends React.Component {
   }
 
   applyFilters() {
+    const baseUrl = this.props.location.pathname.indexOf('/mobile') !== -1 ? '/mobile/search' : '/hotels/listings';
     const queryParams = queryString.parse(this.props.location.search);
     let search = `?region=${encodeURI(queryParams.region)}`;
     search += `&currency=${encodeURI(queryParams.currency)}`;
@@ -422,7 +423,7 @@ class StaticHotelsSearchPage extends React.Component {
     const page = this.state.page ? this.state.page : 0;
     const sort = this.state.orderBy;
     const pagination = `&page=${page}&sort=${sort}`;
-    this.props.history.push('/hotels/listings' + search + filters + pagination);
+    this.props.history.push(baseUrl + search + filters + pagination);
 
     getStaticHotelsByFilter(search, filters, page, sort).then(res => {
       if (res.success) {
