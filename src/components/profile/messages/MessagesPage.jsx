@@ -54,7 +54,7 @@ export default class MessagesPage extends React.Component {
       loading: true
     });
 
-    requester.getMyConversations([`?page=${page - 1}`]).then(res => {
+    requester.getMyConversations([`page=${page - 1}`]).then(res => {
       res.body.then(data => {
         this.setState({
           messages: data.content,

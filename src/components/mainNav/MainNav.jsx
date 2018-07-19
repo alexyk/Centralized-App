@@ -451,7 +451,7 @@ class MainNav extends React.Component {
   }
 
   handleSubmitRecoveryToken() {
-    requester.sendRecoveryToken(this.state.recoveryToken).then(res => {
+    requester.sendRecoveryToken([`token=${this.state.recoveryToken}`]).then(res => {
       if (res.success) {
         this.closeModal(ENTER_RECOVERY_TOKEN);
         this.openModal(CHANGE_PASSWORD);
