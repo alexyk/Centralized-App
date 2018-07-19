@@ -1,0 +1,84 @@
+@import '../../../vendors/include-media';
+#my-profile-edit-form {
+  width: 100%;
+  select {
+    border: 1px solid #cfcfcf;
+    border-radius: 5px;
+    background-color: white;
+    padding: 15px;
+    width: 100%;
+  }
+  h2 {
+    margin: 0;
+  }
+  hr {
+    margin-top: 10px;
+    border-top: 1px solid #cfcfcf;
+  }
+  label {
+    display: block;
+    margin: 10px 0 5px 5px;
+  }
+  input {
+    border: 1px solid #cfcfcf;
+    border-radius: 5px;
+    background-color: white;
+    padding: 15px;
+    width: 100%;
+  }
+  .lock {
+    vertical-align: baseline;
+    margin-left: 5px;
+  }
+  form>div {
+    clear: both;
+    margin-bottom: 20px;
+  }
+  .text {
+    color: #8b8c8e;
+    width: 95%;
+  }
+  .name>div {
+    width: 49%;
+    display: inline-block;
+    @include media('<tablet') {
+      width: 100%;
+    }
+  }
+  .name>.first {
+    margin-right: 5px;
+  }
+  .birth-sex {
+    display: flex;
+    @include media('<tablet') {
+      flex-direction: column;
+    }
+  }
+  .option-field {
+    width: 30%;
+    margin-right: 5px;
+
+    @include media('<tablet') {
+      width: 100%;
+    }
+  }
+  .language-currency {
+    display: flex;
+    justify-content: space-around;
+    @include media('<tablet') {
+      flex-direction: column;
+      margin-bottom: 0;
+    }
+    div {
+      width: 99%;
+    }
+  }
+  .btn {
+    padding: 15px 70px;
+    margin: 20px 0;
+
+    @include media('<tablet') {
+      width: 100%;
+    }
+  }
+}
