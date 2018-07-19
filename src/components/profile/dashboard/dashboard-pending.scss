@@ -1,26 +1,98 @@
+$breakpoints: (
+	'xs-phone': 320px,
+	'phone': 570px,
+	'tablet': 768px,
+	'desktop': 1024px,
+	'widescreen': 1200px
+);
+
+@import '../../../styles/css/vendors/include-media';
+
 .dashboard-flex-container {
+  @include media("<=phone") {
+    flex-wrap: wrap;
+    padding: 5%;
+    margin-bottom: 10%;
+    border: 1px solid #CCCCCC;
+  }
   &.dashboard-flex-row {
     font-size: 18px;
-  }
-  .dashboard-image-host {
-    width: 30px;
-    height: 45px;
-    border-radius: 5px;
   }
   
   .dashboard-image-width {
     width: 7%;
+    .dashboard-image-host {
+      width: 30px;
+      border-radius: 5px;
+    }
+    @include media("<=phone") {
+      flex: 0 20%;
+      order: 0;
+      margin-right: 0;
+      padding-bottom: 5%;
+    }
   }
   
   .dashboard-host-width {
     width: 40%;
+    .icon-hotel {
+      display: none;
+    }
+    @include media("<=phone") {
+      order: 2;
+      width: 100%;
+      align-items: center;
+      display: inline-flex;
+      margin-right: 0;
+      padding: 5% 0;
+      border-bottom: 1px lightgray solid;
+      border-top: 1px lightgray solid;
+      .icon-hotel {
+        display: block;
+        width: 20px;
+        height: 20px;
+        margin-right: 10%;
+      }
+		}
   }
   
   .dashboard-dates-width {
     width: 28%;
+    .icon-calendar {
+      display: none;
+    }
+    @include media("<=phone") {
+      order: 3;
+      width: 100%;
+      align-items: center;
+      display: inline-flex;
+      margin-right: 0;
+      margin-top: 5%;
+      .icon-calendar {
+        display: block;
+      }
+      span {
+        margin-right: 10%;
+      }
+      i {
+        padding: 0 10%;
+      }
+    }
   }
   
   .dashboard-status-width {
     width: 25%;
+    @include media("<=phone") {
+      order: 1;
+      flex: 0 75%;			
+      align-items: center;
+      justify-content: center;
+      display: inline-flex;
+      margin-right: 0;
+      padding-bottom: 5%;
+      div {
+        text-align: center;
+      }
+    }
   }
 }

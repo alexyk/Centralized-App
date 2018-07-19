@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import ProfileFlexContainer from '../flexContainer/ProfileFlexContainer';
 import { Config } from '../../../config';
+import HotelIcon from '../../../styles/images/icon-hotel.png';
 
 function DashboardRow(props) {
   return (
@@ -10,10 +11,12 @@ function DashboardRow(props) {
         <img className="dashboard-image-host" src={`${Config.getValue('imgHost')}${props.trip.userImage}`} alt="user-profile" />
       </div>
       <div className="flex-row-child dashboard-host-width">
-        <div>{props.trip.hostName}</div>
-        <div>{props.trip.listingName}</div>
+        <img className="icon-hotel" src={HotelIcon} alt="hotel" />
+        <div className="hotel-name">{props.trip.hostName}
+          {props.trip.listingName}</div>
       </div>
       <div className="flex-row-child dashboard-dates-width">
+        <span className="icon-calendar" />
         {props.trip.displayStartDate} <i aria-hidden="true" className="fa fa-long-arrow-right"></i> {props.trip.displayEndDate}
       </div>
       <div className="flex-row-child dashboard-status-width">
