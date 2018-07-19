@@ -127,24 +127,20 @@ $media-expressions: (
 .tabset {
 	@extend %listreset;
 	text-align: left;
-	padding-left: 5px;
-	@include media(">=desktop") {
-		padding-left: 15px;
-	}
 	li {
 		display: inline-block;
 		vertical-align: middle;
-		margin-right: 22px;
+		margin-right: 10px;
 		&:last-child {
 			margin-right: 0;
 		}
-		&.active {
-			a {
-				&:after {
-					transform: translateY(0);
-				}
-			}
-		}
+		// &.active {
+		// 	a {
+		// 		&:after {
+		// 			transform: translateY(0);
+		// 		}
+		// 	}
+    // }
 	}
 	a {
 		position: relative;
@@ -166,9 +162,15 @@ $media-expressions: (
 			background: $moderate-red;
 			transform: translateY(100%);
 		}
+    &.active {
+      border-bottom: 1px solid $moderate-red;
+      @include media(">=desktop") {
+        border-bottom: 4px solid $moderate-red;
+      }
+    }
 		@include media(">=desktop") {
 			font-size: 18px;
-			padding: 15px;
+			padding: 16px 5px 13px 5px;
 			&:after{
 				height: 4px;
 			}
