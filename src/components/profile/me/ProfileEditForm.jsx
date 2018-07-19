@@ -196,33 +196,33 @@ class ProfileEditForm extends React.Component {
             <div className="bday option-field">
               <label htmlFor="bday">&nbsp;</label>
               <div className='select'>
-              <select name="day" id="bday" onChange={this.onChange} value={this.state.day}>
-                <option disabled value="">Day</option>
-                {Array.apply(null, Array(32)).map(function (item, i) {
-                  return i > 0 && <option key={i} value={i}>{i}</option>;
-                })}
-              </select>
-            </div>
+                <select name="day" id="bday" onChange={this.onChange} value={this.state.day}>
+                  <option disabled value="">Day</option>
+                  {Array.apply(null, Array(32)).map(function (item, i) {
+                    return i > 0 && <option key={i} value={i}>{i}</option>;
+                  })}
+                </select>
+              </div>
             </div>
             <div className="byear option-field">
               <label htmlFor="byear">&nbsp;</label>
               <div className='select'>
-              <select name="year" id="byear" onChange={this.onChange} value={this.state.year}>
-                <option disabled value="">Year</option>
-                {years}
-              </select>
-            </div>
+                <select name="year" id="byear" onChange={this.onChange} value={this.state.year}>
+                  <option disabled value="">Year</option>
+                  {years}
+                </select>
+              </div>
             </div>
             <div className="sex option-field">
               <label htmlFor="sex">Gender <img src={Config.getValue('basePath') + 'images/icon-lock.png'} className="lock" alt="lock-o" /></label>
               <div className='select'>
-              <select name="gender" id="sex" onChange={this.onChange} value={this.state.gender}>
-                <option disabled value="">Gender</option>
-                <option value="men">Men</option>
-                <option value="women">Women</option>
-                <option value="other">Other</option>
-              </select>
-            </div>
+                <select name="gender" id="sex" onChange={this.onChange} value={this.state.gender}>
+                  <option disabled value="">Gender</option>
+                  <option value="men">Men</option>
+                  <option value="women">Women</option>
+                  <option value="other">Other</option>
+                </select>
+              </div>
             </div>
             <br className="clear-both" />
           </div>
@@ -235,7 +235,7 @@ class ProfileEditForm extends React.Component {
 
           <div className="loc-address">
             <label htmlFor="loc-address">ETH/LOC address <img src={Config.getValue('basePath') + 'images/icon-lock.png'} className="lock" alt="lock-o" /></label>
-            <input className="form-control form-control-disabled" id="loc-address" name="locAddress" value={this.state.locAddress} onChange={this.onChange} type="text" disabled="disabled" />
+            <input id="loc-address" name="locAddress" value={this.state.locAddress} onChange={this.onChange} type="text" disabled="disabled" />
           </div>
 
           <div className="language-currency">
@@ -243,48 +243,46 @@ class ProfileEditForm extends React.Component {
 
               <label htmlFor="language">Preferred language</label>
               <div className='select'>
-              <select name="preferredLanguage" id="language" onChange={this.onChange} value={this.state.preferredLanguage}>
-                <option value="1">English</option>
-              </select>
-            </div>
+                <select name="preferredLanguage" id="language" onChange={this.onChange} value={this.state.preferredLanguage}>
+                  <option value="1">English</option>
+                </select>
+              </div>
             </div>
             <div className="currency">
 
               <label htmlFor="currency">Preferred currency</label>
               <div className='select'>
-              <select name="preferredCurrency" id="currency" onChange={this.onChange} value={this.state.preferredCurrency}>
-                <option disabled value="">Currency</option>
-                {this.state.currencies.map((item, i) => {
-                  return <option key={i} value={item.id}>{item.code}</option>;
-                })}
-              </select>
-            </div>
+                <select name="preferredCurrency" id="currency" onChange={this.onChange} value={this.state.preferredCurrency}>
+                  <option disabled value="">Currency</option>
+                  {this.state.currencies.map((item, i) => {
+                    return <option key={i} value={item.id}>{item.code}</option>;
+                  })}
+                </select>
+              </div>
             </div>
             <br className="clear-both" />
           </div>
-          <div className="address language-currency">
-
-
-            <div className="language">
-            <label htmlFor="address">Where you live</label>
-            <div className='select'>
-              <select name="country" id="address" onChange={this.updateCountry} value={this.state.country}>
-                <option disabled value="">Country</option>
-                {this.state.countries.map((item, i) => {
-                  return <option key={i} value={item.id}>{item.name}</option>;
-                })}
-              </select>
+          <div className="address-city">
+            <div className="address">
+              <label htmlFor="address">Where you live</label>
+              <div className='select'>
+                <select name="country" id="address" onChange={this.updateCountry} value={this.state.country}>
+                  <option disabled value="">Country</option>
+                  {this.state.countries.map((item, i) => {
+                    return <option key={i} value={item.id}>{item.name}</option>;
+                  })}
+                </select>
+              </div>
             </div>
-            </div>
-            <div className="language">
-            <label htmlFor="address">Which city</label>
-            <div className='select'>
-              <select name="city" onChange={this.onChange} value={this.state.city}>
-                <option disabled value="">City</option>
-                {this.state.cities.map((item, i) => {
-                  return <option key={i} value={item.id}>{item.name}</option>;
-                })}
-              </select>
+            <div className="city">
+              <label htmlFor="city">Which city</label>
+              <div className='select'>
+                <select name="city" id="city" onChange={this.onChange} value={this.state.city}>
+                  <option disabled value="">City</option>
+                  {this.state.cities.map((item, i) => {
+                    return <option key={i} value={item.id}>{item.name}</option>;
+                  })}
+                </select>
               </div>
             </div>
 
