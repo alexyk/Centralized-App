@@ -1,19 +1,49 @@
+$breakpoints: (
+	'xs-phone': 320px,
+	'phone': 570px,
+	'tablet': 768px,
+	'desktop': 1024px,
+	'widescreen': 1200px
+);
+
+@import '../../../styles/css/vendors/include-media';
+
 .my-listings-flex-container {
+  @include media("<=phone") {
+    flex-wrap: wrap;
+    padding: 5%;
+    margin-bottom: 10%;
+    font-size: 18px;
+    text-align: center;
+  }
   .toggle {
-    width: 0.5%;
+    width: 1%;
+    min-width: 10px;
     height: 100px;
     background-repeat: no-repeat;
     background-position: 0px;
     background-image: url(../../../styles/images/arrow-right.png);
+    @include media("<=phone") {
+      width: 2%;
+      height: 40px;
+      order: 0;
+    }
   }
   .thumb {
     background-position: center center;
     background-repeat: no-repeat;
     background-size: cover;
-    width: 8%;
+    width: 9%;
+    min-width: 50px;
     height: 60px;
     background-color: silver;
     border-radius: 2px;
+    @include media("<=phone") {
+      text-align: center;
+      margin-left: 3%;
+      width: 90%;
+      order: 1;
+    }
   }
   .details {
     width: 35%;
@@ -21,18 +51,37 @@
       font-size: 24px;
       font-family: 'FuturaStd-Medium', sans-serif;
     }
+    @include media("<=phone") {
+      width: 100%;
+      order: 2;
+      .list-hotel-rating {
+        display: flex;
+        justify-content: center;
+      }
+    }
   }
   .price {
     font-size: 18px;
     width: 11%;
+    @include media("<=phone") {
+      width: 100%;
+      order: 3;
+      margin-top: 5%;
+      font-size: 20px;
+    }
   }
   .edit {
     width: 12%;
     font-size: 20px;
     font-family: 'FuturaStd-Medium', sans-serif;
+    @include media("<=phone") {
+      width: 45%;
+      order: 4;
+      margin-top: 5%;
+    }
   }
   .calendar {
-    width: 210px;
+    min-width: 180px;
     padding-top: 20px;
     margin-top: 0;
     margin-bottom: 0;
@@ -53,6 +102,10 @@
       line-height: 3.6;
       font-family: sans-serif;
     }
+    @include media("<=phone") {
+      width: 100%;
+      order: 5;
+    }
   }
   .remove {
     span {
@@ -63,6 +116,23 @@
       height: 39px;
       border-radius: 2px;
       cursor: pointer;
+    }
+    .delete {
+      display: none;
+    }
+    @include media("<=phone") {
+      order: 4;
+      width: 45%;
+      text-align: center;
+      margin-top: 5%;
+      span {
+        display: none;
+      }
+      .delete {
+        display: block;
+        font-size: 20px;
+        font-family: 'FuturaStd-Medium', sans-serif;
+      }
     }
   }
 }

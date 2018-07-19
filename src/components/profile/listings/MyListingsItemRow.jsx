@@ -23,7 +23,7 @@ function MyListingsItemRow(props) {
         <span>{props.listing.defaultDailyPrice} {props.listing.currencyCode}</span>
       </div>
       <div className="flex-row-child edit">
-        <Link to={`/profile/listings/edit/landing/${props.listing.id}`}>Edit Listing</Link>
+        <Link to={`/profile/listings/edit/landing/${props.listing.id}`}>Edit</Link>
       </div>
       <div className="flex-row-child calendar">
         {/* <input type="button" className="button" value="View Calendar"/> */}
@@ -31,6 +31,7 @@ function MyListingsItemRow(props) {
       </div>
       <div className="flex-row-child remove" onClick={(e) => props.handleOpenDeleteListingModal(e, props.listing.id, props.listing.name, props.listing.state)}>
         <span />
+        <div className="delete">Remove</div>
       </div>
     </ProfileFlexContainer>
   );
