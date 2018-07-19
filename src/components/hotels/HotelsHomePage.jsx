@@ -4,6 +4,7 @@ import { withRouter } from 'react-router-dom';
 import PopularDestinationsCarousel from './carousel/PopularDestinationsCarousel';
 import HeroComponent from './HeroComponent';
 import { connect } from 'react-redux';
+import BancorConvertWidget from '../external/BancorConvertWidget';
 
 import { setRegion } from '../../actions/searchInfo';
 
@@ -20,6 +21,7 @@ function HotelsHomePage(props) {
   return (
     <div>
       <HeroComponent redirectToSearchPage={redirectToSearchPage} />
+      <BancorConvertWidget />
       <section id="popular-hotels-box">
         <h2>Popular Destinations</h2>
         <PopularDestinationsCarousel handleDestinationPick={handleDestinationPick} />

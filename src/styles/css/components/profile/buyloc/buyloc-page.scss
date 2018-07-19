@@ -1,0 +1,25 @@
+@import '../../../base/variables';
+
+#buyloc-page {
+
+  .buyloc-page__content {
+    background-color: white; 
+    border-top: 1px solid #cccccc; 
+  }
+
+  p {
+    padding: 20px 0;
+    text-align: center;
+    font-size: 1.2em;
+    font-weight: 400;
+  }
+
+  a {
+    color: $moderate-red;
+  }
+
+  .bottom-padder {
+    height: 150px;
+    background-color: white; 
+  }
+}
