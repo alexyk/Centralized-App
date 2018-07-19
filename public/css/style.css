@@ -2462,7 +2462,6 @@ input::-webkit-inner-spin-button {
 @media (max-width: 667px) {
     .list-hotel-box,
     .filter-box {
-        max-width: 380px;
         margin: 0 auto;
     }
 }

@@ -6,6 +6,7 @@ import moment from 'moment';
 import PopularListingsCarousel from '../common/listing/PopularListingsCarousel';
 import PropTypes from 'prop-types';
 import HomesHeroComponent from './HomesHeroComponent';
+import BancorConvertWidget from '../external/BancorConvertWidget';
 
 class HomesHomePage extends React.Component {
   constructor(props) {
@@ -75,6 +76,8 @@ class HomesHomePage extends React.Component {
           handleSearch={this.handleSearch}
           handleDatePick={this.handleDatePick}
         />
+
+        <BancorConvertWidget />
 
         <section id="popular-hotels-box">
           <h2>Popular Properties</h2>

@@ -1,21 +1,22 @@
-// import FilterPanel from './filter/FilterPanel';
-import Pagination from '../../common/pagination/Pagination';
-import ResultsHolder from './ResultsHolder';
+import { ROOMS_XML_CURRENCY } from '../../../constants/currencies.js';
+
 import PropTypes from 'prop-types';
 import React from 'react';
 import { withRouter } from 'react-router-dom';
 import moment from 'moment';
+import uuid from 'uuid';
+import Stomp from 'stompjs';
+import queryString from 'query-string';
+import { NotificationManager } from 'react-notifications';
 import { setCurrency } from '../../../actions/paymentInfo';
 import { connect } from 'react-redux';
-import { ROOMS_XML_CURRENCY } from '../../../constants/currencies.js';
-
-import MultiMarkerGoogleMap from './google-map/MultiMarkerGoogleMap';
-import HotelsSearchBar from './HotelsSearchBar';
-import uuid from 'uuid';
-import queryString from 'query-string';
-import Stomp from 'stompjs';
 import _ from 'lodash';
 
+import ResultsHolder from './ResultsHolder';
+import Pagination from '../../common/pagination/Pagination';
+import MultiMarkerGoogleMap from './google-map/MultiMarkerGoogleMap';
+import HotelsSearchBar from './HotelsSearchBar';
+import FilterPanel from './filter/FilterPanel';
 import { setSearchInfo, setRegion } from '../../../actions/searchInfo';
 
 import { Config } from '../../../config';
@@ -25,10 +26,15 @@ import {
   getCurrencyRates,
   getLocRateInUserSelectedCurrency,
   getStaticHotels,
+  getStaticHotelsByFilter,
+  getMapInfo
 } from '../../../requester';
 
-const DEBUG_SOCKET = false;
+import '../../../styles/css/components/hotels_search/sidebar/sidebar.css';
+
+const DEBUG_SOCKET = true;
 const DELAY_INTERVAL = 100;
+const DEBOUNCE_INTERVAL = 1000;
 
 class StaticHotelsSearchPage extends React.Component {
   constructor(props) {
@@ -45,34 +51,40 @@ class StaticHotelsSearchPage extends React.Component {
 
     this.state = {
       allElements: false,
-      priceRange: [0, 5000],
-      orderBy: '',
+      hotelName: '',
+      showUnavailable: false,
+      orderBy: 'priceForSort,asc',
       stars: [false, false, false, false, false],
+      priceRange: [0, 5000],
       city: '',
       hotels: {},
       mapInfo: [],
       searchParams: null,
-      filteredListings: null,
-      isFiltered: false,
       loading: true,
-      currentPage: !queryParams.page ? 0 : Number(queryParams.page),
+      page: !queryParams.page ? 0 : Number(queryParams.page),
       showMap: false,
+      windowWidth: 0,
+      showFiltersMobile: false
     };
 
-    this.updateParamsMap = this.updateParamsMap.bind(this);
-    this.toggleFilter = this.toggleFilter.bind(this);
     this.onPageChange = this.onPageChange.bind(this);
     this.clearFilters = this.clearFilters.bind(this);
 
     this.handlePriceRangeSelect = this.handlePriceRangeSelect.bind(this);
     this.handleOrderBy = this.handleOrderBy.bind(this);
-    this.applyFilters = this.applyFilters.bind(this);
+    this.applyFilters = _.debounce(this.applyFilters.bind(this), DEBOUNCE_INTERVAL);
     this.handleToggleStar = this.handleToggleStar.bind(this);
     this.toggleMap = this.toggleMap.bind(this);
     this.getRandomInt = this.getRandomInt.bind(this);
     this.updateMapInfo = this.updateMapInfo.bind(this);
     this.clearIntervals = this.clearIntervals.bind(this);
     this.redirectToSearchPage = this.redirectToSearchPage.bind(this);
+    this.handleFilterByName = this.handleFilterByName.bind(this);
+    this.handleShowUnavailable = this.handleShowUnavailable.bind(this);
+    this.isFiltered = this.isFiltered.bind(this);
+    this.populateFilters = this.populateFilters.bind(this);
+    this.getCityLocation = this.getCityLocation.bind(this);
+    this.handleShowFilters= this.handleShowFilters.bind(this);
 
     // SOCKET BINDINGS
     this.handleReceiveMessage = this.handleReceiveMessage.bind(this);
@@ -80,6 +92,9 @@ class StaticHotelsSearchPage extends React.Component {
     this.subscribe = this.subscribe.bind(this);
     this.unsubscribe = this.unsubscribe.bind(this);
     this.disconnect = this.disconnect.bind(this);
+
+    // WINDOW WIDTH BINGINGS
+    this.updateWindowWidth = this.updateWindowWidth.bind(this);
   }
 
   componentDidMount() {
@@ -94,8 +109,12 @@ class StaticHotelsSearchPage extends React.Component {
     const query = this.props.location.search;
     const queryParams = queryString.parse(query);
     const { region } = queryParams;
+
+    if (this.isFiltered()) {
+      this.populateFilters();
+    }
+
     getStaticHotels(region).then(json => {
-      console.log(json);
       const { content } = json;
       content.forEach(l => {
         if (this.hotelInfoById[l.id]) {
@@ -108,6 +127,51 @@ class StaticHotelsSearchPage extends React.Component {
         this.connectSocket();
       });
     });
+
+    this.updateWindowWidth();
+    window.addEventListener('resize', this.updateWindowWidth);
+  }
+
+  componentWillMount() {
+    if (this.props.location.search) {
+      const searchParams = queryString.parse(this.props.location.search);
+      const rooms = JSON.parse(decodeURI(searchParams.rooms));
+      const adults = this.getAdults(rooms);
+      const hasChildren = this.getHasChildren(rooms);
+      const startDate = moment(searchParams.startDate, 'DD/MM/YYYY');
+      const endDate = moment(searchParams.endDate, 'DD/MM/YYYY');
+      const regionId = searchParams.region;
+      const region = { id: regionId };
+      const page = searchParams.page;
+
+      this.props.dispatch(setSearchInfo(startDate, endDate, region, rooms, adults, hasChildren));
+
+      this.setState({
+        nights: this.props.searchInfo.nights,
+        page: page ? Number(page) : 0,
+      });
+
+      this.getCityLocation(regionId);
+    }
+  }
+
+  componentWillUnmount() {
+    this.setState({
+      listings: null,
+      filteredListings: null,
+      loading: true,
+      page: 0,
+    });
+
+    this.unsubscribe();
+    this.disconnect();
+    this.clearIntervals();
+    this.hotelInfo = [];
+    this.hotelInfoById = {};
+  }
+
+  updateWindowWidth() {
+    this.setState({ windowWidth: window.innerWidth });
   }
 
   handleReceiveMessage(message) {
@@ -115,6 +179,7 @@ class StaticHotelsSearchPage extends React.Component {
     if (messageBody.allElements) {
       this.setState({ allElements: true });
       this.unsubscribe();
+      this.applyFilters();
     } else {
       const { id } = messageBody;
       this.hotelInfoById[id] = messageBody;
@@ -129,24 +194,6 @@ class StaticHotelsSearchPage extends React.Component {
     }
   }
 
-  updateMapInfo(hotel) {
-    if (this.state.showMap) {
-      this.counter += 1;
-      const timeout = this.counter * DELAY_INTERVAL;
-      const delayInterval = setTimeout(() => {
-        this.setState(prev => {
-          const mapInfo = prev.mapInfo.slice(0);
-          mapInfo.push(hotel);
-          return {
-            mapInfo
-          };
-        });
-      }, timeout);
-
-      this.delayIntervals.push(delayInterval);
-    }
-  }
-
   connectSocket() {
     if (!localStorage.getItem('uuid')) {
       localStorage.setItem('uuid', `${uuid()}`);
@@ -154,6 +201,7 @@ class StaticHotelsSearchPage extends React.Component {
 
     const url = Config.getValue('socketHost');
     this.client = Stomp.client(url);
+
     if (!DEBUG_SOCKET) {
       this.client.debug = () => { };
     }
@@ -165,6 +213,7 @@ class StaticHotelsSearchPage extends React.Component {
     const id = localStorage.getItem('uuid');
     const rnd = this.getRandomInt();
     const search = this.props.location.search;
+    const endOfSearch = search.indexOf('&filters=') !== -1 ? search.indexOf('&filters=') : search.length;
     const queueId = `${id}&${rnd}`;
     const destination = 'search/' + queueId;
     const client = this.client;
@@ -174,7 +223,7 @@ class StaticHotelsSearchPage extends React.Component {
 
     const msgObject = {
       uuid: queueId,
-      query: search,
+      query: search.substr(0, endOfSearch),
     };
 
     const msg = JSON.stringify(msgObject);
@@ -187,56 +236,21 @@ class StaticHotelsSearchPage extends React.Component {
     client.send(sendDestination, headers, msg);
   }
 
-  componentWillMount() {
-    if (this.props.location.search) {
-      const searchParams = this.getSearchParams(this.props.location.search);
-      const rooms = JSON.parse(decodeURI(searchParams.get('rooms')));
-      const adults = this.getAdults(rooms);
-      const hasChildren = this.getHasChildren(rooms);
-      const startDate = moment(searchParams.get('startDate'), 'DD/MM/YYYY');
-      const endDate = moment(searchParams.get('endDate'), 'DD/MM/YYYY');
-      const regionId = searchParams.get('region');
-      const region = { id: regionId };
-      const page = searchParams.get('page');
+  getCityLocation(regionId) {
+    this.geocoder = new window.google.maps.Geocoder();
+    getRegionNameById(regionId).then((json) => {
+      this.props.dispatch(setRegion(json));
+      const address = json.query;
 
-      this.props.dispatch(setSearchInfo(startDate, endDate, region, rooms, adults, hasChildren));
-
-      this.setState({
-        searchParams: searchParams,
-        nights: this.props.searchInfo.nights,
-        currentPage: page ? Number(page) : 0,
+      this.geocoder.geocode({ 'address': address }, (results, status) => {
+        if (status === window.google.maps.GeocoderStatus.OK) {
+          this.setState({
+            lat: results[0].geometry.location.lat(),
+            lon: results[0].geometry.location.lng(),
+          });
+        }
       });
-
-      this.geocoder = new window.google.maps.Geocoder();
-      getRegionNameById(regionId).then((json) => {
-        this.props.dispatch(setRegion(json));
-        const address = json.query;
-
-        this.geocoder.geocode({ 'address': address }, (results, status) => {
-          if (status === window.google.maps.GeocoderStatus.OK) {
-            this.setState({
-              lat: results[0].geometry.location.lat(),
-              lon: results[0].geometry.location.lng(),
-            });
-          }
-        });
-      });
-    }
-  }
-
-  componentWillUnmount() {
-    this.setState({
-      listings: null,
-      filteredListings: null,
-      loading: true,
-      currentPage: 0,
     });
-
-    this.unsubscribe();
-    this.disconnect();
-    this.clearIntervals();
-    this.hotelInfo = [];
-    this.hotelInfoById = {};
   }
 
   getAdults(rooms) {
@@ -264,6 +278,7 @@ class StaticHotelsSearchPage extends React.Component {
 
   redirectToSearchPage(queryString) {
     this.unsubscribe();
+    this.disconnect();
     this.clearIntervals();
     this.hotelInfoById = {};
     this.hotelInfo = [];
@@ -273,10 +288,12 @@ class StaticHotelsSearchPage extends React.Component {
 
     const region = this.props.searchInfo.region.id;
 
+    this.getCityLocation(region);
+
     this.setState({
       loading: true,
       childrenModal: false,
-      currentPage: 0,
+      page: 0,
       hotels: {},
       mapInfo: [],
       allElements: false,
@@ -286,126 +303,283 @@ class StaticHotelsSearchPage extends React.Component {
       getStaticHotels(region).then(json => {
         const hotels = _.mapKeys(json.content, 'id');
         this.setState({ hotels, totalElements: json.totalElements, loading: false }, () => {
-          this.subscribe();
+          this.connectSocket();
         });
       });
     });
   }
 
-  toggleFilter(key, value) {
-    const stateKey = key + 'Toggled';
-    const set = new Set(this.state[stateKey]);
-    if (set.has(value)) {
-      set.delete(value);
-    } else {
-      set.add(value);
-    }
-
-    this.setState({ [stateKey]: set });
-    this.updateParamsMap(key, Array.from(set).join(','));
-  }
-
-  getSearchTerms(searchParams) {
-    let keys = Array.from(searchParams.keys());
-    let pairs = [];
-    for (let i = 0; i < keys.length; i++) {
-      pairs.push(keys[i] + '=' + this.createParam(searchParams.get(keys[i])));
-    }
-
-    return pairs.join('&');
-  }
-
-  getSearchParams() {
-    const map = new Map();
-    const pairs = this.props.location.search.substr(1).split('&');
-    for (let i = 0; i < pairs.length; i++) {
-      let pair = pairs[i].split('=');
-      map.set(pair[0], this.parseParam(pair[1]));
-    }
-
-    return map;
-  }
-
-  updateParamsMap(key, value) {
-    if (!value || value === '') {
-      this.state.searchParams.delete(key);
-    } else {
-      this.state.searchParams.set(key, this.createParam(value));
-    }
-  }
-
-  parseParam(param) {
-    return param.split('%20').join(' ');
-  }
-
-  createParam(param) {
-    return param.split(' ').join('%20');
-  }
-
   handleOrderBy(event) {
+    this.setState({ loading: true, });
     const orderBy = event.target.value;
-    this.setState({ orderBy }, () => {
+    this.setState({ orderBy, showMap: false, page: 0 }, () => {
       this.applyFilters();
     });
   }
 
   handlePriceRangeSelect(event) {
+    this.setState({ loading: true, });
     const priceRange = event.target.value;
-    this.setState({ priceRange }, () => {
+    this.setState({ priceRange, showMap: false, page: 0 }, () => {
+      this.applyFilters();
+    });
+  }
+
+  handleFilterByName(event) {
+    this.setState({ loading: true, });
+    const hotelName = event.target.value;
+    this.setState({ hotelName, showMap: false, page: 0 }, () => {
       this.applyFilters();
     });
   }
 
   handleToggleStar(star) {
+    this.setState({ loading: true, });
     const stars = this.state.stars;
     stars[star] = !stars[star];
-    this.setState({ stars }, () => {
+    this.setState({ stars, showMap: false, page: 0 }, () => {
       this.applyFilters();
     });
   }
 
-  applyFilters() {
-    const currentPage = 0;
-    const { priceRange, orderBy } = this.state;
-    const userCurrencyRate = this.state.rates[ROOMS_XML_CURRENCY][this.props.paymentInfo.currency];
-    const stars = this.state.stars.filter(x => x).length > 0 ? this.state.stars.slice(0) : [true, true, true, true, true];
-    const filteredListings = this.state.listings
-      .slice(0)
-      .filter(x => (priceRange[0] <= x.price * userCurrencyRate && x.price * userCurrencyRate <= priceRange[1]) && stars[x.stars - 1]);
-
-    if (orderBy === 'asc') {
-      filteredListings.sort((x, y) => x.price > y.price ? 1 : -1);
-    } else if (orderBy === 'desc') {
-      filteredListings.sort((x, y) => x.price > y.price ? -1 : 1);
-    }
-
-    this.setState({ filteredListings, currentPage, isFiltered: true });
-  }
-
-  clearFilters() {
-    const defaultPriceRange = { target: { value: [0, 5000] } };
-    const defaultOrderBy = { target: { value: '' } };
-    this.handlePriceRangeSelect(defaultPriceRange);
-    this.handleOrderBy(defaultOrderBy);
-    this.setState({ stars: [false, false, false, false, false], isFiltered: false });
-  }
-
-  toggleMap() {
-    this.setState(prev => {
-      if (prev.showMap) {
-        this.counter = 0;
-        this.clearIntervals();
-      }
-      return {
-        showMap: !prev.showMap,
-        mapInfo: this.hotelInfo
-      };
+  handleShowUnavailable() {
+    this.setState({ loading: true, });
+    const showUnavailable = !this.state.showUnavailable;
+    this.setState({ showUnavailable, showMap: false, page: 0 }, () => {
+      this.applyFilters();
     });
   }
 
-  onPageChange(page) {
+  handleShowFilters() {
+    console.log('handled');
+    this.setState({ showFiltersMobile: true });
+  }
+
+  mapStars(stars) {
+    let hasStars = false;
+    let mappedStars = [];
+    stars.forEach(s => {
+      if (s) {
+        hasStars = true;
+      }
+    });
+
+    if (!hasStars) {
+      for (let i = 0; i <= 5; i++) {
+        mappedStars.push(i);
+      }
+    } else {
+      mappedStars.push(0);
+      stars.forEach((s, i) => {
+        if (s) {
+          mappedStars.push(i + 1);
+        }
+      });
+    }
+
+    return mappedStars;
+  }
+
+  populateFilters() {
+    const params = queryString.parse(this.props.location.search);
+    const filters = JSON.parse(params.filters);
+    const stars = [false, false, false, false, false];
+    if (filters.stars.length < 6) {
+      filters.stars.forEach(s => {
+        const star = s - 1;
+        if (star >= 0) {
+          stars[star] = true;
+        }
+      });
+    }
     this.setState({
-      currentPage: page - 1,
+      hotelName: filters.name,
+      showUnavailable: filters.showUnavailable,
+      priceRange: [filters.minPrice, filters.maxPrice],
+      stars: stars,
+      orderBy: params.sort,
+      page: params.page ? Number(params.page) : 0
+    });
+  }
+
+  applyFilters() {
+    const queryParams = queryString.parse(this.props.location.search);
+    let search = `?region=${encodeURI(queryParams.region)}`;
+    search += `&currency=${encodeURI(queryParams.currency)}`;
+    search += `&startDate=${encodeURI(queryParams.startDate)}`;
+    search += `&endDate=${encodeURI(queryParams.endDate)}`;
+    search += `&rooms=${encodeURI(queryParams.rooms)}`;
+
+    const filtersObj = {
+      showUnavailable: this.state.showUnavailable,
+      name: this.state.hotelName,
+      minPrice: this.state.priceRange[0],
+      maxPrice: this.state.priceRange[1],
+      stars: this.mapStars(this.state.stars)
+    };
+
+    const filters = `&filters=${encodeURI(JSON.stringify(filtersObj))}`;
+    const page = this.state.page ? this.state.page : 0;
+    const sort = this.state.orderBy;
+    const pagination = `&page=${page}&sort=${sort}`;
+    this.props.history.push('/hotels/listings' + search + filters + pagination);
+
+    getStaticHotelsByFilter(search, filters, page, sort).then(res => {
+      if (res.success) {
+        res.response.json().then(json => {
+          this.setState({ loading: false, hotels: json.content, page, totalElements: json.totalElements }, () => {
+            return new Promise((resolve) => {
+              resolve();
+            });
+          });
+        });
+      } else {
+        NotificationManager.info('Search expired');
+        return new Promise((reject) => {
+          reject();
+        });
+      }
+    });
+  }
+
+  clearFilters() {
+    this.setState({
+      hotelName: '',
+      showUnavailable: false,
+      orderBy: 'asc',
+      stars: [false, false, false, false, false],
+      priceRange: [0, 5000],
+      showMap: false,
+      loading: true
+    }, () => {
+      this.applyFilters();
+    });
+  }
+
+  async toggleMap(e) {
+    if (e) {
+      e.preventDefault();
+    }
+
+    const showMap = this.state.showMap;
+
+    if (showMap) {
+      this.counter = 0;
+      this.clearIntervals();
+    }
+
+    if (this.isFiltered()) {
+      getMapInfo(this.props.location.search).then(json => {
+        if (!json.isCacheExpired) {
+          let mapInfo = [];
+          mapInfo = json.content.map(hotel => {
+            return {
+              id: hotel.id,
+              lat: hotel.latitude,
+              lon: hotel.longitude,
+              name: hotel.name,
+              price: hotel.price,
+              stars: hotel.star,
+              thumbnail: { url: hotel.hotelPhoto }
+            };
+          });
+
+          this.setState({
+            mapInfo: mapInfo,
+            showMap: !showMap,
+          });
+        } else {
+          this.applyFilters().then(() => {
+            this.setState({
+              showMap: !showMap,
+            });
+          }).catch(e => {
+            console.log(e);
+          });
+        }
+      });
+    } else {
+      this.setState({
+        showMap: !showMap,
+      });
+    }
+  }
+
+  updateMapInfo(hotel) {
+    if (this.state.showMap) {
+      this.counter += 1;
+      const timeout = this.counter * DELAY_INTERVAL;
+      const delayInterval = setTimeout(() => {
+        this.setState(prev => {
+          const mapInfo = prev.mapInfo.slice(0);
+          mapInfo.push(hotel);
+          return {
+            mapInfo
+          };
+        });
+      }, timeout);
+
+      this.delayIntervals.push(delayInterval);
+    }
+  }
+
+  // updateFilteredMapInfo() {
+  //   if (this.isFiltered() && this.state.showMap) {
+  //     this.setState({ mapLoading: true });
+  //     const queryParams = queryString.parse(this.props.location.search);
+  //     let search = `?region=${encodeURI(queryParams.region)}`;
+  //     search += `&currency=${encodeURI(queryParams.currency)}`;
+  //     search += `&startDate=${encodeURI(queryParams.startDate)}`;
+  //     search += `&endDate=${encodeURI(queryParams.endDate)}`;
+  //     search += `&rooms=${encodeURI(queryParams.rooms)}`;
+
+  //     const filtersObj = {
+  //       showUnavailable: this.state.showUnavailable,
+  //       name: this.state.hotelName,
+  //       minPrice: this.state.priceRange[0],
+  //       maxPrice: this.state.priceRange[1],
+  //       stars: this.mapStars(this.state.stars)
+  //     };
+
+  //     const filters = `&filters=${encodeURI(JSON.stringify(filtersObj))}`;
+  //     const page = this.state.page ? this.state.page : 0;
+  //     const sort = this.state.orderBy;
+  //     const pagination = `&page=${page}&sort=${sort}`;
+  //     search += filters + pagination;
+
+  //     getMapInfo(search).then(json => {
+  //       if (!json.isCacheExpired) {
+  //         let mapInfo = [];
+  //         mapInfo = json.content.map(hotel => {
+  //           return {
+  //             id: hotel.id,
+  //             lat: hotel.latitude,
+  //             lon: hotel.longitude,
+  //             name: hotel.name,
+  //             price: hotel.price,
+  //             stars: hotel.star,
+  //             thumbnail: { url: hotel.hotelPhoto }
+  //           };
+  //         });
+
+  //         this.setState({
+  //           mapInfo: mapInfo,
+  //           mapLoading: false
+  //         });
+  //       } else {
+  //         NotificationManager.info('Please renew your search');
+  //         this.setState({
+  //           showMap: false
+  //         });
+  //       }
+  //     });
+  //   }
+  // }
+
+  onPageChange(page) {
+    console.log(page);
+    this.setState({
+      page: page - 1,
       loading: true
     });
 
@@ -415,21 +589,29 @@ class StaticHotelsSearchPage extends React.Component {
 
     window.scrollTo(0, 0);
 
-    getStaticHotels(region, page - 1).then(json => {
-      const listings = json.content;
-      listings.forEach(l => {
-        if (this.hotelInfoById[l.id]) {
-          l.price = this.hotelInfoById[l.id].price;
-        }
-      });
-      const hotels = _.mapKeys(listings, 'id');
+    if (this.isFiltered()) {
+      this.applyFilters();
+    } else {
+      getStaticHotels(region, page - 1).then(json => {
+        const listings = json.content;
+        listings.forEach(l => {
+          if (this.hotelInfoById[l.id]) {
+            l.price = this.hotelInfoById[l.id].price;
+          }
+        });
+        const hotels = _.mapKeys(listings, 'id');
 
-      this.setState({
-        hotels,
-        totalElements: json.totalElements,
-        loading: false
+        this.setState({
+          hotels,
+          totalElements: json.totalElements,
+          loading: false
+        });
       });
-    });
+    }
+  }
+
+  isFiltered() {
+    return this.props.location.search.indexOf('&filters=') !== -1;
   }
 
   getRandomInt() {
@@ -468,29 +650,50 @@ class StaticHotelsSearchPage extends React.Component {
         <section id="hotel-box">
           <div className="container">
             <div className="row">
-              <div className="col-md-3">
-                {this.state.showMap
-                  ? <button onClick={this.toggleMap} className="btn btn-primary" style={{ width: '100%', marginBottom: '20px' }}>Show list</button>
-                  : <button onClick={this.toggleMap} className="btn btn-primary" style={{ width: '100%', marginBottom: '20px' }}>Show on map</button>
-                }
+              <div className="hotels-search-sidebar col-md-3">
+                <FilterPanel
+                  windowWidth={this.state.windowWidth}
+                  showFiltersMobile={this.state.showFiltersMobile}
+                  hotelName={this.state.hotelName}
+                  priceRange={this.state.priceRange}
+                  isSearchReady={this.state.allElements}
+                  orderBy={this.state.orderBy}
+                  stars={this.state.stars}
+                  showUnavailable={this.state.showUnavailable}
+                  handleOrderBy={this.handleOrderBy}
+                  clearFilters={this.clearFilters}
+                  handlePriceRangeSelect={this.handlePriceRangeSelect}
+                  handleToggleStar={this.handleToggleStar}
+                  handleFilterByName={this.handleFilterByName}
+                  handleShowUnavailable={this.handleShowUnavailable}
+                  handleShowFilters={this.handleShowFilters}
+                />
+
+                <div className="map">
+                  <div className="img-holder">
+                    <a href="#" onClick={this.toggleMap}>See Results {this.state.showMap ? 'List' : 'on Map'}</a>
+                  </div>
+                </div>
               </div>
               <div className="col-md-9">
                 <div className="list-hotel-box" id="list-hotel-box">
                   {this.state.showMap
                     ? <div>
-                      <MultiMarkerGoogleMap
-                        lat={this.state.lat}
-                        lon={this.state.lon}
-                        hotels={hotels}
-                        mapInfo={this.state.mapInfo}
-                        isFiltered={this.state.isFiltered}
-                        locRate={this.state.locRate}
-                        rates={this.state.rates}
-                        paymentInfo={this.props.paymentInfo}
-                        isLogged={this.props.userInfo.isLogged}
-                        nights={this.state.nights}
-                        loading={this.state.loading}
-                      />
+                      {this.state.mapLoading
+                        ? <div className="loader"></div>
+                        : <MultiMarkerGoogleMap
+                          lat={this.state.lat}
+                          lon={this.state.lon}
+                          hotels={hotels}
+                          mapInfo={this.state.mapInfo}
+                          locRate={this.state.locRate}
+                          rates={this.state.rates}
+                          paymentInfo={this.props.paymentInfo}
+                          isLogged={this.props.userInfo.isLogged}
+                          nights={this.state.nights}
+                          loading={this.state.loading}
+                        />
+                      }
                     </div>
                     : <div>
                       {this.state.loading
@@ -506,13 +709,15 @@ class StaticHotelsSearchPage extends React.Component {
                         />
                       }
 
-                      <Pagination
-                        loading={this.state.loading}
-                        onPageChange={this.onPageChange}
-                        currentPage={this.state.currentPage + 1}
-                        pageSize={20}
-                        totalElements={totalElements}
-                      />
+                      {!this.state.loading &&
+                        <Pagination
+                          loading={this.state.loading}
+                          onPageChange={this.onPageChange}
+                          currentPage={this.state.page + 1}
+                          pageSize={10}
+                          totalElements={totalElements}
+                        />
+                      }
                     </div>
                   }
                 </div>
