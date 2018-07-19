@@ -21,7 +21,8 @@ export default function reducer(state = initialState, action) {
         redditProfile: action.redditProfile,
         refLink: action.refLink,
         participates: action.participates,
-        isVerifyEmail: action.isVerifyEmail
+        isVerifyEmail: action.isVerifyEmail,
+        voteUrl: action.voteUrl
       };
     default:
       return state;

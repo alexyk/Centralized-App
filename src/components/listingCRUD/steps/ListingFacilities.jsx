@@ -6,7 +6,7 @@ import ListingCrudNav from '../navigation/ListingCrudNav';
 import FilterCheckbox from '../../common/filter/FilterCheckbox';
 import FooterNav from '../navigation/FooterNav';
 
-export default function CreateListingFacilities(props) {
+function ListingFacilities(props) {
   if (!props) {
     return null;
   }
@@ -72,10 +72,12 @@ export default function CreateListingFacilities(props) {
   );
 }
 
-CreateListingFacilities.propTypes = {
+ListingFacilities.propTypes = {
   values: PropTypes.any,
   updateProgress: PropTypes.func,
   prev: PropTypes.string,
   next: PropTypes.string,
   routes: PropTypes.object,
 };
+
+export default ListingFacilities;

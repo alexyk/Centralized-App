@@ -9,7 +9,7 @@ import requester from '../../../initDependencies';
 
 import '../../../styles/css/components/profile/my-listings__progress-item.css';
 
-export default class MyListingsInProgressItem extends React.Component {
+class MyListingsInProgressItem extends React.Component {
   constructor(props) {
     super(props);
 
@@ -179,7 +179,7 @@ export default class MyListingsInProgressItem extends React.Component {
           ref={el => this.captcha = el}
           size="invisible"
           sitekey={Config.getValue('recaptchaKey')}
-          onChange={token => this.deleteSelected(token)}
+          onChange={token => { this.deleteSelected(token); this.captcha.reset(); }}
         />
       </div>
     );
@@ -193,3 +193,5 @@ MyListingsInProgressItem.propTypes = {
   filterListings: PropTypes.func,
   deleteInProgressListing: PropTypes.func
 };
+
+export default MyListingsInProgressItem;

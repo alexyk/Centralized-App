@@ -17,7 +17,7 @@ import {
   PROFILE_PASSWORD_REQUIREMENTS
 } from '../../../constants/warningMessages.js';
 
-export default function AirdropRegisterModal(props) {
+function AirdropRegisterModal(props) {
 
   const openWalletInfo = () => {
     requester.getEmailFreeResponse(props.signUpEmail).then(res => {
@@ -51,7 +51,7 @@ export default function AirdropRegisterModal(props) {
 
   return (
     <div>
-      <Modal show={props.isActive} onHide={() => console.log("First register in Locktrip")} className="modal fade myModal">
+      <Modal show={props.isActive} onHide={() => console.log('First register in Locktrip')} className="modal fade myModal">
         <Modal.Header>
           <h1>Sign up</h1>
           <button type="button" className="close" onClick={() => props.closeModal(AIRDROP_REGISTER)}>&times;</button>
@@ -97,3 +97,5 @@ AirdropRegisterModal.propTypes = {
   closeModal: PropTypes.func,
   isActive: PropTypes.bool
 };
+
+export default AirdropRegisterModal;

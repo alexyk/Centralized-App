@@ -4,7 +4,7 @@ import Pagination from '../../common/pagination/Pagination';
 import React from 'react';
 import requester from '../../../initDependencies';
 
-export default class MessagesPage extends React.Component {
+class MessagesPage extends React.Component {
   constructor(props) {
     super(props);
 
@@ -109,3 +109,5 @@ export default class MessagesPage extends React.Component {
     );
   }
 }
+
+export default MessagesPage;

@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import HomesSearchBarDatePicker from './HomesSearchBarDatePicker';
 import moment from 'moment';
 
-const SearchBar = (props) => (
+const HomesSearchBar = (props) => (
   <div className="source-panel">
     <div className="source-panel-select source-panel-item">
       {/* <i className="icon icon-map form-control-feedback"></i> */}
@@ -77,7 +77,7 @@ const calculateNights = (startDate, endDate) => {
   return (checkOut > checkIn) ? checkOut.diff(checkIn, 'days') : 0;
 };
 
-SearchBar.propTypes = {
+HomesSearchBar.propTypes = {
   countryId: PropTypes.string,
   countries: PropTypes.array,
   startDate: PropTypes.any,
@@ -88,4 +88,4 @@ SearchBar.propTypes = {
   handleDatePick: PropTypes.func,
 };
 
-export default SearchBar;
+export default HomesSearchBar;

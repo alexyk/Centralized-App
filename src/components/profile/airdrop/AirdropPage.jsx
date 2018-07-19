@@ -1,24 +1,25 @@
-import React, { Component } from 'react';
-import { withRouter } from 'react-router-dom';
-
-import { connect } from 'react-redux';
-import { setIsLogged } from '../../../actions/userInfo';
-import { openModal, closeModal, airdropModals } from '../../../actions/modalsInfo';
-import { Config } from '../../../config';
-import { setAirdropInfo, setAirdropModalTrue } from '../../../actions/airdropInfo';
-import { NotificationManager } from 'react-notifications';
-import NavProfile from '../NavProfile';
-import { CopyToClipboard } from 'react-copy-to-clipboard';
-import NoEntriesMessage from '../common/NoEntriesMessage';
-import requester from '../../../initDependencies';
-
 import '../../../styles/css/components/profile/airdrop-page.css';
 
 import {
-  LOGIN,
   AIRDROP_LOGIN,
-  AIRDROP_REGISTER
+  AIRDROP_REGISTER,
+  LOGIN
 } from '../../../constants/modals.js';
+import React, { Component } from 'react';
+import { airdropModals, openModal } from '../../../actions/modalsInfo';
+
+import { Config } from '../../../config';
+import { CopyToClipboard } from 'react-copy-to-clipboard';
+import NavProfile from '../NavProfile';
+import NoEntriesMessage from '../common/NoEntriesMessage';
+import { NotificationManager } from 'react-notifications';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import requester from '../../../initDependencies';
+import { setAirdropInfo } from '../../../actions/airdropInfo';
+import { setIsLogged } from '../../../actions/userInfo';
+import validator from 'validator';
+import { withRouter } from 'react-router-dom';
 
 class AirdropPage extends Component {
   constructor(props) {
@@ -27,10 +28,12 @@ class AirdropPage extends Component {
     this.state = {
       isUserLogged: false,
       isAirdropUser: false,
+      isVoteUrlEdited: false,
       didPostUserInfo: false,
       loginEmail: '',
       loginPassword: '',
       token: null,
+      voteUrl: '',
       userParticipates: false,
       loading: true,
     };
@@ -40,17 +43,19 @@ class AirdropPage extends Component {
     this.isUserLogged = this.isUserLogged.bind(this);
     this.handleEdit = this.handleEdit.bind(this);
     this.handleEditSubmit = this.handleEditSubmit.bind(this);
+    this.handleSaveVoteUrl = this.handleSaveVoteUrl.bind(this);
     this.onChange = this.onChange.bind(this);
   }
 
   componentWillMount() {
     if (this.props.location.search && this.props.location.search.indexOf('emailtoken') !== -1) {
-
       requester.verifyUserEmail(this.props.location.search).then(() => {
+        console.log('verifying user email');
         NotificationManager.info('Email verified.');
         if (this.isUserLogged()) {
           requester.getUserAirdropInfo().then(res => {
             res.body.then(data => {
+              console.log('dispatching user info');
               this.dispatchAirdropInfo(data);
             });
           });
@@ -75,6 +80,15 @@ class AirdropPage extends Component {
       this.setState({ userParticipates: true });
     }
   }
+
+  // componentDidUpdate(prevState) {
+  //   const { isUserLogged, didPostUserInfo } = this.state;
+  //   if (!prevState.isUserLogged && isUserLogged) {
+  //     getUserAirdropInfo().then(json => {
+  //       this.setState({ userAirdropInfo: json });
+  //     });
+  //   }
+  // }
 
   openModal(modal, e) {
     if (e) {
@@ -131,27 +145,22 @@ class AirdropPage extends Component {
 
           if (this.isUserLogged()) {
             if (airdropEmail !== loggedInUserEmail) {
-              console.log('wrong user logged')
+              // console.log('wrong user logged')
               this.logout();
               this.openModal(AIRDROP_LOGIN);
             } else {
-              console.log('user is logged')
+              // console.log('user is logged')
               // Post confirmation to backend /airdrop/participate/:token
               requester.getUserAirdropInfo().then(res => {
                 res.body.then(data => {
                   if (data.user) {
-                    console.log('user already participates')
                     this.dispatchAirdropInfo(data);
-                    console.log('user info dispatched')
                   } else {
-                    console.log('user has not participated yet', data)
                     requester.verifyUserAirdropInfo(token).then(() => {
-                      // then set airdrop info in redux
-                      console.log('user moved from temp to main')
                       requester.getUserAirdropInfo().then(res => {
                         res.body.then(data => {
                           this.dispatchAirdropInfo(data);
-                          console.log('user info dispatched')
+                          // console.log('user info dispatched')
                           NotificationManager.info('Verification email has been sent. Please follow the link to confirm your email.');
                         });
                       });
@@ -161,26 +170,27 @@ class AirdropPage extends Component {
               });
             }
           } else {
-            console.log('no user logged')
+            // console.log('no user logged')
             this.openModal(AIRDROP_LOGIN);
           }
         } else if (!user.exists) {
           // user profile doesn't exist
-          console.log('user does not exist')
+          // console.log('user does not exist')
           this.logout();
           this.openModal(AIRDROP_REGISTER);
         } else {
           NotificationManager.warning('Token expired or invalid');
           this.props.location.href = '/airdrop';
         }
+      }).catch(e => {
+        console.log(e);
+        // this.props.history.push('/airdrop');
       });
-    }).catch(e => {
-      console.log(e);
-      // this.props.history.push('/airdrop');
     });
   }
 
   dispatchAirdropInfo(info) {
+    console.log(info);
     const email = info.user;
     const facebookProfile = info.facebookProfile;
     const telegramProfile = info.telegramProfile;
@@ -191,10 +201,11 @@ class AirdropPage extends Component {
     const isVerifyEmail = info.isVerifyEmail;
     const referralCount = info.referralCount;
     const isCampaignSuccessfullyCompleted = info.isCampaignSuccessfullyCompleted;
-    this.props.dispatch(setAirdropInfo(email, facebookProfile, telegramProfile, twitterProfile, redditProfile, refLink, participates, isVerifyEmail, referralCount, isCampaignSuccessfullyCompleted));
+    const voteUrl = info.voteUrl;
+    this.props.dispatch(setAirdropInfo(email, facebookProfile, telegramProfile, twitterProfile, redditProfile, refLink, participates, isVerifyEmail, referralCount, isCampaignSuccessfullyCompleted, voteUrl));
     this.props.airdropInfo.referralCount = referralCount;
     this.props.airdropInfo.isCampaignSuccessfullyCompleted = isCampaignSuccessfullyCompleted;
-    this.setState({ loading: false });
+    this.setState({ voteUrl: voteUrl, loading: false });
   }
 
   handleEdit(media, e) {
@@ -231,7 +242,25 @@ class AirdropPage extends Component {
     });
   }
 
+  handleSaveVoteUrl() {
+    if (!validator.isURL(this.state.voteUrl)) {
+      NotificationManager.info('Enter a valid URL.');
+    } else {
+      const { voteUrl } = this.state;
+      requester.editAirdropVoteUrl({ voteUrl }).then(() => {
+        this.setState({ isVoteUrlEdited: false });
+        NotificationManager.info('Vote URL saved.');
+      }).catch(error => {
+        console.log(error);
+      });
+    }
+  }
+
   onChange(e) {
+    if (e.target.name === 'voteUrl') {
+      this.setState({ isVoteUrlEdited: true });
+    }
+
     this.setState({ [e.target.name]: e.target.value });
   }
 
@@ -277,8 +306,6 @@ class AirdropPage extends Component {
               <div className="balance-row">
                 <div className="balance-row__label"><span className="emphasized-text">Unverified Balance</span></div>
                 <div className="balance-row__content">${this.props.airdropInfo.isCampaignSuccessfullyCompleted ? this.props.airdropInfo.referralCount * 5 + 10 : this.props.airdropInfo.referralCount * 5}</div>
-
-
               </div>
 
               <div className="balance-row">
@@ -287,10 +314,14 @@ class AirdropPage extends Component {
                 <CopyToClipboard text={this.props.airdropInfo.refLink.toString().replace('alpha.', '')} onCopy={() => { NotificationManager.info('Copied to clipboard.'); }}><button className="referral-url-copy">Copy to Clipboard</button></CopyToClipboard>
               </div>
 
-              {/* <div className="balance-row">
-                <div className="balance-row__label"><span className="emphasized-text">Number of Referred People</span></div>
-                <div className="balance-row__content">101</div>
-              </div> */}
+              <div className="balance-row">
+                <div className="balance-row__label"><span className="emphasized-text">Your LockTrip listing vote screenshot URL (<a href="https://medium.com/@LockChainCo/vote-for-locktrip-on-kucoin-now-f89448556aac" target="_blank" rel='noreferrer noopener' className="referral-url">read more</a>)</span></div>
+                <input name="voteUrl" value={this.state.voteUrl} className="balance-row__content" onChange={this.onChange}></input>
+                <span className={`step-check${this.state.voteUrl ? ' checked' : ' unchecked'}`}></span>
+                {this.state.isVoteUrlEdited && this.state.voteUrl &&
+                  <button className="save-vote-url" onClick={this.handleSaveVoteUrl}>Save</button>
+                }
+              </div>
             </div>
 
             <div className="airdrop-info">
@@ -394,5 +425,19 @@ function mapStateToProps(state) {
     airdropInfo
   };
 }
+
+AirdropPage.propTypes = {
+  countries: PropTypes.array,
+
+  // start Router props
+  location: PropTypes.object,
+  history: PropTypes.object,
+
+  // start Redux props
+  paymentInfo: PropTypes.object,
+  userInfo: PropTypes.object,
+  airdropInfo: PropTypes.object,
+  dispatch: PropTypes.func,
+};
 
 export default withRouter(connect(mapStateToProps)(AirdropPage));

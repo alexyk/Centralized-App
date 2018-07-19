@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-export default function ListingCrudNav(props) {
+function ListingCrudNav(props) {
   return (
     <div className="admin_dashboard">
       <section className="step-by-step">
@@ -21,3 +21,5 @@ export default function ListingCrudNav(props) {
 ListingCrudNav.propTypes = {
   progress: PropTypes.string,
 };
+
+export default ListingCrudNav;

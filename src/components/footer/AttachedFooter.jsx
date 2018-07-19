@@ -83,11 +83,11 @@ AttachedFooter.propTypes = {
   paymentInfo: PropTypes.object
 };
 
-export default connect(mapStateToProps)(AttachedFooter);
-
 function mapStateToProps(state) {
   const { paymentInfo } = state;
   return {
     paymentInfo
   };
 }
+
+export default connect(mapStateToProps)(AttachedFooter);

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import Stomp from 'stompjs';
 
-export default class StyleTest extends Component {
+class StompTest extends Component {
   constructor(props) {
     super(props);
 
@@ -17,7 +17,7 @@ export default class StyleTest extends Component {
     const url = 'ws://localhost:61614';
     const login = null;
     const passcode = null;
-    const receiveDestination = 'search/' + uuid;
+    const receiveDestination = '/topic/search/' + uuid;
     const client = Stomp.client(url);
     this.client = client;
     client.connect(login, passcode, function (frame) {
@@ -38,12 +38,12 @@ export default class StyleTest extends Component {
     const uuid = '456';
     const msgObject = {
       uuid: uuid,
-      query: 'region=52612&currency=EUR&startDate=28/06/2018&endDate=29/06/2018&rooms=%5B%7B%22adults%22:2,%22children%22:%5B%5D%7D%5D'
+      query: 'region=52612&currency=EUR&startDate=10/07/2018&endDate=11/07/2018&rooms=%5B%7B%22adults%22:2,%22children%22:%5B%5D%7D%5D'
     };
 
     const msg = JSON.stringify(msgObject);
 
-    const sendDestination = 'search';
+    const sendDestination = '/topic/search';
     const headers = {
       'content-length': false
     };
@@ -58,3 +58,5 @@ export default class StyleTest extends Component {
     );
   }
 }
+
+export default StompTest;

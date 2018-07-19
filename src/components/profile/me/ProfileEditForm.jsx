@@ -7,7 +7,7 @@ import React from 'react';
 import moment from 'moment';
 import requester from '../../../initDependencies';
 
-export default class ProfileEditPage extends React.Component {
+class ProfileEditForm extends React.Component {
   constructor(props) {
     super(props);
 
@@ -288,3 +288,5 @@ export default class ProfileEditPage extends React.Component {
     );
   }
 }
+
+export default ProfileEditForm;

@@ -176,7 +176,7 @@ class HomeReservationPanel extends React.Component {
                 ref={el => this.captcha = el}
                 size="invisible"
                 sitekey={Config.getValue('recaptchaKey')}
-                onChange={token => this.onSubmit(token)}
+                onChange={token => { this.onSubmit(token); this.captcha.reset(); }}
               />
               <br />
 
@@ -243,8 +243,6 @@ HomeReservationPanel.propTypes = {
   paymentInfo: PropTypes.object
 };
 
-export default withRouter(connect(mapStateToProps)(HomeReservationPanel));
-
 function mapStateToProps(state) {
   const { userInfo, paymentInfo } = state;
   return {
@@ -252,3 +250,5 @@ function mapStateToProps(state) {
     paymentInfo
   };
 }
+
+export default withRouter(connect(mapStateToProps)(HomeReservationPanel));

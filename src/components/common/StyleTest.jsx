@@ -1,54 +1,49 @@
 import React, { Component } from 'react';
-import Select from 'react-select';
-import { NotificationManager } from 'react-notifications';
 
-export default class StyleTest extends Component {
+import queryString from 'query-string';
+
+class StyleTest extends Component {
   constructor(props) {
     super(props);
     
     this.state = {
-      selectedOption: null
+      ulr: null,
+      decodedUrl: null,
     };
 
-    this.handleChange = this.handleChange.bind(this);
+    this.decode = this.decode.bind(this);
   }
 
-  handleChange(selectedOption) {
-    this.setState({ selectedOption });
+  componentDidMount() {
+    // const baseURL = '/hotels/listings';
+    const searchString = '?region=15664&currency=EUR&startDate=14/07/2018&endDate=20/07/2018&rooms=%5B%7B"adults":2,"children":%5B%5D%7D%5D';
+    const filters = {
+      name: 'marinela',
+      minPrice: 10,
+      maxPrice: 500,
+      stars: [0,1,2,3,4,5],
+    };
+    const filterString = '&filters=' + encodeURI(JSON.stringify(filters));
+    const paginationString = '&page=0&sort=asc&size=10';
+    const url = `${searchString}${filterString}${paginationString}`;
+    this.setState({ url });
+  }
+
+  decode() {
+    const params = queryString.parse(this.state.url);
+    const filters = params.filters;
+    console.log(filters);
   }
 
   render() {
-    const { selectedOption } = this.state;
     return (
       <div className="container">
-        <Select
-          style={{ zIndex: '100' }}
-          name="form-field-name"
-          value={selectedOption}
-          onChange={this.handleChange}
-          clearable={true}
-          onClose={() => {
-            if (this.state.selectedOption && this.state.selectedOption.label === '') {
-              this.setState({ selectedOption: null });
-            }
-          }}
-          onOpen={() => {
-            if (!this.state.selectedOption) {
-              this.setState({ selectedOption: { label: '' } });
-            }
-          }}
-          options={[
-            { value: 'one', label: 'One' },
-            { value: 'two', label: 'Two' },
-          ]}
-        />
-
-        <button onClick={() => {
-          const a = 'abc';
-          console.log(a.match('^([^\\s][a-zA-Z].?[0-9][^\\s]|[^\\s][0-9].?[a-zA-Z][^\\s])$/'));
-        }}>Test</button>
-        <span className="icon-question" title={`${123}`}></span>
+        {this.state.url}
+        {this.state.decodedUrl}
+        <button onClick={this.decode}>DECODE</button>
       </div>
     );
   }
 }
+
+export default StyleTest;

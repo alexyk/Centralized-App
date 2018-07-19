@@ -712,17 +712,17 @@ class EditListingPage extends React.Component {
           ref={(el) => this.editCaptcha = el}
           size="invisible"
           sitekey={Config.getValue('recaptchaKey')}
-          onChange={token => { this.editListing(token); }}
+          onChange={token => { this.editListing(token); this.captcha.reset(); }}
         />
       </div>
     );
   }
 }
 
-export default withRouter(EditListingPage);
-
 EditListingPage.propTypes = {
   history: PropTypes.object,
   location: PropTypes.object,
   match: PropTypes.object
 };
+
+export default withRouter(EditListingPage);

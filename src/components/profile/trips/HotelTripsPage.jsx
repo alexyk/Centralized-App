@@ -1,6 +1,5 @@
 import { closeModal, openModal } from '../../../actions/modalsInfo.js';
 
-import CancellationModal from '../../common/modals/CancellationModal';
 import { Config } from '../../../config';
 import { HotelReservation } from '../../../services/blockchain/hotelReservation';
 import HotelTripsTable from './HotelTripsTable';

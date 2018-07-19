@@ -8,7 +8,7 @@ import requester from '../../../initDependencies';
 import { Config } from '../../../config';
 import { TokenTransactions } from '../../../services/blockchain/tokenTransactions';
 
-export default class WalletIndexPage extends React.Component {
+class WalletIndexPage extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -120,3 +120,5 @@ export default class WalletIndexPage extends React.Component {
     );
   }
 }
+
+export default WalletIndexPage;

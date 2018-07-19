@@ -211,6 +211,8 @@ class UnpublishedList extends React.Component {
             break;
           case 'denied': NotificationManager.success('Listing denied');
             break;
+          default:
+            break;
         }
 
         const allListings = this.state.listings;

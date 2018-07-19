@@ -4,7 +4,7 @@ import moment from 'moment';
 import { Config } from '../../../config';
 import NoEntriesMessage from '../common/NoEntriesMessage';
 
-export default function DashboardPending(props) {
+function DashboardPending(props) {
 
   const renderReservations = () => {
     if (!props.reservations) {
@@ -49,6 +49,10 @@ export default function DashboardPending(props) {
     );
   };
 
+  const capitalize = (string) => {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+  };
+
   const renderTrips = () => {
     if (!props.trips) {
       return;
@@ -69,18 +73,26 @@ export default function DashboardPending(props) {
             </li>
             <li>
               <span className="cnt block">
-                <span className="block bold">{trip.hostName}</span>
+                <span className="block bold">{trip.hostName}</span><br />
                 <span className="where block">{trip.listingName}</span>
               </span>
             </li>
             <li>
-              <span className="cnt block">{moment(new Date(trip.startDate)).format('DD MMM, YYYY')}<i aria-hidden="true" className="fa fa-long-arrow-right"></i>{moment(new Date(trip.endDate)).format('DD MMM, YYYY')}</span>
+              <span className="cnt block">{trip.displayStartDate} <i aria-hidden="true" className="fa fa-long-arrow-right"></i> {trip.displayEndDate}</span>
             </li>
             <li>
-              <span className="cnt block">
-                <span className="bold">{trip.accepted ? 'Accepted' : 'Pending'}</span>
-                <span> - </span>
-                <span>{trip.currencyCode} {trip.price}</span>
+              <span className="cnt block"><div className="reservation-status bold">
+                {
+                  capitalize(trip.status != null && trip.status.length > 0 ? trip.status : 'PENDING')
+                }
+                &nbsp;
+                  {trip.status && trip.status.toUpperCase() === 'FAILED' &&
+                  <span className="icon-question" title={trip.error ? trip.error : 'Transaction failed.'}></span>
+                }
+              </div>
+                {trip.status && trip.status.toUpperCase() === 'DONE' &&
+                  <span>Reference No.: {trip.booking_id}</span>
+                }
               </span>
             </li>
           </ul>
@@ -114,7 +126,7 @@ export default function DashboardPending(props) {
           <li><span>&nbsp;</span></li>
           <li><span>Host</span></li>
           <li><span>Trip Dates</span></li>
-          <li><span>Status - Price</span></li>
+          <li><span>Status</span></li>
           <li><span></span></li>
         </ul>
 
@@ -129,3 +141,5 @@ DashboardPending.propTypes = {
   reservations: PropTypes.array,
   trips: PropTypes.array
 };
+
+export default DashboardPending;

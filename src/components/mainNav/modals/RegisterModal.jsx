@@ -17,7 +17,7 @@ import {
   PROFILE_PASSWORD_REQUIREMENTS
 } from '../../../constants/warningMessages.js';
 
-export default function LoginModal(props) {
+function RegisterModal(props) {
 
   const openWalletInfo = () => {
     requester.getEmailFreeResponse(props.signUpEmail).then(res => {
@@ -86,7 +86,7 @@ export default function LoginModal(props) {
   );
 }
 
-LoginModal.propTypes = {
+RegisterModal.propTypes = {
   signUpEmail: PropTypes.string,
   signUpFirstName: PropTypes.string,
   signUpLastName: PropTypes.string,
@@ -96,3 +96,5 @@ LoginModal.propTypes = {
   closeModal: PropTypes.func,
   isActive: PropTypes.bool
 };
+
+export default RegisterModal;

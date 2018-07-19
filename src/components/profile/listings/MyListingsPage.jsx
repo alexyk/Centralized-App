@@ -4,13 +4,12 @@ import { Link } from 'react-router-dom';
 import MyListingsActiveItem from './MyListingsActiveItem';
 import MyListingsInProgressItem from './MyListingsInProgressItem';
 import { NotificationManager } from 'react-notifications';
-import Pagination from '../../common/pagination/Pagination';
 import ReCAPTCHA from 'react-google-recaptcha';
 import React from 'react';
 import filterListings from '../../../actions/filterListings';
 import requester from '../../../initDependencies';
 
-export default class MyListingsPage extends React.Component {
+class MyListingsPage extends React.Component {
   constructor(props) {
     super(props);
 
@@ -200,3 +199,5 @@ export default class MyListingsPage extends React.Component {
     );
   }
 }
+
+export default MyListingsPage;
