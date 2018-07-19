@@ -156,8 +156,8 @@ class MainNav extends React.Component {
         // this.captcha.reset();
       }
       else {
-        res.body.then(res => {
-          const errors = res.errors;
+        res.errors.then(res => {
+          const errors = res;
           for (let key in errors) {
             if (typeof errors[key] !== 'function') {
               NotificationManager.warning(errors[key].message, 'Field: ' + key.toUpperCase());
@@ -229,7 +229,7 @@ class MainNav extends React.Component {
         });
       } else {
         res.errors.then(res => {
-          const errors = res.errors;
+          const errors = res;
           console.log(errors);
           if (errors.hasOwnProperty('JsonFileNull')) {
             NotificationManager.warning(errors['JsonFileNull'].message);

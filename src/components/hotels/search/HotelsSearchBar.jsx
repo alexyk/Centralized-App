@@ -21,8 +21,8 @@ function HotelsSearchBar(props) {
       return Promise.resolve({ options: [] });
     }
 
-    return requester.getRegionsBySearchParameter(param).then(res => {
-      res.body.then(data => {
+    return requester.getRegionsBySearchParameter([`query=${param}`]).then(res => {
+      return res.body.then(data => {
         return { options: data };
       });
     });

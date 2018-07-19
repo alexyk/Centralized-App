@@ -48,7 +48,7 @@ class HotelBookingConfirmPage extends React.Component {
         res.body.then(data => {
           this.setState({ data: data, booking: booking });
 
-          requester.getLocRateInUserSelectedCurrency(data.currency).then(res => {
+          requester.getLocRateByCurrency(data.currency).then(res => {
             res.body.then(data => {
               this.setState({ locRate: data[0]['price_' + data.currency.toLowerCase()] });
             });
@@ -235,7 +235,7 @@ class HotelBookingConfirmPage extends React.Component {
         const queryString = this.props.location.search;
         console.log((queryString));
 
-        requester.getCurrentlyLoggedUserJsonFile().then(res => {
+        requester.getMyJsonFile().then(res => {
           res.body.then(data => {
             setTimeout(() => {
               HotelReservation.createReservation(
