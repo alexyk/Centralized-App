@@ -1,0 +1,29 @@
+@import '../../../base/variables';
+
+.hotels-search-sidebar {
+  .map {
+		margin-bottom: 17px;
+		padding: 21px 15px 14px;
+		background: $white;
+		border-radius: 3px;
+  }
+  
+	.map {
+		padding: 7px;
+		.img-holder {
+      background-image: url('./map.jpg');
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			min-height: 126px;
+		}
+		a {
+			display: inline-block;
+			vertical-align: middle;
+			font-weight: 400;
+			color: $text-black;
+			background: $white;
+			padding: 22px;
+		}
+	}
+}

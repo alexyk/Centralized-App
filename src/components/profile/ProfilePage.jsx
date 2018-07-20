@@ -11,6 +11,7 @@ import MessagesPage from './messages/MessagesPage';
 import MessagesChatPage from './messages/MessagesChatPage';
 import ProfileEditPage from './me/ProfileEditPage';
 import WalletPage from './wallet/WalletIndexPage';
+import BuyLocPage from './buyloc/BuyLocPage';
 import AdminPage from './admin/AdminPage';
 
 import PropTypes from 'prop-types';

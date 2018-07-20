@@ -1,0 +1,46 @@
+$breakpoints: (
+	'xs-phone': 320px,
+	'phone': 570px,
+	'tablet': 768px,
+	'desktop': 1024px,
+	'widescreen': 1200px
+);
+
+@import '../../../styles/css/vendors/include-media';
+
+.flex-container-row {
+  display: -webkit-box;
+  display: -moz-box;
+  display: -ms-flexbox;
+  display: -webkit-flex;
+  display: flex;
+  border: 1px solid #CCCCCC;
+  border-radius: 5px;
+  background-color: white;
+  align-items: center;
+  margin-top: 10px;
+  padding-left: 2%;
+  .flex-row-child {
+    padding: 2% 0;
+    margin-right: 2%;
+  }
+}
+
+.flex-container-header {
+  @include media("<=phone") {
+   display: none;
+  }
+  display: -webkit-box;
+  display: -moz-box;
+  display: -ms-flexbox;
+  display: -webkit-flex;
+  display: flex;
+  border: 1px solid #CCCCCC;
+  border-radius: 5px;
+  margin-bottom: 10px;
+  padding-left: 2%;
+  .flex-header-child {
+    padding: 1% 0;
+    margin-right: 2%;
+  }
+}
