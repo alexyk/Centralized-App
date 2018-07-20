@@ -86,9 +86,9 @@ class HotelBookingPage extends React.Component {
       const adults = [];
       for (let j = 0; j < searchRoom.adults; j++) {
         const adult = {
-          title: this.props.userInfo.gender === 'men' ? 'Mr' : 'Mrs',
-          firstName: i === 0 && j === 0 ? this.props.userInfo.firstName : '',
-          lastName: i === 0 && j === 0 ? this.props.userInfo.lastName : '',
+          title: i === 0 && j === 0 && this.props.userInfo.gender === 'women' ? 'Mrs' : 'Mr',
+          firstName: i === 0 && j === 0 ? this.props.userInfo.firstName : 'Optional',
+          lastName: i === 0 && j === 0 ? this.props.userInfo.lastName : 'Optional',
         };
 
         adults.push(adult);
