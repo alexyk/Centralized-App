@@ -16,7 +16,6 @@ function FilterPanel(props) {
     );
   }
 
-  console.log(props.showFiltersMobile);
   if (props.windowWidth <= 991 && !props.showFiltersMobile) {
     return (
       <div className="filter-box">

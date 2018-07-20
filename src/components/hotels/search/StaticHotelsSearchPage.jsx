@@ -7,7 +7,6 @@ import moment from 'moment';
 import uuid from 'uuid';
 import Stomp from 'stompjs';
 import queryString from 'query-string';
-import { NotificationManager } from 'react-notifications';
 import { setCurrency } from '../../../actions/paymentInfo';
 import { connect } from 'react-redux';
 import _ from 'lodash';
@@ -32,7 +31,7 @@ import {
 
 import '../../../styles/css/components/hotels_search/sidebar/sidebar.css';
 
-const DEBUG_SOCKET = true;
+const DEBUG_SOCKET = false;
 const DELAY_INTERVAL = 100;
 const DEBOUNCE_INTERVAL = 1000;
 
@@ -158,13 +157,6 @@ class StaticHotelsSearchPage extends React.Component {
   }
 
   componentWillUnmount() {
-    this.setState({
-      listings: null,
-      filteredListings: null,
-      loading: true,
-      page: 0,
-    });
-
     this.unsubscribe();
     this.disconnect();
     this.clearIntervals();
@@ -409,11 +401,12 @@ class StaticHotelsSearchPage extends React.Component {
     const search = this.getSearchString();
     const filters = this.getFilterString();
     const page = this.state.page ? this.state.page : 0;
-    this.props.history.push(baseUrl + search + filters);
     getStaticHotelsByFilter(search, filters).then(res => {
       if (res.success) {
         res.response.json().then(json => {
-          this.setState({ loading: false, hotels: json.content, page, totalElements: json.totalElements });
+          this.setState({ loading: false, hotels: json.content, page, totalElements: json.totalElements }, () => {
+            this.props.history.push(baseUrl + search + filters);
+          });
         });
       } else {
         console.log('Search expired');
@@ -540,59 +533,6 @@ class StaticHotelsSearchPage extends React.Component {
       this.delayIntervals.push(delayInterval);
     }
   }
-
-  // updateFilteredMapInfo() {
-  //   if (this.isFiltered() && this.state.showMap) {
-  //     this.setState({ mapLoading: true });
-  //     const queryParams = queryString.parse(this.props.location.search);
-  //     let search = `?region=${encodeURI(queryParams.region)}`;
-  //     search += `&currency=${encodeURI(queryParams.currency)}`;
-  //     search += `&startDate=${encodeURI(queryParams.startDate)}`;
-  //     search += `&endDate=${encodeURI(queryParams.endDate)}`;
-  //     search += `&rooms=${encodeURI(queryParams.rooms)}`;
-
-  //     const filtersObj = {
-  //       showUnavailable: this.state.showUnavailable,
-  //       name: this.state.hotelName,
-  //       minPrice: this.state.priceRange[0],
-  //       maxPrice: this.state.priceRange[1],
-  //       stars: this.mapStars(this.state.stars)
-  //     };
-
-  //     const filters = `&filters=${encodeURI(JSON.stringify(filtersObj))}`;
-  //     const page = this.state.page ? this.state.page : 0;
-  //     const sort = this.state.orderBy;
-  //     const pagination = `&page=${page}&sort=${sort}`;
-  //     search += filters + pagination;
-
-  //     getMapInfo(search).then(json => {
-  //       if (!json.isCacheExpired) {
-  //         let mapInfo = [];
-  //         mapInfo = json.content.map(hotel => {
-  //           return {
-  //             id: hotel.id,
-  //             lat: hotel.latitude,
-  //             lon: hotel.longitude,
-  //             name: hotel.name,
-  //             price: hotel.price,
-  //             stars: hotel.star,
-  //             thumbnail: { url: hotel.hotelPhoto }
-  //           };
-  //         });
-
-  //         this.setState({
-  //           mapInfo: mapInfo,
-  //           mapLoading: false
-  //         });
-  //       } else {
-  //         NotificationManager.info('Please renew your search');
-  //         this.setState({
-  //           showMap: false
-  //         });
-  //       }
-  //     });
-  //   }
-  // }
 
   onPageChange(page) {
     console.log(page);

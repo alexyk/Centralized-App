@@ -43,8 +43,7 @@ class MultiMarkerGoogleMap extends Component {
   }
 
   componentWillUnmount() {
-    console.log('map unmounted');
-    // this.clearAll();
+    this.clearAll();
   }
 
   placeMarkers(hotels, infoWindows) {
@@ -93,7 +92,6 @@ class MultiMarkerGoogleMap extends Component {
     if (this.markers) {
       this.markers.forEach((marker) => {
         marker.setMap(null);
-        console.log('marker cleared');
       });
     }
   }
