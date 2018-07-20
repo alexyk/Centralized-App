@@ -515,7 +515,7 @@ export async function getEmailFreeResponse(email) {
 }
 
 export async function getMyHotelBookings(searchTerm, size = 10) {
-  return sendRequest(`${host}users/me/bookings${searchTerm !== null && searchTerm !== undefined ? `${searchTerm}&` : '?'}sort=id,desc&size=${size}`, RequestMethod.GET).then(res => {
+  return sendRequest(`${host}users/me/bookings${searchTerm ? `${searchTerm}&` : '?'}size=${size}`, RequestMethod.GET).then(res => {
     return res.response.json();
   });
 }

@@ -39,10 +39,18 @@
     width: 95%;
   }
   .name>div {
-    width: 49%;
+    // width: 49%;
+    flex-grow: 2;
     display: inline-block;
     @include media('<tablet') {
       width: 100%;
+    }
+  }
+  .name {
+    display: flex;
+    justify-content: space-around;
+    @include media('<tablet') {
+      flex-direction: column;
     }
   }
   .name>.first {
@@ -62,7 +70,7 @@
       width: 100%;
     }
   }
-  .language-currency {
+  .language-currency, .address-city {
     display: flex;
     justify-content: space-around;
     @include media('<tablet') {
@@ -70,8 +78,16 @@
       margin-bottom: 0;
     }
     div {
-      width: 99%;
+      width: 100%;
     }
+    .language, .address {
+      @include media('>tablet') {
+        margin-right: 5px;
+      }
+    }
+  }
+  .address {
+
   }
   .btn {
     padding: 15px 70px;

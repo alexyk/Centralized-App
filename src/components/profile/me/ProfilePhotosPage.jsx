@@ -6,8 +6,9 @@ import request from 'superagent';
 
 import '../../../styles/css/components/profile/me/profile-photos.css';
 
-const host = Config.getValue('apiHost');
-const LOCKTRIP_UPLOAD_URL = `${host}users/me/images/upload`;
+const API_HOST = Config.getValue('apiHost');
+const IMG_HOST = Config.getValue('imgHost');
+const LOCKTRIP_UPLOAD_URL = `${API_HOST}users/me/images/upload`;
 
 class ProfilePhotosPage extends React.Component {
   constructor(props) {
@@ -77,7 +78,7 @@ class ProfilePhotosPage extends React.Component {
             {this.state.uploadedFilesThumbUrls.length === 0 ? null :
               this.state.uploadedFilesThumbUrls.map((imageUrl, i) =>
                 <div key={i} className="uploaded-small-picture col-md-4">
-                  <img src={`${Config.getValue('apiHost')}${imageUrl}`} height={200} alt={`uploaded-${i}`} />
+                  <img src={`${IMG_HOST}${imageUrl}`} height={200} alt={`uploaded-${i}`} />
                 </div>
               )
             }
