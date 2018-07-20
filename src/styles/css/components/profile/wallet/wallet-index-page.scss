@@ -10,8 +10,7 @@
     border-radius: 5px;
     background-color: white;
     padding: 20px;
-    width: 100%; // -webkit-box-shadow: none;
-    // box-shadow: none;
+    width: 100%;
   }
   div {
     @include media('<tablet') {
@@ -25,8 +24,7 @@
         display: inline-block;
       }
     }
-  } // .button-wallet-link {
-  // }
+  }
   .btn {
     @include media('<tablet') {
       padding: 15px 70px;

@@ -886,9 +886,9 @@ footer .currency-switcher {
     flex-grow: 1;
 }
 
-#localization-nav div.container {
-    /* padding: 15px 0; */
-}
+/* #localization-nav div.container {
+     padding: 15px 0;
+} */
 
 ul.navbar-localization {
     list-style: none;
@@ -1978,7 +1978,7 @@ li.dropdown {
     display: none;
 }
 
-.listings.create .form-group label.custom-radio span.button {
+/* .listings.create .form-group label.custom-radio span.button {
     display: block;
     width: 150px;
     height: 150px;
@@ -1994,7 +1994,7 @@ li.dropdown {
 .listings.create .form-group label.custom-radio span.button img {
     margin: 10px;
     display: none;
-}
+} */
 
 .listings.create .form-group label.house.custom-radio span.button {
     background-image: url(../images/icon-house.png);
