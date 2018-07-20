@@ -7,7 +7,7 @@ export function setIsLogged(isLogged) {
   };
 }
 
-export function setUserInfo(firstName, lastName, phoneNumber, email, locAddress, ethBalance, locBalance) {
+export function setUserInfo(firstName, lastName, phoneNumber, email, locAddress, ethBalance, locBalance, gender) {
   return {
     type: userInfo.SET_USER_INFO,
     firstName,
@@ -16,6 +16,7 @@ export function setUserInfo(firstName, lastName, phoneNumber, email, locAddress,
     email,
     locAddress,
     ethBalance,
-    locBalance
+    locBalance,
+    gender
   };
 }
