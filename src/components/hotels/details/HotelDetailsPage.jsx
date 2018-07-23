@@ -59,7 +59,6 @@ class HotelDetailsPage extends React.Component {
     this.gotoImage = this.gotoImage.bind(this);
     this.handleClickImage = this.handleClickImage.bind(this);
     this.openLightbox = this.openLightbox.bind(this);
-    this.handleSelectRegion = this.handleSelectRegion.bind(this);
     this.handleBookRoom = this.handleBookRoom.bind(this);
     this.next = this.next.bind(this);
     this.previous = this.previous.bind(this);
@@ -72,10 +71,12 @@ class HotelDetailsPage extends React.Component {
     getHotelById(id, search).then((data) => {
       this.setState({ data: data, loading: false });
       const searchParams = this.getSearchParams(this.props.location.search);
-      const regionId = searchParams.get('region') || data.region.externalId;
-      getRegionNameById(regionId).then((json) => {
-        this.props.dispatch(setRegion(json));
-      });
+      const regionId = searchParams.get('region') || data.region && data.region.externalId;
+      if (regionId) {
+        getRegionNameById(regionId).then((json) => {
+          this.props.dispatch(setRegion(json));
+        });
+      }
     });
 
     getHotelRooms(id, search).then((data) => {
@@ -229,10 +230,6 @@ class HotelDetailsPage extends React.Component {
     else {
       return 0;
     }
-  }
-
-  handleSelectRegion(value) {
-    this.setState({ region: value });
   }
 
   checkAvailability(quoteId) {

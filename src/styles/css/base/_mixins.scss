@@ -258,12 +258,7 @@ $animation-speed: .3s !default;
 	font-size: ($pxSize / 10px) + rem;
 }
 
-@mixin rowWithIconInMobile() {
-	width: 100%;
-	padding: 3% 0;
-	align-items: center;
-	display: inline-flex;
-	margin-right: 0;
+@mixin icon {
 	.icon {
 		width: 24px;
 		height: 24px;
@@ -274,9 +269,17 @@ $animation-speed: .3s !default;
 		text-align: center;
 		padding: 0;
 	}
-	.content {
-		text-align: center;
+}
+
+@mixin rowWithIconInMobile($contentRowAlign, $width) {
+	width: $width;
+	align-items: center;
+	display: inline-flex;
+	@include icon();
+	.content-row {
 		padding-bottom: 0px;
+		width: 100%;
+		text-align: $contentRowAlign;
 	}
 }
 
@@ -286,11 +289,9 @@ $animation-speed: .3s !default;
     margin-right: 0;
     font-size: 20px;
 	border-top: 1px #CCCCCC solid;
+	padding-top: 5%;
     .status {
     	font-weight: bold;
-    }
-    .reference {
-    	margin-top: 3%;
     }
 }
 
@@ -301,9 +302,18 @@ $animation-speed: .3s !default;
     border-bottom: 1px #CCCCCC solid;
     padding-top: 0px;
     .image-host {
-      width: 25%;
-      height: 25%;
+      width: 70px;
+      height: 70px;
     }
+}
+
+@mixin imageHost() {
+	.image-host {
+		border-radius: 50%;
+		padding-top: 0;
+		width: 55px;
+		height: 55px;
+	}
 }
 
 

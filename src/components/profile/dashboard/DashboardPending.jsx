@@ -6,7 +6,7 @@ import NoEntriesMessage from '../common/NoEntriesMessage';
 import ProfileFlexContainer from '../flexContainer/ProfileFlexContainer';
 import DashboardTripRow from './DashboardTripRow';
 
-import './dashboard-pending.css';
+import '../../../styles/css/components/profile/dashboard/dashboard-pending.css';
 
 function DashboardPending(props) {
 
