@@ -49,14 +49,7 @@ $breakpoints: (
     }
     .trips-dates {
       width: 35%;
-      .content-row {
-        .date-in-day {
-          color: #a2c5bf;
-        }
-        .date-out-day {
-          color: #d87a61;
-        }
-      }
+      @include checkInCheckoutDates();
     }
     .trips-actions {
       width: 20%;

@@ -11,50 +11,53 @@ $breakpoints: (
 @import '../../../base/mixins';
 
 .dashboard-flex-container {
+  align-items: center;
+  font-size: 18px;
+  .icon {
+    display: none;
+  }
+
+  .dashboard-image {
+    width: 7%;
+    min-width: 80px;
+    @include imageHost();    
+  }
+  
+  .dashboard-host {
+    width: 42%;
+    .hostName {
+      font-weight: 400;
+    }
+  }
+
+  .dashboard-dates {
+    width: 36%;
+    @include checkInCheckoutDates();
+  }
+  
+  .dashboard-status {
+    width: 15%;
+    .status {
+      font-weight: 400;
+    }
+  }
+
   @include media("<=phone") {
     flex-wrap: wrap;
     padding: 5%;
     margin-bottom: 10%;
-  }
-  &.dashboard-flex-row {
-    font-size: 18px;
-  }
-  
-  .dashboard-image-width {
-    width: 7%;
-    .image-host {
-      width: 45px;
-      height: 45px;
-      border-radius: 5px;
-    }
-    @include media("<=phone") {
+    .dashboard-image {
       @include imageHostInMobile();
     }
-  }
-  
-  .dashboard-host-width {
-    width: 37%;
-    .icon {
-      display: none;
-    }
-    @include media("<=phone") {
-      @include rowWithIconInMobile(center, 100%);
-		}
-  }
-  
-  .dashboard-dates-width {
-    width: 30%;
-    .icon {
-      display: none;
-    }
-    @include media("<=phone") {
+    .dashboard-host,
+    .dashboard-dates {
+      margin-top: 5%;
       @include rowWithIconInMobile(center, 100%);
     }
-  }
-  
-  .dashboard-status-width {
-    width: 20%;
-    @include media("<=phone") {
+    .dashboard-dates {
+      margin-bottom: 5%;
+    }
+    .dashboard-status {
       @include statusRowInMobile();
     }
   }

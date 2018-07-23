@@ -17,7 +17,7 @@ function HotelTripsTableRow(props) {
   let afterTomorrow = new Date();
   afterTomorrow.setHours(48);
 
-  const getHotelName = (name) => {
+  const getHostName = (name) => {
     if (name.length <= 50) {
       return name;
     }
@@ -56,7 +56,7 @@ function HotelTripsTableRow(props) {
         <div className="flex-row-child trips-host">
           <img className="icon" src={HotelIcon} alt="hotel" />
           <div className="content-row">
-            <div className="hostName">{getHotelName(props.trip.hotel_name)}</div>
+            <div className="hostName">{getHostName(props.trip.hotel_name)}</div>
             <div className="email">{props.trip.hostEmail}</div>
             <div className="phoneNumber">{props.trip.hostPhone}</div>
             {props.trip.hostEmail ? <div><span className="send-message-icon"></span><a href={`mailto:${props.trip.hostEmail}`}>Send Message</a></div> : ''}
@@ -66,7 +66,7 @@ function HotelTripsTableRow(props) {
       <div className="tablet-col-2">
         <div className="flex-row-child trips-location">
           <i className="fa fa-info-circle icon" />
-          <Link className="trips-location-link content-row" to={`/hotels/listings/${props.trip.hotel_id}?currency=GBP&startDate=${moment(tomorrow).format('DD/MM/YYYY')}&endDate=${moment(afterTomorrow).format('DD/MM/YYYY')}&rooms=%5B%7B"adults":2,"children":%5B%5D%7D%5D`}><u>{getHotelName(props.trip.hotel_name)}</u></Link>
+          <Link className="trips-location-link content-row" to={`/hotels/listings/${props.trip.hotel_id}?currency=GBP&startDate=${moment(tomorrow).format('DD/MM/YYYY')}&endDate=${moment(afterTomorrow).format('DD/MM/YYYY')}&rooms=%5B%7B"adults":2,"children":%5B%5D%7D%5D`}><u>{getHostName(props.trip.hotel_name)}</u></Link>
         </div>
         <div className="flex-row-child trips-dates">
           <span className="icon-calendar icon" />

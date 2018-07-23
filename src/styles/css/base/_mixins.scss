@@ -316,4 +316,15 @@ $animation-speed: .3s !default;
 	}
 }
 
+@mixin checkInCheckoutDates {
+	.content-row {
+        .date-in-day {
+          color: #a2c5bf;
+        }
+        .date-out-day {
+          color: #d87a61;
+        }
+    }
+}
+
 

@@ -73,7 +73,7 @@ function DashboardPending(props) {
         return (
           <DashboardTripRow
             key={trip.id}
-            styleClass="dashboard-flex-container dashboard-flex-row"
+            styleClass="dashboard-flex-container"
             capitalize={capitalize}
             trip={trip}
           />
@@ -102,10 +102,10 @@ function DashboardPending(props) {
         <h2>Latest Trips</h2>
         <hr className="profile-line" />
         <ProfileFlexContainer styleClass="flex-container-header dashboard-flex-container">
-          <div className="flex-header-child dashboard-image-width" />
-          <div className="flex-header-child dashboard-host-width">Host</div>
-          <div className="flex-header-child dashboard-dates-width">Trip Dates</div>
-          <div className="flex-header-child dashboard-status-width">Status</div>
+          <div className="dashboard-image" />
+          <div className="dashboard-host">Host</div>
+          <div className="dashboard-dates">Trip Dates</div>
+          <div className="dashboard-status">Status</div>
         </ProfileFlexContainer>
         {renderTrips()}
       </div>
