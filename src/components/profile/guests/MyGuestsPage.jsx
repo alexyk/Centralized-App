@@ -166,6 +166,8 @@ class MyGuestsPage extends React.Component {
         return this.cancelReservation;
       case 'reject':
         return this.rejectReservation;
+      default:
+        return null;
     }
   }
 

@@ -86,9 +86,9 @@ class HotelBookingPage extends React.Component {
       const adults = [];
       for (let j = 0; j < searchRoom.adults; j++) {
         const adult = {
-          title: 'Mr',
-          firstName: '',
-          lastName: '',
+          title: i === 0 && j === 0 && this.props.userInfo.gender === 'women' ? 'Mrs' : 'Mr',
+          firstName: i === 0 && j === 0 ? this.props.userInfo.firstName : 'Optional',
+          lastName: i === 0 && j === 0 ? this.props.userInfo.lastName : 'Optional',
         };
 
         adults.push(adult);
@@ -160,7 +160,7 @@ class HotelBookingPage extends React.Component {
   }
 
   handleSubmit() {
-    
+
     if (!this.isValidNames()) {
       NotificationManager.warning('Names should be at least 3 characters long and contain only characters');
     } else if (!this.isValidAges()) {
@@ -228,6 +228,7 @@ class HotelBookingPage extends React.Component {
     // console.log(this.state.pictures);
     const hotelPicUrl = this.state.pictures && this.state.pictures.length > 0 ? this.state.pictures[0].url : '/listings/images/default.png';
     const priceInSelectedCurrency = this.state.rates && Number(this.state.totalPrice * this.state.rates[ROOMS_XML_CURRENCY][this.props.paymentInfo.currency]).toFixed(2);
+
     return (
       <div>
         <div className="booking-steps">
@@ -284,13 +285,30 @@ class HotelBookingPage extends React.Component {
                           return (
                             <div className="form-row" key={adultIndex}>
                               <label htmlFor="title">Guest</label>
-                              <select className="title-select" name="title" onChange={(e) => { this.handleAdultChange(e, roomIndex, adultIndex); }} >
+                              <select
+                                className="title-select"
+                                name="title" 
+                                value={this.state.rooms[roomIndex].adults[adultIndex].title}
+                                onChange={(e) => { this.handleAdultChange(e, roomIndex, adultIndex); }}
+                              >
                                 <option value="Mr">Mr</option>
                                 <option value="Mrs">Mrs</option>
                               </select>
 
-                              <input className="guest-name" type="text" placeholder="First Name" name="firstName" onChange={(e) => { this.handleAdultChange(e, roomIndex, adultIndex); }} />
-                              <input className="guest-name" type="text" placeholder="Last Name" name="lastName" onChange={(e) => { this.handleAdultChange(e, roomIndex, adultIndex); }} />
+                              <input className="guest-name"
+                                type="text"
+                                placeholder="First Name"
+                                name="firstName"
+                                value={this.state.rooms[roomIndex].adults[adultIndex].firstName}
+                                onChange={(e) => { this.handleAdultChange(e, roomIndex, adultIndex); }}
+                              />
+                              <input
+                                className="guest-name"
+                                type="text"
+                                placeholder="Last Name"
+                                value={this.state.rooms[roomIndex].adults[adultIndex].lastName}
+                                name="lastName" onChange={(e) => { this.handleAdultChange(e, roomIndex, adultIndex); }}
+                              />
                             </div>
                           );
                         })}

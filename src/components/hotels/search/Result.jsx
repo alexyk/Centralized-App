@@ -96,7 +96,7 @@ function Result(props) {
             {calculateStars(star)}
           </div>
         </div>
-        <p>{generalDescription && ReactHtmlParser(generalDescription + (generalDescription.length < 250 ? '' : '...'))}</p>
+        <div>{generalDescription && ReactHtmlParser(generalDescription + (generalDescription.length < 250 ? '' : '...'))}</div>
       </div>
 
       <div className="result-pricing">

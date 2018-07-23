@@ -7,7 +7,6 @@ import moment from 'moment';
 import uuid from 'uuid';
 import Stomp from 'stompjs';
 import queryString from 'query-string';
-import { NotificationManager } from 'react-notifications';
 import { setCurrency } from '../../../actions/paymentInfo';
 import { connect } from 'react-redux';
 import _ from 'lodash';
@@ -32,7 +31,7 @@ import {
 
 import '../../../styles/css/components/hotels_search/sidebar/sidebar.css';
 
-const DEBUG_SOCKET = true;
+const DEBUG_SOCKET = false;
 const DELAY_INTERVAL = 100;
 const DEBOUNCE_INTERVAL = 1000;
 
@@ -46,7 +45,7 @@ class StaticHotelsSearchPage extends React.Component {
     this.subscription = null;
     this.hotelInfo = [];
     this.hotelInfoById = {};
-    this.counter = 0;
+    this.intervalCounter = 0;
     this.delayIntervals = [];
 
     this.state = {
@@ -81,10 +80,12 @@ class StaticHotelsSearchPage extends React.Component {
     this.redirectToSearchPage = this.redirectToSearchPage.bind(this);
     this.handleFilterByName = this.handleFilterByName.bind(this);
     this.handleShowUnavailable = this.handleShowUnavailable.bind(this);
-    this.isFiltered = this.isFiltered.bind(this);
+    this.isSearchReady = this.isSearchReady.bind(this);
     this.populateFilters = this.populateFilters.bind(this);
     this.getCityLocation = this.getCityLocation.bind(this);
-    this.handleShowFilters= this.handleShowFilters.bind(this);
+    this.handleShowFilters = this.handleShowFilters.bind(this);
+    this.getSearchString = this.getSearchString.bind(this);
+    this.getFilterString = this.getFilterString.bind(this);
 
     // SOCKET BINDINGS
     this.handleReceiveMessage = this.handleReceiveMessage.bind(this);
@@ -110,7 +111,7 @@ class StaticHotelsSearchPage extends React.Component {
     const queryParams = queryString.parse(query);
     const { region } = queryParams;
 
-    if (this.isFiltered()) {
+    if (this.isSearchReady()) {
       this.populateFilters();
     }
 
@@ -156,13 +157,6 @@ class StaticHotelsSearchPage extends React.Component {
   }
 
   componentWillUnmount() {
-    this.setState({
-      listings: null,
-      filteredListings: null,
-      loading: true,
-      page: 0,
-    });
-
     this.unsubscribe();
     this.disconnect();
     this.clearIntervals();
@@ -403,13 +397,34 @@ class StaticHotelsSearchPage extends React.Component {
   }
 
   applyFilters() {
+    const baseUrl = this.props.location.pathname.indexOf('/mobile') !== -1 ? '/mobile/search' : '/hotels/listings';
+    const search = this.getSearchString();
+    const filters = this.getFilterString();
+    const page = this.state.page ? this.state.page : 0;
+    getStaticHotelsByFilter(search, filters).then(res => {
+      if (res.success) {
+        res.response.json().then(json => {
+          this.setState({ loading: false, hotels: json.content, page, totalElements: json.totalElements }, () => {
+            this.props.history.push(baseUrl + search + filters);
+          });
+        });
+      } else {
+        console.log('Search expired');
+      }
+    });
+  }
+
+  getSearchString() {
     const queryParams = queryString.parse(this.props.location.search);
     let search = `?region=${encodeURI(queryParams.region)}`;
     search += `&currency=${encodeURI(queryParams.currency)}`;
     search += `&startDate=${encodeURI(queryParams.startDate)}`;
     search += `&endDate=${encodeURI(queryParams.endDate)}`;
     search += `&rooms=${encodeURI(queryParams.rooms)}`;
+    return search;
+  }
 
+  getFilterString() {
     const filtersObj = {
       showUnavailable: this.state.showUnavailable,
       name: this.state.hotelName,
@@ -418,28 +433,12 @@ class StaticHotelsSearchPage extends React.Component {
       stars: this.mapStars(this.state.stars)
     };
 
-    const filters = `&filters=${encodeURI(JSON.stringify(filtersObj))}`;
     const page = this.state.page ? this.state.page : 0;
     const sort = this.state.orderBy;
     const pagination = `&page=${page}&sort=${sort}`;
-    this.props.history.push('/hotels/listings' + search + filters + pagination);
 
-    getStaticHotelsByFilter(search, filters, page, sort).then(res => {
-      if (res.success) {
-        res.response.json().then(json => {
-          this.setState({ loading: false, hotels: json.content, page, totalElements: json.totalElements }, () => {
-            return new Promise((resolve) => {
-              resolve();
-            });
-          });
-        });
-      } else {
-        NotificationManager.info('Search expired');
-        return new Promise((reject) => {
-          reject();
-        });
-      }
-    });
+    const filters = `&filters=${encodeURI(JSON.stringify(filtersObj))}` + pagination;
+    return filters;
   }
 
   clearFilters() {
@@ -456,7 +455,7 @@ class StaticHotelsSearchPage extends React.Component {
     });
   }
 
-  async toggleMap(e) {
+  toggleMap(e) {
     if (e) {
       e.preventDefault();
     }
@@ -464,51 +463,63 @@ class StaticHotelsSearchPage extends React.Component {
     const showMap = this.state.showMap;
 
     if (showMap) {
-      this.counter = 0;
+      // If map was opened, close it
       this.clearIntervals();
+      this.setState({ showMap: !showMap });
+      return;
     }
 
-    if (this.isFiltered()) {
-      getMapInfo(this.props.location.search).then(json => {
-        if (!json.isCacheExpired) {
-          let mapInfo = [];
-          mapInfo = json.content.map(hotel => {
-            return {
-              id: hotel.id,
-              lat: hotel.latitude,
-              lon: hotel.longitude,
-              name: hotel.name,
-              price: hotel.price,
-              stars: hotel.star,
-              thumbnail: { url: hotel.hotelPhoto }
-            };
-          });
-
-          this.setState({
-            mapInfo: mapInfo,
-            showMap: !showMap,
-          });
-        } else {
-          this.applyFilters().then(() => {
-            this.setState({
-              showMap: !showMap,
-            });
-          }).catch(e => {
-            console.log(e);
-          });
-        }
-      });
-    } else {
+    if (!this.isSearchReady()) {
+      // Use partial information from socket
       this.setState({
         showMap: !showMap,
+        mapInfo: this.hotelInfo
       });
+      return;
     }
+
+    getMapInfo(this.props.location.search).then(json => {
+      if (!json.isCacheExpired) {
+        let mapInfo = [];
+        mapInfo = json.content.map(hotel => {
+          return {
+            id: hotel.id,
+            lat: hotel.latitude,
+            lon: hotel.longitude,
+            name: hotel.name,
+            price: hotel.price,
+            stars: hotel.star,
+            thumbnail: { url: hotel.hotelPhoto }
+          };
+        });
+
+        this.setState({
+          mapInfo: mapInfo,
+          showMap: !showMap,
+        });
+      } else {
+        const search = this.getSearchString();
+        const filters = this.getFilterString();
+        const page = this.state.page ? this.state.page : 0;
+        this.setState({ loading: true });
+        getStaticHotelsByFilter(search, filters).then(res => {
+          if (res.success) {
+            res.response.json().then(json => {
+              this.setState({ loading: false, hotels: json.content, page, totalElements: json.totalElements });
+              this.toggleMap();
+            });
+          } else {
+            console.log('Search expired');
+          }  
+        });
+      }
+    });
   }
 
   updateMapInfo(hotel) {
     if (this.state.showMap) {
-      this.counter += 1;
-      const timeout = this.counter * DELAY_INTERVAL;
+      this.intervalCounter += 1;
+      const timeout = this.intervalCounter * DELAY_INTERVAL;
       const delayInterval = setTimeout(() => {
         this.setState(prev => {
           const mapInfo = prev.mapInfo.slice(0);
@@ -523,59 +534,6 @@ class StaticHotelsSearchPage extends React.Component {
     }
   }
 
-  // updateFilteredMapInfo() {
-  //   if (this.isFiltered() && this.state.showMap) {
-  //     this.setState({ mapLoading: true });
-  //     const queryParams = queryString.parse(this.props.location.search);
-  //     let search = `?region=${encodeURI(queryParams.region)}`;
-  //     search += `&currency=${encodeURI(queryParams.currency)}`;
-  //     search += `&startDate=${encodeURI(queryParams.startDate)}`;
-  //     search += `&endDate=${encodeURI(queryParams.endDate)}`;
-  //     search += `&rooms=${encodeURI(queryParams.rooms)}`;
-
-  //     const filtersObj = {
-  //       showUnavailable: this.state.showUnavailable,
-  //       name: this.state.hotelName,
-  //       minPrice: this.state.priceRange[0],
-  //       maxPrice: this.state.priceRange[1],
-  //       stars: this.mapStars(this.state.stars)
-  //     };
-
-  //     const filters = `&filters=${encodeURI(JSON.stringify(filtersObj))}`;
-  //     const page = this.state.page ? this.state.page : 0;
-  //     const sort = this.state.orderBy;
-  //     const pagination = `&page=${page}&sort=${sort}`;
-  //     search += filters + pagination;
-
-  //     getMapInfo(search).then(json => {
-  //       if (!json.isCacheExpired) {
-  //         let mapInfo = [];
-  //         mapInfo = json.content.map(hotel => {
-  //           return {
-  //             id: hotel.id,
-  //             lat: hotel.latitude,
-  //             lon: hotel.longitude,
-  //             name: hotel.name,
-  //             price: hotel.price,
-  //             stars: hotel.star,
-  //             thumbnail: { url: hotel.hotelPhoto }
-  //           };
-  //         });
-
-  //         this.setState({
-  //           mapInfo: mapInfo,
-  //           mapLoading: false
-  //         });
-  //       } else {
-  //         NotificationManager.info('Please renew your search');
-  //         this.setState({
-  //           showMap: false
-  //         });
-  //       }
-  //     });
-  //   }
-  // }
-
   onPageChange(page) {
     console.log(page);
     this.setState({
@@ -589,7 +547,7 @@ class StaticHotelsSearchPage extends React.Component {
 
     window.scrollTo(0, 0);
 
-    if (this.isFiltered()) {
+    if (this.isSearchReady()) {
       this.applyFilters();
     } else {
       getStaticHotels(region, page - 1).then(json => {
@@ -610,7 +568,7 @@ class StaticHotelsSearchPage extends React.Component {
     }
   }
 
-  isFiltered() {
+  isSearchReady() {
     return this.props.location.search.indexOf('&filters=') !== -1;
   }
 
@@ -633,7 +591,7 @@ class StaticHotelsSearchPage extends React.Component {
   }
 
   clearIntervals() {
-    this.counter = 0;
+    this.intervalCounter = 0;
     this.delayIntervals.forEach(interval => {
       clearInterval(interval);
     });
