@@ -87,7 +87,6 @@ function ListingAccommodations(props) {
                 />
               </div>
               </div>
-
               <div>
                 <h2>Sleeping arrangement</h2>
                 <hr />
