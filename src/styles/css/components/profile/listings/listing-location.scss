@@ -1,0 +1,19 @@
+@import '../../../vendors/include-media';
+.row {
+  input {
+    border: 1px solid #cfcfcf;
+    border-radius: 5px;
+    background-color: white;
+    padding: 20px;
+    width: 100%;
+  }
+  h2 {
+    @include media('<tablet') {
+    padding-top: 10px;
+    }
+  }
+  .form-group label {
+    margin: 10px 0 7px 7px;
+    font-size: 18px;
+  }
+}
