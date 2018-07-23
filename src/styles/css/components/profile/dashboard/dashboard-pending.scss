@@ -6,9 +6,9 @@ $breakpoints: (
 	'widescreen': 1200px
 );
 
-@import '../../../styles/css/vendors/include-media';
+@import '../../../vendors/include-media';
 
-@import '../../../styles/css/base/mixins';
+@import '../../../base/mixins';
 
 .dashboard-flex-container {
   @include media("<=phone") {
@@ -38,7 +38,7 @@ $breakpoints: (
       display: none;
     }
     @include media("<=phone") {
-      @include rowWithIconInMobile();
+      @include rowWithIconInMobile(center, 100%);
 		}
   }
   
@@ -48,7 +48,7 @@ $breakpoints: (
       display: none;
     }
     @include media("<=phone") {
-      @include rowWithIconInMobile();
+      @include rowWithIconInMobile(center, 100%);
     }
   }
   

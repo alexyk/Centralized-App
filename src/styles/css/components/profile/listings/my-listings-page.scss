@@ -6,9 +6,12 @@ $breakpoints: (
 	'widescreen': 1200px
 );
 
-@import '../../../styles/css/vendors/include-media';
+@import '../../../vendors/include-media';
+
+@import '../../../base/mixins';
 
 .my-listings-flex-container {
+  align-items: center;
   @include media("<=phone") {
     flex-wrap: wrap;
     padding: 5%;
@@ -22,7 +25,7 @@ $breakpoints: (
     height: 100px;
     background-repeat: no-repeat;
     background-position: 0px;
-    background-image: url(../../../styles/images/arrow-right.png);
+    background-image: url(../../../../images/arrow-right.png);
     @include media("<=phone") {
       width: 2%;
       height: 40px;
@@ -38,9 +41,11 @@ $breakpoints: (
     height: 60px;
     background-color: silver;
     border-radius: 2px;
+    margin-right: 2%;
     @include media("<=phone") {
       text-align: center;
       margin-left: 3%;
+      margin-bottom: 5%;
       width: 90%;
       order: 1;
     }
@@ -82,10 +87,7 @@ $breakpoints: (
   }
   .calendar {
     min-width: 180px;
-    padding-top: 20px;
-    margin-top: 0;
-    margin-bottom: 0;
-    margin-left: 0;
+    margin: 0;
     display: block;
     a {
       background-color: #d87a61;
@@ -104,6 +106,7 @@ $breakpoints: (
     }
     @include media("<=phone") {
       width: 100%;
+      padding-top: 5%; 
       order: 5;
     }
   }
@@ -111,7 +114,7 @@ $breakpoints: (
     span {
       display: block;
       background-position: center center;
-      background-image: url(../../../styles/images/icon-remove.png);
+      background-image: url(../../../../images/icon-remove.png);
       width: 39px;
       height: 39px;
       border-radius: 2px;

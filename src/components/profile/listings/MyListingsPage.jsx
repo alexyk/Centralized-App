@@ -12,7 +12,7 @@ import { Config } from '../../../config';
 import ReCAPTCHA from 'react-google-recaptcha';
 import MyListingsItemRow from './MyListingsItemRow';
 
-import './my-listings-page.css';
+import '../../../styles/css/components/profile/listings/my-listings-page.css';
 
 
 
