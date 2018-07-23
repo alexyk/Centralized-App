@@ -1,12 +1,9 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import moment from 'moment';
-import { Config } from '../../../config';
 import NoEntriesMessage from '../common/NoEntriesMessage';
 import ProfileFlexContainer from '../flexContainer/ProfileFlexContainer';
 import DashboardTripRow from './DashboardTripRow';
-
-import '../../../styles/css/components/profile/dashboard/dashboard-pending.css';
+import DashboardReservationRow from './DashboardReservationRow';
 
 function DashboardPending(props) {
 
@@ -24,30 +21,12 @@ function DashboardPending(props) {
     return (
       props.reservations.map(reservation => {
         return (
-          <ul key={reservation.id} className="profile-pending-list profile-pending-item">
-            <li>
-              <span className="session-nav-user-thumb"><img src={`${Config.getValue('imgHost')}${reservation.userImage}`} alt="user-profile" /></span>
-            </li>
-            <li>
-              <span className="cnt block">
-                <span className="block bold">{reservation.guestName}</span>
-                <span className="where block">{reservation.listingName}</span>
-              </span>
-            </li>
-            <li>
-              <span className="cnt block">{moment(new Date(reservation.startDate)).format('DD MMM, YYYY')}<i aria-hidden="true" className="fa fa-long-arrow-right"></i>{moment(new Date(reservation.endDate)).format('DD MMM, YYYY')}</span>
-            </li>
-            <li>
-              <span className="cnt block">{parseInt((new Date(reservation.endDate) - new Date(reservation.startDate)) / (1000 * 60 * 60 * 24), 10)} nights &bull; {reservation.guests} guests</span>
-            </li>
-            <li>
-              <span className="cnt block">
-                <span className="bold">{reservation.accepted ? 'Accepted' : 'Pending'}</span>
-                <span> - </span>
-                <span>{reservation.currencyCode} {reservation.price}</span>
-              </span>
-            </li>
-          </ul>
+          <DashboardReservationRow
+            key={reservation.id}
+            styleClass="dashboard-flex-reservations-container"
+            capitalize={capitalize}
+            reservation={reservation}
+          />
         );
       })
     );
@@ -73,7 +52,7 @@ function DashboardPending(props) {
         return (
           <DashboardTripRow
             key={trip.id}
-            styleClass="dashboard-flex-container"
+            styleClass="dashboard-flex-trips-container"
             capitalize={capitalize}
             trip={trip}
           />
@@ -87,21 +66,25 @@ function DashboardPending(props) {
       <div className="container">
         <h2>Latest Reservation Requests</h2>
         <hr className="profile-line" />
-        <ul className="profile-pending-list profile-pending-header bold">
-          <li><span>&nbsp;</span></li>
-          <li><span>Booker</span></li>
-          <li><span>Trip Dates</span></li>
-          <li><span>Nights</span></li>
-          <li><span>Status</span></li>
-          <li><span>Price</span></li>
-        </ul>
+        <ProfileFlexContainer styleClass="flex-container-header dashboard-flex-reservations-container">
+          <div className="tablet-col-1">
+            <div className="dashboard-image" />
+            <div className="dashboard-booker">Booker</div>
+          </div>
+          <div className="tablet-col-2">
+            <div className="dashboard-dates">Trip Dates</div>
+            <div className="dashboard-nights">Nights</div>
+            <div className="dashboard-status">Status</div>
+            <div className="dashboard-date">Date</div>
+          </div>
+        </ProfileFlexContainer>
         {renderReservations()}
       </div>
 
       <div className="container">
         <h2>Latest Trips</h2>
         <hr className="profile-line" />
-        <ProfileFlexContainer styleClass="flex-container-header dashboard-flex-container">
+        <ProfileFlexContainer styleClass="flex-container-header dashboard-flex-trips-container">
           <div className="dashboard-image" />
           <div className="dashboard-host">Host</div>
           <div className="dashboard-dates">Trip Dates</div>

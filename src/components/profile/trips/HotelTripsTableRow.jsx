@@ -6,6 +6,8 @@ import ProfileFlexContainer from '../flexContainer/ProfileFlexContainer';
 import { Config } from '../../../config';
 import HotelIcon from '../../../styles/images/icon-hotel.png';
 
+import '../../../styles/css/components/profile/trips/hotel-trips-table.css';
+
 function HotelTripsTableRow(props) {
 
   const capitalize = (string) => {

@@ -5,7 +5,9 @@ import ProfileFlexContainer from '../flexContainer/ProfileFlexContainer';
 import { Config } from '../../../config';
 import HotelIcon from '../../../styles/images/icon-hotel.png';
 
-function DashboardRow(props) {
+import '../../../styles/css/components/profile/dashboard/dashboard-trips.css';
+
+function DashboardTripRow(props) {
   const getHostName = (name) => {
     if (name.length <= 50) {
       return name;
@@ -35,14 +37,14 @@ function DashboardRow(props) {
   const dates = extractDatesData(props.trip);
 
   return (
-    <ProfileFlexContainer key={props.trip.id} styleClass={`flex-container-row ${props.styleClass}`}>
+    <ProfileFlexContainer styleClass={`flex-container-row ${props.styleClass}`}>
       <div className="flex-row-child dashboard-image">
         <img className="image-host" src={`${Config.getValue('imgHost')}${props.trip.userImage}`} alt="user-profile" />
       </div>
       <div className="flex-row-child dashboard-host">
         <img className="icon" src={HotelIcon} alt="hotel" />
         <div className="content-row">
-          <div className="hostName">{getHostName(props.trip.hostName)}</div>
+          <div className="host-name">{getHostName(props.trip.hostName)}</div>
           <div>{props.trip.listingName}</div>
         </div>
       </div>
@@ -68,10 +70,10 @@ function DashboardRow(props) {
   );
 }
 
-DashboardRow.propTypes = {
+DashboardTripRow.propTypes = {
   trip: PropTypes.object,
   capitalize: PropTypes.func,
   styleClass: PropTypes.string
 };
 
-export default DashboardRow;
+export default DashboardTripRow;

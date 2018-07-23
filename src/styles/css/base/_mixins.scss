@@ -269,6 +269,9 @@ $animation-speed: .3s !default;
 		text-align: center;
 		padding: 0;
 	}
+	.icon::before {
+		color: #54575A;
+	}
 }
 
 @mixin rowWithIconInMobile($contentRowAlign, $width) {

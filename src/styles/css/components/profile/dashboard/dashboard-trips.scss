@@ -10,7 +10,7 @@ $breakpoints: (
 
 @import '../../../base/mixins';
 
-.dashboard-flex-container {
+.dashboard-flex-trips-container {
   align-items: center;
   font-size: 18px;
   .icon {
@@ -25,7 +25,7 @@ $breakpoints: (
   
   .dashboard-host {
     width: 42%;
-    .hostName {
+    .host-name {
       font-weight: 400;
     }
   }
@@ -46,6 +46,9 @@ $breakpoints: (
     flex-wrap: wrap;
     padding: 5%;
     margin-bottom: 10%;
+    &.flex-container-header {
+      display: none;
+    }
     .dashboard-image {
       @include imageHostInMobile();
     }
