@@ -2761,13 +2761,13 @@ select {
     display: inline-block;
 }
 
-.bedroom-counter {
+/* .bedroom-counter {
     font-size: 16px;
     padding: 15px 39px 15px 15px;
     width: 34%;
     outline: none;
     border-radius: 3px;
-}
+} */
 
 .Select-placeholder {
     line-height: 60px;

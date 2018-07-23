@@ -1,0 +1,21 @@
+@import '../../../vendors/include-media';
+#reservation-hotel-review-room {
+  h2 {
+    @include media('<tablet') {
+      font-size: 24px;
+      font-weight: 400;
+      margin-top: 20px;
+    }
+  }
+  h3 {
+    font-size: 18px;
+  }
+  .bedroom-counter {
+    font-size: 16px;
+    padding: 15px 39px 15px 15px;
+    width: 100%;
+    outline: none;
+    border-radius: 3px;
+    margin-bottom: 10px;
+  }
+}
