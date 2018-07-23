@@ -1,0 +1,21 @@
+@import '../../../vendors/include-media';
+#reservation-hotel-review-room {
+  .pictures-upload {
+    width: 100%;
+    padding: 50px 0;
+    text-align: center;
+    background: #FFFFFF;
+    border: 2px dashed #CCCCCC;
+    border-radius: 3px;
+    margin: 0 auto;
+    @include media('>=tablet') {
+      width: 30%;
+    }
+}
+.listings.create {
+  min-height: 200px;
+}
+.pictures-upload p {
+    font-size: 20px;
+}
+}

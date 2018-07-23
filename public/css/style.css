@@ -2056,9 +2056,9 @@ li.dropdown {
     padding: 5px 10px;
 }
 
-.listings.create {
+/* .listings.create {
     min-height: 600px;
-}
+} */
 
 .listings.create .other-rules {
     margin: 0;
@@ -2671,7 +2671,7 @@ input[type="checkbox"].tick:checked+label:after {
 
 .pictures-upload p {
     font-size: 22px;
-}
+} */
 
 h2+hr {
     border-top: 1px solid #CFD1D0;
