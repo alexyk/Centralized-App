@@ -12,14 +12,14 @@ function DashboardRow(props) {
       </div>
       <div className="flex-row-child dashboard-host-width">
         <img className="icon" src={HotelIcon} alt="hotel" />
-        <div className="content">
+        <div className="content-row">
           <div>{props.trip.hostName}</div>
           <div>{props.trip.listingName}</div>
         </div>
       </div>
       <div className="flex-row-child dashboard-dates-width">
         <span className="icon-calendar icon" />
-        <div className="content">
+        <div className="content-row">
           {props.trip.displayStartDate} <i aria-hidden="true" className="fa fa-long-arrow-right"></i> {props.trip.displayEndDate}
         </div>
       </div>

@@ -4,7 +4,7 @@ import NoEntriesMessage from '../common/NoEntriesMessage';
 import ProfileFlexContainer from '../flexContainer/ProfileFlexContainer';
 import HotelTripsTableRow from './HotelTripsTableRow';
 
-import './hotel-trips-table.css';
+import '../../../styles/css/components/profile/trips/hotel-trips-table.css';
 
 function HotelTripsTable(props) {
 
@@ -20,10 +20,10 @@ function HotelTripsTable(props) {
     }
 
     return (
-      props.trips.map((trip, i) => {
+      props.trips.map((trip) => {
         return (
           <HotelTripsTableRow
-            key={i}
+            key={trip.id}
             trip={trip}
             styleClass="trips-flex-container"
             onTripSelect={props.onTripSelect}
@@ -37,12 +37,16 @@ function HotelTripsTable(props) {
   return (
     <div>
       <ProfileFlexContainer styleClass="flex-container-header trips-flex-container">
-        <div className="flex-header-child trips-image-width"></div>
-        <div className="flex-header-child trips-host-width">Host</div>
-        <div className="flex-header-child trips-property-width">Property</div>
-        <div className="flex-header-child trips-dates-width">Dates</div>
-        <div className="flex-header-child trips-actions-width">Actions</div>
-        <div className="flex-header-child trips-status-width">Status</div>
+        <div className="tablet-col-1">
+          <div className="trips-image"></div>
+          <div className="trips-host">Host</div>
+        </div>
+        <div className="tablet-col-2">
+          <div className="trips-location">Location</div>
+          <div className="trips-dates">Dates</div>
+          <div className="trips-actions">Actions</div>
+          <div className="trips-status">Status</div>
+        </div>
       </ProfileFlexContainer>
       {renderTrips()}
     </div>
