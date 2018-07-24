@@ -403,7 +403,6 @@ class CreateListingPage extends React.Component {
 
   handleImageUpload(files) {
     files.forEach((file) => {
-      console.log(file);
       let upload = request.post(LOCKTRIP_UPLOAD_URL)
         .field('image', file);
 

@@ -22,7 +22,6 @@ class MessagesPage extends React.Component {
 
   componentDidMount() {
     getMyConversations('?page=0').then(data => {
-      console.log(data);
       this.setState({ messages: data.content, loading: false, totalElements: data.totalElements });
     });
   }

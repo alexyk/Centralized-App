@@ -225,9 +225,7 @@ class HotelBookingConfirmPage extends React.Component {
       const hotelId = this.props.match.params.id;
       const roomId = this.state.booking.quoteId;
       const numberOfTravelers = this.getNumberOfTravelers();
-      console.log(json);
       const cancellationFees = json;
-      console.log(cancellationFees);
       const daysBeforeStartOfRefund = [];
       const refundPercentages = [];
       for (let key in cancellationFees) {
@@ -240,7 +238,6 @@ class HotelBookingConfirmPage extends React.Component {
       this.closeModal(PASSWORD_PROMPT);
 
       const queryString = this.props.location.search;
-      console.log((queryString));
 
       getCurrentlyLoggedUserJsonFile().then((json) => {
         // console.log(json);
@@ -264,7 +261,6 @@ class HotelBookingConfirmPage extends React.Component {
               queryString: queryString
             };
 
-            console.log(bookingConfirmObj);
             confirmBooking(bookingConfirmObj).then(() => {
               NotificationManager.success('LOC Payment has been initiated. We will send you a confirmation message once it has been processed by the Blockchain.');
               setTimeout(() => {
@@ -414,7 +410,7 @@ class HotelBookingConfirmPage extends React.Component {
 
   render() {
     const isMobile = this.props.location.pathname.indexOf('/mobile') !== -1;
-    
+
     const booking = this.state.data && this.state.data.booking.hotelBooking;
     const fiatPrice = this.state.data && this.state.data.fiatPrice;
     const locPrice = this.state.data && this.state.data.locPrice;

@@ -45,8 +45,7 @@ class DashboardPage extends React.Component {
             return x.sortDate >= y.sortDate ? -1 : 1;
           }).slice(0, 5);
 
-          console.log(trips);
-          
+
           this.setState({
             trips: trips,
             loading: false,

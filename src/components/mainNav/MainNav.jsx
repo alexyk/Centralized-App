@@ -245,7 +245,6 @@ class MainNav extends React.Component {
       } else {
         res.response.then(res => {
           const errors = res.errors;
-          console.log(errors);
           if (errors.hasOwnProperty('JsonFileNull')) {
             NotificationManager.warning(errors['JsonFileNull'].message);
             this.setState({ isUpdatingWallet: true }, () => {
@@ -299,7 +298,6 @@ class MainNav extends React.Component {
       } else {
         res.response.then(res => {
           const errors = res.errors;
-          console.log(errors);
           if (errors.hasOwnProperty('JsonFileNull')) {
             NotificationManager.warning(errors['JsonFileNull'].message);
             this.setState({ isUpdatingWallet: true }, () => {
@@ -324,18 +322,14 @@ class MainNav extends React.Component {
 
   handleAirdropUser() {
     getUserAirdropInfo().then(json => {
-      console.log(json);
       if (json.participates) {
         this.dispatchAirdropInfo(json);
       } else {
-        console.log('user not yet moved from temp to main');
         const token = this.props.location.search.split('=')[1];
         checkIfAirdropUserExists(token).then(user => {
           const currentEmail = localStorage[Config.getValue('domainPrefix') + '.auth.username'];
           if (user.email === currentEmail && user.exists) {
-            console.log('users match');
             verifyUserAirdropInfo(token).then(() => {
-              console.log('user moved from temp to main');
               NotificationManager.info('Verification email has been sent. Please follow the link to confirm your email.');
               getUserAirdropInfo().then(json => {
                 this.dispatchAirdropInfo(json);
@@ -362,7 +356,6 @@ class MainNav extends React.Component {
     const participates = info.participates;
     const isVerifyEmail = info.isVerifyEmail;
     this.props.dispatch(setAirdropInfo(email, facebookProfile, telegramProfile, twitterProfile, redditProfile, refLink, participates, isVerifyEmail));
-    console.log('user info dispatched');
   }
 
   clearLocalStorage() {
@@ -486,7 +479,6 @@ class MainNav extends React.Component {
 
   handleSubmitRecoveryEmail(token) {
     const email = { email: this.state.recoveryEmail };
-    console.log(token, email);
     postRecoveryEmail(email, token).then((res) => {
       if (res.success) {
         this.closeModal(SEND_RECOVERY_EMAIL);
@@ -555,9 +547,9 @@ class MainNav extends React.Component {
                   sitekey={Config.getValue('recaptchaKey')}
                   onChange={(token) => {
                     const reCaptchaFunc = this.getReCaptchaFunction(currentReCaptcha);
-                    
+
                     reCaptchaFunc(token);
-                    
+
                     this.captcha.reset();
 
                     this.setState({
