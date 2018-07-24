@@ -12,7 +12,9 @@ function MyListingsItemRow(props) {
     <ProfileFlexContainer key={props.listing.id} styleClass={`flex-container-row ${props.styleClass}`}>
       <div className="flex-row-child toggle" />
       <div className="flex-row-child thumb">
-        <span style={{ backgroundImage: `url(${Config.getValue('imgHost') + props.listing.thumbnail})` }}></span>
+        {props.listing.thumbnail ?
+          <img className="thumb-image" src={Config.getValue('imgHost') + props.listing.thumbnail} alt="listing-thumb" /> :
+          <div className="thumb-background"><span></span></div>}
       </div>
       <div className="flex-row-child details">
         <div className="content-row">

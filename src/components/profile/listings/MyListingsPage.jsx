@@ -38,7 +38,6 @@ class MyListingsPage extends React.Component {
 
   componentDidMount() {
     getMyListings('?page=0').then((data) => {
-      console.log(data);
       const active = data.content.filter(l => l.state === 'active');
       const denied = data.content.filter(l => l.state === 'denied');
       const inactive = data.content.filter(l => l.state === 'inactive');

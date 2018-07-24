@@ -1,6 +1,7 @@
 $breakpoints: (
-	'xs-phone': 320px,
-	'phone': 570px,
+	'xs-phone': 380px,
+	'phone': 500px,
+	'lg-phone': 565px,
 	'tablet': 800px,
 	'desktop': 1024px,
 	'widescreen': 1200px
@@ -23,22 +24,30 @@ $breakpoints: (
   }
 
   .thumb {
-    background-position: center center;
-    background-repeat: no-repeat;
-    background-size: cover;
-    width: 80px;
-    min-width: 80px;
-    height: 60px;
-    background-color: silver;
     border-radius: 2px;
     margin-right: 2%;
+    padding-right: 0;
+    width: 130px;
+    height: 80px;
+    .thumb-image {
+      width:100%;
+      height:100%;
+      object-fit: contain;
+    }
+    .thumb-background {
+      background-position: center center;
+      background-repeat: no-repeat;
+      background-size: cover;
+      width: 100%;
+      height: 100%;
+      background-color: silver;     
+    }
   }
   
   .details {
     width: 43%;
     a {
       font-size: 25px;
-      transform: scale(0.5, 1);
       font-family: 'Futura', sans-serif;
       font-weight: 400;
       &:hover {
@@ -83,14 +92,13 @@ $breakpoints: (
   .edit {
     width: 14%;
     font-size: 22px;
-    transform: scale(0.9, 1);
     font-weight: 400;
     font-family: 'Futura', sans-serif;
   }
   
   .calendar {
     width: 0%;
-    min-width: 200px;
+    min-width: 220px;
     margin: 0;
     display: block;
     a {
@@ -107,7 +115,7 @@ $breakpoints: (
       letter-spacing: .1em;
       line-height: 3.6;
       font-family: 'Futura', sans-serif;
-      font-weight: 300;
+      font-weight: 400;
     }
   }
   
@@ -127,7 +135,7 @@ $breakpoints: (
     }
   }
 
-  @include media("<=phone") {
+  @include media("<=tablet") {
     flex-wrap: wrap;
     padding: 5%;
     margin-bottom: 10%;
@@ -142,11 +150,12 @@ $breakpoints: (
       text-align: center;
       margin-left: 3%;
       margin-bottom: 5%;
-      width: 90%;
       order: 1;
+      width: 120px;
+      height: 90px;
     }
     .details {
-      width: 100%;
+      width: 65%;
       order: 2;
       .list-hotel-rating {
         display: flex;
@@ -154,25 +163,25 @@ $breakpoints: (
       }
     }
     .price {
-      width: 100%;
-      order: 3;
+      width: 33%;
+      order: 4;
       margin-top: 5%;
       font-size: 20px;
     }
     .edit {
-      width: 50%;
-      order: 4;
+      width: 33%;
+      order: 3;
       margin-top: 5%;
-      text-align: left;
+      text-align: center;
     }
     .calendar {
       width: 100%;
       padding-top: 5%; 
-      order: 5;
+      order: 6;
     }
     .remove {
-      order: 4;
-      width: 50%;
+      order: 5;
+      width: 33%;
       text-align: center;
       margin-top: 5%;
       span {
@@ -184,6 +193,45 @@ $breakpoints: (
         font-family: 'Futura', sans-serif;
         font-weight: 400;
       }
+    }
+  }
+
+  @include media("<=lg-phone") {
+    .details {
+      width: 60%;
+    }
+    .price {
+      width: 100%;
+      order: 3;
+    }
+    .edit {
+      width: 50%;
+      order: 4;
+    }
+    .remove {
+      order: 5;
+      width: 50%;
+    }
+  }
+
+  @include media("<=phone") {
+    .details {
+      width: 100%;
+    }
+    .price {
+      order: 1;
+      width: 45%;
+    }
+  }
+
+  @include media("<=xs-phone") {
+    .price {
+      order: 1;
+      width: 38%;
+    }
+    .edit {
+      padding-right: 8.9%;
+      padding-left: 1.5%;
     }
   }
 }
