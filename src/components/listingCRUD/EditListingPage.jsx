@@ -141,7 +141,6 @@ class EditListingPage extends React.Component {
     } else {
       this.setState({ listingId: id });
       getMyListingById(id).then(data => {
-        console.log(data);
         this.setListingData(data);
       });
     }
