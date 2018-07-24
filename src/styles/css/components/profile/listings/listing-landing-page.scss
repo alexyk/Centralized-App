@@ -1,0 +1,88 @@
+@import '../../../vendors/include-media';
+#listing-landing-page {
+  display: flex;
+  justify-content: space-between; // @include media('<tablet') {
+  //   flex-direction: column;
+  // }
+  .listing-landing-page-left-part {
+    width: 45%;
+    @include media('<tablet') {
+      width: 100%;
+    }
+    img {
+      width: 100%;
+    }
+  }
+  .listing-landing-page-right-part {
+    width: 45%;
+    @include media('<tablet') {
+      padding-top: 40px;
+      width: 100%;
+    }
+  }
+  hr:last-of-type {
+    padding-bottom: 20px;
+  }
+  h3 {
+    margin-top: 10px;
+    font-size: 24px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid silver;
+    @include media('<tablet') {
+      font-size: 20px;
+    }
+  }
+  .place-listing-container {
+    h3 {
+      padding-top: 85px;
+      @include media('<tablet') {
+        padding-top: 5px;
+      }
+    }
+  }
+  hr {
+    margin: 0;
+  }
+  .input-listing-title-container {
+    padding-right: 0;
+    padding-left: 0;
+  }
+  .house-laning-page {
+    @include media('<tablet') {
+      text-align: center;
+    }
+  }
+  input {
+    margin-top: 5px;
+    border: 1px solid #cfcfcf;
+    border-radius: 5px;
+    background-color: white;
+    padding: 20px;
+    width: 100%;
+  } //   .listings.create.landing .left-poster {
+  //     margin: 50px 0;
+  //     width: 30%;
+  // }
+  // .listings.create.landing .column-container {
+  //     padding-top: 40px;
+  //     width: 60%;
+  //     // float: right;
+  // }
+  .listings.create {
+    h4 {
+      font-size: 12px;
+      margin: 0;
+      font-family: 'FuturaStd-Medium', sans-serif;
+    }
+    .custom-radio {
+      display: inline-block;
+      margin: 0 20px 0 20px;
+      text-align: center;
+      cursor: pointer;
+      font-size: 18px;
+    }
+    input[type=radio] {
+      display: none;
+    }
+  }
+}

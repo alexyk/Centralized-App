@@ -1943,7 +1943,11 @@ li.dropdown {
     float: left;
 }
 
-.listings.create.landing .left-poster {
+.listings.create .form-group label.custom-radio input[type=radio] {
+  display: none;
+} 
+
+/* .listings.create.landing .left-poster {
     margin: 50px 0;
 }
 
@@ -1959,12 +1963,7 @@ li.dropdown {
     font-family: 'FuturaStd-Medium', sans-serif;
 }
 
-.listings.create.landing h3 {
-    margin-top: 10px;
-    font-size: 24px;
-    padding-bottom: 20px;
-    border-bottom: 1px solid silver;
-}
+
 
 .listings.create .form-group label.custom-radio {
     display: inline-block;
@@ -1974,9 +1973,7 @@ li.dropdown {
     font-size: 18px;
 }
 
-.listings.create .form-group label.custom-radio input[type=radio] {
-    display: none;
-}
+
 
 /* .listings.create .form-group label.custom-radio span.button {
     display: block;
