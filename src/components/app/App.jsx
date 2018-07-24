@@ -15,7 +15,6 @@ import { connect } from 'react-redux';
 import MainNav from '../mainNav/MainNav';
 import Footer from '../footer/Footer';
 import NavLocalization from '../profile/NavLocalization';
-import StompTest from '../common/StompTest';
 import queryString from 'query-string';
 import { Wallet } from '../../services/blockchain/wallet.js';
 import { NotificationContainer } from 'react-notifications';
@@ -135,7 +134,6 @@ class App extends React.Component {
           <Route path="/profile/" render={() => !this.isAuthenticated() ? <Redirect to="/" /> : <ProfilePage location={this.props.location} />} />
           <Route path="/airdrop" render={() => <AirdropPage />} />
           <Route path="/buyloc" render={() => <BuyLocPage />} />
-          <Route path="/test" render={() => <StompTest />} />
           <Route path="/softuni" render={() => <WorldKuCoinCampaign />} />
           <Route path="/vote" render={() => <WorldKuCoinCampaign />} />
           <Route path="/campaigns/balance/check" render={() => <Balance />} />
