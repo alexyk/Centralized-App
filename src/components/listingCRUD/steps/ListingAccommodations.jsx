@@ -77,7 +77,7 @@ function ListingAccommodations(props) {
 
               <br />
 
-              <div>
+              <div className="bedroom-container-place-type">
                 <h3>How many bedrooms can your guests use?</h3>
                 <div className='select'>
                 <Dropdown

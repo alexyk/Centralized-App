@@ -1,5 +1,5 @@
 @import '../../../vendors/include-media';
-.row {
+#create-listing-location {
   input {
     border: 1px solid #cfcfcf;
     border-radius: 5px;
@@ -12,7 +12,10 @@
     padding-top: 10px;
     }
   }
-  .form-group label {
+  .select {
+    width: 100%;
+  }
+  label {
     margin: 10px 0 7px 7px;
     font-size: 18px;
   }

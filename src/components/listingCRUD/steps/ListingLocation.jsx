@@ -74,7 +74,7 @@ function ListingLocation(props) {
     : () => { showErrors(props.values); };
 
   return (
-    <div>
+    <div id="create-listing-location">
       <ListingCrudNav progress='33%' />
       <div className="container">
         <div className="row">

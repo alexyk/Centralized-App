@@ -10,17 +10,19 @@
   h3 {
     font-size: 18px;
   }
-  .select {
+  .bedroom-container-place-type {
     width: 40%;
     @include media('<tablet') {
       width: 100%;
     }
   }
-  .bedroom-counter {
-    font-size: 16px;
-    padding: 15px 39px 15px 15px;
-    outline: none;
-    border-radius: 3px;
-    margin-bottom: 10px;
+.bedroom-counter {
+  font-size: 16px;
+  padding: 15px 39px 15px 15px;
+  outline: none;
+  border-radius: 3px;
+  margin-bottom: 10px;
+  width: 100%;
+
   }
 }

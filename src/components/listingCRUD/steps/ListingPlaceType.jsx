@@ -31,7 +31,7 @@ function ListingPlaceType(props) {
                     <div className='select'>
                       <select
                         onChange={(e) => props.onChange(e)}
-
+                        className='select-listing-place-type'
                         name="listingType"
                         value={listingType}
                         required="required"
@@ -48,7 +48,7 @@ function ListingPlaceType(props) {
                       <select
                         onChange={(e) => props.onChange(e)}
                         value={propertyType}
-
+                        className='select-listing-place-type'
                         name="propertyType"
                         required="required"
                         id="property-type">
