@@ -5,6 +5,8 @@ import React from 'react';
 import { Config } from '../../../config';
 import ProfileFlexContainer from '../flexContainer/ProfileFlexContainer';
 
+import '../../../styles/css/components/profile/listings/my-listings-page.css';
+
 function MyListingsItemRow(props) {
   return (
     <ProfileFlexContainer key={props.listing.id} styleClass={`flex-container-row ${props.styleClass}`}>
@@ -13,25 +15,28 @@ function MyListingsItemRow(props) {
         <span style={{ backgroundImage: `url(${Config.getValue('imgHost') + props.listing.thumbnail})` }}></span>
       </div>
       <div className="flex-row-child details">
-        <Link to={'/homes/listings/' + props.listing.id}>{props.listing.name}</Link>
-        <ListingItemRatingBox
-          rating={props.listing.averageRating}
-          reviewsCount={props.listing.reviewsCount}
-        />
+        <div className="content-row">
+          <div>
+            <Link to={'/homes/listings/' + props.listing.id}>{props.listing.name}</Link>
+          </div>
+          <ListingItemRatingBox
+            rating={props.listing.averageRating}
+            reviewsCount={props.listing.reviewsCount}
+          />
+        </div>
       </div>
       <div className="flex-row-child price">
         <span>{props.listing.defaultDailyPrice} {props.listing.currencyCode}</span>
       </div>
       <div className="flex-row-child edit">
-        <Link to={`/profile/listings/edit/landing/${props.listing.id}`}>Edit</Link>
+        <Link to={`/profile/listings/edit/landing/${props.listing.id}`}>Edit Listing</Link>
       </div>
       <div className="flex-row-child calendar">
-        {/* <input type="button" className="button" value="View Calendar"/> */}
         <Link to={'/profile/listings/calendar/' + props.listing.id}>View Calendar</Link>
       </div>
       <div className="flex-row-child remove" onClick={(e) => props.handleOpenDeleteListingModal(e, props.listing.id, props.listing.name, props.listing.state)}>
         <span />
-        <div className="delete">Remove</div>
+        <div className="delete">Remove Listing</div>
       </div>
     </ProfileFlexContainer>
   );
@@ -39,9 +44,7 @@ function MyListingsItemRow(props) {
 
 MyListingsItemRow.propTypes = {
   listing: PropTypes.object,
-  state: PropTypes.string,
   styleClass: PropTypes.string,
-  filterListings: PropTypes.func,
   handleOpenDeleteListingModal: PropTypes.func
 };
 

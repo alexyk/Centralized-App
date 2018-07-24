@@ -12,8 +12,6 @@ import { Config } from '../../../config';
 import ReCAPTCHA from 'react-google-recaptcha';
 import MyListingsItemRow from './MyListingsItemRow';
 
-import '../../../styles/css/components/profile/listings/my-listings-page.css';
-
 class MyListingsPage extends React.Component {
   constructor(props) {
     super(props);
