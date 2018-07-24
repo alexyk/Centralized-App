@@ -228,8 +228,10 @@ class MainNav extends React.Component {
           // this.captcha.reset();
         });
       } else {
-        res.errors.then(res => {
-          const errors = res;
+        console.log("adsadasd");
+        console.log(res);
+        res.errors.then(err => {
+          const errors = err.errors;
           console.log(errors);
           if (errors.hasOwnProperty('JsonFileNull')) {
             NotificationManager.warning(errors['JsonFileNull'].message);

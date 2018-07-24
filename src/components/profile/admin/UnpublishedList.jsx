@@ -68,6 +68,7 @@ class UnpublishedList extends React.Component {
 
   componentDidMount() {
     let search = this.buildSearchTerm();
+    console.log(search.searchTermMap);
     requester.getAllUnpublishedListings(search.searchTermMap).then(res => {
       res.body.then(data => {
         this.setState({ listings: data.content, loading: false, totalElements: data.totalElements });
@@ -106,7 +107,7 @@ class UnpublishedList extends React.Component {
 
   buildSearchTerm() {
     let searchTermMap = [];
-    let searchTerm = `?`;
+    let searchTerm = '?';
 
     if (this.state.city) {
       searchTermMap.push(`cityId=${this.state.city}`);
@@ -130,7 +131,7 @@ class UnpublishedList extends React.Component {
 
     return {
       searchTerm,
-      searchTermMap 
+      searchTermMap
     };
   }
 
@@ -178,11 +179,16 @@ class UnpublishedList extends React.Component {
     });
 
     let searchTerm = queryString.parse(this.props.location.search);
-    console.log(searchTerm);
+    let arraySearchTerm = [];
     searchTerm.page = page - 1;
 
+    for (let key in searchTerm) {
+      let kvp = `${key}=${searchTerm[key]}`;
+      arraySearchTerm.push(kvp);
+    }
+
     let newSearchTerm = queryString.stringify(searchTerm);
-    requester.getAllUnpublishedListings([newSearchTerm]).then(res => {
+    requester.getAllUnpublishedListings(arraySearchTerm).then(res => {
       res.body.then(data => {
         this.props.history.push('?' + newSearchTerm);
         this.setState({
@@ -236,9 +242,9 @@ class UnpublishedList extends React.Component {
     };
 
     requester.contactHost(id, contactHostObj, captchaToken).then(() => {
-        NotificationManager.info('Message sent');
-        this.closeContactHostModal();
-      });
+      NotificationManager.info('Message sent');
+      this.closeContactHostModal();
+    });
   }
 
   openContactHostModal(event, id) {

@@ -1,4 +1,4 @@
-import Requester from 'test-locktrip-service-layer';
+import Requester from 'locktrip-service-layer';
 
 let requester = new Requester(localStorage);
 const x = {};

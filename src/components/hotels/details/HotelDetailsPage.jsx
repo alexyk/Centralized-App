@@ -67,13 +67,13 @@ class HotelDetailsPage extends React.Component {
 
   componentDidMount() {
     const id = this.props.match.params.id;
-    const search = this.props.location.search;
-    console.log(search);
-    requester.getHotelById(id, search).then(res => {
+    const searchParams = this.getNewSearchParams();
+    const search = this.getSearchParams();
+    requester.getHotelById(id, searchParams).then(res => {
       res.body.then(data => {
         this.setState({ data: data, loading: false });
-        const searchParams = this.getSearchParams(this.props.location.search);
-        const regionId = searchParams.get('region') || data.region.externalId;
+
+        const regionId = search.get('region') || data.region.externalId;
         requester.getRegionNameById(regionId).then(res => {
           res.body.then(data => {
             this.props.dispatch(setRegion(data));
@@ -82,7 +82,7 @@ class HotelDetailsPage extends React.Component {
       });
     });
 
-    requester.getHotelRooms(id, search).then(res => {
+    requester.getHotelRooms(id, searchParams).then(res => {
       res.body.then(data => {
         this.setState({ hotelRooms: data, loadingRooms: false });
       });
@@ -127,6 +127,17 @@ class HotelDetailsPage extends React.Component {
     }
 
     return map;
+  }
+
+  getNewSearchParams() {
+    const array = [];
+    const pairs = this.props.location.search.substr(1).split('&');
+    for(let i = 0; i < pairs.length; i++) {
+      let pair = pairs[i];
+      array.push(pair);
+    }
+
+    return array;
   }
 
   getAdults(rooms) {

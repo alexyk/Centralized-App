@@ -44,13 +44,13 @@ class HotelBookingConfirmPage extends React.Component {
     const booking = JSON.parse(decodeURI(searchParams.get('booking')));
 
     requester.createReservation(booking).then(res => {
-      if (res.ok) {
+      if (res.success) {
         res.body.then(data => {
           this.setState({ data: data, booking: booking });
-
+          console.log(data);
           requester.getLocRateByCurrency(data.currency).then(res => {
-            res.body.then(data => {
-              this.setState({ locRate: data[0]['price_' + data.currency.toLowerCase()] });
+            res.body.then(locData => {
+              this.setState({ locRate: locData[0]['price_' + data.currency.toLowerCase()] });
             });
           });
 
@@ -61,7 +61,7 @@ class HotelBookingConfirmPage extends React.Component {
           });
         });
       } else {
-        res.then((res) => {
+        res.errors.then((res) => {
           const errors = res.errors;
           for (let key in errors) {
             if (typeof errors[key] !== 'function') {

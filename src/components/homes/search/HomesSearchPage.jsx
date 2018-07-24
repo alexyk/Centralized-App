@@ -1,14 +1,13 @@
 import Breadcrumb from '../../Breadcrumb';
 import FilterPanel from './filter/FilterPanel';
-import Pagination from '../../common/pagination/Pagination';
 import HomeItem from './HomeItem';
+import HomesSearchBar from './HomesSearchBar';
+import Pagination from '../../common/pagination/Pagination';
 import PropTypes from 'prop-types';
 import React from 'react';
-import { withRouter } from 'react-router-dom';
 import moment from 'moment';
 import requester from '../../../initDependencies';
-
-import HomesSearchBar from './HomesSearchBar';
+import { withRouter } from 'react-router-dom';
 
 class HomesSearchPage extends React.Component {
   constructor(props) {
@@ -44,8 +43,9 @@ class HomesSearchPage extends React.Component {
   }
 
   componentDidMount() {
-    const searchTerms = this.getSearchTerms(this.state.searchParams);
-    requester.getListingsByFilter(searchTerms + `&page=${this.state.currentPage - 1}`).then(res => {
+    let searchTerms = this.getSearchTerms(this.state.searchParams);
+    searchTerms.push(`page=${this.state.currentPage - 1}`);
+    requester.getListingsByFilter(searchTerms).then(res => {
       res.body.then(data => {
         this.setState({
           listings: data.filteredListings.content,
@@ -102,7 +102,7 @@ class HomesSearchPage extends React.Component {
     });
 
     this.clearFilters(e);
-    const searchTerms = this.getSearchTerms(this.state.searchParams);
+    let searchTerms = this.getSearchTerms(this.state.searchParams);
     requester.getListingsByFilter(searchTerms).then(res => {
       res.body.then(data => {
         this.setState({
@@ -188,8 +188,9 @@ class HomesSearchPage extends React.Component {
       loading: true
     });
 
-    const searchTerms = this.getSearchTerms(this.state.searchParams);
-    requester.getListingsByFilter(searchTerms + `&page=${page - 1}`).then(res => {
+    let searchTerms = this.getSearchTerms(this.state.searchParams);
+    searchTerms.push(`page=${page - 1}`);
+    requester.getListingsByFilter(searchTerms).then(res => {
       res.body.then(data => {
         this.setState({
           listings: data.filteredListings.content,
@@ -208,8 +209,7 @@ class HomesSearchPage extends React.Component {
     }
 
     console.log(pairs);
-
-    return pairs.join('&');
+    return pairs;
   }
 
   getSearchParams() {

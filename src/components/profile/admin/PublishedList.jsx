@@ -58,8 +58,8 @@ class PublishedList extends React.Component {
   }
 
   componentDidMount() {
-    let searchTerm = this.buildSearchTerm();
-    requester.getAllPublishedListings([searchTerm]).then(res => {
+    let search = this.buildSearchTerm();
+    requester.getAllPublishedListings(search.searchTermMap).then(res => {
       res.body.then(data => {
         this.setState({ listings: data.content, loading: false, totalElements: data.totalElements });
       });
@@ -84,35 +84,44 @@ class PublishedList extends React.Component {
   onSearch() {
     this.setState({ loading: true });
 
-    let searchTerm = this.buildSearchTerm();
+    let search = this.buildSearchTerm();
 
-    requester.getAllPublishedListings([searchTerm]).then(res => {
+    requester.getAllPublishedListings(search.searchTermMap).then(res => {
       res.body.then(data => {
-        this.props.history.push(`/profile/admin/listings/published${searchTerm}`);
+        this.props.history.push(`/profile/admin/listings/published${search.searchTerm}`);
         this.setState({ listings: data.content, loading: false, totalElements: data.totalElements });
       });
     });
   }
 
   buildSearchTerm() {
-    let searchTerm = `?`;
+    let searchTermMap = [];
+    let searchTerm = '?';
 
     if (this.state.city) {
+      searchTermMap.push(`cityId=${this.state.city}`);
       searchTerm += `&cityId=${this.state.city}`;
     }
 
     if (this.state.name) {
+      searchTermMap.push(`listingName=${this.state.name}`);
       searchTerm += `&listingName=${this.state.name}`;
     }
 
     if (this.state.country) {
+      searchTermMap.push(`countryId=${this.state.country}`);
       searchTerm += `&countryId=${this.state.country}`;
     }
 
     if (this.state.hostEmail) {
+      searchTermMap.push(`host=${this.state.hostEmail}`);
       searchTerm += `&host=${this.state.hostEmail}`;
     }
-    return searchTerm;
+
+    return {
+      searchTerm,
+      searchTermMap
+    };
   }
 
   onChange(e) {
@@ -155,11 +164,16 @@ class PublishedList extends React.Component {
     });
 
     let searchTerm = queryString.parse(this.props.location.search);
-
+    let arraySearchTerm = [];
     searchTerm.page = page - 1;
 
+    for (let key in searchTerm) {
+      let kvp = `${key}=${searchTerm[key]}`;
+      arraySearchTerm.push(kvp);
+    }
+
     let newSearchTerm = queryString.stringify(searchTerm);
-    requester.getAllPublishedListings([newSearchTerm]).then(res => {
+    requester.getAllPublishedListings(arraySearchTerm).then(res => {
       res.body.then(data => {
         this.props.history.push('?' + newSearchTerm);
         this.setState({

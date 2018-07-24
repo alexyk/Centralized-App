@@ -28,13 +28,14 @@ class HotelBookingPage extends React.Component {
 
   componentDidMount() {
     const id = this.props.match.params.id;
-    let search = this.props.location.search;
-    const searchParams = this.getSearchParams(this.props.location.search);
-    const quoteId = searchParams.get('quoteId');
-    const rooms = this.getRooms(searchParams);
-    const nights = this.getNights(searchParams);
-    search = search.substr(0, search.indexOf('&quoteId='));
-    requester.getHotelById(id, search).then(res => {
+    const searchParams = this.getNewSearchParams();
+    const searchString = this.getSearchParams();
+
+    const quoteId = searchString.get('quoteId');
+    const rooms = this.getRooms(searchString);
+    const nights = this.getNights(searchString);
+    searchParams.pop();
+    requester.getHotelById(id, searchParams).then(res => {
       res.body.then(data => {
         this.setState({
           hotel: data,
@@ -47,7 +48,7 @@ class HotelBookingPage extends React.Component {
       });
     });
 
-    requester.getHotelRooms(id, search).then(res => {
+    requester.getHotelRooms(id, searchParams).then(res => {
       res.body.then(data => {
         const roomResults = data.filter(x => x.quoteId === quoteId)[0].roomsResults;
         const totalPrice = this.getTotalPrice(roomResults);
@@ -134,9 +135,21 @@ class HotelBookingPage extends React.Component {
     }
   }
 
+  getNewSearchParams() {
+    const array = [];
+    const pairs = this.props.location.search.substr(1).split('&');
+    for(let i = 0; i < pairs.length; i++) {
+      let pair = pairs[i];
+      array.push(pair);
+    }
+
+    return array;
+  }
+
   getSearchParams() {
     const map = new Map();
     const pairs = this.props.location.search.substr(1).split('&');
+    console.log(pairs);
     for (let i = 0; i < pairs.length; i++) {
       let pair = pairs[i].split('=');
       map.set(pair[0], this.parseParam(pair[1]));
