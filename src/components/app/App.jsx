@@ -49,7 +49,6 @@ class App extends React.Component {
   }
 
   componentWillMount() {
-    console.log(encodeURI(localStorage.getItem(Config.getValue('domainPrefix') + '.auth.locktrip')));
     this.handleInternalAuthorization();
     this.handleExternalAuthorization();
   }
@@ -92,7 +91,6 @@ class App extends React.Component {
       this.setUserInfo();
       const url = this.props.location.pathname;
       const search = this.getQueryString(queryStringParameters);
-      console.log(url + search);
       this.props.history.push(url + search);
     }
   }

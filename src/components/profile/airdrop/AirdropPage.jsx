@@ -58,11 +58,9 @@ class AirdropPage extends Component {
   componentWillMount() {
     if (this.props.location.search && this.props.location.search.indexOf('emailtoken') !== -1) {
       verifyUserEmail(this.props.location.search).then(() => {
-        console.log('verifying user email');
         NotificationManager.info('Email verified.');
         if (this.isUserLogged()) {
           getUserAirdropInfo().then(json => {
-            console.log('dispatching user info');
             this.dispatchAirdropInfo(json);
           });
         }
@@ -193,7 +191,6 @@ class AirdropPage extends Component {
   }
 
   dispatchAirdropInfo(info) {
-    console.log(info);
     const email = info.user;
     const facebookProfile = info.facebookProfile;
     const telegramProfile = info.telegramProfile;
