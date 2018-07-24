@@ -1,4 +1,5 @@
 import 'react-notifications/lib/notifications.css';
+import '../../../styles/css/components/profile/me/my-profile-edit-form.css';
 
 import { Config } from '../../../config';
 import { NotificationManager } from 'react-notifications';
@@ -162,7 +163,7 @@ class ProfileEditForm extends React.Component {
     }
 
     return (
-      <div id="profile-edit-form">
+      <div id="my-profile-edit-form">
         <h2>Edit Profile</h2>
         <hr />
         <form onSubmit={(e) => { e.preventDefault(); this.captcha.execute(); }}>
@@ -179,48 +180,56 @@ class ProfileEditForm extends React.Component {
           </div>
           <div className="text"><span>Your public profile only shows your first name.<br />When you request a booking, your host will see your first and last name.</span></div>
           <div className="birth-sex">
-            <div className="bmonth">
+            <div className="bmonth option-field">
               <label htmlFor="bmonth">Birthdate <img src={Config.getValue('basePath') + 'images/icon-lock.png'} className="lock" alt="lock-o" /></label>
-              <select name="month" id="bmonth" onChange={this.onChange} value={this.state.month}>
-                <option disabled value="">Month</option>
-                <option value="01">January</option>
-                <option value="02">February</option>
-                <option value="03">March</option>
-                <option value="04">April</option>
-                <option value="05">May</option>
-                <option value="06">June</option>
-                <option value="07">July</option>
-                <option value="08">August</option>
-                <option value="09">September</option>
-                <option value="10">October</option>
-                <option value="11">November</option>
-                <option value="12">December</option>
-              </select>
+              <div className='select'>
+                <select name="month" id="bmonth" onChange={this.onChange} value={this.state.month}>
+                  <option disabled value="">Month</option>
+                  <option value="01">January</option>
+                  <option value="02">February</option>
+                  <option value="03">March</option>
+                  <option value="04">April</option>
+                  <option value="05">May</option>
+                  <option value="06">June</option>
+                  <option value="07">July</option>
+                  <option value="08">August</option>
+                  <option value="09">September</option>
+                  <option value="10">October</option>
+                  <option value="11">November</option>
+                  <option value="12">December</option>
+                </select>
+              </div>
             </div>
-            <div className="bday">
+            <div className="bday option-field">
               <label htmlFor="bday">&nbsp;</label>
-              <select name="day" id="bday" onChange={this.onChange} value={this.state.day}>
-                <option disabled value="">Day</option>
-                {Array.apply(null, Array(32)).map(function (item, i) {
-                  return i > 0 && <option key={i} value={i}>{i}</option>;
-                })}
-              </select>
+              <div className='select'>
+                <select name="day" id="bday" onChange={this.onChange} value={this.state.day}>
+                  <option disabled value="">Day</option>
+                  {Array.apply(null, Array(32)).map(function (item, i) {
+                    return i > 0 && <option key={i} value={i}>{i}</option>;
+                  })}
+                </select>
+              </div>
             </div>
-            <div className="byear">
+            <div className="byear option-field">
               <label htmlFor="byear">&nbsp;</label>
-              <select name="year" id="byear" onChange={this.onChange} value={this.state.year}>
-                <option disabled value="">Year</option>
-                {years}
-              </select>
+              <div className='select'>
+                <select name="year" id="byear" onChange={this.onChange} value={this.state.year}>
+                  <option disabled value="">Year</option>
+                  {years}
+                </select>
+              </div>
             </div>
-            <div className="sex">
+            <div className="sex option-field">
               <label htmlFor="sex">Gender <img src={Config.getValue('basePath') + 'images/icon-lock.png'} className="lock" alt="lock-o" /></label>
-              <select name="gender" id="sex" onChange={this.onChange} value={this.state.gender}>
-                <option disabled value="">Gender</option>
-                <option value="men">Men</option>
-                <option value="women">Women</option>
-                <option value="other">Other</option>
-              </select>
+              <div className='select'>
+                <select name="gender" id="sex" onChange={this.onChange} value={this.state.gender}>
+                  <option disabled value="">Gender</option>
+                  <option value="men">Men</option>
+                  <option value="women">Women</option>
+                  <option value="other">Other</option>
+                </select>
+              </div>
             </div>
             <br className="clear-both" />
           </div>
@@ -233,45 +242,57 @@ class ProfileEditForm extends React.Component {
 
           <div className="loc-address">
             <label htmlFor="loc-address">ETH/LOC address <img src={Config.getValue('basePath') + 'images/icon-lock.png'} className="lock" alt="lock-o" /></label>
-            <input className="form-control form-control-disabled" id="loc-address" name="locAddress" value={this.state.locAddress} onChange={this.onChange} type="text" disabled="disabled" />
+            <input id="loc-address" name="locAddress" value={this.state.locAddress} onChange={this.onChange} type="text" disabled="disabled" />
           </div>
 
           <div className="language-currency">
             <div className="language">
+
               <label htmlFor="language">Preferred language</label>
-              <select name="preferredLanguage" id="language" onChange={this.onChange} value={this.state.preferredLanguage}>
-                <option value="1">English</option>
-              </select>
+              <div className='select'>
+                <select name="preferredLanguage" id="language" onChange={this.onChange} value={this.state.preferredLanguage}>
+                  <option value="1">English</option>
+                </select>
+              </div>
             </div>
             <div className="currency">
+
               <label htmlFor="currency">Preferred currency</label>
-              <select name="preferredCurrency" id="currency" onChange={this.onChange} value={this.state.preferredCurrency}>
-                <option disabled value="">Currency</option>
-                {this.state.currencies.map((item, i) => {
-                  return <option key={i} value={item.id}>{item.code}</option>;
-                })}
-              </select>
+              <div className='select'>
+                <select name="preferredCurrency" id="currency" onChange={this.onChange} value={this.state.preferredCurrency}>
+                  <option disabled value="">Currency</option>
+                  {this.state.currencies.map((item, i) => {
+                    return <option key={i} value={item.id}>{item.code}</option>;
+                  })}
+                </select>
+              </div>
             </div>
             <br className="clear-both" />
           </div>
-          <div className="address language-currency">
-            <label htmlFor="address">Where you live</label>
-            <div className="language">
-              <select name="country" id="address" onChange={this.updateCountry} value={this.state.country}>
-                <option disabled value="">Country</option>
-                {this.state.countries.map((item, i) => {
-                  return <option key={i} value={item.id}>{item.name}</option>;
-                })}
-              </select>
+          <div className="address-city">
+            <div className="address">
+              <label htmlFor="address">Where you live</label>
+              <div className='select'>
+                <select name="country" id="address" onChange={this.updateCountry} value={this.state.country}>
+                  <option disabled value="">Country</option>
+                  {this.state.countries.map((item, i) => {
+                    return <option key={i} value={item.id}>{item.name}</option>;
+                  })}
+                </select>
+              </div>
             </div>
-            <div className="language">
-              <select name="city" onChange={this.onChange} value={this.state.city}>
-                <option disabled value="">City</option>
-                {this.state.cities.map((item, i) => {
-                  return <option key={i} value={item.id}>{item.name}</option>;
-                })}
-              </select>
+            <div className="city">
+              <label htmlFor="city">Which city</label>
+              <div className='select'>
+                <select name="city" id="city" onChange={this.onChange} value={this.state.city}>
+                  <option disabled value="">City</option>
+                  {this.state.cities.map((item, i) => {
+                    return <option key={i} value={item.id}>{item.name}</option>;
+                  })}
+                </select>
+              </div>
             </div>
+
             <br className="clear-both" />
           </div>
 

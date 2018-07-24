@@ -51,6 +51,7 @@ class NavLocalization extends Component {
               ? <ul className="tabset">
                 <li><NavLink to='/hotels' activeClassName="active">HOTELS</NavLink></li>
                 <li><NavLink to='/homes' activeClassName="active">HOMES</NavLink></li>
+                <li><NavLink to='/buyloc' activeClassName="active">BUY LOC</NavLink></li>
               </ul>
               : <div className="sm-none">&nbsp;</div>
             }

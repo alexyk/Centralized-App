@@ -26,7 +26,7 @@ $media-expressions: (
 @import '../base/mixins';
 @import '../base/helpers';
 
-@import '../components/checkbox-filters-component';
+@import '../components/hotels_search/filter/checkbox-filters-component';
 
 .sidebar {
 	width: 100%;

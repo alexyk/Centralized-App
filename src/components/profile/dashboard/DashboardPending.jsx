@@ -3,6 +3,10 @@ import React from 'react';
 import moment from 'moment';
 import { Config } from '../../../config';
 import NoEntriesMessage from '../common/NoEntriesMessage';
+import ProfileFlexContainer from '../flexContainer/ProfileFlexContainer';
+import DashboardTripRow from './DashboardTripRow';
+
+import '../../../styles/css/components/profile/dashboard/dashboard-pending.css';
 
 function DashboardPending(props) {
 
@@ -67,35 +71,12 @@ function DashboardPending(props) {
     return (
       props.trips.map(trip => {
         return (
-          <ul key={trip.id} className="profile-pending-list profile-pending-item">
-            <li>
-              <span className="session-nav-user-thumb"><img src={`${Config.getValue('imgHost')}${trip.userImage}`} alt="user-profile" /></span>
-            </li>
-            <li>
-              <span className="cnt block">
-                <span className="block bold">{trip.hostName}</span><br />
-                <span className="where block">{trip.listingName}</span>
-              </span>
-            </li>
-            <li>
-              <span className="cnt block">{trip.displayStartDate} <i aria-hidden="true" className="fa fa-long-arrow-right"></i> {trip.displayEndDate}</span>
-            </li>
-            <li>
-              <span className="cnt block"><div className="reservation-status bold">
-                {
-                  capitalize(trip.status != null && trip.status.length > 0 ? trip.status : 'PENDING')
-                }
-                &nbsp;
-                  {trip.status && trip.status.toUpperCase() === 'FAILED' &&
-                  <span className="icon-question" title={trip.error ? trip.error : 'Transaction failed.'}></span>
-                }
-              </div>
-                {trip.status && trip.status.toUpperCase() === 'DONE' &&
-                  <span>Reference No.: {trip.booking_id}</span>
-                }
-              </span>
-            </li>
-          </ul>
+          <DashboardTripRow
+            key={trip.id}
+            styleClass="dashboard-flex-container dashboard-flex-row"
+            capitalize={capitalize}
+            trip={trip}
+          />
         );
       })
     );
@@ -114,24 +95,19 @@ function DashboardPending(props) {
           <li><span>Status</span></li>
           <li><span>Price</span></li>
         </ul>
-
         {renderReservations()}
-
       </div>
 
       <div className="container">
         <h2>Latest Trips</h2>
         <hr className="profile-line" />
-        <ul className="profile-pending-list profile-pending-header bold">
-          <li><span>&nbsp;</span></li>
-          <li><span>Host</span></li>
-          <li><span>Trip Dates</span></li>
-          <li><span>Status</span></li>
-          <li><span></span></li>
-        </ul>
-
+        <ProfileFlexContainer styleClass="flex-container-header dashboard-flex-container">
+          <div className="flex-header-child dashboard-image-width" />
+          <div className="flex-header-child dashboard-host-width">Host</div>
+          <div className="flex-header-child dashboard-dates-width">Trip Dates</div>
+          <div className="flex-header-child dashboard-status-width">Status</div>
+        </ProfileFlexContainer>
         {renderTrips()}
-
       </div>
     </section>
   );

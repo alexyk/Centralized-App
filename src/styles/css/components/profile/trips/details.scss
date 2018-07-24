@@ -18,7 +18,7 @@
       margin-bottom: 5%;
       text-align: center;
     }
-    h1 {
+    h2 {
       text-align: center;
       margin: auto;
       max-width: 80%;
@@ -31,9 +31,10 @@
       }
     }
     .details-background {
-      margin-bottom: 5%;
-      margin-top: 5%;
+      display: block;
       width: 100%;
+      max-width: 400px;
+      margin: 5% auto;
     }
     .stars {
       margin-bottom: 5%;

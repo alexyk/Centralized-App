@@ -426,6 +426,18 @@ export async function getStaticHotels(regionId, page = 0) {
   });
 }
 
+export async function getStaticHotelsByFilter(search, filters) {
+  return sendRequest(`${host}api/hotels/filtered${search}${filters}`, RequestMethod.GET).then(res => {
+    return res;
+  });
+}
+
+export async function getMapInfo(search) {
+  return sendRequest(`${host}api/hotels/filtered/map${search}`, RequestMethod.GET).then(res => {
+    return res.response.json();
+  });
+}
+
 export async function getHotelById(id, search) {
   return sendRequest(`${host}api/hotels/${id}${search}`, RequestMethod.GET).then(res => {
     return res.response.json();
@@ -500,7 +512,7 @@ export async function getEmailFreeResponse(email) {
 }
 
 export async function getMyHotelBookings(searchTerm, size = 10) {
-  return sendRequest(`${host}users/me/bookings${searchTerm !== null && searchTerm !== undefined ? `${searchTerm}&` : '?'}sort=id,desc&size=${size}`, RequestMethod.GET).then(res => {
+  return sendRequest(`${host}users/me/bookings${searchTerm ? `${searchTerm}&` : '?'}size=${size}`, RequestMethod.GET).then(res => {
     return res.response.json();
   });
 }

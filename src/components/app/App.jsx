@@ -15,14 +15,18 @@ import { connect } from 'react-redux';
 import MainNav from '../mainNav/MainNav';
 import Footer from '../footer/Footer';
 import NavLocalization from '../profile/NavLocalization';
-import StyleTest from '../common/StyleTest';
+import StompTest from '../common/StompTest';
 import queryString from 'query-string';
 import { Wallet } from '../../services/blockchain/wallet.js';
+import { NotificationContainer } from 'react-notifications';
 
 import ProfilePage from '../profile/ProfilePage';
 import AirdropPage from '../profile/airdrop/AirdropPage';
 import PropTypes from 'prop-types';
 import { setIsLogged, setUserInfo } from '../../actions/userInfo';
+import WorldKuCoinCampaign from '../external/WorldKuCoinCampaign';
+import Balance from '../external/Balance';
+import BuyLocPage from '../profile/buyloc/BuyLocPage';
 
 // MOBILE ONLY START
 import StaticHotelsSearchPage from '../hotels/search/StaticHotelsSearchPage';
@@ -36,9 +40,6 @@ import {
 } from '../../requester';
 
 import '../../styles/css/main.css';
-import {NotificationContainer} from "react-notifications";
-import WorldKuCoinCampaign from "../external/WorldKuCoinCampaign";
-import Balance from "../external/Balance";
 
 class App extends React.Component {
   constructor(props) {
@@ -68,9 +69,9 @@ class App extends React.Component {
         const ethBalance = eth / (Math.pow(10, 18));
         Wallet.getTokenBalance(res.locAddress).then(loc => {
           const locBalance = loc / (Math.pow(10, 18));
-          const { firstName, lastName, phoneNumber, email, locAddress } = res;
+          const { firstName, lastName, phoneNumber, email, locAddress, gender } = res;
           this.props.dispatch(setIsLogged(true));
-          this.props.dispatch(setUserInfo(firstName, lastName, phoneNumber, email, locAddress, ethBalance, locBalance));
+          this.props.dispatch(setUserInfo(firstName, lastName, phoneNumber, email, locAddress, ethBalance, locBalance, gender));
         });
       });
     });
@@ -120,7 +121,7 @@ class App extends React.Component {
           <NavLocalization />
         }
 
-        <NotificationContainer/>
+        <NotificationContainer />
 
         <Switch>
           <Route exact path="/" render={() => <HomeRouterPage />} />
@@ -133,7 +134,8 @@ class App extends React.Component {
           <Route path="/profile/listings/create" render={() => !this.isAuthenticated() ? <Redirect to="/" /> : <CreateListingPage />} />
           <Route path="/profile/" render={() => !this.isAuthenticated() ? <Redirect to="/" /> : <ProfilePage location={this.props.location} />} />
           <Route path="/airdrop" render={() => <AirdropPage />} />
-          <Route path="/test" render={() => <StyleTest />} />
+          <Route path="/buyloc" render={() => <BuyLocPage />} />
+          <Route path="/test" render={() => <StompTest />} />
           <Route path="/softuni" render={() => <WorldKuCoinCampaign />} />
           <Route path="/vote" render={() => <WorldKuCoinCampaign />} />
           <Route path="/campaigns/balance/check" render={() => <Balance />} />

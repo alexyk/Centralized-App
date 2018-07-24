@@ -64,6 +64,7 @@ class EditListingPage extends React.Component {
       street: '',
       city: '',
       state: '',
+      countryCode: '',
       name: '',
       text: '',
       interaction: '',
@@ -155,16 +156,19 @@ class EditListingPage extends React.Component {
   }
 
   setListingData(data) {
-    const city = data.location.split(', ')[0];
-    const state = data.location.split(', ')[1];
-    const country = data.location.split(', ')[2];
+    const location = data.location.split(', ');
+    const city = location[0];
+    const state = location[1];
+    const country = location[2];
+    const countryCode = location[3];
     const isAddressSelected = !!(city && state && country);
 
     this.setState({
       type: data.listingType.toString(),
-      city: data.location.split(', ')[0],
-      state: data.location.split(', ')[1],
-      country: data.location.split(', ')[2],
+      city: city,
+      state: state,
+      country: country,
+      countryCode: countryCode,
       isAddressSelected: isAddressSelected,
       propertyType: data.type.toString(),
       roomType: data.details.roomType ? data.details.roomType : this.getDetailValue(data, 'roomType'),
@@ -712,7 +716,7 @@ class EditListingPage extends React.Component {
           ref={(el) => this.editCaptcha = el}
           size="invisible"
           sitekey={Config.getValue('recaptchaKey')}
-          onChange={token => { this.editListing(token); this.captcha.reset(); }}
+          onChange={token => { this.editListing(token); this.editCaptcha.reset(); }}
         />
       </div>
     );

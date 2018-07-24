@@ -1,3 +1,4 @@
+import BancorConvertWidget from '../external/BancorConvertWidget';
 import HeroComponent from './HeroComponent';
 import PopularDestinationsCarousel from './carousel/PopularDestinationsCarousel';
 import PropTypes from 'prop-types';
@@ -19,6 +20,7 @@ function HotelsHomePage(props) {
   return (
     <div>
       <HeroComponent redirectToSearchPage={redirectToSearchPage} />
+      <BancorConvertWidget />
       <section id="popular-hotels-box">
         <h2>Popular Destinations</h2>
         <PopularDestinationsCarousel handleDestinationPick={handleDestinationPick} />

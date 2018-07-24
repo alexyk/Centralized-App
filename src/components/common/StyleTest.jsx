@@ -18,6 +18,7 @@ class StyleTest extends Component {
     // const baseURL = '/hotels/listings';
     const searchString = '?region=15664&currency=EUR&startDate=14/07/2018&endDate=20/07/2018&rooms=%5B%7B"adults":2,"children":%5B%5D%7D%5D';
     const filters = {
+      showUnavailable: false,
       name: 'marinela',
       minPrice: 10,
       maxPrice: 500,
