@@ -1,6 +1,7 @@
 @import '../../../vendors/include-media';
 #listing-house-rules-container {
   display: flex;
+  justify-content: space-between;
   @include media('<tablet') {
     flex-direction: column;
   }
@@ -17,6 +18,10 @@
     @include media('<tablet') {
       margin-top: 15px;
     }
+  }
+  .col-md-3 {
+    display: flex;
+    justify-content: space-between;
   }
   input[type="radio"] {
     display: inline-block;
@@ -39,20 +44,31 @@
       padding: 0;
     }
   }
+  .button-remove-container {
+    padding-left: 10px;
+    padding-right: 28px;
+  }
+  .change-rules {
+    display: flex;
+    justify-content: space-between;
+  }
   label {
     @include media('<tablet') {
-      margin-bottom: 5px; // margin-top: 5px;
+      margin-bottom: 5px;
     }
   }
   .btn {
     padding: 17px;
     margin-top: 5px;
+    width: 100%;
     @include media('<tablet') {
       margin-top: 20px;
-      width: 100%;
     }
   }
   hr {
-    border-top:1px solid #ccc;
+    border-top: 1px solid #ccc;
+  }
+  .add-item {
+    padding-top: 25px;
   }
 }

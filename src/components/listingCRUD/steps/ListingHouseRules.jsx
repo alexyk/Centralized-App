@@ -158,10 +158,10 @@ function ListingHouseRules(props) {
                 <div>
                   {Array.from(otherHouseRules).map((item, i) =>
                     <div key={i} className="row">
-                      <div className="col-md-9">
+                      <div className="add-item col-md-9">
                         {item}
                       </div>
-                      <div className="col-md-3">
+                      <div className="button-remove-container col-md-3">
                         <input type="button" value="Remove" onClick={() => props.removeRule(item)} />
                       </div>
                     </div>
