@@ -79,21 +79,14 @@ class HotelTripsPage extends React.Component {
   handleCancelTrip() {
     let bookingForCancellation = {};
     bookingForCancellation.bookingId = this.state.bookingPrepareId;
-    console.log(bookingForCancellation);
     cancelBooking(bookingForCancellation).then(res => {
-      console.log(res);
       if (res.success === true) {
         getCurrentlyLoggedUserJsonFile().then((json) => {
-          // console.log(json);
-          console.log(this.state.bookingPrepareId);
-          // console.log(this.state.password);
-
 
           NotificationManager.info('Your reservation is being cancelled...', 'Transactions', 10000);
           this.closeModal(PASSWORD_PROMPT);
 
           HotelReservation.cancelReservation(json.jsonFile, this.state.password, this.state.bookingPrepareId.toString()).then(response => {
-            // console.log(response);
           }).catch(error => {
             if (error.hasOwnProperty('message')) {
               NotificationManager.warning(error.message, 'Cancel Reservation');

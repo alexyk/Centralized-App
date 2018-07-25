@@ -1,11 +1,11 @@
-import { Modal } from 'react-bootstrap';
+import {Modal} from 'react-bootstrap';
 import PropTypes from 'prop-types';
 import React from 'react';
-import { connect } from 'react-redux';
+import {connect} from 'react-redux';
 
-import { setRooms } from '../../../actions/searchInfo';
+import {setRooms} from '../../../actions/searchInfo';
 
-import { CHILDREN } from '../../../constants/modals'; 
+import {CHILDREN} from '../../../constants/modals';
 
 function ChildrenModal(props) {
 
@@ -30,7 +30,7 @@ function ChildrenModal(props) {
     let children = rooms[roomIndex].children;
     if (children.length < value) {
       while (children.length < value) {
-        children.push({ age: '' });
+        children.push({age: ''});
       }
     } else if (children.length > value) {
       children = children.slice(0, value);
@@ -38,7 +38,6 @@ function ChildrenModal(props) {
 
     rooms[roomIndex].children = children;
     props.dispatch(setRooms(rooms));
-    console.log(rooms);
   };
 
   const handleChildAgeChange = (event, roomIndex, childIndex) => {
@@ -46,7 +45,6 @@ function ChildrenModal(props) {
     const rooms = props.searchInfo.rooms.slice();
     rooms[roomIndex].children[childIndex].age = value;
     props.dispatch(setRooms(rooms));
-    console.log(rooms);
   };
 
   return (
@@ -66,7 +64,8 @@ function ChildrenModal(props) {
                       <span className="children-select-label">Room {roomIndex + 1}</span>
                     </div>
                     <div className="col col-md-8">
-                      <select name={`children${roomIndex}`} className="form-control children-select" value={room.children.length} onChange={(e) => handleChildrenChange(e, roomIndex)}>
+                      <select name={`children${roomIndex}`} className="form-control children-select"
+                              value={room.children.length} onChange={(e) => handleChildrenChange(e, roomIndex)}>
                         <option value="0">No children</option>
                         <option value="1">1 child</option>
                         <option value="2">2 children</option>
@@ -81,7 +80,8 @@ function ChildrenModal(props) {
                     {room.children.map((child, childIndex) => {
                       return (
                         <div key={childIndex} className="col col-md-2">
-                          <select name={`children${roomIndex}age`} className="form-control children-age-select" value={child.age} onChange={(e) => handleChildAgeChange(e, roomIndex, childIndex)}>
+                          <select name={`children${roomIndex}age`} className="form-control children-age-select"
+                                  value={child.age} onChange={(e) => handleChildAgeChange(e, roomIndex, childIndex)}>
                             <option value="" selected disabled required>Age</option>
                             <option value="1">1</option>
                             <option value="2">2</option>
@@ -106,12 +106,15 @@ function ChildrenModal(props) {
                     })}
                   </div>
                 </div>
-                <hr className="room-break" />
+                <hr className="room-break"/>
               </div>
             );
           })}
           {areChildrenAgesValid() ?
-            <button className="btn btn-primary" onClick={e => { props.closeModal(CHILDREN, e); props.handleSubmit(); }}>Search</button> :
+            <button className="btn btn-primary" onClick={e => {
+              props.closeModal(CHILDREN, e);
+              props.handleSubmit();
+            }}>Search</button> :
             <button className="btn btn-primary" disabled>Search</button>
           }
         </Modal.Body>
@@ -131,7 +134,7 @@ ChildrenModal.propTypes = {
 };
 
 function mapStateToProps(state) {
-  const { searchInfo } = state;
+  const {searchInfo} = state;
   return {
     searchInfo
   };

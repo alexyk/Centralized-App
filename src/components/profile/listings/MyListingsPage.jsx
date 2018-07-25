@@ -42,7 +42,6 @@ class MyListingsPage extends React.Component {
 
   componentDidMount() {
     getMyListings('?page=0').then((data) => {
-      console.log(data);
       const active = data.content.filter(l => l.state === 'active');
       const denied = data.content.filter(l => l.state === 'denied');
       const inactive = data.content.filter(l => l.state === 'inactive');
@@ -202,7 +201,7 @@ class MyListingsPage extends React.Component {
               return (
                 <MyListingsInProgressItem
                   key={i}
-                  id={item.id} 
+                  id={item.id}
                   step={item.step}
                   deleteInProgressListing={this.deleteInProgressListing}
                   filterListings={this.filterListings}
