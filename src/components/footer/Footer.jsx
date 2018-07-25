@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { setCurrency, setLocRate } from '../../actions/paymentInfo';
-import { getLocRateInUserSelectedCurrency } from '../../requester';
+import requester from '../../initDependencies';
 
 import '../../styles/css/components/footer/footer-component.css';
 
@@ -25,8 +25,10 @@ class Footer extends React.Component {
   }
 
   getAndSetLocRate(currency) {
-    getLocRateInUserSelectedCurrency(currency).then((data) => {
-      this.props.dispatch(setLocRate(data[0][`price_${currency.toLowerCase()}`]));
+    requester.getLocRateByCurrency(currency).then(res => {
+      res.body.then(data => {
+        this.props.dispatch(setLocRate(data[0][`price_${currency.toLowerCase()}`]));
+      });
     });
   }
 
@@ -72,7 +74,7 @@ class Footer extends React.Component {
               <div className="select">
                 <select className="currency"
                   value={this.props.paymentInfo.currency}
-                  onChange={(e) => this.props.dispatch(setCurrency(e.target.value))} 
+                  onChange={(e) => this.props.dispatch(setCurrency(e.target.value))}
                 >
                   <option value="EUR" selected>Euro</option>
                   <option value="USD">US Dollar</option>

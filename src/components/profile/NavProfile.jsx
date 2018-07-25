@@ -1,6 +1,6 @@
 import { NavLink } from 'react-router-dom';
 import React from 'react';
-import { getUserInfo } from '../../requester';
+import requester from '../../initDependencies';
 
 class NavProfile extends React.Component {
   constructor(props) {
@@ -13,8 +13,10 @@ class NavProfile extends React.Component {
   }
 
   componentDidMount() {
-    getUserInfo().then((data) => {
-      this.setState({ roles: data.roles, loading: false });
+    requester.getUserInfo().then(res => {
+      res.body.then(data => {
+        this.setState({ roles: data.roles, loading: false });
+      });
     });
   }
 
