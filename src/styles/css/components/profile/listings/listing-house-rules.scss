@@ -1,0 +1,53 @@
+@import '../../../vendors/include-media';
+#listing-house-rules-container {
+  .rules-container {
+    margin-left: 10px;
+  }
+  input {
+    margin-top: 5px;
+    border: 1px solid #cfcfcf;
+    border-radius: 5px;
+    background-color: white;
+    padding: 20px;
+    width: 100%;
+    @include media('<tablet') {
+      margin-top: 15px;
+    }
+  }
+  input[type="radio"] {
+    display: inline-block;
+    margin-right: 10px;
+    @include media('<tablet') {
+      margin: auto;
+      text-align: center;
+      margin-top: 10px;
+      margin-bottom: 10px;
+    }
+  }
+  p {
+    font-size: 20px;
+    @include media('<tablet') {
+      font-size: 16px;
+      margin-bottom: 0;
+    }
+  }
+  .button-add-container {
+    @include media('<tablet') {
+      padding: 0;
+    }
+  }
+  label {
+    @include media('<tablet') {
+      margin-bottom: 5px;
+      // margin-top: 5px;
+    }
+  }
+  .btn {
+    padding: 17px;
+    margin-top: 5px;
+    @include media('<tablet') {
+      margin-top: 20px;
+      width: 100%;
+    }
+  }
+}
