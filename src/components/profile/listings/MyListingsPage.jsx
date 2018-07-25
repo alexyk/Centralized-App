@@ -201,7 +201,7 @@ class MyListingsPage extends React.Component {
               return (
                 <MyListingsInProgressItem
                   key={i}
-                  id={item.id} 
+                  id={item.id}
                   step={item.step}
                   deleteInProgressListing={this.deleteInProgressListing}
                   filterListings={this.filterListings}

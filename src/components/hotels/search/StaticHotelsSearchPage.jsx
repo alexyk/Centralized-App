@@ -345,7 +345,6 @@ class StaticHotelsSearchPage extends React.Component {
   }
 
   handleShowFilters() {
-    console.log('handled');
     this.setState({ showFiltersMobile: true });
   }
 
@@ -537,7 +536,6 @@ class StaticHotelsSearchPage extends React.Component {
   }
 
   onPageChange(page) {
-    console.log(page);
     this.setState({
       page: page - 1,
       loading: true

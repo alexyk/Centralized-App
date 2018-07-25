@@ -49,14 +49,7 @@ $breakpoints: (
     }
     .trips-dates {
       width: 35%;
-      .content-row {
-        .date-in-day {
-          color: #a2c5bf;
-        }
-        .date-out-day {
-          color: #d87a61;
-        }
-      }
+      @include checkInCheckoutDates();
     }
     .trips-actions {
       width: 20%;
@@ -76,11 +69,16 @@ $breakpoints: (
     }
   }
 
-  @include media(">tablet" , "<=desktop") {
+  @include media("<=desktop") {
     padding: 5%;
+    &.flex-container-header {
+      display: none;
+    }
     .tablet-col-1 {
-      display: block;
+      display: flex;
+      flex-direction: column;
       width: 30%;
+      justify-content: center;
       text-align: center;
       .trips-image,
       .trips-host {
@@ -116,19 +114,12 @@ $breakpoints: (
 
   }
 
-  @include media(">phone" , "<=tablet") {
-    padding: 5%;
+  @include media("<=tablet") {
     .tablet-col-1 {
-      display: block;
-      width: 30%;
-      text-align: center;
       min-width: 180px;
       .trips-image,
       .trips-host {
         width: 90%;
-      }
-      .trips-host {
-        margin-top: 10%;
       }
     }
 
@@ -136,12 +127,6 @@ $breakpoints: (
       display: flex;
       flex-direction: column;
       justify-content: center;
-      width: 70%;
-      .trips-location,
-      .trips-dates,
-      .trips-actions {
-        margin-bottom: 5%;
-      }
       .trips-location {
         @include rowWithIconInMobile(center, 100%);
       }
@@ -153,19 +138,16 @@ $breakpoints: (
       }
       .trips-status {
         width: 100%;
-        @include statusRowInMobile();
       }
     }
-
   }
 
   @include media("<=phone") {
     flex-wrap: wrap;
-    padding: 5%;
     margin-bottom: 10%;
     .tablet-col-1 {
-      display: block !important;
-      width: 100% !important;
+      display: block;
+      width: 100%;
       .trips-image {
         @include imageHostInMobile();
       }
@@ -177,22 +159,8 @@ $breakpoints: (
     }
 
     .tablet-col-2 {
-      display: block !important;
-      width: 100% !important;
-      .trips-location,
-      .trips-dates,
-      .trips-actions {
-        margin-bottom: 5%;
-      }
-      .trips-location {
-        @include rowWithIconInMobile(center, 100%);
-      }
-      .trips-dates {
-        @include rowWithIconInMobile(center, 100%);
-      }
-      .trips-actions {
-        @include rowWithIconInMobile(center, 100%);
-      }
+      display: block;
+      width: 100%;
       .trips-status {
         @include statusRowInMobile();
       }

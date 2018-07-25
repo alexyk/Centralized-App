@@ -130,7 +130,6 @@ class HomeDetailsPage extends React.Component {
     const today = moment();
     const prices = this.state.prices;
     const range = prices.filter(x => x.start >= startDate && x.end < endDate);
-    console.log(startDate, today);
     const isInvalidRange = range.filter(x => !x.available).length > 0;
     if (isInvalidRange) {
       NotificationManager.warning('There is a unavailable day in your select range', 'Calendar Operations');

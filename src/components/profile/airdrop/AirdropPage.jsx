@@ -190,7 +190,6 @@ class AirdropPage extends Component {
   }
 
   dispatchAirdropInfo(info) {
-    console.log(info);
     const email = info.user;
     const facebookProfile = info.facebookProfile;
     const telegramProfile = info.telegramProfile;

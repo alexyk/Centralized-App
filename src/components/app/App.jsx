@@ -26,7 +26,6 @@ import ProfilePage from '../profile/ProfilePage';
 import PropTypes from 'prop-types';
 import React from 'react';
 import StaticHotelsSearchPage from '../hotels/search/StaticHotelsSearchPage';
-import StompTest from '../common/StompTest';
 import { Wallet } from '../../services/blockchain/wallet.js';
 import WorldKuCoinCampaign from '../external/WorldKuCoinCampaign';
 import { connect } from 'react-redux';
@@ -43,7 +42,6 @@ class App extends React.Component {
   }
 
   componentWillMount() {
-    console.log(encodeURI(localStorage.getItem(Config.getValue('domainPrefix') + '.auth.locktrip')));
     this.handleInternalAuthorization();
     this.handleExternalAuthorization();
   }
@@ -88,7 +86,6 @@ class App extends React.Component {
       this.setUserInfo();
       const url = this.props.location.pathname;
       const search = this.getQueryString(queryStringParameters);
-      console.log(url + search);
       this.props.history.push(url + search);
     }
   }
@@ -130,7 +127,6 @@ class App extends React.Component {
           <Route path="/profile/" render={() => !this.isAuthenticated() ? <Redirect to="/" /> : <ProfilePage location={this.props.location} />} />
           <Route path="/airdrop" render={() => <AirdropPage />} />
           <Route path="/buyloc" render={() => <BuyLocPage />} />
-          <Route path="/test" render={() => <StompTest />} />
           <Route path="/softuni" render={() => <WorldKuCoinCampaign />} />
           <Route path="/vote" render={() => <WorldKuCoinCampaign />} />
           <Route path="/campaigns/balance/check" render={() => <Balance />} />

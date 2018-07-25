@@ -156,7 +156,6 @@ class HotelTripDetails extends React.Component {
     const checkInData = bookingData.checkIn;
     const checkOutData = bookingData.checkOut;
 
-    console.log(bookingData.latitude);
 
     return (
       <div>

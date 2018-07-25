@@ -228,11 +228,8 @@ class MainNav extends React.Component {
           // this.captcha.reset();
         });
       } else {
-        console.log("adsadasd");
-        console.log(res);
-        res.errors.then(err => {
-          const errors = err.errors;
-          console.log(errors);
+        res.response.then(res => {
+          const errors = res.errors;
           if (errors.hasOwnProperty('JsonFileNull')) {
             NotificationManager.warning(errors['JsonFileNull'].message);
             this.setState({ isUpdatingWallet: true }, () => {
@@ -356,7 +353,6 @@ class MainNav extends React.Component {
     const participates = info.participates;
     const isVerifyEmail = info.isVerifyEmail;
     this.props.dispatch(setAirdropInfo(email, facebookProfile, telegramProfile, twitterProfile, redditProfile, refLink, participates, isVerifyEmail));
-    console.log('user info dispatched');
   }
 
   clearLocalStorage() {
@@ -553,9 +549,9 @@ class MainNav extends React.Component {
                   sitekey={Config.getValue('recaptchaKey')}
                   onChange={(token) => {
                     const reCaptchaFunc = this.getReCaptchaFunction(currentReCaptcha);
-                    
+
                     reCaptchaFunc(token);
-                    
+
                     this.captcha.reset();
 
                     this.setState({

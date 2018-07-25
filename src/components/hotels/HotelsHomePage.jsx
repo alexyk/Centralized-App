@@ -17,6 +17,8 @@ function HotelsHomePage(props) {
     props.history.push('/hotels/listings' + queryString);
   };
 
+  console.log('TEST');
+
   return (
     <div>
       <HeroComponent redirectToSearchPage={redirectToSearchPage} />
