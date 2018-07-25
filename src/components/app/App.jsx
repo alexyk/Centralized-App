@@ -1,45 +1,38 @@
+import '../../styles/css/main.css';
+
 import { Redirect, Route, Switch, withRouter } from 'react-router-dom';
+import { setIsLogged, setUserInfo } from '../../actions/userInfo';
 
 import AccountNotificationsPage from '../profile/account/AccountNotificationsPage';
+import AirdropPage from '../profile/airdrop/AirdropPage';
+import Balance from '../external/Balance';
 import BigCalendar from 'react-big-calendar';
+import BuyLocPage from '../profile/buyloc/BuyLocPage';
 import CalendarPage from '../profile/calendar/CalendarPage';
 import { Config } from '../../config';
 import CreateListingPage from '../listingCRUD/CreateListingPage';
 import EditListingPage from '../listingCRUD/EditListingPage';
+import Footer from '../footer/Footer';
 import HomeRouterPage from '../home/HomeRouterPage';
 import HomesRouterPage from '../homes/HomesRouterPage';
-import HotelsRouterPage from '../hotels/HotelsRouterPage';
-import React from 'react';
-import moment from 'moment';
-import { connect } from 'react-redux';
-import MainNav from '../mainNav/MainNav';
-import Footer from '../footer/Footer';
-import NavLocalization from '../profile/NavLocalization';
-import StompTest from '../common/StompTest';
-import queryString from 'query-string';
-import { Wallet } from '../../services/blockchain/wallet.js';
-import { NotificationContainer } from 'react-notifications';
-
-import ProfilePage from '../profile/ProfilePage';
-import AirdropPage from '../profile/airdrop/AirdropPage';
-import PropTypes from 'prop-types';
-import { setIsLogged, setUserInfo } from '../../actions/userInfo';
-import WorldKuCoinCampaign from '../external/WorldKuCoinCampaign';
-import Balance from '../external/Balance';
-import BuyLocPage from '../profile/buyloc/BuyLocPage';
-
-// MOBILE ONLY START
-import StaticHotelsSearchPage from '../hotels/search/StaticHotelsSearchPage';
-import HotelDetailsPage from '../hotels/details/HotelDetailsPage';
-import HotelBookingPage from '../hotels/book/HotelBookingPage';
 import HotelBookingConfirmPage from '../hotels/book/HotelBookingConfirmPage';
-// MOBILE ONLY END
-
-import {
-  getUserInfo
-} from '../../requester';
-
-import '../../styles/css/main.css';
+import HotelBookingPage from '../hotels/book/HotelBookingPage';
+import HotelDetailsPage from '../hotels/details/HotelDetailsPage';
+import HotelsRouterPage from '../hotels/HotelsRouterPage';
+import MainNav from '../mainNav/MainNav';
+import NavLocalization from '../profile/NavLocalization';
+import { NotificationContainer } from 'react-notifications';
+import ProfilePage from '../profile/ProfilePage';
+import PropTypes from 'prop-types';
+import React from 'react';
+import StaticHotelsSearchPage from '../hotels/search/StaticHotelsSearchPage';
+import StompTest from '../common/StompTest';
+import { Wallet } from '../../services/blockchain/wallet.js';
+import WorldKuCoinCampaign from '../external/WorldKuCoinCampaign';
+import { connect } from 'react-redux';
+import moment from 'moment';
+import queryString from 'query-string';
+import requester from '../../initDependencies';
 
 class App extends React.Component {
   constructor(props) {
@@ -64,14 +57,16 @@ class App extends React.Component {
   }
 
   setUserInfo() {
-    getUserInfo().then(res => {
-      Wallet.getBalance(res.locAddress).then(eth => {
-        const ethBalance = eth / (Math.pow(10, 18));
-        Wallet.getTokenBalance(res.locAddress).then(loc => {
-          const locBalance = loc / (Math.pow(10, 18));
-          const { firstName, lastName, phoneNumber, email, locAddress, gender } = res;
-          this.props.dispatch(setIsLogged(true));
-          this.props.dispatch(setUserInfo(firstName, lastName, phoneNumber, email, locAddress, ethBalance, locBalance, gender));
+    requester.getUserInfo().then(res => {
+      res.body.then(data => {
+        Wallet.getBalance(data.locAddress).then(eth => {
+          const ethBalance = eth / (Math.pow(10, 18));
+          Wallet.getTokenBalance(data.locAddress).then(loc => {
+            const locBalance = loc / (Math.pow(10, 18));
+            const { firstName, lastName, phoneNumber, email, locAddress, gender } = data;
+            this.props.dispatch(setIsLogged(true));
+            this.props.dispatch(setUserInfo(firstName, lastName, phoneNumber, email, locAddress, ethBalance, locBalance, gender));
+          });
         });
       });
     });

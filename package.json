@@ -14,7 +14,7 @@
     "jquery": "^3.2.1",
     "json-fetch": "^7.5.0",
     "less": "^2.7.3",
-    "locktrip-service-layer": "^1.0.0",
+    "locktrip-service-layer": "^1.0.2",
     "lodash": "^4.17.4",
     "moment": "^2.19.3",
     "node-sass-chokidar": "^1.2.2",

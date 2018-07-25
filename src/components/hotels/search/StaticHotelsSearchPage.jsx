@@ -1,35 +1,25 @@
-import { ROOMS_XML_CURRENCY } from '../../../constants/currencies.js';
+import '../../../styles/css/components/hotels_search/sidebar/sidebar.css';
 
-import PropTypes from 'prop-types';
-import React from 'react';
-import { withRouter } from 'react-router-dom';
-import moment from 'moment';
-import uuid from 'uuid';
-import Stomp from 'stompjs';
-import queryString from 'query-string';
-import { setCurrency } from '../../../actions/paymentInfo';
-import { connect } from 'react-redux';
-import _ from 'lodash';
-
-import ResultsHolder from './ResultsHolder';
-import Pagination from '../../common/pagination/Pagination';
-import MultiMarkerGoogleMap from './google-map/MultiMarkerGoogleMap';
-import HotelsSearchBar from './HotelsSearchBar';
-import FilterPanel from './filter/FilterPanel';
-import { setSearchInfo, setRegion } from '../../../actions/searchInfo';
+import { setRegion, setSearchInfo } from '../../../actions/searchInfo';
 
 import { Config } from '../../../config';
-
-import {
-  getRegionNameById,
-  getCurrencyRates,
-  getLocRateInUserSelectedCurrency,
-  getStaticHotels,
-  getStaticHotelsByFilter,
-  getMapInfo
-} from '../../../requester';
-
-import '../../../styles/css/components/hotels_search/sidebar/sidebar.css';
+import FilterPanel from './filter/FilterPanel';
+import HotelsSearchBar from './HotelsSearchBar';
+import MultiMarkerGoogleMap from './google-map/MultiMarkerGoogleMap';
+import Pagination from '../../common/pagination/Pagination';
+import PropTypes from 'prop-types';
+import { ROOMS_XML_CURRENCY } from '../../../constants/currencies.js';
+import React from 'react';
+import ResultsHolder from './ResultsHolder';
+import Stomp from 'stompjs';
+import _ from 'lodash';
+import { connect } from 'react-redux';
+import moment from 'moment';
+import queryString from 'query-string';
+import requester from '../../../initDependencies';
+import { setCurrency } from '../../../actions/paymentInfo';
+import uuid from 'uuid';
+import { withRouter } from 'react-router-dom';
 
 const DEBUG_SOCKET = false;
 const DELAY_INTERVAL = 100;
@@ -99,12 +89,16 @@ class StaticHotelsSearchPage extends React.Component {
   }
 
   componentDidMount() {
-    getLocRateInUserSelectedCurrency(ROOMS_XML_CURRENCY).then((json) => {
-      this.setState({ locRate: Number(json[0][`price_${ROOMS_XML_CURRENCY.toLowerCase()}`]) });
+    requester.getLocRateByCurrency(ROOMS_XML_CURRENCY).then(res => {
+      res.body.then(data => {
+        this.setState({ locRate: Number(data[0][`price_${ROOMS_XML_CURRENCY.toLowerCase()}`]) });
+      });
     });
 
-    getCurrencyRates().then((json) => {
-      this.setState({ rates: json });
+    requester.getCurrencyRates().then(res => {
+      res.body.then(data => {
+        this.setState({ rates: data });
+      });
     });
 
     const query = this.props.location.search;
@@ -115,17 +109,19 @@ class StaticHotelsSearchPage extends React.Component {
       this.populateFilters();
     }
 
-    getStaticHotels(region).then(json => {
-      const { content } = json;
-      content.forEach(l => {
-        if (this.hotelInfoById[l.id]) {
-          l.price = this.hotelInfoById[l.id];
-        }
-      });
+    requester.getStaticHotels(region).then(res => {
+      res.body.then(data => {
+        const { content } = data;
+        content.forEach(l => {
+          if (this.hotelInfoById[l.id]) {
+            l.price = this.hotelInfoById[l.id];
+          }
+        });
 
-      const hotels = _.mapKeys(content, 'id');
-      this.setState({ hotels, totalElements: json.totalElements, loading: false }, () => {
-        this.connectSocket();
+        const hotels = _.mapKeys(content, 'id');
+        this.setState({ hotels, totalElements: data.totalElements, loading: false }, () => {
+          this.connectSocket();
+        });
       });
     });
 
@@ -232,17 +228,19 @@ class StaticHotelsSearchPage extends React.Component {
 
   getCityLocation(regionId) {
     this.geocoder = new window.google.maps.Geocoder();
-    getRegionNameById(regionId).then((json) => {
-      this.props.dispatch(setRegion(json));
-      const address = json.query;
+    requester.getRegionNameById(regionId).then(res => {
+      res.body.then(data => {
+        this.props.dispatch(setRegion(data));
+        const address = data.query;
 
-      this.geocoder.geocode({ 'address': address }, (results, status) => {
-        if (status === window.google.maps.GeocoderStatus.OK) {
-          this.setState({
-            lat: results[0].geometry.location.lat(),
-            lon: results[0].geometry.location.lng(),
-          });
-        }
+        this.geocoder.geocode({ 'address': address }, (results, status) => {
+          if (status === window.google.maps.GeocoderStatus.OK) {
+            this.setState({
+              lat: results[0].geometry.location.lat(),
+              lon: results[0].geometry.location.lng(),
+            });
+          }
+        });
       });
     });
   }
@@ -294,10 +292,12 @@ class StaticHotelsSearchPage extends React.Component {
       nights: nights,
       stars: [false, false, false, false, false]
     }, () => {
-      getStaticHotels(region).then(json => {
-        const hotels = _.mapKeys(json.content, 'id');
-        this.setState({ hotels, totalElements: json.totalElements, loading: false }, () => {
-          this.connectSocket();
+      requester.getStaticHotels(region).then(res => {
+        res.body.then(data => {
+          const hotels = _.mapKeys(data.content, 'id');
+          this.setState({ hotels, totalElements: data.totalElements, loading: false }, () => {
+            this.connectSocket();
+          });
         });
       });
     });
@@ -401,10 +401,10 @@ class StaticHotelsSearchPage extends React.Component {
     const search = this.getSearchString();
     const filters = this.getFilterString();
     const page = this.state.page ? this.state.page : 0;
-    getStaticHotelsByFilter(search, filters).then(res => {
+    requester.getStaticHotelsByFilter(search, filters).then(res => {
       if (res.success) {
-        res.response.json().then(json => {
-          this.setState({ loading: false, hotels: json.content, page, totalElements: json.totalElements }, () => {
+        res.body.then(data => {
+          this.setState({ loading: false, hotels: data.content, page, totalElements: data.totalElements }, () => {
             this.props.history.push(baseUrl + search + filters);
           });
         });
@@ -478,41 +478,43 @@ class StaticHotelsSearchPage extends React.Component {
       return;
     }
 
-    getMapInfo(this.props.location.search).then(json => {
-      if (!json.isCacheExpired) {
-        let mapInfo = [];
-        mapInfo = json.content.map(hotel => {
-          return {
-            id: hotel.id,
-            lat: hotel.latitude,
-            lon: hotel.longitude,
-            name: hotel.name,
-            price: hotel.price,
-            stars: hotel.star,
-            thumbnail: { url: hotel.hotelPhoto }
-          };
-        });
+    requester.getMapInfo(this.props.location.search).then(res => {
+      res.body.then(data => {
+        if (!data.isCacheExpired) {
+          let mapInfo = [];
+          mapInfo = data.content.map(hotel => {
+            return {
+              id: hotel.id,
+              lat: hotel.latitude,
+              lon: hotel.longitude,
+              name: hotel.name,
+              price: hotel.price,
+              stars: hotel.star,
+              thumbnail: { url: hotel.hotelPhoto }
+            };
+          });
 
-        this.setState({
-          mapInfo: mapInfo,
-          showMap: !showMap,
-        });
-      } else {
-        const search = this.getSearchString();
-        const filters = this.getFilterString();
-        const page = this.state.page ? this.state.page : 0;
-        this.setState({ loading: true });
-        getStaticHotelsByFilter(search, filters).then(res => {
-          if (res.success) {
-            res.response.json().then(json => {
-              this.setState({ loading: false, hotels: json.content, page, totalElements: json.totalElements });
-              this.toggleMap();
-            });
-          } else {
-            console.log('Search expired');
-          }  
-        });
-      }
+          this.setState({
+            mapInfo: mapInfo,
+            showMap: !showMap,
+          });
+        } else {
+          const search = this.getSearchString();
+          const filters = this.getFilterString();
+          const page = this.state.page ? this.state.page : 0;
+          this.setState({ loading: true });
+          requester.getStaticHotelsByFilter(search, filters).then(res => {
+            if (res.success) {
+              res.body.then(data => {
+                this.setState({ loading: false, hotels: data.content, page, totalElements: data.totalElements });
+                this.toggleMap();
+              });
+            } else {
+              console.log('Search expired');
+            }
+          });
+        }
+      });
     });
   }
 
@@ -550,19 +552,21 @@ class StaticHotelsSearchPage extends React.Component {
     if (this.isSearchReady()) {
       this.applyFilters();
     } else {
-      getStaticHotels(region, page - 1).then(json => {
-        const listings = json.content;
-        listings.forEach(l => {
-          if (this.hotelInfoById[l.id]) {
-            l.price = this.hotelInfoById[l.id].price;
-          }
-        });
-        const hotels = _.mapKeys(listings, 'id');
-
-        this.setState({
-          hotels,
-          totalElements: json.totalElements,
-          loading: false
+      requester.getStaticHotels(region, page - 1).then(res => {
+        res.body.then(data => {
+          const listings = data.content;
+          listings.forEach(l => {
+            if (this.hotelInfoById[l.id]) {
+              l.price = this.hotelInfoById[l.id].price;
+            }
+          });
+          const hotels = _.mapKeys(listings, 'id');
+          
+          this.setState({
+            hotels,
+            totalElements: data.totalElements,
+            loading: false
+          });
         });
       });
     }
