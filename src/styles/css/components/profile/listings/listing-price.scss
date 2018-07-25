@@ -1,24 +1,20 @@
 @import '../../../vendors/include-media';
-#listing-ckecking-container {
-  select {
+#listing-price-container {
+  input, select {
+    margin-top: 10px;
     border: 1px solid #cfcfcf;
     border-radius: 5px;
     background-color: white;
     padding: 20px;
     width: 100%;
   }
-  h2 {
-    @include media('<tablet') {
-      font-size: 20px;
-    }
-  }
-  .check-in-container {
-    margin-bottom: 20px;
-  }
   label {
-    font-size: 18px;
+    padding-top: 10px;
   }
   hr {
     border-top: 1px solid #ccc;
+  }
+  h2 {
+    padding-top: 20px;
   }
 }
