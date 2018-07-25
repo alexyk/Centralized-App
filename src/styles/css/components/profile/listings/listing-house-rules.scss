@@ -1,5 +1,9 @@
 @import '../../../vendors/include-media';
 #listing-house-rules-container {
+  display: flex;
+  @include media('<tablet') {
+    flex-direction: column;
+  }
   .rules-container {
     margin-left: 10px;
   }
@@ -29,6 +33,7 @@
     @include media('<tablet') {
       font-size: 16px;
       margin-bottom: 0;
+      margin-top: 10px;
     }
   }
   .button-add-container {
@@ -38,8 +43,7 @@
   }
   label {
     @include media('<tablet') {
-      margin-bottom: 5px;
-      // margin-top: 5px;
+      margin-bottom: 5px; // margin-top: 5px;
     }
   }
   .btn {
