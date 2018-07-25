@@ -1,18 +1,15 @@
-import { deleeteInProgressListing, getMyListings, getMyListingsInProgress } from '../../../requester';
+import '../../../styles/css/components/profile/listings/my-listings-page.css';
 
-import { NotificationManager } from 'react-notifications';
+import { Config } from '../../../config';
+import DeletionModal from '../../common/modals/DeletionModal';
 import { Link } from 'react-router-dom';
-import MyListingsActiveItem from './MyListingsActiveItem';
 import MyListingsInProgressItem from './MyListingsInProgressItem';
+import MyListingsItemRow from './MyListingsItemRow';
+import { NotificationManager } from 'react-notifications';
+import ReCAPTCHA from 'react-google-recaptcha';
 import React from 'react';
 import filterListings from '../../../actions/filterListings';
-import { deleteListing } from '../../../requester';
-import DeletionModal from '../../common/modals/DeletionModal';
-import { Config } from '../../../config';
-import ReCAPTCHA from 'react-google-recaptcha';
-import MyListingsItemRow from './MyListingsItemRow';
-
-import '../../../styles/css/components/profile/listings/my-listings-page.css';
+import requester from '../../../initDependencies';
 
 class MyListingsPage extends React.Component {
   constructor(props) {
@@ -39,26 +36,30 @@ class MyListingsPage extends React.Component {
   }
 
   componentDidMount() {
-    getMyListings('?page=0').then((data) => {
-      const active = data.content.filter(l => l.state === 'active');
-      const denied = data.content.filter(l => l.state === 'denied');
-      const inactive = data.content.filter(l => l.state === 'inactive');
-      this.setState({
-        activeListings: active,
-        deniedListings: denied,
-        inactiveListings: inactive,
-        loading: false
+    requester.getMyListings(['page=0']).then(res => {
+      res.body.then(data => {
+        const active = data.content.filter(l => l.state === 'active');
+        const denied = data.content.filter(l => l.state === 'denied');
+        const inactive = data.content.filter(l => l.state === 'inactive');
+        this.setState({
+          activeListings: active,
+          deniedListings: denied,
+          inactiveListings: inactive,
+          loading: false
+        });
       });
     });
 
-    getMyListingsInProgress('?page=0').then((data) => {
-      this.setState({ listingsInProgress: data.content, totalListingsInProgress: data.totalElements });
+    requester.getMyListingsInProgress(['page=0']).then(res => {
+      res.body.then(data => {
+        this.setState({ listingsInProgress: data.content, totalListingsInProgress: data.totalElements });
+      });
     });
   }
 
   deleteInProgressListing(id) {
-    deleeteInProgressListing(id).then((data) => {
-      if (data.success) {
+    requester.deleteInProgressListing(id).then(res => {
+      if (res.success) {
         let listingsInProgress = this.state.listingsInProgress;
         listingsInProgress = listingsInProgress.filter(x => x.id !== id);
         this.setState({ listingsInProgress: listingsInProgress, totalListingsInProgress: this.state.totalListingsInProgress - 1 });
@@ -73,11 +74,13 @@ class MyListingsPage extends React.Component {
     });
     window.scrollTo(0, 0);
 
-    getMyListings(`?page=${page - 1}`).then(data => {
-      this.setState({
-        listings: data.content,
-        totalListings: data.totalElements,
-        loading: false
+    requester.getMyListings([`page=${page - 1}`]).then(res => {
+      res.body.then(data => {
+        this.setState({
+          listings: data.content,
+          totalListings: data.totalElements,
+          loading: false
+        });
       });
     });
   }
@@ -98,22 +101,21 @@ class MyListingsPage extends React.Component {
   handleDeleteListing(token) {
     this.setState({ isDeleting: true });
     const { deletingId } = this.state;
-    deleteListing(deletingId, token)
-      .then(res => {
-        if (res.success) {
-          const listingStateKey = this.state.listingState + 'Listings';
-          const listings = this.state[listingStateKey];
-          const filteredListings = listings.filter(x => x.id !== deletingId);
-          this.setState({ [listingStateKey]: filteredListings });
-          NotificationManager.success('Listing deleted');
-        } else {
-          NotificationManager.error('Cannot delete this property. It might have reservations or other irrevocable actions.');
-        }
-        this.handleCloseDeleteListing();
-      }).catch(e => {
-        console.log(e);
-        this.handleCloseDeleteListing();
-      });
+    requester.deleteListing(deletingId, token).then(res => {
+      if (res.success) {
+        const listingStateKey = this.state.listingState + 'Listings';
+        const listings = this.state[listingStateKey];
+        const filteredListings = listings.filter(x => x.id !== deletingId);
+        this.setState({ [listingStateKey]: filteredListings });
+        NotificationManager.success('Listing deleted');
+      } else {
+        NotificationManager.error('Cannot delete this property. It might have reservations or other irrevocable actions.');
+      }
+      this.handleCloseDeleteListing();
+    }).catch(e => {
+      console.log(e);
+      this.handleCloseDeleteListing();
+    });
   }
 
   handleCloseDeleteListing() {

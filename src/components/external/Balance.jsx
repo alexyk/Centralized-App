@@ -1,11 +1,11 @@
-import React from 'react';
-
 import 'react-notifications/lib/notifications.css';
-import {getExternalCampaignBalance} from '../../requester'
-import {withRouter} from "react-router-dom";
-import {Config} from "../../config";
-import {NotificationManager} from "react-notifications";
-import {CopyToClipboard} from "react-copy-to-clipboard";
+
+import {Config} from '../../config';
+import {CopyToClipboard} from 'react-copy-to-clipboard';
+import {NotificationManager} from 'react-notifications';
+import React from 'react';
+import requester from '../../initDependencies';
+import {withRouter} from 'react-router-dom';
 
 class Balance extends React.Component {
   constructor(props) {
@@ -33,9 +33,11 @@ class Balance extends React.Component {
   }
 
   send() {
-    getExternalCampaignBalance(this.state.email).then(res => {
-      this.setState({balance: res.count, refLink: Config.getValue("basePath") + "vote?ref=" + res.referralId});
-    })
+    requester.getExternalCampaignBalance(this.state.email).then(res => {
+      res.body.then(data => {
+        this.setState({balance: data.count, refLink: Config.getValue("basePath") + "vote?ref=" + data.referralId});
+      });
+    });
   }
 
   render() {

@@ -1,12 +1,13 @@
-import { getHotelBookingDetails } from '../../../requester';
-import React from 'react';
-import { Link, withRouter } from 'react-router-dom';
-import moment from 'moment';
-import LogoLockTrip from '../../../styles/images/logolocktrip.png';
-import Star from '../../../styles/images/star.png';
-import FillStar from '../../../styles/images/fill-star.png';
-
 import '../../../styles/css/components/profile/trips/details.css';
+
+import { Link, withRouter } from 'react-router-dom';
+
+import FillStar from '../../../styles/images/fill-star.png';
+import LogoLockTrip from '../../../styles/images/logolocktrip.png';
+import React from 'react';
+import Star from '../../../styles/images/star.png';
+import moment from 'moment';
+import requester from '../../../initDependencies';
 
 class HotelTripDetails extends React.Component {
   constructor(props) {
@@ -62,10 +63,11 @@ class HotelTripDetails extends React.Component {
     //   'longitude': '-0.150089', // done
     // };
     const bookingId = this.props.match.params.id;
-    getHotelBookingDetails(bookingId)
-      .then((json) => {
-        if (json) {
-          const bookingData = json;
+    requester.getHotelBookingDetails(bookingId).then(res => {
+      res.body.then(data => {
+        console.log(data);
+        if (data) {
+          const bookingData = data;
           this.extractDatesData(bookingData);
           this.setState({
             bookingData,
@@ -76,9 +78,10 @@ class HotelTripDetails extends React.Component {
         //   bookingData: bookingDataMock,
         // });
       })
-      .catch((err) => {
-        console.log(err);
-      });
+        .catch((err) => {
+          console.log(err);
+        });
+    });
   }
 
   extractDatesData(bookingData) {
@@ -133,7 +136,7 @@ class HotelTripDetails extends React.Component {
   }
 
   renderHeading() {
-    switch(this.state.bookingData.bookingStatus) {
+    switch (this.state.bookingData.bookingStatus) {
       case 'PENDING':
         return 'Your reservation is being confirmed';
       case 'DONE':

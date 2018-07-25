@@ -1,8 +1,8 @@
 import { Config } from '../../../config';
 import Dropzone from 'react-dropzone';
 import React from 'react';
-import { getUserInfo } from '../../../requester';
 import request from 'superagent';
+import requester from '../../../initDependencies';
 
 import '../../../styles/css/components/profile/me/profile-photos.css';
 
@@ -27,8 +27,10 @@ class ProfilePhotosPage extends React.Component {
   }
 
   componentDidMount() {
-    getUserInfo().then((data) => {
-      this.setState({ uploadedFilesThumbUrls: [data.image], loading: false });
+    requester.getUserInfo().then(res => {
+      res.body.then(data => {
+        this.setState({ uploadedFilesThumbUrls: [data.image], loading: false });
+      });
     });
   }
 
