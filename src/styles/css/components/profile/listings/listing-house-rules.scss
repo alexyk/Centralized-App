@@ -29,9 +29,7 @@
     }
   }
   p {
-    font-size: 20px;
     @include media('<tablet') {
-      font-size: 16px;
       margin-bottom: 0;
       margin-top: 10px;
     }
