@@ -37,10 +37,10 @@ function ListingItemRatingBox(props) {
     let starsElements = [];
     let rating = Math.round(ratingNumber);
     for (let i = 0; i < rating; i++) {
-      starsElements.push(<span key={i} className="full-star"></span>);
+      starsElements.push(<span key={i} className="full-star star"></span>);
     }
     for (let i = 0; i < 5 - rating; i++) {
-      starsElements.push(<span key={100 - i} className="empty-star"></span>);
+      starsElements.push(<span key={100 - i} className="empty-star star"></span>);
     }
 
     return starsElements;
@@ -48,10 +48,9 @@ function ListingItemRatingBox(props) {
 
   return (
     <div className="list-hotel-rating">
-      <div className="list-hotel-rating-count">{getRatingString(props.rating, props.reviewsCount)}</div>
-      <div className="list-hotel-rating-stars">
-        {calculateStars(props.rating)}
-      </div>
+      <div className={`list-hotel-rating-count count-${props.reviewsCount}`}>{getRatingString(props.rating, props.reviewsCount)}</div>
+      <div className="list-hotel-rating-stars">{calculateStars(props.rating)}</div>
+      <div className="list-hotel-rating-reviews">{props.reviewsCount} Reviews</div>
     </div>
   );
 }

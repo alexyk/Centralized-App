@@ -1,7 +1,8 @@
 $breakpoints: (
-	'xs-phone': 320px,
-	'phone': 570px,
-	'tablet': 768px,
+	'xs-phone': 380px,
+	'phone': 500px,
+	'lg-phone': 570px,
+	'tablet': 800px,
 	'desktop': 1024px,
 	'widescreen': 1200px
 );
@@ -12,81 +13,104 @@ $breakpoints: (
 
 .my-listings-flex-container {
   align-items: center;
-  @include media("<=phone") {
-    flex-wrap: wrap;
-    padding: 5%;
-    margin-bottom: 10%;
-    font-size: 18px;
-    text-align: center;
+  margin-bottom: 3%;
+  width: 100%;
+  
+  a:hover {
+    color: #333;
   }
+  
   .toggle {
-    width: 1%;
-    min-width: 10px;
-    height: 100px;
+    margin-top: -29px;
+    min-width: 20px;
+    width: 20px;
+    height: 10px;
     background-repeat: no-repeat;
     background-position: 0px;
-    background-image: url(../../../../images/arrow-right.png);
-    @include media("<=phone") {
-      width: 2%;
-      height: 40px;
-      order: 0;
-    }
+    cursor: pointer;
+    padding-right: 0;
   }
+
   .thumb {
-    background-position: center center;
-    background-repeat: no-repeat;
-    background-size: cover;
-    width: 9%;
-    min-width: 50px;
-    height: 60px;
-    background-color: silver;
     border-radius: 2px;
     margin-right: 2%;
-    @include media("<=phone") {
-      text-align: center;
-      margin-left: 3%;
-      margin-bottom: 5%;
-      width: 90%;
-      order: 1;
+    padding-right: 0;
+    min-width: 110px;
+    width: 110px;
+    height: 80px;
+    .thumb-image {
+      width:100%;
+      height:100%;
+      object-fit: contain;
     }
   }
+  
   .details {
-    width: 35%;
-    a {
-      font-size: 24px;
-      font-family: 'FuturaStd-Medium', sans-serif;
+    width: 43%;
+    font-size: 25px;
+    font-family: 'Futura', sans-serif;
+    .name {
+      font-weight: 400;
     }
-    @include media("<=phone") {
+    .list-hotel-rating {
+      display: inline-flex;
       width: 100%;
-      order: 2;
-      .list-hotel-rating {
-        display: flex;
-        justify-content: center;
+      margin-top: 2%;
+      align-items: center;
+      flex-wrap: wrap;
+      .list-hotel-rating-reviews,
+      .list-hotel-rating-stars,
+      .list-hotel-rating-count {
+        margin-bottom: 5px;
+      }
+      .list-hotel-rating-count {
+        &.count-0 {
+          width: 0;
+        }
+        margin-right: 0;
+        width: 60px;
+      }
+      .list-hotel-rating-stars {
+        width: 110px;
+        margin-right: 0;
+        margin-top: -5px;
+        .star {
+          margin-left: 2.5%;
+          margin-right: 2.5%;
+        }
       }
     }
+    .last-update-date {
+      color: #898c8d;
+      font-size: 15px;
+    }
   }
+  
   .price {
     font-size: 18px;
-    width: 11%;
-    @include media("<=phone") {
-      width: 100%;
-      order: 3;
-      margin-top: 5%;
-      font-size: 20px;
-    }
+    width: 15%;
   }
-  .edit {
-    width: 12%;
-    font-size: 20px;
-    font-family: 'FuturaStd-Medium', sans-serif;
-    @include media("<=phone") {
-      width: 45%;
-      order: 4;
-      margin-top: 5%;
-    }
+  
+  .edit,
+  .preview {
+    width: 14%;
+    font-size: 22px;
+    font-weight: 400;
+    font-family: 'Futura', sans-serif;
   }
+
+  .preview {
+    border: 3px solid black;
+    padding: 13px 22px;
+    border-radius: 5px;
+    min-width: 220px;
+    transform:scale(0.8,1.0);
+    text-align: center;
+  }
+  
   .calendar {
-    min-width: 180px;
+    width: 0%;
+    min-width: 220px;
     margin: 0;
     display: block;
     a {
@@ -97,20 +121,22 @@ $breakpoints: (
       padding: 18px 22px;
       text-align: center;
       text-decoration: none;
-      font-size: 16px;
+      font-size: 18px;
       cursor: pointer;
       border-radius: 5px;
       letter-spacing: .1em;
       line-height: 3.6;
-      font-family: sans-serif;
-    }
-    @include media("<=phone") {
-      width: 100%;
-      padding-top: 5%; 
-      order: 5;
+      font-family: 'Futura', sans-serif;
+      font-weight: 400;
     }
   }
+
+  .publish {
+    width: 29%;
+  }
+  
   .remove {
+    padding-right: 0;
     span {
       display: block;
       background-position: center center;
@@ -123,18 +149,195 @@ $breakpoints: (
     .delete {
       display: none;
     }
-    @include media("<=phone") {
-      order: 4;
-      width: 45%;
+  }
+
+  @include media("<=tablet") {
+    &.finished,
+    &.in-progress {
+      flex-wrap: wrap;
+      padding: 5%;
+      margin-bottom: 10%;
+      font-size: 18px;
       text-align: center;
-      margin-top: 5%;
-      span {
+    }
+    .toggle {
+      &.finished {
+        width: 2%;
+        height: 40px;
+        order: 0;
+      }
+      &.in-progress {
         display: none;
       }
+    }
+    .thumb {
+      &.finished {
+        text-align: center;
+        margin-left: 3%;
+        order: 1;
+        width: 120px;
+        height: 90px;
+      }
+      &.in-progress {
+        margin: 0;
+        width: 50%;
+      }
+    }
+    .details {
+      &.finished {
+        width: 63%;
+        order: 2;
+        .list-hotel-rating {
+          display: flex;
+          justify-content: center;
+        }
+      }
+      &.in-progress {
+        width: 50%;
+        text-align: center;
+      }
+    }
+    .price {
+      &.finished {
+        width: 33%;
+        order: 4;
+        margin-top: 5%;
+        font-size: 20px;
+      }
+    }
+    .edit {
+      &.finished {
+        width: 33%;
+        order: 3;
+        margin-top: 5%;
+        text-align: center;
+      }
+    }
+    .calendar {
+      &.finished {
+        width: 100%;
+        padding-top: 5%; 
+        order: 6;
+      }
+    }
+    .preview {
+      &.finished {
+        order: 6;
+      }
+      &.in-progress {
+        width: 50%;
+        min-width: 50%;
+        margin-top: 10%;
+      }
+    }
+    .remove {
       .delete {
         display: block;
         font-size: 20px;
-        font-family: 'FuturaStd-Medium', sans-serif;
+        font-family: 'Futura', sans-serif;
+        font-weight: 400;
+      }
+      span {
+        display: none;
+      }
+      &.finished {
+        order: 5;
+        width: 33%;
+        text-align: center;
+        margin-top: 5%;
+      }
+      &.in-progress {
+        width: 50%;
+        margin-top: 10%;
+        border: 3px solid black;
+        padding: 13px 22px;
+        border-radius: 5px;
+        transform:scale(0.8,1.0);
+        text-align: center;
+      }
+    }
+    .publish {
+      &.in-progress {
+        width: 0;
+        padding: 0;
+      }
+    }
+  }
+
+  @include media("<=lg-phone") {
+    .thumb {
+      &.in-progress {
+        margin: 0;
+        width: 50%;
+      }
+    }
+    .details {
+      &.finished {
+        width: 58%;
+      }
+      &.in-progress {
+        width: 50%;
+      }
+    }
+    .price {
+      &.finished {
+        width: 100%;
+        order: 3;
+      }
+    }
+    .edit {
+      &.finished {
+        width: 50%;
+        order: 4;
+      }
+    }
+    .remove {
+      &.finished {
+        order: 5;
+        width: 50%;
+      }
+    }
+  }
+
+  @include media("<=phone") {
+    .thumb {
+      &.finished,
+      &.in-progress {
+        margin-left: 0;
+        width: 100%;
+        margin-bottom: 5%;
+      }
+    }
+    .details {
+      &.finished {
+        width: 100%;
+      }
+      &.in-progress {
+        margin-top: 5%;
+        width: 100%;
+      }
+    }
+  }
+
+  @include media("<=xs-phone") {
+    .edit {
+      &.finished {
+        padding-right: 8.9%;
+        padding-left: 1.5%;
+      }
+    }
+    .preview {
+      &.in-progress {
+        a {
+          margin-left: -7%;
+        }
+      }
+    }
+    .remove {
+      &.in-progress {
+        .delete {
+          margin-left: -7%;
+        }
       }
     }
   }
