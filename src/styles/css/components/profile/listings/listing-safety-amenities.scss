@@ -1,0 +1,40 @@
+// @import '../../vendors/include-media';
+@import '../../../base/variables';
+
+#listing-safety-amenities {
+  h2 {
+    margin-bottom: 30px;
+  }
+  
+  .checkbox-filters {
+    margin-bottom: 20px;
+
+    h4 {
+      margin-bottom: 20px;
+    }
+
+    ul {
+      // @extend %listreset;
+      li {
+        display: flex;
+        justify-content: space-between;
+        color: #54575a;
+        margin-bottom: 5px;
+        &:last-child {
+          margin-bottom: 0;
+        }
+        span {
+          font-size: 14px;
+        }
+      }
+      a {
+        color: $text-black;
+        font-weight: 400;
+        padding-left: 30px;
+        &:hover {
+          color: $light-cyan;
+        }
+      }
+    }
+  }
+}

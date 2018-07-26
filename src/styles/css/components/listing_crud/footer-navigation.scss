@@ -9,6 +9,7 @@ $breakpoints: (
 @import '../../vendors/include-media';
 
 .footer-navigation{
+  margin-top: 40px;
   background-color: #fff;
   box-shadow: 0 -2px 10px #CCCCCC;
 
@@ -17,24 +18,34 @@ $breakpoints: (
     justify-content: space-between;
 
     .footer-navigation__content__aside {
-      width: 30%;
+      width: 25%;
+      @include media("<=tablet") {
+       display: none;
+      }
     }
 
     .footer-navigation__content__main {
       display: flex;
       justify-content: space-between;
       flex-direction: row-reverse;
-      padding: 10px 0;
-      width: 67%;
+      padding: 15px 5px;
+      width: 100%;
 
       .btn-back {
         min-width: 170px;
+        font-weight: 400;
         background: transparent;
         color: #555;
+        @include media("<=tablet") {
+          min-width: 70px;
+        }
       }
 
       .btn-next{
         min-width: 170px;
+        @include media("<=tablet") {
+          min-width: 70px;
+        }
       }
 
       @include media("<=phone") {

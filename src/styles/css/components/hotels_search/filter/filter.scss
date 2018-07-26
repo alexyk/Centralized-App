@@ -162,7 +162,7 @@ $white: #fff;
           font-size: 14px;
         }
         .key {
-          max-width: 60%;
+          // max-width: 60%;
           @include media(">=widescreen") {
             max-width: 90%;
           }
