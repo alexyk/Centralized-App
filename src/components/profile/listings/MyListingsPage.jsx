@@ -2,7 +2,6 @@ import { deleeteInProgressListing, getMyListings, getMyListingsInProgress } from
 
 import { NotificationManager } from 'react-notifications';
 import { Link } from 'react-router-dom';
-import MyListingsActiveItem from './MyListingsActiveItem';
 import MyListingsInProgressItem from './MyListingsInProgressItem';
 import React from 'react';
 import filterListings from '../../../actions/filterListings';
