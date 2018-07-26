@@ -1,9 +1,14 @@
 @import '../../../vendors/include-media';
 #homes-booking-page-container {
+  .container {
+    display: flex;
+    justify-content: space-between;
+  }
   .left-part {
     border-radius: 5px;
     width: 35%;
     background-color: #fff;
+    margin-bottom: 25px;
     h2,
     p {
       margin-bottom: 10px;
@@ -13,6 +18,7 @@
       margin: 5px;
     }
     h2 {
+      color: #272E30;
       text-align: center;
       padding-top: 15px;
     }
@@ -91,6 +97,54 @@
           font-size: 14px;
           margin-bottom: 0;
         }
+      }
+    }
+    .price-container {
+      display: flex;
+      justify-content: space-between;
+      font-size: 18px;
+      padding: 20px 20px 0 20px;
+      border-bottom: 1px solid #F2F2F4;
+      margin-bottom: 60px;
+      p {
+        font-weight: 400;
+        color: #53575A;
+        &:first-child {
+          padding-top: 12px;
+        } // font-weight: 300;
+        span {
+          color: #000;
+          font-size: 30px;
+        }
+      }
+    }
+    // hr {
+    //   border-bottom: 1px solid #F2F2F4;
+    //   padding-bottom: 30px;
+    //   margin: 0 5px;
+    // }
+  }
+  .right-part {
+    width: 50%;
+    h3 {
+      font-weight: 400;
+      font-size: 24px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #CCC;
+    }
+    .icons-container-space {
+      display: flex;
+      justify-content: space-between;
+      text-align: center;
+    }
+    .arrangements-container div {
+      display: flex;
+      padding: 20px 0;
+      span {
+        font-weight: 400;
+      }
+      img {
+        padding: 0 25px;
       }
     }
   }
