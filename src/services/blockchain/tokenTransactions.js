@@ -1,54 +1,51 @@
 import ethers from 'ethers';
 import {
-	BaseValidators
+  BaseValidators
 } from './validators/baseValidators';
 import {
-	TokenValidators
+  TokenValidators
 } from './validators/tokenValidators';
 import {
-	LOCTokenContract,
-	LOCTokenContractWithWallet,
-	getNodeProvider
+  EtherValidators
+} from './validators/etherValidators'
+import {
+  LOCTokenContract,
+  LOCTokenContractWithWallet,
+  getNodeProvider
 } from './config/contracts-config.js';
 import {
-	fundTransactionAmountIfNeeded
-} from './utils/ethFuncs.js'
-import {
-	Config
-} from '../../config';
+  getGasPrice
+} from "./utils/ethFuncs";
 const gasConfig = require('./config/gas-config.json');
 const errors = require('./config/errors.json');
 
 export class TokenTransactions {
 
-	static async sendTokens(jsonObj, password, recipient, amount) {
-		BaseValidators.validateAddress(recipient, errors.INVALID_ADDRESS);
+  static async sendTokens(jsonObj, password, recipient, amount) {
+    BaseValidators.validateAddress(recipient, errors.INVALID_ADDRESS);
 
     let wallet = await ethers.Wallet.fromEncryptedWallet(jsonObj, password);
+    let gasPrice = await getGasPrice();
 
-		let result = await fundTransactionAmountIfNeeded(
-			wallet.address,
-			wallet.privateKey,
-			gasConfig.transferTokens
-		);
-		await TokenValidators.validateLocBalance(wallet.address, amount, wallet, gasConfig.transferTokens);
+    await TokenValidators.validateLocBalance(wallet.address, amount, wallet, gasConfig.transferTokens);
+    await EtherValidators.validateEthBalance(wallet, gasConfig.transferTokens);
 
-		const LOCTokenContractWallet = LOCTokenContractWithWallet(wallet);
-		var overrideOptions = {
-			gasLimit: gasConfig.transferTokens,
-			gasPrice: result.gasPrice
-		};
-		return await LOCTokenContractWallet.transfer(recipient, amount, overrideOptions);
+    const LOCTokenContractWallet = LOCTokenContractWithWallet(wallet);
+    var overrideOptions = {
+      gasLimit: gasConfig.transferTokens,
+      gasPrice: gasPrice
+    };
+    return await LOCTokenContractWallet.transfer(recipient, amount, overrideOptions);
 
-	};
+  };
 
-	static async getLOCBalance(address) {
-		return await LOCTokenContract.balanceOf(address);
-	}
+  static async getLOCBalance(address) {
+    return await LOCTokenContract.balanceOf(address);
+  }
 
-	static async getETHBalance(address) {
-		const nodeProvider = getNodeProvider();
-		return await nodeProvider.getBalance(address);
+  static async getETHBalance(address) {
+    const nodeProvider = getNodeProvider();
+    return await nodeProvider.getBalance(address);
 
-	}
+  }
 }
