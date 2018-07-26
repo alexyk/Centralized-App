@@ -1,5 +1,5 @@
 import React from 'react';
-import OwlCarousel from 'react-owl-carousel';
+// import OwlCarousel from 'react-owl-carousel';
 import PropTypes from 'prop-types';
 import { Config } from '../../../config.js';
 import moment from 'moment';
@@ -35,7 +35,7 @@ function PopularDestinationsCarousel(props) {
 
   return (
     <div>
-      <OwlCarousel
+      {/* <OwlCarousel
         className="owl-theme"
         loop
         mouseDrag={false}
@@ -69,7 +69,7 @@ function PopularDestinationsCarousel(props) {
             </div>
           );
         })}
-      </OwlCarousel>
+      </OwlCarousel> */}
     </div>
   );
 }

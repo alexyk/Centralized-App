@@ -36,6 +36,7 @@ class HotelBookingConfirmPage extends React.Component {
     this.handleSubmit = this.handleSubmit.bind(this);
     this.onChange = this.onChange.bind(this);
     this.toggleCanxDetails = this.toggleCanxDetails.bind(this);
+    this.handleSubmitSingleWithdrawer = this.handleSubmitSingleWithdrawer.bind(this);
   }
 
   componentDidMount() {
@@ -285,6 +286,60 @@ class HotelBookingConfirmPage extends React.Component {
     });
   }
 
+  handleSubmitSingleWithdrawer() {
+    const password = this.state.password;
+    const preparedBookingId = this.state.data.preparedBookingId;
+    const wei = (this.tokensToWei(this.state.data.locPrice.toString()));
+    const booking = this.state.data.booking.hotelBooking;
+    const endDate = moment.utc(booking[0].arrivalDate, 'YYYY-MM-DD').add(booking[0].nights, 'days');
+
+    NotificationManager.info(PROCESSING_TRANSACTION, 'Transactions', 60000);
+    this.setState({ confirmed: true });
+    this.closeModal(PASSWORD_PROMPT);
+
+    const queryString = this.props.location.search;
+
+    requester.getMyJsonFile().then(res => {
+      res.body.then(data => {
+        setTimeout(() => {
+          HotelReservation.createSimpleReservationSingleWithdrawer(
+            data.jsonFile,
+            password,
+            wei.toString(),
+            endDate.unix().toString(),
+          ).then(transaction => {
+            console.log(transaction);
+            const bookingConfirmObj = {
+              bookingId: preparedBookingId,
+              transactionHash: transaction.hash,
+              queryString: queryString
+            };
+
+            requester.confirmBooking(bookingConfirmObj).then(() => {
+              NotificationManager.success('LOC Payment has been initiated. We will send you a confirmation message once it has been processed by the Blockchain.');
+              setTimeout(() => {
+                this.props.history.push('/profile/trips/hotels');
+              }, 2000);
+            });
+          }).catch(error => {
+            if (error.hasOwnProperty('message')) {
+              NotificationManager.warning(error.message, 'Send Tokens');
+            } else if (error.hasOwnProperty('err') && error.err.hasOwnProperty('message')) {
+              NotificationManager.warning(error.err.message, 'Send Tokens');
+            } else if (typeof x === 'string') {
+              NotificationManager.warning(error, 'Send Tokens');
+            } else {
+              NotificationManager.warning(error);
+            }
+
+            this.closeModal(PASSWORD_PROMPT);
+            this.setState({ confirmed: false });
+          });
+        }, 1000);
+      });
+    });
+  }
+
 
   openModal(modal, e) {
     if (e) {
@@ -491,7 +546,7 @@ class HotelBookingConfirmPage extends React.Component {
                 isActive={this.props.modalsInfo.modals.get(PASSWORD_PROMPT)}
                 text={'Enter your wallet password'}
                 placeholder={'Wallet password'}
-                handleSubmit={() => this.handleSubmit()}
+                handleSubmit={() => this.handleSubmitSingleWithdrawer()}
                 closeModal={this.closeModal}
                 password={this.state.password}
                 onChange={this.onChange}
