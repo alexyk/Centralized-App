@@ -1,0 +1,66 @@
+@import '../../../vendors/include-media';
+.listings {
+  margin-top: 20px;
+  span.button {
+    display: block;
+    width: 150px;
+    height: 150px;
+    background-color: white;
+    border: 1px solid #dcdcdd;
+    border-radius: 5px;
+    background-position: center center;
+    background-repeat: no-repeat;
+    text-align: right;
+    margin-bottom: 10px;
+    @include media('<tablet') {
+      width: 80px;
+      height: 70px;
+    }
+  }
+  span.button img {
+    margin: 10px;
+    display: none;
+    @include media('<tablet') {
+      width: 20%;
+      margin: 3px;
+    }
+  }
+}
+
+#reservation-hotel-review-room {
+  margin-bottom: 40px;
+  h2 {
+    @include media('<tablet') {
+      font-size: 1.2em;
+    }
+  }
+  .select-listing-place-type,
+  input[type="number"] {
+    border: 1px solid #cfcfcf;
+    border-radius: 5px;
+    background-color: white;
+    padding: 20px;
+    width: 100%;
+  }
+  input[type="number"] {
+    border-radius: 0;
+  }
+  label {
+    margin: 10px 6px;
+  }
+  .images-place {
+    display: flex;
+    justify-content: start;
+    @include media('<tablet') {
+     justify-content: center;
+    }
+  }
+  .input-group-addon {
+    width: 13%;
+  }
+  p {
+    @include media('<tablet') {
+      font-size: 14px;
+    }
+  }
+}

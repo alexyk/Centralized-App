@@ -182,7 +182,7 @@ class ProfileEditForm extends React.Component {
           <div className="birth-sex">
             <div className="bmonth option-field">
               <label htmlFor="bmonth">Birthdate <img src={Config.getValue('basePath') + 'images/icon-lock.png'} className="lock" alt="lock-o" /></label>
-              <div className='select'>
+              <div className='select select-profile-edit-form'>
                 <select name="month" id="bmonth" onChange={this.onChange} value={this.state.month}>
                   <option disabled value="">Month</option>
                   <option value="01">January</option>

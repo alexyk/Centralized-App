@@ -1,0 +1,21 @@
+@import '../../../vendors/include-media';
+#listing-ckecking-container {
+  select {
+    border: 1px solid #cfcfcf;
+    border-radius: 5px;
+    background-color: white;
+    padding: 20px;
+    width: 100%;
+  }
+  h2 {
+    @include media('<tablet') {
+      font-size: 20px;
+    }
+  }
+  .check-in-container {
+    margin-bottom: 20px;
+  }
+  hr {
+    border-top: 1px solid #ccc;
+  }
+}

@@ -886,9 +886,9 @@ footer .currency-switcher {
     flex-grow: 1;
 }
 
-#localization-nav div.container {
-    /* padding: 15px 0; */
-}
+/* #localization-nav div.container {
+     padding: 15px 0;
+} */
 
 ul.navbar-localization {
     list-style: none;
@@ -1943,7 +1943,11 @@ li.dropdown {
     float: left;
 }
 
-.listings.create.landing .left-poster {
+.listings.create .form-group label.custom-radio input[type=radio] {
+  display: none;
+}
+
+/* .listings.create.landing .left-poster {
     margin: 50px 0;
 }
 
@@ -1959,12 +1963,7 @@ li.dropdown {
     font-family: 'FuturaStd-Medium', sans-serif;
 }
 
-.listings.create.landing h3 {
-    margin-top: 10px;
-    font-size: 24px;
-    padding-bottom: 20px;
-    border-bottom: 1px solid silver;
-}
+
 
 .listings.create .form-group label.custom-radio {
     display: inline-block;
@@ -1974,11 +1973,9 @@ li.dropdown {
     font-size: 18px;
 }
 
-.listings.create .form-group label.custom-radio input[type=radio] {
-    display: none;
-}
 
-.listings.create .form-group label.custom-radio span.button {
+
+/* .listings.create .form-group label.custom-radio span.button {
     display: block;
     width: 150px;
     height: 150px;
@@ -1994,7 +1991,7 @@ li.dropdown {
 .listings.create .form-group label.custom-radio span.button img {
     margin: 10px;
     display: none;
-}
+} */
 
 .listings.create .form-group label.house.custom-radio span.button {
     background-image: url(../images/icon-house.png);
@@ -2056,9 +2053,9 @@ li.dropdown {
     padding: 5px 10px;
 }
 
-.listings.create {
+/* .listings.create {
     min-height: 600px;
-}
+} */
 
 .listings.create .other-rules {
     margin: 0;
@@ -2671,7 +2668,7 @@ input[type="checkbox"].tick:checked+label:after {
 
 .pictures-upload p {
     font-size: 22px;
-}
+} */
 
 h2+hr {
     border-top: 1px solid #CFD1D0;
@@ -2761,13 +2758,13 @@ select {
     display: inline-block;
 }
 
-.bedroom-counter {
+/* .bedroom-counter {
     font-size: 16px;
     padding: 15px 39px 15px 15px;
     width: 34%;
     outline: none;
     border-radius: 3px;
-}
+} */
 
 .Select-placeholder {
     line-height: 60px;

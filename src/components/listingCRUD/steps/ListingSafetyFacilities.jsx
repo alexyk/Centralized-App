@@ -6,6 +6,7 @@ import BasicsAside from '../aside/BasicsAside';
 import ListingCrudNav from '../navigation/ListingCrudNav';
 import FooterNav from '../navigation/FooterNav';
 
+
 function ListingSafetyFacilities(props) {
   const category = props.values.categories.filter(category => category.name === 'Safety Amenities');
   const safetyAmenities = [];
