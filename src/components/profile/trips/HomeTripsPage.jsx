@@ -1,4 +1,3 @@
-import { cancelTrip, getMyTrips } from '../../../requester';
 import { Config } from '../../../config';
 import CancellationModal from '../../common/modals/CancellationModal';
 import Pagination from '../../common/pagination/Pagination';
@@ -8,6 +7,7 @@ import { NotificationManager } from 'react-notifications';
 import PropTypes from 'prop-types';
 import ReCAPTCHA from 'react-google-recaptcha';
 import React from 'react';
+import requester from '../../../initDependencies';
 
 import { withRouter } from 'react-router-dom';
 
@@ -47,11 +47,13 @@ class HomeTripsPage extends React.Component {
         }
       }
     }
-    getMyTrips('?page=0').then((data) => {
-      this.setState({ trips: data.content, totalTrips: data.totalElements, loading: false, currentTripId: id });
-      if (id) {
-        NotificationManager.success('Booking Request Sent Successfully, your host will get back to you with additional questions.', 'Reservation Operations');
-      }
+    requester.getMyTrips(['page=0']).then(res => {
+      res.body.then(data => {
+        this.setState({ trips: data.content, totalTrips: data.totalElements, loading: false, currentTripId: id });
+        if (id) {
+          NotificationManager.success('Booking Request Sent Successfully, your host will get back to you with additional questions.', 'Reservation Operations');
+        }
+      });
     });
   }
 
@@ -63,15 +65,16 @@ class HomeTripsPage extends React.Component {
     const id = this.state.selectedTripId;
     const message = this.state.cancellationText;
     let messageObj = { message: message };
-    cancelTrip(id, messageObj, captchaToken)
-      .then(response => {
-        if (response.success) {
+    requester.cancelTrip(id, messageObj, captchaToken).then(res => {
+      res.body.then(data => {
+        if (res.success) {
           this.componentDidMount();
-          NotificationManager.success(response.message, 'Reservation Operations');
+          NotificationManager.success(data.message, 'Reservation Operations');
         } else {
-          NotificationManager.error(response.message, 'Reservation Operations');
+          NotificationManager.error(data.message, 'Reservation Operations');
         }
       });
+    });
   }
 
   setTripIsAccepted(tripId, isAccepted) {
@@ -92,11 +95,13 @@ class HomeTripsPage extends React.Component {
       loading: true
     });
 
-    getMyTrips(`?page=${page - 1}`).then(data => {
-      this.setState({
-        trips: data.content,
-        totalTrips: data.totalElements,
-        loading: false
+    requester.getMyTrips([`page=${page - 1}`]).then(res => {
+      res.body.then(data => {
+        this.setState({
+          trips: data.content,
+          totalTrips: data.totalElements,
+          loading: false
+        });
       });
     });
   }

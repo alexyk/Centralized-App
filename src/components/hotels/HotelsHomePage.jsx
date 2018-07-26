@@ -1,12 +1,11 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { withRouter } from 'react-router-dom';
-import PopularDestinationsCarousel from './carousel/PopularDestinationsCarousel';
-import HeroComponent from './HeroComponent';
-import { connect } from 'react-redux';
 import BancorConvertWidget from '../external/BancorConvertWidget';
-
+import HeroComponent from './HeroComponent';
+import PopularDestinationsCarousel from './carousel/PopularDestinationsCarousel';
+import PropTypes from 'prop-types';
+import React from 'react';
+import { connect } from 'react-redux';
 import { setRegion } from '../../actions/searchInfo';
+import { withRouter } from 'react-router-dom';
 
 function HotelsHomePage(props) {
   const handleDestinationPick = (region) => {
@@ -17,6 +16,8 @@ function HotelsHomePage(props) {
   const redirectToSearchPage = (queryString) => {
     props.history.push('/hotels/listings' + queryString);
   };
+
+  console.log('TEST');
 
   return (
     <div>

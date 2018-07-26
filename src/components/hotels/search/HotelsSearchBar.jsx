@@ -1,17 +1,15 @@
-import React from 'react';
-import { withRouter } from 'react-router-dom';
-import PropTypes from 'prop-types';
-import Select from 'react-select';
-import { connect } from 'react-redux';
-import HotelsSearchBarDatePicker from './HotelsSearchBarDatePicker';
-import ChildrenModal from '../modals/ChildrenModal';
-
-import { setRegion, setDates, setRooms, setAdults, setChildren, setRoomsByCountOfRooms } from '../../../actions/searchInfo';
-import { openModal, closeModal } from '../../../actions/modalsInfo.js';
+import { closeModal, openModal } from '../../../actions/modalsInfo.js';
+import { setAdults, setChildren, setDates, setRegion, setRooms, setRoomsByCountOfRooms } from '../../../actions/searchInfo';
 
 import { CHILDREN } from '../../../constants/modals';
-
-import { getRegionsBySearchParameter } from '../../../requester';
+import ChildrenModal from '../modals/ChildrenModal';
+import HotelsSearchBarDatePicker from './HotelsSearchBarDatePicker';
+import PropTypes from 'prop-types';
+import React from 'react';
+import Select from 'react-select';
+import { connect } from 'react-redux';
+import requester from '../../../initDependencies';
+import { withRouter } from 'react-router-dom';
 
 function HotelsSearchBar(props) {
   if (props.location.pathname.indexOf('/mobile') !== -1) {
@@ -23,10 +21,11 @@ function HotelsSearchBar(props) {
       return Promise.resolve({ options: [] });
     }
 
-    return getRegionsBySearchParameter(param)
-      .then((json) => {
-        return { options: json };
+    return requester.getRegionsBySearchParameter([`query=${param}`]).then(res => {
+      return res.body.then(data => {
+        return { options: data };
       });
+    });
   };
 
   const getQueryString = () => {

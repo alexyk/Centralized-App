@@ -1,9 +1,8 @@
-import { getMyReservations, getMyTrips, getMyHotelBookings } from '../../../requester';
-
+import { Config } from '../../../config';
 import DashboardPending from './DashboardPending';
 import React from 'react';
 import moment from 'moment';
-import { Config } from '../../../config';
+import requester from '../../../initDependencies';
 
 class DashboardPage extends React.Component {
   constructor(props) {
@@ -17,45 +16,52 @@ class DashboardPage extends React.Component {
   }
 
   componentDidMount() {
-    getMyReservations('?page=0').then((dataReservations) => {
-      getMyTrips('?page=0').then((dataHomeTrips) => {
-        getMyHotelBookings().then((dataHotelTrips) => {
-          const homeTrips = dataHomeTrips.content.map(trip => {
-            return {
-              ...trip,
-              sortDate: moment(new Date(trip.startDate)).utc().valueOf(),
-              displayStartDate: moment(new Date(trip.startDate)).format('DD MMM, YYYY'),
-              displayEndDate: moment(new Date(trip.endDate)).format('DD MMM, YYYY'),
-              status: trip.accepted ? 'ACCEPTED' : 'PENDING'
-            };
-          });
+    requester.getMyReservations(['page=0']).then((resReservations) => {
+      resReservations.body.then(dataReservations => {
+        requester.getMyTrips(['page=0']).then((resHomeTrips) => {
+          resHomeTrips.body.then(dataHomeTrips => {
+            requester.getMyHotelBookings().then((resHotelTrips) => {
+              resHotelTrips.body.then(dataHotelTrips => {
+                const homeTrips = dataHomeTrips.content.map(trip => {
+                  return {
+                    ...trip,
+                    sortDate: moment(new Date(trip.startDate)).utc().valueOf(),
+                    displayStartDate: moment(new Date(trip.startDate)).format('DD MMM, YYYY'),
+                    displayEndDate: moment(new Date(trip.endDate)).format('DD MMM, YYYY'),
+                    status: trip.accepted ? 'ACCEPTED' : 'PENDING'
+                  };
+                });
 
-          const hotelTrips = dataHotelTrips.content.map(trip => {
-            return {
-              ...trip,
-              sortDate: moment(trip.arrival_date, 'YYYY-MM-DD').utc().valueOf(),
-              displayStartDate: moment(trip.arrival_date, 'YYYY-MM-DD').format('DD MMM, YYYY'),
-              displayEndDate: moment(trip.arrival_date, 'YYYY-MM-DD').add(trip.nights, 'days').format('DD MMM, YYYY'),
-              userImage: trip.hotel_photo ? JSON.parse(trip.hotel_photo).original : Config.getValue('imgHost') + 'users/images/default.png',
-              hostName: trip.hotel_name
-            };
-          });
+                const hotelTrips = dataHotelTrips.content.map(trip => {
+                  return {
+                    ...trip,
+                    sortDate: moment(trip.arrival_date, 'YYYY-MM-DD').utc().valueOf(),
+                    displayStartDate: moment(trip.arrival_date, 'YYYY-MM-DD').format('DD MMM, YYYY'),
+                    displayEndDate: moment(trip.arrival_date, 'YYYY-MM-DD').add(trip.nights, 'days').format('DD MMM, YYYY'),
+                    userImage: trip.hotel_photo ? JSON.parse(trip.hotel_photo).original : Config.getValue('imgHost') + 'users/images/default.png',
+                    hostName: trip.hotel_name
+                  };
+                });
 
-          const trips = homeTrips.concat(hotelTrips).sort((x, y) => {
-            return x.sortDate >= y.sortDate ? -1 : 1;
-          }).slice(0, 5);
+                const trips = homeTrips.concat(hotelTrips).sort((x, y) => {
+                  return x.sortDate >= y.sortDate ? -1 : 1;
+                }).slice(0, 5);
 
-          console.log(trips);
-          
-          this.setState({
-            trips: trips,
-            loading: false,
-            reservations: dataReservations.content
+                console.log(trips);
+
+                this.setState({
+                  trips: trips,
+                  loading: false,
+                  reservations: dataReservations.content
+                });
+              });
+            });
           });
         });
       });
     });
   }
+
 
   render() {
     return (

@@ -4,8 +4,6 @@ import NoEntriesMessage from '../common/NoEntriesMessage';
 import ProfileFlexContainer from '../flexContainer/ProfileFlexContainer';
 import HotelTripsTableRow from './HotelTripsTableRow';
 
-import '../../../styles/css/components/profile/trips/hotel-trips-table.css';
-
 function HotelTripsTable(props) {
 
   const renderTrips = () => {

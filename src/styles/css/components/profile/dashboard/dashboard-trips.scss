@@ -1,0 +1,67 @@
+$breakpoints: (
+	'xs-phone': 320px,
+	'phone': 570px,
+	'tablet': 768px,
+	'desktop': 1024px,
+	'widescreen': 1200px
+);
+
+@import '../../../vendors/include-media';
+
+@import '../../../base/mixins';
+
+.dashboard-flex-trips-container {
+  align-items: center;
+  font-size: 18px;
+  .icon {
+    display: none;
+  }
+
+  .dashboard-image {
+    width: 7%;
+    min-width: 80px;
+    @include imageHost();    
+  }
+  
+  .dashboard-host {
+    width: 42%;
+    .host-name {
+      font-weight: 400;
+    }
+  }
+
+  .dashboard-dates {
+    width: 36%;
+    @include checkInCheckoutDates();
+  }
+  
+  .dashboard-status {
+    width: 15%;
+    .status {
+      font-weight: 400;
+    }
+  }
+
+  @include media("<=phone") {
+    flex-wrap: wrap;
+    padding: 5%;
+    margin-bottom: 10%;
+    &.flex-container-header {
+      display: none;
+    }
+    .dashboard-image {
+      @include imageHostInMobile();
+    }
+    .dashboard-host,
+    .dashboard-dates {
+      margin-top: 5%;
+      @include rowWithIconInMobile(center, 100%);
+    }
+    .dashboard-dates {
+      margin-bottom: 5%;
+    }
+    .dashboard-status {
+      @include statusRowInMobile();
+    }
+  }
+}

@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import ReCAPTCHA from 'react-google-recaptcha';
 import React from 'react';
-import { deleteListing } from '../../../requester';
+import requester from '../../../initDependencies';
 
 class MyListingsInProgressItemAdditionalContent extends React.Component {
   constructor(props) {
@@ -83,16 +83,15 @@ class MyListingsInProgressItemAdditionalContent extends React.Component {
 
     this.setState({ sending: true });
 
-    deleteListing(this.state.deletingId, token)
-      .then(res => {
-        if (res.success) {
-          this.props.filterListings(this.state.deletingId);
-        } else {
-          NotificationManager.error('Cannot delete this property. It might have reservations or other irrevocable actions.', 'Deleting Listing');
-        }
-        this.setState({ sending: false });
-        // this.onHide();
-      });
+    requester.deleteListing(this.state.deletingId, token).then(res => {
+      if (res.success) {
+        this.props.filterListings(this.state.deletingId);
+      } else {
+        NotificationManager.error('Cannot delete this property. It might have reservations or other irrevocable actions.', 'Deleting Listing');
+      }
+      this.setState({ sending: false });
+      // this.onHide();
+    });
   }
 
   calculateProgressPercentage(progressNumber) {

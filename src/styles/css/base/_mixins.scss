@@ -269,6 +269,9 @@ $animation-speed: .3s !default;
 		text-align: center;
 		padding: 0;
 	}
+	.icon::before {
+		color: #54575A;
+	}
 }
 
 @mixin rowWithIconInMobile($contentRowAlign, $width) {
@@ -314,6 +317,17 @@ $animation-speed: .3s !default;
 		width: 55px;
 		height: 55px;
 	}
+}
+
+@mixin checkInCheckoutDates {
+	.content-row {
+        .date-in-day {
+          color: #a2c5bf;
+        }
+        .date-out-day {
+          color: #d87a61;
+        }
+    }
 }
 
 
