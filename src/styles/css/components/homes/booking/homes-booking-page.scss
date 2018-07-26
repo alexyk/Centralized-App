@@ -1,0 +1,97 @@
+@import '../../../vendors/include-media';
+#homes-booking-page-container {
+  .left-part {
+    border-radius: 5px;
+    width: 35%;
+    background-color: #fff;
+    h2,
+    p {
+      margin-bottom: 10px;
+    }
+    .hotel-img {
+      width: 97%;
+      margin: 5px;
+    }
+    h2 {
+      text-align: center;
+      padding-top: 15px;
+    }
+    .rating {
+      font-size: 20px;
+      color: #8A8C8B;
+      display: flex;
+      justify-content: center;
+      div {
+        padding: 0 8px;
+        img {
+          padding: 0 3px;
+        }
+      }
+    }
+    .city {
+      padding-left: 25px;
+      margin-bottom: 20px;
+    }
+    .booking-info-container {
+      border-radius: 5px;
+      padding-bottom: 20px;
+      width: 95%;
+      margin: auto;
+      background-color: #F7F7F9;
+      .div-guest {
+        display: flex;
+        padding: 16px;
+        p {
+          font-size: 18px;
+          margin: 3px 0 0 10px;
+        }
+      }
+      .check-in-out {
+        color: #53575A;
+        display: flex;
+        padding: 0 16px;
+        .row-container {
+          padding: 0 10px;
+          p {
+            margin-bottom: 0;
+            &:first-of-type {
+              font-size: 18px;
+            }
+          }
+          .date-mon-day {
+            display: flex;
+            justify-content: space-around;
+            p {
+              font-size: 14px;
+              font-weight: 400;
+              span {
+                color: #C2D8D6;
+                font-size: 14px;
+              }
+              .date-color {
+                color: #DA836F !important;
+              }
+            }
+          }
+        }
+        .arrow-icon-container {
+          padding-right: 10px;
+        }
+      }
+      .border-nights-container {
+        margin-top: -12px;
+        padding: 6px;
+        border: 1px dashed #CBCBCD;
+        border-radius: 5px;
+        div {
+          text-align: center;
+          margin: auto;
+        }
+        p {
+          font-size: 14px;
+          margin-bottom: 0;
+        }
+      }
+    }
+  }
+}
