@@ -68,7 +68,9 @@ class HomesBookingPage extends React.Component {
               <p>total price <span>$340</span></p>
               {/* <hr/> */}
             </div>
-            <img src="/images/dot-bgr.png" alt="dot-bgr" />
+            <div className="image-dot">
+              <img src="/images/dot-bgr.png" alt="dot-bgr" />
+            </div>
           </div>
           <div className="right-part">
             <h2>Review Room Details</h2>
