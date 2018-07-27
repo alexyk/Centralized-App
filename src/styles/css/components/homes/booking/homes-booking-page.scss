@@ -6,9 +6,10 @@
   }
   .left-part {
     border-radius: 5px;
-    width: 35%;
+    width: 34%;
     background-color: #fff;
     margin-bottom: 25px;
+    height: 58vh;
     h2,
     p {
       margin-bottom: 10px;
@@ -61,7 +62,7 @@
           p {
             margin-bottom: 0;
             &:first-of-type {
-              font-size: 18px;
+              font-size: 16px;
             }
           }
           .date-mon-day {
@@ -117,8 +118,7 @@
           font-size: 30px;
         }
       }
-    }
-    // hr {
+    } // hr {
     //   border-bottom: 1px solid #F2F2F4;
     //   padding-bottom: 30px;
     //   margin: 0 5px;
@@ -131,6 +131,7 @@
       font-size: 24px;
       padding-bottom: 10px;
       border-bottom: 1px solid #CCC;
+      margin: 30px 0;
     }
     .icons-container-space {
       display: flex;
@@ -139,13 +140,28 @@
     }
     .arrangements-container div {
       display: flex;
-      padding: 20px 0;
+      padding: 10px 0;
+      p {
+        padding-top: 15px;
+        margin-bottom: 0;
+      }
       span {
+        color: #54585B;
         font-weight: 400;
       }
       img {
-        padding: 0 25px;
+        padding: 0 20px;
       }
+    }
+    .hotel-rules-container{
+      p {
+        margin-bottom: 5px;
+      }
+    }
+    .btn {
+      margin: 30px 0;
+      width: 60%;
+      float: right;
     }
   }
 }

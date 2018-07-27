@@ -1,5 +1,5 @@
 import React from 'react';
-import { Config } from '../../../config';
+import { ProgressBar } from '../../../config';
 
 import '../../../styles/css/components/homes/booking/homes-booking-page.css';
 
@@ -94,19 +94,36 @@ class HomesBookingPage extends React.Component {
             </div>
             <h3>Sleeping Arrangements</h3>
             <div className="arrangements-container">
-            <div>
-              <p><span>Bedroom 1</span>One double bed</p>
-              <img src="/images/icon-review/icon-6.png" alt="icon-bedroom" />
+              <div>
+                <p><span>Bedroom 1 </span>One double bed</p>
+                <img src="/images/icon-review/icon-6.png" alt="icon-bedroom" />
+              </div>
+              <div>
+                <p><span>Bedroom 2 </span>Two twin beds</p>
+                <img src="/images/icon-review/icon-7.png" alt="icon-bedroom" />
+              </div>
+              <div>
+                <p><span>Living Room </span>One sofa bed</p>
+                <img src="/images/icon-review/icon-8.png" alt="icon-sofa-bed" />
+              </div>
             </div>
-            <div>
-              <p><span>Bedroom 2</span>Two twin beds</p>
-              <img src="/images/icon-review/icon-7.png" alt="icon-bedroom" />
+            <div className="hotel-rules-container">
+              <h3>Hotel Rules</h3>
+              <p>No smoking</p>
+              <p>Not suitable fot pets</p>
+              <p>No parties or events</p>
+              <div className="Check-in">
+                <p>Check-in</p>
+
+              </div>
             </div>
-            <div>
-              <p><span>Living Room</span>One sofa bed</p>
-              <img src="/images/icon-review/icon-8.png" alt="icon-sofa-bed" />
+            <div className="children-and-extra-beds">
+              <h3>Children & Extra Beds</h3>
+              <p>All children are welcome.</p>
+              <p>FREE! One child under 2 years stays free of charge in a crib.</p>
+              <p>There is no capacity for extra beds in the room.</p>
             </div>
-            </div>
+            <button className="btn">Agree & Continue</button>
           </div>
         </div>
       </div>
