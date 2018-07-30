@@ -3,7 +3,6 @@ import { ProgressBar } from '../../../config';
 
 import '../../../styles/css/components/homes/booking/homes-booking-page.css';
 
-
 class HomesBookingPage extends React.Component {
 
   render() {
