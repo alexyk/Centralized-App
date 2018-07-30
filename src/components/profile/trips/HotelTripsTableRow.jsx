@@ -27,11 +27,11 @@ function HotelTripsTableRow(props) {
   };
 
   const extractDatesData = (trip) => {
-    const startDateMoment = moment(trip.arrivalDate);
-    const endDateMoment = moment(trip.arrivalDate).add(trip.nights, 'days');
+    const startDateMoment = moment(trip.arrival_date, 'YYYY-MM-DD');
+    const endDateMoment = moment(trip.arrival_date, 'YYYY-MM-DD').add(trip.nights, 'days');
 
     const checkIn = {
-      day: startDateMoment.format('DD'),
+      day: startDateMoment.format('D'),
       year: startDateMoment.format('YYYY'),
       month: startDateMoment.format('MMM').toLowerCase()
     };
@@ -45,7 +45,15 @@ function HotelTripsTableRow(props) {
     return { checkIn, checkOut };
   };
 
+  const isFutureTrip = () => {
+    const now = moment();
+    const arrivalDate = moment(props.trip.arrival_date, 'YYYY-MM-DD');
+    const isPastDate = now.diff(arrivalDate) < 0;
+    return isPastDate;
+  };
+
   const dates = extractDatesData(props.trip);
+  console.log(dates);
 
   return (
     <ProfileFlexContainer styleClass={`flex-container-row ${props.styleClass}`}>
@@ -81,7 +89,7 @@ function HotelTripsTableRow(props) {
             props.trip.has_details !== 0 ?
             <i className="fa fa-bolt icon" /> : null}
           <div className="content-row">
-            {props.trip.status && props.trip.status.toUpperCase() === 'DONE' &&
+            {props.trip.status && props.trip.status.toUpperCase() === 'DONE' && isFutureTrip() &&
               <button type="submit" onClick={e => { e.preventDefault(); props.onTripSelect(props.trip.id); props.handleCancelReservation(); }}>Cancel Trip</button>
             }
             {props.trip.has_details === 0 ?
