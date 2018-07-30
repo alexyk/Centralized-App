@@ -1,0 +1,116 @@
+@mixin horizontalLine() {
+  padding-top: 20px;
+  border-top: 1px solid #ccc;
+}
+.home-page-content {
+  padding-left: 5%;
+  padding-right: 5%;
+  text-align: center;
+  .home-page-content-item {
+    margin-top: 5%;
+    h3 {
+      font-size: 32px;
+      margin-bottom: 5px;
+      font-family: 'FuturaStd-Light', sans-serif;
+    }
+    h5 {
+      font-size: 20px;
+      padding-bottom: 20px;
+      margin-bottom: 0;
+    }
+    .images-container {
+      margin-top: 1%;
+    }
+    .owl-carousel,
+    .hotels-cards {
+      @include horizontalLine();
+    }
+    .hotels-cards {
+      .slick-slide {
+        padding-left: 10px;
+        padding-right: 10px;
+        .item {
+          background-color: white;
+          a {
+            color: inherit;
+          }
+          .picture {
+            height: 160px;
+            div {
+              width: 100%;
+              height: 100%;
+              background-size: cover;
+              background-repeat: no-repeat;
+              background-position: center;
+            }
+            .slick-slide {
+              padding-left: 0;
+              padding-right: 0;
+            }
+            .slick-next {
+              top: 141px !important;
+              right: 10px !important;
+              background: none !important;
+            
+              &:before {
+                content: url('../../../images/right.png');
+              }
+            }
+
+            .slick-prev {
+              top: 141px !important;
+              left: 0px !important;
+              z-index: 2;
+              background: none !important;
+            
+              &:before {
+                content: url('../../../images/left.png');
+              }
+            }
+          }
+          .list-property-description {
+            padding: 5%;
+            text-align: left;
+            .name {
+              display: block;
+              min-height: 42px;
+              letter-spacing: .03em;
+              font-size: 18px;
+              margin-bottom: 10px;
+            }
+            .list-hotel-rating {
+              display: flex;
+              margin-bottom: 5px;
+            }
+            .list-property-price {
+              font-size: 18px;
+              letter-spacing: -.05em;
+            }
+          }
+        }
+      }
+    }
+  }
+  .get-started {
+    margin-top: 70px;
+    @include horizontalLine();
+    h2 {
+      margin-top: 50px;
+      font-weight: bold;
+    }
+    .get-started-content {
+      margin-left: 28%;
+      margin-right: 28%;
+      font-family: 'Futura', 'Arial', 'Helvetica Neue', 'Helvetica', sans-serif;;
+    }
+    .get-started-graphic {
+      background: transparent url(../../../images/get-started.svg) no-repeat top center;
+      background-size: contain;
+      width: 100%;
+      height: 200px;
+    }
+    .btn {
+      margin-top: 5%;
+    }
+  }
+}

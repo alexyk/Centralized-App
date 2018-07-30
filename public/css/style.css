@@ -832,12 +832,6 @@ footer .currency-switcher {
     min-height: 500px;
 }
 
-#get-started .get-started-graphic {
-    background: transparent url(../images/get-started.svg) no-repeat top center;
-    background-size: contain;
-    width: 100%;
-    height: 200px;
-}
 
 #main-nav #second-nav {
     background-color: transparent;
@@ -2223,28 +2217,6 @@ li.dropdown {
     }
 }
 
-#popular-hotels-box {
-    margin-bottom: 50px;
-    padding-left: 100px;
-    padding-right: 100px;
-    margin-top: 100px;
-}
-
-#popular-hotels-box h2 {
-    text-align: center;
-    border-bottom: 1px solid #ccc;
-    display: block;
-    margin-left: 15px;
-    margin-right: 15px;
-    padding-bottom: 20px;
-    margin-bottom: 40px;
-    font-size: 32px;
-}
-
-#popular-hotels-box h3 {
-    font-family: 'FuturaStd-Light', sans-serif;
-}
-
 #popular-hotels-box .list-property-small {
     background: #fff;
     padding: 4px;
@@ -2380,6 +2352,7 @@ li.dropdown {
 }
 
 .left_carusel {
+    left: 0;
     bottom: 40%;
     margin-left: -80px;
     position: absolute;
