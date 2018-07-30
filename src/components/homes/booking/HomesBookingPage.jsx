@@ -1,5 +1,5 @@
 import React from 'react';
-import { ProgressBar } from '../../../config';
+
 
 import '../../../styles/css/components/homes/booking/homes-booking-page.css';
 
@@ -12,18 +12,20 @@ class HomesBookingPage extends React.Component {
         <div className="container">
           <div className="left-part">
             <img className="hotel-img" src="/images/wish-hotel-img.jpg" alt="wish-hotel" />
-            <h2>Heaven - Junior Suite with view</h2>
-            <div className="rating">
-              <p>Excellent 4.1/5 </p>
-              <div>
-                <img src="/images/icon-star-filter.png" alt="star" />
-                <img src="/images/icon-star-filter.png" alt="star" />
-                <img src="/images/icon-star-filter.png" alt="star" />
-                <img src="/images/icon-star-filter.png" alt="star" />
-                <img src="/images/icon-star-filter-g.png" alt="star" />
-              </div>
-              <p> 73 Reviews</p></div>
-            <p className="city">Sozopol, Bulgaria</p>
+            <div className="review-info-container">
+              <h2>Heaven - Junior Suite with view</h2>
+              <div className="rating">
+                <p>Excellent 4.1/5 </p>
+                <div>
+                  <img src="/images/icon-star-filter.png" alt="star" />
+                  <img src="/images/icon-star-filter.png" alt="star" />
+                  <img src="/images/icon-star-filter.png" alt="star" />
+                  <img src="/images/icon-star-filter.png" alt="star" />
+                  <img src="/images/icon-star-filter-g.png" alt="star" />
+                </div>
+                <p> 73 Reviews</p></div>
+              <div><p className="city">Sozopol, Bulgaria</p></div></div>
+
             <div className="booking-info-container">
               <div className="div-guest">
                 <div>
@@ -65,7 +67,6 @@ class HomesBookingPage extends React.Component {
             <div className="price-container">
               <p>$85 x 4 nights</p>
               <p>total price <span>$340</span></p>
-              {/* <hr/> */}
             </div>
             <div className="image-dot">
               <img src="/images/dot-bgr.png" alt="dot-bgr" />
@@ -74,22 +75,21 @@ class HomesBookingPage extends React.Component {
           <div className="right-part">
             <h2>Review Room Details</h2>
             <h3>The Space</h3>
-            {/* <hr /> */}
             <div className="icons-container-space">
-              <div>        <img src="/images/icon-review/icon-1.png" alt="icon-home-w" />
+              <div>        <img src="/images/icon-review/icon-home.png" alt="icon-home" />
                 <p>Entire Home/Apt</p></div>
               <div>
-                <img src="/images/icon-review/icon-2.png" alt="icon-guest" />
+                <img src="/images/icon-review/icon-guest.png" alt="icon-guest" />
                 <p>Guests x4</p></div>
               <div>
-                <img src="/images/icon-review/icon-3.png" alt="icon-size" />
+                <img src="/images/icon-review/icon-size.png" alt="icon-size" />
                 <p>85 m2</p></div>
               <div>
-                <img src="/images/icon-review/icon-4.png" alt="icon-bathroom" />
+                <img src="/images/icon-review/icon-bathroom.png" alt="icon-bathroom" />
                 <p>1 Bathroom</p>
               </div>
               <div>
-                <img src="/images/icon-review/icon-5.png" alt="icon-bedrooms" />
+                <img src="/images/icon-review/icon-bedrooms.png" alt="icon-bedrooms" />
                 <p>2 Bedrooms</p>
               </div>
             </div>
@@ -97,15 +97,15 @@ class HomesBookingPage extends React.Component {
             <div className="arrangements-container">
               <div>
                 <p><span>Bedroom 1 </span>One double bed</p>
-                <img src="/images/icon-review/icon-6.png" alt="icon-bedroom" />
+                <img src="/images/icon-review/icon-bedroom.png" alt="icon-bedroom" />
               </div>
               <div>
                 <p><span>Bedroom 2 </span>Two twin beds</p>
-                <img src="/images/icon-review/icon-7.png" alt="icon-bedroom" />
+                <img src="/images/icon-review/icon-bed-room.png" alt="icon-bedroom" />
               </div>
               <div>
                 <p><span>Living Room </span>One sofa bed</p>
-                <img src="/images/icon-review/icon-8.png" alt="icon-sofa-bed" />
+                <img src="/images/icon-review/icon-sofa-bed.png" alt="icon-sofa-bed" />
               </div>
             </div>
             <div className="hotel-rules-container">
@@ -113,10 +113,22 @@ class HomesBookingPage extends React.Component {
               <p>No smoking</p>
               <p>Not suitable fot pets</p>
               <p>No parties or events</p>
-              <div className="Check-in">
+
+
+
+
+              {/* <div className="Check-in">
                 <p>Check-in</p>
 
               </div>
+              <div className="Check-out">
+                <p>Check-out</p>
+
+              </div> */}
+
+
+
+
             </div>
             <div className="children-and-extra-beds">
               <h3>Children & Extra Beds</h3>
