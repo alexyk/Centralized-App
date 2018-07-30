@@ -11,6 +11,8 @@ import Dropzone from 'react-dropzone';
 
 import { Config } from '../../../config';
 
+import '../../../styles/css/components/profile/listings/listing-photos.css';
+
 function ListingPhotos(props) {
   const SortableItem = SortableElement(({ value, i }) =>
     <div className="uploaded-small-picture col-md-4" >
@@ -45,7 +47,7 @@ function ListingPhotos(props) {
             <div className="col-md-3">
               <PlaceDescriptionAside routes={props.routes} />
             </div>
-            <div className="reservation-hotel-review-room col-md-9">
+            <div id="reservation-hotel-review-room" className="col-md-9">
               <h2>Upload photos of your place</h2>
               <hr />
 
@@ -61,12 +63,12 @@ function ListingPhotos(props) {
               </Dropzone>
 
               <div className="pictures-preview col-md-12">
-                {props.values.uploadedFilesUrls.length === 0 
-                  ? null 
-                  : <SortableList 
-                    axis={'xy'} 
-                    lockToContainerEdges={true} 
-                    items={props.values.uploadedFilesUrls} 
+                {props.values.uploadedFilesUrls.length === 0
+                  ? null
+                  : <SortableList
+                    axis={'xy'}
+                    lockToContainerEdges={true}
+                    items={props.values.uploadedFilesUrls}
                     onSortEnd={props.onSortEnd} />
                 }
               </div>

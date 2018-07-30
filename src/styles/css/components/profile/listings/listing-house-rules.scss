@@ -1,0 +1,74 @@
+@import '../../../vendors/include-media';
+#listing-house-rules-container {
+  display: flex;
+  justify-content: space-between;
+  @include media('<tablet') {
+    flex-direction: column;
+  }
+  .rules-container {
+    margin-left: 10px;
+  }
+  input {
+    margin-top: 5px;
+    border: 1px solid #cfcfcf;
+    border-radius: 5px;
+    background-color: white;
+    padding: 20px;
+    width: 100%;
+    @include media('<tablet') {
+      margin-top: 15px;
+    }
+  }
+  .col-md-3 {
+    display: flex;
+    justify-content: space-between;
+  }
+  input[type="radio"] {
+    display: inline-block;
+    margin-right: 10px;
+    @include media('<tablet') {
+      margin: auto;
+      text-align: center;
+      margin-top: 10px;
+      margin-bottom: 10px;
+    }
+  }
+  p {
+    @include media('<tablet') {
+      margin-bottom: 0;
+      margin-top: 10px;
+    }
+  }
+  .button-add-container {
+    @include media('<tablet') {
+      padding: 0;
+    }
+  }
+  .button-remove-container {
+    padding-left: 10px;
+    padding-right: 28px;
+  }
+  .change-rules {
+    display: flex;
+    justify-content: space-between;
+  }
+  label {
+    @include media('<tablet') {
+      margin-bottom: 5px;
+    }
+  }
+  .btn {
+    padding: 17px;
+    margin-top: 5px;
+    width: 100%;
+    @include media('<tablet') {
+      margin-top: 20px;
+    }
+  }
+  hr {
+    border-top: 1px solid #ccc;
+  }
+  .add-item {
+    padding-top: 25px;
+  }
+}

@@ -7,6 +7,10 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import FooterNav from '../navigation/FooterNav';
 
+import '../../../styles/css/components/profile/listings/listing-accommodations.css';
+
+
+
 function ListingAccommodations(props) {
   const { guestsIncluded, bedroomsCount, bedrooms, bathrooms } = props.values;
   const bedroomRows = bedrooms.map((bedroom, i) => {
@@ -53,7 +57,7 @@ function ListingAccommodations(props) {
             <div className="col-md-3">
               <BasicsAside routes={props.routes} />
             </div>
-            <div className="reservation-hotel-review-room col-md-9">
+            <div id="reservation-hotel-review-room" className="col-md-9">
 
               <div>
                 <h2>Accommodation</h2>
@@ -73,8 +77,9 @@ function ListingAccommodations(props) {
 
               <br />
 
-              <div>
+              <div className="bedroom-container-place-type">
                 <h3>How many bedrooms can your guests use?</h3>
+                <div className='select'>
                 <Dropdown
                   className="bedroom-counter l-select"
                   name="bedroomCount"
@@ -83,7 +88,7 @@ function ListingAccommodations(props) {
                   onChange={props.updateBedrooms}
                 />
               </div>
-
+              </div>
               <div>
                 <h2>Sleeping arrangement</h2>
                 <hr />

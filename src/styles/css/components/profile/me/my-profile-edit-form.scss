@@ -65,12 +65,12 @@
   .option-field {
     width: 30%;
     margin-right: 5px;
-
     @include media('<tablet') {
       width: 100%;
     }
   }
-  .language-currency, .address-city {
+  .language-currency,
+  .address-city {
     display: flex;
     justify-content: space-around;
     @include media('<tablet') {
@@ -80,19 +80,16 @@
     div {
       width: 100%;
     }
-    .language, .address {
+    .language,
+    .address {
       @include media('>tablet') {
         margin-right: 5px;
       }
     }
   }
-  .address {
-
-  }
   .btn {
     padding: 15px 70px;
     margin: 20px 0;
-
     @include media('<tablet') {
       width: 100%;
     }
