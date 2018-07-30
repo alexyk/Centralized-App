@@ -68,7 +68,6 @@ class HomesBookingPage extends React.Component {
             <div className="price-container">
               <p>$85 x 4 nights</p>
               <p>total price <span>$340</span></p>
-              {/* <hr/> */}
             </div>
             <div className="image-dot">
               <img src="/images/dot-bgr.png" alt="dot-bgr" />
@@ -77,7 +76,6 @@ class HomesBookingPage extends React.Component {
           <div className="right-part">
             <h2>Review Room Details</h2>
             <h3>The Space</h3>
-            {/* <hr /> */}
             <div className="icons-container-space">
               <div>        <img src="/images/icon-review/icon-home.png" alt="icon-home" />
                 <p>Entire Home/Apt</p></div>
