@@ -13,7 +13,7 @@
     "javascript-time-ago": "^1.0.21",
     "jquery": "^3.2.1",
     "json-fetch": "^7.5.0",
-    "locktrip-service-layer": "^1.0.4",
+    "locktrip-service-layer": "^1.0.6",
     "lodash": "^4.17.10",
     "moment": "^2.19.3",
     "npm-run-all": "^4.1.2",
@@ -65,7 +65,8 @@
     "toggle-selection": "^1.0.6",
     "uuid": "^3.2.1",
     "validator": "^9.4.1",
-    "web3": "^1.0.0-beta2"
+    "web3": "^1.0.0-beta2",
+    "why-did-you-update": "^0.1.1"
   },
   "scripts": {
     "analyze": "source-map-explorer build/static/js/main.*",
