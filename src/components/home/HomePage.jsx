@@ -18,7 +18,7 @@ let slider = null;
 const SlickButton = (props) => {
   const { currentSlide, slideCount, ...arrowProps } = props;
   return (
-    <button type="button" {...arrowProps} />
+    <button type="button" {...arrowProps} style={{ display: 'none' }} />
   );
 };
 
@@ -32,6 +32,8 @@ class HomePage extends React.Component {
 
     this.handleDestinationPick = this.handleDestinationPick.bind(this);
     this.redirectToSearchPage = this.redirectToSearchPage.bind(this);
+    this.next = this.next.bind(this);
+    this.prev = this.prev.bind(this);
   }
 
   componentDidMount() {
@@ -55,6 +57,14 @@ class HomePage extends React.Component {
 
   redirectToSearchPage(queryString) {
     this.props.history.push('/hotels/listings' + queryString);
+  }
+
+  next() {
+    this.slider.slickNext();
+  }
+
+  prev() {
+    this.slider.slickPrev();
   }
 
   render() {
@@ -96,10 +106,19 @@ class HomePage extends React.Component {
           <HomePageContentItem
             title="Explore"
             text="What are you looking for?"
-            content={<div className="images-container">
-              <img src={null} alt="hotels" />
-              <img src={null} alt="homes" />
-            </div>}
+            content={
+              <ul className="categories">
+                <li>
+                  <a href="#"><img src="/images/hotels.jpg" alt="hotels" />
+                    <h3>Hotels</h3>
+                  </a>
+                </li>
+                <li className="homes">
+                  <a href="#"><img src="/images/homes.jpg" alt="homes" />
+                    <h3>Homes</h3>
+                  </a>
+                </li>
+              </ul>}
           />
           <HomePageContentItem
             title="Popular"
@@ -111,7 +130,7 @@ class HomePage extends React.Component {
             text="Homes around the world"
             content={listings &&
               <div>
-                <Slider ref={s => slider = s}
+                <Slider ref={s => this.slider = s}
                   {...settings}>
                   {listings.map((listing, i) => {
                     return (
@@ -123,7 +142,13 @@ class HomePage extends React.Component {
                     );
                   })}
                 </Slider>
-                <div className="btn">See all</div>
+                <div className="carousel-nav">
+                  <ul>
+                    <li><button className="icon-arrow-left" onClick={this.prev}></button></li>
+                    <li><button className="btn">See all</button></li>
+                    <li><button className="icon-arrow-right" onClick={this.next}></button></li>
+                  </ul>
+                </div>
               </div>}
           />
           <HomePageContentItem
