@@ -1,5 +1,5 @@
 import React from 'react';
-import OwlCarousel from 'react-owl-carousel';
+import Slider from 'react-slick';
 import PropTypes from 'prop-types';
 import { Config } from '../../../config.js';
 import moment from 'moment';
@@ -33,51 +33,64 @@ function PopularDestinationsCarousel(props) {
     },
   ];
 
+  let slider = null;
+
+  const SlickButton = (props) => {
+    const { currentSlide, slideCount, ...arrowProps } = props;
+    return (
+      <button type="button" {...arrowProps} />
+    );
+  };
+
+  const settings = {
+    infinite: true,
+    speed: 500,
+    slidesToShow: 4,
+    slidesToScroll: 1,
+    nextArrow: <SlickButton />,
+    prevArrow: <SlickButton />,
+    className: 'top-destinations',
+    responsive: [
+      {
+        breakpoint: 1300,
+        settings: {
+          slidesToShow: 3,
+        }
+      },
+      {
+        breakpoint: 980,
+        settings: {
+          slidesToShow: 2,
+        }
+      },
+      {
+        breakpoint: 650,
+        settings: {
+          slidesToShow: 1,
+        }
+      }
+    ]
+  };
+
   return (
     <div>
-      <OwlCarousel
-        className="owl-theme"
-        loop
-        mouseDrag={false}
-        autoplay={false}
-        margin={30}
-        nav
-        navText={['<span class=\'left_carusel\'></span>', '<span class=\'right_carusel\'></span>']}
-        items={4}
-        responsiveClass
-        dots={false}
-        responsive={{
-          0: {
-            items: 1
-          },
-          768: {
-            items: 3
-          },
-          960: {
-            items: 4
-          },
-          1200: {
-            items: 4
-          }
-        }}>
+      <Slider ref={s => slider = s}
+        {...settings}>
         {pictures.map((dest, i) => {
           return (
             <div key={i} className="popular-destination-image-container">
-              <div onClick={() => props.handleDestinationPick({ id: dest.id, query: dest.query })}>
+              <div onClick={() => props.handleDestinationPick({ id: dest.id, query: dest.query }, dest.searchUrl)}>
                 <img src={dest.image} alt={dest.query} />
               </div>
             </div>
           );
         })}
-      </OwlCarousel>
+      </Slider>
     </div>
   );
 }
 
 PopularDestinationsCarousel.propTypes = {
-  listings: PropTypes.array,
-  listingType: PropTypes.string,
-
   // Redux props
   paymentInfo: PropTypes.object,
 };

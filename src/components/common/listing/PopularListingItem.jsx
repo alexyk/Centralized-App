@@ -1,7 +1,6 @@
 import { Config } from '../../../config.js';
 import { Link } from 'react-router-dom';
 import Slider from 'react-slick';
-import ListingItemPictureCarousel from './ListingItemPictureCarousel';
 import ListingItemRatingBox from './ListingItemRatingBox';
 import PropTypes from 'prop-types';
 import React from 'react';
@@ -73,6 +72,7 @@ function PopularListingItem(props) {
               </div>
               <ListingItemRatingBox
                 rating={rating}
+                isHomePage={true}
               />
             </div>
             <div className="list-property-price"><strong>{props.paymentInfo.currencySign}{listingPrice} <span>(LOC {(listingPrice / props.paymentInfo.locRate).toFixed(2)})</span></strong> per night</div>

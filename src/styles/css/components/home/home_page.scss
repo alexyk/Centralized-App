@@ -21,11 +21,73 @@
     .images-container {
       margin-top: 1%;
     }
-    .owl-carousel,
+    .top-destinations,
     .hotels-cards {
       @include horizontalLine();
     }
+    .top-destinations {
+      .slick-next {
+        right: 2.5% !important;
+
+        &:before {
+          content: url('../../../images/next.png');
+          background-color: white;
+          border: 1px solid #ccc;
+          border-radius: 3px;
+          padding: 7px 15px;
+          font-size: 27px;
+          opacity: 1 !important;
+        }
+      }
+      .slick-prev {
+        left: -2% !important;
+        z-index: 2;
+        
+        &:before {
+          content: url('../../../images/next.png');
+          background-color: white;
+          border: 1px solid #ccc;
+          border-radius: 3px;
+          padding: 7px 15px;
+          font-size: 27px;
+          opacity: 1 !important;
+        }
+      }
+      .popular-destination-image-container {
+        cursor: pointer;
+      }
+      .slick-slide {
+        padding-left: 10px;
+        padding-right: 10px;
+      }
+    }
     .hotels-cards {
+      .slick-next {
+        top: 385px !important;
+        right: 41% !important;
+        
+        &:before {
+          content: url('../../../images/next.png');
+          border: 1px solid #ccc;
+          border-radius: 3px;
+          padding: 7px 15px;
+          font-size: 27px;
+        }
+      }
+
+      .slick-prev {
+        top: 385px !important;
+        left: 35% !important;
+        z-index: 2;
+
+        &:before {
+          content: url('../../../images/next.png');
+          border: 1px solid #ccc;
+          border-radius: 3px;
+          padding: 7px 15px;
+          font-size: 27px;
+        }
+      }
       .slick-slide {
         padding-left: 10px;
         padding-right: 10px;
@@ -54,6 +116,8 @@
             
               &:before {
                 content: url('../../../images/right.png');
+                border: 0px;
+                padding: 0px;
               }
             }
 
@@ -65,6 +129,8 @@
             
               &:before {
                 content: url('../../../images/left.png');
+                border: 0px;
+                padding: 0px;
               }
             }
           }
@@ -73,14 +139,30 @@
             text-align: left;
             .name {
               display: block;
-              min-height: 42px;
+              height: 42px;
               letter-spacing: .03em;
               font-size: 18px;
               margin-bottom: 10px;
             }
             .list-hotel-rating {
-              display: flex;
+              display: inline-block;
               margin-bottom: 5px;
+              line-height: 20px;
+              font-size: 16px;
+              .list-hotel-rating-count {
+                display: inline-block;
+              }
+              .list-hotel-rating-stars {
+                width: 100px;
+                margin-right: 5px;
+                .star {
+                  margin-left: 2%;
+                  margin-right: 2%;
+                }
+              }
+              .list-hotel-rating-reviews {
+                margin-right: 0px;
+              }
             }
             .list-property-price {
               font-size: 18px;
@@ -89,6 +171,12 @@
           }
         }
       }
+    }
+    .btn {
+      border-radius: 3px;
+      margin-top: 50px;
+      font-size: 18px;
+      padding: 8px 30px;
     }
   }
   .get-started {

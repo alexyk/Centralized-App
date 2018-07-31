@@ -1,7 +1,7 @@
 import BancorConvertWidget from '../external/BancorConvertWidget';
-import HeroComponent from '../hotels/HeroComponent';
 import PopularDestinationsCarousel from '../hotels/carousel/PopularDestinationsCarousel';
 import PopularListingItem from '../common/listing/PopularListingItem';
+import HeroComponent from './HeroComponent';
 import PropTypes from 'prop-types';
 import React from 'react';
 import Slider from 'react-slick';
@@ -48,9 +48,9 @@ class HomePage extends React.Component {
     });
   }
 
-  handleDestinationPick(region) {
+  handleDestinationPick(region, searchUrl) {
     this.props.dispatch(setRegion(region));
-    document.getElementsByName('stay')[0].click();
+    this.props.history.push(searchUrl);
   }
 
   redirectToSearchPage(queryString) {
@@ -69,19 +69,19 @@ class HomePage extends React.Component {
       className: 'hotels-cards',
       responsive: [
         {
-          breakpoint: 1024,
+          breakpoint: 1300,
           settings: {
             slidesToShow: 3,
           }
         },
         {
-          breakpoint: 768,
+          breakpoint: 980,
           settings: {
             slidesToShow: 2,
           }
         },
         {
-          breakpoint: 480,
+          breakpoint: 650,
           settings: {
             slidesToShow: 1,
           }
@@ -90,7 +90,7 @@ class HomePage extends React.Component {
     };
     return (
       <div>
-        <HeroComponent redirectToSearchPage={this.redirectToSearchPage} />
+        <HeroComponent homePage={this.props.homePage} />
         <BancorConvertWidget />
         <section className="home-page-content">
           <HomePageContentItem
@@ -110,18 +110,21 @@ class HomePage extends React.Component {
             title="Popular"
             text="Homes around the world"
             content={listings &&
-              <Slider ref={s => slider = s}
-                {...settings}>
-                {listings.map((listing, i) => {
-                  return (
-                    <PopularListingItem
-                      key={i}
-                      listing={listing}
-                      listingsType="homes"
-                    />
-                  );
-                })}
-              </Slider>}
+              <div>
+                <Slider ref={s => slider = s}
+                  {...settings}>
+                  {listings.map((listing, i) => {
+                    return (
+                      <PopularListingItem
+                        key={i}
+                        listing={listing}
+                        listingsType="homes"
+                      />
+                    );
+                  })}
+                </Slider>
+                <div className="btn">See all</div>
+              </div>}
           />
           <HomePageContentItem
             title="Top Destinations"
@@ -141,6 +144,8 @@ class HomePage extends React.Component {
 }
 
 HomePage.propTypes = {
+  homePage: PropTypes.string,
+
   // Router props
   history: PropTypes.object,
 

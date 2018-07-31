@@ -2,7 +2,7 @@ import { Route, Switch } from 'react-router-dom';
 
 import PropTypes from 'prop-types';
 import React from 'react';
-import HomesHomePage from './HomesHomePage';
+import HomePage from '../home/HomePage';
 import HomesSearchPage from './search/HomesSearchPage';
 import HomeDetailsPage from './details/HomeDetailsPage';
 import requester from '../../initDependencies';
@@ -28,7 +28,7 @@ class HomesRouterPage extends React.Component {
     return (
       <div>
         <Switch>
-          <Route exact path="/homes" render={() => <HomesHomePage countries={this.state.countries} />} />
+          <Route exact path="/homes" render={() => <HomePage homePage="homes" />} />
           <Route exact path="/homes/listings" render={() => <HomesSearchPage countries={this.state.countries} />} />
           <Route exact path="/homes/listings/:id" render={() => <HomeDetailsPage countries={this.state.countries} />} />
         </Switch>

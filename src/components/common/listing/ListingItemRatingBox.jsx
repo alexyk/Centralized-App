@@ -50,14 +50,15 @@ function ListingItemRatingBox(props) {
     <div className="list-hotel-rating">
       <div className={`list-hotel-rating-count count-${props.reviewsCount}`}>{getRatingString(props.rating, props.reviewsCount)}</div>
       <div className="list-hotel-rating-stars">{calculateStars(props.rating)}</div>
-      <div className="list-hotel-rating-reviews">{props.reviewsCount} Reviews</div>
+      <div className="list-hotel-rating-reviews">{props.reviewsCount} {props.isHomePage ? '' : ' Reviews'}</div>
     </div>
   );
 }
 
 ListingItemRatingBox.propTypes = {
   rating: PropTypes.number,
-  reviewsCount: PropTypes.number
+  reviewsCount: PropTypes.number,
+  isHomePage: PropTypes.bool
 };
 
 export default ListingItemRatingBox;

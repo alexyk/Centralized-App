@@ -1,18 +1,16 @@
-import { Route, Switch } from 'react-router-dom';
+import { Route, Switch, Redirect } from 'react-router-dom';
 
 import React from 'react';
-import HotelsHomePage from '../hotels/HotelsHomePage';
-import HomesHomePage from '../homes/HomesHomePage';
 import HomePage from './HomePage';
 
 function HomeRouterPage() {
   return (
     <div>
       <Switch>
-        <Route exact path="/homes" render={() => <HomesHomePage />} />
-        <Route exact path="/hotels" render={() => <HotelsHomePage />} />
-        <Route exact path="/users/resetPassword/:confirm" render={() => <HotelsHomePage />} />
-        <Route exact path="/" render={() => <HomePage />} />
+        <Route exact path="/homes" render={() => <HomePage />} />
+        <Route exact path="/hotels" render={() => <HomePage />} />
+        <Route exact path="/users/resetPassword/:confirm" render={() => <HomePage />} />
+        <Redirect from="/" to="/hotels" />
       </Switch>
     </div>
   );

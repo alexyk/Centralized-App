@@ -2,7 +2,7 @@ import { Route, Switch } from 'react-router-dom';
 
 import PropTypes from 'prop-types';
 import React from 'react';
-import HotelsHomePage from './HotelsHomePage';
+import HomePage from '../home/HomePage';
 import HotelDetailsPage from './details/HotelDetailsPage';
 import HotelBookingPage from './book/HotelBookingPage';
 import HotelBookingConfirmPage from './book/HotelBookingConfirmPage';
@@ -21,7 +21,7 @@ class HotelsRouterPage extends React.Component {
     return (
       <div>
         <Switch>
-          <Route exact path="/hotels" render={() => <HotelsHomePage />} />
+          <Route exact path="/hotels" render={() => <HomePage homePage="hotels" />} />
           <Route exact path="/hotels/listings" render={() => <StaticHotelsSearchPage />} />
           <Route exact path="/hotels/listings/:id" render={() => <HotelDetailsPage />} />
           <Route exact path="/hotels/listings/book/:id" render={() => <HotelBookingPage />} />
