@@ -196,6 +196,8 @@ class StaticHotelsSearchPage extends React.Component {
       this.client.debug = () => { };
     }
 
+    console.log(this.client);
+
     this.client.connect(null, null, this.subscribe);
   }
 
