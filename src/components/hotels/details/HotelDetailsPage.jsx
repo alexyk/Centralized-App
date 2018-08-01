@@ -71,8 +71,7 @@ class HotelDetailsPage extends React.Component {
     requester.getHotelById(id, searchParams).then(res => {
       res.body.then(data => {
         this.setState({ data: data, loading: false });
-
-        const regionId = search.get('region') || data.region && data.region.externalId;
+        const regionId = search.get('region') || (data.region && data.region.externalId);
         requester.getRegionNameById(regionId).then(res => {
           res.body.then(data => {
             this.props.dispatch(setRegion(data));

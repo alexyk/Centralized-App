@@ -11,15 +11,6 @@ import { withRouter } from 'react-router-dom';
 
 // import InfiniteList from 'react-infinite-scroll-list';
 
-
-
-
-
-
-
-
-
-
 class MessagesChatPage extends React.Component {
   constructor(props) {
     super(props);
