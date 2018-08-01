@@ -211,7 +211,9 @@ $media-expressions: (
 		background: $white;
     padding: 7px 0;
     // height: 50px;
-		// width: 100%;
+    @include media(">=tablet") {
+      width: 100%;
+		}
 	}
 	.check-wrap{
 		display: flex;
