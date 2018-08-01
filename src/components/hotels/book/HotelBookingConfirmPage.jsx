@@ -219,7 +219,6 @@ class HotelBookingConfirmPage extends React.Component {
         const roomId = this.state.booking.quoteId;
         const numberOfTravelers = this.getNumberOfTravelers();
         const cancellationFees = data;
-        console.log(cancellationFees);
         const daysBeforeStartOfRefund = [];
         const refundPercentages = [];
         for (let key in cancellationFees) {
@@ -232,7 +231,6 @@ class HotelBookingConfirmPage extends React.Component {
         this.closeModal(PASSWORD_PROMPT);
 
         const queryString = this.props.location.search;
-        console.log((queryString));
 
         requester.getMyJsonFile().then(res => {
           res.body.then(data => {

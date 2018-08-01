@@ -23,7 +23,7 @@ class ProfileEditForm extends React.Component {
       year: '',
       gender: '',
       country: '',
-      city: '',
+      city: '1',
       locAddress: '',
       jsonFile: '',
       currencies: [],
@@ -40,15 +40,30 @@ class ProfileEditForm extends React.Component {
     this.updateCountry = this.updateCountry.bind(this);
   }
 
-  componentDidMount() {
-    requester.getCountries().then(res => {
-      res.body.then(data => {
-        this.setState({ countries: data.content });
-      });
+  async componentDidMount() {
+    const headers = {
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'Authorization': localStorage[Config.getValue('domainPrefix') + '.auth.locktrip']
+      }
+    };
+
+    // TODO: Move to requester
+    const data = await fetch('http://localhost:8080/countries', headers)
+      .then(response => response.json())
+      .then(data => data)
+      .catch();
+
+    // console.log(data);
+
+    this.setState({
+      countries: data,
     });
 
     requester.getUserInfo().then(res => {
       res.body.then(data => {
+        console.log(data);
         let day = '';
         let month = '';
         let year = '';
@@ -98,8 +113,7 @@ class ProfileEditForm extends React.Component {
   }
 
   updateUser(captchaToken) {
-    let birthday;
-    birthday = `${this.state.day}/${this.state.month}/${this.state.year}`;
+    let birthday = `${this.state.day}/${this.state.month}/${this.state.year}`;
 
     let userInfo = {
       firstName: this.state.firstName,
