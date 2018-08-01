@@ -47,7 +47,6 @@ class HotelBookingConfirmPage extends React.Component {
       if (res.success) {
         res.body.then(data => {
           this.setState({ data: data, booking: booking });
-          console.log(data);
           requester.getLocRateByCurrency(data.currency).then(res => {
             res.body.then(locData => {
               this.setState({ locRate: locData[0]['price_' + data.currency.toLowerCase()] });
