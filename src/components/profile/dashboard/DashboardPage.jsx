@@ -23,7 +23,6 @@ class DashboardPage extends React.Component {
             requester.getMyHotelBookings().then((resHotelTrips) => {
               resHotelTrips.body.then(dataHotelTrips => {
                 const homeTrips = dataHomeTrips.content.map(trip => {
-                  console.log(trip.startDate);
                   return {
                     ...trip,
                     sortDate: moment(trip.startDate).utc().valueOf(),
@@ -47,8 +46,6 @@ class DashboardPage extends React.Component {
                 const trips = homeTrips.concat(hotelTrips).sort((x, y) => {
                   return x.sortDate >= y.sortDate ? -1 : 1;
                 }).slice(0, 5);
-
-                console.log(trips);
 
                 this.setState({
                   trips: trips,
