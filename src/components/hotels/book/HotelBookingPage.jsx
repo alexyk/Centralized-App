@@ -149,7 +149,6 @@ class HotelBookingPage extends React.Component {
   getSearchParams() {
     const map = new Map();
     const pairs = this.props.location.search.substr(1).split('&');
-    console.log(pairs);
     for (let i = 0; i < pairs.length; i++) {
       let pair = pairs[i].split('=');
       map.set(pair[0], this.parseParam(pair[1]));
