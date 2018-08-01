@@ -131,10 +131,10 @@ $media-expressions: (
 			display: inline-block;
 			vertical-align: middle;
 			margin-right: 11px;
-			width: 100%;
-			@include media(">=desktop") {
-				width: auto
-			}
+			// width: 100%;
+			// @include media(">=desktop") {
+				width: auto;
+			// }
 			&:last-child {
 				margin-right: 0;
 			}
@@ -155,12 +155,12 @@ $media-expressions: (
 			justify-content: center;
 			padding: 0;
 			@include media(">=tablet") {
-				min-width: 300px;
+				// min-width: 300px;
 				margin: 0 auto;
 			}
-			@include media(">=desktop") {
+			// @include media(">=desktop") {
 				min-width: 120px;
-			}
+			// }
 		}
 		.icon-arrow-right,
 		.icon-arrow-left {

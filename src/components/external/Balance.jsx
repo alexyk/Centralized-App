@@ -33,10 +33,15 @@ class Balance extends React.Component {
   }
 
   send() {
-    requester.getExternalCampaignBalance(this.state.email).then(res => {
-      res.body.then(data => {
-        this.setState({balance: data.count, refLink: Config.getValue("basePath") + "vote?ref=" + data.referralId});
-      });
+    requester.getExternalCampaignBalance({ email: this.state.email }).then(res => {
+      console.log(res);
+      if (res.success) {
+        res.body.then(data => {
+          this.setState({balance: data.count, refLink: Config.getValue("basePath") + "vote?ref=" + data.referralId});
+        });
+      } else {
+        console.log('Error');
+      }
     });
   }
 

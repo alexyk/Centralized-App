@@ -1,5 +1,6 @@
 @import '../../vendors/include-media';
 @import '../../base/variables';
+
 @mixin horizontalLine() {
   padding-top: 20px;
   border-top: 1px solid #ccc;
@@ -19,27 +20,55 @@
   }
   .top-destinations {
     .slick-next {
-      right: 2.5% !important;
+      // right: 15% !important;
+      // @include media(">=tablet") {
+        right: 40px !important;
+      // }
       &:before {
-        content: url('../../../images/next.png');
+        font-family: 'icomoon' !important;
+        speak: none;
+        font-style: normal;
+        font-weight: normal;
+        font-variant: normal;
+        text-transform: none;
+        line-height: 1;
+
+        /* Better Font Rendering =========== */
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        content: "\E902";
+	      color: #57595b;
         background-color: white;
         border: 1px solid #ccc;
         border-radius: 3px;
         padding: 7px 15px;
-        font-size: 27px;
         opacity: 1 !important;
       }
     }
     .slick-prev {
-      left: -2% !important;
+      left: -5px !important;
       z-index: 2;
+      @include media(">=tablet") {
+        right: 2.5% !important;
+      }
       &:before {
-        content: url('../../../images/left.png');
+        font-family: 'icomoon' !important;
+        speak: none;
+        font-style: normal;
+        font-weight: normal;
+        font-variant: normal;
+        text-transform: none;
+        line-height: 1;
+
+        /* Better Font Rendering =========== */
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        content: "\E901";
+	      color: #57595b;
         background-color: white;
         border: 1px solid #ccc;
         border-radius: 3px;
         padding: 7px 15px;
-        font-size: 27px;
         opacity: 1 !important;
       }
     }
@@ -52,10 +81,7 @@
     }
   }
   .hotels-cards {
-    margin-bottom: 60px;
-    @include media("<=tablet") {
-    margin-bottom: 0;
-  }
+    margin-bottom: 30px;
     .slick-slide {
       padding-left: 10px;
       padding-right: 10px;
@@ -139,7 +165,7 @@
   }
   .btn {
     border-radius: 3px;
-    margin-top: 50px;
+    // margin-top: 50px;
     font-size: 18px;
     padding: 8px 30px;
   }
