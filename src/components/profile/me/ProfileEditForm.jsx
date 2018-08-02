@@ -26,6 +26,7 @@ class ProfileEditForm extends React.Component {
       gender: '',
       country: { id: 1, name: 'US', code: 'US' },
       city: '',
+      address: '',
       locAddress: '',
       jsonFile: '',
       currencies: [],
@@ -43,28 +44,14 @@ class ProfileEditForm extends React.Component {
   }
 
   async componentDidMount() {
-    const headers = {
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-        'Authorization': localStorage[Config.getValue('domainPrefix') + '.auth.locktrip']
-      }
-    };
+    requester.getCountries()
+      .then(res => res.body)
+      .then(data => this.setState({ countries: data }))
+      .catch(error => console.log(error));
 
-    // TODO: Move to requester
-    const data = await fetch('http://localhost:8080/countries', headers)
-      .then(response => response.json())
-      .then(data => data)
-      .catch();
-
-    // console.log(data);
-
-    this.setState({
-      countries: data,
-    });
-
-    requester.getUserInfo().then(res => {
-      res.body.then(data => {
+    requester.getUserInfo()
+      .then(res => res.body)
+      .then(data => {
         console.log(data);
         let day = '';
         let month = '';
@@ -78,31 +65,25 @@ class ProfileEditForm extends React.Component {
         }
 
         this.setState({
-          firstName: data.firstName !== null ? data.firstName : '',
-          lastName: data.lastName !== null ? data.lastName : '',
-          phoneNumber: data.phoneNumber !== null ? data.phoneNumber : '',
-          preferredLanguage: data.preferredLanguage !== null ? data.preferredLanguage : '',
-          preferredCurrency: data.preferredCurrency !== null ? data.preferredCurrency.id : '',
-          gender: data.gender !== null ? data.gender : '',
-          // country: data.country !== null ? data.country : { id: 1, code: 'US' },
-          // city: data.city !== null ? data.city.id : '1',
+          firstName: data.firstName ? data.firstName : '',
+          lastName: data.lastName ? data.lastName : '',
+          phoneNumber: data.phoneNumber ? data.phoneNumber : '',
+          preferredLanguage: data.preferredLanguage ? data.preferredLanguage : '',
+          preferredCurrency: data.preferredCurrency ? data.preferredCurrency.id : '',
+          gender: data.gender? data.gender : '',
+          country: data.country ? data.country : { name: 'United States of America', id: 1, code: 'US' },
+          city: data.city ? data.city : '',
+          address: data.address ? data.address : '',
           locAddress: data.locAddress !== null ? data.locAddress : '',
           jsonFile: data.jsonFile !== null ? data.jsonFile : '',
           currencies: data.currencies,
           day: day,
           month: month,
           year: year
-        }, () => {
-          requester.getCities(this.state.country).then(res => {
-            res.body.then(data => {
-              this.setState({ cities: data.content });
-            });
-          });
         });
+      }).then(() => {
+        this.setState({ loading: false });
       });
-    }).then(() => {
-      this.setState({ loading: false });
-    });
   }
 
   onChange(e) {
@@ -126,6 +107,7 @@ class ProfileEditForm extends React.Component {
       gender: this.state.gender,
       country: parseInt(this.state.country.id, 10),
       city: this.state.city,
+      address: this.state.address,
       birthday: birthday,
       locAddress: this.state.locAddress,
       jsonFile: this.state.jsonFile
@@ -159,17 +141,6 @@ class ProfileEditForm extends React.Component {
   handleCitySelect(place) {
     this.setState({ city: place.formatted_address });
   }
-
-  // updateCities() {
-  //   requester.getCities(this.state.country).then(res => {
-  //     res.body.then(data => {
-  //       this.setState({
-  //         city: '1',
-  //         cities: data.content,
-  //       });
-  //     });
-  //   });
-  // }
 
   render() {
     if (this.state.loading) {
@@ -247,8 +218,8 @@ class ProfileEditForm extends React.Component {
               <div className='select'>
                 <select name="gender" id="sex" onChange={this.onChange} value={this.state.gender}>
                   <option disabled value="">Gender</option>
-                  <option value="men">Men</option>
-                  <option value="women">Women</option>
+                  <option value="male">Male</option>
+                  <option value="female">Female</option>
                   <option value="other">Other</option>
                 </select>
               </div>
@@ -328,6 +299,11 @@ class ProfileEditForm extends React.Component {
 
 
             <br className="clear-both" />
+          </div>
+
+          <div className="address">
+            <label htmlFor="address">Address</label>
+            <input id="address" name="address" value={this.state.address} onChange={this.onChange} type="text" />
           </div>
 
           <ReCAPTCHA
