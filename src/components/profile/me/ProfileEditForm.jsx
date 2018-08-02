@@ -264,7 +264,7 @@ class ProfileEditForm extends React.Component {
           </div>
           <div className="address-city">
             <div className="address">
-              <label htmlFor="address">Where you live</label>
+              <label htmlFor="address">Where do you live</label>
               <div className='select'>
                 <select name="country" id="address" onChange={this.updateCountry} value={JSON.stringify(this.state.country)}>
                   <option disabled value="">Country</option>
@@ -303,7 +303,7 @@ class ProfileEditForm extends React.Component {
 
           <div className="address">
             <label htmlFor="address">Address</label>
-            <input id="address" name="address" value={this.state.address} onChange={this.onChange} type="text" />
+            <input id="address" name="address" value={this.state.address} onChange={this.onChange} type="text" placeholder='Enter your address' />
           </div>
 
           <ReCAPTCHA
