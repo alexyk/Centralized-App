@@ -1,11 +1,10 @@
 import React from 'react';
 
-export default class ReactGoogleAutocomplete extends React.Component {
+export default class GooglePlacesAutocomplete extends React.Component {
   constructor(props) {
     super(props);
     this.autocomplete = null;
     this.event = null;
-    // this.componentRestrictions = null;
   }
 
   componentDidMount() {
@@ -18,7 +17,6 @@ export default class ReactGoogleAutocomplete extends React.Component {
 
     if (componentRestrictions) {
       config.componentRestrictions = componentRestrictions;
-      // this.componentRestrictions = componentRestrictions;
     }
 
     this.autocomplete = new window.google.maps.places.Autocomplete(this.refs.input, config);
@@ -35,7 +33,6 @@ export default class ReactGoogleAutocomplete extends React.Component {
       };
 
       this.autocomplete.setOptions(config);
-      // this.componentRestrictions = componentRestrictions;
     }
   }
 

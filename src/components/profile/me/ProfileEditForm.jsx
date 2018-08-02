@@ -8,6 +8,8 @@ import React from 'react';
 import moment from 'moment';
 import requester from '../../../initDependencies';
 
+import Select from '../../common/google/GooglePlacesAutocomplete';
+
 class ProfileEditForm extends React.Component {
   constructor(props) {
     super(props);
@@ -22,8 +24,8 @@ class ProfileEditForm extends React.Component {
       day: '',
       year: '',
       gender: '',
-      country: '',
-      city: '1',
+      country: { id: 1, name: 'US', code: 'US' },
+      city: '',
       locAddress: '',
       jsonFile: '',
       currencies: [],
@@ -36,8 +38,8 @@ class ProfileEditForm extends React.Component {
     this.onChange = this.onChange.bind(this);
     this.changeDropdownValue = this.changeDropdownValue.bind(this);
     this.updateUser = this.updateUser.bind(this);
-    this.updateCities = this.updateCities.bind(this);
     this.updateCountry = this.updateCountry.bind(this);
+    this.handleCitySelect = this.handleCitySelect.bind(this);
   }
 
   async componentDidMount() {
@@ -82,8 +84,8 @@ class ProfileEditForm extends React.Component {
           preferredLanguage: data.preferredLanguage !== null ? data.preferredLanguage : '',
           preferredCurrency: data.preferredCurrency !== null ? data.preferredCurrency.id : '',
           gender: data.gender !== null ? data.gender : '',
-          country: data.country !== null ? data.country.id : '1',
-          city: data.city !== null ? data.city.id : '1',
+          // country: data.country !== null ? data.country : { id: 1, code: 'US' },
+          // city: data.city !== null ? data.city.id : '1',
           locAddress: data.locAddress !== null ? data.locAddress : '',
           jsonFile: data.jsonFile !== null ? data.jsonFile : '',
           currencies: data.currencies,
@@ -122,8 +124,8 @@ class ProfileEditForm extends React.Component {
       preferredLanguage: this.state.preferredLanguage,
       preferredCurrency: parseInt(this.state.preferredCurrency, 10),
       gender: this.state.gender,
-      country: parseInt(this.state.country, 10),
-      city: parseInt(this.state.city, 10),
+      country: parseInt(this.state.country.id, 10),
+      city: this.state.city,
       birthday: birthday,
       locAddress: this.state.locAddress,
       jsonFile: this.state.jsonFile
@@ -147,23 +149,27 @@ class ProfileEditForm extends React.Component {
   }
 
   updateCountry(e) {
+    console.log(e.target.value);
     this.setState({
-      [e.target.name]: e.target.value,
-    }, () => {
-      this.updateCities();
+      country: JSON.parse(e.target.value),
+      city: ''
     });
   }
 
-  updateCities() {
-    requester.getCities(this.state.country).then(res => {
-      res.body.then(data => {
-        this.setState({
-          city: '1',
-          cities: data.content,
-        });
-      });
-    });
+  handleCitySelect(place) {
+    this.setState({ city: place.formatted_address });
   }
+
+  // updateCities() {
+  //   requester.getCities(this.state.country).then(res => {
+  //     res.body.then(data => {
+  //       this.setState({
+  //         city: '1',
+  //         cities: data.content,
+  //       });
+  //     });
+  //   });
+  // }
 
   render() {
     if (this.state.loading) {
@@ -175,6 +181,8 @@ class ProfileEditForm extends React.Component {
     for (let i = (new Date()).getFullYear(); i >= 1940; i--) {
       years.push(<option key={i} value={i}>{i}</option>);
     }
+
+    console.log(this.state.country);
 
     return (
       <div id="my-profile-edit-form">
@@ -287,10 +295,10 @@ class ProfileEditForm extends React.Component {
             <div className="address">
               <label htmlFor="address">Where you live</label>
               <div className='select'>
-                <select name="country" id="address" onChange={this.updateCountry} value={this.state.country}>
+                <select name="country" id="address" onChange={this.updateCountry} value={JSON.stringify(this.state.country)}>
                   <option disabled value="">Country</option>
                   {this.state.countries.map((item, i) => {
-                    return <option key={i} value={item.id}>{item.name}</option>;
+                    return <option key={i} value={JSON.stringify(item)}>{item.name}</option>;
                   })}
                 </select>
               </div>
@@ -298,14 +306,26 @@ class ProfileEditForm extends React.Component {
             <div className="city">
               <label htmlFor="city">Which city</label>
               <div className='select'>
-                <select name="city" id="city" onChange={this.onChange} value={this.state.city}>
+                <Select
+                  style={{ width: '100%' }}
+                  value={this.state.city}
+                  onChange={this.onChange}
+                  name="city"
+                  onPlaceSelected={this.handleCitySelect}
+                  types={['(cities)']}
+                  componentRestrictions={{ country: this.state.country.code.toLowerCase() }}
+                  disabled={!this.state.country}
+                  placeholder='Choose your city'
+                />
+                {/* <select name="city" id="city" onChange={this.onChange} value={this.state.city}>
                   <option disabled value="">City</option>
                   {this.state.cities.map((item, i) => {
                     return <option key={i} value={item.id}>{item.name}</option>;
                   })}
-                </select>
+                </select> */}
               </div>
             </div>
+
 
             <br className="clear-both" />
           </div>

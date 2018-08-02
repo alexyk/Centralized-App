@@ -1,15 +1,15 @@
 import React from 'react';
 import { withRouter } from 'react-router-dom';
 import { Config } from '../../config';
-import Autocomplete from './ReactGoogleAutocomplete';
+import Select from './google/GooglePlacesAutocomplete';
 
 class GooglePlaces extends React.Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      country: 'BG',
-      city: 'Yambol',
+      country: '',
+      city: '',
       search: '',
       countries: []
     };
@@ -72,7 +72,7 @@ class GooglePlaces extends React.Component {
         </div>
 
         <div className='select'>
-          <Autocomplete
+          <Select
             style={{ width: '100%' }}
             value={this.state.city}
             onChange={this.onChange}
