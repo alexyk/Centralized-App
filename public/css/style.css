@@ -575,7 +575,7 @@ button.disabled:hover {
 
 #hotel-info .hotel-content {
     float: left;
-    width: 55%;
+    width: 100%;
 }
 
 #hotel-info #hotel-section {

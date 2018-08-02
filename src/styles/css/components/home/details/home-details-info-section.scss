@@ -1,0 +1,43 @@
+@import '../../../vendors/include-media';
+#hotel-info {
+  .btn-home-details-info-section-container {
+    display: flex;
+    justify-content: space-between;
+  }
+  .rbc-toolbar-label {
+    @include media("<=phone") {
+      font-size: 27px;
+    }
+  }
+  .calendar-price {
+    @include media("<=tablet") {
+      font-size: 12px;
+    }
+  }
+  .rbc-row-segment {
+    @include media("<=tablet") {
+      bottom: 6px;
+    }
+  }
+  .rbc-row-bg {
+    @include media("<=tablet") {
+      height: 0;
+    }
+  }
+  .calendar>div {
+    @include media("<=tablet") {
+      width: 100%;
+      padding: 0;
+    }
+    .rbc-month-row {
+      @include media("<=tablet") {
+        height: 50px;
+      }
+    }
+  }
+  .list-hotel-description {
+    @include media("<=tablet") {
+      margin: 10% 0;
+    }
+  }
+}

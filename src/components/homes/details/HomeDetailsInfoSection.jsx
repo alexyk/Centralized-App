@@ -2,11 +2,12 @@ import ContactHostModal from '../../common/modals/ContactHostModal';
 import PropTypes from 'prop-types';
 import HomeDetailsAmenityColumn from './HomeDetailsAmenityColumn';
 import HomeDetailsCalendar from './HomeDetailsCalendar';
-import HomeReservationPanel from './HomeReservationPanel';
 import HomeDetailsReviewBox from './HomeDetailsReviewBox';
 import React from 'react';
 import { withRouter } from 'react-router-dom';
 import { Config } from '../../../config';
+
+import '../../../styles/css/components/home/details/home-details-info-section.css';
 
 function HomeDetailsInfoSection(props) {
   const getAmenities = (amenities) => {
@@ -45,7 +46,10 @@ function HomeDetailsInfoSection(props) {
           <h1> {props.data.name} </h1>
           <div className="clearfix" />
           <p>{street}, {city.name}, {country.name}</p>
-          <button className="btn btn-primary" onClick={props.openModal}>Contact Host</button>
+          <div className="btn-home-details-info-section-container">
+            <button className="btn btn-primary" onClick={props.openModal}>Contact Host</button>
+            <a className="btn btn-home-details-info-section-container" href="http://localhost:3000/homes/listings/booking/" >Book now</a>
+          </div>
 
           <HomeDetailsCalendar
             onApply={props.onApply}
@@ -127,7 +131,7 @@ function HomeDetailsInfoSection(props) {
             <div className="clearfix" />
           </div>
         </div>
-        <HomeReservationPanel
+        {/* <HomeReservationPanel
           locRate={props.locRate}
           showLoginModal={props.showLoginModal}
           isLogged={props.isLogged}
@@ -138,7 +142,7 @@ function HomeDetailsInfoSection(props) {
           endDate={props.endDate}
           listing={props.data}
           loading={props.loading}
-        />
+        /> */}
         <div className="clearfix"></div>
       </div>
     </section>
