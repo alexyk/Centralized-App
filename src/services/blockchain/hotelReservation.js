@@ -272,6 +272,8 @@ export class HotelReservation {
 
     let reservationWithWalletInstance = SimpleReservationSingleWithdrawerContractWithWallet(wallet);
 
+    console.log('hotelReservation.js, wei:', reservationCostLOC);
+    console.log('hotelReservation.js, end date:', withdrawDateInSeconds);
     const createReservationSingleWithdrawerTxResult = await reservationWithWalletInstance.createReservation(
       reservationCostLOC,
       withdrawDateFormatted,

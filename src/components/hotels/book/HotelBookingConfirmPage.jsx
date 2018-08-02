@@ -302,13 +302,16 @@ class HotelBookingConfirmPage extends React.Component {
     requester.getMyJsonFile().then(res => {
       res.body.then(data => {
         setTimeout(() => {
+          console.log('HotelBookingConfirmPage.jsx, wei:', wei.toString());
+          console.log('HotelBookingConfirmPage.jsx, end date:', endDate.unix().toString());
+
           HotelReservation.createSimpleReservationSingleWithdrawer(
             data.jsonFile,
             password,
             wei.toString(),
             endDate.unix().toString(),
           ).then(transaction => {
-            console.log(transaction);
+            console.log('transaction', transaction);
             const bookingConfirmObj = {
               bookingId: preparedBookingId,
               transactionHash: transaction.hash,
