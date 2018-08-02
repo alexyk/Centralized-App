@@ -35,9 +35,9 @@ class HomesHomePage extends React.Component {
       });
     });
 
-    requester.getCountries(true).then(res => {
+    requester.getCountries().then(res => {
       res.body.then(data => {
-        this.setState({ countries: data.content });
+        this.setState({ countries: data });
       });
     });
   }
