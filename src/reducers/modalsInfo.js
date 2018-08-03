@@ -12,7 +12,7 @@ export default function reducer(state = initialState, action) {
       };
     case modalsInfo.CLOSE_MODAL:
       return {
-        isActive: { ...state.isActive, [action.payload]: true }
+        isActive: { ...state.isActive, [action.payload]: false }
       };
     default:
       return state;

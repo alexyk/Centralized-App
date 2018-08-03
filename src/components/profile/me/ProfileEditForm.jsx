@@ -52,7 +52,6 @@ class ProfileEditForm extends React.Component {
     requester.getUserInfo()
       .then(res => res.body)
       .then(data => {
-        console.log(data);
         let day = '';
         let month = '';
         let year = '';
@@ -131,7 +130,6 @@ class ProfileEditForm extends React.Component {
   }
 
   updateCountry(e) {
-    console.log(e.target.value);
     this.setState({
       country: JSON.parse(e.target.value),
       city: ''
@@ -152,8 +150,6 @@ class ProfileEditForm extends React.Component {
     for (let i = (new Date()).getFullYear(); i >= 1940; i--) {
       years.push(<option key={i} value={i}>{i}</option>);
     }
-
-    console.log(this.state.country);
 
     return (
       <div id="my-profile-edit-form">
