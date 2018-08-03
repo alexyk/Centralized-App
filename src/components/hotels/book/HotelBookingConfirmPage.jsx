@@ -485,7 +485,7 @@ class HotelBookingConfirmPage extends React.Component {
                 }
               </div>
               <PasswordModal
-                isActive={this.props.modalsInfo.modals.get(PASSWORD_PROMPT)}
+                isActive={this.props.modalsInfo.isActive.get(PASSWORD_PROMPT)}
                 text={'Enter your wallet password'}
                 placeholder={'Wallet password'}
                 handleSubmit={() => this.handleSubmit()}

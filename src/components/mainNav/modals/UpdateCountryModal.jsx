@@ -4,6 +4,8 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { LOGIN, UPDATE_COUNTRY } from '../../../constants/modals.js';
 
+import { connect } from 'react-redux';
+
 function UpdateCountryModal(props) {
 
   const getShortName = (name, length) => {
@@ -16,7 +18,7 @@ function UpdateCountryModal(props) {
 
   return (
     <div>
-      <Modal show={props.isActive} onHide={() => props.closeModal(UPDATE_COUNTRY)} className="modal fade myModal">
+      <Modal show={props.modalsInfo.isActive[UPDATE_COUNTRY]} onHide={() => props.closeModal(UPDATE_COUNTRY)} className="modal fade myModal">
         <Modal.Header>
           <h1>Where are you from?</h1>
           <button type="button" className="close" onClick={() => props.closeModal(UPDATE_COUNTRY)}>&times;</button>
@@ -42,4 +44,8 @@ function UpdateCountryModal(props) {
   );
 }
 
-export default UpdateCountryModal;
+const mapStateToProps = (state) => ({
+  modalsInfo: state.modalsInfo
+});
+
+export default connect(mapStateToProps)(UpdateCountryModal);
