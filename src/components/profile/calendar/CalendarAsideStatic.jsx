@@ -25,7 +25,7 @@ class CalendarAsideStatic extends React.Component {
                 </div>
               </div>
 
-              <div className="col-md-12 controls">
+              <div className="controls">
                 <button className="btn btn-primary btn-next bold" type="submit"
                   onClick={(e) => {
                     e.preventDefault();

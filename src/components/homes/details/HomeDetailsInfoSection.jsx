@@ -8,6 +8,8 @@ import { withRouter } from 'react-router-dom';
 import { Config } from '../../../config';
 
 import '../../../styles/css/components/home/details/home-details-info-section.css';
+import '../../../styles/css/components/homes/property/calendar.css';
+
 
 function HomeDetailsInfoSection(props) {
   const getAmenities = (amenities) => {
@@ -48,7 +50,7 @@ function HomeDetailsInfoSection(props) {
           <p>{street}, {city.name}, {country.name}</p>
           <div className="btn-home-details-info-section-container">
             <button className="btn btn-primary" onClick={props.openModal}>Contact Host</button>
-            <a className="btn btn-home-details-info-section-container" href="http://localhost:3000/homes/listings/booking/" >Book now</a>
+            <a className="btn btn-primary btn-home-details-info-section-container" href="http://localhost:3000/homes/listings/booking/" >Book now</a>
           </div>
 
           <HomeDetailsCalendar

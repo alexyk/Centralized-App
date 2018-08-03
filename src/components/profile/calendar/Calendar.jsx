@@ -107,7 +107,7 @@ function Calendar(props) {
   BigCalendar.momentLocalizer(moment);
 
   return (
-    <div className={(props.selectedDay !== null && props.selectedDay !== '') ? 'col-md-12 calendar dynamic-aside' : 'col-md-12 calendar'}>
+    <div className={(props.selectedDay !== null && props.selectedDay !== '') ? 'calendar dynamic-aside' : 'calendar'}>
       <div className="col-md-8">
         {props.calendarLoading ?
           <div className="loader"></div> :

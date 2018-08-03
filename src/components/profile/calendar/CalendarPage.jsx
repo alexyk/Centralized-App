@@ -224,27 +224,23 @@ class CalendarPage extends React.Component {
     let allEvents = this.state.prices.concat(this.state.reservations);
 
     return (
-      <div>
-        <div className="col-md-12">
-          <div className="container">
-            <Calendar
-              allEvents={allEvents}
-              calendarLoading={this.state.calendarLoading}
-              onCancel={this.onCancel}
-              onSelectSlot={this.onSelectSlot}
-              selectedDay={this.state.selectedDay}
-              selectedDate={this.state.selectedDate}
-              price={this.state.price}
-              defaultDailyPrice={this.state.defaultDailyPrice}
-              available={this.state.available}
-              onSubmit={this.onSubmit}
-              onChange={this.onChange}
-              updateDailyPrice={this.updateDailyPrice}
-              currencySign={this.state.currencySign}
-              // myListings={this.state.myListings}
-              selectedListing={this.state.selectedListing} />
-          </div>
-        </div>
+      <div className="container">
+        <Calendar
+          allEvents={allEvents}
+          calendarLoading={this.state.calendarLoading}
+          onCancel={this.onCancel}
+          onSelectSlot={this.onSelectSlot}
+          selectedDay={this.state.selectedDay}
+          selectedDate={this.state.selectedDate}
+          price={this.state.price}
+          defaultDailyPrice={this.state.defaultDailyPrice}
+          available={this.state.available}
+          onSubmit={this.onSubmit}
+          onChange={this.onChange}
+          updateDailyPrice={this.updateDailyPrice}
+          currencySign={this.state.currencySign}
+          // myListings={this.state.myListings}
+          selectedListing={this.state.selectedListing} />
       </div>
     );
   }

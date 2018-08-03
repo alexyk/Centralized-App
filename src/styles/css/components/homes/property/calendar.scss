@@ -1,0 +1,104 @@
+@import '../../../vendors/include-media';
+.calendar>div {
+  @include media("<=tablet") {
+    width: 100%;
+    padding: 0;
+  }
+}
+
+.rbc-calendar {
+  .rbc-date-cell {
+    margin-left: 5px;
+    margin-top: 5px;
+    padding: 5px;
+    text-align: left;
+  }
+  .rbc-day-bg {
+    background: #FFF;
+    cursor: pointer;
+  }
+  .rbc-event {
+    text-align: right;
+    background: none;
+    cursor: auto;
+  }
+  .rbc-month-header {
+    border-bottom: 1px solid #DDD;
+    padding: 10px 0;
+    .rbc-header {
+      border: none;
+      font-family: FuturaStd-Medium, sans-serif;
+      font-weight: 700;
+    }
+  }
+  .rbc-month-row {
+    height: 60px;
+    overflow: visible;
+    @include media("<=tablet") {
+      height: 50px;
+    }
+  }
+  .rbc-month-view {
+    width: 80%;
+    margin: auto;
+    @include media("<=tablet") {
+      width: 100%;
+    }
+  }
+  .rbc-now {
+    a {
+      background: #D87A61;
+      border-radius: 50%;
+      color: #FFF;
+      font-size: 12px;
+      padding: 5px;
+      &:focus {
+        color: #FFF;
+      }
+    }
+  }
+  .rbc-row-segment {
+    bottom: 30px;
+    position: relative;
+    right: 0;
+    @include media("<=tablet") {
+      bottom: 6px;
+    }
+  }
+  .rbc-toolbar {
+    .rbc-toolbar-label {
+      font-size: 30px;
+      text-align: left;
+      @include media("<=phone") {
+        font-size: 27px;
+      }
+    }
+    button {
+      color: #C4C4C6;
+      font-size: 32px;
+      outline: none;
+      padding: 3px 18px 5px;
+    }
+  }
+}
+
+.calendar-price {
+  @include media("<=tablet") {
+    font-size: 12px;
+  }
+  @include media("<=phone") {
+    font-size: 10px;
+  }
+}
+
+.list-hotel-description {
+  @include media("<=tablet") {
+    margin: 10% 0;
+  }
+}
+
+.rbc-row-bg {
+  @include media("<=tablet") {
+    height: 5vh;
+  }
+}

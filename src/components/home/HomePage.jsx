@@ -43,9 +43,10 @@ class HomePage extends React.Component {
       });
     });
 
-    requester.getCountries(true).then(res => {
+    requester.getCountries().then(res => {
       res.body.then(data => {
-        this.setState({ countries: data.content });
+        console.log(data);
+        this.setState({ countries: data });
       });
     });
   }
