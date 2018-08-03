@@ -25,7 +25,7 @@ function UpdateCountryModal(props) {
           <form onSubmit={(e) => { e.preventDefault(); props.handleUpdateCountry(); }}>
             <label htmlFor="country">Where do you live</label>
             <div className='select'>
-              <select name="country" id="country" onChange={props.onChange} value={props.country} style={{ padding: '10px', maxWidth: '100%' }}>
+              <select name="country" id="country" onChange={props.handleChangeCountry} value={JSON.stringify(props.country)} style={{ padding: '10px', maxWidth: '100%' }}>
                 <option value="" disabled selected>Country</option>
                 {props.countries && props.countries.map((item, i) => {
                   return <option key={i} value={JSON.stringify(item)} style={{ minWidth: '100%', maxWidth: '0' }}>{getShortName(item.name, 30)}</option>;

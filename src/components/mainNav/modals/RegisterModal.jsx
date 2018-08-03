@@ -79,7 +79,7 @@ function RegisterModal(props) {
               <input type="text" required="required" name="signUpLastName" value={props.signUpLastName} onChange={props.onChange} className="form-control" placeholder="Last Name" />
             </div>
             <div className="form-group">
-              <select name="country" id="country" onChange={props.onChange} value={props.country} style={{ padding: '10px', maxWidth: '100%', marginBottom: '10px', minHeight: '50px', paddingLeft: '40px' }} placeholder='Enter your country'>
+              <select name="country" id="country" onChange={props.handleChangeCountry} value={JSON.stringify(props.country)} style={{ padding: '10px', maxWidth: '100%', marginBottom: '10px', minHeight: '50px', paddingLeft: '40px' }} placeholder='Enter your country'>
                 <option value="" disabled selected>Country</option>
                 {props.countries && props.countries.map((item, i) => {
                   return <option key={i} value={JSON.stringify(item)} style={{ minWidth: '100%', maxWidth: '0' }}>{getShortName(item.name, 30)}</option>;
