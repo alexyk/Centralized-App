@@ -4,6 +4,39 @@ import React from 'react';
 import '../../../styles/css/components/homes/booking/homes-booking-page.css';
 
 class HomesBookingPage extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      from: 14,
+      to: 12
+    };
+  }
+
+  componentDidMount() {
+    const { from, to } = this.state;
+    const fromWidth = ((100 / 24) * from);
+    const toWidth = (100 / 24) * to;
+
+    this.timerCheckInOut = setTimeout(() => {
+      document.getElementById('check_in_hour').style.width = `calc(${fromWidth}% + 40px)`;
+      document.getElementById('check_out_hour').style.width = `calc(${toWidth}% + 40px)`;
+
+      document.getElementById('check_in_line_1').style.width = `${fromWidth}%`;
+      document.getElementById('check_in_line_tooltip').style.width = '3%';
+      document.getElementById('check_in_line_2').style.width = `${100 - fromWidth - 3}%`;
+      document.getElementById('check_out_line_1').style.width = `${toWidth - 3}%`;
+      document.getElementById('check_out_line_tooltip').style.width = '3%';
+      document.getElementById('check_out_line_2').style.width = `${100 - toWidth}%`;
+
+      document.getElementById('check_in_tooltip').style.width = `calc(${fromWidth}% + 95px)`;
+      document.getElementById('check_out_tooltip').style.width = `calc(${toWidth}% + 15px)`;
+    }, 100);
+  }
+
+  componentWillUnmount() {
+    clearTimeout(this.timerCheckInOut);
+  }
 
   render() {
     return (
@@ -113,22 +146,30 @@ class HomesBookingPage extends React.Component {
               <p>No smoking</p>
               <p>Not suitable fot pets</p>
               <p>No parties or events</p>
-
-
-
-
-              {/* <div className="Check-in">
-                <p>Check-in</p>
-
+              <div className="check-in">
+                <p className="check-in-text">Check-in</p>
+                <div className="check-in-line">
+                  <div id="check_in_hour">{this.state.from}:00 pm</div>
+                  <div className="lines">
+                    <div id="check_in_line_1" />
+                    <div id="check_in_line_tooltip" />
+                    <div id="check_in_line_2" />
+                  </div>
+                  <div id="check_in_tooltip"><div className="tooltip-content">From {this.state.from}:00 pm</div></div>
+                </div>
               </div>
-              <div className="Check-out">
-                <p>Check-out</p>
-
-              </div> */}
-
-
-
-
+              <div className="check-out">
+                <p className="check-out-text">Check-out</p>
+                <div className="check-out-line">
+                  <div id="check_out_hour">{this.state.to}:00 pm</div>
+                  <div className="lines">
+                    <div id="check_out_line_1" />
+                    <div id="check_out_line_tooltip" />
+                    <div id="check_out_line_2" />
+                  </div>
+                  <div id="check_out_tooltip"><div className="tooltip-content">Until {this.state.to}:00 pm</div></div>
+                </div>
+              </div>
             </div>
             <div className="children-and-extra-beds">
               <h3>Children & Extra Beds</h3>
