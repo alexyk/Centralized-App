@@ -6,6 +6,7 @@ import HomeDetailsReviewBox from './HomeDetailsReviewBox';
 import React from 'react';
 import { withRouter } from 'react-router-dom';
 import { Config } from '../../../config';
+import { Link } from 'react-router-dom';
 
 import '../../../styles/css/components/home/details/home-details-info-section.css';
 import '../../../styles/css/components/homes/property/calendar.css';
@@ -50,7 +51,8 @@ function HomeDetailsInfoSection(props) {
           <p>{street}, {city.name}, {country.name}</p>
           <div className="btn-home-details-info-section-container">
             <button className="btn btn-primary" onClick={props.openModal}>Contact Host</button>
-            <a className="btn btn-primary btn-home-details-info-section-container" href="http://localhost:3000/homes/listings/booking/" >Book now</a>
+            <Link to="/homes/listings/booking/" className="btn btn-primary btn-home-details-info-section-container">Book Now</Link>
+            {/* <a className="btn btn-primary btn-home-details-info-section-container" href="http://localhost:3000/homes/listings/booking/" >Book now</a> */}
           </div>
 
           <HomeDetailsCalendar
