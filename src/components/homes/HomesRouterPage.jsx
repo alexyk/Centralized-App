@@ -18,9 +18,9 @@ class HomesRouterPage extends React.Component {
   }
 
   componentDidMount() {
-    requester.getCountries(true).then(res => {
+    requester.getCountries().then(res => {
       res.body.then(data => {
-        this.setState({ countries: data.content });
+        this.setState({ countries: data });
       });
     });
   }

@@ -83,12 +83,11 @@ class UnpublishedList extends React.Component {
       });
     }
 
-    requester.getCountries().then(res => {
-      res.body.then(data => {
-        this.setState({ countries: data.content });
+    requester.getCountries()
+      .then(response => response.body)
+      .then(data => {
+        this.setState({ countries: data });
       });
-    });
-
   }
 
   onSearch() {
