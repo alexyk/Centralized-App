@@ -52,7 +52,6 @@ class ProfileEditForm extends React.Component {
     requester.getUserInfo()
       .then(res => res.body)
       .then(data => {
-        console.log(data);
         let day = '';
         let month = '';
         let year = '';
@@ -131,7 +130,6 @@ class ProfileEditForm extends React.Component {
   }
 
   updateCountry(e) {
-    console.log(e.target.value);
     this.setState({
       country: JSON.parse(e.target.value),
       city: ''
@@ -152,8 +150,6 @@ class ProfileEditForm extends React.Component {
     for (let i = (new Date()).getFullYear(); i >= 1940; i--) {
       years.push(<option key={i} value={i}>{i}</option>);
     }
-
-    console.log(this.state.country);
 
     return (
       <div id="my-profile-edit-form">
@@ -264,7 +260,7 @@ class ProfileEditForm extends React.Component {
           </div>
           <div className="address-city">
             <div className="address">
-              <label htmlFor="address">Where you live</label>
+              <label htmlFor="address">Where do you live</label>
               <div className='select'>
                 <select name="country" id="address" onChange={this.updateCountry} value={JSON.stringify(this.state.country)}>
                   <option disabled value="">Country</option>
@@ -303,7 +299,7 @@ class ProfileEditForm extends React.Component {
 
           <div className="address">
             <label htmlFor="address">Address</label>
-            <input id="address" name="address" value={this.state.address} onChange={this.onChange} type="text" />
+            <input id="address" name="address" value={this.state.address} onChange={this.onChange} type="text" placeholder='Enter your address' />
           </div>
 
           <ReCAPTCHA

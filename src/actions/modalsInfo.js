@@ -1,29 +1,23 @@
 import { modalsInfo } from './actionTypes';
 
-export function setShowLogin(showLogin) {
-  return {
-    type: modalsInfo.SET_SHOW_LOGIN,
-    showLogin
-  };
-}
-
 export function openModal(modal) {
   return {
     type: modalsInfo.OPEN_MODAL,
-    modal
+    payload: modal
   };
 }
 
 export function closeModal(modal) {
   return {
     type: modalsInfo.CLOSE_MODAL,
-    modal
+    payload: modal
   };
 }
+
 
 export function airdropModals(modal) {
   return {
     type: modalsInfo.AIRDROP_MODALS,
-    modal
+    payload: modal
   };
 }
