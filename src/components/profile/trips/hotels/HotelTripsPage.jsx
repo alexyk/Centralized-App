@@ -1,19 +1,19 @@
-import { closeModal, openModal } from '../../../actions/modalsInfo.js';
-
-import { Config } from '../../../config';
-import { HotelReservation } from '../../../services/blockchain/hotelReservation';
-import HotelTripsTable from './HotelTripsTable';
-import { Link } from 'react-router-dom';
-import { NotificationManager } from 'react-notifications';
-import { PASSWORD_PROMPT } from '../../../constants/modals.js';
-import Pagination from '../../common/pagination/Pagination';
-import PasswordModal from '../../common/modals/PasswordModal';
+import React from 'react';
 import PropTypes from 'prop-types';
 import ReCAPTCHA from 'react-google-recaptcha';
-import React from 'react';
-import { connect } from 'react-redux';
-import requester from '../../../initDependencies';
+import { Link } from 'react-router-dom';
 import { withRouter } from 'react-router-dom';
+import { NotificationManager } from 'react-notifications';
+import { connect } from 'react-redux';
+
+import HotelTripsList from './HotelTripsList';
+import Pagination from '../../../common/pagination/Pagination';
+import PasswordModal from '../../../common/modals/PasswordModal';
+import requester from '../../../../initDependencies';
+import { Config } from '../../../../config';
+import { HotelReservation } from '../../../../services/blockchain/hotelReservation';
+import { PASSWORD_PROMPT } from '../../../../constants/modals.js';
+import { closeModal, openModal } from '../../../../actions/modalsInfo.js';
 
 class HotelTripsPage extends React.Component {
   constructor(props) {
@@ -159,7 +159,7 @@ class HotelTripsPage extends React.Component {
             <h2>Upcoming Trips ({this.state.totalTrips})</h2>
             <hr />
 
-            <HotelTripsTable
+            <HotelTripsList
               trips={this.state.trips}
               currentTripId={this.state.currentTripId}
               onTripSelect={this.onTripSelect}

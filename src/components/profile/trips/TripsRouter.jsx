@@ -1,9 +1,9 @@
 import { Route, Redirect, Switch } from 'react-router-dom';
 
 import React from 'react';
-import HotelTripsPage from './HotelTripsPage';
+import HotelTripsPage from './hotels/HotelTripsPage';
 import HomeTripsPage from './HomeTripsPage';
-import HotelTripDetails from './HotelTripDetails';
+import HotelTripDetails from './hotels/HotelTripDetails';
 import withNav from './withNav';
 
 function TripsRouter() {

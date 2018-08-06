@@ -2,11 +2,11 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import moment from 'moment';
-import ProfileFlexContainer from '../flexContainer/ProfileFlexContainer';
-import { Config } from '../../../config';
-import HotelIcon from '../../../styles/images/icon-hotel.png';
+import ProfileFlexContainer from '../../flexContainer/ProfileFlexContainer';
+import { Config } from '../../../../config';
+import HotelIcon from '../../../../styles/images/icon-hotel.png';
 
-import '../../../styles/css/components/profile/trips/hotel-trips-table.css';
+import '../../../../styles/css/components/profile/trips/hotel-trips-table.css';
 
 function HotelTripsTableRow(props) {
 
