@@ -73,12 +73,11 @@ class PublishedList extends React.Component {
       });
     }
 
-    requester.getCountries().then(res => {
-      res.body.then(data => {
-        this.setState({ countries: data.content });
+    requester.getCountries()
+      .then(res => res.body)
+      .then(data => {
+        this.setState({ countries: data });
       });
-    });
-
   }
 
   onSearch() {
@@ -213,7 +212,6 @@ class PublishedList extends React.Component {
   }
 
   handleContactHost(id, message, captchaToken) {
-    // this.setState({ loading: true });
     let contactHostObj = {
       message: message
     };
@@ -344,34 +342,6 @@ class PublishedList extends React.Component {
             {this.state.listings.length === 0
               ? <NoEntriesMessage text="No listings to show" />
               : <div>
-                {/* <div className="table-header bold">
-                  <div className="col-md-1">
-                  </div>
-                  <div className="col-md-4">
-                    <span>Name</span>
-                  </div>
-                  <div className="col-md-2">
-                    <span>Price</span>
-                  </div>
-                  <div className="col-md-3">
-                    <span>Actions</span>
-                  </div>
-                  <div className="col-md-2">
-                    <span>Contact host</span>
-                  </div>
-                </div> */}
-
-                {/* TODO: Fix event emmiter warning from this piece of code */}
-
-                {/* <ListingRow
-                      action="Unpublish"
-                      canDelete={false}
-                      updateListingStatus={this.updateListingStatus}
-                      actionClass="btn btn-danger"
-                      listing={item}
-                      key={i}
-                      openModal={this.openModal}
-                    /> */}
                 {this.state.listings.map((l, i) => {
                   return (
                     <ListItem

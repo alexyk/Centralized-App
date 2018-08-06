@@ -48,7 +48,6 @@ class HotelBookingConfirmPage extends React.Component {
       if (res.success) {
         res.body.then(data => {
           this.setState({ data: data, booking: booking });
-          console.log(data);
           requester.getLocRateByCurrency(data.currency).then(res => {
             res.body.then(locData => {
               this.setState({ locRate: locData[0]['price_' + data.currency.toLowerCase()] });
@@ -221,7 +220,6 @@ class HotelBookingConfirmPage extends React.Component {
         const roomId = this.state.booking.quoteId;
         const numberOfTravelers = this.getNumberOfTravelers();
         const cancellationFees = data;
-        console.log(cancellationFees);
         const daysBeforeStartOfRefund = [];
         const refundPercentages = [];
         for (let key in cancellationFees) {
@@ -234,7 +232,6 @@ class HotelBookingConfirmPage extends React.Component {
         this.closeModal(PASSWORD_PROMPT);
 
         const queryString = this.props.location.search;
-        console.log((queryString));
 
         requester.getMyJsonFile().then(res => {
           res.body.then(data => {
@@ -546,7 +543,7 @@ class HotelBookingConfirmPage extends React.Component {
                 }
               </div>
               <PasswordModal
-                isActive={this.props.modalsInfo.modals.get(PASSWORD_PROMPT)}
+                isActive={this.props.modalsInfo.isActive.get(PASSWORD_PROMPT)}
                 text={'Enter your wallet password'}
                 placeholder={'Wallet password'}
                 handleSubmit={() => this.handleSubmitSingleWithdrawer()}

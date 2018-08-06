@@ -32,6 +32,7 @@ import { connect } from 'react-redux';
 import moment from 'moment';
 import queryString from 'query-string';
 import requester from '../../initDependencies';
+import GooglePlaces from '../common/GooglePlaces';
 
 // if (process.env.NODE_ENV === 'development') {
 //   console.log(process.env.NODE_ENV);
@@ -137,6 +138,7 @@ class App extends React.Component {
           <Route path="/softuni" render={() => <WorldKuCoinCampaign />} />
           <Route path="/vote" render={() => <WorldKuCoinCampaign />} />
           <Route path="/campaigns/balance/check" render={() => <Balance />} />
+          <Route path="/google" render={() => <GooglePlaces />} />
 
           {/* MOBILE ONLY START */}
           <Route path="/mobile/search" render={() => <StaticHotelsSearchPage />} />
