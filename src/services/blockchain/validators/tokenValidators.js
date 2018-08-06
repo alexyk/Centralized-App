@@ -24,9 +24,10 @@ export class TokenValidators {
 //     const locAmountGasToValidate = totalGasLoc.mul(TIMES_GAS_AMOUNT);
 //     const locAmountToValidate = locAmountGasToValidate.add(locAmount);
 
+    locAmount = ethers.utils.bigNumberify(locAmount);
     let balance = await LOCTokenContract.balanceOf(account);
     if (locAmount.gt(balance)) {
       throw ERROR.INSUFFICIENT_AMOUNT_LOC;
     }
-  };
+  }
 }
