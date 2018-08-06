@@ -1,4 +1,6 @@
-import { NavLink } from 'react-router-dom';
+import { Link, NavLink } from 'react-router-dom';
+import { MenuItem, Nav, NavDropdown, NavItem, Navbar } from 'react-bootstrap/lib';
+
 import React from 'react';
 import requester from '../../initDependencies';
 
@@ -16,6 +18,8 @@ class NavProfile extends React.Component {
     requester.getUserInfo().then(res => {
       res.body.then(data => {
         this.setState({ roles: data.roles, loading: false });
+        console.log("asd");
+        console.log(data.roles);
       });
     });
   }
@@ -42,7 +46,11 @@ class NavProfile extends React.Component {
             <li><NavLink activeClassName="active" to="/profile/wallet">Wallet</NavLink></li>
             <li><NavLink activeClassName="active" to="/airdrop">Airdrop</NavLink></li>
             <li><NavLink activeClassName="active" to="/buyloc">Buy LOC</NavLink></li>
-            {this.isAdmin() && <li><NavLink activeClassName="active" to="/profile/admin/listings">All Listings</NavLink></li>}
+            {this.isAdmin() && <NavDropdown title="Admin">
+              <li><NavLink activeClassName="active" to="/profile/admin/listings">All Listings</NavLink></li>
+              <li><NavLink activeClassName="active" to="/profile/admin/users">All Users</NavLink></li>
+            </NavDropdown>}
+
           </ul>
         </div>
       </nav>

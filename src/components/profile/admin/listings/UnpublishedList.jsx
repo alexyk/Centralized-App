@@ -1,24 +1,29 @@
-import '../../../styles/css/components/captcha/captcha-container.css';
+import '../../../../styles/css/components/captcha/captcha-container.css';
 
-import { Config } from '../../../config';
-import ContactHostModal from '../../common/modals/ContactHostModal';
+import { NavLink, withRouter } from 'react-router-dom';
+
+import AdminNav from '../AdminNav';
+import { Config } from '../../../../config';
+import ContactHostModal from '../../../common/modals/ContactHostModal';
+import DeletionModal from '../../../common/modals/DeletionModal';
 import Filter from './Filter';
 import Lightbox from 'react-images';
 import ListItem from './ListItem';
-import NoEntriesMessage from '../common/NoEntriesMessage';
+import NoEntriesMessage from '../../common/NoEntriesMessage';
 import { NotificationManager } from 'react-notifications';
-import Pagination from '../../common/pagination/Pagination';
+import Pagination from '../../../common/pagination/Pagination';
 import PropTypes from 'prop-types';
 import ReCAPTCHA from 'react-google-recaptcha';
 import React from 'react';
+import filterListings from '../../../../actions/filterListings';
 import queryString from 'query-string';
-import requester from '../../../initDependencies';
-import { withRouter } from 'react-router-dom';
+import requester from '../../../../initDependencies';
 
-class PublishedList extends React.Component {
+class UnpublishedList extends React.Component {
   constructor(props) {
     super(props);
 
+    this.captcha = null;
     let searchMap = queryString.parse(this.props.location.search);
     this.state = {
       listings: [],
@@ -33,7 +38,10 @@ class PublishedList extends React.Component {
       name: searchMap.listingName === undefined ? '' : searchMap.listingName,
       hostEmail: searchMap.host === undefined ? '' : searchMap.host,
       isShownContactHostModal: false,
-      selectedListing: '1'
+      isShownDeleteListingModal: false,
+      isDeleting: false,
+      deletingId: -1,
+      deletingName: '',
     };
 
     this.onPageChange = this.onPageChange.bind(this);
@@ -42,11 +50,14 @@ class PublishedList extends React.Component {
     this.handleSelectCity = this.handleSelectCity.bind(this);
     this.onSearch = this.onSearch.bind(this);
     this.onChange = this.onChange.bind(this);
-    this.openModal = this.openModal.bind(this);
-    this.closeModal = this.closeModal.bind(this);
     this.openContactHostModal = this.openContactHostModal.bind(this);
     this.closeContactHostModal = this.closeContactHostModal.bind(this);
     this.handleContactHost = this.handleContactHost.bind(this);
+    this.handleDeleteListing = this.handleDeleteListing.bind(this);
+    this.handleOpenDeleteListingModal = this.handleOpenDeleteListingModal.bind(this);
+    this.handleCloseDeleteListing = this.handleCloseDeleteListing.bind(this);
+    this.filterListings = filterListings.bind(this);
+    this.executeCaptcha = this.executeCaptcha.bind(this);
     this.handleExpandListing = this.handleExpandListing.bind(this);
     this.handleShrinkListing = this.handleShrinkListing.bind(this);
     this.closeLightbox = this.closeLightbox.bind(this);
@@ -59,7 +70,8 @@ class PublishedList extends React.Component {
 
   componentDidMount() {
     let search = this.buildSearchTerm();
-    requester.getAllPublishedListings(search.searchTermMap).then(res => {
+    console.log(search.searchTermMap);
+    requester.getAllUnpublishedListings(search.searchTermMap).then(res => {
       res.body.then(data => {
         this.setState({ listings: data.content, loading: false, totalElements: data.totalElements });
       });
@@ -86,13 +98,14 @@ class PublishedList extends React.Component {
 
     let search = this.buildSearchTerm();
 
-    requester.getAllPublishedListings(search.searchTermMap).then(res => {
+    requester.getAllUnpublishedListings(search.searchTermMap).then(res => {
       res.body.then(data => {
-        this.props.history.push(`/profile/admin/listings/published${search.searchTerm}`);
+        this.props.history.push(`/profile/admin/listings/unpublished${search.searchTerm}`);
         this.setState({ listings: data.content, loading: false, totalElements: data.totalElements });
       });
     });
   }
+
 
   buildSearchTerm() {
     let searchTermMap = [];
@@ -128,6 +141,10 @@ class PublishedList extends React.Component {
     this.setState({
       [e.target.name]: e.target.value
     });
+  }
+
+  executeCaptcha() {
+    this.captcha.execute();
   }
 
   handleSelectCountry(option) {
@@ -173,7 +190,7 @@ class PublishedList extends React.Component {
     }
 
     let newSearchTerm = queryString.stringify(searchTerm);
-    requester.getAllPublishedListings(arraySearchTerm).then(res => {
+    requester.getAllUnpublishedListings(arraySearchTerm).then(res => {
       res.body.then(data => {
         this.props.history.push('?' + newSearchTerm);
         this.setState({
@@ -190,14 +207,22 @@ class PublishedList extends React.Component {
       event.preventDefault();
     }
 
-    let unpublishObj = {
+    let publishObj = {
       listingId: id,
       state: status
     };
 
-    requester.changeListingStatus(unpublishObj).then(res => {
+    requester.changeListingStatus(publishObj).then(res => {
       if (res.success) {
-        NotificationManager.info('Listing unpublished');
+        switch (status) {
+          case 'active': NotificationManager.success('Listing approved');
+            break;
+          case 'denied': NotificationManager.success('Listing denied');
+            break;
+          default:
+            break;
+        }
+
         const allListings = this.state.listings;
         const newListings = allListings.filter(x => x.id !== id);
         const totalElements = this.state.totalElements;
@@ -207,7 +232,7 @@ class PublishedList extends React.Component {
         }
       }
       else {
-        NotificationManager.error('Something went wrong', 'Listings Operations');
+        NotificationManager.error('Something went wrong');
       }
     });
   }
@@ -224,14 +249,6 @@ class PublishedList extends React.Component {
     });
   }
 
-  openModal(id) {
-    this.setState({ isShownContactHostModal: true, selectedListing: id });
-  }
-
-  closeModal() {
-    this.setState({ isShownContactHostModal: false });
-  }
-
   openContactHostModal(event, id) {
     if (event) {
       event.preventDefault();
@@ -242,6 +259,53 @@ class PublishedList extends React.Component {
 
   closeContactHostModal() {
     this.setState({ isShownContactHostModal: false });
+  }
+
+  handleOpenDeleteListingModal(event, id, name) {
+    if (event) {
+      event.preventDefault();
+    }
+
+    this.setState({
+      isShownDeleteListingModal: true,
+      deletingId: id,
+      deletingName: name
+    });
+  }
+
+  handleDeleteListing(token) {
+    this.setState({ isDeleting: true });
+    const { deletingId } = this.state;
+    requester.deleteListing(deletingId, token)
+      .then(res => {
+        if (res.success) {
+          const allListings = this.state.listings;
+          const newListings = allListings.filter(x => x.id !== deletingId);
+          const totalElements = this.state.totalElements;
+          this.setState({ listings: newListings, totalElements: totalElements - 1 });
+          NotificationManager.success('Listing deleted');
+          if (newListings.length === 0 && totalElements > 0) {
+            this.onPageChange(1);
+          }
+        } else {
+          NotificationManager.error('Cannot delete this property. It might have reservations or other irrevocable actions.');
+        }
+        this.handleCloseDeleteListing();
+      }).catch(e => {
+        console.log(e);
+        this.handleCloseDeleteListing();
+      });
+  }
+
+  handleCloseDeleteListing() {
+    this.setState(
+      {
+        isShownDeleteListingModal: false,
+        deletingId: -1,
+        isDeleting: false,
+        deletingName: ''
+      }
+    );
   }
 
   handleExpandListing(event, id) {
@@ -305,7 +369,7 @@ class PublishedList extends React.Component {
 
   render() {
     if (this.state.loading) {
-      return <div className="loader" style={{ 'margin-bottom': '40px' }}></div>;
+      return <div className="loader" style={{ 'marginBottom': '40px' }}></div>;
     }
 
     const { imagesListingId } = this.state;
@@ -318,117 +382,107 @@ class PublishedList extends React.Component {
     }
 
     return (
-      <div className="my-reservations">
-        <section id="profile-my-reservations">
-          <div>
-            <Filter
-              countries={this.state.countries}
-              cities={this.state.cities}
-              city={this.state.city}
-              country={this.state.country}
-              name={this.state.name}
-              hostEmail={this.state.hostEmail}
-              handleSelectCountry={this.handleSelectCountry}
-              handleSelectCity={this.handleSelectCity}
-              onSearch={this.onSearch}
-              loading={this.state.countries === [] || this.state.countries.length === 0}
-              onChange={this.onChange} />
+      <div>
+        <AdminNav>
+          <li><NavLink exact activeClassName="active" to="/profile/admin/listings/unpublished"><h2>Unpublished</h2></NavLink></li>
+          <li><NavLink exact activeClassName="active" to="/profile/admin/listings/published"><h2>Published</h2></NavLink></li>
+        </AdminNav>
+        <div className="my-reservations">
+          <section id="profile-my-reservations">
 
-            <ContactHostModal
-              id={this.state.selectedListing}
-              isActive={this.state.isShownContactHostModal}
-              closeModal={this.closeContactHostModal}
-              handleContactHost={this.handleContactHost}
-            />
+            <div>
+              <Filter
+                countries={this.state.countries}
+                cities={this.state.cities}
+                city={this.state.city}
+                country={this.state.country}
+                name={this.state.name}
+                hostEmail={this.state.hostEmail}
+                handleSelectCountry={this.handleSelectCountry}
+                handleSelectCity={this.handleSelectCity}
+                onSearch={this.onSearch}
+                loading={this.state.countries === [] || this.state.countries.length === 0}
+                onChange={this.onChange} />
 
-            {this.state.listings.length === 0
-              ? <NoEntriesMessage text="No listings to show" />
-              : <div>
-                {/* <div className="table-header bold">
-                  <div className="col-md-1">
-                  </div>
-                  <div className="col-md-4">
-                    <span>Name</span>
-                  </div>
-                  <div className="col-md-2">
-                    <span>Price</span>
-                  </div>
-                  <div className="col-md-3">
-                    <span>Actions</span>
-                  </div>
-                  <div className="col-md-2">
-                    <span>Contact host</span>
-                  </div>
-                </div> */}
-
-                {/* TODO: Fix event emmiter warning from this piece of code */}
-
-                {/* <ListingRow
-                      action="Unpublish"
-                      canDelete={false}
-                      updateListingStatus={this.updateListingStatus}
-                      actionClass="btn btn-danger"
-                      listing={item}
-                      key={i}
-                      openModal={this.openModal}
-                    /> */}
-                {this.state.listings.map((l, i) => {
-                  return (
-                    <ListItem
-                      key={i}
-                      item={l}
-                      isExpanded={this.state.expandedListings[l.id]}
-                      openLightbox={this.openLightbox}
-                      openContactHostModal={this.openContactHostModal}
-                      updateListingStatus={this.updateListingStatus}
-                      handleExpandListing={this.handleExpandListing}
-                      handleShrinkListing={this.handleShrinkListing}
-                    />
-                  );
-                })}
-              </div>
-            }
-
-            <Pagination
-              loading={this.state.totalReservations === 0}
-              onPageChange={this.onPageChange}
-              currentPage={this.state.currentPage + 1}
-              pageSize={20}
-              totalElements={this.state.totalElements}
-            />
-
-            {this.state.lightboxIsOpen && images !== null &&
-              <Lightbox
-                currentImage={this.state.currentImage}
-                images={images}
-                isOpen={this.state.lightboxIsOpen}
-                onClickNext={this.gotoNext}
-                onClickPrev={this.gotoPrevious}
-                onClickThumbnail={this.gotoImage}
-                onClose={this.closeLightbox}
-              />
-            }
-
-            <div className='captcha-container'>
-              <ReCAPTCHA
-                ref={el => this.captcha = el}
-                size="invisible"
-                sitekey={Config.getValue('recaptchaKey')}
-                onChange={token => { this.handleDeleteListing(token); this.captcha.reset(); }}
+              <ContactHostModal
+                id={this.state.selectedListing}
+                isActive={this.state.isShownContactHostModal}
+                closeModal={this.closeContactHostModal}
+                handleContactHost={this.handleContactHost}
               />
 
+              <DeletionModal
+                isActive={this.state.isShownDeleteListingModal}
+                deletingName={this.state.deletingName}
+                isDeleting={this.state.isDeleting}
+                // filterListings={this.filterListings}
+                handleDeleteListing={this.executeCaptcha}
+                deletingId={this.state.deletingId}
+                onHide={this.handleCloseDeleteListing}
+              />
+
+              {this.state.listings.length === 0
+                ? <NoEntriesMessage text="No listings to show" />
+                : <div>
+                  {this.state.listings.map((l, i) => {
+                    return (
+                      <ListItem
+                        key={i}
+                        item={l}
+                        isExpanded={this.state.expandedListings[l.id]}
+                        isDeleting={this.state.isDeleting}
+                        openLightbox={this.openLightbox}
+                        openContactHostModal={this.openContactHostModal}
+                        updateListingStatus={this.updateListingStatus}
+                        handleOpenDeleteListingModal={this.handleOpenDeleteListingModal}
+                        handleExpandListing={this.handleExpandListing}
+                        handleShrinkListing={this.handleShrinkListing}
+                      />
+                    );
+                  })}
+                </div>
+              }
+
+              <Pagination
+                loading={this.state.totalReservations === 0}
+                onPageChange={this.onPageChange}
+                currentPage={this.state.currentPage + 1}
+                pageSize={20}
+                totalElements={this.state.totalElements}
+              />
             </div>
+          </section>
+
+
+          {this.state.lightboxIsOpen && images !== null &&
+            <Lightbox
+              currentImage={this.state.currentImage}
+              images={images}
+              isOpen={this.state.lightboxIsOpen}
+              onClickNext={this.gotoNext}
+              onClickPrev={this.gotoPrevious}
+              onClickThumbnail={this.gotoImage}
+              onClose={this.closeLightbox}
+            />
+          }
+
+          <div className='captcha-container'>
+            <ReCAPTCHA
+              ref={el => this.captcha = el}
+              size="invisible"
+              sitekey={Config.getValue('recaptchaKey')}
+              onChange={token => { this.handleDeleteListing(token); this.captcha.reset(); }}
+            />
           </div>
-        </section>
+        </div>
       </div>
     );
   }
 }
 
-PublishedList.propTypes = {
+UnpublishedList.propTypes = {
   location: PropTypes.object,
-  history: PropTypes.object,
-
+  history: PropTypes.object
 };
 
-export default withRouter(PublishedList);
+export default withRouter(UnpublishedList);
