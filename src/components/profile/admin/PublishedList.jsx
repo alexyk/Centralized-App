@@ -75,7 +75,7 @@ class PublishedList extends React.Component {
 
     requester.getCountries().then(res => {
       res.body.then(data => {
-        this.setState({ countries: data });
+        this.setState({ countries: data.content });
       });
     });
 

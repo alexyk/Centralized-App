@@ -43,7 +43,7 @@ class ProfileEditForm extends React.Component {
   componentDidMount() {
     requester.getCountries().then(res => {
       res.body.then(data => {
-        this.setState({ countries: data });
+        this.setState({ countries: data.content });
       });
     });
 
