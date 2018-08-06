@@ -33,6 +33,12 @@ import moment from 'moment';
 import queryString from 'query-string';
 import requester from '../../initDependencies';
 
+// if (process.env.NODE_ENV === 'development') {
+//   console.log(process.env.NODE_ENV);
+//   const { whyDidYouUpdate } = require('why-did-you-update');
+//   whyDidYouUpdate(React);
+// }
+
 class App extends React.Component {
   constructor(props) {
     super(props);
@@ -101,6 +107,7 @@ class App extends React.Component {
   }
 
   render() {
+
     const isWebView = this.props.location.pathname.indexOf('/mobile') !== -1;
 
     return (
