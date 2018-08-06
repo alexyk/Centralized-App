@@ -228,7 +228,7 @@ class MainNav extends React.Component {
           // this.captcha.reset();
         });
       } else {
-        res.response.then(res => {
+        res.errors.then(res => {
           const errors = res.errors;
           if (errors.hasOwnProperty('JsonFileNull')) {
             NotificationManager.warning(errors['JsonFileNull'].message);
@@ -239,13 +239,10 @@ class MainNav extends React.Component {
           } else {
             for (let key in errors) {
               if (typeof errors[key] !== 'function') {
-                console.log(key);
-                console.log(errors[key]);
                 NotificationManager.warning(errors[key].message);
               }
             }
           }
-          // this.captcha.reset();
         }).catch(errors => {
           for (var e in errors) {
             NotificationManager.warning(errors[e].message);
