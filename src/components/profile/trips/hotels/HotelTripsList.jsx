@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+
 import NoEntriesMessage from '../../common/NoEntriesMessage';
 import ProfileFlexContainer from '../../flexContainer/ProfileFlexContainer';
 import HotelTripsTableRow from './HotelTripsTableRow';

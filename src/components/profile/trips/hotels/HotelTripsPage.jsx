@@ -81,7 +81,6 @@ class HotelTripsPage extends React.Component {
   handleCancelTrip() {
     let bookingForCancellation = {};
     bookingForCancellation.bookingId = this.state.bookingPrepareId;
-    console.log(bookingForCancellation);
     requester.cancelBooking(bookingForCancellation).then(res => {
       if (res.success === true) {
         requester.getMyJsonFile().then(res => {
