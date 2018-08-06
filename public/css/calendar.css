@@ -135,7 +135,7 @@
   padding: 0 35px;
   text-align: left;
 }
-
+/*
 .rbc-calendar .rbc-date-cell {
   margin-left: 5px;
   margin-top: 5px;
@@ -251,4 +251,4 @@ div.calendar {
 
 div.calendar.dynamic-aside {
   align-items: flex-end;
-}
+} */
