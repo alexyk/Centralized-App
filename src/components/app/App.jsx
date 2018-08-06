@@ -34,7 +34,6 @@ import queryString from 'query-string';
 import requester from '../../initDependencies';
 import GooglePlaces from '../common/GooglePlaces';
 
-
 // if (process.env.NODE_ENV === 'development') {
 //   console.log(process.env.NODE_ENV);
 //   const { whyDidYouUpdate } = require('why-did-you-update');
