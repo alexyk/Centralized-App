@@ -113,7 +113,7 @@ function HotelsSearchBar(props) {
 
       <div className="check-wrap source-panel-item">
         <ChildrenModal
-          isActive={props.modalsInfo.modals.get(CHILDREN)}
+          isActive={props.modalsInfo.isActive[CHILDREN]}
           closeModal={closeChildrenModal}
           handleSubmit={handleSubmitModal}
         />

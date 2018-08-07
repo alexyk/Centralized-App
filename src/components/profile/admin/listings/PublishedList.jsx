@@ -75,12 +75,11 @@ class PublishedList extends React.Component {
       });
     }
 
-    requester.getCountries().then(res => {
-      res.body.then(data => {
-        this.setState({ countries: data.content });
+    requester.getCountries()
+      .then(res => res.body)
+      .then(data => {
+        this.setState({ countries: data });
       });
-    });
-
   }
 
   onSearch() {
@@ -215,7 +214,6 @@ class PublishedList extends React.Component {
   }
 
   handleContactHost(id, message, captchaToken) {
-    // this.setState({ loading: true });
     let contactHostObj = {
       message: message
     };

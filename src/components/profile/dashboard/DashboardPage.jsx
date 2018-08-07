@@ -11,7 +11,7 @@ class DashboardPage extends React.Component {
       reservations: null,
       totalReservations: 0,
       loading: true,
-      trips: null
+      trips: []
     };
   }
 
@@ -25,9 +25,9 @@ class DashboardPage extends React.Component {
                 const homeTrips = dataHomeTrips.content.map(trip => {
                   return {
                     ...trip,
-                    sortDate: moment(new Date(trip.startDate)).utc().valueOf(),
-                    displayStartDate: moment(new Date(trip.startDate)).format('DD MMM, YYYY'),
-                    displayEndDate: moment(new Date(trip.endDate)).format('DD MMM, YYYY'),
+                    sortDate: moment(trip.startDate).utc().valueOf(),
+                    displayStartDate: moment(trip.startDate).format('DD MMM, YYYY'),
+                    displayEndDate: moment(trip.endDate).format('DD MMM, YYYY'),
                     status: trip.accepted ? 'ACCEPTED' : 'PENDING'
                   };
                 });
@@ -46,8 +46,6 @@ class DashboardPage extends React.Component {
                 const trips = homeTrips.concat(hotelTrips).sort((x, y) => {
                   return x.sortDate >= y.sortDate ? -1 : 1;
                 }).slice(0, 5);
-
-                console.log(trips);
 
                 this.setState({
                   trips: trips,

@@ -65,8 +65,8 @@ class Footer extends React.Component {
             </nav>
             <div className="language-and-currency">
               <div className="select">
-                <select className="language">
-                  <option value="English" selected>English</option>
+                <select className="language" defaultValue="English">
+                  <option value="English">English</option>
                   {/* <option value="Deutch">Deutch</option>
                   <option value="Espanol">Espanol</option> */}
                 </select>
@@ -76,7 +76,7 @@ class Footer extends React.Component {
                   value={this.props.paymentInfo.currency}
                   onChange={(e) => this.props.dispatch(setCurrency(e.target.value))}
                 >
-                  <option value="EUR" selected>Euro</option>
+                  <option value="EUR">Euro</option>
                   <option value="USD">US Dollar</option>
                   <option value="GBP">GB Pound</option>
                 </select>

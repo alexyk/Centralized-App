@@ -1,6 +1,5 @@
-import { Link, NavLink } from 'react-router-dom';
-import { MenuItem, Nav, NavDropdown, NavItem, Navbar } from 'react-bootstrap/lib';
-
+import { NavDropdown } from 'react-bootstrap/lib';
+import { NavLink } from 'react-router-dom';
 import React from 'react';
 import requester from '../../initDependencies';
 

@@ -2,7 +2,14 @@ import { userInfo } from '../actions/actionTypes';
 
 const initialState = {
   isLogged: false,
-  // showLogin: false
+  firstName: '',
+  lastName: '',
+  phoneNumber: '',
+  email: '',
+  locAddress: '',
+  locBalance: '',
+  ethBalance: '',
+  gender: ''
 };
 
 export default function reducer(state = initialState, action) {
