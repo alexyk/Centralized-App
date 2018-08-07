@@ -1,10 +1,11 @@
 import React from 'react';
-import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
-import NoEntriesMessage from '../common/NoEntriesMessage';
 import moment from 'moment';
-import { Config } from '../../../config';
+import { CopyToClipboard } from 'react-copy-to-clipboard';
+
+import NoEntriesMessage from '../../common/NoEntriesMessage';
+import { Config } from '../../../../config';
 
 function HomeTripsTable(props) {
 

@@ -4,11 +4,11 @@ import { Link } from 'react-router-dom';
 import { NotificationManager } from 'react-notifications';
 import ReCAPTCHA from 'react-google-recaptcha';
 
-import { Config } from '../../../config';
-import CancellationModal from '../../common/modals/CancellationModal';
-import Pagination from '../../common/pagination/Pagination';
+import { Config } from '../../../../config';
+import CancellationModal from '../../../common/modals/CancellationModal';
+import Pagination from '../../../common/pagination/Pagination';
 import HomeTripsTable from './HomeTripsTable';
-import requester from '../../../initDependencies';
+import requester from '../../../../initDependencies';
 
 import { withRouter } from 'react-router-dom';
 

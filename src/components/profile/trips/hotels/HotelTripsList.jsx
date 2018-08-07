@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 
 import NoEntriesMessage from '../../common/NoEntriesMessage';
 import ProfileFlexContainer from '../../flexContainer/ProfileFlexContainer';
-import HotelTripsTableRow from './HotelTripsTableRow';
+import HotelTrip from './HotelTrip';
 
 function HotelTripsTable(props) {
 
@@ -21,7 +21,7 @@ function HotelTripsTable(props) {
     return (
       props.trips.map((trip) => {
         return (
-          <HotelTripsTableRow
+          <HotelTrip
             key={trip.id}
             trip={trip}
             styleClass="trips-flex-container"
