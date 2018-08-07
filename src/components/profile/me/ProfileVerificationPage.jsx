@@ -2,7 +2,9 @@ import '../../../styles/css/components/profile/me/profile-verification.css';
 
 import { Config } from '../../../config';
 import Dropzone from 'react-dropzone';
+import { ProfileVerification } from '../../../constants/profileVerification';
 import React from 'react';
+import VerificationItem from './VerificationItem';
 import request from 'superagent';
 import requester from '../../../initDependencies';
 
@@ -19,20 +21,51 @@ class ProfileVerificationPage extends React.Component {
       uploadedFilesThumbUrls: [],
       governmentIdPhoto: null,
       loading: true,
-      error: null
+      error: null,
+      verificationFields: [
+        'address',
+        'birthday',
+        'city',
+        'country',
+        'gender',
+        'phoneNumber',
+        'lastName'
+      ],
+      verifiedFields: [],
+      unverifiedFields: []
     };
 
     this.onImageDrop = this.onImageDrop.bind(this);
     this.handleImageUpload = this.handleImageUpload.bind(this);
     this.onDropRejected = this.onDropRejected.bind(this);
+    this.splitVerificationData = this.splitVerificationData.bind(this);
   }
 
   componentDidMount() {
     requester.getUserInfo().then(res => {
       res.body.then(data => {
+        this.splitVerificationData(data);
+
         this.setState({ governmentIdPhoto: data.userIdentity !== null && data.userIdentity.governmentIdPhoto !== null ? data.userIdentity.governmentIdPhoto : null, loading: false });
       });
     });
+  }
+
+  splitVerificationData(data) {
+    let verifiedFields = [];
+    let unverifiedFields = [];
+
+    for (let i = 0; i < this.state.verificationFields.length; i++) {
+      let key = this.state.verificationFields[i];
+      if (data[key] !== null) {
+        verifiedFields.push(key);
+      }
+      else {
+        unverifiedFields.push(key);
+      }
+    }
+
+    this.setState({ verifiedFields, unverifiedFields });
   }
 
   onImageDrop(files) {
@@ -75,11 +108,13 @@ class ProfileVerificationPage extends React.Component {
     }
 
     return (
-      <div>
-        <h2>Identification</h2>
-        <hr />
-        <h5>For your security and your host's, we need to verify your identity. The informaction you share will be used only for verification. You'll only ever need to do this once.</h5>
-        <section>
+      <div className="container">
+        <div className="row">
+          <h2>Identification</h2>
+          <hr />
+          <h5>For your security and your host's, we need to verify your identity. The informaction you share will be used only for verification. You'll only ever need to do this once.</h5>
+        </div>
+        <div>
           <div className="identification-box row">
             {this.state.governmentIdPhoto == null ?
               <div className="info col-md-9">
@@ -91,7 +126,7 @@ class ProfileVerificationPage extends React.Component {
             }
             <Dropzone
               className="dropzone col-md-3"
-              style={this.state.governmentIdPhoto !== null ? {opacity: '0.5', cursor: 'not-allowed'} : {cursor: 'pointer'}}
+              style={this.state.governmentIdPhoto !== null ? { opacity: '0.5', cursor: 'not-allowed' } : { cursor: 'pointer' }}
               multiple={false}
               maxSize={10485760}
               accept="image/jpg, image/jpeg, image/png"
@@ -102,7 +137,23 @@ class ProfileVerificationPage extends React.Component {
             </Dropzone>
           </div>
           {this.state.error ? <div className="error">{this.state.error}</div> : null}
-        </section>
+        </div>
+        <br />
+        <div className="row">
+          <h2>Your verified info</h2>
+          <hr />
+          {this.state.verifiedFields.map((item, i) => {
+            return <VerificationItem key={i} item={item} verified={true} />;
+          })}
+        </div>
+        <br />
+        <div className="row">
+          <h2>Not yet verified</h2>
+          <hr />
+          {this.state.unverifiedFields.map((item, i) => {
+            return <VerificationItem key={i} item={item} verified={false} />;
+          })}
+        </div>
       </div>
     );
   }

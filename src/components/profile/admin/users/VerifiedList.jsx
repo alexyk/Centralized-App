@@ -20,78 +20,23 @@ class VerifiedList extends React.Component {
 
     let searchMap = queryString.parse(this.props.location.search);
     this.state = {
-      users: [{
-        firstName: 'Christian',
-        gender: null,
-        id: 87,
-        lastName: 'Pamidoff',
-        city: null,
-        country: null,
-        email: 'chrispam1509@gmail.com',
-        birthday: '15/09/2000',
-        image: 'users/images/default.png',
-        verified: true
-      },{
-        firstName: 'Christian',
-        gender: null,
-        id: 87,
-        lastName: 'Pamidoff',
-        city: null,
-        country: null,
-        email: 'chrispam1509@gmail.com',
-        birthday: '15/09/2000',
-        image: 'users/images/default.png',
-        verified: true
-      },{
-        firstName: 'Christian',
-        gender: null,
-        id: 87,
-        lastName: 'Pamidoff',
-        city: null,
-        country: null,
-        email: 'chrispam1509@gmail.com',
-        birthday: '15/09/2000',
-        image: 'users/images/default.png',
-        verified: true
-      },{
-        firstName: 'Christian',
-        gender: null,
-        id: 87,
-        lastName: 'Pamidoff',
-        city: null,
-        country: null,
-        email: 'chrispam1509@gmail.com',
-        birthday: '15/09/2000',
-        image: 'users/images/default.png',
-        verified: true
-      },{
-        firstName: 'Christian',
-        gender: null,
-        id: 87,
-        lastName: 'Pamidoff',
-        city: null,
-        country: null,
-        email: 'chrispam1509@gmail.com',
-        birthday: '15/09/2000',
-        image: 'users/images/default.png',
-        verified: true
-      },],
-      loading: false,
+      users: [],
+      loading: true,
       totalElements: 0,
       currentPage: !searchMap.page ? 0 : Number(searchMap.page),
     };
 
     this.onPageChange = this.onPageChange.bind(this);
-    this.updateListingStatus = this.updateListingStatus.bind(this);
+    this.updateUserStatus = this.updateUserStatus.bind(this);
     this.onChange = this.onChange.bind(this);
   }
 
   componentDidMount() {
-    // requester.getAllPublishedListings().then(res => {
-    //   res.body.then(data => {
-    //     this.setState({ listings: data.content, loading: false, totalElements: data.totalElements });
-    //   });
-    // });
+    requester.getAllVerifiedUsers().then(res => {
+      res.body.then(data => {
+        this.setState({ users: data.content, loading: false, totalElements: data.totalElements });
+      });
+    });
   }
 
 
@@ -108,40 +53,40 @@ class VerifiedList extends React.Component {
       loading: true
     });
 
-    // requester.getAllPublishedListings(page - 1).then(res => {
-    //   res.body.then(data => {
-    //     this.setState({
-    //       users: data.content,
-    //       totalElements: data.totalElements,
-    //       loading: false
-    //     });
-    //   });
-    // });
+    requester.getAllVerifiedUsers([`page=${page - 1}`]).then(res => {
+      res.body.then(data => {
+        this.setState({
+          users: data.content,
+          totalElements: data.totalElements,
+          loading: false
+        });
+      });
+    });
   }
 
-  updateListingStatus(event, id, status) {
+  updateUserStatus(event, id, verified) {
     if (event) {
       event.preventDefault();
     }
 
-    let unpublishObj = {
-      listingId: id,
-      state: status
+    let userObj = {
+      id: id,
+      verified: verified
     };
 
-    requester.changeListingStatus(unpublishObj).then(res => {
+    requester.changeUserStatus(userObj).then(res => {
       if (res.success) {
-        NotificationManager.info('Listing unpublished');
-        const allListings = this.state.listings;
-        const newListings = allListings.filter(x => x.id !== id);
+        NotificationManager.info('User unverified');
+        const allUsers = this.state.users;
+        const newUsers = allUsers.filter(x => x.id !== id);
         const totalElements = this.state.totalElements;
-        this.setState({ listings: newListings, totalElements: totalElements - 1 });
-        if (newListings.length === 0 && totalElements > 0) {
+        this.setState({ listings: newUsers, totalElements: totalElements - 1 });
+        if (newUsers.length === 0 && totalElements > 0) {
           this.onPageChange(1);
         }
       }
       else {
-        NotificationManager.error('Something went wrong', 'Listings Operations');
+        NotificationManager.error('Something went wrong', 'Users Operations');
       }
     });
   }
@@ -163,12 +108,13 @@ class VerifiedList extends React.Component {
               {this.state.users.length === 0
                 ? <NoEntriesMessage text="No users to show" />
                 : <div>
-                  {this.state.users.map((l, i) => {
+                  {this.state.users.map((item, i) => {
                     return (
                       <ListItem
                         key={i}
-                        item={l}
-                        updateListingStatus={this.updateListingStatus}
+                        item={item}
+                        verified={true}
+                        updateUserStatus={this.updateUserStatus}
                       />
                     );
                   })}
@@ -182,16 +128,6 @@ class VerifiedList extends React.Component {
                 pageSize={20}
                 totalElements={this.state.totalElements}
               />
-
-              <div className='captcha-container'>
-                <ReCAPTCHA
-                  ref={el => this.captcha = el}
-                  size="invisible"
-                  sitekey={Config.getValue('recaptchaKey')}
-                  onChange={token => { this.handleDeleteListing(token); this.captcha.reset(); }}
-                />
-
-              </div>
             </div>
           </section>
         </div>
