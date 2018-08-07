@@ -1,7 +1,6 @@
 import React from 'react';
 import HotelTrip from './HotelTrip.jsx';
 import { shallow } from 'enzyme';
-import moment from 'moment';
 
 describe('<HotelTrip />', () => {
   let mockProps, wrapper;

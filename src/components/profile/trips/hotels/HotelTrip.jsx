@@ -53,21 +53,22 @@ class HotelTrip extends React.Component {
     const afterTomorrow = new Date().setHours(48);
     const dates = this.extractDatesData(this.props.trip);
 
+    const { hotel_photo, hotel_name, hostEmail, hostPhone,  } = this.props.trip;
 
     return (
       <ProfileFlexContainer styleClass={`flex-container-row ${this.props.styleClass}`}>
         <div className="tablet-col-1">
           <div className="flex-row-child trips-image">
-            {this.props.trip.hotel_photo &&
-              <img className="image-host" src={`${Config.getValue('imgHost')}${JSON.parse(this.props.trip.hotel_photo).original}`} alt="host-profile" />
+            {hotel_photo &&
+              <img className="image-host" src={`${Config.getValue('imgHost')}${JSON.parse(hotel_photo).original}`} alt="host-profile" />
             }
           </div>
           <div className="flex-row-child trips-host">
             <img className="icon" src={HotelIcon} alt="hotel" />
             <div className="content-row">
-              <div className="hostName">{this.getHostName(this.props.trip.hotel_name)}</div>
-              <div className="email">{this.props.trip.hostEmail}</div>
-              <div className="phoneNumber">{this.props.trip.hostPhone}</div>
+              <div className="hostName">{this.getHostName(hotel_name)}</div>
+              <div className="email">{hostEmail}</div>
+              <div className="phoneNumber">{hostPhone}</div>
               {this.props.trip.hostEmail ? <div><span className="send-message-icon"></span><a href={`mailto:${this.props.trip.hostEmail}`}>Send Message</a></div> : ''}
             </div>
           </div>
