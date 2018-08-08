@@ -108,24 +108,22 @@ class ProfileVerificationPage extends React.Component {
     }
 
     return (
-      <div className="container">
-        <div className="row">
-          <h2>Identification</h2>
-          <hr />
-          <h5>For your security and your host's, we need to verify your identity. The informaction you share will be used only for verification. You'll only ever need to do this once.</h5>
-        </div>
+      <div>
+        <h2>Identification</h2>
+        <hr />
+        <h5>For your security and your host's, we need to verify your identity. The informaction you share will be used only for verification. You'll only ever need to do this once.</h5>
         <div>
-          <div className="identification-box row">
-            {this.state.governmentIdPhoto == null ?
-              <div className="info col-md-9">
-                <span>You'll need to provide identification.</span>
-              </div> :
-              <div className="info col-md-9">
-                <span>You are verified</span>
-              </div>
-            }
+          <div className="box">
+            <div className="left-part">
+              <h2>Government ID</h2>
+              {this.state.governmentIdPhoto == null ?
+                <h5>You'll need to provide identification.</h5> :
+                <h5>You are verified</h5>
+              }
+            </div>
+
             <Dropzone
-              className="dropzone col-md-3"
+              className="button right-part"
               style={this.state.governmentIdPhoto !== null ? { opacity: '0.5', cursor: 'not-allowed' } : { cursor: 'pointer' }}
               multiple={false}
               maxSize={10485760}
@@ -133,27 +131,27 @@ class ProfileVerificationPage extends React.Component {
               onDrop={this.onImageDrop}
               onDropRejected={this.onDropRejected}
               disabled={this.state.governmentIdPhoto !== null}>
-              <span className="button">Provide ID</span>
+              <span>Provide ID</span>
             </Dropzone>
           </div>
           {this.state.error ? <div className="error">{this.state.error}</div> : null}
         </div>
         <br />
-        <div className="row">
-          <h2>Your verified info</h2>
-          <hr />
-          {this.state.verifiedFields.map((item, i) => {
-            return <VerificationItem key={i} item={item} verified={true} />;
-          })}
-        </div>
+        <h2>Your verified info</h2>
+        <hr />
+        {this.state.verifiedFields.map((item, i) => {
+          return <VerificationItem key={i} item={item} verified={true} />;
+        })}
         <br />
-        <div className="row">
-          <h2>Not yet verified</h2>
-          <hr />
-          {this.state.unverifiedFields.map((item, i) => {
-            return <VerificationItem key={i} item={item} verified={false} />;
-          })}
-        </div>
+        {this.state.unverifiedFields.length !== 0 ?
+          <div>
+            <h2>Not yet verified</h2>
+            <hr />
+            {this.state.unverifiedFields.map((item, i) => {
+              return <VerificationItem key={i} item={item} verified={false} />;
+            })}
+          </div>
+          : null}
       </div>
     );
   }

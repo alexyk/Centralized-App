@@ -34,9 +34,6 @@ function ListItem(props) {
             {verified === false &&
               <div><a href="#" onClick={(e) => props.updateUserStatus(e, id, true)}>Verify</a></div>
             }
-            {verified === false &&
-              <div><a href="#" onClick={(e) => props.updateUserStatus(e, id, false)}>Deny</a></div>
-            }
             {verified === true &&
               <div><a href="#" onClick={(e) => props.updateUserStatus(e, id, false)}>Unverify</a></div>
             }

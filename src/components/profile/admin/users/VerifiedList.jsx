@@ -80,7 +80,7 @@ class VerifiedList extends React.Component {
         const allUsers = this.state.users;
         const newUsers = allUsers.filter(x => x.id !== id);
         const totalElements = this.state.totalElements;
-        this.setState({ listings: newUsers, totalElements: totalElements - 1 });
+        this.setState({ users: newUsers, totalElements: totalElements - 1 });
         if (newUsers.length === 0 && totalElements > 0) {
           this.onPageChange(1);
         }
