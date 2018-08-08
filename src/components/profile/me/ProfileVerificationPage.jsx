@@ -2,7 +2,6 @@ import '../../../styles/css/components/profile/me/profile-verification.css';
 
 import { Config } from '../../../config';
 import Dropzone from 'react-dropzone';
-import { ProfileVerification } from '../../../constants/profileVerification';
 import React from 'react';
 import VerificationItem from './VerificationItem';
 import request from 'superagent';
@@ -23,13 +22,14 @@ class ProfileVerificationPage extends React.Component {
       loading: true,
       error: null,
       verificationFields: [
-        'address',
-        'birthday',
-        'city',
-        'country',
-        'gender',
+        'firstName',
+        'lastName',
+        'email',
         'phoneNumber',
-        'lastName'
+        'country',
+        'city',
+        'address',
+        // 'zipCode'
       ],
       verifiedFields: [],
       unverifiedFields: []
