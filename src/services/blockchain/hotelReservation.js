@@ -261,7 +261,8 @@ export class HotelReservation {
     const gasPrice = await getGasPrice();
     let overrideOptions = {
       gasLimit: gasConfig.simpleReservationSingleWithdrawer.create,
-      gasPrice: gasPrice
+      gasPrice: gasPrice,
+      nonce: 1
     };
     await ReservationValidators.validateSimpleReservationSingleWithdrawerParams(jsonObj, password, reservationCostLOC, withdrawDateFormatted)
 
