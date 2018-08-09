@@ -14,6 +14,8 @@ import requester from '../../../initDependencies';
 import { setCurrency } from '../../../actions/paymentInfo';
 import { withRouter } from 'react-router-dom';
 
+const ERROR_MESSAGE_TIME = 20000;
+
 class HotelBookingConfirmPage extends React.Component {
   constructor(props) {
     super(props);
@@ -323,13 +325,17 @@ class HotelBookingConfirmPage extends React.Component {
             });
           }).catch(error => {
             if (error.hasOwnProperty('message')) {
-              NotificationManager.warning(error.message, 'Send Tokens');
+              if (error.message === 'nonce too low') {
+                NotificationManager.warning('You have a pending transaction. Please try again later.', 'Send Tokens', ERROR_MESSAGE_TIME);
+              } else {
+                NotificationManager.warning(error.message, 'Send Tokens', ERROR_MESSAGE_TIME);
+              }
             } else if (error.hasOwnProperty('err') && error.err.hasOwnProperty('message')) {
-              NotificationManager.warning(error.err.message, 'Send Tokens');
+              NotificationManager.warning(error.err.message, 'Send Tokens', ERROR_MESSAGE_TIME);
             } else if (typeof x === 'string') {
-              NotificationManager.warning(error, 'Send Tokens');
+              NotificationManager.warning(error, 'Send Tokens', ERROR_MESSAGE_TIME);
             } else {
-              NotificationManager.warning(error);
+              NotificationManager.warning(error, ERROR_MESSAGE_TIME);
             }
 
             this.closeModal(PASSWORD_PROMPT);

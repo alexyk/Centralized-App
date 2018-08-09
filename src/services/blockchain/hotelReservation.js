@@ -262,7 +262,6 @@ export class HotelReservation {
     let overrideOptions = {
       gasLimit: gasConfig.simpleReservationSingleWithdrawer.create,
       gasPrice: gasPrice,
-      nonce: 1
     };
     await ReservationValidators.validateSimpleReservationSingleWithdrawerParams(jsonObj, password, reservationCostLOC, withdrawDateFormatted)
 
