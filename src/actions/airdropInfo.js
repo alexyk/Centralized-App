@@ -1,6 +1,6 @@
-import {airdropInfo, modalsInfo} from './actionTypes';
+import {airdropInfo} from './actionTypes';
 
-export function setAirdropInfo(email, facebookProfile, telegramProfile, twitterProfile, redditProfile, refLink, participates, isVerifyEmail,referralCount,isCampaignSuccessfullyCompleted) {
+export function setAirdropInfo(email, facebookProfile, telegramProfile, twitterProfile, redditProfile, refLink, participates, isVerifyEmail,referralCount,isCampaignSuccessfullyCompleted, voteUrl) {
   return {
     type: airdropInfo.SET_AIRDROP_INFO,
     email,
@@ -12,7 +12,8 @@ export function setAirdropInfo(email, facebookProfile, telegramProfile, twitterP
     refLink,
     isVerifyEmail,
     referralCount,
-    isCampaignSuccessfullyCompleted
+    isCampaignSuccessfullyCompleted,
+    voteUrl
   };
 }
 

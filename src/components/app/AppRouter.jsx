@@ -8,14 +8,11 @@ import { setIsLogged, setUserInfo } from '../../actions/userInfo';
 import { NotificationContainer } from 'react-notifications';
 
 import App from './App';
-import StaticMobileHotelsSearchPage from '../hotels/search/StaticMobileHotelsSearchPage';
+import MobileHotelsSearchPage from '../hotels/search/MobileHotelsSearchPage';
 import MobileHotelDetailsPage from '../hotels/details/MobileHotelDetailsPage';
 import MobileHotelBookingPage from '../hotels/book/mobile/MobileHotelBookingPage';
 import MobileHotelBookingConfirmPage from '../hotels/book/mobile/MobileHotelBookingConfirmPage';
-
-import {
-  getUserInfo
-} from '../../requester';
+import requester from '../../initDependencies';
 
 export class AppRouter extends React.Component {
   componentWillMount() {
@@ -33,14 +30,16 @@ export class AppRouter extends React.Component {
   }
 
   setUserInfo() {
-    getUserInfo().then(res => {
-      Wallet.getBalance(res.locAddress).then(eth => {
-        const ethBalance = eth / (Math.pow(10, 18));
-        Wallet.getTokenBalance(res.locAddress).then(loc => {
-          const locBalance = loc / (Math.pow(10, 18));
-          const { firstName, lastName, phoneNumber, email, locAddress } = res;
-          this.props.dispatch(setIsLogged(true));
-          this.props.dispatch(setUserInfo(firstName, lastName, phoneNumber, email, locAddress, ethBalance, locBalance));
+    requester.getUserInfo().then(res => {
+      res.body.then(data => {
+        Wallet.getBalance(data.locAddress).then(eth => {
+          const ethBalance = eth / (Math.pow(10, 18));
+          Wallet.getTokenBalance(data.locAddress).then(loc => {
+            const locBalance = loc / (Math.pow(10, 18));
+            const { firstName, lastName, phoneNumber, email, locAddress } = data;
+            this.props.dispatch(setIsLogged(true));
+            this.props.dispatch(setUserInfo(firstName, lastName, phoneNumber, email, locAddress, ethBalance, locBalance));
+          });
         });
       });
     });
@@ -48,11 +47,11 @@ export class AppRouter extends React.Component {
 
   handleInternalAuthorization() {
     if (localStorage[Config.getValue('domainPrefix') + '.auth.username']
-    && localStorage[Config.getValue('domainPrefix') + '.auth.locktrip']) {
+      && localStorage[Config.getValue('domainPrefix') + '.auth.locktrip']) {
       this.setUserInfo();
     }
   }
-  
+
   handleExternalAuthorization() {
     const queryStringParameters = queryString.parse(this.props.location.search);
     const { authEmail, authToken } = queryStringParameters;
@@ -61,20 +60,18 @@ export class AppRouter extends React.Component {
       localStorage[Config.getValue('domainPrefix') + '.auth.locktrip'] = decodeURI(authToken);
       this.setUserInfo();
       const url = this.props.location.pathname;
-      const search = this.getQueryString(queryStringParameters);
-      console.log(url + search);
-      this.props.history.push(url + search);
-    }
-  }
+      let search = '?';
+      for (let key in queryStringParameters) {
+        if (key !== 'authEmail' && key !== 'authToken') {
+          const param = encodeURI(key + '=' + queryStringParameters[key]) + '&';
+          search += param;
+          // console.log(encodeURI(param));
+        }
+      }
 
-  getQueryString(queryStringParameters) {
-    let queryString = '?';
-    queryString += 'region=' + encodeURI(queryStringParameters.region);
-    queryString += '&currency=' + encodeURI(queryStringParameters.currency);
-    queryString += '&startDate=' + encodeURI(queryStringParameters.startDate);
-    queryString += '&endDate=' + encodeURI(queryStringParameters.endDate);
-    queryString += '&rooms=' + encodeURI(queryStringParameters.rooms);
-    return queryString;
+      // console.log(search);
+      this.props.history.push(url + search.substr(0, search.length - 1));
+    }
   }
 
   render() {
@@ -82,7 +79,7 @@ export class AppRouter extends React.Component {
       <div>
         <NotificationContainer />
         <Switch>
-          <Route path="/mobile/search" render={() => <StaticMobileHotelsSearchPage />} />
+          <Route path="/mobile/search" render={() => <MobileHotelsSearchPage />} />
           <Route path="/mobile/details/:id" render={() => <MobileHotelDetailsPage />} />
           <Route path="/mobile/book/confirm/:id" render={() => <MobileHotelBookingConfirmPage />} />
           <Route path="/mobile/book/:id" render={() => <MobileHotelBookingPage />} />

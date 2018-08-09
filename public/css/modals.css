@@ -4,6 +4,22 @@
     margin: 30px auto;
   }
 }
+@media screen and (max-width: 425px) {
+  .myModal .modal-header {
+    padding: 0;
+    position: relative;
+  }
+
+  .myModal .modal-header h1 {
+    max-width: 80%;
+  }
+
+  .myModal .close {
+    position: absolute;
+    top: 13px;
+    right: 10px;
+  }
+}
 .myModal .modal-content {
   padding: 20px;
   background-color: #f0f1f3;
@@ -14,13 +30,22 @@
 }
 .myModal h1 {
   float: left;
-  font-family: FuturaStd-Light, sans-serif;
+  /* font-family: FuturaStd-Light, sans-serif; */
   font-size: 26px;
   margin-bottom: 0;
 }
 .myModal hr {
   border-top: 1px solid #ccc;
 }
+
+.myModal .input-with-icon {
+  position: relative;
+}
+
+.myModal .input-with-icon img {
+  position: absolute;
+}
+
 .myModal .form-group {
   position: relative;
 }

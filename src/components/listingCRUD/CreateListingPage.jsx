@@ -1,15 +1,4 @@
-import { NotificationManager } from 'react-notifications';
 import { Route, Switch, withRouter } from 'react-router-dom';
-import {
-  createListing,
-  createListingProgress,
-  getAmenitiesByCategory,
-  getCurrencies,
-  getUserInfo,
-  getPropertyTypes,
-  updateListingProgress,
-  updateUserInfo
-} from '../../requester';
 
 import { Config } from '../../config';
 import ListingAccommodations from './steps/ListingAccommodations';
@@ -24,13 +13,17 @@ import ListingPhotos from './steps/ListingPhotos';
 import ListingPlaceType from './steps/ListingPlaceType';
 import ListingPrice from './steps/ListingPrice';
 import ListingSafetyFacilities from './steps/ListingSafetyFacilities';
-import ReCAPTCHA from 'react-google-recaptcha';
+import { NotificationManager } from 'react-notifications';
 import PropTypes from 'prop-types';
+import ReCAPTCHA from 'react-google-recaptcha';
 import React from 'react';
 import { arrayMove } from 'react-sortable-hoc';
 import moment from 'moment';
 import request from 'superagent';
+import requester from '../../initDependencies';
 import update from 'react-addons-update';
+
+
 
 const host = Config.getValue('apiHost');
 const LOCKTRIP_UPLOAD_URL = `${host}images/upload`;
@@ -114,20 +107,28 @@ class CreateListingPage extends React.Component {
   }
 
   componentDidMount() {
-    getAmenitiesByCategory().then(data => {
-      this.setState({ categories: data.content });
+    requester.getAmenitiesByCategory().then(res => {
+      res.body.then(data => {
+        this.setState({ categories: data.content });
+      });
     });
 
-    getPropertyTypes().then(data => {
-      this.setState({ propertyTypes: data.content });
+    requester.getPropertyTypes().then(res => {
+      res.body.then(data => {
+        this.setState({ propertyTypes: data.content });
+      });
     });
 
-    getCurrencies().then(data => {
-      this.setState({ currencies: data.content });
+    requester.getCurrencies().then(res => {
+      res.body.then(data => {
+        this.setState({ currencies: data.content });
+      });
     });
 
-    getUserInfo().then(data => {
-      this.setState({ userHasLocAddress: data.locAddress !== null });
+    requester.getUserInfo().then(res => {
+      res.body.then(data => {
+        this.setState({ userHasLocAddress: data.locAddress !== null });
+      });
     });
   }
 
@@ -260,9 +261,9 @@ class CreateListingPage extends React.Component {
       data: JSON.stringify(listing)
     };
 
-    createListingProgress(data).then(res => {
+    requester.createListingProgress(data).then(res => {
       if (res.success) {
-        res.response.json().then(res => {
+        res.body.then(res => {
           const id = res.id;
           this.setState({ progressId: id });
         });
@@ -281,7 +282,7 @@ class CreateListingPage extends React.Component {
         data: JSON.stringify(listing),
       };
 
-      updateListingProgress(progressId, data);
+      requester.updateListingProgress(progressId, data);
     }
   }
 
@@ -290,19 +291,19 @@ class CreateListingPage extends React.Component {
     let listing = this.createListingObject();
     this.setState({ loading: true });
 
-    createListing(listing, captchaToken).then((res) => {
+    requester.createListing(listing, captchaToken).then(res => {
       if (res.success) {
         this.setState({ loading: false });
-        res.response.json().then(res => {
-          const id = res.id;
+        res.body.then(data => {
+          const id = data.id;
           const path = `/profile/listings/calendar/${id}`;
           this.props.history.push(path);
         });
       }
       else {
         this.setState({ loading: false });
-        res.response.then(res => {
-          const errors = res.errors;
+        res.errors.then(data => {
+          const errors = data.errors;
           for (let key in errors) {
             if (typeof errors[key] !== 'function') {
               NotificationManager.warning(errors[key].message);
@@ -403,7 +404,6 @@ class CreateListingPage extends React.Component {
 
   handleImageUpload(files) {
     files.forEach((file) => {
-      console.log(file)
       let upload = request.post(LOCKTRIP_UPLOAD_URL)
         .field('image', file);
 
@@ -442,21 +442,23 @@ class CreateListingPage extends React.Component {
 
 
   updateLocAddress(captchaToken) {
-    getUserInfo().then(data => {
-      let userInfo = {
-        firstName: data.firstName,
-        lastName: data.lastName,
-        phoneNumber: data.phoneNumber,
-        preferredLanguage: data.preferredLanguage,
-        preferredCurrency: data.preferredCurrency.id,
-        gender: data.gender,
-        country: data.country.id,
-        city: data.city.id,
-        birthday: moment(data.birthday).format('DD/MM/YYYY'),
-        locAddress: this.state.locAddress
-      };
-      updateUserInfo(userInfo, captchaToken).then(() => {
-        this.componentDidMount();
+    requester.getUserInfo().then(res => {
+      res.body.then(data => {
+        let userInfo = {
+          firstName: data.firstName,
+          lastName: data.lastName,
+          phoneNumber: data.phoneNumber,
+          preferredLanguage: data.preferredLanguage,
+          preferredCurrency: data.preferredCurrency.id,
+          gender: data.gender,
+          country: data.country.id,
+          city: data.city.id,
+          birthday: moment(data.birthday).format('DD/MM/YYYY'),
+          locAddress: this.state.locAddress
+        };
+        requester.updateUserInfo(userInfo, captchaToken).then(() => {
+          this.componentDidMount();
+        });
       });
     });
   }
@@ -621,7 +623,7 @@ class CreateListingPage extends React.Component {
           ref={(el) => this.captcha = el}
           size="invisible"
           sitekey={Config.getValue('recaptchaKey')}
-          onChange={token => { this.createListing(token); }}
+          onChange={token => { this.createListing(token); this.captcha.reset(); }}
         />
       </div>
     );

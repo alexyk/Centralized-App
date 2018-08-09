@@ -5,7 +5,7 @@ import { Modal } from 'react-bootstrap';
 import { NotificationManager } from 'react-notifications';
 
 import { Config } from '../../../config';
-import { getEmailFreeResponse } from '../../../requester';
+import requester from '../../../initDependencies';
 import { REGISTER, CREATE_WALLET } from '../../../constants/modals.js';
 
 import {
@@ -19,31 +19,41 @@ import {
 
 function RegisterModal(props) {
 
-  const openWalletInfo = () => {
-    getEmailFreeResponse(props.signUpEmail).then(res => {
-      let isEmailFree = false;
-      if (res.exist) {
-        isEmailFree = false;
-      } else {
-        isEmailFree = true;
-      }
+  const getShortName = (name, length) => {
+    if (name.length <= length) {
+      return name;
+    }
 
-      if (!validator.isEmail(props.signUpEmail)) {
-        NotificationManager.warning(INVALID_EMAIL);
-      } else if (!isEmailFree) {
-        NotificationManager.warning(EMAIL_ALREADY_EXISTS);
-      } else if (validator.isEmpty(props.signUpFirstName)) {
-        NotificationManager.warning(INVALID_FIRST_NAME);
-      } else if (validator.isEmpty(props.signUpLastName)) {
-        NotificationManager.warning(INVALID_LAST_NAME);
-      } else if (props.signUpPassword.length < 6) {
-        NotificationManager.warning(PROFILE_INVALID_PASSWORD_LENGTH);
-      } else if (!props.signUpPassword.match('^([^\\s]*[a-zA-Z]+.*?[0-9]+[^\\s]*|[^\\s]*[0-9]+.*?[a-zA-Z]+[^\\s]*)$')) {
-        NotificationManager.warning(PROFILE_PASSWORD_REQUIREMENTS);
-      } else {
-        props.closeModal(REGISTER);
-        props.openModal(CREATE_WALLET);
-      }
+    return `${name.substring(0, length)}...`;
+  };
+
+  const openWalletInfo = () => {
+    requester.getEmailFreeResponse(props.signUpEmail).then(res => {
+      res.body.then(data => {
+        let isEmailFree = false;
+        if (data.exist) {
+          isEmailFree = false;
+        } else {
+          isEmailFree = true;
+        }
+
+        if (!validator.isEmail(props.signUpEmail)) {
+          NotificationManager.warning(INVALID_EMAIL);
+        } else if (!isEmailFree) {
+          NotificationManager.warning(EMAIL_ALREADY_EXISTS);
+        } else if (validator.isEmpty(props.signUpFirstName)) {
+          NotificationManager.warning(INVALID_FIRST_NAME);
+        } else if (validator.isEmpty(props.signUpLastName)) {
+          NotificationManager.warning(INVALID_LAST_NAME);
+        } else if (props.signUpPassword.length < 6) {
+          NotificationManager.warning(PROFILE_INVALID_PASSWORD_LENGTH);
+        } else if (!props.signUpPassword.match('^([^\\s]*[a-zA-Z]+.*?[0-9]+[^\\s]*|[^\\s]*[0-9]+.*?[a-zA-Z]+[^\\s]*)$')) {
+          NotificationManager.warning(PROFILE_PASSWORD_REQUIREMENTS);
+        } else {
+          props.closeModal(REGISTER);
+          props.openModal(CREATE_WALLET);
+        }
+      });
     });
   };
 
@@ -67,6 +77,14 @@ function RegisterModal(props) {
             <div className="form-group">
               <img src={Config.getValue('basePath') + 'images/login-user.png'} alt="user" />
               <input type="text" required="required" name="signUpLastName" value={props.signUpLastName} onChange={props.onChange} className="form-control" placeholder="Last Name" />
+            </div>
+            <div className="form-group">
+              <select name="country" id="country" onChange={props.handleChangeCountry} value={JSON.stringify(props.country)} style={{ padding: '10px', maxWidth: '100%', marginBottom: '10px', minHeight: '50px', paddingLeft: '40px' }} placeholder='Enter your country'>
+                <option value="" disabled selected>Country</option>
+                {props.countries && props.countries.map((item, i) => {
+                  return <option key={i} value={JSON.stringify(item)} style={{ minWidth: '100%', maxWidth: '0' }}>{getShortName(item.name, 30)}</option>;
+                })}
+              </select>
             </div>
             <div className="form-group">
               <img src={Config.getValue('basePath') + 'images/login-pass.png'} alt="pass" />

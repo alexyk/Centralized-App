@@ -1,22 +1,21 @@
-import { NotificationManager } from 'react-notifications';
-import { changeListingStatus, contactHost, getAllUnpublishedListings, getCities, getCountries, deleteListing } from '../../../requester';
+import '../../../styles/css/components/captcha/captcha-container.css';
 
-import Filter from './Filter';
+import { Config } from '../../../config';
 import ContactHostModal from '../../common/modals/ContactHostModal';
 import DeletionModal from '../../common/modals/DeletionModal';
+import Filter from './Filter';
+import Lightbox from 'react-images';
+import ListItem from './ListItem';
+import NoEntriesMessage from '../common/NoEntriesMessage';
+import { NotificationManager } from 'react-notifications';
 import Pagination from '../../common/pagination/Pagination';
 import PropTypes from 'prop-types';
-import React from 'react';
-import queryString from 'query-string';
-import { withRouter } from 'react-router-dom';
-import filterListings from '../../../actions/filterListings';
-import ListItem from './ListItem';
-import { Config } from '../../../config';
 import ReCAPTCHA from 'react-google-recaptcha';
-import NoEntriesMessage from '../common/NoEntriesMessage';
-import Lightbox from 'react-images';
-
-import '../../../styles/css/components/captcha/captcha-container.css';
+import React from 'react';
+import filterListings from '../../../actions/filterListings';
+import queryString from 'query-string';
+import requester from '../../../initDependencies';
+import { withRouter } from 'react-router-dom';
 
 class UnpublishedList extends React.Component {
   constructor(props) {
@@ -68,55 +67,71 @@ class UnpublishedList extends React.Component {
   }
 
   componentDidMount() {
-    let searchTerm = this.buildSearchTerm();
-    getAllUnpublishedListings(searchTerm).then((data) => {
-      this.setState({ listings: data.content, loading: false, totalElements: data.totalElements });
+    let search = this.buildSearchTerm();
+    console.log(search.searchTermMap);
+    requester.getAllUnpublishedListings(search.searchTermMap).then(res => {
+      res.body.then(data => {
+        this.setState({ listings: data.content, loading: false, totalElements: data.totalElements });
+      });
     });
 
     if (this.state.country !== '') {
-      getCities(this.state.country).then(data => {
-        this.setState({ cities: data.content });
+      requester.getCities(this.state.country).then(res => {
+        res.body.then(data => {
+          this.setState({ cities: data.content });
+        });
       });
     }
 
-    getCountries().then(data => {
-      this.setState({ countries: data.content });
-    });
-
+    requester.getCountries()
+      .then(response => response.body)
+      .then(data => {
+        this.setState({ countries: data });
+      });
   }
 
   onSearch() {
     this.setState({ loading: true });
 
-    let searchTerm = this.buildSearchTerm();
+    let search = this.buildSearchTerm();
 
-    getAllUnpublishedListings(searchTerm).then((data) => {
-      this.props.history.push(`/profile/admin/listings/unpublished${searchTerm}`);
-      this.setState({ listings: data.content, loading: false, totalElements: data.totalElements });
+    requester.getAllUnpublishedListings(search.searchTermMap).then(res => {
+      res.body.then(data => {
+        this.props.history.push(`/profile/admin/listings/unpublished${search.searchTerm}`);
+        this.setState({ listings: data.content, loading: false, totalElements: data.totalElements });
+      });
     });
   }
 
 
   buildSearchTerm() {
-    let searchTerm = `?`;
+    let searchTermMap = [];
+    let searchTerm = '?';
 
     if (this.state.city) {
+      searchTermMap.push(`cityId=${this.state.city}`);
       searchTerm += `&cityId=${this.state.city}`;
     }
 
     if (this.state.name) {
+      searchTermMap.push(`listingName=${this.state.name}`);
       searchTerm += `&listingName=${this.state.name}`;
     }
 
     if (this.state.country) {
+      searchTermMap.push(`countryId=${this.state.country}`);
       searchTerm += `&countryId=${this.state.country}`;
     }
 
     if (this.state.hostEmail) {
+      searchTermMap.push(`host=${this.state.hostEmail}`);
       searchTerm += `&host=${this.state.hostEmail}`;
     }
 
-    return searchTerm;
+    return {
+      searchTerm,
+      searchTermMap
+    };
   }
 
   onChange(e) {
@@ -135,9 +150,11 @@ class UnpublishedList extends React.Component {
       city: null
     }, () => {
       if (option) {
-        getCities(option.value).then(data => {
-          this.setState({
-            cities: data.content,
+        requester.getCities(option.value).then(res => {
+          res.body.then(data => {
+            this.setState({
+              cities: data.content,
+            });
           });
         });
       } else {
@@ -161,16 +178,23 @@ class UnpublishedList extends React.Component {
     });
 
     let searchTerm = queryString.parse(this.props.location.search);
-
+    let arraySearchTerm = [];
     searchTerm.page = page - 1;
 
+    for (let key in searchTerm) {
+      let kvp = `${key}=${searchTerm[key]}`;
+      arraySearchTerm.push(kvp);
+    }
+
     let newSearchTerm = queryString.stringify(searchTerm);
-    getAllUnpublishedListings('?' + newSearchTerm).then(data => {
-      this.props.history.push('?' + newSearchTerm);
-      this.setState({
-        listings: data.content,
-        totalElements: data.totalElements,
-        loading: false
+    requester.getAllUnpublishedListings(arraySearchTerm).then(res => {
+      res.body.then(data => {
+        this.props.history.push('?' + newSearchTerm);
+        this.setState({
+          listings: data.content,
+          totalElements: data.totalElements,
+          loading: false
+        });
       });
     });
   }
@@ -185,7 +209,7 @@ class UnpublishedList extends React.Component {
       state: status
     };
 
-    changeListingStatus(publishObj).then((res) => {
+    requester.changeListingStatus(publishObj).then(res => {
       if (res.success) {
         switch (status) {
           case 'active': NotificationManager.success('Listing approved');
@@ -216,12 +240,10 @@ class UnpublishedList extends React.Component {
       message: message
     };
 
-    contactHost(id, contactHostObj, captchaToken)
-      .then(() => {
-        // this.props.history.push(`/profile/messages/chat/${res.conversation}`);
-        NotificationManager.info('Message sent');
-        this.closeContactHostModal();
-      });
+    requester.contactHost(id, contactHostObj, captchaToken).then(() => {
+      NotificationManager.info('Message sent');
+      this.closeContactHostModal();
+    });
   }
 
   openContactHostModal(event, id) {
@@ -251,7 +273,7 @@ class UnpublishedList extends React.Component {
   handleDeleteListing(token) {
     this.setState({ isDeleting: true });
     const { deletingId } = this.state;
-    deleteListing(deletingId, token)
+    requester.deleteListing(deletingId, token)
       .then(res => {
         if (res.success) {
           const allListings = this.state.listings;

@@ -35,7 +35,7 @@ $media-expressions: (
 	@include media(">=desktop") {
 		padding: 0;
 		min-height: 555px;
-		margin-bottom: 78px;
+		// margin-bottom: 78px;
 		background: url(../../images/hero-background-optimized.jpg);
 		size: cover;
 		repeat: no-repeat;

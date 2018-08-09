@@ -1,25 +1,18 @@
 import { modalsInfo } from '../actions/actionTypes';
 
 const initialState = {
-  modals: new Map(),
+  isActive: {},
 };
 
 export default function reducer(state = initialState, action) {
   switch (action.type) {
-    case modalsInfo.SET_SHOW_LOGIN:
-      return {
-        ...state,
-        showLogin: action.showLogin,
-      };
     case modalsInfo.OPEN_MODAL:
       return {
-        ...state,
-        modals: new Map(state.modals.set(action.modal, true))
+        isActive: { ...state.isActive, [action.payload]: true }
       };
     case modalsInfo.CLOSE_MODAL:
       return {
-        ...state,
-        modals: new Map(state.modals.set(action.modal, false))
+        isActive: { ...state.isActive, [action.payload]: false }
       };
     default:
       return state;

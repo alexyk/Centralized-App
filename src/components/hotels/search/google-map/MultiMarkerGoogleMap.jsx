@@ -15,11 +15,13 @@ class MultiMarkerGoogleMap extends Component {
 
     this.markers = [];
     this.infoWindows = [];
-    if (this.props.hotels) {
-      this.placeMarkers(this.props.hotels, this.infoWindows, 0, this.props.hotels.length);
+    if (this.props.mapInfo) {
+      this.placeMarkers(this.props.mapInfo, this.infoWindows);
     }
 
     this.placeMarkers = this.placeMarkers.bind(this);
+    this.clearAll = this.clearAll.bind(this);
+    this.closeAll = this.closeAll.bind(this);
   }
 
   shouldComponentUpdate() {
@@ -29,80 +31,69 @@ class MultiMarkerGoogleMap extends Component {
   componentWillReceiveProps(props) {
     const hasNewCoordinates = props.lat && props.lon && (props.lat !== this.lat || props.lon !== this.lon);
     if (hasNewCoordinates) {
+      this.clearAll();
       this.lat = props.lat;
       this.lon = props.lon;
       const latLng = new window.google.maps.LatLng(props.lat, props.lon);
       this.mapInstance.panTo(latLng);
-    }
-
-    const { hotels } = props;
-    if (hotels) {
-      if (props.isFiltered) {
-        this.infoWindows = [];
-        this.markers.forEach((marker) => {
-          marker.setMap(null);
-        });
-
-        this.placeMarkers(hotels, this.infoWindows);
-      } else {
-        this.placeMarkers(hotels, this.infoWindows, hotels.length - 1);
-      }
+      this.placeMarkers(props.mapInfo, this.infoWindows);
+    } else if (props.mapInfo && props.mapInfo.length > 0) {
+      this.placeSingleMarker(props.mapInfo[props.mapInfo.length - 1], this.infoWindows);
     }
   }
 
   componentWillUnmount() {
-    this.infoWindows = [];
-    this.markers.forEach((marker) => {
-      marker.setMap(null);
-    });
+    this.clearAll();
   }
 
-  placeMarkers(hotels, infoWindows, from, to) {
-    if (hotels && hotels.length > 0) {
-      from = from ? from : 0;
-      to = to ? to : hotels.length;
-
-      // TODO: create a single info window to be displayed
-      // (function iife(info) {
-
-      // })(this.info);
-
-      for (let i = from; i < to; i++) {
-        const hotel = hotels[i];
-        const marker = this.createMarker(hotel);
-        const infoWindow = this.createInfoWindow(hotel);
-        window.google.maps.event.addListener(marker, 'mouseover', function () {
-          infoWindows.forEach(i => {
-            i.close();
-          });
-
-          infoWindow.open(this.mapInstance, marker);
-        });
-
-        window.google.maps.event.addListener(marker, 'click', function () {
-          infoWindows.forEach(i => {
-            i.close();
-          });
-
-          infoWindow.open(this.mapInstance, marker);
-        });
-
-        this.markers.push(marker);
-        this.infoWindows.push(infoWindow);
-      }
-
-      window.google.maps.event.addListener(this.mapInstance, 'click', function () {
-        infoWindows.forEach(i => {
-          i.close();
-        });
+  placeMarkers(hotels, infoWindows) {
+    if (hotels) {
+      hotels.forEach(hotel => {
+        this.placeSingleMarker(hotel, infoWindows);
       });
     }
+  }
+
+  placeSingleMarker(hotel, infoWindows) {
+    const marker = this.createMarker(hotel);
+    const infoWindow = this.createInfoWindow(hotel);
+    window.google.maps.event.addListener(marker, 'mouseover', function () {
+      infoWindows.forEach(i => {
+        i.close();
+      });
+
+      infoWindow.open(this.mapInstance, marker);
+    });
+
+    window.google.maps.event.addListener(marker, 'click', function () {
+      infoWindows.forEach(i => {
+        i.close();
+      });
+
+      infoWindow.open(this.mapInstance, marker);
+    });
+
+    this.markers.push(marker);
+    this.infoWindows.push(infoWindow);
+
+    window.google.maps.event.addListener(this.mapInstance, 'click', function () {
+      infoWindows[infoWindows.length - 1].close();
+    });
   }
 
   closeAll() {
     this.markers.forEach((marker) => {
       marker.infoWindow.close(this.mapInstance, marker);
     });
+  }
+
+  clearAll() {
+    this.infoWindows = [];
+    if (this.markers) {
+      this.markers.forEach((marker) => {
+        marker.setMap(null);
+      });
+    }
   }
 
   createMarker(hotel) {

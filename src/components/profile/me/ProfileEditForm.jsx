@@ -1,12 +1,14 @@
 import 'react-notifications/lib/notifications.css';
-
-import { NotificationManager } from 'react-notifications';
-import { getCities, getCountries, getUserInfo, updateUserInfo } from '../../../requester';
+import '../../../styles/css/components/profile/me/my-profile-edit-form.css';
 
 import { Config } from '../../../config';
+import { NotificationManager } from 'react-notifications';
 import ReCAPTCHA from 'react-google-recaptcha';
 import React from 'react';
 import moment from 'moment';
+import requester from '../../../initDependencies';
+
+import Select from '../../common/google/GooglePlacesAutocomplete';
 
 class ProfileEditForm extends React.Component {
   constructor(props) {
@@ -22,8 +24,9 @@ class ProfileEditForm extends React.Component {
       day: '',
       year: '',
       gender: '',
-      country: '',
+      country: { id: 1, name: 'US', code: 'US' },
       city: '',
+      address: '',
       locAddress: '',
       jsonFile: '',
       currencies: [],
@@ -36,50 +39,50 @@ class ProfileEditForm extends React.Component {
     this.onChange = this.onChange.bind(this);
     this.changeDropdownValue = this.changeDropdownValue.bind(this);
     this.updateUser = this.updateUser.bind(this);
-    this.updateCities = this.updateCities.bind(this);
     this.updateCountry = this.updateCountry.bind(this);
+    this.handleCitySelect = this.handleCitySelect.bind(this);
   }
 
-  componentDidMount() {
-    getCountries().then(data => {
-      this.setState({ countries: data.content });
-    });
+  async componentDidMount() {
+    requester.getCountries()
+      .then(res => res.body)
+      .then(data => this.setState({ countries: data }))
+      .catch(error => console.log(error));
 
-    getUserInfo().then((data) => {
-      let day = '';
-      let month = '';
-      let year = '';
+    requester.getUserInfo()
+      .then(res => res.body)
+      .then(data => {
+        let day = '';
+        let month = '';
+        let year = '';
 
-      if (data.birthday !== null) {
-        let birthday = moment.utc(data.birthday);
-        day = birthday.add(1, 'days').format('D');
-        month = birthday.format('MM');
-        year = birthday.format('YYYY');
-      }
+        if (data.birthday !== null) {
+          let birthday = moment.utc(data.birthday);
+          day = birthday.add(1, 'days').format('D');
+          month = birthday.format('MM');
+          year = birthday.format('YYYY');
+        }
 
-      this.setState({
-        firstName: data.firstName !== null ? data.firstName : '',
-        lastName: data.lastName !== null ? data.lastName : '',
-        phoneNumber: data.phoneNumber !== null ? data.phoneNumber : '',
-        preferredLanguage: data.preferredLanguage !== null ? data.preferredLanguage : '',
-        preferredCurrency: data.preferredCurrency !== null ? data.preferredCurrency.id : '',
-        gender: data.gender !== null ? data.gender : '',
-        country: data.country !== null ? data.country.id : '1',
-        city: data.city !== null ? data.city.id : '1',
-        locAddress: data.locAddress !== null ? data.locAddress : '',
-        jsonFile: data.jsonFile !== null ? data.jsonFile : '',
-        currencies: data.currencies,
-        day: day,
-        month: month,
-        year: year
-      }, () => {
-        getCities(this.state.country).then(data => {
-          this.setState({ cities: data.content });
+        this.setState({
+          firstName: data.firstName ? data.firstName : '',
+          lastName: data.lastName ? data.lastName : '',
+          phoneNumber: data.phoneNumber ? data.phoneNumber : '',
+          preferredLanguage: data.preferredLanguage ? data.preferredLanguage : '',
+          preferredCurrency: data.preferredCurrency ? data.preferredCurrency.id : '',
+          gender: data.gender? data.gender : '',
+          country: data.country ? data.country : { name: 'United States of America', id: 1, code: 'US' },
+          city: data.city ? data.city : '',
+          address: data.address ? data.address : '',
+          locAddress: data.locAddress !== null ? data.locAddress : '',
+          jsonFile: data.jsonFile !== null ? data.jsonFile : '',
+          currencies: data.currencies,
+          day: day,
+          month: month,
+          year: year
         });
+      }).then(() => {
+        this.setState({ loading: false });
       });
-    }).then(() => {
-      this.setState({ loading: false });
-    });
   }
 
   onChange(e) {
@@ -92,9 +95,8 @@ class ProfileEditForm extends React.Component {
   }
 
   updateUser(captchaToken) {
-    let birthday;
-    birthday = `${this.state.day}/${this.state.month}/${this.state.year}`;
-    
+    let birthday = `${this.state.day}/${this.state.month}/${this.state.year}`;
+
     let userInfo = {
       firstName: this.state.firstName,
       lastName: this.state.lastName,
@@ -102,8 +104,9 @@ class ProfileEditForm extends React.Component {
       preferredLanguage: this.state.preferredLanguage,
       preferredCurrency: parseInt(this.state.preferredCurrency, 10),
       gender: this.state.gender,
-      country: parseInt(this.state.country, 10),
-      city: parseInt(this.state.city, 10),
+      country: parseInt(this.state.country.id, 10),
+      city: this.state.city,
+      address: this.state.address,
       birthday: birthday,
       locAddress: this.state.locAddress,
       jsonFile: this.state.jsonFile
@@ -111,7 +114,7 @@ class ProfileEditForm extends React.Component {
 
     Object.keys(userInfo).forEach((key) => (userInfo[key] === null || userInfo[key] === '') && delete userInfo[key]);
 
-    updateUserInfo(userInfo, captchaToken).then((res) => {
+    requester.updateUserInfo(userInfo, captchaToken).then(res => {
       if (res.success) {
         NotificationManager.success('Successfully updated your profile', 'Update user profile');
         this.componentDidMount();
@@ -128,19 +131,13 @@ class ProfileEditForm extends React.Component {
 
   updateCountry(e) {
     this.setState({
-      [e.target.name]: e.target.value,
-    }, () => {
-      this.updateCities();
+      country: JSON.parse(e.target.value),
+      city: ''
     });
   }
 
-  updateCities() {
-    getCities(this.state.country).then(data => {
-      this.setState({
-        city: '1',
-        cities: data.content,
-      });
-    });
+  handleCitySelect(place) {
+    this.setState({ city: place.formatted_address });
   }
 
   render() {
@@ -155,7 +152,7 @@ class ProfileEditForm extends React.Component {
     }
 
     return (
-      <div id="profile-edit-form">
+      <div id="my-profile-edit-form">
         <h2>Edit Profile</h2>
         <hr />
         <form onSubmit={(e) => { e.preventDefault(); this.captcha.execute(); }}>
@@ -172,48 +169,56 @@ class ProfileEditForm extends React.Component {
           </div>
           <div className="text"><span>Your public profile only shows your first name.<br />When you request a booking, your host will see your first and last name.</span></div>
           <div className="birth-sex">
-            <div className="bmonth">
+            <div className="bmonth option-field">
               <label htmlFor="bmonth">Birthdate <img src={Config.getValue('basePath') + 'images/icon-lock.png'} className="lock" alt="lock-o" /></label>
-              <select name="month" id="bmonth" onChange={this.onChange} value={this.state.month}>
-                <option disabled value="">Month</option>
-                <option value="01">January</option>
-                <option value="02">February</option>
-                <option value="03">March</option>
-                <option value="04">April</option>
-                <option value="05">May</option>
-                <option value="06">June</option>
-                <option value="07">July</option>
-                <option value="08">August</option>
-                <option value="09">September</option>
-                <option value="10">October</option>
-                <option value="11">November</option>
-                <option value="12">December</option>
-              </select>
+              <div className='select select-profile-edit-form'>
+                <select name="month" id="bmonth" onChange={this.onChange} value={this.state.month}>
+                  <option disabled value="">Month</option>
+                  <option value="01">January</option>
+                  <option value="02">February</option>
+                  <option value="03">March</option>
+                  <option value="04">April</option>
+                  <option value="05">May</option>
+                  <option value="06">June</option>
+                  <option value="07">July</option>
+                  <option value="08">August</option>
+                  <option value="09">September</option>
+                  <option value="10">October</option>
+                  <option value="11">November</option>
+                  <option value="12">December</option>
+                </select>
+              </div>
             </div>
-            <div className="bday">
+            <div className="bday option-field">
               <label htmlFor="bday">&nbsp;</label>
-              <select name="day" id="bday" onChange={this.onChange} value={this.state.day}>
-                <option disabled value="">Day</option>
-                {Array.apply(null, Array(32)).map(function (item, i) {
-                  return i > 0 && <option key={i} value={i}>{i}</option>;
-                })}
-              </select>
+              <div className='select'>
+                <select name="day" id="bday" onChange={this.onChange} value={this.state.day}>
+                  <option disabled value="">Day</option>
+                  {Array.apply(null, Array(32)).map(function (item, i) {
+                    return i > 0 && <option key={i} value={i}>{i}</option>;
+                  })}
+                </select>
+              </div>
             </div>
-            <div className="byear">
+            <div className="byear option-field">
               <label htmlFor="byear">&nbsp;</label>
-              <select name="year" id="byear" onChange={this.onChange} value={this.state.year}>
-                <option disabled value="">Year</option>
-                {years}
-              </select>
+              <div className='select'>
+                <select name="year" id="byear" onChange={this.onChange} value={this.state.year}>
+                  <option disabled value="">Year</option>
+                  {years}
+                </select>
+              </div>
             </div>
-            <div className="sex">
+            <div className="sex option-field">
               <label htmlFor="sex">Gender <img src={Config.getValue('basePath') + 'images/icon-lock.png'} className="lock" alt="lock-o" /></label>
-              <select name="gender" id="sex" onChange={this.onChange} value={this.state.gender}>
-                <option disabled value="">Gender</option>
-                <option value="men">Men</option>
-                <option value="women">Women</option>
-                <option value="other">Other</option>
-              </select>
+              <div className='select'>
+                <select name="gender" id="sex" onChange={this.onChange} value={this.state.gender}>
+                  <option disabled value="">Gender</option>
+                  <option value="male">Male</option>
+                  <option value="female">Female</option>
+                  <option value="other">Other</option>
+                </select>
+              </div>
             </div>
             <br className="clear-both" />
           </div>
@@ -226,46 +231,75 @@ class ProfileEditForm extends React.Component {
 
           <div className="loc-address">
             <label htmlFor="loc-address">ETH/LOC address <img src={Config.getValue('basePath') + 'images/icon-lock.png'} className="lock" alt="lock-o" /></label>
-            <input className="form-control form-control-disabled" id="loc-address" name="locAddress" value={this.state.locAddress} onChange={this.onChange} type="text" disabled="disabled" />
+            <input id="loc-address" name="locAddress" value={this.state.locAddress} onChange={this.onChange} type="text" disabled="disabled" />
           </div>
 
           <div className="language-currency">
             <div className="language">
+
               <label htmlFor="language">Preferred language</label>
-              <select name="preferredLanguage" id="language" onChange={this.onChange} value={this.state.preferredLanguage}>
-                <option value="1">English</option>
-              </select>
+              <div className='select'>
+                <select name="preferredLanguage" id="language" onChange={this.onChange} value={this.state.preferredLanguage}>
+                  <option value="1">English</option>
+                </select>
+              </div>
             </div>
             <div className="currency">
+
               <label htmlFor="currency">Preferred currency</label>
-              <select name="preferredCurrency" id="currency" onChange={this.onChange} value={this.state.preferredCurrency}>
-                <option disabled value="">Currency</option>
-                {this.state.currencies.map((item, i) => {
-                  return <option key={i} value={item.id}>{item.code}</option>;
-                })}
-              </select>
+              <div className='select'>
+                <select name="preferredCurrency" id="currency" onChange={this.onChange} value={this.state.preferredCurrency}>
+                  <option disabled value="">Currency</option>
+                  {this.state.currencies.map((item, i) => {
+                    return <option key={i} value={item.id}>{item.code}</option>;
+                  })}
+                </select>
+              </div>
             </div>
             <br className="clear-both" />
           </div>
-          <div className="address language-currency">
-            <label htmlFor="address">Where you live</label>
-            <div className="language">
-              <select name="country" id="address" onChange={this.updateCountry} value={this.state.country}>
-                <option disabled value="">Country</option>
-                {this.state.countries.map((item, i) => {
-                  return <option key={i} value={item.id}>{item.name}</option>;
-                })}
-              </select>
+          <div className="address-city">
+            <div className="address">
+              <label htmlFor="address">Where do you live</label>
+              <div className='select'>
+                <select name="country" id="address" onChange={this.updateCountry} value={JSON.stringify(this.state.country)}>
+                  <option disabled value="">Country</option>
+                  {this.state.countries.map((item, i) => {
+                    return <option key={i} value={JSON.stringify(item)}>{item.name}</option>;
+                  })}
+                </select>
+              </div>
             </div>
-            <div className="language">
-              <select name="city" onChange={this.onChange} value={this.state.city}>
-                <option disabled value="">City</option>
-                {this.state.cities.map((item, i) => {
-                  return <option key={i} value={item.id}>{item.name}</option>;
-                })}
-              </select>
+            <div className="city">
+              <label htmlFor="city">Which city</label>
+              <div className='select'>
+                <Select
+                  style={{ width: '100%' }}
+                  value={this.state.city}
+                  onChange={this.onChange}
+                  name="city"
+                  onPlaceSelected={this.handleCitySelect}
+                  types={['(cities)']}
+                  componentRestrictions={{ country: this.state.country.code.toLowerCase() }}
+                  disabled={!this.state.country}
+                  placeholder='Choose your city'
+                />
+                {/* <select name="city" id="city" onChange={this.onChange} value={this.state.city}>
+                  <option disabled value="">City</option>
+                  {this.state.cities.map((item, i) => {
+                    return <option key={i} value={item.id}>{item.name}</option>;
+                  })}
+                </select> */}
+              </div>
             </div>
+
+
             <br className="clear-both" />
+          </div>
+
+          <div className="address">
+            <label htmlFor="address">Address</label>
+            <input id="address" name="address" value={this.state.address} onChange={this.onChange} type="text" placeholder='Enter your address' />
           </div>
 
           <ReCAPTCHA

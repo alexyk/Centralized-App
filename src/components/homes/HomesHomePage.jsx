@@ -1,11 +1,11 @@
-import { getListings, getCountries } from '../../requester';
-
-import React from 'react';
-import { withRouter } from 'react-router-dom';
-import moment from 'moment';
+import BancorConvertWidget from '../external/BancorConvertWidget';
+import HomesHeroComponent from './HomesHeroComponent';
 import PopularListingsCarousel from '../common/listing/PopularListingsCarousel';
 import PropTypes from 'prop-types';
-import HomesHeroComponent from './HomesHeroComponent';
+import React from 'react';
+import moment from 'moment';
+import requester from '../../initDependencies';
+import { withRouter } from 'react-router-dom';
 
 class HomesHomePage extends React.Component {
   constructor(props) {
@@ -29,12 +29,16 @@ class HomesHomePage extends React.Component {
   }
 
   componentDidMount() {
-    getListings().then(data => {
-      this.setState({ listings: data.content });
+    requester.getTopListings().then(res => {
+      res.body.then(data => {
+        this.setState({ listings: data.content });
+      });
     });
 
-    getCountries(true).then(data => {
-      this.setState({ countries: data.content });
+    requester.getCountries().then(res => {
+      res.body.then(data => {
+        this.setState({ countries: data });
+      });
     });
   }
 
@@ -75,6 +79,8 @@ class HomesHomePage extends React.Component {
           handleSearch={this.handleSearch}
           handleDatePick={this.handleDatePick}
         />
+
+        <BancorConvertWidget />
 
         <section id="popular-hotels-box">
           <h2>Popular Properties</h2>

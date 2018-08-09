@@ -6,6 +6,8 @@ import ListingCrudNav from '../navigation/ListingCrudNav';
 import FilterCheckbox from '../../common/filter/FilterCheckbox';
 import FooterNav from '../navigation/FooterNav';
 
+import '../../../styles/css/components/profile/listings/listing-facilities.css';
+
 function ListingFacilities(props) {
   if (!props) {
     return null;
@@ -15,18 +17,21 @@ function ListingFacilities(props) {
   props.values.categories.forEach((category, j) => {
     if (category.amenities.length > 0 && category.name !== 'Safety Amenities') {
       facilities.push(
-        <div key={j} className="filter-box">
-          <h3>{category.name}</h3>
-          {category.amenities.map((item, i) => {
-            return (
-              <div key={i} onClick={() => props.toggle(item.id)}>
-                <FilterCheckbox
-                  key={i}
-                  text={item.name}
-                  checked={props.values.facilities.has(item.id)} />
-              </div>
-            );
-          })}
+        <div key={j} className="checkbox-filters">
+          <h4>{category.name}</h4>
+          <ul>
+            {category.amenities.map((item, i) => {
+              return (
+                <li key={i} onClick={() => props.toggle(item.id)}>
+                  <FilterCheckbox
+                    id={item.id}
+                    key={i}
+                    text={item.name}
+                    checked={props.values.facilities.has(item.id)} />
+                </li>
+              );
+            })}
+          </ul>
         </div>
       );
     }
@@ -38,7 +43,7 @@ function ListingFacilities(props) {
   });
 
   return (
-    <div>
+    <div id="listing-facilicites">
       <ListingCrudNav progress='33%' />
       <div className="container">
         <div className="row">
@@ -49,7 +54,6 @@ function ListingFacilities(props) {
             <div className="col-md-9">
               <div className="form-group">
                 <h2>What facilities do you offer to your guests</h2>
-                <hr />
 
                 <div className="col-md-4">
                   {columns[0]}

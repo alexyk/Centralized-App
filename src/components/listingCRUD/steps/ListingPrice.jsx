@@ -5,11 +5,13 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import FooterNav from '../navigation/FooterNav';
 
+import '../../../styles/css/components/profile/listings/listing-price.css';
+
 function ListingPrice(props) {
   const { currency, defaultDailyPrice, cleaningFee, depositRate, currencies } = props.values;
 
   return (
-    <div>
+    <div id="listing-price-container">
       <ListingCrudNav progress='100%' />
       <div className="container">
         <div className="row">
@@ -26,9 +28,10 @@ function ListingPrice(props) {
                   <div className="col-md-6">
                     <div className="form-group">
                       <label htmlFor="city">Currency</label>
+                      <div className='select'>
                       <select
                         onChange={props.onChange}
-                        className="form-control"
+                       
                         name="currency"
                         value={currency}
                         required="required"
@@ -37,6 +40,7 @@ function ListingPrice(props) {
                           return <option key={i} value={item.id}>{item.code}</option>;
                         })}
                       </select>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -44,7 +48,7 @@ function ListingPrice(props) {
                   <div className="col-md-6">
                     <div className="form-group">
                       <label htmlFor="defaultDailyPrice">Price per Night</label>
-                      <input onChange={props.onChange} type="number" id="defaultDailyPrice" className="form-control" name="defaultDailyPrice" value={defaultDailyPrice} />
+                      <input onChange={props.onChange} type="number" id="defaultDailyPrice"  name="defaultDailyPrice" value={defaultDailyPrice} />
                     </div>
                   </div>
                 </div>
@@ -52,7 +56,7 @@ function ListingPrice(props) {
                   <div className="col-md-6">
                     <div className="form-group">
                       <label htmlFor="cleaningFee">Cleaning Fee</label>
-                      <input onChange={props.onChange} type="number" id="cleaningFee" className="form-control" name="cleaningFee" value={cleaningFee} />
+                      <input onChange={props.onChange} type="number" id="cleaningFee"  name="cleaningFee" value={cleaningFee} />
                     </div>
                   </div>
                 </div>
@@ -60,7 +64,7 @@ function ListingPrice(props) {
                   <div className="col-md-6">
                     <div className="form-group">
                       <label htmlFor="depositRate">Deposit Required</label>
-                      <input onChange={props.onChange} type="number" id="depositRate" className="form-control" name="depositRate" value={depositRate} />
+                      <input onChange={props.onChange} type="number" id="depositRate"  name="depositRate" value={depositRate} />
                     </div>
                   </div>
                 </div>

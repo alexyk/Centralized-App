@@ -1,20 +1,19 @@
-import { NotificationManager } from 'react-notifications';
-import { changeListingStatus, contactHost, getAllPublishedListings, getCities, getCountries } from '../../../requester';
+import '../../../styles/css/components/captcha/captcha-container.css';
 
-import Filter from './Filter';
+import { Config } from '../../../config';
 import ContactHostModal from '../../common/modals/ContactHostModal';
+import Filter from './Filter';
+import Lightbox from 'react-images';
+import ListItem from './ListItem';
+import NoEntriesMessage from '../common/NoEntriesMessage';
+import { NotificationManager } from 'react-notifications';
 import Pagination from '../../common/pagination/Pagination';
 import PropTypes from 'prop-types';
+import ReCAPTCHA from 'react-google-recaptcha';
 import React from 'react';
 import queryString from 'query-string';
+import requester from '../../../initDependencies';
 import { withRouter } from 'react-router-dom';
-import NoEntriesMessage from '../common/NoEntriesMessage';
-import ListItem from './ListItem';
-import Lightbox from 'react-images';
-import ReCAPTCHA from 'react-google-recaptcha';
-import { Config } from '../../../config';
-
-import '../../../styles/css/components/captcha/captcha-container.css';
 
 class PublishedList extends React.Component {
   constructor(props) {
@@ -59,53 +58,69 @@ class PublishedList extends React.Component {
   }
 
   componentDidMount() {
-    let searchTerm = this.buildSearchTerm();
-    getAllPublishedListings(searchTerm).then((data) => {
-      this.setState({ listings: data.content, loading: false, totalElements: data.totalElements });
+    let search = this.buildSearchTerm();
+    requester.getAllPublishedListings(search.searchTermMap).then(res => {
+      res.body.then(data => {
+        this.setState({ listings: data.content, loading: false, totalElements: data.totalElements });
+      });
     });
 
     if (this.state.country !== '') {
-      getCities(this.state.country).then(data => {
-        this.setState({ cities: data.content });
+      requester.getCities(this.state.country).then(res => {
+        res.body.then(data => {
+          this.setState({ cities: data.content });
+        });
       });
     }
 
-    getCountries().then(data => {
-      this.setState({ countries: data.content });
-    });
-
+    requester.getCountries()
+      .then(res => res.body)
+      .then(data => {
+        this.setState({ countries: data });
+      });
   }
 
   onSearch() {
     this.setState({ loading: true });
 
-    let searchTerm = this.buildSearchTerm();
+    let search = this.buildSearchTerm();
 
-    getAllPublishedListings(searchTerm).then((data) => {
-      this.props.history.push(`/profile/admin/listings/published${searchTerm}`);
-      this.setState({ listings: data.content, loading: false, totalElements: data.totalElements });
+    requester.getAllPublishedListings(search.searchTermMap).then(res => {
+      res.body.then(data => {
+        this.props.history.push(`/profile/admin/listings/published${search.searchTerm}`);
+        this.setState({ listings: data.content, loading: false, totalElements: data.totalElements });
+      });
     });
   }
 
   buildSearchTerm() {
-    let searchTerm = `?`;
+    let searchTermMap = [];
+    let searchTerm = '?';
 
     if (this.state.city) {
+      searchTermMap.push(`cityId=${this.state.city}`);
       searchTerm += `&cityId=${this.state.city}`;
     }
 
     if (this.state.name) {
+      searchTermMap.push(`listingName=${this.state.name}`);
       searchTerm += `&listingName=${this.state.name}`;
     }
 
     if (this.state.country) {
+      searchTermMap.push(`countryId=${this.state.country}`);
       searchTerm += `&countryId=${this.state.country}`;
     }
 
     if (this.state.hostEmail) {
+      searchTermMap.push(`host=${this.state.hostEmail}`);
       searchTerm += `&host=${this.state.hostEmail}`;
     }
-    return searchTerm;
+
+    return {
+      searchTerm,
+      searchTermMap
+    };
   }
 
   onChange(e) {
@@ -120,9 +135,11 @@ class PublishedList extends React.Component {
       city: null
     }, () => {
       if (option) {
-        getCities(option.value).then(data => {
-          this.setState({
-            cities: data.content,
+        requester.getCities(option.value).then(res => {
+          res.body.then(data => {
+            this.setState({
+              cities: data.content,
+            });
           });
         });
       } else {
@@ -146,16 +163,23 @@ class PublishedList extends React.Component {
     });
 
     let searchTerm = queryString.parse(this.props.location.search);
-
+    let arraySearchTerm = [];
     searchTerm.page = page - 1;
 
+    for (let key in searchTerm) {
+      let kvp = `${key}=${searchTerm[key]}`;
+      arraySearchTerm.push(kvp);
+    }
+
     let newSearchTerm = queryString.stringify(searchTerm);
-    getAllPublishedListings('?' + newSearchTerm).then(data => {
-      this.props.history.push('?' + newSearchTerm);
-      this.setState({
-        listings: data.content,
-        totalElements: data.totalElements,
-        loading: false
+    requester.getAllPublishedListings(arraySearchTerm).then(res => {
+      res.body.then(data => {
+        this.props.history.push('?' + newSearchTerm);
+        this.setState({
+          listings: data.content,
+          totalElements: data.totalElements,
+          loading: false
+        });
       });
     });
   }
@@ -170,7 +194,7 @@ class PublishedList extends React.Component {
       state: status
     };
 
-    changeListingStatus(unpublishObj).then((res) => {
+    requester.changeListingStatus(unpublishObj).then(res => {
       if (res.success) {
         NotificationManager.info('Listing unpublished');
         const allListings = this.state.listings;
@@ -188,17 +212,14 @@ class PublishedList extends React.Component {
   }
 
   handleContactHost(id, message, captchaToken) {
-    // this.setState({ loading: true });
     let contactHostObj = {
       message: message
     };
 
-    contactHost(id, contactHostObj, captchaToken)
-      .then(res => {
-        // this.props.history.push(`/profile/messages/chat/${res.conversation}`);
-        NotificationManager.info('Message sent');
-        this.closeContactHostModal();
-      });
+    requester.contactHost(id, contactHostObj, captchaToken).then(() => {
+      NotificationManager.info('Message sent');
+      this.closeContactHostModal();
+    });
   }
 
   openModal(id) {
@@ -321,34 +342,6 @@ class PublishedList extends React.Component {
             {this.state.listings.length === 0
               ? <NoEntriesMessage text="No listings to show" />
               : <div>
-                {/* <div className="table-header bold">
-                  <div className="col-md-1">
-                  </div>
-                  <div className="col-md-4">
-                    <span>Name</span>
-                  </div>
-                  <div className="col-md-2">
-                    <span>Price</span>
-                  </div>
-                  <div className="col-md-3">
-                    <span>Actions</span>
-                  </div>
-                  <div className="col-md-2">
-                    <span>Contact host</span>
-                  </div>
-                </div> */}
-
-                {/* TODO: Fix event emmiter warning from this piece of code */}
-
-                {/* <ListingRow
-                      action="Unpublish"
-                      canDelete={false}
-                      updateListingStatus={this.updateListingStatus}
-                      actionClass="btn btn-danger"
-                      listing={item}
-                      key={i}
-                      openModal={this.openModal}
-                    /> */}
                 {this.state.listings.map((l, i) => {
                   return (
                     <ListItem

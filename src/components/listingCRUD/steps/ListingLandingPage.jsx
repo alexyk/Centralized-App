@@ -8,23 +8,25 @@ import ListingCrudNav from '../navigation/ListingCrudNav';
 
 import { Config } from '../../../config';
 
+import '../../../styles/css/components/profile/listings/listing-landing-page.css';
+
 function ListingLandingPage(props) {
   const { listingType, name } = props.values;
   const next = validateInput(props.values) ? props.next : props.location.pathname;
-  const handleClickNext = validateInput(props.values) 
+  const handleClickNext = validateInput(props.values)
     ? () => { props.updateProgress(1); }
     : () => { showErrors(props.values); };
-  
+
   return (
     <div>
       <ListingCrudNav progress='33%' />
       <div className="container">
-        <div className="row">
+        <div id="listing-landing-page" className="row">
           <div className="listings create landing">
-            <div className="col-md-6">
+            <div className="listing-landing-page-left-part col-md-6">
               <img src={Config.getValue('basePath') + 'images/listing-illustration.png'} alt="listing-creation" className="left-poster" />
             </div>
-            <div className="col-md-6">
+            <div className="listing-landing-page-right-part col-md-6">
               <div className="column-container">
                 <div>
                   <h4>STEP ONE</h4>
@@ -32,23 +34,23 @@ function ListingLandingPage(props) {
 
                 <div>
                   <h3>Give your place a name</h3>
-                  <hr />
+                  {/* <hr /> */}
                 </div>
 
-                <div className="col-md-12">
+                <div className="input-listing-title-container col-md-12">
                   <div className="form-group">
-                    <input onChange={props.onChange} placeholder="Listing Title" className="form-control" name="name" value={name} />
+                    <input onChange={props.onChange} placeholder="Listing Title" name="name" value={name} />
                     <br />
                   </div>
                 </div>
 
-                <div>
+                <div className="place-listing-container">
                   <h3>What kind of place do you want to list?</h3>
                   <hr />
                 </div>
                 <div className="form-group">
                   <div className="row">
-                    <div className="col-md-12">
+                    <div className="house-laning-page dcol-md-12">
                       <label className="house custom-radio">
                         <input
                           type="radio"

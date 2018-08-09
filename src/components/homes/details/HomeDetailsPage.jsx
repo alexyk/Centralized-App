@@ -1,21 +1,15 @@
-import { withRouter } from 'react-router-dom';
-import { NotificationManager } from 'react-notifications';
-import {
-  contactHost,
-  getCalendarByListingIdAndDateRange,
-  getUserInfo,
-  getPropertyById
-} from '../../../requester';
-
 import { Config } from '../../../config';
-import Lightbox from 'react-images';
-import PropTypes from 'prop-types';
 import HomeDetailsInfoSection from './HomeDetailsInfoSection';
-import React from 'react';
 import HomesSearchBar from '../search/HomesSearchBar';
+import Lightbox from 'react-images';
+import { NotificationManager } from 'react-notifications';
+import PropTypes from 'prop-types';
+import React from 'react';
 import { connect } from 'react-redux';
 import moment from 'moment';
 import { parse } from 'query-string';
+import requester from '../../../initDependencies';
+import { withRouter } from 'react-router-dom';
 
 class HomeDetailsPage extends React.Component {
   constructor(props) {
@@ -116,14 +110,15 @@ class HomeDetailsPage extends React.Component {
 
   getUserInfo() {
     if (localStorage.getItem(Config.getValue('domainPrefix') + '.auth.locktrip')) {
-      getUserInfo()
-        .then(res => {
+      requester.getUserInfo().then(res => {
+        res.body.then(data => {
           this.setState({
             loaded: true,
-            userInfo: res,
+            userInfo: data,
             loading: false
           });
         });
+      });
     }
     else {
       this.setState({ loaded: true, loading: false });
@@ -135,7 +130,6 @@ class HomeDetailsPage extends React.Component {
     const today = moment();
     const prices = this.state.prices;
     const range = prices.filter(x => x.start >= startDate && x.end < endDate);
-    console.log(startDate, today);
     const isInvalidRange = range.filter(x => !x.available).length > 0;
     if (isInvalidRange) {
       NotificationManager.warning('There is a unavailable day in your select range', 'Calendar Operations');
@@ -215,10 +209,11 @@ class HomeDetailsPage extends React.Component {
       message: message
     };
 
-    contactHost(id, contactHostObj, captchaToken)
-      .then(res => {
-        this.props.history.push(`/profile/messages/chat/${res.conversation}`);
+    requester.contactHost(id, contactHostObj, captchaToken).then(res => {
+      res.body.then(data => {
+        this.props.history.push(`/profile/messages/chat/${data.conversation}`);
       });
+    });
   }
 
   initializeCalendar() {
@@ -227,27 +222,43 @@ class HomeDetailsPage extends React.Component {
     const DAY_INTERVAL = 90;
     end.setUTCHours(now.getUTCHours() + 24 * DAY_INTERVAL);
 
-    getPropertyById(this.props.match.params.id).then((data) => {
+    requester.getListing(this.props.match.params.id).then(res => {
 
-      this.setState({ data: data });
+      res.body.then(data => {
+        this.setState({ data: data });
+      });
 
-      getCalendarByListingIdAndDateRange(this.props.match.params.id, now, end, this.props.paymentInfo.currency, 0, DAY_INTERVAL).then(res => {
-        let prices = [];
-        for (let dateInfo of res.content) {
-          let price = dateInfo.available ? `${this.props.paymentInfo.currencySign}${Math.round(dateInfo.price)}` : '';
-          prices.push(
-            {
-              'title': <span className="calendar-price bold">{price}</span>,
-              'start': moment(dateInfo.date, 'DD/MM/YYYY'),
-              'end': moment(dateInfo.date, 'DD/MM/YYYY'),
-              'allDay': true,
-              'price': dateInfo.price,
-              'available': dateInfo.available
-            }
-          );
-        }
+      let searchTermMap = [];
+      const startDateParam = `${now.getUTCDate()}/${now.getUTCMonth() + 1}/${now.getUTCFullYear()}`;
+      const endDateParam = `${end.getUTCDate()}/${end.getUTCMonth() + 1}/${end.getUTCFullYear()}`;
+      searchTermMap.push(
+        `listing=${this.props.match.params.id}`,
+        `startDate=${startDateParam}`,
+        `endDate=${endDateParam}`,
+        `page=${0}`,
+        `toCode=${this.props.paymentInfo.currency}`,
+        `size=${DAY_INTERVAL}`);
 
-        this.setState({ prices: prices, calendar: res.content, oldCurrency: this.props.paymentInfo.currency });
+
+      requester.getCalendarByListingIdAndDateRange(searchTermMap).then(res => {
+        res.body.then(data => {
+          let prices = [];
+          for (let dateInfo of data.content) {
+            let price = dateInfo.available ? `${this.props.paymentInfo.currencySign}${Math.round(dateInfo.price)}` : '';
+            prices.push(
+              {
+                'title': <span className="calendar-price bold">{price}</span>,
+                'start': moment(dateInfo.date, 'DD/MM/YYYY'),
+                'end': moment(dateInfo.date, 'DD/MM/YYYY'),
+                'allDay': true,
+                'price': dateInfo.price,
+                'available': dateInfo.available
+              }
+            );
+          }
+
+          this.setState({ prices: prices, calendar: data.content, oldCurrency: this.props.paymentInfo.currency });
+        });
       });
     });
   }
