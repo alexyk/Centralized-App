@@ -7,6 +7,7 @@ import {
 
 const ERROR = require('./../config/errors.json');
 const gasConfig = require('./../config/gas-config.json');
+const tokenDecimals = 1000000000000000000
 
 
 export class EtherValidators {
@@ -32,7 +33,7 @@ export class EtherValidators {
     const gasAmountNeeded = gasAmountApprove.add(gasAmountAction);
 
     if (gasAmountNeeded.gt(customerBalance)) {
-      throw new Error(ERROR.INSUFFICIENT_AMOUNT_ETH);
+      throw new Error(ERROR.INSUFFICIENT_AMOUNT_ETH + ` Amount ETH needed: ${gasAmountNeeded.toString()/tokenDecimals}`);
     }
 
   }
