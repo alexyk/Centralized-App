@@ -55,11 +55,11 @@ HomeItem.propTypes = {
   paymentInfo: PropTypes.object
 };
 
-export default withRouter(connect(mapStateToProps)(HomeItem));
-
 function mapStateToProps(state) {
   const { paymentInfo } = state;
   return {
     paymentInfo
   };
 }
+
+export default withRouter(connect(mapStateToProps)(HomeItem));

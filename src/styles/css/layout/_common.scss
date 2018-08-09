@@ -246,7 +246,7 @@ select {
 
 .sm-none {
   @include media("<desktop") {
-    display: none;
+    display: none !important;
   }
 }
 

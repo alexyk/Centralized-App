@@ -4,7 +4,7 @@ import moment from 'moment';
 import { Config } from '../../../config';
 import NoEntriesMessage from '../common/NoEntriesMessage';
 
-export default function MyGuestsTable(props) {
+function MyGuestsTable(props) {
   const renderReservations = () => {
     if (!props.reservations) {
       return;
@@ -87,3 +87,5 @@ MyGuestsTable.propTypes = {
   onReservationCancel: PropTypes.func,
   onReservationReject: PropTypes.func
 };
+
+export default MyGuestsTable;

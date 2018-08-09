@@ -1,60 +1,78 @@
+$breakpoints: (
+	'xs-phone': 380px,
+	'phone': 500px,
+	'lg-phone': 565px,
+	'tablet': 800px,
+	'desktop': 1024px,
+	'widescreen': 1200px
+);
+
+@import '../../vendors/include-media';
+
 .my-listings {
   &__progress-item {
-    display: flex;
     justify-content: space-between;
     position: relative;
     margin-bottom: 20px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    padding: 10px;
-    background-color: #fff;
+    flex-direction: column;
 
-    &__toggle {
-      width: 2%;
-      padding: 10px;
-    }
-
-    &__picture {
-      width: 7%;
-      padding: 10px;
+    .flex-container-row {
+      border: 0px;
+      padding: 0;
+      margin-top: 0;
+      margin-bottom: 0;
     }
 
     &__content {
+      margin-top: 30px;
+      margin-left: calc(130px + 2%);
       width: 87%;
-      padding: 10px;
       
       &__row {
         display: flex;
         justify-content: space-between;
-        padding: 10px;
         margin-bottom: 5px;
+        align-items: center;
 
         .progress-step {
           width: 50%;
           border-bottom: 1px solid #ccc;
           padding-bottom: 5px;
+          margin-bottom: 15px;
         }
 
         .step-number {
           position: relative;
           top: -4px;
           display: inline-block;
-          width: 25px;
-          height: 25px;
+          width: 35px;
+          height: 35px;
           text-align: center;
           border: 2px solid #d97a61;
           border-radius: 50%;
           margin-right: 10px;
+          .number {
+            margin-top: 9px;
+            font-size: 13px;
+            color: #d97a61;
+            font-weight: 600;
+          }
         }
 
         .progress-name {
           display: inline-block;
           font-size: 22px;
+          font-weight: 400;
+        }
+
+        .progress-steps {
+          margin-left: 45px;
         }
 
         .progress-continue {
           text-align: left;
           margin-bottom: 10px;
+          margin-left: 45px;
         }
 
         .progress-continue a {
@@ -64,10 +82,11 @@
         }
 
         .progress-bar-outline {
-          margin: 5px 0 10px 0;
+          margin: 10px 0;
           width: 80%;
           background-color: #E1E1E1; 
           height: 3px;
+          margin-left: 45px;
         }
       }
     }
@@ -76,6 +95,30 @@
       position: absolute;
       top: 55%;
       left: 63%;
+    }
+
+    @include media("<=desktop") {
+      &__content {
+        margin-left: 10%;
+      }
+    }
+
+    @include media("<=tablet") {
+      margin-bottom: 10%;
+      &__content {
+        display: none;
+      }
+      .progress-image {
+        display: none;
+      }
+      .flex-container-row {
+        border: 0px;
+        padding: 5%;
+      }
+      &__content {
+        margin-left: 5%;
+        width: 100%;
+      }
     }
   }
 }

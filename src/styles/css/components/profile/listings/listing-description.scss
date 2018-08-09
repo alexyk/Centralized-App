@@ -1,0 +1,23 @@
+@import '../../../vendors/include-media';
+#reservation-hotel-review-room {
+  h2 {
+    &:last-of-type {
+      padding-top: 15px;
+    }
+    @include media('<tablet') {
+      font-weight: 400;
+    }
+    hr {
+      @include media('<tablet') {
+        margin: 0;
+      }
+    }
+  }
+  textarea {
+    border: 1px solid #cfcfcf;
+    border-radius: 5px;
+    background-color: white;
+    padding: 20px;
+    width: 100%;
+  }
+}

@@ -5,18 +5,20 @@ import GuestSettingsAside from '../aside/GuestSettingsAside';
 import ListingCrudNav from '../navigation/ListingCrudNav';
 import FooterNav from '../navigation/FooterNav';
 
-export default function CreateListingHouseRules(props) {
+import '../../../styles/css/components/profile/listings/listing-house-rules.css';
+
+function ListingHouseRules(props) {
   const { suitableForChildren, suitableForInfants, suitableForPets, smokingAllowed, eventsAllowed, otherHouseRules, otherRuleText } = props.values;
   return (
     <div>
       <ListingCrudNav progress='100%' />
       <div className="container">
         <div className="row">
-          <div className="listings create">
+          <div id="listing-house-rules-container" className="listings create">
             <div className="col-md-3">
               <GuestSettingsAside routes={props.routes} />
             </div>
-            <div className="col-md-9">
+            <div className="rules-container col-md-9">
               <h2>House Rules</h2>
               <hr />
               <div className="form-group">
@@ -146,20 +148,20 @@ export default function CreateListingHouseRules(props) {
                 </div>
                 <div className="col-md-9 other-rules">
                   <div className="form-group">
-                    <input onChange={props.onChange} placeholder="Type rule here" id="other-rules" className="form-control" name="otherRuleText" value={otherRuleText} />
+                    <input onChange={props.onChange} placeholder="Type rule here" id="other-rules"  name="otherRuleText" value={otherRuleText} />
                   </div>
                 </div>
-                <div className="col-md-3">
-                  <input type="button" className="btn btn-primary" value="Add" onClick={() => props.addRule()} />
+                <div className="button-add-container col-md-3">
+                  <button className="btn btn-primary" onClick={() => props.addRule()}> Add</button>
                 </div>
 
                 <div>
                   {Array.from(otherHouseRules).map((item, i) =>
                     <div key={i} className="row">
-                      <div className="col-md-9">
+                      <div className="add-item col-md-9">
                         {item}
                       </div>
-                      <div className="col-md-3">
+                      <div className="button-remove-container col-md-3">
                         <input type="button" value="Remove" onClick={() => props.removeRule(item)} />
                       </div>
                     </div>
@@ -185,7 +187,7 @@ export default function CreateListingHouseRules(props) {
   );
 }
 
-CreateListingHouseRules.propTypes = {
+ListingHouseRules.propTypes = {
   values: PropTypes.any.isRequired,
   onChange: PropTypes.func.isRequired,
   addRule: PropTypes.func.isRequired,
@@ -194,3 +196,5 @@ CreateListingHouseRules.propTypes = {
   next: PropTypes.string,
   routes: PropTypes.object,
 };
+
+export default ListingHouseRules;

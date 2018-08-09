@@ -6,8 +6,9 @@ import ListingCrudNav from '../navigation/ListingCrudNav';
 import FooterNav from '../navigation/FooterNav';
 
 import { Config } from '../../../config';
+import '../../../styles/css/components/profile/listings/listing-place-type.css';
 
-export default function CreateListingPlaceType(props) {
+function ListingPlaceType(props) {
   const { listingType, propertyType, propertyTypes, roomType, dedicatedSpace, propertySize } = props.values;
   return (
     <div>
@@ -19,7 +20,7 @@ export default function CreateListingPlaceType(props) {
             <div className="col-md-3">
               <BasicsAside routes={props.routes} />
             </div>
-            <div className="reservation-hotel-review-room col-md-8">
+            <div id="reservation-hotel-review-room" className="col-md-8">
               <h2>What kind of place do you want to list?</h2>
               <hr />
 
@@ -27,32 +28,36 @@ export default function CreateListingPlaceType(props) {
                 <div className="col-md-6">
                   <div className="form-group">
                     <label htmlFor="listing-type">What are you listing?</label>
-                    <select
-                      onChange={(e) => props.onChange(e)}
-                      className="form-control"
-                      name="listingType"
-                      value={listingType}
-                      required="required"
-                      id="listing-type">
-                      <option value="1">Home</option>
-                    </select>
+                    <div className='select'>
+                      <select
+                        onChange={(e) => props.onChange(e)}
+                        className='select-listing-place-type'
+                        name="listingType"
+                        value={listingType}
+                        required="required"
+                        id="listing-type">
+                        <option value="1">Home</option>
+                      </select>
+                    </div>
                   </div>
                 </div>
                 <div className="col-md-6">
                   <div className="form-group">
                     <label htmlFor="property-type">What type of property is this?</label>
-                    <select
-                      onChange={(e) => props.onChange(e)}
-                      value={propertyType}
-                      className="form-control"
-                      name="propertyType"
-                      required="required"
-                      id="property-type">
-                      <option disabled value="">Type</option>
-                      {propertyTypes.map((item, i) => {
-                        return <option key={i} value={item.id}>{item.name}</option>;
-                      })}
-                    </select>
+                    <div className='select'>
+                      <select
+                        onChange={(e) => props.onChange(e)}
+                        value={propertyType}
+                        className='select-listing-place-type'
+                        name="propertyType"
+                        required="required"
+                        id="property-type">
+                        <option disabled value="">Type</option>
+                        {propertyTypes.map((item, i) => {
+                          return <option key={i} value={item.id}>{item.name}</option>;
+                        })}
+                      </select>
+                    </div>
                   </div>
                 </div>
                 <div className="col-md-12">
@@ -62,7 +67,7 @@ export default function CreateListingPlaceType(props) {
                         <label>What will your guests have?</label>
                       </div>
                     </div>
-                    <div className="col-md-4">
+                    <div className="images-place">
                       <label className="entire custom-radio">
                         <input
                           type="radio"
@@ -71,11 +76,10 @@ export default function CreateListingPlaceType(props) {
                           checked={roomType === 'entire'}
                           value="entire" />
                         <span className="button"><img src={Config.getValue('basePath') + 'images/icon-check-japonica.png'} alt="radio-home" /></span>
-                        <span>Entire Place</span>
+                        <p>Entire Place</p>
                       </label>
-                    </div>
 
-                    <div className="col-md-4">
+
                       <label className="private custom-radio">
                         <input
                           type="radio"
@@ -84,11 +88,10 @@ export default function CreateListingPlaceType(props) {
                           checked={roomType === 'private'}
                           value="private" />
                         <span className="button"><img src={Config.getValue('basePath') + 'images/icon-check-japonica.png'} alt="radio-home" /></span>
-                        <span>Private Place</span>
+                        <p>Private Place</p>
                       </label>
-                    </div>
 
-                    <div className="col-md-4">
+
                       <label className="shared custom-radio">
                         <input
                           type="radio"
@@ -97,7 +100,7 @@ export default function CreateListingPlaceType(props) {
                           checked={roomType === 'shared'}
                           value="shared" />
                         <span className="button"><img src={Config.getValue('basePath') + 'images/icon-check-japonica.png'} alt="radio-home" /></span>
-                        <span>Shared Place</span>
+                        <p>Shared Place</p>
                       </label>
                     </div>
                   </div>
@@ -124,7 +127,7 @@ export default function CreateListingPlaceType(props) {
                   <div className="form-group">
                     <label htmlFor="property-size">Please enter the size of your property</label>
                     <div className="input-group">
-                      <input onChange={(e) => props.onChange(e)} type="number" className="form-control" id="property-size" name="propertySize" value={propertySize} />
+                      <input onChange={(e) => props.onChange(e)} type="number" id="property-size" name="propertySize" value={propertySize} />
                       <span className="input-group-addon">m&sup2;</span>
                     </div>
                   </div>
@@ -136,12 +139,12 @@ export default function CreateListingPlaceType(props) {
           </div>
         </div>
       </div>
-      <FooterNav prev={props.prev} next={props.next} handleClickNext={props.updateProgress} step={2}/>
+      <FooterNav prev={props.prev} next={props.next} handleClickNext={props.updateProgress} step={2} />
     </div>
   );
 }
 
-CreateListingPlaceType.propTypes = {
+ListingPlaceType.propTypes = {
   values: PropTypes.any,
   onChange: PropTypes.func,
   updateProgress: PropTypes.func,
@@ -149,3 +152,5 @@ CreateListingPlaceType.propTypes = {
   next: PropTypes.string,
   routes: PropTypes.object,
 };
+
+export default ListingPlaceType;

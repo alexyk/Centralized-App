@@ -1,24 +1,22 @@
 // import FilterPanel from './filter/FilterPanel';
+
 import Pagination, { DEFAULT_PAGE_SIZE } from '../../common/pagination/Pagination';
-import ResultsHolder from './ResultsHolder';
-import PropTypes from 'prop-types';
-import React from 'react';
-import { withRouter } from 'react-router-dom';
-import moment from 'moment';
-import { connect } from 'react-redux';
-import { ROOMS_XML_CURRENCY } from '../../../constants/currencies.js';
 
-import MultiMarkerGoogleMap from './google-map/MultiMarkerGoogleMap';
-import HotelsSearchBar from './HotelsSearchBar';
-import FilterPanel from './filter/FilterPanel';
 import ChildrenModal from '../modals/ChildrenModal';
-import SockJsClient from 'react-stomp';
-import uuid from 'uuid';
-
-
 import { Config } from '../../../config.js';
-
-import { getRegionNameById, getCurrencyRates, getLocRateInUserSelectedCurrency } from '../../../requester';
+import FilterPanel from './filter/FilterPanel';
+import HotelsSearchBar from './HotelsSearchBar';
+import MultiMarkerGoogleMap from './google-map/MultiMarkerGoogleMap';
+import PropTypes from 'prop-types';
+import { ROOMS_XML_CURRENCY } from '../../../constants/currencies.js';
+import React from 'react';
+import ResultsHolder from './ResultsHolder';
+import SockJsClient from 'react-stomp';
+import { connect } from 'react-redux';
+import moment from 'moment';
+import requester from '../../../initDependencies';
+import uuid from 'uuid';
+import { withRouter } from 'react-router-dom';
 
 class HotelsSearchPage extends React.Component {
   constructor(props) {
@@ -80,8 +78,10 @@ class HotelsSearchPage extends React.Component {
 
   componentDidMount() {
     this.getLocRate();
-    getCurrencyRates().then((json) => {
-      this.setState({ rates: json });
+    requester.getCurrencyRates().then(res => {
+      res.body.then(data => {
+        this.setState({ rates: data });
+      });
     });
 
     if (!localStorage.getItem('uuid')) {
@@ -113,17 +113,19 @@ class HotelsSearchPage extends React.Component {
       });
 
       this.geocoder = new window.google.maps.Geocoder();
-      getRegionNameById(regionId).then((json) => {
-        this.setState({ region: json });
-        const address = json.query;
+      requester.getRegionNameById(regionId).then(res => {
+        res.body.then(data => {
+          this.setState({ region: data });
+          const address = data.query;
 
-        this.geocoder.geocode({ 'address': address }, (results, status) => {
-          if (status === window.google.maps.GeocoderStatus.OK) {
-            this.setState({
-              lat: results[0].geometry.location.lat(),
-              lon: results[0].geometry.location.lng(),
-            });
-          }
+          this.geocoder.geocode({ 'address': address }, (results, status) => {
+            if (status === window.google.maps.GeocoderStatus.OK) {
+              this.setState({
+                lat: results[0].geometry.location.lat(),
+                lon: results[0].geometry.location.lng(),
+              });
+            }
+          });
         });
       });
     }
@@ -160,8 +162,10 @@ class HotelsSearchPage extends React.Component {
   }
 
   getLocRate() {
-    getLocRateInUserSelectedCurrency(ROOMS_XML_CURRENCY).then((json) => {
-      this.setState({ locRate: Number(json[0][`price_${ROOMS_XML_CURRENCY.toLowerCase()}`]) });
+    requester.getLocRateByCurrency(ROOMS_XML_CURRENCY).then(res => {
+      res.body.then(data => {
+        this.setState({ locRate: Number(data[0][`price_${ROOMS_XML_CURRENCY.toLowerCase()}`]) });
+      });
     });
   }
 

@@ -5,9 +5,9 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import moment from 'moment';
 
-export default class CustomEvent extends React.Component {
+class CustomEvent extends React.Component {
   render() {
-    let popoverClickRootClose = (
+    const popoverClickRootClose = (
       <Popover id="popover-trigger-click-root-close" style={{ zIndex: 10000, color: '#000000' }}>
         <div className="event-popup">
           <div className="col-md-12 event-popup-header">
@@ -35,7 +35,6 @@ export default class CustomEvent extends React.Component {
         <OverlayTrigger id="help" trigger="click" rootClose container={this} placement="top" overlay={popoverClickRootClose}>
           <div>{this.props.event.title}</div>
         </OverlayTrigger>
-
       </div>
     );
   }
@@ -44,3 +43,5 @@ export default class CustomEvent extends React.Component {
 CustomEvent.propTypes = {
   event: PropTypes.object
 };
+
+export default CustomEvent;

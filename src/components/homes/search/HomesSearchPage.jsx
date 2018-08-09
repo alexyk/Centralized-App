@@ -1,16 +1,15 @@
 import Breadcrumb from '../../Breadcrumb';
 import FilterPanel from './filter/FilterPanel';
-import Pagination from '../../common/pagination/Pagination';
 import HomeItem from './HomeItem';
+import HomesSearchBar from './HomesSearchBar';
+import Pagination from '../../common/pagination/Pagination';
 import PropTypes from 'prop-types';
 import React from 'react';
-import { getListingsByFilter } from '../../../requester';
-import { withRouter } from 'react-router-dom';
 import moment from 'moment';
+import requester from '../../../initDependencies';
+import { withRouter } from 'react-router-dom';
 
-import HomesSearchBar from './HomesSearchBar';
-
-class ListingSearchPage extends React.Component {
+class HomesSearchPage extends React.Component {
   constructor(props) {
     super(props);
 
@@ -44,18 +43,17 @@ class ListingSearchPage extends React.Component {
   }
 
   componentDidMount() {
-    // getCountries(true).then(data => {
-    //     this.setState({ countries: data.content });
-    // });
-
-    const searchTerms = this.getSearchTerms(this.state.searchParams);
-    getListingsByFilter(searchTerms + `&page=${this.state.currentPage - 1}`).then(data => {
-      this.setState({
-        listings: data.filteredListings.content,
-        totalItems: data.filteredListings.totalElements,
-        loading: false,
-        cities: data.cities,
-        propertyTypes: data.types
+    let searchTerms = this.getSearchTerms(this.state.searchParams);
+    searchTerms.push(`page=${this.state.currentPage - 1}`);
+    requester.getListingsByFilter(searchTerms).then(res => {
+      res.body.then(data => {
+        this.setState({
+          listings: data.filteredListings.content,
+          totalItems: data.filteredListings.totalElements,
+          loading: false,
+          cities: data.cities,
+          propertyTypes: data.types
+        });
       });
     });
   }
@@ -104,15 +102,17 @@ class ListingSearchPage extends React.Component {
     });
 
     this.clearFilters(e);
-    const searchTerms = this.getSearchTerms(this.state.searchParams);
-    getListingsByFilter(searchTerms).then(data => {
-      this.setState({
-        listings: data.filteredListings.content,
-        loading: false,
-        totalItems: data.filteredListings.totalElements,
-        countryId: this.getSearchParams().get('countryId'),
-        cities: data.cities,
-        propertyTypes: data.types
+    let searchTerms = this.getSearchTerms(this.state.searchParams);
+    requester.getListingsByFilter(searchTerms).then(res => {
+      res.body.then(data => {
+        this.setState({
+          listings: data.filteredListings.content,
+          loading: false,
+          totalItems: data.filteredListings.totalElements,
+          countryId: this.getSearchParams().get('countryId'),
+          cities: data.cities,
+          propertyTypes: data.types
+        });
       });
     });
     const url = `/homes/listings/?${searchTerms}`;
@@ -130,12 +130,14 @@ class ListingSearchPage extends React.Component {
     });
 
     let searchTerms = this.getSearchTerms(this.state.searchParams);
-    getListingsByFilter(searchTerms).then(data => {
-      this.setState({
-        listings: data.filteredListings.content,
-        loading: false,
-        totalItems: data.filteredListings.totalElements,
-        countryId: this.getSearchParams().get('countryId'),
+    requester.getListingsByFilter(searchTerms).then(res => {
+      res.body.then(data => {
+        this.setState({
+          listings: data.filteredListings.content,
+          loading: false,
+          totalItems: data.filteredListings.totalElements,
+          countryId: this.getSearchParams().get('countryId'),
+        });
       });
     });
     let url = `/homes/listings/?${searchTerms}`;
@@ -186,12 +188,15 @@ class ListingSearchPage extends React.Component {
       loading: true
     });
 
-    const searchTerms = this.getSearchTerms(this.state.searchParams);
-    getListingsByFilter(searchTerms + `&page=${page - 1}`).then(data => {
-      this.setState({
-        listings: data.filteredListings.content,
-        loading: false,
-        totalItems: data.filteredListings.totalElements
+    let searchTerms = this.getSearchTerms(this.state.searchParams);
+    searchTerms.push(`page=${page - 1}`);
+    requester.getListingsByFilter(searchTerms).then(res => {
+      res.body.then(data => {
+        this.setState({
+          listings: data.filteredListings.content,
+          loading: false,
+          totalItems: data.filteredListings.totalElements
+        });
       });
     });
   }
@@ -203,7 +208,8 @@ class ListingSearchPage extends React.Component {
       pairs.push(keys[i] + '=' + this.createParam(searchParams.get(keys[i])));
     }
 
-    return pairs.join('&');
+    console.log(pairs);
+    return pairs;
   }
 
   getSearchParams() {
@@ -330,10 +336,10 @@ class ListingSearchPage extends React.Component {
   }
 }
 
-ListingSearchPage.propTypes = {
+HomesSearchPage.propTypes = {
   countries: PropTypes.array,
   location: PropTypes.object,
   history: PropTypes.object
 };
 
-export default withRouter(ListingSearchPage);
+export default withRouter(HomesSearchPage);

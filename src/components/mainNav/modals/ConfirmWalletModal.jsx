@@ -9,7 +9,7 @@ import { MNEMONIC_LAST_CALL, WRONG_MNEMONIC_WORDS } from '../../../constants/war
 
 // let captcha = undefined;
 
-export default function CreateWalletModal(props) {
+function ConfirmWalletModal(props) {
 
   const onWordsForget = () => {
     NotificationManager.warning(MNEMONIC_LAST_CALL);
@@ -23,7 +23,6 @@ export default function CreateWalletModal(props) {
       props.closeModal(CONFIRM_WALLET);
       props.openModal(SAVE_WALLET);
     } else {
-      props.closeModal(CONFIRM_WALLET);
       props.handleConfirmWallet();
     }
   };
@@ -46,7 +45,10 @@ export default function CreateWalletModal(props) {
           <form onSubmit={(e) => { e.preventDefault(); handleSubmit(); }}>
             <textarea name="mnemonicWords" className="form-control" onChange={props.handleMnemonicWordsChange} value={props.mnemonicWords} autoFocus onKeyPress={handleEnterKeyPress} />
             <br />
-            <button type="submit" className="btn btn-primary">Confirm Wallet</button>
+            {!props.confirmedRegistration
+              ? <button type="submit" className="btn btn-primary">Confirm Wallet</button>
+              : <button className="btn btn-primary btn-book" disabled>Processing Registration...</button>
+            }
           </form>
           <button className="btn btn-primary" onClick={onWordsForget}>Sorry, I did not save them</button>
         </Modal.Body>
@@ -62,11 +64,14 @@ export default function CreateWalletModal(props) {
   );
 }
 
-CreateWalletModal.propTypes = {
+ConfirmWalletModal.propTypes = {
   openModal: PropTypes.func,
   closeModal: PropTypes.func,
   handleConfirmWallet: PropTypes.func,
   handleMnemonicWordsChange: PropTypes.func,
   mnemonicWords: PropTypes.string,
-  isActive: PropTypes.bool
+  isActive: PropTypes.bool,
+  confirmedRegistration: PropTypes.bool
 };
+
+export default ConfirmWalletModal;

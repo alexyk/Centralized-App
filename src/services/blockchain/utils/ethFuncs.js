@@ -11,9 +11,9 @@ import {
 import {
 	approveContract
 } from "../utils/approveContract";
-import {
-	Config
-} from '../../../config.js';
+// import {
+// 	Config
+// } from '../../../config.js';
 import ethers from 'ethers';
 
 const {
@@ -39,7 +39,7 @@ export async function gasToLoc(gasAmount) {
 	let gasCostPrice = await getGasPrice();
 	let gasCost = gasCostPrice.mul(gasAmount);
 	const gasCoonst = ethers.utils.bigNumberify(gasCost);
-	let contractBalacne = await LOCExchangeContract.getLocBalance();
+	// let contractBalacne = await LOCExchangeContract.getLocBalance();
 
 	return await LOCExchangeContract.weiToLocWei(gasCoonst);
 };
@@ -78,7 +78,7 @@ export async function fundTransactionAmountIfNeeded(walletAddress, walletPrivate
 	let result = {};
 	const nodeProvider = getNodeProvider();
 	let accountBalance = await nodeProvider.getBalance(walletAddress);
-	let initialAccountBalance = accountBalance;
+	// let initialAccountBalance = accountBalance;
 	let remainderForExchange = 0;
 
 	const gasPrice = await getGasPrice();

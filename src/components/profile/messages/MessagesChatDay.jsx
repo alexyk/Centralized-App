@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import moment from 'moment';
 
-export default function MessagesChatPage(props) {
+function MessagesChatDay(props) {
   return (
     <div className="stamp">
       <hr />
@@ -11,6 +11,8 @@ export default function MessagesChatPage(props) {
   );
 }
 
-MessagesChatPage.propTypes = {
+MessagesChatDay.propTypes = {
   date: PropTypes.string
 };
+
+export default MessagesChatDay;

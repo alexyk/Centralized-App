@@ -11,32 +11,32 @@ import MessagesPage from './messages/MessagesPage';
 import MessagesChatPage from './messages/MessagesChatPage';
 import ProfileEditPage from './me/ProfileEditPage';
 import WalletPage from './wallet/WalletIndexPage';
-import ListingsAdminPage from './admin/ListingsAdminPage';
+import AdminPage from './admin/AdminPage';
 
 import PropTypes from 'prop-types';
 
-export default class ProfilePage extends React.Component {
-  render() {
-    return (
-      <div>
-        <NavProfile />
-        <Switch>
-          <Route exact path="/profile/dashboard" render={() => <DashboardPage />} />
-          <Route exact path="/profile/listings" render={() => <MyListingsPage />} />
-          <Route exact path="/profile/listings/calendar/:id" render={() => <CalendarPage />} />
-          <Route exact path="/profile/messages" render={() => <MessagesPage />} />
-          <Route exact path="/profile/messages/chat/:id" render={() => <MessagesChatPage />} />
-          <Route path="/profile/trips" render={() => <TripsRouter location={this.props.location} />} />
-          <Route path="/profile/reservations" render={() => <MyGuestsPage />} />
-          <Route path="/profile/me/edit" render={() => <ProfileEditPage />} />
-          <Route path="/profile/wallet" render={() => <WalletPage />} />
-          <Route path="/profile/admin" render={() => <ListingsAdminPage />} />
-        </Switch>
-      </div>
-    );
-  }
+function ProfilePage(props) {
+  return (
+    <div>
+      <NavProfile />
+      <Switch>
+        <Route exact path="/profile/dashboard" render={() => <DashboardPage />} />
+        <Route exact path="/profile/listings" render={() => <MyListingsPage />} />
+        <Route exact path="/profile/listings/calendar/:id" render={() => <CalendarPage />} />
+        <Route exact path="/profile/messages" render={() => <MessagesPage />} />
+        <Route exact path="/profile/messages/chat/:id" render={() => <MessagesChatPage />} />
+        <Route path="/profile/trips" render={() => <TripsRouter location={props.location} />} />
+        <Route path="/profile/reservations" render={() => <MyGuestsPage />} />
+        <Route path="/profile/me/edit" render={() => <ProfileEditPage />} />
+        <Route path="/profile/wallet" render={() => <WalletPage />} />
+        <Route path="/profile/admin" render={() => <AdminPage />} />
+      </Switch>
+    </div>
+  );
 }
 
 ProfilePage.propTypes = {
   location: PropTypes.object,
 };
+
+export default ProfilePage;

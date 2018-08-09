@@ -257,3 +257,77 @@ $animation-speed: .3s !default;
 	font-size: $pxSize;
 	font-size: ($pxSize / 10px) + rem;
 }
+
+@mixin icon {
+	.icon {
+		width: 24px;
+		height: 24px;
+		display: block;
+		font-size: 24px;
+		color: #54575A;
+		margin-right: 10%;
+		text-align: center;
+		padding: 0;
+	}
+	.icon::before {
+		color: #54575A;
+	}
+}
+
+@mixin rowWithIconInMobile($contentRowAlign, $width) {
+	width: $width;
+	align-items: center;
+	display: inline-flex;
+	@include icon();
+	.content-row {
+		padding-bottom: 0px;
+		width: 100%;
+		text-align: $contentRowAlign;
+	}
+}
+
+@mixin statusRowInMobile() {
+	width: 100%;
+    text-align: center;
+    margin-right: 0;
+    font-size: 20px;
+	border-top: 1px #CCCCCC solid;
+	padding-top: 5%;
+    .status {
+    	font-weight: bold;
+    }
+}
+
+@mixin imageHostInMobile() {
+	width: 100%;
+    text-align: center;
+    padding-bottom: 5%;
+    border-bottom: 1px #CCCCCC solid;
+    padding-top: 0px;
+    .image-host {
+      width: 70px;
+      height: 70px;
+    }
+}
+
+@mixin imageHost() {
+	.image-host {
+		border-radius: 50%;
+		padding-top: 0;
+		width: 55px;
+		height: 55px;
+	}
+}
+
+@mixin checkInCheckoutDates {
+	.content-row {
+        .date-in-day {
+          color: #a2c5bf;
+        }
+        .date-out-day {
+          color: #d87a61;
+        }
+    }
+}
+
+

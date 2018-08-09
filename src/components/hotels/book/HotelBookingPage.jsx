@@ -1,15 +1,14 @@
-import { withRouter } from 'react-router-dom';
+import { Config } from '../../../config';
 import { NotificationManager } from 'react-notifications';
-
 import PropTypes from 'prop-types';
+import { ROOMS_XML_CURRENCY } from '../../../constants/currencies.js';
 import React from 'react';
 import { connect } from 'react-redux';
 import moment from 'moment';
+import requester from '../../../initDependencies';
+import { setCurrency } from '../../../actions/paymentInfo';
 import validator from 'validator';
-import { ROOMS_XML_CURRENCY } from '../../../constants/currencies.js';
-import { Config } from '../../../config';
-
-import { getHotelById, getHotelRooms, getLocRateInUserSelectedCurrency, getCurrencyRates } from '../../../requester';
+import { withRouter } from 'react-router-dom';
 
 class HotelBookingPage extends React.Component {
   constructor(props) {
@@ -29,36 +28,43 @@ class HotelBookingPage extends React.Component {
 
   componentDidMount() {
     const id = this.props.match.params.id;
-    let search = this.props.location.search;
-    const searchParams = this.getSearchParams(this.props.location.search);
-    const quoteId = searchParams.get('quoteId');
-    const rooms = this.getRooms(searchParams);
-    const nights = this.getNights(searchParams);
-    search = search.substr(0, search.indexOf('&quoteId='));
-    getHotelById(id, search).then((data) => {
-      this.setState({
-        hotel: data,
-        nights: nights,
-        rooms: rooms,
-        pictures: data.photos,
-        loading: false,
-        quoteId: quoteId
+    const searchParams = this.getNewSearchParams();
+    const searchString = this.getSearchParams();
+
+    const quoteId = searchString.get('quoteId');
+    const rooms = this.getRooms(searchString);
+    const nights = this.getNights(searchString);
+    searchParams.pop();
+    requester.getHotelById(id, searchParams).then(res => {
+      res.body.then(data => {
+        this.setState({
+          hotel: data,
+          nights: nights,
+          rooms: rooms,
+          pictures: data.hotelPhotos,
+          loading: false,
+          quoteId: quoteId
+        });
       });
     });
 
-    getHotelRooms(id, search).then((data) => {
-      const roomResults = data.filter(x => x.quoteId === quoteId)[0].roomsResults;
-      const totalPrice = this.getTotalPrice(roomResults);
-      this.setState({
-        roomResults: roomResults,
-        totalPrice: totalPrice,
-        loading: false,
+    requester.getHotelRooms(id, searchParams).then(res => {
+      res.body.then(data => {
+        const roomResults = data.filter(x => x.quoteId === quoteId)[0].roomsResults;
+        const totalPrice = this.getTotalPrice(roomResults);
+        this.setState({
+          roomResults: roomResults,
+          totalPrice: totalPrice,
+          loading: false,
+        });
       });
     });
 
     this.getLocRate();
-    getCurrencyRates().then((json) => {
-      this.setState({ rates: json });
+    requester.getCurrencyRates().then(res => {
+      res.body.then(data => {
+        this.setState({ rates: data });
+      });
     });
 
     this.timeout = setTimeout(() => {
@@ -72,8 +78,10 @@ class HotelBookingPage extends React.Component {
   }
 
   getLocRate() {
-    getLocRateInUserSelectedCurrency(ROOMS_XML_CURRENCY).then((json) => {
-      this.setState({ locRate: Number(json[0][`price_${ROOMS_XML_CURRENCY.toLowerCase()}`]) });
+    requester.getLocRateByCurrency(ROOMS_XML_CURRENCY).then(res => {
+      res.body.then(data => {
+        this.setState({ locRate: Number(data[0][`price_${ROOMS_XML_CURRENCY.toLowerCase()}`]) });
+      });
     });
   }
 
@@ -85,9 +93,9 @@ class HotelBookingPage extends React.Component {
       const adults = [];
       for (let j = 0; j < searchRoom.adults; j++) {
         const adult = {
-          title: 'Mr',
-          firstName: '',
-          lastName: '',
+          title: i === 0 && j === 0 && this.props.userInfo.gender === 'women' ? 'Mrs' : 'Mr',
+          firstName: i === 0 && j === 0 ? this.props.userInfo.firstName : 'Optional',
+          lastName: i === 0 && j === 0 ? this.props.userInfo.lastName : 'Optional',
         };
 
         adults.push(adult);
@@ -127,9 +135,21 @@ class HotelBookingPage extends React.Component {
     }
   }
 
+  getNewSearchParams() {
+    const array = [];
+    const pairs = this.props.location.search.substr(1).split('&');
+    for(let i = 0; i < pairs.length; i++) {
+      let pair = pairs[i];
+      array.push(pair);
+    }
+
+    return array;
+  }
+
   getSearchParams() {
     const map = new Map();
     const pairs = this.props.location.search.substr(1).split('&');
+    console.log(pairs);
     for (let i = 0; i < pairs.length; i++) {
       let pair = pairs[i].split('=');
       map.set(pair[0], this.parseParam(pair[1]));
@@ -159,6 +179,7 @@ class HotelBookingPage extends React.Component {
   }
 
   handleSubmit() {
+
     if (!this.isValidNames()) {
       NotificationManager.warning('Names should be at least 3 characters long and contain only characters');
     } else if (!this.isValidAges()) {
@@ -176,7 +197,9 @@ class HotelBookingPage extends React.Component {
       const encodedBooking = encodeURI(JSON.stringify(booking));
       const id = this.props.match.params.id;
       const query = `?booking=${encodedBooking}`;
-      this.props.history.push(`/hotels/listings/book/confirm/${id}${query}`);
+      const isWebView = this.props.location.pathname.indexOf('/mobile') !== -1;
+      const rootURL = !isWebView ? '/hotels/listings/book/confirm' : '/mobile/book/confirm';
+      this.props.history.push(`${rootURL}/${id}${query}`);
       // window.location.href = `/hotels/listings/book/confirm/${id}${query}`;
     }
   }
@@ -221,9 +244,10 @@ class HotelBookingPage extends React.Component {
     const hotelMainAddress = this.state.hotel && this.state.hotel.additionalInfo.mainAddress;
     const hotelCityName = this.state.hotel && this.state.hotel.city;
     const rooms = this.state.rooms;
-    console.log(this.state.pictures);
-    const hotelPicUrl = this.state.pictures && this.state.pictures.length > 0 ? this.state.pictures[0] : '/listings/images/default.png';
+    // console.log(this.state.pictures);
+    const hotelPicUrl = this.state.pictures && this.state.pictures.length > 0 ? this.state.pictures[0].url : '/listings/images/default.png';
     const priceInSelectedCurrency = this.state.rates && Number(this.state.totalPrice * this.state.rates[ROOMS_XML_CURRENCY][this.props.paymentInfo.currency]).toFixed(2);
+
     return (
       <div>
         <div className="booking-steps">
@@ -245,7 +269,7 @@ class HotelBookingPage extends React.Component {
                       <img src={`${Config.getValue('imgHost')}${hotelPicUrl}`} alt="Hotel" />
                     </div>
                     <h6>{hotelName}</h6>
-                    <h6>{hotelMainAddress}, {hotelCityName}</h6>
+                    <h6>{hotelMainAddress}&nbsp;{hotelCityName}</h6>
                     <hr />
                     {this.state.roomResults && this.state.roomResults.map((room, index) => {
                       if (!this.props.userInfo.isLogged) {
@@ -280,13 +304,30 @@ class HotelBookingPage extends React.Component {
                           return (
                             <div className="form-row" key={adultIndex}>
                               <label htmlFor="title">Guest</label>
-                              <select className="title-select" name="title" onChange={(e) => { this.handleAdultChange(e, roomIndex, adultIndex); }} >
+                              <select
+                                className="title-select"
+                                name="title" 
+                                value={this.state.rooms[roomIndex].adults[adultIndex].title}
+                                onChange={(e) => { this.handleAdultChange(e, roomIndex, adultIndex); }}
+                              >
                                 <option value="Mr">Mr</option>
                                 <option value="Mrs">Mrs</option>
                               </select>
 
-                              <input className="guest-name" type="text" placeholder="First Name" name="firstName" onChange={(e) => { this.handleAdultChange(e, roomIndex, adultIndex); }} />
-                              <input className="guest-name" type="text" placeholder="Last Name" name="lastName" onChange={(e) => { this.handleAdultChange(e, roomIndex, adultIndex); }} />
+                              <input className="guest-name"
+                                type="text"
+                                placeholder="First Name"
+                                name="firstName"
+                                value={this.state.rooms[roomIndex].adults[adultIndex].firstName}
+                                onChange={(e) => { this.handleAdultChange(e, roomIndex, adultIndex); }}
+                              />
+                              <input
+                                className="guest-name"
+                                type="text"
+                                placeholder="Last Name"
+                                value={this.state.rooms[roomIndex].adults[adultIndex].lastName}
+                                name="lastName" onChange={(e) => { this.handleAdultChange(e, roomIndex, adultIndex); }}
+                              />
                             </div>
                           );
                         })}
@@ -306,6 +347,23 @@ class HotelBookingPage extends React.Component {
                 <div className="col col-md-12" style={{ 'padding': '0', 'margin': '10px 0' }}>
                   <button className="btn btn-primary btn-book" onClick={this.handleSubmit}>Proceed</button>
                 </div>
+                {this.props.location.pathname.indexOf('/mobile') !== -1 &&
+                  <div>
+                    <div className="col col-md-12" style={{ 'padding': '0', 'margin': '10px 0' }}>
+                      <button className="btn btn-primary btn-book" onClick={(e) => this.props.history.goBack()}>Back</button>
+                    </div>
+                    <select
+                      className="currency"
+                      value={this.props.paymentInfo.currency}
+                      style={{ 'height': '40px', 'marginBottom': '10px', 'textAlignLast': 'right', 'paddingRight': '45%', 'direction': 'rtl' }}
+                      onChange={(e) => this.props.dispatch(setCurrency(e.target.value))}
+                    >
+                      <option value="EUR">EUR</option>
+                      <option value="USD">USD</option>
+                      <option value="GBP">GBP</option>
+                    </select>
+                  </div>
+                }
               </div>
             </section>
           </div>
@@ -329,8 +387,6 @@ HotelBookingPage.propTypes = {
   paymentInfo: PropTypes.object
 };
 
-export default withRouter(connect(mapStateToProps)(HotelBookingPage));
-
 function mapStateToProps(state) {
   const { userInfo, paymentInfo } = state;
   return {
@@ -338,3 +394,5 @@ function mapStateToProps(state) {
     paymentInfo
   };
 }
+
+export default withRouter(connect(mapStateToProps)(HotelBookingPage));

@@ -1,9 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-export default function ListingCrudNav(props) {
+function ListingCrudNav(props) {
   return (
-    <div className="admin_dashboard">
+    <div className="admin_dashboard sm-none">
       <section className="step-by-step">
         <ul className="nav navbar-nav nav_dash_menu" style={{ padding: '15px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', float: 'none', width: '100%', textAlign: 'center' }}>
           <p to="/listings/create/landing" style={{ float: 'none', display: 'inline-block', color: 'white', fontSize: '20px', marginBottom: '0', width: '33%' }}>Step 1: The Basics</p>
@@ -21,3 +21,5 @@ export default function ListingCrudNav(props) {
 ListingCrudNav.propTypes = {
   progress: PropTypes.string,
 };
+
+export default ListingCrudNav;

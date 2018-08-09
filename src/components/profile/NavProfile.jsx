@@ -1,8 +1,8 @@
 import { NavLink } from 'react-router-dom';
 import React from 'react';
-import { getUserInfo } from '../../requester';
+import requester from '../../initDependencies';
 
-export default class NavProfile extends React.Component {
+class NavProfile extends React.Component {
   constructor(props) {
     super(props);
 
@@ -13,8 +13,10 @@ export default class NavProfile extends React.Component {
   }
 
   componentDidMount() {
-    getUserInfo().then((data) => {
-      this.setState({ roles: data.roles, loading: false });
+    requester.getUserInfo().then(res => {
+      res.body.then(data => {
+        this.setState({ roles: data.roles, loading: false });
+      });
     });
   }
 
@@ -39,6 +41,7 @@ export default class NavProfile extends React.Component {
             <li><NavLink activeClassName="active" to="/profile/me/edit">Profile</NavLink></li>
             <li><NavLink activeClassName="active" to="/profile/wallet">Wallet</NavLink></li>
             <li><NavLink activeClassName="active" to="/airdrop">Airdrop</NavLink></li>
+            <li><NavLink activeClassName="active" to="/buyloc">Buy LOC</NavLink></li>
             {this.isAdmin() && <li><NavLink activeClassName="active" to="/profile/admin/listings">All Listings</NavLink></li>}
           </ul>
         </div>
@@ -46,3 +49,5 @@ export default class NavProfile extends React.Component {
     );
   }
 }
+
+export default NavProfile;

@@ -2,7 +2,7 @@ import React from 'react';
 import { Modal } from 'react-bootstrap';
 import PropTypes from 'prop-types';
 
-export default function CancellationModal(props) {
+function CancellationModal(props) {
   return (
     <div>
       <Modal show={props.isActive} onHide={e => props.onClose(props.name, e)} className="modal fade myModal">
@@ -37,3 +37,5 @@ CancellationModal.propTypes = {
   isActive: PropTypes.bool,
   closeModal: PropTypes.func,
 };
+
+export default CancellationModal;

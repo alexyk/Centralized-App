@@ -1,17 +1,10 @@
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 
-import {
-  editDefaultDailyPrice,
-  getCalendarByListingIdAndDateRange,
-  getMyReservations,
-  getPropertyById,
-  publishCalendarSlot
-} from '../../../requester';
-
 import Calendar from './Calendar';
 import PropTypes from 'prop-types';
 import React from 'react';
 import moment from 'moment';
+import requester from '../../../initDependencies';
 import { withRouter } from 'react-router-dom';
 
 class CalendarPage extends React.Component {
@@ -43,32 +36,29 @@ class CalendarPage extends React.Component {
 
 
   componentDidMount() {
+    requester.getListing(this.props.match.params.id).then(res => {
+      res.body.then(data => {
+        let currencyCode = data.currencyCode;
+        let currencySign = '';
 
-    // getAllMyListings().then((data) => {
-    //     this.setState({ myListings: data.content });
-    // });
+        switch (currencyCode) {
+          case 'USD': currencySign = '$';
+            break;
+          case 'GBP': currencySign = '£';
+            break;
+          case 'EUR': currencySign = '€';
+            break;
+          default: currencySign = 'null';
+        }
 
-    getPropertyById(this.props.match.params.id).then((data) => {
-      let currencyCode = data.currencyCode;
-      let currencySign = '';
-
-      switch (currencyCode) {
-        case 'USD': currencySign = '$';
-          break;
-        case 'GBP': currencySign = '£';
-          break;
-        case 'EUR': currencySign = '€';
-          break;
-        default: currencySign = 'null';
-      }
-
-      this.setState({
-        currencySign: currencySign,
-        currencyCode: currencyCode,
-        listing: data.content,
-        defaultDailyPrice: data.defaultDailyPrice
-      }, () => {
-        this.updateCalendar();
+        this.setState({
+          currencySign: currencySign,
+          currencyCode: currencyCode,
+          listing: data.content,
+          defaultDailyPrice: data.defaultDailyPrice
+        }, () => {
+          this.updateCalendar();
+        });
       });
     });
   }
@@ -79,27 +69,42 @@ class CalendarPage extends React.Component {
     const DAY_INTERVAL = 90;
     end.setUTCHours(now.getUTCHours() + 24 * DAY_INTERVAL);
     const { currencyCode, currencySign } = this.state;
-    getCalendarByListingIdAndDateRange(this.props.match.params.id, now, end, currencyCode, 0, DAY_INTERVAL).then(res => {
-      let prices = [];
-      for (let dateInfo of res.content) {
-        let availableStyle = dateInfo.available ? 1 : 0.5;
-        let price = {
-          'title': <span className="calendar-price bold" style={{ opacity: availableStyle }}>{currencySign}{Math.round(dateInfo.price)}</span>,
-          'start': moment(dateInfo.date, 'DD/MM/YYYY'),
-          'end': moment(dateInfo.date, 'DD/MM/YYYY'),
-          'allDay': true,
-          'price': Math.round(dateInfo.price),
-          'available': dateInfo.available
-        };
-        prices.push(price);
-      }
 
-      this.setState({ prices: prices });
+    let searchTermMap = [];
+    const startDateParam = `${now.getUTCDate()}/${now.getUTCMonth() + 1}/${now.getUTCFullYear()}`;
+    const endDateParam = `${end.getUTCDate()}/${end.getUTCMonth() + 1}/${end.getUTCFullYear()}`;
+    searchTermMap.push(
+      `listing=${this.props.match.params.id}`,
+      `startDate=${startDateParam}`,
+      `endDate=${endDateParam}`,
+      `page=${0}`,
+      `toCode=${currencyCode}`,
+      `size=${DAY_INTERVAL}`);
+
+
+    requester.getCalendarByListingIdAndDateRange(searchTermMap).then(res => {
+      res.body.then(data => {
+        let prices = [];
+        for (let dateInfo of data.content) {
+          let availableStyle = dateInfo.available ? 1 : 0.5;
+          let price = {
+            'title': <span className="calendar-price bold" style={{ opacity: availableStyle }}>{currencySign}{Math.round(dateInfo.price)}</span>,
+            'start': moment(dateInfo.date, 'DD/MM/YYYY'),
+            'end': moment(dateInfo.date, 'DD/MM/YYYY'),
+            'allDay': true,
+            'price': Math.round(dateInfo.price),
+            'available': dateInfo.available
+          };
+          prices.push(price);
+        }
+
+        this.setState({ prices: prices });
+      });
     });
 
-    getMyReservations()
-      .then(res => {
-        let reservations = res.content.filter(r => r.listingId === this.props.match.params.id);
+    requester.getMyReservations().then(res => {
+      res.body.then(data => {
+        let reservations = data.content.filter(r => r.listingId === this.props.match.params.id);
         let events = [];
         for (let reservation of reservations) {
           let event = {
@@ -117,6 +122,7 @@ class CalendarPage extends React.Component {
           reservations: events
         });
       });
+    });
   }
 
   mergeEvents(prices, reservations) {
@@ -162,7 +168,7 @@ class CalendarPage extends React.Component {
       price: this.state.price,
       available: this.state.available
     };
-    publishCalendarSlot(listingId, slotInfo, captchaToken).then((res) => {
+    requester.publishCalendarSlot(listingId, slotInfo, captchaToken).then(res => {
       if (res.success) {
         this.setState({ selectedDay: null, date: null, price: null, available: 'true' });
         this.componentDidMount();
@@ -199,7 +205,7 @@ class CalendarPage extends React.Component {
       defaultDailyPrice: this.state.defaultDailyPrice
     };
 
-    editDefaultDailyPrice(listingId, priceObj, captchaToken).then(res => {
+    requester.editDefaultDailyPrice(listingId, priceObj, captchaToken).then(res => {
       if (res.success) {
         this.updateCalendar();
         this.setState({ calendarLoading: false });
@@ -244,10 +250,9 @@ class CalendarPage extends React.Component {
   }
 }
 
-
-export default withRouter(CalendarPage);
-
 CalendarPage.propTypes = {
   history: PropTypes.object,
   match: PropTypes.object
 };
+
+export default withRouter(CalendarPage);

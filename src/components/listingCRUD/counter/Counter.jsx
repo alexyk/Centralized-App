@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-export default class Counter extends React.Component {
+class Counter extends React.Component {
   constructor(props) {
     super(props);
 
@@ -42,3 +42,5 @@ Counter.propTypes = {
   value: PropTypes.number.isRequired,
   onChange: PropTypes.func.isRequired,
 };
+
+export default Counter;

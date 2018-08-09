@@ -11,7 +11,7 @@ import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 
-import '../../../styles/css/components/hotels_search/results_holder__hotels.css';
+import '../../../styles/css/components/hotels_search/result/results_holder__hotels.css';
 
 let slider = null;
 
@@ -26,19 +26,30 @@ function Result(props) {
     return starsElements;
   };
 
-  const leftButton = <button></button>;
-  const rightButton = <button></button>;
+  const SlickButton = props => {
+    const {currentSlide, slideCount, ...arrowProps} = props;
+    return (
+      <button type="button" {...arrowProps}>
+      </button>
+    );
+  };
 
-  let { id, name, description, photos, price, stars } = props.hotel;
-  const pictures = photos.slice(0, 3).map(url => { return { thumbnail: `${Config.getValue('imgHost')}${url}` }; });
+  // const leftButton = <button type="button" data-role="none" className="slick-arrow slick-next" style={{ display: 'block' }}></button>;
+  // const rightButton = <button></button>;
+
+  let { id, name, generalDescription, hotelPhoto, star } = props.hotel;
+  let { price } = props;
+  const photoUrl = hotelPhoto && hotelPhoto.url ? hotelPhoto.url : hotelPhoto;
+  const pictures = photoUrl ? [ { thumbnail: `${Config.getValue('imgHost')}${photoUrl}` }, { thumbnail: `${Config.getValue('imgHost')}${photoUrl}` } ] : [];
   const { locRate, rates } = props;
   const { currencySign } = props.paymentInfo;
-  const locPrice = ((price / locRate) / props.nights).toFixed(2);
+  const isPriceLoaded = !!price;
+  let locPrice = ((price / locRate) / props.nights).toFixed(2);
   const priceInSelectedCurrency = rates && ((price * (rates[ROOMS_XML_CURRENCY][props.paymentInfo.currency])) / props.nights).toFixed(2);
 
-  description = description.substr(0, 250);
+  generalDescription = generalDescription && generalDescription.substr(0, 250);
 
-  if (pictures.length < 1) {
+  if (pictures && pictures.length < 1) {
     pictures.push({ thumbnail: `${Config.getValue('imgHost')}/listings/images/default.png` });
   }
 
@@ -47,47 +58,27 @@ function Result(props) {
     speed: 500,
     slidesToShow: 1,
     slidesToScroll: 1,
-    nextArrow: rightButton,
-    prevArrow: leftButton
+    nextArrow: <SlickButton />,
+    prevArrow: <SlickButton />
   };
 
-  const redirectURL = props.location.pathname.indexOf('mobile') === -1 
+  const redirectURL = props.location.pathname.indexOf('mobile') === -1
     ? '/hotels/listings'
     : '/mobile/details';
 
-  console.log(redirectURL);
-  {/* <ReactBootstrapCarousel
-            animation={true}
-            autoplay={false}
-            leftIcon={leftButton}
-            rightIcon={rightButton}
-            indicators={false}
-            className="carousel-fade"
-            onSelect={() => console.log('click')}>
-            {pictures.map((item, i) => {
-              return (
-                <Link to={`/hotels/listings/${id}${props.location.search}`} key={i}>
-                  <div key={i} style={{ backgroundImage: 'url(' + item.thumbnail + ')' }}>
-                  </div>
-                </Link>
-              );
-            })}
-          </ReactBootstrapCarousel> */}
-
+  const search = props.location.search;
+  const endOfSearch = search.indexOf('&filters=') !== -1 ? search.indexOf('&filters=') : search.length;
 
   return (
-
-
     <div className="result" >
       <div className="result-images">
         {pictures &&
-
           <Slider ref={s => slider = s}
             {...settings}>
             {pictures.map((picture, i) => {
               return (
                 <div key={i}>
-                  <Link to={`${redirectURL}/${id}${props.location.search}`} key={i}>
+                  <Link to={`${redirectURL}/${id}${search.substr(0, endOfSearch)}`} key={i}>
                     <div style={{ backgroundImage: 'url(' + picture.thumbnail + ')' }}>
                     </div>
                   </Link>
@@ -98,39 +89,27 @@ function Result(props) {
         }
       </div>
       <div className="result-content">
-        <h4><Link to={`${redirectURL}/${id}${props.location.search}`}>{name}</Link></h4>
+        <h4><Link to={`${redirectURL}/${id}${search.substr(0, endOfSearch)}`}>{name}</Link></h4>
         <div className="rating">
           <span>Rating: </span>
           <div className="rating-holder">
-            {/* <input type="radio" value="5" name="rating1.0" id="star20" />
-            <label htmlFor="star20" title="5 stars"><span className="fa"></span></label>
-            <input type="radio" value="4" name="rating1.0" id="star19" checked />
-            <label htmlFor="star19" title="4 stars"><span className="fa"></span></label>
-            <input type="radio" value="3" name="rating1.0" id="star18" />
-            <label htmlFor="star18" title="3 stars"><span className="fa"></span></label>
-            <input type="radio" value="2" name="rating1.0" id="star17" />
-            <label htmlFor="star17" title="2 stars"><span className="fa"></span></label>
-            <input type="radio" value="1" name="rating1.0" id="star16" />
-            <label htmlFor="star16" title="1 star"><span className="fa"></span></label> */}
-            {calculateStars(stars)}
+            {calculateStars(star)}
           </div>
-          {/* <span>73 Reviews</span> */}
         </div>
-        {/* <div className="result-homes-features">
-          <ul>
-            <li>Entire apartment</li>
-            <li>1 bedroom</li>
-            <li>1 bed</li>
-            <li>1.5 baths</li>
-          </ul>
-        </div> */}
-        <p>{ReactHtmlParser(description + (description.length < 250 ? '' : '...'))}</p>
+        <div>{generalDescription && ReactHtmlParser(generalDescription + (generalDescription.length < 250 ? '' : '...'))}</div>
       </div>
+
       <div className="result-pricing">
         <div className="price-for">Price for 1 night</div>
-        <span className="price">{props.userInfo.isLogged && `${currencySign} ${priceInSelectedCurrency}`}</span>
-        <span>(LOC {locPrice})</span>
-        <Link className="btn" to={`${redirectURL}/${id}${props.location.search}`}>Book now</Link>
+        {!isPriceLoaded
+          ? (!props.allElements ? <div className="loader" style={{ width: '100%' }}></div> : <span style={{ padding: '20px 10px 10px 10px' }}>Unavailable</span>)
+          : <span className="price">{props.userInfo.isLogged && `${currencySign} ${priceInSelectedCurrency}`}</span>
+        }
+        {isPriceLoaded && <span>(LOC {locPrice})</span>}
+        {!isPriceLoaded && props.allElements
+          ? <button disabled className="btn">Unavailable</button>
+          : <Link className="btn" to={`${redirectURL}/${id}${search.substr(0, endOfSearch)}`}>Book now</Link>
+        }
       </div>
     </div>
   );

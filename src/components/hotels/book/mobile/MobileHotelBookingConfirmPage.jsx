@@ -1,29 +1,22 @@
-import { withRouter } from 'react-router-dom';
-import { NotificationManager } from 'react-notifications';
-import PasswordModal from '../../../common/modals/PasswordModal';
+import '../../../../styles/css/components/captcha/captcha-container.css';
+
+import { closeModal, openModal } from '../../../../actions/modalsInfo.js';
+
 import { Config } from '../../../../config';
+import { HotelReservation } from '../../../../services/blockchain/hotelReservation';
+import { NotificationManager } from 'react-notifications';
+import { PASSWORD_PROMPT } from '../../../../constants/modals.js';
+import { PROCESSING_TRANSACTION } from '../../../../constants/infoMessages.js';
+import PasswordModal from '../../../common/modals/PasswordModal';
 import PropTypes from 'prop-types';
+import { ROOMS_XML_CURRENCY } from '../../../../constants/currencies.js';
+import ReCAPTCHA from 'react-google-recaptcha';
 import React from 'react';
 import { connect } from 'react-redux';
 import moment from 'moment';
-import { ROOMS_XML_CURRENCY } from '../../../../constants/currencies.js';
-import { PASSWORD_PROMPT } from '../../../../constants/modals.js';
-import { openModal, closeModal } from '../../../../actions/modalsInfo.js';
-import { PROCESSING_TRANSACTION } from '../../../../constants/infoMessages.js';
-import ReCAPTCHA from 'react-google-recaptcha';
-
-import '../../../../styles/css/components/captcha/captcha-container.css';
-
-import {
-  testBook,
-  getLocRateInUserSelectedCurrency,
-  getCurrentlyLoggedUserJsonFile,
-  confirmBooking,
-  getCurrencyRates,
-  getCancellationFees
-} from '../../../../requester';
-
-import { HotelReservation } from '../../../../services/blockchain/hotelReservation';
+import requester from '../../../../initDependencies';
+import { setCurrency } from '../../../../actions/paymentInfo';
+import { withRouter } from 'react-router-dom';
 
 class MobileHotelBookingConfirmPage extends React.Component {
   constructor(props) {
@@ -55,23 +48,27 @@ class MobileHotelBookingConfirmPage extends React.Component {
     const searchParams = this.getSearchParams(search);
     const booking = JSON.parse(decodeURI(searchParams.get('booking')));
     console.log(booking);
-    testBook(booking).then((res) => {
-      if (res.ok) {
-        res.json().then((json) => {
-          console.log(json);
-          this.setState({ data: json, booking: booking });
+    requester.createReservation(booking).then(res => {
+      if (res.success) {
+        res.body.then(data => {
+          
+          this.setState({ data: data, booking: booking });
 
-          getLocRateInUserSelectedCurrency(json.currency).then((data) => {
-            this.setState({ locRate: data[0]['price_' + json.currency.toLowerCase()] });
+          requester.getLocRateByCurrency(data.currency).then(res => {
+            res.body.then(data => {
+              this.setState({ locRate: data[0]['price_' + data.currency.toLowerCase()] });
+            });
           });
 
-          getCurrencyRates().then((json) => {
-            this.setState({ rates: json });
+          requester.getCurrencyRates().then(res => {
+            res.body.then(data => {
+              this.setState({ rates: data });
+            });
           });
         });
       } else {
-        res.then((res) => {
-          const errors = res.errors;
+        res.errors.then(data => {
+          const errors = data.errors;
           for (let key in errors) {
             if (typeof errors[key] !== 'function') {
               NotificationManager.warning(errors[key].message);
@@ -217,81 +214,86 @@ class MobileHotelBookingConfirmPage extends React.Component {
   }
 
   handleSubmit(token) {
-    getCancellationFees(this.state.data.preparedBookingId).then((json) => {
-      const password = this.state.password;
-      const preparedBookingId = this.state.data.preparedBookingId;
-      // console.log(preparedBookingId);
-      const wei = (this.tokensToWei(this.state.data.locPrice.toString()));
-      // console.log(wei);
-      const booking = this.state.data.booking.hotelBooking;
-      const startDate = moment(booking[0].arrivalDate, 'YYYY-MM-DD');
-      const endDate = moment(booking[0].arrivalDate, 'YYYY-MM-DD').add(booking[0].nights, 'days');
-      // const daysBeforeStartOfRefund = ['0'];
-      // const refundPercentages = ['100'];
-      const hotelId = this.props.match.params.id;
-      const roomId = this.state.booking.quoteId;
-      const numberOfTravelers = this.getNumberOfTravelers();
-      console.log(json);
-      const cancellationFees = json;
-      console.log(cancellationFees);
-      const daysBeforeStartOfRefund = [];
-      const refundPercentages = [];
-      for (let key in cancellationFees) {
-        daysBeforeStartOfRefund.unshift(key.toString());
-        refundPercentages.unshift(cancellationFees[key].toString());
-      }
+    requester.getCancellationFees(this.state.data.preparedBookingId).then(res => {
+      res.body.then(json => {
+        const password = this.state.password;
+        const preparedBookingId = this.state.data.preparedBookingId;
+        // console.log(preparedBookingId);
+        const wei = (this.tokensToWei(this.state.data.locPrice.toString()));
+        // console.log(wei);
+        const booking = this.state.data.booking.hotelBooking;
+        const startDate = moment.utc(booking[0].arrivalDate, 'YYYY-MM-DD');
+        const endDate = moment.utc(booking[0].arrivalDate, 'YYYY-MM-DD').add(booking[0].nights, 'days');
+        // const daysBeforeStartOfRefund = ['0'];
+        // const refundPercentages = ['100'];
+        const hotelId = this.props.match.params.id;
+        const roomId = this.state.booking.quoteId;
+        const numberOfTravelers = this.getNumberOfTravelers();
+        console.log(json);
+        const cancellationFees = json;
+        console.log(cancellationFees);
+        const daysBeforeStartOfRefund = [];
+        const refundPercentages = [];
+        for (let key in cancellationFees) {
+          daysBeforeStartOfRefund.unshift(key.toString());
+          refundPercentages.unshift(cancellationFees[key].toString());
+        }
 
-      console.log(daysBeforeStartOfRefund)
-      console.log(refundPercentages)
+        console.log(daysBeforeStartOfRefund)
+        console.log(refundPercentages)
 
-      NotificationManager.info(PROCESSING_TRANSACTION, 'Transactions', 60000);
-      this.setState({ confirmed: true });
-      this.closeModal(PASSWORD_PROMPT);
+        NotificationManager.info(PROCESSING_TRANSACTION, 'Transactions', 60000);
+        this.setState({ confirmed: true });
+        this.closeModal(PASSWORD_PROMPT);
 
-      getCurrentlyLoggedUserJsonFile().then((json) => {
-        // console.log(json);
-        setTimeout(() => {
-          HotelReservation.createReservation(
-            json.jsonFile,
-            password,
-            preparedBookingId.toString(),
-            wei,
-            startDate.unix().toString(),
-            endDate.unix().toString(),
-            daysBeforeStartOfRefund,
-            refundPercentages,
-            hotelId,
-            roomId,
-            numberOfTravelers.toString()
-          ).then(transaction => {
-            const bookingConfirmObj = {
-              bookingId: preparedBookingId,
-              transactionHash: transaction.hash
-            };
+        requester.getMyJsonFile().then(res => {
+          res.body.then(data => {
+            setTimeout(() => {
+              HotelReservation.createReservation(
+                data.jsonFile,
+                password,
+                preparedBookingId.toString(),
+                wei,
+                startDate.unix().toString(),
+                endDate.unix().toString(),
+                daysBeforeStartOfRefund,
+                refundPercentages,
+                hotelId,
+                roomId,
+                numberOfTravelers.toString()
+              ).then(transaction => {
+                const bookingConfirmObj = {
+                  bookingId: preparedBookingId,
+                  transactionHash: transaction.hash
+                };
 
-            console.log(bookingConfirmObj);
-            confirmBooking(bookingConfirmObj).then(() => {
-              NotificationManager.success('LOC Payment has been initiated. We will send you a confirmation message once it has been processed by the Blockchain.');
-              setTimeout(() => {
-                this.props.history.push('/profile/trips/hotels');
-              }, 2000);
-            });
-          }).catch(error => {
-            if (error.hasOwnProperty('message')) {
-              NotificationManager.warning(error.message, 'Send Tokens');
-            } else if (error.hasOwnProperty('err') && error.err.hasOwnProperty('message')) {
-              NotificationManager.warning(error.err.message, 'Send Tokens');
-            } else if (typeof x === 'string') {
-              NotificationManager.warning(error, 'Send Tokens');
-            } else {
-              NotificationManager.warning(error);
-            }
+                console.log(bookingConfirmObj);
+                requester.confirmBooking(bookingConfirmObj).then(() => {
+                  NotificationManager.success('LOC Payment has been initiated. We will send you a confirmation message once it has been processed by the Blockchain.');
+                  setTimeout(() => {
+                    this.props.history.push('/profile/trips/hotels');
+                  }, 2000);
+                });
+              }).catch(error => {
+                console.log(error);
+                if (error.hasOwnProperty('message')) {
+                  NotificationManager.warning(error.message, 'Send Tokens');
+                } else if (error.hasOwnProperty('err') && error.err.hasOwnProperty('message')) {
+                  NotificationManager.warning(error.err.message, 'Send Tokens');
+                } else if (typeof x === 'string') {
+                  NotificationManager.warning(error, 'Send Tokens');
+                } else {
+                  NotificationManager.warning(error);
+                }
 
-            this.closeModal(PASSWORD_PROMPT);
-            this.setState({ confirmed: false });
+                this.closeModal(PASSWORD_PROMPT);
+                this.setState({ confirmed: false });
+              });
+            }, 1000);
           });
-        }, 1000);
+        });
       });
+
 
       //     TokenTransactions.sendTokens(json.jsonFile, password, recipient, amount.toString()).then((transactionHash) => {
       //       const bookingConfirmObj = {
@@ -479,13 +481,23 @@ class MobileHotelBookingConfirmPage extends React.Component {
                     </p>
                   </div>
                 </div>
-                <button className="btn btn-primary btn-book" onClick={(e) => this.props.history.goBack()}>Back</button>
                 {!this.state.confirmed
                   ? <button className="btn btn-primary btn-book" onClick={(e) => this.openModal(PASSWORD_PROMPT, e)}>Confirm and Pay</button>
                   : <button className="btn btn-primary btn-book" disabled>Processing Payment...</button>
                 }
+                <button className="btn btn-primary btn-book" onClick={(e) => this.props.history.goBack()}>Back</button>
 
                 {/* <button className="btn btn-primary btn-book" onClick={() => this.getCancellationFees()}>Log Fees</button> */}
+                <select
+                  className="currency"
+                  value={this.props.paymentInfo.currency}
+                  style={{ 'height': '40px', 'marginBottom': '10px', 'textAlignLast': 'right', 'paddingRight': '45%', 'direction': 'rtl' }}
+                  onChange={(e) => this.props.dispatch(setCurrency(e.target.value))}
+                >
+                  <option value="EUR">EUR</option>
+                  <option value="USD">USD</option>
+                  <option value="GBP">GBP</option>
+                </select>
               </div>
               <PasswordModal
                 isActive={this.props.modalsInfo.modals.get(PASSWORD_PROMPT)}

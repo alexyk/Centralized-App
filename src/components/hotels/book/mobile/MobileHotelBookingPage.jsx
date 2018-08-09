@@ -4,12 +4,12 @@ import { NotificationManager } from 'react-notifications';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
+import { setCurrency } from '../../../../actions/paymentInfo';
 import moment from 'moment';
 import validator from 'validator';
 import { ROOMS_XML_CURRENCY } from '../../../../constants/currencies.js';
 import { Config } from '../../../../config';
-
-import { getHotelById, getHotelRooms, getLocRateInUserSelectedCurrency, getCurrencyRates } from '../../../../requester';
+import requester from '../../../../initDependencies';
 
 class MobileHotelBookingPage extends React.Component {
   constructor(props) {
@@ -35,30 +35,36 @@ class MobileHotelBookingPage extends React.Component {
     const rooms = this.getRooms(searchParams);
     const nights = this.getNights(searchParams);
     search = search.substr(0, search.indexOf('&quoteId='));
-    getHotelById(id, search).then((data) => {
-      this.setState({
-        hotel: data,
-        nights: nights,
-        rooms: rooms,
-        pictures: data.photos,
-        loading: false,
-        quoteId: quoteId
+    requester.getHotelById(id, search).then(res => {
+      res.body.then(data => {
+        this.setState({
+          hotel: data,
+          nights: nights,
+          rooms: rooms,
+          pictures: data.photos,
+          loading: false,
+          quoteId: quoteId
+        });
       });
     });
 
-    getHotelRooms(id, search).then((data) => {
-      const roomResults = data.filter(x => x.quoteId === quoteId)[0].roomsResults;
-      const totalPrice = this.getTotalPrice(roomResults);
-      this.setState({
-        roomResults: roomResults,
-        totalPrice: totalPrice,
-        loading: false,
+    requester.getHotelRooms(id, search).then(res => {
+      res.body.then(data => {
+        const roomResults = data.filter(x => x.quoteId === quoteId)[0].roomsResults;
+        const totalPrice = this.getTotalPrice(roomResults);
+        this.setState({
+          roomResults: roomResults,
+          totalPrice: totalPrice,
+          loading: false,
+        });
       });
     });
 
     this.getLocRate();
-    getCurrencyRates().then((json) => {
-      this.setState({ rates: json });
+    requester.getCurrencyRates().then(res => {
+      res.body.then(data => {
+        this.setState({ rates: data });
+      });
     });
 
     // this.timeout = setTimeout(() => {
@@ -72,8 +78,10 @@ class MobileHotelBookingPage extends React.Component {
   }
 
   getLocRate() {
-    getLocRateInUserSelectedCurrency(ROOMS_XML_CURRENCY).then((json) => {
-      this.setState({ locRate: Number(json[0][`price_${ROOMS_XML_CURRENCY.toLowerCase()}`]) });
+    requester.getLocRateByCurrency(ROOMS_XML_CURRENCY).then(res => {
+      res.body.then(data => {
+        this.setState({ locRate: Number(data[0][`price_${ROOMS_XML_CURRENCY.toLowerCase()}`]) });
+      });
     });
   }
 
@@ -302,12 +310,22 @@ class MobileHotelBookingPage extends React.Component {
                     );
                   })}
                 </div>
+                <div className="col col-md-12" style={{ 'padding': '0', 'margin': '10px 0 20px 0' }}>
+                  <button className="btn btn-primary btn-book" onClick={this.handleSubmit}>Proceed</button>
+                </div>
                 <div className="col col-md-12" style={{ 'padding': '0', 'margin': '10px 0' }}>
                   <button className="btn btn-primary btn-book" onClick={(e) => this.props.history.goBack()}>Back</button>
                 </div>
-                <div className="col col-md-12" style={{ 'padding': '0', 'margin': '10px 0' }}>
-                  <button className="btn btn-primary btn-book" onClick={this.handleSubmit}>Proceed</button>
-                </div>
+                <select
+                  className="currency"
+                  value={this.props.paymentInfo.currency}
+                  style={{ 'height': '40px', 'marginBottom': '10px', 'textAlignLast': 'right', 'paddingRight': '45%', 'direction': 'rtl' }}
+                  onChange={(e) => this.props.dispatch(setCurrency(e.target.value))}
+                >
+                  <option value="EUR">EUR</option>
+                  <option value="USD">USD</option>
+                  <option value="GBP">GBP</option>
+                </select>
               </div>
             </section>
           </div>

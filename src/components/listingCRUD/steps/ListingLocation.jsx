@@ -10,7 +10,9 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import FooterNav from '../navigation/FooterNav';
 
-function CreateListingLocation(props) {
+import '../../../styles/css/components/profile/listings/listing-location.css';
+
+function ListingLocation(props) {
 
   const handleOnPlaceSelected = (place) => {
     if (place.address_components !== undefined) {
@@ -19,26 +21,32 @@ function CreateListingLocation(props) {
     }
   };
 
+  const getWarningMessage = (message) => {
+    NotificationManager.warning(message);
+    props.onChange({ target: { name: 'street', value: '' } });
+    props.onChange({ target: { name: 'lng', value: '' } });
+    props.onChange({ target: { name: 'lat', value: '' } });
+    props.onChange({ target: { name: 'isAddressSelected', value: false } });
+  };
+
   const handleStreetSelected = (place) => {
-    if (place.address_components !== undefined) {
+    if (place.address_components) {
       const addressComponentsMap = props.convertGoogleApiAddressComponents(place);
-      // console.log(place)
-      let address = '';
-      if (addressComponentsMap.filter(x => x.type === 'route')[0]) {
+      if (addressComponentsMap.filter(x => x.type === 'route')[0] && place.geometry.location.lng() && place.geometry.location.lat()) {
         const addressNumber = addressComponentsMap.filter(x => x.type === 'street_number')[0] ? addressComponentsMap.filter(x => x.type === 'street_number')[0].name : '';
         const addressRoute = addressComponentsMap.filter(x => x.type === 'route')[0].name;
-        address = `${addressNumber}, ${addressRoute}`;
-        props.onChange({ target: { name: 'street', value: address } });
-        props.onChange({ target: { name: 'isAddressSelected', value: true } });
-        props.onChange({ target: { name: 'lng', value: place.geometry.location.lng() } });
-        props.onChange({ target: { name: 'lat', value: place.geometry.location.lat() } });
-        changeAddressComponents(addressComponentsMap);
+        if (!addressNumber) {
+          getWarningMessage('Please fill valid address - location and number');
+        } else {
+          const address = `${addressNumber}, ${addressRoute}`;
+          props.onChange({ target: { name: 'street', value: address } });
+          props.onChange({ target: { name: 'isAddressSelected', value: true } });
+          props.onChange({ target: { name: 'lng', value: place.geometry.location.lng() } });
+          props.onChange({ target: { name: 'lat', value: place.geometry.location.lat() } });
+          changeAddressComponents(addressComponentsMap);
+        }
       } else {
-        NotificationManager.warning('Invalid address');
-        props.onChange({ target: { name: 'street', value: '' } });
-        props.onChange({ target: { name: 'lng', value: '' } });
-        props.onChange({ target: { name: 'lat', value: '' } });
-        props.onChange({ target: { name: 'isAddressSelected', value: false } });
+        getWarningMessage('Invalid address');
       }
     }
   };
@@ -61,12 +69,12 @@ function CreateListingLocation(props) {
 
   const { country, city, street, state } = props.values;
   const next = validateInput(props.values) ? props.next : props.location.pathname;
-  const handleClickNext = validateInput(props.values) 
+  const handleClickNext = validateInput(props.values)
     ? () => { props.updateProgress(1); }
     : () => { showErrors(props.values); };
 
   return (
-    <div>
+    <div id="create-listing-location">
       <ListingCrudNav progress='33%' />
       <div className="container">
         <div className="row">
@@ -83,7 +91,7 @@ function CreateListingLocation(props) {
                     <div className="form-group">
                       <label htmlFor="city">City</label>
                       <Autocomplete
-                        className="form-control"
+
                         value={city}
                         onChange={props.onChange}
                         name="city"
@@ -95,7 +103,7 @@ function CreateListingLocation(props) {
                   <div className="col-md-6">
                     <div className="form-group">
                       <label htmlFor="country">Country</label>
-                      <input style={{ background: '#AAA', opacity: 0.5 }} disabled className="form-control" id="country" name="country" value={country} />
+                      <input style={{ background: '#AAA', opacity: 0.5 }} disabled  id="country" name="country" value={country} />
                     </div>
                   </div>
                   <div className="col-md-6">
@@ -106,12 +114,12 @@ function CreateListingLocation(props) {
                     <div className="form-group">
                       <label htmlFor="street">Address</label>
                       <Autocomplete
-                        className="form-control"
+
                         value={street}
                         onChange={onAddressChange}
                         name="street"
                         onPlaceSelected={handleStreetSelected}
-                        types={['geocode']}
+                        types={['address']}
                       />
                       {/* <input className="form-control" id="street" name="street" value={street} onChange={props.onChange} /> */}
                     </div>
@@ -119,7 +127,7 @@ function CreateListingLocation(props) {
                   <div className="col-md-6">
                     <div className="form-group">
                       <label htmlFor="country">State</label>
-                      <input style={{ background: '#AAA', opacity: 0.5 }} disabled className="form-control" id="state" name="state" value={state} />
+                      <input style={{ background: '#AAA', opacity: 0.5 }} disabled  id="state" name="state" value={state} />
                     </div>
                   </div>
                 </div>
@@ -182,7 +190,7 @@ function showErrors(values) {
   }
 }
 
-CreateListingLocation.propTypes = {
+ListingLocation.propTypes = {
   values: PropTypes.any,
   onChange: PropTypes.func,
   onSelect: PropTypes.func,
@@ -197,4 +205,4 @@ CreateListingLocation.propTypes = {
   location: PropTypes.object,
 };
 
-export default withRouter(CreateListingLocation);
+export default withRouter(ListingLocation);

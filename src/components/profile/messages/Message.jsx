@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-export default function Message(props) {
+function Message(props) {
   return (
     <div className="body">{props.message.message}</div>
   );
@@ -10,3 +10,5 @@ export default function Message(props) {
 Message.propTypes = {
   message: PropTypes.object
 };
+
+export default Message;

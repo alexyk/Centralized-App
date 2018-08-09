@@ -1,15 +1,4 @@
-import { NotificationManager } from 'react-notifications';
 import { Route, Switch, withRouter } from 'react-router-dom';
-import {
-  createListing,
-  editListing,
-  getAmenitiesByCategory,
-  getCurrencies,
-  getListingProgress,
-  getMyListingById,
-  getPropertyTypes,
-  updateListingProgress
-} from '../../requester';
 
 import { Config } from '../../config';
 import DefaultListing from './DefaultListing';
@@ -24,13 +13,15 @@ import ListingPhotos from './steps/ListingPhotos';
 import ListingPlaceType from './steps/ListingPlaceType';
 import ListingPrice from './steps/ListingPrice';
 import ListingSafetyFacilities from './steps/ListingSafetyFacilities';
+import { NotificationManager } from 'react-notifications';
 import PropTypes from 'prop-types';
+import ReCAPTCHA from 'react-google-recaptcha';
 import React from 'react';
 import { arrayMove } from 'react-sortable-hoc';
 import moment from 'moment';
 import request from 'superagent';
+import requester from '../../initDependencies';
 import update from 'react-addons-update';
-import ReCAPTCHA from 'react-google-recaptcha';
 
 const host = Config.getValue('apiHost');
 const LOCKTRIP_UPLOAD_URL = `${host}images/upload`;
@@ -73,6 +64,7 @@ class EditListingPage extends React.Component {
       street: '',
       city: '',
       state: '',
+      countryCode: '',
       name: '',
       text: '',
       interaction: '',
@@ -131,16 +123,20 @@ class EditListingPage extends React.Component {
     const search = this.props.location.search;
     if (search) {
       this.setState({ progressId: id, isInProgress: true });
-      getListingProgress(id).then(res => {
-        this.setListingData(JSON.parse(res.data));
-        const step = steps[search.split('=')[1]];
-        const path = `/profile/listings/edit/${step}/${id}`;
-        this.props.history.push(path);
+      requester.getListingProgress(id).then(res => {
+        res.body.then(data => {
+          this.setListingData(JSON.parse(data.data));
+          const step = steps[search.split('=')[1]];
+          const path = `/profile/listings/edit/${step}/${id}`;
+          this.props.history.push(path);
+        });
       });
     } else {
       this.setState({ listingId: id });
-      getMyListingById(id).then(data => {
-        this.setListingData(data);
+      requester.getMyListingById(id).then(res => {
+        res.body.then(data => {
+          this.setListingData(data);
+        });
       });
     }
 
@@ -160,16 +156,19 @@ class EditListingPage extends React.Component {
   }
 
   setListingData(data) {
-    const city = data.location.split(', ')[0];
-    const state = data.location.split(', ')[1];
-    const country = data.location.split(', ')[2];
+    const location = data.location.split(', ');
+    const city = location[0];
+    const state = location[1];
+    const country = location[2];
+    const countryCode = location[3];
     const isAddressSelected = !!(city && state && country);
 
     this.setState({
       type: data.listingType.toString(),
-      city: data.location.split(', ')[0],
-      state: data.location.split(', ')[1],
-      country: data.location.split(', ')[2],
+      city: city,
+      state: state,
+      country: country,
+      countryCode: countryCode,
       isAddressSelected: isAddressSelected,
       propertyType: data.type.toString(),
       roomType: data.details.roomType ? data.details.roomType : this.getDetailValue(data, 'roomType'),
@@ -213,16 +212,22 @@ class EditListingPage extends React.Component {
   }
 
   componentDidMount() {
-    getAmenitiesByCategory().then(data => {
-      this.setState({ categories: data.content });
+    requester.getAmenitiesByCategory().then(res => {
+      res.body.then(data => {
+        this.setState({ categories: data.content });
+      });
     });
 
-    getPropertyTypes().then(data => {
-      this.setState({ propertyTypes: data.content });
+    requester.getPropertyTypes().then(res => {
+      res.body.then(data => {
+        this.setState({ propertyTypes: data.content });
+      });
     });
 
-    getCurrencies().then(data => {
-      this.setState({ currencies: data.content });
+    requester.getCurrencies().then(res => {
+      res.body.then(data => {
+        this.setState({ currencies: data.content });
+      })
     });
   }
 
@@ -392,19 +397,19 @@ class EditListingPage extends React.Component {
     this.setState({ loading: true });
     let listing = this.createListingObject();
     if (this.state.isInProgress) {
-      createListing(listing, captchaToken).then((res) => {
+      requester.createListing(listing, captchaToken).then(res => {
         if (res.success) {
           this.setState({ loading: false });
-          res.response.json().then(res => {
-            const id = res.id;
+          res.body.then(data => {
+            const id = data.id;
             const path = `/profile/listings/calendar/${id}`;
             this.props.history.push(path);
           });
         }
         else {
           this.setState({ loading: false });
-          res.response.then(res => {
-            const errors = res.errors;
+          res.errors.then(data => {
+            const errors = data.errors;
             for (let key in errors) {
               if (typeof errors[key] !== 'function') {
                 NotificationManager.warning(errors[key].message);
@@ -414,7 +419,7 @@ class EditListingPage extends React.Component {
         }
       });
     } else {
-      editListing(this.state.listingId, listing, captchaToken).then((res) => {
+      requester.editListing(this.state.listingId, listing, captchaToken).then(res => {
         if (res.success) {
           this.setState({ loading: false });
           this.props.history.push('/profile/listings');
@@ -422,8 +427,8 @@ class EditListingPage extends React.Component {
 
         } else {
           this.setState({ loading: false });
-          res.response.then(res => {
-            const errors = res.errors;
+          res.errors.then(data => {
+            const errors = data.errors;
             for (let key in errors) {
               if (typeof errors[key] !== 'function') {
                 NotificationManager.warning(errors[key].message);
@@ -567,7 +572,7 @@ class EditListingPage extends React.Component {
         data: JSON.stringify(listing),
       };
 
-      updateListingProgress(progressId, data);
+      requester.updateListingProgress(progressId, data);
     }
   }
 
@@ -711,17 +716,17 @@ class EditListingPage extends React.Component {
           ref={(el) => this.editCaptcha = el}
           size="invisible"
           sitekey={Config.getValue('recaptchaKey')}
-          onChange={token => { this.editListing(token); }}
+          onChange={token => { this.editListing(token); this.editCaptcha.reset(); }}
         />
       </div>
     );
   }
 }
 
-export default withRouter(EditListingPage);
-
 EditListingPage.propTypes = {
   history: PropTypes.object,
   location: PropTypes.object,
   match: PropTypes.object
 };
+
+export default withRouter(EditListingPage);
