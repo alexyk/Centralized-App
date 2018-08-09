@@ -5,10 +5,9 @@ import { Config } from '../../../config';
 import { NotificationManager } from 'react-notifications';
 import ReCAPTCHA from 'react-google-recaptcha';
 import React from 'react';
+import Select from '../../common/google/GooglePlacesAutocomplete';
 import moment from 'moment';
 import requester from '../../../initDependencies';
-
-import Select from '../../common/google/GooglePlacesAutocomplete';
 
 class ProfileEditForm extends React.Component {
   constructor(props) {
@@ -28,6 +27,7 @@ class ProfileEditForm extends React.Component {
       city: '',
       address: '',
       locAddress: '',
+      zipCode: '',
       jsonFile: '',
       currencies: [],
       cities: [],
@@ -75,6 +75,7 @@ class ProfileEditForm extends React.Component {
           address: data.address ? data.address : '',
           locAddress: data.locAddress !== null ? data.locAddress : '',
           jsonFile: data.jsonFile !== null ? data.jsonFile : '',
+          zipCode: data.zipCode !== null ? data.zipCode : '',
           currencies: data.currencies,
           day: day,
           month: month,
@@ -109,7 +110,8 @@ class ProfileEditForm extends React.Component {
       address: this.state.address,
       birthday: birthday,
       locAddress: this.state.locAddress,
-      jsonFile: this.state.jsonFile
+      jsonFile: this.state.jsonFile,
+      zipCode: this.state.zipCode,
     };
 
     Object.keys(userInfo).forEach((key) => (userInfo[key] === null || userInfo[key] === '') && delete userInfo[key]);
@@ -300,6 +302,11 @@ class ProfileEditForm extends React.Component {
           <div className="address">
             <label htmlFor="address">Address</label>
             <input id="address" name="address" value={this.state.address} onChange={this.onChange} type="text" placeholder='Enter your address' />
+          </div>
+
+          <div className="zip-code">
+            <label htmlFor="zip-code">Zip Code</label>
+            <input id="zip-code" name="zipCode" value={this.state.zipCode} onChange={this.onChange} type="text" placeholder='Enter your zip code' />
           </div>
 
           <ReCAPTCHA

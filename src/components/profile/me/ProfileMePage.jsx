@@ -1,5 +1,6 @@
 import { Route, Switch } from 'react-router-dom';
 
+import ProfileAdditionalInfo from './ProfileAdditionalInfo';
 import ProfileEditForm from './ProfileEditForm';
 import ProfileNav from './ProfileNav';
 import ProfilePhotosPage from './ProfilePhotosPage';
@@ -20,6 +21,7 @@ function ProfileMePage() {
               <Switch>
                 <Route exact path="/profile/me/edit" render={() => <ProfileEditForm />} />
                 <Route exact path="/profile/me/edit/photos" render={() => <ProfilePhotosPage />} />
+                <Route exact path="/profile/me/additional-info" render={() => <ProfileAdditionalInfo /> } />
                 <Route exact path="/profile/me/verification" render={() => <ProfileVerificationPage />} />
               </Switch>
             </div>
