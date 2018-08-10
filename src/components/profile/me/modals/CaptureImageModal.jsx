@@ -21,7 +21,7 @@ class CaptureImageModal extends React.Component {
             <button type="button" className="close" onClick={() => props.closeModal(CAPTURE_IMAGE)}>&times;</button>
           </Modal.Header>
           <Modal.Body>
-            <form onSubmit={(e) => { e.preventDefault(); props.capture(); }}>
+            <form onSubmit={(e) => { e.preventDefault(); props.closeModal(CAPTURE_IMAGE); props.onCaptureDrop(); }}>
               <Webcam
                 className="webcam"
                 audio={false}

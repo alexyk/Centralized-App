@@ -15,9 +15,6 @@ hr {
   }
   .right-part {
     flex: 3;
-    display: grid;
-    grid-template-columns: auto auto;
-    grid-column-gap: 5px;
     justify-content: center;
     i {
       margin: 0 5px;
@@ -27,12 +24,15 @@ hr {
     display: flex;
     flex: 1;
     padding: 17px;
+    margin: 5px 0;
     font-size: 18px;
     font-weight: 400;
     text-align: center;
     color: white;
     background-color: #d87a61;
     border-radius: 3px;
+    width: 100%;
+    justify-content: center;
   }
 }
 .webcam {

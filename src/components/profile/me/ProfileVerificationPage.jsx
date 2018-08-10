@@ -9,14 +9,12 @@ import Dropzone from 'react-dropzone';
 import PropTypes from 'prop-types';
 import React from 'react';
 import VerificationItem from './VerificationItem';
-import Webcam from 'react-webcam';
 import { connect } from 'react-redux';
 import request from 'superagent';
 import requester from '../../../initDependencies';
 import { withRouter } from 'react-router-dom';
 
 const API_HOST = Config.getValue('apiHost');
-const IMG_HOST = Config.getValue('imgHost');
 const LOCKTRIP_UPLOAD_URL = `${API_HOST}users/me/identity/images/upload`;
 
 class ProfileVerificationPage extends React.Component {
@@ -24,7 +22,7 @@ class ProfileVerificationPage extends React.Component {
     super(props);
 
     this.state = {
-      uploadedFiles: '',
+      uploadedFile: '',
       uploadedFilesThumbUrls: '',
       loading: true,
       error: null,
@@ -35,14 +33,16 @@ class ProfileVerificationPage extends React.Component {
       verifiedFields: [],
       unverifiedFields: [],
       governmentIdPhoto: '',
-      governmentIdHolderPhoto: ''
+      governmentIdHolderPhoto: '',
+      uploadedFilegovernmentIdPhoto: null,
+      uploadedFilegovernmentIdHolderPhoto: null
     };
 
     this.onImageDrop = this.onImageDrop.bind(this);
     this.handleImageUpload = this.handleImageUpload.bind(this);
     this.onDropRejected = this.onDropRejected.bind(this);
     this.splitVerificationData = this.splitVerificationData.bind(this);
-    this.capture = this.capture.bind(this);
+    this.onCaptureDrop = this.onCaptureDrop.bind(this);
     this.openModal = this.openModal.bind(this);
     this.closeModal = this.closeModal.bind(this);
     this.setRef = this.setRef.bind(this);
@@ -80,52 +80,35 @@ class ProfileVerificationPage extends React.Component {
     this.setState({ verifiedFields, unverifiedFields });
   }
 
-  onImageDrop(file, photoName) {
-    this.handleImageUpload(file, photoName);
-
-    this.setState({
-      uploadedFile: file
-    });
-  }
-
   onDropRejected() {
     this.setState({ error: 'Maximum file upload size is 10MB. Supported media formats are jpg, jpeg, png' });
   }
 
-  handleImageUpload(file, photoName) {
-    let upload = request.post(LOCKTRIP_UPLOAD_URL)
+  async handleImageUpload(file) {
+    return await request.post(LOCKTRIP_UPLOAD_URL)
       .field('image', file)
-      .set('Authorization', localStorage[Config.getValue('domainPrefix') + '.auth.locktrip']);
-
-
-    upload.end((err, response) => {
-      if (err) {
-        console.error(err);
-      }
-      else {
-        this.setState({
-          photoName: [response.body.thumbnail]
-        });
-        this.updateUserIdentity();
-      }
-    });
+      .set('Authorization', localStorage[Config.getValue('domainPrefix') + '.auth.locktrip']).then(res => {
+        return res.body.thumbnail;
+      });
   }
 
-  updateUserIdentity() {
-    var userIdentityObj = {
-      governmentIdPhoto: this.state.governmentIdPhoto,
-      governmentIdHolderPhoto: this.state.governmentIdHolderPhoto
-    };
+  async updateUserIdentity() {
+    let governmentIdPhoto = await this.handleImageUpload(this.state.uploadedFilegovernmentIdPhoto);
+    let governmentIdHolderPhoto = await this.handleImageUpload(this.state.uploadedFilegovernmentIdHolderPhoto);
 
+    var userIdentityObj = {
+      governmentIdPhoto,
+      governmentIdHolderPhoto
+    };
     requester.updateUserAdditionalInfo(userIdentityObj).then(res => {
       if (res.success) {
-        console.log('bachka');
+        // Notification
       }
     });
   }
 
   dataURLtoFile(dataurl, filename) {
-    var arr = dataurl.split(','), mime = arr[0].match(/:(.*?);/)[1],
+    let arr = dataurl.split(','), mime = arr[0].match(/:(.*?);/)[1],
       bstr = atob(arr[1]), n = bstr.length, u8arr = new Uint8Array(n);
     while (n--) {
       u8arr[n] = bstr.charCodeAt(n);
@@ -133,25 +116,17 @@ class ProfileVerificationPage extends React.Component {
     return new File([u8arr], filename, { type: mime });
   }
 
-  capture(photoName) {
-    const ImageURL = this.webcam.getScreenshot();
+  onImageDrop(file, photoName) {
+    this.setState({
+      [`uploadedFile${photoName}`]: file[0]
+    });
+  }
 
-    var file = this.dataURLtoFile(ImageURL, 'image.jpeg');
-
-    let upload = request.post(LOCKTRIP_UPLOAD_URL)
-      .field('image', file)
-      .set('Authorization', localStorage[Config.getValue('domainPrefix') + '.auth.locktrip']);
-
-    upload.end((err, response) => {
-      if (err) {
-        console.error(err);
-      }
-      else {
-        console.log(response.body.thumbnail);
-        this.setState({ photoName: [response.body.thumbnail] });
-        this.updateUserIdentity();
-        this.closeModal(CAPTURE_IMAGE);
-      }
+  onCaptureDrop(photoName) {
+    let imageURL = this.webcam.getScreenshot();
+    var file = this.dataURLtoFile(imageURL, 'image.jpeg');
+    this.setState({
+      [`uploadedFile${photoName}`]: file
     });
   }
 
@@ -200,43 +175,42 @@ class ProfileVerificationPage extends React.Component {
               <div>
                 <Dropzone
                   className="button"
-                  style={this.state.governmentIdPhoto !== null ? { opacity: '0.5', cursor: 'not-allowed' } : { cursor: 'pointer' }}
+                  style={this.state.uploadedFilegovernmentIdPhoto === null ? null : { backgroundColor: 'green' }}
                   multiple={false}
                   maxSize={10485760}
                   accept="image/jpg, image/jpeg, image/png"
                   onDrop={(files) => this.onImageDrop(files, 'governmentIdPhoto')}
                   onDropRejected={this.onDropRejected}
-                  disabled={this.state.governmentIdPhoto !== null}>
+                >
                   <span><i className="fa fa-upload"></i>Provide ID</span>
                 </Dropzone>
                 <button
-                  style={this.state.governmentIdPhoto !== null ? { opacity: '0.5', cursor: 'not-allowed' } : { cursor: 'pointer' }}
-                  disabled={this.state.governmentIdPhoto === null}
+                  style={this.state.uploadedFilegovernmentIdPhoto === null ? null : { backgroundColor: 'green' }}
                   onClick={() => this.openModal(CAPTURE_IMAGE)}
                   className="button">
                   <i className="fa fa-camera"></i>Provide ID</button>
-                <CaptureImageModal setRef={this.setRef} capture={() => this.capture('governmentIdPhoto')} isActive={this.props.modalsInfo.isActive[CAPTURE_IMAGE]} openModal={this.openModal} closeModal={this.closeModal} onChange={this.onChange} />
+                <CaptureImageModal setRef={this.setRef} onCaptureDrop={() => this.onCaptureDrop('governmentIdPhoto')} isActive={this.props.modalsInfo.isActive[CAPTURE_IMAGE]} openModal={this.openModal} closeModal={this.closeModal} onChange={this.onChange} />
               </div>
               <div>
                 <Dropzone
                   className="button"
-                  style={this.state.governmentIdHolderPhoto !== null ? { opacity: '0.5', cursor: 'not-allowed' } : { cursor: 'pointer' }}
+                  style={this.state.uploadedFilegovernmentIdHolderPhoto === null ? null : { backgroundColor: 'green' }}
                   multiple={false}
                   maxSize={10485760}
                   accept="image/jpg, image/jpeg, image/png"
-                  onDrop={this.onImageDrop}
+                  onDrop={(files) => this.onImageDrop(files, 'governmentIdHolderPhoto')}
                   onDropRejected={this.onDropRejected}
-                  disabled={this.state.governmentIdHolderPhoto !== null}>
+                >
                   <span><i className="fa fa-upload"></i>Provide Holder and ID</span>
                 </Dropzone>
                 <button
-                  style={this.state.governmentIdHolderPhoto !== null ? { opacity: '0.5', cursor: 'not-allowed' } : { cursor: 'pointer' }}
-                  disabled={this.state.governmentIdHolderPhoto === null}
+                  style={this.state.uploadedFilegovernmentIdHolderPhoto === null ? null : { backgroundColor: 'green' }}
                   onClick={() => this.openModal(CAPTURE_IMAGE)}
                   className="button">
                   <i className="fa fa-camera"></i>Provide Holder ID</button>
-                <CaptureImageModal setRef={this.setRef} capture={() => this.capture('governmentIdHolderPhoto')} isActive={this.props.modalsInfo.isActive[CAPTURE_IMAGE]} openModal={this.openModal} closeModal={this.closeModal} onChange={this.onChange} />
+                <CaptureImageModal setRef={this.setRef} onCaptureDrop={() => this.onCaptureDrop('governmentIdHolderPhoto')} isActive={this.props.modalsInfo.isActive[CAPTURE_IMAGE]} openModal={this.openModal} closeModal={this.closeModal} onChange={this.onChange} />
               </div>
+              <button onClick={this.updateUserIdentity}>Save ID</button>
             </div>
           </div>
           {this.state.error ? <div className="error">{this.state.error}</div> : null}
