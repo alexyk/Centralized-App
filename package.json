@@ -76,6 +76,7 @@
     "build": "npm-run-all build-css build-js",
     "start-stage": "sh -ac '. ./.env.staging; react-scripts start'",
     "build/stage": "sh -ac '. ./.env.staging; npm run build",
+    "start-prod": "sh -ac '. ./.env.production; react-scripts start'",
     "build/prod": "sh -ac '. ./.env.production; npm run build",
     "build/dev": "sh -ac '. ./.env.development; npm run build",
     "build/local": "sh -ac '. ./.env; npm run build",
