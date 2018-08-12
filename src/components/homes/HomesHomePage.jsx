@@ -69,8 +69,8 @@ class HomesHomePage extends React.Component {
   }  
   
   handleDestinationPick(region) {
-    // props.dispatch(setRegion(region));
-    // document.getElementsByName('stay')[0].click();
+    this.setState({ countryId: region.countryId.toString() });
+    document.getElementsByName('stay')[0].click();
   }
 
   render() {

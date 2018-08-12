@@ -6,6 +6,7 @@ import { NotificationManager } from 'react-notifications';
 
 import { Config } from '../../../config';
 import requester from '../../../initDependencies';
+import StringUtils from '../../../services/utilities/stringUtilities.js';
 import { REGISTER, CREATE_WALLET } from '../../../constants/modals.js';
 
 import {
@@ -82,7 +83,7 @@ function RegisterModal(props) {
               <select name="country" id="country" onChange={props.handleChangeCountry} value={JSON.stringify(props.country)} style={{ padding: '10px', maxWidth: '100%', marginBottom: '10px', minHeight: '50px', paddingLeft: '40px' }} placeholder='Enter your country'>
                 <option value="" disabled selected>Country</option>
                 {props.countries && props.countries.map((item, i) => {
-                  return <option key={i} value={JSON.stringify(item)} style={{ minWidth: '100%', maxWidth: '0' }}>{getShortName(item.name, 30)}</option>;
+                  return <option key={i} value={JSON.stringify(item)} style={{ minWidth: '100%', maxWidth: '0' }}>{StringUtils.shorten(item.name, 30)}</option>;
                 })}
               </select>
             </div>
