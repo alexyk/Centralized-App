@@ -1,18 +1,19 @@
 import BancorConvertWidget from '../external/BancorConvertWidget';
 import HomesHeroComponent from './HomesHeroComponent';
-import PopularListingsCarousel from '../common/listing/PopularListingsCarousel';
+// import PopularListingsCarousel from '../common/listing/PopularListingsCarousel';
 import PropTypes from 'prop-types';
 import React from 'react';
 import moment from 'moment';
 import requester from '../../initDependencies';
 import { withRouter } from 'react-router-dom';
+import PopularDestinationsCarousel from '../hotels/carousel/PopularDestinationsCarousel';
 
 class HomesHomePage extends React.Component {
   constructor(props) {
     super(props);
 
-    let startDate = moment();
-    let endDate = moment().add(1, 'day');
+    let startDate = moment().add(1, 'day');
+    let endDate = moment().add(2, 'day');
 
     this.state = {
       countryId: '',
@@ -26,6 +27,7 @@ class HomesHomePage extends React.Component {
     this.onChange = this.onChange.bind(this);
     this.handleSearch = this.handleSearch.bind(this);
     this.handleDatePick = this.handleDatePick.bind(this);
+    this.handleDestinationPick = this.handleDestinationPick.bind(this);
   }
 
   componentDidMount() {
@@ -64,6 +66,11 @@ class HomesHomePage extends React.Component {
       startDate: picker.startDate,
       endDate: picker.endDate,
     });
+  }  
+  
+  handleDestinationPick(region) {
+    // props.dispatch(setRegion(region));
+    // document.getElementsByName('stay')[0].click();
   }
 
   render() {
@@ -83,15 +90,16 @@ class HomesHomePage extends React.Component {
         <BancorConvertWidget />
 
         <section id="popular-hotels-box">
-          <h2>Popular Properties</h2>
-          {!this.state.listings ? <div className="loader"></div> :
-            this.state.listings && this.state.listings.length > 1 &&
-            <PopularListingsCarousel
-              listings={this.state.listings}
-              listingsType="homes"
-            />
-          }
+          <h2>Popular Destinations</h2>
+          <PopularDestinationsCarousel handleDestinationPick={this.handleDestinationPick} />
           <div className="clearfix"></div>
+        </section>
+        <section id="get-started">
+          <div className="container">
+            <div className="get-started-graphic">
+              <div className="clearfix"></div>
+            </div>
+          </div>
         </section>
       </div>
     );

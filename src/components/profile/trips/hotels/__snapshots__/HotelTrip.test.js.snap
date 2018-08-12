@@ -1,0 +1,1429 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<HotelTrip /> renders without failing 1`] = `
+ShallowWrapper {
+  "length": 1,
+  Symbol(enzyme.__root__): [Circular],
+  Symbol(enzyme.__unrendered__): <HotelTrip
+    handleCancelReservation={[Function]}
+    onTripSelect={[Function]}
+    styleClass="trips-flex-container"
+    trip={
+        Object {
+            "arrival_date": "2018-08-07",
+            "booking_id": null,
+            "created_on": 1533568675000,
+            "error": null,
+            "has_details": 0,
+            "hotel_id": 24278,
+            "hotel_name": "Vitosha Park Hotel",
+            "hotel_photo": "{\\"id\\":\\"411442\\", \\"original\\":\\"hotels/images/img-2-2900328012053570-153845.png\\", \\"thumbnail\\":\\"hotels/images/img-1-2900327971416594-153845.png\\"}",
+            "id": 547,
+            "nights": 1,
+            "status": "PENDING",
+            "transaction_hash": "0x5b063f05f770a32185641f4b6e3bd33e2500b7aab0d8a5090416af4f2040df2c",
+          }
+    }
+/>,
+  Symbol(enzyme.__renderer__): Object {
+    "batchedUpdates": [Function],
+    "getNode": [Function],
+    "render": [Function],
+    "simulateEvent": [Function],
+    "unmount": [Function],
+  },
+  Symbol(enzyme.__node__): Object {
+    "instance": null,
+    "key": undefined,
+    "nodeType": "function",
+    "props": Object {
+      "children": Array [
+        <div
+          className="tablet-col-1"
+>
+          <div
+                    className="flex-row-child trips-image"
+          >
+                    <img
+                              alt="host-profile"
+                              className="image-host"
+                              src="https://static.locktrip.com/hotels/images/img-2-2900328012053570-153845.png"
+                    />
+          </div>
+          <div
+                    className="flex-row-child trips-host"
+          >
+                    <img
+                              alt="hotel"
+                              className="icon"
+                              src="icon-hotel.png"
+                    />
+                    <div
+                              className="content-row"
+                    >
+                              <div
+                                        className="hostName"
+                              >
+                                        Vitosha Park Hotel
+                              </div>
+                              <div
+                                        className="email"
+                              />
+                              <div
+                                        className="phoneNumber"
+                              />
+                              
+                    </div>
+          </div>
+</div>,
+        <div
+          className="tablet-col-2"
+>
+          <div
+                    className="flex-row-child trips-location"
+          >
+                    <i
+                              className="fa fa-info-circle icon"
+                    />
+                    <Link
+                              className="trips-location-link content-row"
+                              replace={false}
+                              to="/hotels/listings/24278?currency=GBP&startDate=08/08/2018&endDate=09/08/2018&rooms=%5B%7B\\"adults\\":2,\\"children\\":%5B%5D%7D%5D"
+                    >
+                              <u>
+                                        Vitosha Park Hotel
+                              </u>
+                    </Link>
+          </div>
+          <div
+                    className="flex-row-child trips-dates"
+          >
+                    <span
+                              className="icon-calendar icon"
+                    />
+                    <div
+                              className="content-row"
+                    >
+                              <span
+                                        className="date-in-day"
+                              >
+                                        7
+                              </span>
+                               
+                              aug
+                              , 
+                              2018
+                               
+                              <i
+                                        aria-hidden="true"
+                                        className="fa fa-long-arrow-right"
+                              />
+                               
+                              <span
+                                        className="date-out-day"
+                              >
+                                        8
+                              </span>
+                               
+                              aug
+                              , 
+                              2018
+                    </div>
+          </div>
+          <div
+                    className="flex-row-child trips-actions"
+          >
+                    <div
+                              className="content-row"
+                    >
+                              
+                    </div>
+          </div>
+          <div
+                    className="flex-row-child trips-status"
+          >
+                    <span
+                              className="status"
+                    >
+                              PENDING
+                    </span>
+                    <span>
+                               
+                    </span>
+          </div>
+</div>,
+      ],
+      "styleClass": "flex-container-row trips-flex-container",
+    },
+    "ref": null,
+    "rendered": Array [
+      Object {
+        "instance": null,
+        "key": undefined,
+        "nodeType": "host",
+        "props": Object {
+          "children": Array [
+            <div
+              className="flex-row-child trips-image"
+>
+              <img
+                            alt="host-profile"
+                            className="image-host"
+                            src="https://static.locktrip.com/hotels/images/img-2-2900328012053570-153845.png"
+              />
+</div>,
+            <div
+              className="flex-row-child trips-host"
+>
+              <img
+                            alt="hotel"
+                            className="icon"
+                            src="icon-hotel.png"
+              />
+              <div
+                            className="content-row"
+              >
+                            <div
+                                          className="hostName"
+                            >
+                                          Vitosha Park Hotel
+                            </div>
+                            <div
+                                          className="email"
+                            />
+                            <div
+                                          className="phoneNumber"
+                            />
+                            
+              </div>
+</div>,
+          ],
+          "className": "tablet-col-1",
+        },
+        "ref": null,
+        "rendered": Array [
+          Object {
+            "instance": null,
+            "key": undefined,
+            "nodeType": "host",
+            "props": Object {
+              "children": <img
+                alt="host-profile"
+                className="image-host"
+                src="https://static.locktrip.com/hotels/images/img-2-2900328012053570-153845.png"
+/>,
+              "className": "flex-row-child trips-image",
+            },
+            "ref": null,
+            "rendered": Object {
+              "instance": null,
+              "key": undefined,
+              "nodeType": "host",
+              "props": Object {
+                "alt": "host-profile",
+                "className": "image-host",
+                "src": "https://static.locktrip.com/hotels/images/img-2-2900328012053570-153845.png",
+              },
+              "ref": null,
+              "rendered": null,
+              "type": "img",
+            },
+            "type": "div",
+          },
+          Object {
+            "instance": null,
+            "key": undefined,
+            "nodeType": "host",
+            "props": Object {
+              "children": Array [
+                <img
+                  alt="hotel"
+                  className="icon"
+                  src="icon-hotel.png"
+/>,
+                <div
+                  className="content-row"
+>
+                  <div
+                                    className="hostName"
+                  >
+                                    Vitosha Park Hotel
+                  </div>
+                  <div
+                                    className="email"
+                  />
+                  <div
+                                    className="phoneNumber"
+                  />
+                  
+</div>,
+              ],
+              "className": "flex-row-child trips-host",
+            },
+            "ref": null,
+            "rendered": Array [
+              Object {
+                "instance": null,
+                "key": undefined,
+                "nodeType": "host",
+                "props": Object {
+                  "alt": "hotel",
+                  "className": "icon",
+                  "src": "icon-hotel.png",
+                },
+                "ref": null,
+                "rendered": null,
+                "type": "img",
+              },
+              Object {
+                "instance": null,
+                "key": undefined,
+                "nodeType": "host",
+                "props": Object {
+                  "children": Array [
+                    <div
+                      className="hostName"
+>
+                      Vitosha Park Hotel
+</div>,
+                    <div
+                      className="email"
+/>,
+                    <div
+                      className="phoneNumber"
+/>,
+                    "",
+                  ],
+                  "className": "content-row",
+                },
+                "ref": null,
+                "rendered": Array [
+                  Object {
+                    "instance": null,
+                    "key": undefined,
+                    "nodeType": "host",
+                    "props": Object {
+                      "children": "Vitosha Park Hotel",
+                      "className": "hostName",
+                    },
+                    "ref": null,
+                    "rendered": "Vitosha Park Hotel",
+                    "type": "div",
+                  },
+                  Object {
+                    "instance": null,
+                    "key": undefined,
+                    "nodeType": "host",
+                    "props": Object {
+                      "children": undefined,
+                      "className": "email",
+                    },
+                    "ref": null,
+                    "rendered": null,
+                    "type": "div",
+                  },
+                  Object {
+                    "instance": null,
+                    "key": undefined,
+                    "nodeType": "host",
+                    "props": Object {
+                      "children": undefined,
+                      "className": "phoneNumber",
+                    },
+                    "ref": null,
+                    "rendered": null,
+                    "type": "div",
+                  },
+                  "",
+                ],
+                "type": "div",
+              },
+            ],
+            "type": "div",
+          },
+        ],
+        "type": "div",
+      },
+      Object {
+        "instance": null,
+        "key": undefined,
+        "nodeType": "host",
+        "props": Object {
+          "children": Array [
+            <div
+              className="flex-row-child trips-location"
+>
+              <i
+                            className="fa fa-info-circle icon"
+              />
+              <Link
+                            className="trips-location-link content-row"
+                            replace={false}
+                            to="/hotels/listings/24278?currency=GBP&startDate=08/08/2018&endDate=09/08/2018&rooms=%5B%7B\\"adults\\":2,\\"children\\":%5B%5D%7D%5D"
+              >
+                            <u>
+                                          Vitosha Park Hotel
+                            </u>
+              </Link>
+</div>,
+            <div
+              className="flex-row-child trips-dates"
+>
+              <span
+                            className="icon-calendar icon"
+              />
+              <div
+                            className="content-row"
+              >
+                            <span
+                                          className="date-in-day"
+                            >
+                                          7
+                            </span>
+                             
+                            aug
+                            , 
+                            2018
+                             
+                            <i
+                                          aria-hidden="true"
+                                          className="fa fa-long-arrow-right"
+                            />
+                             
+                            <span
+                                          className="date-out-day"
+                            >
+                                          8
+                            </span>
+                             
+                            aug
+                            , 
+                            2018
+              </div>
+</div>,
+            <div
+              className="flex-row-child trips-actions"
+>
+              <div
+                            className="content-row"
+              >
+                            
+              </div>
+</div>,
+            <div
+              className="flex-row-child trips-status"
+>
+              <span
+                            className="status"
+              >
+                            PENDING
+              </span>
+              <span>
+                             
+              </span>
+</div>,
+          ],
+          "className": "tablet-col-2",
+        },
+        "ref": null,
+        "rendered": Array [
+          Object {
+            "instance": null,
+            "key": undefined,
+            "nodeType": "host",
+            "props": Object {
+              "children": Array [
+                <i
+                  className="fa fa-info-circle icon"
+/>,
+                <Link
+                  className="trips-location-link content-row"
+                  replace={false}
+                  to="/hotels/listings/24278?currency=GBP&startDate=08/08/2018&endDate=09/08/2018&rooms=%5B%7B\\"adults\\":2,\\"children\\":%5B%5D%7D%5D"
+>
+                  <u>
+                                    Vitosha Park Hotel
+                  </u>
+</Link>,
+              ],
+              "className": "flex-row-child trips-location",
+            },
+            "ref": null,
+            "rendered": Array [
+              Object {
+                "instance": null,
+                "key": undefined,
+                "nodeType": "host",
+                "props": Object {
+                  "className": "fa fa-info-circle icon",
+                },
+                "ref": null,
+                "rendered": null,
+                "type": "i",
+              },
+              Object {
+                "instance": null,
+                "key": undefined,
+                "nodeType": "class",
+                "props": Object {
+                  "children": <u>
+                    Vitosha Park Hotel
+</u>,
+                  "className": "trips-location-link content-row",
+                  "replace": false,
+                  "to": "/hotels/listings/24278?currency=GBP&startDate=08/08/2018&endDate=09/08/2018&rooms=%5B%7B\\"adults\\":2,\\"children\\":%5B%5D%7D%5D",
+                },
+                "ref": null,
+                "rendered": Object {
+                  "instance": null,
+                  "key": undefined,
+                  "nodeType": "host",
+                  "props": Object {
+                    "children": "Vitosha Park Hotel",
+                  },
+                  "ref": null,
+                  "rendered": "Vitosha Park Hotel",
+                  "type": "u",
+                },
+                "type": [Function],
+              },
+            ],
+            "type": "div",
+          },
+          Object {
+            "instance": null,
+            "key": undefined,
+            "nodeType": "host",
+            "props": Object {
+              "children": Array [
+                <span
+                  className="icon-calendar icon"
+/>,
+                <div
+                  className="content-row"
+>
+                  <span
+                                    className="date-in-day"
+                  >
+                                    7
+                  </span>
+                   
+                  aug
+                  , 
+                  2018
+                   
+                  <i
+                                    aria-hidden="true"
+                                    className="fa fa-long-arrow-right"
+                  />
+                   
+                  <span
+                                    className="date-out-day"
+                  >
+                                    8
+                  </span>
+                   
+                  aug
+                  , 
+                  2018
+</div>,
+              ],
+              "className": "flex-row-child trips-dates",
+            },
+            "ref": null,
+            "rendered": Array [
+              Object {
+                "instance": null,
+                "key": undefined,
+                "nodeType": "host",
+                "props": Object {
+                  "className": "icon-calendar icon",
+                },
+                "ref": null,
+                "rendered": null,
+                "type": "span",
+              },
+              Object {
+                "instance": null,
+                "key": undefined,
+                "nodeType": "host",
+                "props": Object {
+                  "children": Array [
+                    <span
+                      className="date-in-day"
+>
+                      7
+</span>,
+                    " ",
+                    "aug",
+                    ", ",
+                    "2018",
+                    " ",
+                    <i
+                      aria-hidden="true"
+                      className="fa fa-long-arrow-right"
+/>,
+                    " ",
+                    <span
+                      className="date-out-day"
+>
+                      8
+</span>,
+                    " ",
+                    "aug",
+                    ", ",
+                    "2018",
+                  ],
+                  "className": "content-row",
+                },
+                "ref": null,
+                "rendered": Array [
+                  Object {
+                    "instance": null,
+                    "key": undefined,
+                    "nodeType": "host",
+                    "props": Object {
+                      "children": "7",
+                      "className": "date-in-day",
+                    },
+                    "ref": null,
+                    "rendered": "7",
+                    "type": "span",
+                  },
+                  " ",
+                  "aug",
+                  ", ",
+                  "2018",
+                  " ",
+                  Object {
+                    "instance": null,
+                    "key": undefined,
+                    "nodeType": "host",
+                    "props": Object {
+                      "aria-hidden": "true",
+                      "className": "fa fa-long-arrow-right",
+                    },
+                    "ref": null,
+                    "rendered": null,
+                    "type": "i",
+                  },
+                  " ",
+                  Object {
+                    "instance": null,
+                    "key": undefined,
+                    "nodeType": "host",
+                    "props": Object {
+                      "children": "8",
+                      "className": "date-out-day",
+                    },
+                    "ref": null,
+                    "rendered": "8",
+                    "type": "span",
+                  },
+                  " ",
+                  "aug",
+                  ", ",
+                  "2018",
+                ],
+                "type": "div",
+              },
+            ],
+            "type": "div",
+          },
+          Object {
+            "instance": null,
+            "key": undefined,
+            "nodeType": "host",
+            "props": Object {
+              "children": Array [
+                null,
+                <div
+                  className="content-row"
+>
+                  
+</div>,
+              ],
+              "className": "flex-row-child trips-actions",
+            },
+            "ref": null,
+            "rendered": Array [
+              null,
+              Object {
+                "instance": null,
+                "key": undefined,
+                "nodeType": "host",
+                "props": Object {
+                  "children": Array [
+                    false,
+                    null,
+                  ],
+                  "className": "content-row",
+                },
+                "ref": null,
+                "rendered": Array [
+                  false,
+                  null,
+                ],
+                "type": "div",
+              },
+            ],
+            "type": "div",
+          },
+          Object {
+            "instance": null,
+            "key": undefined,
+            "nodeType": "host",
+            "props": Object {
+              "children": Array [
+                <span
+                  className="status"
+>
+                  PENDING
+</span>,
+                <span>
+                   
+</span>,
+                false,
+                false,
+              ],
+              "className": "flex-row-child trips-status",
+            },
+            "ref": null,
+            "rendered": Array [
+              Object {
+                "instance": null,
+                "key": undefined,
+                "nodeType": "host",
+                "props": Object {
+                  "children": "PENDING",
+                  "className": "status",
+                },
+                "ref": null,
+                "rendered": "PENDING",
+                "type": "span",
+              },
+              Object {
+                "instance": null,
+                "key": undefined,
+                "nodeType": "host",
+                "props": Object {
+                  "children": " ",
+                },
+                "ref": null,
+                "rendered": " ",
+                "type": "span",
+              },
+              false,
+              false,
+            ],
+            "type": "div",
+          },
+        ],
+        "type": "div",
+      },
+    ],
+    "type": [Function],
+  },
+  Symbol(enzyme.__nodes__): Array [
+    Object {
+      "instance": null,
+      "key": undefined,
+      "nodeType": "function",
+      "props": Object {
+        "children": Array [
+          <div
+            className="tablet-col-1"
+>
+            <div
+                        className="flex-row-child trips-image"
+            >
+                        <img
+                                    alt="host-profile"
+                                    className="image-host"
+                                    src="https://static.locktrip.com/hotels/images/img-2-2900328012053570-153845.png"
+                        />
+            </div>
+            <div
+                        className="flex-row-child trips-host"
+            >
+                        <img
+                                    alt="hotel"
+                                    className="icon"
+                                    src="icon-hotel.png"
+                        />
+                        <div
+                                    className="content-row"
+                        >
+                                    <div
+                                                className="hostName"
+                                    >
+                                                Vitosha Park Hotel
+                                    </div>
+                                    <div
+                                                className="email"
+                                    />
+                                    <div
+                                                className="phoneNumber"
+                                    />
+                                    
+                        </div>
+            </div>
+</div>,
+          <div
+            className="tablet-col-2"
+>
+            <div
+                        className="flex-row-child trips-location"
+            >
+                        <i
+                                    className="fa fa-info-circle icon"
+                        />
+                        <Link
+                                    className="trips-location-link content-row"
+                                    replace={false}
+                                    to="/hotels/listings/24278?currency=GBP&startDate=08/08/2018&endDate=09/08/2018&rooms=%5B%7B\\"adults\\":2,\\"children\\":%5B%5D%7D%5D"
+                        >
+                                    <u>
+                                                Vitosha Park Hotel
+                                    </u>
+                        </Link>
+            </div>
+            <div
+                        className="flex-row-child trips-dates"
+            >
+                        <span
+                                    className="icon-calendar icon"
+                        />
+                        <div
+                                    className="content-row"
+                        >
+                                    <span
+                                                className="date-in-day"
+                                    >
+                                                7
+                                    </span>
+                                     
+                                    aug
+                                    , 
+                                    2018
+                                     
+                                    <i
+                                                aria-hidden="true"
+                                                className="fa fa-long-arrow-right"
+                                    />
+                                     
+                                    <span
+                                                className="date-out-day"
+                                    >
+                                                8
+                                    </span>
+                                     
+                                    aug
+                                    , 
+                                    2018
+                        </div>
+            </div>
+            <div
+                        className="flex-row-child trips-actions"
+            >
+                        <div
+                                    className="content-row"
+                        >
+                                    
+                        </div>
+            </div>
+            <div
+                        className="flex-row-child trips-status"
+            >
+                        <span
+                                    className="status"
+                        >
+                                    PENDING
+                        </span>
+                        <span>
+                                     
+                        </span>
+            </div>
+</div>,
+        ],
+        "styleClass": "flex-container-row trips-flex-container",
+      },
+      "ref": null,
+      "rendered": Array [
+        Object {
+          "instance": null,
+          "key": undefined,
+          "nodeType": "host",
+          "props": Object {
+            "children": Array [
+              <div
+                className="flex-row-child trips-image"
+>
+                <img
+                                alt="host-profile"
+                                className="image-host"
+                                src="https://static.locktrip.com/hotels/images/img-2-2900328012053570-153845.png"
+                />
+</div>,
+              <div
+                className="flex-row-child trips-host"
+>
+                <img
+                                alt="hotel"
+                                className="icon"
+                                src="icon-hotel.png"
+                />
+                <div
+                                className="content-row"
+                >
+                                <div
+                                                className="hostName"
+                                >
+                                                Vitosha Park Hotel
+                                </div>
+                                <div
+                                                className="email"
+                                />
+                                <div
+                                                className="phoneNumber"
+                                />
+                                
+                </div>
+</div>,
+            ],
+            "className": "tablet-col-1",
+          },
+          "ref": null,
+          "rendered": Array [
+            Object {
+              "instance": null,
+              "key": undefined,
+              "nodeType": "host",
+              "props": Object {
+                "children": <img
+                  alt="host-profile"
+                  className="image-host"
+                  src="https://static.locktrip.com/hotels/images/img-2-2900328012053570-153845.png"
+/>,
+                "className": "flex-row-child trips-image",
+              },
+              "ref": null,
+              "rendered": Object {
+                "instance": null,
+                "key": undefined,
+                "nodeType": "host",
+                "props": Object {
+                  "alt": "host-profile",
+                  "className": "image-host",
+                  "src": "https://static.locktrip.com/hotels/images/img-2-2900328012053570-153845.png",
+                },
+                "ref": null,
+                "rendered": null,
+                "type": "img",
+              },
+              "type": "div",
+            },
+            Object {
+              "instance": null,
+              "key": undefined,
+              "nodeType": "host",
+              "props": Object {
+                "children": Array [
+                  <img
+                    alt="hotel"
+                    className="icon"
+                    src="icon-hotel.png"
+/>,
+                  <div
+                    className="content-row"
+>
+                    <div
+                                        className="hostName"
+                    >
+                                        Vitosha Park Hotel
+                    </div>
+                    <div
+                                        className="email"
+                    />
+                    <div
+                                        className="phoneNumber"
+                    />
+                    
+</div>,
+                ],
+                "className": "flex-row-child trips-host",
+              },
+              "ref": null,
+              "rendered": Array [
+                Object {
+                  "instance": null,
+                  "key": undefined,
+                  "nodeType": "host",
+                  "props": Object {
+                    "alt": "hotel",
+                    "className": "icon",
+                    "src": "icon-hotel.png",
+                  },
+                  "ref": null,
+                  "rendered": null,
+                  "type": "img",
+                },
+                Object {
+                  "instance": null,
+                  "key": undefined,
+                  "nodeType": "host",
+                  "props": Object {
+                    "children": Array [
+                      <div
+                        className="hostName"
+>
+                        Vitosha Park Hotel
+</div>,
+                      <div
+                        className="email"
+/>,
+                      <div
+                        className="phoneNumber"
+/>,
+                      "",
+                    ],
+                    "className": "content-row",
+                  },
+                  "ref": null,
+                  "rendered": Array [
+                    Object {
+                      "instance": null,
+                      "key": undefined,
+                      "nodeType": "host",
+                      "props": Object {
+                        "children": "Vitosha Park Hotel",
+                        "className": "hostName",
+                      },
+                      "ref": null,
+                      "rendered": "Vitosha Park Hotel",
+                      "type": "div",
+                    },
+                    Object {
+                      "instance": null,
+                      "key": undefined,
+                      "nodeType": "host",
+                      "props": Object {
+                        "children": undefined,
+                        "className": "email",
+                      },
+                      "ref": null,
+                      "rendered": null,
+                      "type": "div",
+                    },
+                    Object {
+                      "instance": null,
+                      "key": undefined,
+                      "nodeType": "host",
+                      "props": Object {
+                        "children": undefined,
+                        "className": "phoneNumber",
+                      },
+                      "ref": null,
+                      "rendered": null,
+                      "type": "div",
+                    },
+                    "",
+                  ],
+                  "type": "div",
+                },
+              ],
+              "type": "div",
+            },
+          ],
+          "type": "div",
+        },
+        Object {
+          "instance": null,
+          "key": undefined,
+          "nodeType": "host",
+          "props": Object {
+            "children": Array [
+              <div
+                className="flex-row-child trips-location"
+>
+                <i
+                                className="fa fa-info-circle icon"
+                />
+                <Link
+                                className="trips-location-link content-row"
+                                replace={false}
+                                to="/hotels/listings/24278?currency=GBP&startDate=08/08/2018&endDate=09/08/2018&rooms=%5B%7B\\"adults\\":2,\\"children\\":%5B%5D%7D%5D"
+                >
+                                <u>
+                                                Vitosha Park Hotel
+                                </u>
+                </Link>
+</div>,
+              <div
+                className="flex-row-child trips-dates"
+>
+                <span
+                                className="icon-calendar icon"
+                />
+                <div
+                                className="content-row"
+                >
+                                <span
+                                                className="date-in-day"
+                                >
+                                                7
+                                </span>
+                                 
+                                aug
+                                , 
+                                2018
+                                 
+                                <i
+                                                aria-hidden="true"
+                                                className="fa fa-long-arrow-right"
+                                />
+                                 
+                                <span
+                                                className="date-out-day"
+                                >
+                                                8
+                                </span>
+                                 
+                                aug
+                                , 
+                                2018
+                </div>
+</div>,
+              <div
+                className="flex-row-child trips-actions"
+>
+                <div
+                                className="content-row"
+                >
+                                
+                </div>
+</div>,
+              <div
+                className="flex-row-child trips-status"
+>
+                <span
+                                className="status"
+                >
+                                PENDING
+                </span>
+                <span>
+                                 
+                </span>
+</div>,
+            ],
+            "className": "tablet-col-2",
+          },
+          "ref": null,
+          "rendered": Array [
+            Object {
+              "instance": null,
+              "key": undefined,
+              "nodeType": "host",
+              "props": Object {
+                "children": Array [
+                  <i
+                    className="fa fa-info-circle icon"
+/>,
+                  <Link
+                    className="trips-location-link content-row"
+                    replace={false}
+                    to="/hotels/listings/24278?currency=GBP&startDate=08/08/2018&endDate=09/08/2018&rooms=%5B%7B\\"adults\\":2,\\"children\\":%5B%5D%7D%5D"
+>
+                    <u>
+                                        Vitosha Park Hotel
+                    </u>
+</Link>,
+                ],
+                "className": "flex-row-child trips-location",
+              },
+              "ref": null,
+              "rendered": Array [
+                Object {
+                  "instance": null,
+                  "key": undefined,
+                  "nodeType": "host",
+                  "props": Object {
+                    "className": "fa fa-info-circle icon",
+                  },
+                  "ref": null,
+                  "rendered": null,
+                  "type": "i",
+                },
+                Object {
+                  "instance": null,
+                  "key": undefined,
+                  "nodeType": "class",
+                  "props": Object {
+                    "children": <u>
+                      Vitosha Park Hotel
+</u>,
+                    "className": "trips-location-link content-row",
+                    "replace": false,
+                    "to": "/hotels/listings/24278?currency=GBP&startDate=08/08/2018&endDate=09/08/2018&rooms=%5B%7B\\"adults\\":2,\\"children\\":%5B%5D%7D%5D",
+                  },
+                  "ref": null,
+                  "rendered": Object {
+                    "instance": null,
+                    "key": undefined,
+                    "nodeType": "host",
+                    "props": Object {
+                      "children": "Vitosha Park Hotel",
+                    },
+                    "ref": null,
+                    "rendered": "Vitosha Park Hotel",
+                    "type": "u",
+                  },
+                  "type": [Function],
+                },
+              ],
+              "type": "div",
+            },
+            Object {
+              "instance": null,
+              "key": undefined,
+              "nodeType": "host",
+              "props": Object {
+                "children": Array [
+                  <span
+                    className="icon-calendar icon"
+/>,
+                  <div
+                    className="content-row"
+>
+                    <span
+                                        className="date-in-day"
+                    >
+                                        7
+                    </span>
+                     
+                    aug
+                    , 
+                    2018
+                     
+                    <i
+                                        aria-hidden="true"
+                                        className="fa fa-long-arrow-right"
+                    />
+                     
+                    <span
+                                        className="date-out-day"
+                    >
+                                        8
+                    </span>
+                     
+                    aug
+                    , 
+                    2018
+</div>,
+                ],
+                "className": "flex-row-child trips-dates",
+              },
+              "ref": null,
+              "rendered": Array [
+                Object {
+                  "instance": null,
+                  "key": undefined,
+                  "nodeType": "host",
+                  "props": Object {
+                    "className": "icon-calendar icon",
+                  },
+                  "ref": null,
+                  "rendered": null,
+                  "type": "span",
+                },
+                Object {
+                  "instance": null,
+                  "key": undefined,
+                  "nodeType": "host",
+                  "props": Object {
+                    "children": Array [
+                      <span
+                        className="date-in-day"
+>
+                        7
+</span>,
+                      " ",
+                      "aug",
+                      ", ",
+                      "2018",
+                      " ",
+                      <i
+                        aria-hidden="true"
+                        className="fa fa-long-arrow-right"
+/>,
+                      " ",
+                      <span
+                        className="date-out-day"
+>
+                        8
+</span>,
+                      " ",
+                      "aug",
+                      ", ",
+                      "2018",
+                    ],
+                    "className": "content-row",
+                  },
+                  "ref": null,
+                  "rendered": Array [
+                    Object {
+                      "instance": null,
+                      "key": undefined,
+                      "nodeType": "host",
+                      "props": Object {
+                        "children": "7",
+                        "className": "date-in-day",
+                      },
+                      "ref": null,
+                      "rendered": "7",
+                      "type": "span",
+                    },
+                    " ",
+                    "aug",
+                    ", ",
+                    "2018",
+                    " ",
+                    Object {
+                      "instance": null,
+                      "key": undefined,
+                      "nodeType": "host",
+                      "props": Object {
+                        "aria-hidden": "true",
+                        "className": "fa fa-long-arrow-right",
+                      },
+                      "ref": null,
+                      "rendered": null,
+                      "type": "i",
+                    },
+                    " ",
+                    Object {
+                      "instance": null,
+                      "key": undefined,
+                      "nodeType": "host",
+                      "props": Object {
+                        "children": "8",
+                        "className": "date-out-day",
+                      },
+                      "ref": null,
+                      "rendered": "8",
+                      "type": "span",
+                    },
+                    " ",
+                    "aug",
+                    ", ",
+                    "2018",
+                  ],
+                  "type": "div",
+                },
+              ],
+              "type": "div",
+            },
+            Object {
+              "instance": null,
+              "key": undefined,
+              "nodeType": "host",
+              "props": Object {
+                "children": Array [
+                  null,
+                  <div
+                    className="content-row"
+>
+                    
+</div>,
+                ],
+                "className": "flex-row-child trips-actions",
+              },
+              "ref": null,
+              "rendered": Array [
+                null,
+                Object {
+                  "instance": null,
+                  "key": undefined,
+                  "nodeType": "host",
+                  "props": Object {
+                    "children": Array [
+                      false,
+                      null,
+                    ],
+                    "className": "content-row",
+                  },
+                  "ref": null,
+                  "rendered": Array [
+                    false,
+                    null,
+                  ],
+                  "type": "div",
+                },
+              ],
+              "type": "div",
+            },
+            Object {
+              "instance": null,
+              "key": undefined,
+              "nodeType": "host",
+              "props": Object {
+                "children": Array [
+                  <span
+                    className="status"
+>
+                    PENDING
+</span>,
+                  <span>
+                     
+</span>,
+                  false,
+                  false,
+                ],
+                "className": "flex-row-child trips-status",
+              },
+              "ref": null,
+              "rendered": Array [
+                Object {
+                  "instance": null,
+                  "key": undefined,
+                  "nodeType": "host",
+                  "props": Object {
+                    "children": "PENDING",
+                    "className": "status",
+                  },
+                  "ref": null,
+                  "rendered": "PENDING",
+                  "type": "span",
+                },
+                Object {
+                  "instance": null,
+                  "key": undefined,
+                  "nodeType": "host",
+                  "props": Object {
+                    "children": " ",
+                  },
+                  "ref": null,
+                  "rendered": " ",
+                  "type": "span",
+                },
+                false,
+                false,
+              ],
+              "type": "div",
+            },
+          ],
+          "type": "div",
+        },
+      ],
+      "type": [Function],
+    },
+  ],
+  Symbol(enzyme.__options__): Object {
+    "adapter": ReactSixteenAdapter {
+      "options": Object {
+        "enableComponentDidUpdateOnSetState": true,
+      },
+    },
+  },
+}
+`;

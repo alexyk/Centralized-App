@@ -1,13 +1,14 @@
-import { Config } from '../../../config';
-import CancellationModal from '../../common/modals/CancellationModal';
-import Pagination from '../../common/pagination/Pagination';
-import { Link } from 'react-router-dom';
-import HomeTripsTable from './HomeTripsTable';
-import { NotificationManager } from 'react-notifications';
-import PropTypes from 'prop-types';
-import ReCAPTCHA from 'react-google-recaptcha';
 import React from 'react';
-import requester from '../../../initDependencies';
+import PropTypes from 'prop-types';
+import { Link } from 'react-router-dom';
+import { NotificationManager } from 'react-notifications';
+import ReCAPTCHA from 'react-google-recaptcha';
+
+import { Config } from '../../../../config';
+import CancellationModal from '../../../common/modals/CancellationModal';
+import Pagination from '../../../common/pagination/Pagination';
+import HomeTripsTable from './HomeTripsTable';
+import requester from '../../../../initDependencies';
 
 import { withRouter } from 'react-router-dom';
 
