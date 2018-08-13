@@ -149,3 +149,8 @@ export async function arrayToUtf8BytesArrayConverter(arrayToConvert) {
   }
   return arrayInBytes
 }
+
+export async function getNonceNumber(walletAddress) {
+  const nodeProvider = getNodeProvider();
+  return await nodeProvider.getTransactionCount(walletAddress);
+}
