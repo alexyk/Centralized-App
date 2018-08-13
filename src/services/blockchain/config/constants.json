@@ -21,5 +21,7 @@
   "yearInDays": 365,
   "leapYearDay": 1,
   "secondsInMilliSeconds": 1000,
-  "singleReservationWithdrawGas": 3000
+  "singleReservationWithdrawGas": 3000,
+  "successStatusCode": 1,
+  "failedSatusCode": 0
 }

@@ -34,6 +34,7 @@ const gasConfig = require('./config/gas-config.json');
 const errors = require('./config/errors.json');
 const {
   singleReservationWithdrawGas
+
 } = require('./config/constants.json');
 
 export class HotelReservation {
@@ -259,22 +260,21 @@ export class HotelReservation {
 
     let wallet = await ethers.Wallet.fromEncryptedWallet(jsonObj, password);
     const gasPrice = await getGasPrice();
+
     let overrideOptions = {
       gasLimit: gasConfig.simpleReservationSingleWithdrawer.create,
       gasPrice: gasPrice,
-      nonce: 1
     };
     await ReservationValidators.validateSimpleReservationSingleWithdrawerParams(jsonObj, password, reservationCostLOC, withdrawDateFormatted)
 
     await TokenValidators.validateLocBalance(wallet.address, reservationCostLOC, wallet, gasConfig.simpleReservationSingleWithdrawer.create);
     await EtherValidators.validateEthBalance(wallet, overrideOptions.gasLimit);
 
-    await approveContract(wallet, reservationCostLOC, SimpleReservationSingleWithdrawerContract.address, gasPrice);
+    let currentNonce = await approveContract(wallet, reservationCostLOC, SimpleReservationSingleWithdrawerContract.address, gasPrice);
+    overrideOptions.nonce = currentNonce;
 
     let reservationWithWalletInstance = SimpleReservationSingleWithdrawerContractWithWallet(wallet);
 
-    console.log('hotelReservation.js, wei:', reservationCostLOC);
-    console.log('hotelReservation.js, end date:', withdrawDateInSeconds);
     const createReservationSingleWithdrawerTxResult = await reservationWithWalletInstance.createReservation(
       reservationCostLOC,
       withdrawDateFormatted,
