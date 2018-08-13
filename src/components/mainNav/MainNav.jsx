@@ -12,6 +12,7 @@ import {
   SAVE_WALLET,
   SEND_RECOVERY_EMAIL
 } from '../../constants/modals.js';
+
 import {
   INVALID_EMAIL,
   INVALID_PASSWORD,
@@ -19,6 +20,9 @@ import {
   PASSWORDS_DONT_MATCH,
   PROFILE_PASSWORD_REQUIREMENTS
 } from '../../constants/warningMessages';
+
+import { LONG } from '../../constants/notificationDisplayTimes.js';
+
 import { Link, withRouter } from 'react-router-dom';
 import { MenuItem, Nav, NavDropdown, NavItem, Navbar } from 'react-bootstrap/lib';
 import { PASSWORD_SUCCESSFULLY_CHANGED, PROFILE_SUCCESSFULLY_CREATED } from '../../constants/successMessages.js';
@@ -457,7 +461,7 @@ class MainNav extends React.Component {
         NotificationManager.success(PASSWORD_SUCCESSFULLY_CHANGED);
       }
       else {
-        NotificationManager.error(NOT_FOUND);
+        NotificationManager.error(NOT_FOUND, '', LONG);
       }
       // this.captcha.reset();
     });

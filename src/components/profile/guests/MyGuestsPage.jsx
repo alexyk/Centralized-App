@@ -10,6 +10,8 @@ import React from 'react';
 import requester from '../../../initDependencies';
 import { withRouter } from 'react-router-dom';
 
+import { LONG } from '../../../constants/notificationDisplayTimes.js';
+
 class MyGuestsPage extends React.Component {
   constructor(props) {
     super(props);
@@ -81,9 +83,9 @@ class MyGuestsPage extends React.Component {
       res.body.then(data => {
         if (res.success) {
           this.setReservationIsAccepted(id, true);
-          NotificationManager.success(data.message, 'Reservation Operations');
+          NotificationManager.success(data.message, 'Reservation Operations', LONG);
         } else {
-          NotificationManager.error(data.message, 'Reservation Operations');
+          NotificationManager.error(data.message, 'Reservation Operations', LONG);
         }
       });
     });
@@ -95,9 +97,9 @@ class MyGuestsPage extends React.Component {
       res.body.then(data => {
         if (res.success) {
           this.setReservationIsAccepted(id, false);
-          NotificationManager.success(data.message, 'Reservation Operations');
+          NotificationManager.success(data.message, 'Reservation Operations', LONG);
         } else {
-          NotificationManager.error(data.message, 'Reservation Operations');
+          NotificationManager.error(data.message, 'Reservation Operations', LONG);
         }
       });
     });
@@ -112,9 +114,9 @@ class MyGuestsPage extends React.Component {
         res.body.then(data => {
           if (res.success) {
             this.deleteReservationFromState(id);
-            NotificationManager.success(data.message, 'Reservation Operations');
+            NotificationManager.success(data.message, 'Reservation Operations', LONG);
           } else {
-            NotificationManager.error(data.message, 'Reservation Operations');
+            NotificationManager.error(data.message, 'Reservation Operations', LONG);
           }
         });
       });

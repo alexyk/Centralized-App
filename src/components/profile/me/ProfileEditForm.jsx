@@ -8,6 +8,9 @@ import React from 'react';
 import moment from 'moment';
 import requester from '../../../initDependencies';
 
+import { UNCATEGORIZED_ERROR } from '../../../constants/errorMessages.js';
+import { LONG } from '../../../constants/notificationDisplayTimes.js';
+
 class ProfileEditForm extends React.Component {
   constructor(props) {
     super(props);
@@ -123,7 +126,7 @@ class ProfileEditForm extends React.Component {
         this.componentDidMount();
       }
       else {
-        NotificationManager.error('Something went wrong...');
+        NotificationManager.error(UNCATEGORIZED_ERROR, '', LONG);
       }
     }).catch(errors => {
       for (var e in errors) {

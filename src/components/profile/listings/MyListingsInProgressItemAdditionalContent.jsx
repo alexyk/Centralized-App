@@ -7,6 +7,9 @@ import ReCAPTCHA from 'react-google-recaptcha';
 import React from 'react';
 import requester from '../../../initDependencies';
 
+import { PROPERTY_CANNOT_BE_DELETED } from '../../../constants/errorMessages.js';
+import { LONG } from '../../../constants/notificationDisplayTimes.js';
+
 class MyListingsInProgressItemAdditionalContent extends React.Component {
   constructor(props) {
     super(props);
@@ -87,10 +90,9 @@ class MyListingsInProgressItemAdditionalContent extends React.Component {
       if (res.success) {
         this.props.filterListings(this.state.deletingId);
       } else {
-        NotificationManager.error('Cannot delete this property. It might have reservations or other irrevocable actions.', 'Deleting Listing');
+        NotificationManager.error(PROPERTY_CANNOT_BE_DELETED, 'Listing Operations', LONG);
       }
       this.setState({ sending: false });
-      // this.onHide();
     });
   }
 
