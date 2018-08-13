@@ -3,7 +3,7 @@ import '../../../styles/css/components/carousel-component.css';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 
-import { setRegion, setSearchInfo } from '../../../actions/searchInfo';
+import { setSearchInfo } from '../../../actions/searchInfo';
 
 import { Config } from '../../../config';
 import HotelDetailsInfoSection from './HotelDetailsInfoSection';
@@ -21,6 +21,7 @@ import requester from '../../../initDependencies';
 import { setCurrency } from '../../../actions/paymentInfo';
 import { withRouter } from 'react-router-dom';
 
+import { CHECKING_ROOM_AVAILABILITY, ROOM_NO_LONGER_AVAILABLE } from '../../../constants/infoMessages.js';
 import { UNCATEGORIZED_ERROR } from '../../../constants/errorMessages.js';
 import { LONG } from '../../../constants/notificationDisplayTimes.js';
 
@@ -291,7 +292,7 @@ class HotelDetailsPage extends React.Component {
 
   handleBookRoom(roomsResults) {
     this.setState({ loadingRooms: true });
-    NotificationManager.info('Checking room availability...');
+    NotificationManager.info(CHECKING_ROOM_AVAILABILITY, '', LONG);
     const rooms = this.props.searchInfo.rooms.map((room) => {
       const adults = [];
       const children = room.children;
@@ -350,7 +351,7 @@ class HotelDetailsPage extends React.Component {
     requester.createReservation(booking).then(res => {
       if (res.success) {
         if (index !== 0) {
-          NotificationManager.info('The room that you requested is no longer available. You were given a similar room which may have slightly different price and extras.', '', 5000);
+          NotificationManager.info(ROOM_NO_LONGER_AVAILABLE, '', LONG);
         }
 
         const id = this.props.match.params.id;

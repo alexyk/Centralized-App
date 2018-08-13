@@ -12,6 +12,7 @@ import { TokenTransactions } from '../../../services/blockchain/tokenTransaction
 
 import '../../../styles/css/components/profile/wallet/wallet-index-page.css';
 
+import { PROCESSING_TRANSACTION } from '../../../constants/infoMessages.js';
 import { TRANSACTION_SUCCESSFUL } from '../../../constants/successMessages.js';
 import { LONG } from '../../../constants/notificationDisplayTimes.js';
 
@@ -38,7 +39,7 @@ class WalletIndexPage extends React.Component {
 
   sendTokens() {
     // console.log('amount : ' + this.state.locAmount * Math.pow(10, 18));
-    NotificationManager.info('We are processing your transaction through the ethereum network. It might freeze your screen for about 10 seconds...', 'Transactions');
+    NotificationManager.info(PROCESSING_TRANSACTION, 'Transactions', LONG);
     setTimeout(() => {
       TokenTransactions.sendTokens(
         this.state.jsonFile,

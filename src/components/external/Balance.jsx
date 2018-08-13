@@ -7,6 +7,9 @@ import React from 'react';
 import requester from '../../initDependencies';
 import {withRouter} from 'react-router-dom';
 
+import { COPIED_TO_CLIPBOARD } from '../../constants/infoMessages.js';
+import { LONG } from '../../constants/notificationDisplayTimes.js';
+
 class Balance extends React.Component {
   constructor(props) {
     super(props);
@@ -82,7 +85,7 @@ class Balance extends React.Component {
                            type="text" disabled="disabled" value={this.state.refLink} />
                     &nbsp;
                     <CopyToClipboard text={this.state.refLink} onCopy={() => {
-                      NotificationManager.info('Copied to clipboard.');
+                      NotificationManager.info(COPIED_TO_CLIPBOARD, '', LONG);
                     }}><a href="#" className="btn">Copy</a></CopyToClipboard>
                   </div>
                   }

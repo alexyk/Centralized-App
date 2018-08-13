@@ -17,6 +17,7 @@ import queryString from 'query-string';
 import requester from '../../../initDependencies';
 import { withRouter } from 'react-router-dom';
 
+import { MESSAGE_SENT } from '../../../constants/infoMessages.js';
 import { LISTING_APPROVED, LISTING_DENIED, LISTING_DELETED } from '../../../constants/successMessages.js';
 import { UNCATEGORIZED_ERROR, PROPERTY_CANNOT_BE_DELETED } from '../../../constants/errorMessages.js';
 import { LONG } from '../../../constants/notificationDisplayTimes.js';
@@ -244,7 +245,7 @@ class UnpublishedList extends React.Component {
     };
 
     requester.contactHost(id, contactHostObj, captchaToken).then(() => {
-      NotificationManager.info('Message sent');
+      NotificationManager.info(MESSAGE_SENT, '', LONG);
       this.closeContactHostModal();
     });
   }

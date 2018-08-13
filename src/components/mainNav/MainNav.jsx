@@ -22,6 +22,7 @@ import {
   PROFILE_PASSWORD_REQUIREMENTS
 } from '../../constants/warningMessages';
 
+import { VERIFICATION_EMAIL_SENT } from '../../constants/infoMessages.js';
 import { LONG } from '../../constants/notificationDisplayTimes.js';
 
 import { Link, withRouter } from 'react-router-dom';
@@ -335,7 +336,7 @@ class MainNav extends React.Component {
                 console.log('users match');
                 requester.verifyUserAirdropInfo(token).then(() => {
                   console.log('user moved from temp to main');
-                  NotificationManager.info('Verification email has been sent. Please follow the link to confirm your email.');
+                  NotificationManager.info(VERIFICATION_EMAIL_SENT, '', LONG);
                   requester.getUserAirdropInfo().then(res => {
                     res.body.then(data => {
                       this.dispatchAirdropInfo(data);

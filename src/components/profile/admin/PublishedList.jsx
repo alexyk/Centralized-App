@@ -15,6 +15,8 @@ import queryString from 'query-string';
 import requester from '../../../initDependencies';
 import { withRouter } from 'react-router-dom';
 
+import { MESSAGE_SENT } from '../../../constants/infoMessages.js';
+import { LISTING_UNPUBLISHED } from '../../../constants/successMessages.js';
 import { UNCATEGORIZED_ERROR } from '../../../constants/errorMessages.js';
 import { LONG } from '../../../constants/notificationDisplayTimes.js';
 
@@ -199,7 +201,7 @@ class PublishedList extends React.Component {
 
     requester.changeListingStatus(unpublishObj).then(res => {
       if (res.success) {
-        NotificationManager.info('Listing unpublished');
+        NotificationManager.success(LISTING_UNPUBLISHED, '', LONG);
         const allListings = this.state.listings;
         const newListings = allListings.filter(x => x.id !== id);
         const totalElements = this.state.totalElements;
@@ -220,7 +222,7 @@ class PublishedList extends React.Component {
     };
 
     requester.contactHost(id, contactHostObj, captchaToken).then(() => {
-      NotificationManager.info('Message sent');
+      NotificationManager.info(MESSAGE_SENT, '', LONG);
       this.closeContactHostModal();
     });
   }
