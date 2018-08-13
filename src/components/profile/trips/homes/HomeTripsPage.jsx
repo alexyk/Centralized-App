@@ -12,6 +12,7 @@ import requester from '../../../../initDependencies';
 
 import { withRouter } from 'react-router-dom';
 
+import { BOOKING_REQUEST_SENT } from '../../../../constants/successMessages.js';
 import { LONG } from '../../../../constants/notificationDisplayTimes.js';
 
 class HomeTripsPage extends React.Component {
@@ -54,7 +55,7 @@ class HomeTripsPage extends React.Component {
       res.body.then(data => {
         this.setState({ trips: data.content, totalTrips: data.totalElements, loading: false, currentTripId: id });
         if (id) {
-          NotificationManager.success('Booking Request Sent Successfully, your host will get back to you with additional questions.', 'Reservation Operations');
+          NotificationManager.success(BOOKING_REQUEST_SENT, 'Reservation Operations', LONG);
         }
       });
     });

@@ -1,3 +1,10 @@
 export const PASSWORD_SUCCESSFULLY_CHANGED = 'Password successfully changed';
 export const PROFILE_SUCCESSFULLY_UPDATED = 'Successfully updated your profile';
 export const PROFILE_SUCCESSFULLY_CREATED = 'Succesfully created your account.';
+export const TRANSACTION_SUCCESSFUL = 'Transaction made successfully';
+export const BOOKING_REQUEST_SENT = 'Booking Request Sent Successfully, your host will get back to you with additional questions.';
+export const LOC_PAYMENT_INITIATED = 'LOC Payment has been initiated. We will send you a confirmation message once it has been processed by the Blockchain.';
+export const LISTING_UPDATED = 'Successfully updated your listing';
+export const LISTING_APPROVED = 'Listing approved';
+export const LISTING_DENIED = 'Listing denied';
+export const LISTING_DELETED = 'Listing deleted';

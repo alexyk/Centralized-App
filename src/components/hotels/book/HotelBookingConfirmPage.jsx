@@ -15,6 +15,9 @@ import { setCurrency } from '../../../actions/paymentInfo';
 import { withRouter } from 'react-router-dom';
 import { Config } from '../../../config.js';
 
+import { LOC_PAYMENT_INITIATED } from '../../../constants/successMessages.js';
+import { LONG } from '../../../constants/notificationDisplayTimes.js';
+
 const ERROR_MESSAGE_TIME = 20000;
 
 class HotelBookingConfirmPage extends React.Component {
@@ -241,52 +244,52 @@ class HotelBookingConfirmPage extends React.Component {
 
         const queryString = this.props.location.search;
 
-        // requester.getMyJsonFile().then(res => {
-        //   res.body.then(data => {
-        //     setTimeout(() => {
-        //       HotelReservation.createReservation(
-        //         data.jsonFile,
-        //         password,
-        //         preparedBookingId.toString(),
-        //         wei,
-        //         startDate.unix().toString(),
-        //         endDate.unix().toString(),
-        //         daysBeforeStartOfRefund,
-        //         refundPercentages,
-        //         hotelId,
-        //         roomId,
-        //         numberOfTravelers.toString()
-        //       ).then(transaction => {
-        //         const bookingConfirmObj = {
-        //           bookingId: preparedBookingId,
-        //           transactionHash: transaction.hash,
-        //           queryString: queryString
-        //         };
+        requester.getMyJsonFile().then(res => {
+          res.body.then(data => {
+            setTimeout(() => {
+              HotelReservation.createReservation(
+                data.jsonFile,
+                password,
+                preparedBookingId.toString(),
+                wei,
+                startDate.unix().toString(),
+                endDate.unix().toString(),
+                daysBeforeStartOfRefund,
+                refundPercentages,
+                hotelId,
+                roomId,
+                numberOfTravelers.toString()
+              ).then(transaction => {
+                const bookingConfirmObj = {
+                  bookingId: preparedBookingId,
+                  transactionHash: transaction.hash,
+                  queryString: queryString
+                };
 
-        //         console.log(bookingConfirmObj);
-        //         requester.confirmBooking(bookingConfirmObj).then(() => {
-        //           NotificationManager.success('LOC Payment has been initiated. We will send you a confirmation message once it has been processed by the Blockchain.');
-        //           setTimeout(() => {
-        //             this.props.history.push('/profile/trips/hotels');
-        //           }, 2000);
-        //         });
-        //       }).catch(error => {
-        //         if (error.hasOwnProperty('message')) {
-        //           NotificationManager.warning(error.message, 'Send Tokens');
-        //         } else if (error.hasOwnProperty('err') && error.err.hasOwnProperty('message')) {
-        //           NotificationManager.warning(error.err.message, 'Send Tokens');
-        //         } else if (typeof x === 'string') {
-        //           NotificationManager.warning(error, 'Send Tokens');
-        //         } else {
-        //           NotificationManager.warning(error);
-        //         }
+                console.log(bookingConfirmObj);
+                requester.confirmBooking(bookingConfirmObj).then(() => {
+                  NotificationManager.success(LOC_PAYMENT_INITIATED, '', LONG);
+                  setTimeout(() => {
+                    this.props.history.push('/profile/trips/hotels');
+                  }, 2000);
+                });
+              }).catch(error => {
+                if (error.hasOwnProperty('message')) {
+                  NotificationManager.warning(error.message, 'Send Tokens');
+                } else if (error.hasOwnProperty('err') && error.err.hasOwnProperty('message')) {
+                  NotificationManager.warning(error.err.message, 'Send Tokens');
+                } else if (typeof x === 'string') {
+                  NotificationManager.warning(error, 'Send Tokens');
+                } else {
+                  NotificationManager.warning(error);
+                }
 
-        //         this.closeModal(PASSWORD_PROMPT);
-        //         this.setState({ confirmed: false });
-        //       });
-        //     }, 1000);
-        //   });
-        // });
+                this.closeModal(PASSWORD_PROMPT);
+                this.setState({ confirmed: false });
+              });
+            }, 1000);
+          });
+        });
       });
     });
   }
