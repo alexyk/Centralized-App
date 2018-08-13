@@ -11,7 +11,8 @@ import React from 'react';
 import filterListings from '../../../actions/filterListings';
 import requester from '../../../initDependencies';
 
-
+import { PROPERTY_CANNOT_BE_DELETED } from '../../../constants/errorMessages.js';
+import { LONG } from '../../../constants/notificationDisplayTimes.js';
 
 class MyListingsPage extends React.Component {
   constructor(props) {
@@ -111,7 +112,7 @@ class MyListingsPage extends React.Component {
         this.setState({ [listingStateKey]: filteredListings });
         NotificationManager.success('Listing deleted');
       } else {
-        NotificationManager.error('Cannot delete this property. It might have reservations or other irrevocable actions.');
+        NotificationManager.error(PROPERTY_CANNOT_BE_DELETED, 'Listing Operations', LONG);
       }
       this.handleCloseDeleteListing();
     }).catch(e => {

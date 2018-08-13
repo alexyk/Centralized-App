@@ -21,6 +21,9 @@ import requester from '../../../initDependencies';
 import { setCurrency } from '../../../actions/paymentInfo';
 import { withRouter } from 'react-router-dom';
 
+import { UNCATEGORIZED_ERROR } from '../../../constants/errorMessages.js';
+import { LONG } from '../../../constants/notificationDisplayTimes.js';
+
 class HotelDetailsPage extends React.Component {
   constructor(props) {
     super(props);
@@ -67,16 +70,9 @@ class HotelDetailsPage extends React.Component {
   componentDidMount() {
     const id = this.props.match.params.id;
     const searchParams = this.getNewSearchParams();
-    const search = this.getSearchParams();
     requester.getHotelById(id, searchParams).then(res => {
       res.body.then(data => {
         this.setState({ data: data, loading: false });
-        const regionId = search.get('region') || (data.region && data.region.externalId);
-        requester.getRegionNameById(regionId).then(res => {
-          res.body.then(data => {
-            this.props.dispatch(setRegion(data));
-          });
-        });
       });
     });
 
@@ -335,7 +331,7 @@ class HotelDetailsPage extends React.Component {
     try {
       this.checkNextRoom(allRooms, 0, booking);
     } catch (e) {
-      NotificationManager.error('Something went wrong...');
+      NotificationManager.error(UNCATEGORIZED_ERROR, '', LONG);
     }
   }
 
@@ -366,7 +362,7 @@ class HotelDetailsPage extends React.Component {
         this.checkNextRoom(allRooms, index + 1, booking);
       }
     }).catch(() => {
-      NotificationManager.error('Something went wrong...');
+      NotificationManager.error(UNCATEGORIZED_ERROR, '', LONG);
     });
   }
 

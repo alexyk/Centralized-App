@@ -9,6 +9,8 @@ import moment from 'moment';
 import requester from '../../../initDependencies';
 
 import Select from '../../common/google/GooglePlacesAutocomplete';
+import { UNCATEGORIZED_ERROR } from '../../../constants/errorMessages.js';
+import { LONG } from '../../../constants/notificationDisplayTimes.js';
 
 class ProfileEditForm extends React.Component {
   constructor(props) {
@@ -120,7 +122,7 @@ class ProfileEditForm extends React.Component {
         this.componentDidMount();
       }
       else {
-        NotificationManager.error('Something went wrong...');
+        NotificationManager.error(UNCATEGORIZED_ERROR, '', LONG);
       }
     }).catch(errors => {
       for (var e in errors) {

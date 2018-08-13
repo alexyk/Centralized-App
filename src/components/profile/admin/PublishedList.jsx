@@ -15,6 +15,9 @@ import queryString from 'query-string';
 import requester from '../../../initDependencies';
 import { withRouter } from 'react-router-dom';
 
+import { UNCATEGORIZED_ERROR } from '../../../constants/errorMessages.js';
+import { LONG } from '../../../constants/notificationDisplayTimes.js';
+
 class PublishedList extends React.Component {
   constructor(props) {
     super(props);
@@ -206,7 +209,7 @@ class PublishedList extends React.Component {
         }
       }
       else {
-        NotificationManager.error('Something went wrong', 'Listings Operations');
+        NotificationManager.error(UNCATEGORIZED_ERROR, 'Listings Operations', LONG);
       }
     });
   }

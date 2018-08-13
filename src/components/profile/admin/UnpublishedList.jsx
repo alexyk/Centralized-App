@@ -17,6 +17,9 @@ import queryString from 'query-string';
 import requester from '../../../initDependencies';
 import { withRouter } from 'react-router-dom';
 
+import { UNCATEGORIZED_ERROR, PROPERTY_CANNOT_BE_DELETED } from '../../../constants/errorMessages.js';
+import { LONG } from '../../../constants/notificationDisplayTimes.js';
+
 class UnpublishedList extends React.Component {
   constructor(props) {
     super(props);
@@ -229,13 +232,12 @@ class UnpublishedList extends React.Component {
         }
       }
       else {
-        NotificationManager.error('Something went wrong');
+        NotificationManager.error(UNCATEGORIZED_ERROR, '', LONG);
       }
     });
   }
 
   handleContactHost(id, message, captchaToken) {
-    // this.setState({ loading: true });
     let contactHostObj = {
       message: message
     };
@@ -285,7 +287,7 @@ class UnpublishedList extends React.Component {
             this.onPageChange(1);
           }
         } else {
-          NotificationManager.error('Cannot delete this property. It might have reservations or other irrevocable actions.');
+          NotificationManager.error(PROPERTY_CANNOT_BE_DELETED, '', LONG);
         }
         this.handleCloseDeleteListing();
       }).catch(e => {
