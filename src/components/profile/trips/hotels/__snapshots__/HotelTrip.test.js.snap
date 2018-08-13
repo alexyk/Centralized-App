@@ -5,9 +5,11 @@ ShallowWrapper {
   "length": 1,
   Symbol(enzyme.__root__): [Circular],
   Symbol(enzyme.__unrendered__): <HotelTrip
+    afterTomorrow="11/10/2018"
     handleCancelReservation={[Function]}
     onTripSelect={[Function]}
     styleClass="trips-flex-container"
+    tomorrow="10/10/2018"
     trip={
         Object {
             "arrival_date": "2018-08-07",
@@ -88,7 +90,7 @@ ShallowWrapper {
                     <Link
                               className="trips-location-link content-row"
                               replace={false}
-                              to="/hotels/listings/24278?currency=GBP&startDate=08/08/2018&endDate=09/08/2018&rooms=%5B%7B\\"adults\\":2,\\"children\\":%5B%5D%7D%5D"
+                              to="/hotels/listings/24278?currency=GBP&startDate=10/10/2018&endDate=11/10/2018&rooms=%5B%7B\\"adults\\":2,\\"children\\":%5B%5D%7D%5D"
                     >
                               <u>
                                         Vitosha Park Hotel
@@ -359,7 +361,7 @@ ShallowWrapper {
               <Link
                             className="trips-location-link content-row"
                             replace={false}
-                            to="/hotels/listings/24278?currency=GBP&startDate=08/08/2018&endDate=09/08/2018&rooms=%5B%7B\\"adults\\":2,\\"children\\":%5B%5D%7D%5D"
+                            to="/hotels/listings/24278?currency=GBP&startDate=10/10/2018&endDate=11/10/2018&rooms=%5B%7B\\"adults\\":2,\\"children\\":%5B%5D%7D%5D"
               >
                             <u>
                                           Vitosha Park Hotel
@@ -439,7 +441,7 @@ ShallowWrapper {
                 <Link
                   className="trips-location-link content-row"
                   replace={false}
-                  to="/hotels/listings/24278?currency=GBP&startDate=08/08/2018&endDate=09/08/2018&rooms=%5B%7B\\"adults\\":2,\\"children\\":%5B%5D%7D%5D"
+                  to="/hotels/listings/24278?currency=GBP&startDate=10/10/2018&endDate=11/10/2018&rooms=%5B%7B\\"adults\\":2,\\"children\\":%5B%5D%7D%5D"
 >
                   <u>
                                     Vitosha Park Hotel
@@ -471,7 +473,7 @@ ShallowWrapper {
 </u>,
                   "className": "trips-location-link content-row",
                   "replace": false,
-                  "to": "/hotels/listings/24278?currency=GBP&startDate=08/08/2018&endDate=09/08/2018&rooms=%5B%7B\\"adults\\":2,\\"children\\":%5B%5D%7D%5D",
+                  "to": "/hotels/listings/24278?currency=GBP&startDate=10/10/2018&endDate=11/10/2018&rooms=%5B%7B\\"adults\\":2,\\"children\\":%5B%5D%7D%5D",
                 },
                 "ref": null,
                 "rendered": Object {
@@ -781,7 +783,7 @@ ShallowWrapper {
                         <Link
                                     className="trips-location-link content-row"
                                     replace={false}
-                                    to="/hotels/listings/24278?currency=GBP&startDate=08/08/2018&endDate=09/08/2018&rooms=%5B%7B\\"adults\\":2,\\"children\\":%5B%5D%7D%5D"
+                                    to="/hotels/listings/24278?currency=GBP&startDate=10/10/2018&endDate=11/10/2018&rooms=%5B%7B\\"adults\\":2,\\"children\\":%5B%5D%7D%5D"
                         >
                                     <u>
                                                 Vitosha Park Hotel
@@ -1052,7 +1054,7 @@ ShallowWrapper {
                 <Link
                                 className="trips-location-link content-row"
                                 replace={false}
-                                to="/hotels/listings/24278?currency=GBP&startDate=08/08/2018&endDate=09/08/2018&rooms=%5B%7B\\"adults\\":2,\\"children\\":%5B%5D%7D%5D"
+                                to="/hotels/listings/24278?currency=GBP&startDate=10/10/2018&endDate=11/10/2018&rooms=%5B%7B\\"adults\\":2,\\"children\\":%5B%5D%7D%5D"
                 >
                                 <u>
                                                 Vitosha Park Hotel
@@ -1132,7 +1134,7 @@ ShallowWrapper {
                   <Link
                     className="trips-location-link content-row"
                     replace={false}
-                    to="/hotels/listings/24278?currency=GBP&startDate=08/08/2018&endDate=09/08/2018&rooms=%5B%7B\\"adults\\":2,\\"children\\":%5B%5D%7D%5D"
+                    to="/hotels/listings/24278?currency=GBP&startDate=10/10/2018&endDate=11/10/2018&rooms=%5B%7B\\"adults\\":2,\\"children\\":%5B%5D%7D%5D"
 >
                     <u>
                                         Vitosha Park Hotel
@@ -1164,7 +1166,7 @@ ShallowWrapper {
 </u>,
                     "className": "trips-location-link content-row",
                     "replace": false,
-                    "to": "/hotels/listings/24278?currency=GBP&startDate=08/08/2018&endDate=09/08/2018&rooms=%5B%7B\\"adults\\":2,\\"children\\":%5B%5D%7D%5D",
+                    "to": "/hotels/listings/24278?currency=GBP&startDate=10/10/2018&endDate=11/10/2018&rooms=%5B%7B\\"adults\\":2,\\"children\\":%5B%5D%7D%5D",
                   },
                   "ref": null,
                   "rendered": Object {

@@ -19,8 +19,9 @@ describe('<HotelTrip />', () => {
         nights: 1,
         status: 'PENDING',
         transaction_hash: '0x5b063f05f770a32185641f4b6e3bd33e2500b7aab0d8a5090416af4f2040df2c',
-
       },
+      tomorrow: '10/10/2018',
+      afterTomorrow: '11/10/2018',
       styleClass: 'trips-flex-container',
       handleCancelReservation: jest.fn(),
       onTripSelect: jest.fn(),

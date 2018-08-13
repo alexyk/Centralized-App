@@ -49,11 +49,10 @@ class HotelTrip extends React.Component {
 
   render() {
 
-    const tomorrow = new Date().setHours(24);
-    const afterTomorrow = new Date().setHours(48);
     const dates = this.extractDatesData(this.props.trip);
-
     const { hotel_photo, hotel_name, hostEmail, hostPhone,  } = this.props.trip;
+
+    console.log(this.props.tomorrow)
 
     return (
       <ProfileFlexContainer styleClass={`flex-container-row ${this.props.styleClass}`}>
@@ -76,7 +75,7 @@ class HotelTrip extends React.Component {
         <div className="tablet-col-2">
           <div className="flex-row-child trips-location">
             <i className="fa fa-info-circle icon" />
-            <Link className="trips-location-link content-row" to={`/hotels/listings/${this.props.trip.hotel_id}?currency=GBP&startDate=${moment(tomorrow).format('DD/MM/YYYY')}&endDate=${moment(afterTomorrow).format('DD/MM/YYYY')}&rooms=%5B%7B"adults":2,"children":%5B%5D%7D%5D`}><u>{this.getHostName(this.props.trip.hotel_name)}</u></Link>
+            <Link className="trips-location-link content-row" to={`/hotels/listings/${this.props.trip.hotel_id}?currency=GBP&startDate=${this.props.tomorrow}&endDate=${this.props.afterTomorrow}&rooms=%5B%7B"adults":2,"children":%5B%5D%7D%5D`}><u>{this.getHostName(this.props.trip.hotel_name)}</u></Link>
           </div>
           <div className="flex-row-child trips-dates">
             <span className="icon-calendar icon" />
@@ -117,6 +116,8 @@ class HotelTrip extends React.Component {
 
 HotelTrip.propTypes = {
   trip: PropTypes.object,
+  tomorrow: PropTypes.string, // format (DD/MM/YYYY)
+  afterTomorrow: PropTypes.string, // format (DD/MM/YYYY)
   styleClass: PropTypes.string,
   handleCancelReservation: PropTypes.func,
   onTripSelect: PropTypes.func
