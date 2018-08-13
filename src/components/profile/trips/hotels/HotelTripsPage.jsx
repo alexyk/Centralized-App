@@ -17,6 +17,7 @@ import { closeModal, openModal } from '../../../../actions/modalsInfo.js';
 
 import { CANCELLING_RESERVATION } from '../../../../constants/infoMessages.js';
 import { BOOKING_REQUEST_SENT } from '../../../../constants/successMessages.js';
+import { CANCELLATION_NOT_POSSIBLE } from '../../../../constants/warningMessages.js';
 import { LONG } from '../../../../constants/notificationDisplayTimes.js';
 
 class HotelTripsPage extends React.Component {
@@ -97,13 +98,13 @@ class HotelTripsPage extends React.Component {
               // console.log(response);
             }).catch(error => {
               if (error.hasOwnProperty('message')) {
-                NotificationManager.warning(error.message, 'Cancel Reservation');
+                NotificationManager.warning(error.message, 'Cancel Reservation', LONG);
               } else if (error.hasOwnProperty('err') && error.err.hasOwnProperty('message')) {
-                NotificationManager.warning(error.err.message, 'Cancel Reservation');
+                NotificationManager.warning(error.err.message, 'Cancel Reservation', LONG);
               } else if (typeof x === 'string') {
-                NotificationManager.warning(error, 'Cancel Reservation');
+                NotificationManager.warning(error, 'Cancel Reservation', LONG);
               } else {
-                NotificationManager.warning(error);
+                NotificationManager.warning(error, '', LONG);
               }
 
               this.closeModal(PASSWORD_PROMPT);
@@ -112,7 +113,7 @@ class HotelTripsPage extends React.Component {
         });
 
       } else {
-        NotificationManager.warning('We cannot cancel your reservation');
+        NotificationManager.warning(CANCELLATION_NOT_POSSIBLE, LONG);
         this.closeModal(PASSWORD_PROMPT);
       }
     });

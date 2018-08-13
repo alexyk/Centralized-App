@@ -11,6 +11,9 @@ import { parse } from 'query-string';
 import requester from '../../../initDependencies';
 import { withRouter } from 'react-router-dom';
 
+import { INVALID_SEARCH_DATE } from '../../../constants/warningMessages.js';
+import { LONG } from '../../../constants/notificationDisplayTimes.js';
+
 class HomeDetailsPage extends React.Component {
   constructor(props) {
     super(props);
@@ -127,12 +130,11 @@ class HomeDetailsPage extends React.Component {
 
   handleApply(event, picker) {
     const { startDate, endDate } = picker;
-    const today = moment();
     const prices = this.state.prices;
     const range = prices.filter(x => x.start >= startDate && x.end < endDate);
     const isInvalidRange = range.filter(x => !x.available).length > 0;
     if (isInvalidRange) {
-      NotificationManager.warning('There is a unavailable day in your select range', 'Calendar Operations');
+      NotificationManager.warning(INVALID_SEARCH_DATE, 'Calendar Operations', LONG);
       this.setState({ calendarStartDate: undefined, calendarEndDate: undefined });
     }
     else {

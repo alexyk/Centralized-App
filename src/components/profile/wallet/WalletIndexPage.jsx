@@ -54,15 +54,15 @@ class WalletIndexPage extends React.Component {
           password: ''
         });
         // console.log(x);
-      }).catch(x => {
-        if (x.hasOwnProperty('message')) {
-          NotificationManager.warning(x.message, 'Send Tokens');
-        } else if (x.hasOwnProperty('err') && x.err.hasOwnProperty('message')) {
-          NotificationManager.warning(x.err.message, 'Send Tokens');
-        } else if (typeof x === 'string') {
-          NotificationManager.warning(x, 'Send Tokens');
+      }).catch(error => {
+        if (error.hasOwnProperty('message')) {
+          NotificationManager.warning(error.message, 'Send Tokens', LONG);
+        } else if (error.hasOwnProperty('err') && error.err.hasOwnProperty('message')) {
+          NotificationManager.warning(error.err.message, 'Send Tokens', LONG);
+        } else if (typeof error === 'string') {
+          NotificationManager.warning(error, 'Send Tokens', LONG);
         } else {
-          console.log(x);
+          console.log(error);
         }
       });
     }, 1000);

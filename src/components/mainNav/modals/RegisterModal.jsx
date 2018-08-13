@@ -16,6 +16,7 @@ import {
   PROFILE_INVALID_PASSWORD_LENGTH,
   PROFILE_PASSWORD_REQUIREMENTS
 } from '../../../constants/warningMessages.js';
+import { LONG } from '../../../constants/notificationDisplayTimes.js';
 
 function RegisterModal(props) {
 
@@ -30,17 +31,17 @@ function RegisterModal(props) {
         }
 
         if (!validator.isEmail(props.signUpEmail)) {
-          NotificationManager.warning(INVALID_EMAIL);
+          NotificationManager.warning(INVALID_EMAIL, '', LONG);
         } else if (!isEmailFree) {
-          NotificationManager.warning(EMAIL_ALREADY_EXISTS);
+          NotificationManager.warning(EMAIL_ALREADY_EXISTS, '', LONG);
         } else if (validator.isEmpty(props.signUpFirstName)) {
-          NotificationManager.warning(INVALID_FIRST_NAME);
+          NotificationManager.warning(INVALID_FIRST_NAME, '', LONG);
         } else if (validator.isEmpty(props.signUpLastName)) {
-          NotificationManager.warning(INVALID_LAST_NAME);
+          NotificationManager.warning(INVALID_LAST_NAME, '', LONG);
         } else if (props.signUpPassword.length < 6) {
-          NotificationManager.warning(PROFILE_INVALID_PASSWORD_LENGTH);
+          NotificationManager.warning(PROFILE_INVALID_PASSWORD_LENGTH, '', LONG);
         } else if (!props.signUpPassword.match('^([^\\s]*[a-zA-Z]+.*?[0-9]+[^\\s]*|[^\\s]*[0-9]+.*?[a-zA-Z]+[^\\s]*)$')) {
-          NotificationManager.warning(PROFILE_PASSWORD_REQUIREMENTS);
+          NotificationManager.warning(PROFILE_PASSWORD_REQUIREMENTS, '', LONG);
         } else {
           props.closeModal(REGISTER);
           props.openModal(CREATE_WALLET);

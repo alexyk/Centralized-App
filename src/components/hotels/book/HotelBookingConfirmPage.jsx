@@ -69,7 +69,7 @@ class HotelBookingConfirmPage extends React.Component {
           const errors = res.errors;
           for (let key in errors) {
             if (typeof errors[key] !== 'function') {
-              NotificationManager.warning(errors[key].message);
+              NotificationManager.warning(errors[key].message, '', LONG);
             }
           }
         });
@@ -270,13 +270,13 @@ class HotelBookingConfirmPage extends React.Component {
                 });
               }).catch(error => {
                 if (error.hasOwnProperty('message')) {
-                  NotificationManager.warning(error.message, 'Send Tokens');
+                  NotificationManager.warning(error.message, 'Transactions', LONG);
                 } else if (error.hasOwnProperty('err') && error.err.hasOwnProperty('message')) {
-                  NotificationManager.warning(error.err.message, 'Send Tokens');
+                  NotificationManager.warning(error.err.message, 'Transactions', LONG);
                 } else if (typeof x === 'string') {
-                  NotificationManager.warning(error, 'Send Tokens');
+                  NotificationManager.warning(error, 'Transactions', LONG);
                 } else {
-                  NotificationManager.warning(error);
+                  NotificationManager.warning(error, '', LONG);
                 }
 
                 this.closeModal(PASSWORD_PROMPT);

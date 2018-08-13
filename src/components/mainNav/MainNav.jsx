@@ -39,6 +39,7 @@ import CreateWalletModal from './modals/CreateWalletModal';
 import EnterRecoveryTokenModal from './modals/EnterRecoveryTokenModal';
 import LoginModal from './modals/LoginModal';
 import { NOT_FOUND } from '../../constants/errorMessages';
+import { MISSING_AIRDROP_INFO } from '../../constants/warningMessages.js';
 import { NotificationManager } from 'react-notifications';
 import PropTypes from 'prop-types';
 import ReCAPTCHA from 'react-google-recaptcha';
@@ -158,17 +159,15 @@ class MainNav extends React.Component {
         });
         this.openModal(LOGIN);
         NotificationManager.success(PROFILE_SUCCESSFULLY_CREATED, '', LONG);
-        // this.captcha.reset();
       }
       else {
         res.errors.then(res => {
           const errors = res;
           for (let key in errors) {
             if (typeof errors[key] !== 'function') {
-              NotificationManager.warning(errors[key].message, 'Field: ' + key.toUpperCase());
+              NotificationManager.warning(errors[key].message, 'Field: ' + key.toUpperCase(), LONG);
             }
           }
-          // this.captcha.reset();
         });
       }
     });
@@ -197,7 +196,7 @@ class MainNav extends React.Component {
           const errors = res;
           for (let key in errors) {
             if (typeof errors[key] !== 'function') {
-              NotificationManager.warning(errors[key].message, 'Field: ' + key.toUpperCase());
+              NotificationManager.warning(errors[key].message, 'Field: ' + key.toUpperCase(), LONG);
             }
           }
         });
@@ -236,7 +235,7 @@ class MainNav extends React.Component {
         res.errors.then(res => {
           const errors = res.errors;
           if (errors.hasOwnProperty('JsonFileNull')) {
-            NotificationManager.warning(errors['JsonFileNull'].message);
+            NotificationManager.warning(errors['JsonFileNull'].message, '', LONG);
             this.setState({ isUpdatingWallet: true }, () => {
               this.closeModal(LOGIN);
               this.openModal(CREATE_WALLET);
@@ -244,13 +243,13 @@ class MainNav extends React.Component {
           } else {
             for (let key in errors) {
               if (typeof errors[key] !== 'function') {
-                NotificationManager.warning(errors[key].message);
+                NotificationManager.warning(errors[key].message, '', LONG);
               }
             }
           }
         }).catch(errors => {
           for (var e in errors) {
-            NotificationManager.warning(errors[e].message);
+            NotificationManager.warning(errors[e].message, '', LONG);
           }
           // this.captcha.reset();
         });
@@ -289,7 +288,7 @@ class MainNav extends React.Component {
           const errors = res;
           console.log(errors);
           if (errors.hasOwnProperty('JsonFileNull')) {
-            NotificationManager.warning(errors['JsonFileNull'].message);
+            NotificationManager.warning(errors['JsonFileNull'].message, '', LONG);
             this.setState({ isUpdatingWallet: true }, () => {
               this.closeModal(AIRDROP_LOGIN);
               this.openModal(CREATE_WALLET);
@@ -297,13 +296,13 @@ class MainNav extends React.Component {
           } else {
             for (let key in errors) {
               if (typeof errors[key] !== 'function') {
-                NotificationManager.warning(errors[key].message);
+                NotificationManager.warning(errors[key].message, '', LONG);
               }
             }
           }
         }).catch(errors => {
           for (var e in errors) {
-            NotificationManager.warning(errors[e].message);
+            NotificationManager.warning(errors[e].message, '', LONG);
           }
         });
       }
@@ -339,7 +338,7 @@ class MainNav extends React.Component {
           });
         }
       }).catch(() => {
-        NotificationManager.warning('No airdrop information about this profile');
+        NotificationManager.warning(MISSING_AIRDROP_INFO, '', LONG);
         this.props.history.push('/airdrop');
       });
     });
@@ -436,17 +435,17 @@ class MainNav extends React.Component {
     const password = this.state.newPassword;
     const confirm = this.state.confirmNewPassword;
     if (password !== confirm) {
-      NotificationManager.warning(PASSWORDS_DONT_MATCH);
+      NotificationManager.warning(PASSWORDS_DONT_MATCH, '', LONG);
       return;
     }
 
     if (password.length < 6 || password.length > 30) {
-      NotificationManager.warning(INVALID_PASSWORD);
+      NotificationManager.warning(INVALID_PASSWORD, '', LONG);
       return;
     }
 
     if (!password.match('^([^\\s]*[a-zA-Z]+.*?[0-9]+[^\\s]*|[^\\s]*[0-9]+.*?[a-zA-Z]+[^\\s]*)$')) {
-      NotificationManager.warning(PROFILE_PASSWORD_REQUIREMENTS);
+      NotificationManager.warning(PROFILE_PASSWORD_REQUIREMENTS, '', LONG);
       return;
     }
 
@@ -475,7 +474,7 @@ class MainNav extends React.Component {
         this.openModal(CHANGE_PASSWORD);
       }
       else {
-        NotificationManager.warning(INVALID_TOKEN);
+        NotificationManager.warning(INVALID_TOKEN, '', LONG);
       }
     });
   }
@@ -489,9 +488,8 @@ class MainNav extends React.Component {
         this.openModal(ENTER_RECOVERY_TOKEN);
       }
       else {
-        NotificationManager.warning(INVALID_EMAIL);
+        NotificationManager.warning(INVALID_EMAIL, '', LONG);
       }
-      // this.captcha.reset();
     });
   }
 
