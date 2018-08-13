@@ -20,7 +20,7 @@ export async function approveContract(
   const locContract = await LOCTokenContractWithWallet(wallet)
   const allowance = await locContract.allowance(wallet.address, contractAddressToApprove)
   let nonce = await getNonceNumber(wallet.address);
-  if (allowance.toString() >= amount) {
+  if (allowance.gte(amount)) {
     return nonce
   }
 
