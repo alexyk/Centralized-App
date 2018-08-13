@@ -15,6 +15,7 @@ import { HotelReservation } from '../../../../services/blockchain/hotelReservati
 import { PASSWORD_PROMPT } from '../../../../constants/modals.js';
 import { closeModal, openModal } from '../../../../actions/modalsInfo.js';
 
+import { CANCELLING_RESERVATION } from '../../../../constants/infoMessages.js';
 import { BOOKING_REQUEST_SENT } from '../../../../constants/successMessages.js';
 import { LONG } from '../../../../constants/notificationDisplayTimes.js';
 
@@ -89,7 +90,7 @@ class HotelTripsPage extends React.Component {
       if (res.success === true) {
         requester.getMyJsonFile().then(res => {
           res.body.then(data => {
-            NotificationManager.info('Your reservation is being cancelled...', 'Transactions', 10000);
+            NotificationManager.info(CANCELLING_RESERVATION, 'Transactions', LONG);
             this.closeModal(PASSWORD_PROMPT);
 
             HotelReservation.cancelReservation(data.jsonFile, this.state.password, this.state.bookingPrepareId.toString()).then(response => {

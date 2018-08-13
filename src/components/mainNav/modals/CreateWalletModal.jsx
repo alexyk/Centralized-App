@@ -7,6 +7,7 @@ import { Wallet } from '../../../services/blockchain/wallet.js';
 import { CREATE_WALLET, SAVE_WALLET } from '../../../constants/modals.js';
 import { WALLET_INVALID_PASSWORD_LENGTH } from '../../../constants/warningMessages.js';
 import { SCREEN_FREEZE } from '../../../constants/infoMessages.js';
+import { LONG } from '../../../constants/notificationDisplayTimes.js';
 
 function CreateWalletModal(props) {
 
@@ -15,7 +16,7 @@ function CreateWalletModal(props) {
       NotificationManager.warning(WALLET_INVALID_PASSWORD_LENGTH);
     } else {
       try {
-        NotificationManager.info(SCREEN_FREEZE);
+        NotificationManager.info(SCREEN_FREEZE, '', LONG);
         setTimeout(() => {
           Wallet.createFromPassword(props.walletPassword).then((wallet) => {
             localStorage.setItem('walletAddress', wallet.address);

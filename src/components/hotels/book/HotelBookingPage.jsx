@@ -10,6 +10,9 @@ import { setCurrency } from '../../../actions/paymentInfo';
 import validator from 'validator';
 import { withRouter } from 'react-router-dom';
 
+import { SEARCH_EXPIRED } from '../../../constants/infoMessages.js';
+import { EXTRA_LONG } from '../../../constants/notificationDisplayTimes.js';
+
 class HotelBookingPage extends React.Component {
   constructor(props) {
     super(props);
@@ -68,7 +71,7 @@ class HotelBookingPage extends React.Component {
     });
 
     this.timeout = setTimeout(() => {
-      NotificationManager.info('Your search has expired.', '', 600000);
+      NotificationManager.info(SEARCH_EXPIRED, '', EXTRA_LONG);
       this.props.history.push('/hotels');
     }, 600000);
   }

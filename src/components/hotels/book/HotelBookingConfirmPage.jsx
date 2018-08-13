@@ -15,7 +15,8 @@ import { setCurrency } from '../../../actions/paymentInfo';
 import { withRouter } from 'react-router-dom';
 
 import { LOC_PAYMENT_INITIATED } from '../../../constants/successMessages.js';
-import { LONG } from '../../../constants/notificationDisplayTimes.js';
+import { SEARCH_EXPIRED } from '../../../constants/infoMessages.js';
+import { LONG, EXTRA_LONG } from '../../../constants/notificationDisplayTimes.js';
 
 class HotelBookingConfirmPage extends React.Component {
   constructor(props) {
@@ -76,7 +77,7 @@ class HotelBookingConfirmPage extends React.Component {
     });
 
     this.timeout = setTimeout(() => {
-      NotificationManager.info('Your search has expired.', '', 600000);
+      NotificationManager.info(SEARCH_EXPIRED, '', EXTRA_LONG);
       this.props.history.push('/hotels');
     }, 600000);
   }
@@ -231,7 +232,7 @@ class HotelBookingConfirmPage extends React.Component {
           refundPercentages.unshift(cancellationFees[key].toString());
         }
 
-        NotificationManager.info(PROCESSING_TRANSACTION, 'Transactions', 60000);
+        NotificationManager.info(PROCESSING_TRANSACTION, 'Transactions', EXTRA_LONG);
         this.setState({ confirmed: true });
         this.closeModal(PASSWORD_PROMPT);
 
