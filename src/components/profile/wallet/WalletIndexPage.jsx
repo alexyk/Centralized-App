@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 import 'react-notifications/lib/notifications.css';
 
@@ -10,6 +11,9 @@ import { Config } from '../../../config';
 import { TokenTransactions } from '../../../services/blockchain/tokenTransactions';
 
 import '../../../styles/css/components/profile/wallet/wallet-index-page.css';
+
+import { TRANSACTION_SUCCESSFUL } from '../../../constants/successMessages.js';
+import { LONG } from '../../../constants/notificationDisplayTimes.js';
 
 class WalletIndexPage extends React.Component {
   constructor(props) {
@@ -42,7 +46,7 @@ class WalletIndexPage extends React.Component {
         this.state.recipientAddress,
         (this.state.locAmount * Math.pow(10, 18)).toString()
       ).then(() => {
-        NotificationManager.success('Transaction made successfully', 'Send Tokens');
+        NotificationManager.success(TRANSACTION_SUCCESSFUL, 'Send Tokens', LONG);
         this.setState({
           recipientAddress: '',
           locAmount: 0,
@@ -129,6 +133,10 @@ class WalletIndexPage extends React.Component {
     );
   }
 }
+
+WalletIndexPage.propTypes = {
+  userInfo: PropTypes.object
+};
 
 const mapStateToProps = (state) => ({
   userInfo: state.userInfo

@@ -15,6 +15,9 @@ import { HotelReservation } from '../../../../services/blockchain/hotelReservati
 import { PASSWORD_PROMPT } from '../../../../constants/modals.js';
 import { closeModal, openModal } from '../../../../actions/modalsInfo.js';
 
+import { BOOKING_REQUEST_SENT } from '../../../../constants/successMessages.js';
+import { LONG } from '../../../../constants/notificationDisplayTimes.js';
+
 class HotelTripsPage extends React.Component {
   constructor(props) {
     super(props);
@@ -57,7 +60,7 @@ class HotelTripsPage extends React.Component {
         console.log(data.content);
         this.setState({ trips: data.content, totalTrips: data.totalElements, loading: false, currentTripId: id });
         if (id) {
-          NotificationManager.success('Booking Request Sent Successfully, your host will get back to you with additional questions.', 'Reservation Operations');
+          NotificationManager.success(BOOKING_REQUEST_SENT, 'Reservation Operations', LONG);
         }
       });
     });
@@ -205,7 +208,9 @@ class HotelTripsPage extends React.Component {
 }
 
 HotelTripsPage.propTypes = {
-  location: PropTypes.object
+  location: PropTypes.object,
+  dispatch: PropTypes.func,
+  modalsInfo: PropTypes.object
 };
 
 function mapStateToProps(state) {

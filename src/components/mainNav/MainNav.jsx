@@ -156,7 +156,7 @@ class MainNav extends React.Component {
           confirmedRegistration: false,
         });
         this.openModal(LOGIN);
-        NotificationManager.success(PROFILE_SUCCESSFULLY_CREATED);
+        NotificationManager.success(PROFILE_SUCCESSFULLY_CREATED, '', LONG);
         // this.captcha.reset();
       }
       else {
@@ -189,7 +189,7 @@ class MainNav extends React.Component {
     requester.register(user, captchaToken).then(res => {
       if (res.success) {
         this.openModal(AIRDROP_LOGIN);
-        NotificationManager.success(PROFILE_SUCCESSFULLY_CREATED);
+        NotificationManager.success(PROFILE_SUCCESSFULLY_CREATED, '', LONG);
       }
       else {
         res.errors.then(res => {
@@ -458,7 +458,7 @@ class MainNav extends React.Component {
       if (res.success) {
         this.closeModal(CHANGE_PASSWORD);
         this.openModal(LOGIN);
-        NotificationManager.success(PASSWORD_SUCCESSFULLY_CHANGED);
+        NotificationManager.success(PASSWORD_SUCCESSFULLY_CHANGED, '', LONG);
       }
       else {
         NotificationManager.error(NOT_FOUND, '', LONG);

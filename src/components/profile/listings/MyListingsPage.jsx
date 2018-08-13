@@ -11,6 +11,7 @@ import React from 'react';
 import filterListings from '../../../actions/filterListings';
 import requester from '../../../initDependencies';
 
+import { LISTING_DELETED } from '../../../constants/successMessages.js';
 import { PROPERTY_CANNOT_BE_DELETED } from '../../../constants/errorMessages.js';
 import { LONG } from '../../../constants/notificationDisplayTimes.js';
 
@@ -110,7 +111,7 @@ class MyListingsPage extends React.Component {
         const listings = this.state[listingStateKey];
         const filteredListings = listings.filter(x => x.id !== deletingId);
         this.setState({ [listingStateKey]: filteredListings });
-        NotificationManager.success('Listing deleted');
+        NotificationManager.success(LISTING_DELETED, '', LONG);
       } else {
         NotificationManager.error(PROPERTY_CANNOT_BE_DELETED, 'Listing Operations', LONG);
       }

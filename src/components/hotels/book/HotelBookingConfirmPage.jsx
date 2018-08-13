@@ -14,6 +14,9 @@ import requester from '../../../initDependencies';
 import { setCurrency } from '../../../actions/paymentInfo';
 import { withRouter } from 'react-router-dom';
 
+import { LOC_PAYMENT_INITIATED } from '../../../constants/successMessages.js';
+import { LONG } from '../../../constants/notificationDisplayTimes.js';
+
 class HotelBookingConfirmPage extends React.Component {
   constructor(props) {
     super(props);
@@ -259,7 +262,7 @@ class HotelBookingConfirmPage extends React.Component {
 
                 console.log(bookingConfirmObj);
                 requester.confirmBooking(bookingConfirmObj).then(() => {
-                  NotificationManager.success('LOC Payment has been initiated. We will send you a confirmation message once it has been processed by the Blockchain.');
+                  NotificationManager.success(LOC_PAYMENT_INITIATED, '', LONG);
                   setTimeout(() => {
                     this.props.history.push('/profile/trips/hotels');
                   }, 2000);

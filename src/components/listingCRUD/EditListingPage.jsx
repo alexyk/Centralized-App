@@ -23,6 +23,9 @@ import request from 'superagent';
 import requester from '../../initDependencies';
 import update from 'react-addons-update';
 
+import { LISTING_UPDATED } from '../../constants/successMessages.js';
+import { LONG } from '../../constants/notificationDisplayTimes.js';
+
 const host = Config.getValue('apiHost');
 const LOCKTRIP_UPLOAD_URL = `${host}images/upload`;
 
@@ -423,7 +426,7 @@ class EditListingPage extends React.Component {
         if (res.success) {
           this.setState({ loading: false });
           this.props.history.push('/profile/listings');
-          NotificationManager.success('Successfully updated your listing');
+          NotificationManager.success(LISTING_UPDATED, 'Listing Operations', LONG);
 
         } else {
           this.setState({ loading: false });
