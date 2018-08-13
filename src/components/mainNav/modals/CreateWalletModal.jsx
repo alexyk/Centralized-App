@@ -13,7 +13,7 @@ function CreateWalletModal(props) {
 
   const submitPassword = () => {
     if (props.walletPassword.length < 9) {
-      NotificationManager.warning(WALLET_INVALID_PASSWORD_LENGTH);
+      NotificationManager.warning(WALLET_INVALID_PASSWORD_LENGTH, '', LONG);
     } else {
       try {
         NotificationManager.info(SCREEN_FREEZE, '', LONG);

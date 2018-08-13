@@ -10,6 +10,9 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import FooterNav from '../navigation/FooterNav';
 
+import { MISSING_ADDRESS, INVALID_ADDRESS, MISSING_CITY, MISSING_COUNTRY } from '../../../constants/warningMessages.js';
+import { LONG } from '../../../constants/notificationDisplayTimes.js';
+
 import '../../../styles/css/components/profile/listings/listing-location.css';
 
 function ListingLocation(props) {
@@ -22,7 +25,7 @@ function ListingLocation(props) {
   };
 
   const getWarningMessage = (message) => {
-    NotificationManager.warning(message);
+    NotificationManager.warning(message, '', LONG);
     props.onChange({ target: { name: 'street', value: '' } });
     props.onChange({ target: { name: 'lng', value: '' } });
     props.onChange({ target: { name: 'lat', value: '' } });
@@ -174,19 +177,19 @@ function validateInput(values) {
 function showErrors(values) {
   const { street, city, country, isAddressSelected } = values;
   if (!isAddressSelected) {
-    NotificationManager.warning('Select a valid address');
+    NotificationManager.warning(MISSING_ADDRESS, '', LONG);
   }
 
   if (street.length < 6) {
-    NotificationManager.warning('Address should be at least 6 characters long');
+    NotificationManager.warning(INVALID_ADDRESS, '', LONG);
   }
 
   if (!city || city.trim() === '') {
-    NotificationManager.warning('City is required');
+    NotificationManager.warning(MISSING_CITY, '', LONG);
   }
 
   if (!country || country.trim() === '') {
-    NotificationManager.warning('Country is required');
+    NotificationManager.warning(MISSING_COUNTRY, '', LONG);
   }
 }
 

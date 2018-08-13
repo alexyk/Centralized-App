@@ -23,6 +23,7 @@ import { withRouter } from 'react-router-dom';
 
 import { CHECKING_ROOM_AVAILABILITY, ROOM_NO_LONGER_AVAILABLE } from '../../../constants/infoMessages.js';
 import { UNCATEGORIZED_ERROR } from '../../../constants/errorMessages.js';
+import { INVALID_SEARCH_DATE, ALL_ROOMS_TAKEN } from '../../../constants/warningMessages.js';
 import { LONG } from '../../../constants/notificationDisplayTimes.js';
 
 class HotelDetailsPage extends React.Component {
@@ -182,7 +183,7 @@ class HotelDetailsPage extends React.Component {
     const range = prices.filter(x => x.start >= startDate && x.end < endDate);
     const isInvalidRange = range.filter(x => !x.available).length > 0;
     if (isInvalidRange) {
-      NotificationManager.warning('There is a unavailable day in your select range', 'Calendar Operations');
+      NotificationManager.warning(INVALID_SEARCH_DATE, 'Calendar Operations', LONG);
       this.setState({ calendarStartDate: undefined, calendarEndDate: undefined });
     }
     else {
@@ -339,7 +340,7 @@ class HotelDetailsPage extends React.Component {
   checkNextRoom(allRooms, index, booking) {
     const isWebView = this.props.location.pathname.indexOf('/mobile') !== -1;
     if (index >= allRooms.length) {
-      NotificationManager.warning('Unfortunatelly all rooms in that hotel were already taken, please try another one.', '', 5000);
+      NotificationManager.warning(ALL_ROOMS_TAKEN, '', LONG);
       const search = this.props.location.search;
       const rootURL = !isWebView ? '/hotels/listings' : '/mobile/search';
       const URL = `${rootURL}/${search}`;

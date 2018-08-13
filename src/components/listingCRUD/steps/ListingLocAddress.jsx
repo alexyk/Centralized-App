@@ -9,6 +9,9 @@ import PropTypes from 'prop-types';
 import ReCAPTCHA from 'react-google-recaptcha';
 import React from 'react';
 
+import { INVALID_LOC_ADDRESS } from '../../../constants/warningMessages.js';
+import { LONG } from '../../../constants/notificationDisplayTimes.js';
+
 let captcha;
 
 function ListingLocAddress(props) {
@@ -72,7 +75,7 @@ function validateInput(values) {
 function showErrors(values) {
   const { locAddress } = values;
   if (locAddress.length < 20) {
-    NotificationManager.warning('LOC Address should be at least 20 characters long');
+    NotificationManager.warning(INVALID_LOC_ADDRESS, '', LONG);
   }
 }
 

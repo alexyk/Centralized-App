@@ -11,7 +11,8 @@ import validator from 'validator';
 import { withRouter } from 'react-router-dom';
 
 import { SEARCH_EXPIRED } from '../../../constants/infoMessages.js';
-import { EXTRA_LONG } from '../../../constants/notificationDisplayTimes.js';
+import { INVALID_CHILD_AGE, INVALID_GUEST_NAME } from '../../../constants/warningMessages.js';
+import { LONG, EXTRA_LONG } from '../../../constants/notificationDisplayTimes.js';
 
 class HotelBookingPage extends React.Component {
   constructor(props) {
@@ -181,11 +182,10 @@ class HotelBookingPage extends React.Component {
   }
 
   handleSubmit() {
-
     if (!this.isValidNames()) {
-      NotificationManager.warning('Names should be at least 3 characters long and contain only characters');
+      NotificationManager.warning(INVALID_GUEST_NAME, '', LONG);
     } else if (!this.isValidAges()) {
-      NotificationManager.warning('Child age should be between 1 and 17 years');
+      NotificationManager.warning(INVALID_CHILD_AGE, '', LONG);
     } else {
       const quoteId = this.state.quoteId;
       const rooms = this.state.rooms;

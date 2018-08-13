@@ -11,6 +11,9 @@ import Dropzone from 'react-dropzone';
 
 import { Config } from '../../../config';
 
+import { MISSING_PICTURE, INVALID_PICTURE } from '../../../constants/warningMessages.js';
+import { LONG } from '../../../constants/notificationDisplayTimes.js';
+
 import '../../../styles/css/components/profile/listings/listing-photos.css';
 
 function ListingPhotos(props) {
@@ -82,7 +85,7 @@ function ListingPhotos(props) {
 }
 
 function onDropRejected() {
-  NotificationManager.warning('Maximum file upload size is 10MB. Supported media formats are jpg, jpeg, png');
+  NotificationManager.warning(INVALID_PICTURE, '', LONG);
 }
 
 function validateInput(values) {
@@ -97,7 +100,7 @@ function validateInput(values) {
 function showErrors(values) {
   const { uploadedFilesUrls } = values;
   if (uploadedFilesUrls.length < 1) {
-    NotificationManager.warning('At least 1 picture is required');
+    NotificationManager.warning(MISSING_PICTURE, '', LONG);
   }
 }
 

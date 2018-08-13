@@ -127,7 +127,7 @@ class ProfileEditForm extends React.Component {
       }
     }).catch(errors => {
       for (var e in errors) {
-        NotificationManager.warning(errors[e].message);
+        NotificationManager.warning(errors[e].message, '', LONG);
       }
     });
   }

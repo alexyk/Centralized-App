@@ -25,6 +25,7 @@ import { LONG } from '../../../constants/notificationDisplayTimes.js';
 import { SOCIAL_PROFILE_EMPTY, INVALID_URL } from '../../../constants/errorMessages.js';
 import { PROFILE_SUCCESSFULLY_UPDATED, EMAIL_VERIFIED, VOTE_URL_SUCCESSFULLY_SAVED } from '../../../constants/successMessages.js';
 import { VERIFICATION_EMAIL_SENT, COPIED_TO_CLIPBOARD } from '../../../constants/infoMessages.js';
+import { INVALID_TOKEN } from '../../../constants/warningMessages.js';
 
 class AirdropPage extends Component {
   constructor(props) {
@@ -184,7 +185,7 @@ class AirdropPage extends Component {
           this.logout();
           this.openModal(AIRDROP_REGISTER);
         } else {
-          NotificationManager.warning('Token expired or invalid');
+          NotificationManager.warning(INVALID_TOKEN, '', LONG);
           this.props.location.href = '/airdrop';
         }
       }).catch(e => {

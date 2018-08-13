@@ -415,7 +415,7 @@ class EditListingPage extends React.Component {
             const errors = data.errors;
             for (let key in errors) {
               if (typeof errors[key] !== 'function') {
-                NotificationManager.warning(errors[key].message);
+                NotificationManager.warning(errors[key].message, '', LONG);
               }
             }
           });
@@ -434,7 +434,7 @@ class EditListingPage extends React.Component {
             const errors = data.errors;
             for (let key in errors) {
               if (typeof errors[key] !== 'function') {
-                NotificationManager.warning(errors[key].message);
+                NotificationManager.warning(errors[key].message, '', LONG);
               }
             }
           });

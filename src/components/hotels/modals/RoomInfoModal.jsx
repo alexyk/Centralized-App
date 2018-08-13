@@ -4,6 +4,9 @@ import { Modal } from 'react-bootstrap';
 import PropTypes from 'prop-types';
 import React from 'react';
 
+import { INVALID_CHILD_AGE } from '../../../constants/warningMessages.js';
+import { LONG } from '../../../constants/notificationDisplayTimes.js';
+
 class RoomInfoModal extends React.Component {
   constructor(props) {
     super(props);
@@ -28,7 +31,7 @@ class RoomInfoModal extends React.Component {
       this.props.closeModal(`roomInfo${this.props.roomId}`);
       this.props.openModal(`roomInfo${this.props.roomId + 1}`);
     } else {
-      NotificationManager.warning('Invalid child age');
+      NotificationManager.warning(INVALID_CHILD_AGE, '', LONG);
     }
   }
 
@@ -37,7 +40,7 @@ class RoomInfoModal extends React.Component {
       this.props.closeModal(`roomInfo${this.props.roomId}`);
       this.props.handleSearch();
     } else {
-      NotificationManager.warning('Invalid child age');
+      NotificationManager.warning(INVALID_CHILD_AGE, '', LONG);
     }
   }
 
@@ -119,7 +122,15 @@ class RoomInfoModal extends React.Component {
 RoomInfoModal.propTypes = {
   openModal: PropTypes.func,
   closeModal: PropTypes.func,
-  isActive: PropTypes.bool
+  isActive: PropTypes.bool,
+  roomId: PropTypes.number,
+  rooms: PropTypes.array,
+  room: PropTypes.object,
+  modalId: PropTypes.string,
+  handleAdultsChange: PropTypes.func,
+  handleChildrenChange: PropTypes.func,
+  handleChildAgeChange: PropTypes.func,
+  handleSearch: PropTypes.func,
 };
 
 export default RoomInfoModal;
