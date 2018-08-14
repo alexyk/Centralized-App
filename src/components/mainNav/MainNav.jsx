@@ -66,6 +66,7 @@ class MainNav extends React.Component {
       signUpLocAddress: '',
       loginEmail: '',
       loginPassword: '',
+      country: { id: 1 },
       walletPassword: '',
       repeatWalletPassword: '',
       mnemonicWords: '',
@@ -204,7 +205,7 @@ class MainNav extends React.Component {
     });
   }
 
-  handleLogin(captchaToken) {
+  handleLogin() {
     let user = {
       email: this.state.loginEmail,
       password: this.state.loginPassword
@@ -222,7 +223,7 @@ class MainNav extends React.Component {
       this.setState({ isUpdatingCountry: false });
     }
 
-    requester.login(user, captchaToken).then(res => {
+    requester.login(user).then(res => {
       if (res.success) {
         res.body.then(data => {
           localStorage[Config.getValue('domainPrefix') + '.auth.locktrip'] = data.Authorization;
@@ -420,6 +421,10 @@ class MainNav extends React.Component {
       e.preventDefault();
     }
 
+    this.setState({
+      country: { id: 1 },
+    });
+
     this.props.dispatch(closeModal(modal));
   }
 
@@ -523,8 +528,12 @@ class MainNav extends React.Component {
   }
 
   handleUpdateCountry() {
-    this.closeModal(UPDATE_COUNTRY);
-    this.executeReCaptcha('login');
+    if (this.state.country) {
+      this.closeModal(UPDATE_COUNTRY);
+      this.handleLogin();
+    } else {
+      NotificationManager.error('Please select a valid country.', '', LONG);
+    }
   }
 
   executeReCaptcha(currentReCaptcha) {
@@ -579,7 +588,7 @@ class MainNav extends React.Component {
           <SendRecoveryEmailModal isActive={this.props.modalsInfo.isActive[SEND_RECOVERY_EMAIL]} openModal={this.openModal} closeModal={this.closeModal} recoveryEmail={this.state.recoveryEmail} handleSubmitRecoveryEmail={() => this.executeReCaptcha('recoveryEmail')} onChange={this.onChange} />
           <EnterRecoveryTokenModal isActive={this.props.modalsInfo.isActive[ENTER_RECOVERY_TOKEN]} openModal={this.openModal} closeModal={this.closeModal} onChange={this.onChange} recoveryToken={this.state.recoveryToken} handleSubmitRecoveryToken={this.handleSubmitRecoveryToken} />
           <ChangePasswordModal isActive={this.props.modalsInfo.isActive[CHANGE_PASSWORD]} openModal={this.openModal} closeModal={this.closeModal} newPassword={this.state.newPassword} confirmNewPassword={this.state.confirmNewPassword} onChange={this.onChange} handlePasswordChange={() => this.executeReCaptcha('changePassword')} />
-          <LoginModal isActive={this.props.modalsInfo.isActive[LOGIN]} openModal={this.openModal} closeModal={this.closeModal} loginEmail={this.state.loginEmail} loginPassword={this.state.loginPassword} onChange={this.onChange} handleLogin={() => this.executeReCaptcha('login')} />
+          <LoginModal isActive={this.props.modalsInfo.isActive[LOGIN]} openModal={this.openModal} closeModal={this.closeModal} loginEmail={this.state.loginEmail} loginPassword={this.state.loginPassword} onChange={this.onChange} handleLogin={this.handleLogin} />
           <AirdropLoginModal isActive={this.props.modalsInfo.isActive[AIRDROP_LOGIN]} openModal={this.openModal} closeModal={this.closeModal} loginEmail={this.state.loginEmail} loginPassword={this.state.loginPassword} onChange={this.onChange} handleLogin={this.handleAirdropLogin} />
           <RegisterModal isActive={this.props.modalsInfo.isActive[REGISTER]} openModal={this.openModal} closeModal={this.closeModal} signUpEmail={this.state.signUpEmail} signUpFirstName={this.state.signUpFirstName} signUpLastName={this.state.signUpLastName} signUpPassword={this.state.signUpPassword} countries={this.state.countries} onChange={this.onChange} handleChangeCountry={this.handleChangeCountry} />
           <AirdropRegisterModal isActive={this.props.modalsInfo.isActive[AIRDROP_REGISTER]} openModal={this.openModal} closeModal={this.closeModal} signUpEmail={this.state.signUpEmail} signUpFirstName={this.state.signUpFirstName} signUpLastName={this.state.signUpLastName} signUpPassword={this.state.signUpPassword} onChange={this.onChange} />
