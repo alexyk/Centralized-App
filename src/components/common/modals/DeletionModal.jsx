@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 function DeletionModal(props) {
   return (
     <div>
-      <Modal show={true} onHide={props.onHide} className="modal fade myModal">
+      <Modal show={props.isActive} onHide={props.onHide} className="modal fade myModal">
         <Modal.Header>
           <button type="button" className="close" onClick={props.onHide}>&times;</button>
           <h2>Delete Listing</h2>
