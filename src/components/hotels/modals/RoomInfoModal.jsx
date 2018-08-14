@@ -64,8 +64,7 @@ class RoomInfoModal extends React.Component {
 
     return (
       <div>
-        {/* <Modal show={this.props.isActive} onHide={e => this.props.closeModal(this.props.modalId, e)} className="modal fade myModal"> */}
-        <Modal show={true} onHide={e => this.props.closeModal(this.props.modalId, e)} className="modal fade myModal">
+        <Modal show={this.props.isActive} onHide={e => this.props.closeModal(this.props.modalId, e)} className="modal fade myModal">
           <Modal.Header>
             <h1>Room {this.props.roomId + 1}</h1>
             <button type="button" className="close" onClick={(e) => this.props.closeModal(this.props.modalId, e)}>&times;</button>
