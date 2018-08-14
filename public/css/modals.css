@@ -1,4 +1,4 @@
-@media screen and (min-width: 768px) {
+/* @media screen and (min-width: 768px) {
   .myModal .modal-dialog {
     width: 440px;
     margin: 30px auto;
@@ -9,13 +9,13 @@
   background-color: #f0f1f3;
 }
 .myModal .modal-header {
+  position: relative;
   border-bottom: 0;
-  padding: 15px 15px 0;
 }
-.myModal h1 {
-  float: left;
-  font-family: FuturaStd-Light, sans-serif;
-  font-size: 26px;
+.myModal .modal-header h1 {
+  text-align: left;
+  width: 85%;
+  font-size: 24px;
   margin-bottom: 0;
 }
 .myModal hr {
@@ -37,14 +37,23 @@
   top: 20px;
   left: 12px;
 }
+.myModal .form-group .password-image {
+  top: 15px;
+  left: 12px;
+}
+.myModal input[type="checkbox"] {
+  margin-right: 10px;
+}
+.myModal p {
+  margin: 20px 0px 10px 0;
+  text-align: center;
+}
 .myModal .btn {
   margin-top: 15px;
   width: 100%;
 }
 .myModal .signup-rights {
-  font-size: 13px;
-  margin-top: 10px;
-  max-width: 80%;
+  text-align: center;
 }
 .login-sign {
   text-align: center;
@@ -54,6 +63,9 @@
   cursor: pointer;
 }
 button.close {
+  position: absolute;
+  top: 5px;
+  right: 5px;
   border: 2px solid #213843;
   border-radius: 50px;
   color: #213843;
@@ -67,4 +79,4 @@ button.close {
 }
 button.close:hover {
   opacity: 0.2;
-}
+} */

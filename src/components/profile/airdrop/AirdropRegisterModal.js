@@ -58,23 +58,23 @@ function AirdropRegisterModal(props) {
           <button type="button" className="close" onClick={() => props.closeModal(AIRDROP_REGISTER)}>&times;</button>
         </Modal.Header>
         <Modal.Body>
-          <div>Please first register in Locktrip page</div>
+          <div className="modal-input-label">Please first register in Locktrip page</div>
           <form onSubmit={(e) => { e.preventDefault(); openWalletInfo(); }}>
-            <div className="form-group">
-              <img src={Config.getValue('basePath') + 'images/login-mail.png'} alt="email" />
-              <input type="email" name="signUpEmail" value={props.signUpEmail} onChange={props.onChange} className="form-control" placeholder="Email address" autoFocus />
+            <div className="input-container">
+              <img src={Config.getValue('basePath') + 'images/login-mail.png'} className="email-image" alt="email" />
+              <input type="email" name="signUpEmail" value={props.signUpEmail} onChange={props.onChange} className="with-icon" placeholder="Email address" autoFocus />
             </div>
-            <div className="form-group">
-              <img src={Config.getValue('basePath') + 'images/login-user.png'} alt="user" />
-              <input type="text" required="required" name="signUpFirstName" value={props.signUpFirstName} onChange={props.onChange} className="form-control" placeholder="First Name" />
+            <div className="input-container">
+              <img src={Config.getValue('basePath') + 'images/login-user.png'} className="user-image" alt="user" />
+              <input type="text" required="required" name="signUpFirstName" value={props.signUpFirstName} onChange={props.onChange} className="with-icon" placeholder="First Name" />
             </div>
-            <div className="form-group">
-              <img src={Config.getValue('basePath') + 'images/login-user.png'} alt="user" />
-              <input type="text" required="required" name="signUpLastName" value={props.signUpLastName} onChange={props.onChange} className="form-control" placeholder="Last Name" />
+            <div className="input-container">
+              <img src={Config.getValue('basePath') + 'images/login-user.png'} className="user-image" alt="user" />
+              <input type="text" required="required" name="signUpLastName" value={props.signUpLastName} onChange={props.onChange} className="with-icon" placeholder="Last Name" />
             </div>
-            <div className="form-group">
-              <img src={Config.getValue('basePath') + 'images/login-pass.png'} alt="pass" />
-              <input type="password" required="required" name="signUpPassword" value={props.signUpPassword} onChange={props.onChange} className="form-control" placeholder="Password" />
+            <div className="input-container">
+              <img src={Config.getValue('basePath') + 'images/login-pass.png'} className="password-image" alt="pass" />
+              <input type="password" required="required" name="signUpPassword" value={props.signUpPassword} onChange={props.onChange} className="with-icon" placeholder="Password" />
             </div>
             <div className="clearfix"></div>
             <button type="submit" className="btn btn-primary">Proceed</button>

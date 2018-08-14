@@ -1,6 +1,6 @@
 export const PASSWORDS_DONT_MATCH = 'Passwords don\'t match.';
 export const INVALID_PASSWORD = 'Password should be at least 6 characters long, containing characters and digits.';
-export const WALLET_INVALID_PASSWORD_LENGTH = 'Password should be at least 9 symbols.';
+export const WALLET_INVALID_PASSWORD_LENGTH = 'Password should be at least 8 characters long.';
 export const PROFILE_INVALID_PASSWORD_LENGTH = 'Password should be at least 6 symbols.';
 export const PROFILE_PASSWORD_REQUIREMENTS = 'Password must contain both latin letters and digits.';
 export const MNEMONIC_LAST_CALL = 'Last call for saving your mnemonic words!';
