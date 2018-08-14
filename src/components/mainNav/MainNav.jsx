@@ -67,6 +67,7 @@ class MainNav extends React.Component {
       loginEmail: '',
       loginPassword: '',
       walletPassword: '',
+      repeatWalletPassword: '',
       mnemonicWords: '',
       userName: '',
       userToken: '',
@@ -532,18 +533,6 @@ class MainNav extends React.Component {
     }, () => this.captcha.execute());
   }
 
-  // executeChangePasswordCaptcha() {
-  //   this.changePasswordCaptcha.execute();
-  // }
-
-  // executeSendRecoveryEmailCaptcha() {
-  //   this.sendRecoveryEmailCaptcha.execute();
-  // }
-
-  // executeConfirmWalletCaptcha() {
-  //   this.confirmWalletCaptcha.execute();
-  // }
-
   getReCaptchaFunction(currentReCaptcha) {
     switch (currentReCaptcha) {
       case 'login':
@@ -583,32 +572,8 @@ class MainNav extends React.Component {
                 />
               )
             }
-            {/* <ReCAPTCHA
-              ref={el => this.loginCaptcha = el}
-              size="invisible"
-              sitekey={Config.getValue('recaptchaKey')}
-              onChange={(token) => { this.handleLogin(token); this.loginCaptcha.reset(); }}
-            />
-            <ReCAPTCHA
-              ref={el => this.changePasswordCaptcha = el}
-              size="invisible"
-              sitekey={Config.getValue('recaptchaKey')}
-              onChange={(token) => { this.handlePasswordChange(token); this.changePasswordCaptcha.reset(); }}
-            />
-            <ReCAPTCHA
-              ref={el => this.sendRecoveryEmailCaptcha = el}
-              size="invisible"
-              sitekey={Config.getValue('recaptchaKey')}
-              onChange={token => { this.handleSubmitRecoveryEmail(token); this.sendRecoveryEmailCaptcha.reset(); }}
-            />
-            <ReCAPTCHA
-              ref={el => this.confirmWalletCaptcha = el}
-              size="invisible"
-              sitekey={Config.getValue('recaptchaKey')}
-              onChange={(token) => { this.handleConfirmWallet(token); this.confirmWalletCaptcha.reset(); }}
-            /> */}
           </div>
-          <CreateWalletModal setUserInfo={this.setUserInfo} userToken={this.state.userToken} userName={this.state.userName} walletPassword={this.state.walletPassword} isActive={this.props.modalsInfo.isActive[CREATE_WALLET]} openModal={this.openModal} closeModal={this.closeModal} onChange={this.onChange} />
+          <CreateWalletModal setUserInfo={this.setUserInfo} userToken={this.state.userToken} userName={this.state.userName} walletPassword={this.state.walletPassword} repeatWalletPassword={this.state.repeatWalletPassword} isActive={this.props.modalsInfo.isActive[CREATE_WALLET]} openModal={this.openModal} closeModal={this.closeModal} onChange={this.onChange} />
           <SaveWalletModal setUserInfo={this.setUserInfo} userToken={this.state.userToken} userName={this.state.userName} isActive={this.props.modalsInfo.isActive[SAVE_WALLET]} openModal={this.openModal} closeModal={this.closeModal} onChange={this.onChange} />
           <ConfirmWalletModal isActive={this.props.modalsInfo.isActive[CONFIRM_WALLET]} openModal={this.openModal} closeModal={this.closeModal} handleMnemonicWordsChange={this.handleMnemonicWordsChange} mnemonicWords={this.state.mnemonicWords} handleConfirmWallet={() => this.executeReCaptcha('confirmWallet')} confirmedRegistration={this.state.confirmedRegistration} />
           <SendRecoveryEmailModal isActive={this.props.modalsInfo.isActive[SEND_RECOVERY_EMAIL]} openModal={this.openModal} closeModal={this.closeModal} recoveryEmail={this.state.recoveryEmail} handleSubmitRecoveryEmail={() => this.executeReCaptcha('recoveryEmail')} onChange={this.onChange} />

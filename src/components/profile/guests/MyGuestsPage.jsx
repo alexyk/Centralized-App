@@ -10,6 +10,7 @@ import React from 'react';
 import requester from '../../../initDependencies';
 import { withRouter } from 'react-router-dom';
 
+import { RESERVATION_ACCEPTED, RESERVATION_DELETED, RESERVATION_CANCELLED } from '../../../constants/successMessages.js';
 import { LONG } from '../../../constants/notificationDisplayTimes.js';
 
 class MyGuestsPage extends React.Component {
@@ -31,9 +32,6 @@ class MyGuestsPage extends React.Component {
     this.openModal = this.openModal.bind(this);
     this.closeModal = this.closeModal.bind(this);
     this.onReservationSelect = this.onReservationSelect.bind(this);
-    // this.onReservationAccept = this.onReservationAccept.bind(this);
-    // this.onReservationCancel = this.onReservationCancel.bind(this);
-    // this.onReservationReject = this.onReservationReject.bind(this);
 
     this.executeReCaptcha = this.executeReCaptcha.bind(this);
     this.getReCaptchaFunction = this.getReCaptchaFunction.bind(this);
@@ -65,43 +63,32 @@ class MyGuestsPage extends React.Component {
     }, () => this.captcha.execute());
   }
 
-  // onReservationAccept() {
-  //   this.acceptCaptcha.execute();
-  // }
-
-  // onReservationCancel() {
-  //   this.cancelCaptcha.execute();
-  // }
-
-  // onReservationReject() {
-  //   this.rejectCaptcha.execute();
-  // }
-
   acceptReservation(captchaToken) {
     const id = this.state.selectedReservationId;
     requester.acceptReservation(id, captchaToken).then(res => {
-      res.body.then(data => {
-        if (res.success) {
-          this.setReservationIsAccepted(id, true);
-          NotificationManager.success(data.message, 'Reservation Operations', LONG);
-        } else {
-          NotificationManager.error(data.message, 'Reservation Operations', LONG);
-        }
-      });
+      console.log(res);
+      if (res.success) {
+        this.setReservationIsAccepted(id, true);
+        NotificationManager.success(RESERVATION_ACCEPTED, 'Reservation Operations', LONG);
+      } else {
+        res.errors.then(e => {
+          NotificationManager.error(e.message, 'Reservation Operations', LONG);
+        });
+      }
     });
   }
 
   cancelReservation(captchaToken) {
     const id = this.state.selectedReservationId;
     requester.cancelReservation(id, captchaToken).then(res => {
-      res.body.then(data => {
-        if (res.success) {
-          this.setReservationIsAccepted(id, false);
-          NotificationManager.success(data.message, 'Reservation Operations', LONG);
-        } else {
-          NotificationManager.error(data.message, 'Reservation Operations', LONG);
-        }
-      });
+      if (res.success) {
+        this.setReservationIsAccepted(id, false);
+        NotificationManager.success(RESERVATION_CANCELLED, 'Reservation Operations', LONG);
+      } else {
+        res.errors.then(e => {
+          NotificationManager.error(e.message, 'Reservation Operations', LONG);
+        });
+      }
     });
   }
 
@@ -109,17 +96,16 @@ class MyGuestsPage extends React.Component {
     const id = this.state.selectedReservationId;
     const message = this.state.cancellationText;
     let messageObj = { message: message };
-    requester.cancelTrip(id, messageObj, captchaToken)
-      .then(res => {
-        res.body.then(data => {
-          if (res.success) {
-            this.deleteReservationFromState(id);
-            NotificationManager.success(data.message, 'Reservation Operations', LONG);
-          } else {
-            NotificationManager.error(data.message, 'Reservation Operations', LONG);
-          }
+    requester.cancelTrip(id, messageObj, captchaToken).then(res => {
+      if (res.success) {
+        this.deleteReservationFromState(id);
+        NotificationManager.success(RESERVATION_DELETED, 'Reservation Operations', LONG);
+      } else {
+        res.errors.then(e => {
+          NotificationManager.error(e.message, 'Reservation Operations', LONG);
         });
-      });
+      }
+    });
   }
 
   deleteReservationFromState(reservationId) {
@@ -214,22 +200,6 @@ class MyGuestsPage extends React.Component {
           )
         }
 
-        {/* <ReCAPTCHA
-          ref={el => this.acceptCaptcha = el}
-          size="invisible"
-          sitekey={Config.getValue('recaptchaKey')}
-          onChange={token => { this.acceptReservation(token); this.acceptCaptcha.reset(); }} />
-        <ReCAPTCHA
-          ref={el => this.cancelCaptcha = el}
-          size="invisible"
-          sitekey={Config.getValue('recaptchaKey')}
-          onChange={token => { this.cancelReservation(token); this.cancelCaptcha.reset(); }} />
-        <ReCAPTCHA
-          ref={el => this.rejectCaptcha = el}
-          size="invisible"
-          sitekey={Config.getValue('recaptchaKey')}
-          onChange={token => { this.rejectReservation(token); this.rejectCaptcha.reset(); }} /> */}
-
         <CancellationModal
           name={'showRejectReservationModal'}
           value={this.state.cancellationText}
@@ -238,7 +208,7 @@ class MyGuestsPage extends React.Component {
           onChange={this.onChange}
           isActive={this.state.showRejectReservationModal}
           onClose={this.closeModal}
-          onSubmit={this.onReservationReject} />
+          onSubmit={() => { this.executeReCaptcha('reject'); }} />
 
         <section id="profile-my-reservations">
           <div className="container">
@@ -248,7 +218,7 @@ class MyGuestsPage extends React.Component {
               reservations={this.state.reservations}
               onReservationAccept={() => this.executeReCaptcha('accept')}
               onReservationCancel={() => this.executeReCaptcha('cancel')}
-              onReservationSelect={() => this.executeReCaptcha('reject')}
+              onReservationSelect={() => this.onReservationSelect}
               onReservationReject={() => { this.openModal('showRejectReservationModal'); }} />
 
             <Pagination

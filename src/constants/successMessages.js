@@ -12,3 +12,6 @@ export const LISTING_DENIED = 'Listing denied.';
 export const LISTING_DELETED = 'Listing deleted.';
 export const EMAIL_VERIFIED = 'Email verified.';
 export const VOTE_URL_SUCCESSFULLY_SAVED = 'Vote URL saved.';
+export const RESERVATION_ACCEPTED = 'Reservation accepted.';
+export const RESERVATION_DELETED = 'Reservation deleted.';
+export const RESERVATION_CANCELLED = 'Reservation cancelled.';

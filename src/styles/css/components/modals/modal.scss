@@ -1,0 +1,99 @@
+@media screen and (min-width: 768px) {
+  .myModal .modal-dialog {
+    width: 440px;
+    margin: 30px auto;
+  }
+}
+.myModal {
+  .modal-content {
+    padding: 20px;
+    background-color: #f0f1f3;
+  }
+  .modal-header {
+    position: relative;
+    border-bottom: 0;
+    h1 {
+      text-align: left;
+      width: 85%;
+      font-size: 24px;
+      margin-bottom: 0;
+    }
+  }
+  .signup-rights {
+    text-align: center;
+  }
+  .btn {
+    margin-top: 15px;
+    width: 100%;
+  }
+  .remember-me {
+    margin: 20px 0 10px 0;
+  }
+  .modal-input-label {
+    margin-bottom: 10px;
+  }
+  button.close {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    border: 2px solid #213843;
+    border-radius: 50px;
+    color: #213843;
+    font-size: 13px;
+    font-weight: 700;
+    height: 35px;
+    opacity: 1;
+    outline: none;
+    user-select: none;
+    width: 35px;
+  }
+  button.close:hover {
+    opacity: 0.2;
+  }
+  .input-container {
+    position: relative;
+    img {
+      position: absolute;
+      left: 12px;
+      &.password-image {
+        top: 14px;
+      }
+      &.email-image {
+        top: 18px;
+      }
+      &.user-image {
+        top: 14px;
+      }
+    }
+  }
+  .login-sign {
+    text-align: center;
+  }
+  .login-sign a {
+    text-decoration: underline;
+    cursor: pointer;
+  }
+  input[type="text"], input[type="email"], input[type="password"] {
+    min-height: 50px;
+    width: 100%;
+    margin-bottom: 10px;
+    outline: none;
+  }
+  input.with-icon {
+    padding-left: 40px;
+  }
+  input[type="checkbox"] {
+    margin-right: 10px;
+  }
+  textarea {
+    width: 100%;
+    outline: none;
+  }
+  p {
+    margin: 20px 0px 10px 0;
+    text-align: center;
+  }
+  hr {
+    border-top: 1px solid #ccc;
+  }
+}

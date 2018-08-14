@@ -1,4 +1,4 @@
-export const SCREEN_FREEZE = 'We are creating your wallet through the ethereum network. The screen might be unavailable for about 10 seconds...';
+export const CREATING_WALLET = 'We are creating your wallet through the ethereum network.';
 export const PROCESSING_TRANSACTION = 'We are processing your transaction through the ethereum network. This might take several seconds...';
 
 export const COPIED_TO_CLIPBOARD = 'Copied to clipboard.';

@@ -2,6 +2,8 @@ import React from 'react';
 import { Modal } from 'react-bootstrap';
 import PropTypes from 'prop-types';
 
+import '../../../styles/css/components/modals/modal.css';
+
 function CancellationModal(props) {
   return (
     <div>
@@ -11,12 +13,9 @@ function CancellationModal(props) {
           <button type="button" className="close" onClick={(e) => props.onClose(props.name, e)}>&times;</button>
         </Modal.Header>
         <Modal.Body>
-          <p>{props.text}</p>
           <form onSubmit={(e) => { e.preventDefault(); props.onSubmit(); props.onClose(props.name); }}>
-            <div className="form-group">
-              <textarea rows="4" name="cancellationText" value={props.value} onChange={props.onChange} className="form-control text-area"></textarea>
-            </div>
-
+            <div className="modal-input-label">{props.text}</div>
+            <textarea rows="4" name="cancellationText" value={props.value} onChange={props.onChange}></textarea>
             <button type="submit" className="btn btn-primary">Send message</button>
             <div className="clearfix"></div>
           </form>
