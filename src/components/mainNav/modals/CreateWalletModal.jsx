@@ -41,7 +41,7 @@ function CreateWalletModal(props) {
 
   return (
     <div>
-      <Modal show={true} className="modal fade myModal">
+      <Modal show={props.isActive} className="modal fade myModal">
         <Modal.Header>
           <h1>Please setup your personal wallet password</h1>
           <button type="button" className="close" onClick={(e) => props.closeModal(CREATE_WALLET, e)}>&times;</button>
