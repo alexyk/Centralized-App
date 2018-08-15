@@ -319,7 +319,7 @@ class HotelBookingConfirmPage extends React.Component {
           refundPercentages.unshift(cancellationFees[key].toString());
         }
 
-        NotificationManager.info(PROCESSING_TRANSACTION, 'Transactions', EXTRA_LONG);
+        NotificationManager.info(PROCESSING_TRANSACTION, 'Transactions', 0);
         this.setState({ confirmed: true });
         this.closeModal(PASSWORD_PROMPT);
 
@@ -409,12 +409,12 @@ class HotelBookingConfirmPage extends React.Component {
             };
 
             requester.confirmBooking(bookingConfirmObj).then(() => {
-              NotificationManager.success('LOC Payment has been initiated. We will send you a confirmation message once it has been processed by the Blockchain.');
+              NotificationManager.success('LOC Payment has been initiated. We will send you a confirmation message once it has been processed by the Blockchain.', '', LONG);
               setTimeout(() => {
                 this.props.history.push('/profile/trips/hotels');
               }, 2000);
             }).catch(error => {
-              NotificationManager.success('Something went wrong...');
+              NotificationManager.success('Something with your transaction went wrong...', '', LONG);
               console.log(error);
             });
           }).catch(error => {
