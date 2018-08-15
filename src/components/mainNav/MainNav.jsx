@@ -55,6 +55,7 @@ import { Wallet } from '../../services/blockchain/wallet.js';
 import { connect } from 'react-redux';
 import requester from '../../initDependencies';
 import { setAirdropInfo } from '../../actions/airdropInfo';
+import queryString from 'query-string';
 
 class MainNav extends React.Component {
   constructor(props) {
@@ -119,9 +120,9 @@ class MainNav extends React.Component {
       this.setUserInfo();
     }
 
-    const search = this.props.location.search;
-    const searchParams = search.split('=');
-    if (searchParams[0] === '?token') {
+    const queryParams = queryString.parse(this.props.location.search);
+    if (queryParams.token) {
+      this.setState({ recoveryToken: queryParams.token });
       this.openModal(ENTER_RECOVERY_TOKEN);
     }
 
