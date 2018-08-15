@@ -1,15 +1,19 @@
-import { Config } from '../../../config';
-import CancellationModal from '../../common/modals/CancellationModal';
-import Pagination from '../../common/pagination/Pagination';
-import { Link } from 'react-router-dom';
-import HomeTripsTable from './HomeTripsTable';
-import { NotificationManager } from 'react-notifications';
-import PropTypes from 'prop-types';
-import ReCAPTCHA from 'react-google-recaptcha';
 import React from 'react';
-import requester from '../../../initDependencies';
+import PropTypes from 'prop-types';
+import { Link } from 'react-router-dom';
+import { NotificationManager } from 'react-notifications';
+import ReCAPTCHA from 'react-google-recaptcha';
+
+import { Config } from '../../../../config';
+import CancellationModal from '../../../common/modals/CancellationModal';
+import Pagination from '../../../common/pagination/Pagination';
+import HomeTripsTable from './HomeTripsTable';
+import requester from '../../../../initDependencies';
 
 import { withRouter } from 'react-router-dom';
+
+import { BOOKING_REQUEST_SENT } from '../../../../constants/successMessages.js';
+import { LONG } from '../../../../constants/notificationDisplayTimes.js';
 
 class HomeTripsPage extends React.Component {
   constructor(props) {
@@ -51,7 +55,7 @@ class HomeTripsPage extends React.Component {
       res.body.then(data => {
         this.setState({ trips: data.content, totalTrips: data.totalElements, loading: false, currentTripId: id });
         if (id) {
-          NotificationManager.success('Booking Request Sent Successfully, your host will get back to you with additional questions.', 'Reservation Operations');
+          NotificationManager.success(BOOKING_REQUEST_SENT, 'Reservation Operations', LONG);
         }
       });
     });
@@ -69,9 +73,9 @@ class HomeTripsPage extends React.Component {
       res.body.then(data => {
         if (res.success) {
           this.componentDidMount();
-          NotificationManager.success(data.message, 'Reservation Operations');
+          NotificationManager.success(data.message, 'Reservation Operations', LONG);
         } else {
-          NotificationManager.error(data.message, 'Reservation Operations');
+          NotificationManager.error(data.message, 'Reservation Operations', LONG);
         }
       });
     });

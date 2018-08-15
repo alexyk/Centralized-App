@@ -19,6 +19,11 @@ import filterListings from '../../../../actions/filterListings';
 import queryString from 'query-string';
 import requester from '../../../../initDependencies';
 
+import { MESSAGE_SENT } from '../../../../constants/infoMessages.js';
+import { LISTING_APPROVED, LISTING_DENIED, LISTING_DELETED } from '../../../../constants/successMessages.js';
+import { UNCATEGORIZED_ERROR, PROPERTY_CANNOT_BE_DELETED } from '../../../../constants/errorMessages.js';
+import { LONG } from '../../../../constants/notificationDisplayTimes.js';
+
 class UnpublishedList extends React.Component {
   constructor(props) {
     super(props);
@@ -214,9 +219,9 @@ class UnpublishedList extends React.Component {
     requester.changeListingStatus(publishObj).then(res => {
       if (res.success) {
         switch (status) {
-          case 'active': NotificationManager.success('Listing approved');
+          case 'active': NotificationManager.success(LISTING_APPROVED, '', LONG);
             break;
-          case 'denied': NotificationManager.success('Listing denied');
+          case 'denied': NotificationManager.success(LISTING_DENIED, '', LONG);
             break;
           default:
             break;
@@ -231,19 +236,18 @@ class UnpublishedList extends React.Component {
         }
       }
       else {
-        NotificationManager.error('Something went wrong');
+        NotificationManager.error(UNCATEGORIZED_ERROR, '', LONG);
       }
     });
   }
 
   handleContactHost(id, message, captchaToken) {
-    // this.setState({ loading: true });
     let contactHostObj = {
       message: message
     };
 
     requester.contactHost(id, contactHostObj, captchaToken).then(() => {
-      NotificationManager.info('Message sent');
+      NotificationManager.info(MESSAGE_SENT, '', LONG);
       this.closeContactHostModal();
     });
   }
@@ -282,12 +286,12 @@ class UnpublishedList extends React.Component {
           const newListings = allListings.filter(x => x.id !== deletingId);
           const totalElements = this.state.totalElements;
           this.setState({ listings: newListings, totalElements: totalElements - 1 });
-          NotificationManager.success('Listing deleted');
+          NotificationManager.success(LISTING_DELETED, '', LONG);
           if (newListings.length === 0 && totalElements > 0) {
             this.onPageChange(1);
           }
         } else {
-          NotificationManager.error('Cannot delete this property. It might have reservations or other irrevocable actions.');
+          NotificationManager.error(PROPERTY_CANNOT_BE_DELETED, '', LONG);
         }
         this.handleCloseDeleteListing();
       }).catch(e => {

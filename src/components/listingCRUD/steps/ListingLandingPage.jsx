@@ -10,6 +10,9 @@ import { Config } from '../../../config';
 
 import '../../../styles/css/components/profile/listings/listing-landing-page.css';
 
+import { COMMING_SOON, INVALID_TITLE } from '../../../constants/warningMessages.js';
+import { LONG } from '../../../constants/notificationDisplayTimes.js';
+
 function ListingLandingPage(props) {
   const { listingType, name } = props.values;
   const next = validateInput(props.values) ? props.next : props.location.pathname;
@@ -85,7 +88,7 @@ function ListingLandingPage(props) {
 }
 
 function showComingSoonNotification() {
-  NotificationManager.warning('Coming Soon...');
+  NotificationManager.warning(COMMING_SOON, '', LONG);
 }
 
 function validateInput(values) {
@@ -100,7 +103,7 @@ function validateInput(values) {
 function showErrors(values) {
   const { name } = values;
   if (name.length < 2) {
-    NotificationManager.warning('Title should be at least 2 characters');
+    NotificationManager.warning(INVALID_TITLE, '', LONG);
   }
 }
 

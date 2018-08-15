@@ -1,19 +1,24 @@
-import { closeModal, openModal } from '../../../actions/modalsInfo.js';
-
-import { Config } from '../../../config';
-import { HotelReservation } from '../../../services/blockchain/hotelReservation';
-import HotelTripsTable from './HotelTripsTable';
-import { Link } from 'react-router-dom';
-import { NotificationManager } from 'react-notifications';
-import { PASSWORD_PROMPT } from '../../../constants/modals.js';
-import Pagination from '../../common/pagination/Pagination';
-import PasswordModal from '../../common/modals/PasswordModal';
+import React from 'react';
 import PropTypes from 'prop-types';
 import ReCAPTCHA from 'react-google-recaptcha';
-import React from 'react';
-import { connect } from 'react-redux';
-import requester from '../../../initDependencies';
+import { Link } from 'react-router-dom';
 import { withRouter } from 'react-router-dom';
+import { NotificationManager } from 'react-notifications';
+import { connect } from 'react-redux';
+
+import HotelTripsList from './HotelTripsList';
+import Pagination from '../../../common/pagination/Pagination';
+import PasswordModal from '../../../common/modals/PasswordModal';
+import requester from '../../../../initDependencies';
+import { Config } from '../../../../config';
+import { HotelReservation } from '../../../../services/blockchain/hotelReservation';
+import { PASSWORD_PROMPT } from '../../../../constants/modals.js';
+import { closeModal, openModal } from '../../../../actions/modalsInfo.js';
+
+import { CANCELLING_RESERVATION } from '../../../../constants/infoMessages.js';
+import { BOOKING_REQUEST_SENT } from '../../../../constants/successMessages.js';
+import { CANCELLATION_NOT_POSSIBLE } from '../../../../constants/warningMessages.js';
+import { LONG } from '../../../../constants/notificationDisplayTimes.js';
 
 class HotelTripsPage extends React.Component {
   constructor(props) {
@@ -54,9 +59,10 @@ class HotelTripsPage extends React.Component {
     }
     requester.getMyHotelBookings(['page=0']).then(res => {
       res.body.then(data => {
+        console.log(data.content);
         this.setState({ trips: data.content, totalTrips: data.totalElements, loading: false, currentTripId: id });
         if (id) {
-          NotificationManager.success('Booking Request Sent Successfully, your host will get back to you with additional questions.', 'Reservation Operations');
+          NotificationManager.success(BOOKING_REQUEST_SENT, 'Reservation Operations', LONG);
         }
       });
     });
@@ -81,25 +87,24 @@ class HotelTripsPage extends React.Component {
   handleCancelTrip() {
     let bookingForCancellation = {};
     bookingForCancellation.bookingId = this.state.bookingPrepareId;
-    console.log(bookingForCancellation);
     requester.cancelBooking(bookingForCancellation).then(res => {
       if (res.success === true) {
         requester.getMyJsonFile().then(res => {
           res.body.then(data => {
-            NotificationManager.info('Your reservation is being cancelled...', 'Transactions', 10000);
+            NotificationManager.info(CANCELLING_RESERVATION, 'Transactions', LONG);
             this.closeModal(PASSWORD_PROMPT);
 
             HotelReservation.cancelReservation(data.jsonFile, this.state.password, this.state.bookingPrepareId.toString()).then(response => {
               // console.log(response);
             }).catch(error => {
               if (error.hasOwnProperty('message')) {
-                NotificationManager.warning(error.message, 'Cancel Reservation');
+                NotificationManager.warning(error.message, 'Cancel Reservation', LONG);
               } else if (error.hasOwnProperty('err') && error.err.hasOwnProperty('message')) {
-                NotificationManager.warning(error.err.message, 'Cancel Reservation');
+                NotificationManager.warning(error.err.message, 'Cancel Reservation', LONG);
               } else if (typeof x === 'string') {
-                NotificationManager.warning(error, 'Cancel Reservation');
+                NotificationManager.warning(error, 'Cancel Reservation', LONG);
               } else {
-                NotificationManager.warning(error);
+                NotificationManager.warning(error, '', LONG);
               }
 
               this.closeModal(PASSWORD_PROMPT);
@@ -108,7 +113,7 @@ class HotelTripsPage extends React.Component {
         });
 
       } else {
-        NotificationManager.warning('We cannot cancel your reservation');
+        NotificationManager.warning(CANCELLATION_NOT_POSSIBLE, LONG);
         this.closeModal(PASSWORD_PROMPT);
       }
     });
@@ -159,7 +164,7 @@ class HotelTripsPage extends React.Component {
             <h2>Upcoming Trips ({this.state.totalTrips})</h2>
             <hr />
 
-            <HotelTripsTable
+            <HotelTripsList
               trips={this.state.trips}
               currentTripId={this.state.currentTripId}
               onTripSelect={this.onTripSelect}
@@ -205,7 +210,9 @@ class HotelTripsPage extends React.Component {
 }
 
 HotelTripsPage.propTypes = {
-  location: PropTypes.object
+  location: PropTypes.object,
+  dispatch: PropTypes.func,
+  modalsInfo: PropTypes.object
 };
 
 function mapStateToProps(state) {

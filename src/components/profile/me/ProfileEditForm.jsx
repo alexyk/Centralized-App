@@ -9,6 +9,10 @@ import Select from '../../common/google/GooglePlacesAutocomplete';
 import moment from 'moment';
 import requester from '../../../initDependencies';
 
+import { PROFILE_SUCCESSFULLY_UPDATED } from '../../../constants/successMessages.js';
+import { UNCATEGORIZED_ERROR } from '../../../constants/errorMessages.js';
+import { LONG } from '../../../constants/notificationDisplayTimes.js';
+
 class ProfileEditForm extends React.Component {
   constructor(props) {
     super(props);
@@ -118,15 +122,15 @@ class ProfileEditForm extends React.Component {
 
     requester.updateUserInfo(userInfo, captchaToken).then(res => {
       if (res.success) {
-        NotificationManager.success('Successfully updated your profile', 'Update user profile');
+        NotificationManager.success(PROFILE_SUCCESSFULLY_UPDATED, '', LONG);
         this.componentDidMount();
       }
       else {
-        NotificationManager.error('Something went wrong...');
+        NotificationManager.error(UNCATEGORIZED_ERROR, '', LONG);
       }
     }).catch(errors => {
       for (var e in errors) {
-        NotificationManager.warning(errors[e].message);
+        NotificationManager.warning(errors[e].message, '', LONG);
       }
     });
   }

@@ -1,8 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import NoEntriesMessage from '../common/NoEntriesMessage';
-import ProfileFlexContainer from '../flexContainer/ProfileFlexContainer';
-import HotelTripsTableRow from './HotelTripsTableRow';
+import moment from 'moment';
+
+import NoEntriesMessage from '../../common/NoEntriesMessage';
+import ProfileFlexContainer from '../../flexContainer/ProfileFlexContainer';
+import HotelTrip from './HotelTrip';
 
 function HotelTripsTable(props) {
 
@@ -20,9 +22,11 @@ function HotelTripsTable(props) {
     return (
       props.trips.map((trip) => {
         return (
-          <HotelTripsTableRow
+          <HotelTrip
             key={trip.id}
             trip={trip}
+            tomorrow={moment().add(1, 'days').format('DD/MM/YYYY')}
+            afterTomorrow={moment().add(2, 'days').format('DD/MM/YYYY')}
             styleClass="trips-flex-container"
             onTripSelect={props.onTripSelect}
             handleCancelReservation={props.handleCancelReservation}
