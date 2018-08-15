@@ -126,6 +126,14 @@ class MainNav extends React.Component {
       this.openModal(ENTER_RECOVERY_TOKEN);
     }
 
+    if (queryParams.emailVerificationToken) {
+      this.setState({ 
+        emailVerificationToken: queryParams.emailVerificationToken,
+        isVerifyingEmail: true,
+      });
+      this.openModal(LOGIN);
+    }
+
     this.messageListener();
   }
 
