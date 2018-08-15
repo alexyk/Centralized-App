@@ -1,19 +1,18 @@
-import React from 'react';
 import { Route, Switch } from 'react-router-dom';
 
-import NavProfile from './NavProfile';
-import TripsRouter from './trips/TripsRouter';
-import DashboardPage from './dashboard/DashboardPage';
-import MyListingsPage from './listings/MyListingsPage';
-import CalendarPage from './calendar/CalendarPage';
-import MyGuestsPage from './guests/MyGuestsPage';
-import MessagesPage from './messages/MessagesPage';
-import MessagesChatPage from './messages/MessagesChatPage';
-import ProfileEditPage from './me/ProfileEditPage';
-import WalletPage from './wallet/WalletIndexPage';
 import AdminPage from './admin/AdminPage';
-
+import CalendarPage from './calendar/CalendarPage';
+import DashboardPage from './dashboard/DashboardPage';
+import MessagesChatPage from './messages/MessagesChatPage';
+import MessagesPage from './messages/MessagesPage';
+import MyGuestsPage from './guests/MyGuestsPage';
+import MyListingsPage from './listings/MyListingsPage';
+import NavProfile from './NavProfile';
+import ProfileMePage from './me/ProfileMePage';
 import PropTypes from 'prop-types';
+import React from 'react';
+import TripsRouter from './trips/TripsRouter';
+import WalletPage from './wallet/WalletIndexPage';
 
 function ProfilePage(props) {
   return (
@@ -27,7 +26,7 @@ function ProfilePage(props) {
         <Route exact path="/profile/messages/chat/:id" render={() => <MessagesChatPage />} />
         <Route path="/profile/trips" render={() => <TripsRouter location={props.location} />} />
         <Route path="/profile/reservations" render={() => <MyGuestsPage />} />
-        <Route path="/profile/me/edit" render={() => <ProfileEditPage />} />
+        <Route path="/profile/me" render={() => <ProfileMePage />} />
         <Route path="/profile/wallet" render={() => <WalletPage />} />
         <Route path="/profile/admin" render={() => <AdminPage />} />
       </Switch>

@@ -1,12 +1,13 @@
-import React from 'react';
 import { Route, Switch } from 'react-router-dom';
 
-import ProfileNav from './ProfileNav';
+import ProfileAdditionalInfo from './ProfileAdditionalInfo';
 import ProfileEditForm from './ProfileEditForm';
+import ProfileNav from './ProfileNav';
 import ProfilePhotosPage from './ProfilePhotosPage';
+import ProfileVerificationPage from './ProfileVerificationPage';
+import React from 'react';
 
-
-function ProfileEditPage() {
+function ProfileMePage() {
   return (
     <div>
       <section id="profile-edit">
@@ -20,6 +21,8 @@ function ProfileEditPage() {
               <Switch>
                 <Route exact path="/profile/me/edit" render={() => <ProfileEditForm />} />
                 <Route exact path="/profile/me/edit/photos" render={() => <ProfilePhotosPage />} />
+                <Route exact path="/profile/me/additional-info" render={() => <ProfileAdditionalInfo /> } />
+                <Route exact path="/profile/me/verification" render={() => <ProfileVerificationPage />} />
               </Switch>
             </div>
             <div className="before-footer clear-both" />
@@ -30,4 +33,4 @@ function ProfileEditPage() {
   );
 }
 
-export default ProfileEditPage;
+export default ProfileMePage;

@@ -1,8 +1,9 @@
+import '../../../../styles/css/components/profile/admin_panel/unpublished-item.css';
+
+import { Config } from '../../../../config.js';
+import PropTypes from 'prop-types';
 import React from 'react';
 import Slider from 'react-slick';
-import { Config } from '../../../config.js';
-import PropTypes from 'prop-types';
-import '../../../styles/css/components/profile/admin_panel/unpublished-item.css';
 
 let slider = null;
 
@@ -12,7 +13,7 @@ function ListItem(props) {
   if (thumbnails.length < 1) {
     pictures.push({ thumbnail: `${Config.getValue('imgHost')}/listings/images/default.png` });
   }
-  
+
   const leftButton = <button></button>;
   const rightButton = <button></button>;
   const settings = {
@@ -63,9 +64,9 @@ function ListItem(props) {
                 : <div><a href="#" onClick={(e) => props.handleShrinkListing(e, id)}>Hide</a></div>
               )
             }
-            
+
             <div><a href="#" onClick={(e) => props.openContactHostModal(e, id)}>Contact Host</a></div>
-            {state === 'inactive' && 
+            {state === 'inactive' &&
               <div><a href="#" className="delete" onClick={(e) => props.handleOpenDeleteListingModal(e, id, name)}>Delete</a></div>
             }
           </div>
@@ -76,7 +77,7 @@ function ListItem(props) {
             {state === 'inactive' &&
               <div><a href="#" onClick={(e) => props.updateListingStatus(e, id, 'denied')}>Deny</a></div>
             }
-            {state === 'active' && 
+            {state === 'active' &&
               <div><a href="#" onClick={(e) => props.updateListingStatus(e, id, 'inactive')}>Unpublish</a></div>
             }
           </div>

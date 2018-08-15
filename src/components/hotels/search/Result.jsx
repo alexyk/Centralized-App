@@ -1,17 +1,17 @@
-import React from 'react';
-import { withRouter, Link } from 'react-router-dom';
-import { connect } from 'react-redux';
-import PropTypes from 'prop-types';
 import '../../../styles/css/components/search-result-component.css';
-import { Config } from '../../../config';
-import { ROOMS_XML_CURRENCY } from '../../../constants/currencies.js';
-import ReactHtmlParser from 'react-html-parser';
-
-import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
-
 import '../../../styles/css/components/hotels_search/result/results_holder__hotels.css';
+
+import { Link, withRouter } from 'react-router-dom';
+
+import { Config } from '../../../config';
+import PropTypes from 'prop-types';
+import { ROOMS_XML_CURRENCY } from '../../../constants/currencies.js';
+import React from 'react';
+import ReactHtmlParser from 'react-html-parser';
+import Slider from 'react-slick';
+import { connect } from 'react-redux';
 
 let slider = null;
 
