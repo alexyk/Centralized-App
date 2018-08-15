@@ -1,18 +1,21 @@
 import '../../../styles/css/components/profile/me/profile-verification.css';
+import '../../../styles/css/components/profile/admin_panel/navigation-tab.css';
 
+import { NavLink, withRouter } from 'react-router-dom';
 import { closeModal, openModal } from '../../../actions/modalsInfo';
 
 import { CAPTURE_IMAGE } from '../../../constants/modals.js';
 import CaptureImageModal from './modals/CaptureImageModal';
 import { Config } from '../../../config';
 import Dropzone from 'react-dropzone';
+import {NotificationManager} from 'react-notifications';
 import PropTypes from 'prop-types';
 import React from 'react';
 import VerificationItem from './VerificationItem';
+import Webcam from 'react-webcam';
 import { connect } from 'react-redux';
 import request from 'superagent';
 import requester from '../../../initDependencies';
-import { withRouter } from 'react-router-dom';
 
 const API_HOST = Config.getValue('apiHost');
 const LOCKTRIP_UPLOAD_URL = `${API_HOST}users/me/identity/images/upload`;
@@ -35,7 +38,9 @@ class ProfileVerificationPage extends React.Component {
       governmentIdPhoto: '',
       governmentIdHolderPhoto: '',
       uploadedFilegovernmentIdPhoto: null,
-      uploadedFilegovernmentIdHolderPhoto: null
+      uploadedFilegovernmentIdHolderPhoto: null,
+      cardIdTabs: [],
+      activeTab: true
     };
 
     this.onImageDrop = this.onImageDrop.bind(this);
@@ -47,16 +52,23 @@ class ProfileVerificationPage extends React.Component {
     this.closeModal = this.closeModal.bind(this);
     this.setRef = this.setRef.bind(this);
     this.updateUserIdentity = this.updateUserIdentity.bind(this);
+    this.changeTabStatus = this.changeTabStatus.bind(this);
+    this.fillUserInfo = this.fillUserInfo.bind(this);
   }
 
   componentDidMount() {
+    this.fillUserInfo();
+  }
+
+  fillUserInfo() {
     requester.getUserInfo().then(res => {
       res.body.then(data => {
         this.splitVerificationData(data);
-
+        console.log(data);
         this.setState({
           governmentIdPhoto: data.userIdentity !== null && data.userIdentity.governmentIdPhoto !== null ? data.userIdentity.governmentIdPhoto : null,
           governmentIdHolderPhoto: data.userIdentity !== null && data.userIdentity.governmentIdHolderPhoto !== null ? data.userIdentity.governmentIdHolderPhoto : null,
+          verified: data.verified,
           loading: false
         });
       });
@@ -102,7 +114,8 @@ class ProfileVerificationPage extends React.Component {
     };
     requester.updateUserAdditionalInfo(userIdentityObj).then(res => {
       if (res.success) {
-        // Notification
+        NotificationManager.info('Your card ID is submitted. Wait up to 72 hours for admin to revise your personal information');
+        this.fillUserInfo();
       }
     });
   }
@@ -117,12 +130,31 @@ class ProfileVerificationPage extends React.Component {
   }
 
   onImageDrop(file, photoName) {
+
+    if (photoName == 'governmentIdPhoto') {
+      this.state.cardIdTabs.push('cardId');
+      this.setState({activeTab: false});
+    }
+    if (photoName == 'governmentIdHolderPhoto') {
+      this.state.cardIdTabs.push('cardIdHolder');
+      this.setState({activeTab: ''});
+    }
+
     this.setState({
-      [`uploadedFile${photoName}`]: file[0]
+      [`uploadedFile${photoName}`]: file[0],
     });
   }
 
   onCaptureDrop(photoName) {
+    if (photoName == 'governmentIdPhoto') {
+      this.state.cardIdTabs.push('cardId');
+      this.setState({activeTab: false});
+    }
+    if (photoName == 'governmentIdHolderPhoto') {
+      this.state.cardIdTabs.push('cardIdHolder');
+      this.setState({activeTab: ''});
+    }
+
     let imageURL = this.webcam.getScreenshot();
     var file = this.dataURLtoFile(imageURL, 'image.jpeg');
     this.setState({
@@ -150,71 +182,134 @@ class ProfileVerificationPage extends React.Component {
     this.props.dispatch(closeModal(modal));
   }
 
+  changeTabStatus(state) {
+    if (state == 'cardId') {
+      this.setState({ activeTab: true });
+    }
+    if (state == 'cardIdHolder') {
+      this.setState({ activeTab: false });
+    }
+    // this.state.cardIdTabs.push(state);
+  }
+
   render() {
     if (this.state.loading) {
       return <div className="loader"></div>;
     }
 
     console.log(this.state);
-
+    const isTwoPicturesUploaded = this.state.uploadedFilegovernmentIdHolderPhoto != null && this.state.uploadedFilegovernmentIdPhoto != null;
+    const saveButtonClass = this.state.uploadedFilegovernmentIdPhoto == null || this.state.uploadedFilegovernmentIdHolderPhoto == null ? 'unactive' : 'active';
     return (
       <div>
         <h2>Identification</h2>
         <hr />
         <h5>For your security and your host's, we need to verify your identity. The informaction you share will be used only for verification. You'll only ever need to do this once.</h5>
-        <div>
-          <div className="box">
-            <div className="left-part">
-              <h2>Government ID</h2>
-              {this.state.governmentIdPhoto == null ?
-                <h5>You'll need to provide identification.</h5> :
-                <h5>You are verified</h5>
-              }
-            </div>
-            <div className="right-part">
-              <div>
-                <Dropzone
-                  className="button"
-                  style={this.state.uploadedFilegovernmentIdPhoto === null ? null : { backgroundColor: 'green' }}
-                  multiple={false}
-                  maxSize={10485760}
-                  accept="image/jpg, image/jpeg, image/png"
-                  onDrop={(files) => this.onImageDrop(files, 'governmentIdPhoto')}
-                  onDropRejected={this.onDropRejected}
-                >
-                  <span><i className="fa fa-upload"></i>Provide ID</span>
-                </Dropzone>
-                <button
-                  style={this.state.uploadedFilegovernmentIdPhoto === null ? null : { backgroundColor: 'green' }}
-                  onClick={() => this.openModal(CAPTURE_IMAGE)}
-                  className="button">
-                  <i className="fa fa-camera"></i>Provide ID</button>
-                <CaptureImageModal setRef={this.setRef} onCaptureDrop={() => this.onCaptureDrop('governmentIdPhoto')} isActive={this.props.modalsInfo.isActive[CAPTURE_IMAGE]} openModal={this.openModal} closeModal={this.closeModal} onChange={this.onChange} />
+
+        {this.state.verified == true ? <div>Verified</div> : this.state.governmentIdHolderPhoto == 'true' && this.state.governmentIdPhoto == 'true' ? <div>Pending</div> :
+          <div>
+            <div className="box">
+              <ul className="navigation-tab">
+                <li>
+                  <a href="#"
+                    onClick={() => this.changeTabStatus('cardId')}
+                    className={this.state.activeTab == true ? 'active' : ''}>
+                    <h2>
+                      {this.state.cardIdTabs.includes('cardId') ?
+                        <span className="step-check checked"></span> :
+                        <span className="step-check unchecked"></span>}
+                      Step 1: Card ID</h2>
+                  </a>
+                </li>
+                <li>
+                  <a href="#"
+                    onClick={() => this.changeTabStatus('cardIdHolder')}
+                    className={this.state.activeTab == false ? 'active' : ''}>
+                    <h2>
+                      {this.state.cardIdTabs.includes('cardIdHolder') ?
+                        <span className="step-check checked"></span> :
+                        <span className="step-check unchecked"></span>}
+                      Step 2: Holder + Card ID</h2>
+                  </a>
+                </li>
+              </ul>
+              <div className="left-part">
+                <h2>{this.state.activeTab == true ? 'Government ID' : 'Holder + Government ID'}</h2>
+                {this.state.activeTab == true ?
+                  <h5>Phasellus imperdiet purus sit amet turpis sagittis, in efficitur augue ornare. Duis id lorem mauris. Morbi volutpat augue quis ex sodales, a dignissim velit vehicula. Nam ut mauris non tortor interdum ultricies. Praesent vulputate ultrices ex, sed vulputate nulla tempus eu.</h5> :
+                  <h5>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean sed suscipit lorem, id cursus tellus. Nam finibus, ante vel consequat euismod, libero nisl pellentesque eros, ultricies iaculis augue purus in mauris. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos.</h5>
+                }
               </div>
-              <div>
-                <Dropzone
-                  className="button"
-                  style={this.state.uploadedFilegovernmentIdHolderPhoto === null ? null : { backgroundColor: 'green' }}
-                  multiple={false}
-                  maxSize={10485760}
-                  accept="image/jpg, image/jpeg, image/png"
-                  onDrop={(files) => this.onImageDrop(files, 'governmentIdHolderPhoto')}
-                  onDropRejected={this.onDropRejected}
-                >
-                  <span><i className="fa fa-upload"></i>Provide Holder and ID</span>
-                </Dropzone>
-                <button
-                  style={this.state.uploadedFilegovernmentIdHolderPhoto === null ? null : { backgroundColor: 'green' }}
-                  onClick={() => this.openModal(CAPTURE_IMAGE)}
-                  className="button">
-                  <i className="fa fa-camera"></i>Provide Holder ID</button>
-                <CaptureImageModal setRef={this.setRef} onCaptureDrop={() => this.onCaptureDrop('governmentIdHolderPhoto')} isActive={this.props.modalsInfo.isActive[CAPTURE_IMAGE]} openModal={this.openModal} closeModal={this.closeModal} onChange={this.onChange} />
+              <div className="right-part">
+                {this.state.activeTab == true ? <div>
+                  <Dropzone
+                    className="button"
+                    style={this.state.uploadedFilegovernmentIdPhoto === null ? null : { backgroundColor: '#a2c5bf' }}
+                    multiple={false}
+                    maxSize={10485760}
+                    accept="image/jpg, image/jpeg, image/png"
+                    onDrop={(files) => this.onImageDrop(files, 'governmentIdPhoto')}
+                    onDropRejected={this.onDropRejected}
+                  >
+                    <span><i className="fa fa-upload"></i>Provide ID</span>
+                  </Dropzone>
+                  <p>or</p>
+                  <button
+                    style={this.state.uploadedFilegovernmentIdPhoto === null ? null : { backgroundColor: '#a2c5bf' }}
+                    onClick={() => this.openModal(CAPTURE_IMAGE)}
+                    className="button">
+                    <i className="fa fa-camera"></i>Provide ID</button>
+                  <CaptureImageModal isActive={this.props.modalsInfo.isActive[CAPTURE_IMAGE]} openModal={this.openModal} closeModal={this.closeModal}>
+                    <form onSubmit={(e) => { e.preventDefault(); this.closeModal(CAPTURE_IMAGE); this.onCaptureDrop('governmentIdPhoto'); }}>
+                      <Webcam
+                        className="webcam"
+                        audio={false}
+                        screenshotFormat="image/jpeg"
+                        ref={(cam) => this.setRef(cam)}
+                      />
+                      <button type="submit" className="btn btn-primary">Capture</button>
+                      <div className="clearfix"></div>
+                    </form>
+
+                  </CaptureImageModal>
+                </div> :
+                  <div>
+                    <Dropzone
+                      className="button"
+                      style={this.state.uploadedFilegovernmentIdHolderPhoto === null ? null : { backgroundColor: '#a2c5bf' }}
+                      multiple={false}
+                      maxSize={10485760}
+                      accept="image/jpg, image/jpeg, image/png"
+                      onDrop={(files) => this.onImageDrop(files, 'governmentIdHolderPhoto')}
+                      onDropRejected={this.onDropRejected}
+                    >
+                      <span><i className="fa fa-upload"></i>Provide Holder + ID</span>
+                    </Dropzone>
+                    <p>or</p>
+                    <button
+                      style={this.state.uploadedFilegovernmentIdHolderPhoto === null ? null : { backgroundColor: '#a2c5bf' }}
+                      onClick={() => this.openModal(CAPTURE_IMAGE)}
+                      className="button">
+                      <i className="fa fa-camera"></i>Provide Holder ID</button>
+                    <CaptureImageModal isActive={this.props.modalsInfo.isActive[CAPTURE_IMAGE]} openModal={this.openModal} closeModal={this.closeModal}>
+                      <form onSubmit={(e) => { e.preventDefault(); this.closeModal(CAPTURE_IMAGE); this.onCaptureDrop('governmentIdHolderPhoto'); }}>
+                        <Webcam
+                          className="webcam"
+                          audio={false}
+                          screenshotFormat="image/jpeg"
+                          ref={(cam) => this.setRef(cam)}
+                        />
+                        <button type="submit" className="btn btn-primary">Capture</button>
+                        <div className="clearfix"></div>
+                      </form>
+
+                    </CaptureImageModal>
+                  </div>}
+                {this.state.error ? <div className="error">{this.state.error}</div> : null}
               </div>
-              <button onClick={this.updateUserIdentity}>Save ID</button>
             </div>
-          </div>
-          {this.state.error ? <div className="error">{this.state.error}</div> : null}
-        </div>
+            <button disabled={!isTwoPicturesUploaded} onClick={this.updateUserIdentity} className={'button' + ' ' + saveButtonClass}>Save ID</button>
+          </div>}
         <br />
         <h2>Your verified info</h2>
         <hr />
