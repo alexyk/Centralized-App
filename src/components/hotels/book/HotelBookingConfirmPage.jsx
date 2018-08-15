@@ -413,6 +413,9 @@ class HotelBookingConfirmPage extends React.Component {
               setTimeout(() => {
                 this.props.history.push('/profile/trips/hotels');
               }, 2000);
+            }).catch(error => {
+              NotificationManager.success('Something went wrong...');
+              console.log(error);
             });
           }).catch(error => {
             if (error.hasOwnProperty('message')) {
@@ -646,7 +649,7 @@ class HotelBookingConfirmPage extends React.Component {
                           <p>Timer: <strong>{this.state.seconds}</strong> sec</p>
                           <p className="booking-card-price">Order Card Total: {this.props.paymentInfo.currency} {(locRate * locPrice).toFixed(4)}</p>
                           {isVerify
-                            ? <button className="btn btn-primary btn-book" onClick={() => this.payWithCard()}>Pay with card</button>
+                            ? <button className="btn btn-primary btn-book" onClick={() => this.payWithCard()} disabled>Pay with card</button>
                             : (<React.Fragment>
                               <div className="not-verify-info">Your profile is already not verify. <p> Please verify first. </p></div>
                               <Link to="/profile/me/edit">Profile page</Link>

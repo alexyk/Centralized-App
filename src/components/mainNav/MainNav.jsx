@@ -223,11 +223,13 @@ class MainNav extends React.Component {
 
     if (this.state.isUpdatingCountry) {
       user.country = this.state.country.id;
+      this.closeModal(UPDATE_COUNTRY);
       this.setState({ isUpdatingCountry: false });
     }
 
     if (this.state.isVerifyingEmail) {
       user.emailVerificationToken = this.state.emailVerificationToken;
+      this.closeModal(EMAIL_VERIFICATION);
       this.setState({ isVerifyingEmail: false });
     }
 
@@ -278,7 +280,6 @@ class MainNav extends React.Component {
           for (var e in errors) {
             NotificationManager.warning(errors[e].message, '', LONG);
           }
-          // this.captcha.reset();
         });
       }
     });
