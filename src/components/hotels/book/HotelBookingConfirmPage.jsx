@@ -11,13 +11,16 @@ import React from 'react';
 import { connect } from 'react-redux';
 import moment from 'moment';
 import requester from '../../../initDependencies';
-import { setCurrency } from '../../../actions/paymentInfo';
-import { withRouter } from 'react-router-dom';
+import { setCurrency, setLocRate } from '../../../actions/paymentInfo';
+import { setBestPrice } from '../../../actions/bookingBestPrice';
+import { withRouter, Link } from 'react-router-dom';
 import { Config } from '../../../config.js';
 
 import { LOC_PAYMENT_INITIATED } from '../../../constants/successMessages.js';
 import { SEARCH_EXPIRED } from '../../../constants/infoMessages.js';
 import { LONG, EXTRA_LONG } from '../../../constants/notificationDisplayTimes.js';
+
+import '../../../styles/css/components/hotels/book/hotel-booking-confirm-page.css';
 
 const ERROR_MESSAGE_TIME = 20000;
 
@@ -26,6 +29,8 @@ class HotelBookingConfirmPage extends React.Component {
     super(props);
 
     this.captcha = null;
+    this.timer = null;
+    this.socket = null;
 
     this.state = {
       data: null,
@@ -33,7 +38,9 @@ class HotelBookingConfirmPage extends React.Component {
       loading: true,
       locRate: null,
       password: '',
-      confirmed: false
+      confirmed: false,
+      fiatPriceInEUR: null,
+      seconds: 0,
     };
 
     this.timeout = null;
@@ -44,6 +51,13 @@ class HotelBookingConfirmPage extends React.Component {
     this.onChange = this.onChange.bind(this);
     this.toggleCanxDetails = this.toggleCanxDetails.bind(this);
     this.handleSubmitSingleWithdrawer = this.handleSubmitSingleWithdrawer.bind(this);
+    this.tick = this.tick.bind(this);
+
+    // SOCKET BINDINGS
+    this.initializeSocket = this.initializeSocket.bind(this);
+    this.connectSocket = this.connectSocket.bind(this);
+    this.handleReceiveMessage = this.handleReceiveMessage.bind(this);
+    this.disconnectSocket = this.disconnectSocket.bind(this);
   }
 
   componentDidMount() {
@@ -54,12 +68,12 @@ class HotelBookingConfirmPage extends React.Component {
     requester.createReservation(booking).then(res => {
       if (res.success) {
         res.body.then(data => {
-          this.setState({ data: data, booking: booking });
-          requester.getLocRateByCurrency(data.currency).then(res => {
-            res.body.then(locData => {
-              this.setState({ locRate: locData[0]['price_' + data.currency.toLowerCase()] });
-            });
-          });
+          this.setState({ data: data, booking: booking }, this.initializeSocket());
+          // requester.getLocRateByCurrency(data.currency).then(res => {
+          //   res.body.then(locData => {
+          //     this.setState({ locRate: locData[0]['price_' + data.currency.toLowerCase()] });
+          //   });
+          // });
 
           requester.getCurrencyRates().then(res => {
             res.body.then(data => {
@@ -87,6 +101,72 @@ class HotelBookingConfirmPage extends React.Component {
 
   componentWillUnmount() {
     clearTimeout(this.timeout);
+    clearInterval(this.timer);
+    this.disconnectSocket();
+  }
+
+  tick() {
+    const { seconds } = this.state;
+    let { fiatPriceInEUR } = this.state;
+    if (seconds === 29) {
+      const bestPrice = this.props.bookingBestPrice.price;
+      this.setState({
+        fiatPriceInEUR: bestPrice,
+        seconds: 0,
+      });
+      this.props.dispatch(setLocRate((bestPrice / this.state.data.locPrice) * this.state.rates[ROOMS_XML_CURRENCY][this.props.paymentInfo.currency]));
+    } else {
+      if (fiatPriceInEUR === null) {
+        fiatPriceInEUR = this.props.bookingBestPrice.price;
+        const locRate = (fiatPriceInEUR / this.state.data.locPrice) * this.state.rates[ROOMS_XML_CURRENCY][this.props.paymentInfo.currency];
+        this.props.dispatch(setLocRate(locRate));
+      }
+      this.setState((prevState) => {
+        return {
+          seconds: prevState.seconds + 1,
+          fiatPriceInEUR
+        };
+      });
+    }
+  }
+
+  initializeSocket() {
+    this.socket = new WebSocket(Config.getValue('SOCKET_HOST_PRICE'));
+    this.socket.onmessage = this.handleReceiveMessage;
+    this.socket.onopen = this.connectSocket;
+  }
+
+  connectSocket() {
+    const locAmount = this.state.data && this.state.data.locPrice;
+    this.socket.send(JSON.stringify({ locAmount }));
+    this.timer = setInterval(this.tick, 1000);
+  }
+
+  handleReceiveMessage(event) {
+    const fiatPriceInEUR = (JSON.parse(event.data)).fiatAmount;
+    this.props.dispatch(setBestPrice(fiatPriceInEUR));
+  }
+
+  disconnectSocket() {
+    this.socket.close();
+  }
+
+  payWithCard() {
+    const { data, fiatPriceInEUR, rates } = this.state;
+    const paymentInfo = {
+      fiatAmount: fiatPriceInEUR * rates[ROOMS_XML_CURRENCY][this.props.paymentInfo.currency],
+      locAmount: data.locPrice,
+      currency: this.props.paymentInfo.currency,
+      bookingId: data.preparedBookingId,
+    };
+
+    requester.verifyCreditCardPayment(JSON.stringify(paymentInfo))
+      .then(res => {
+        res.body.then((data) => {
+          // requester.payWithCreditCard(res.url);
+          window.location.href = data.url;
+        });
+      });
   }
 
   getSearchParams() {
@@ -398,12 +478,13 @@ class HotelBookingConfirmPage extends React.Component {
     const roomsXMLCurrency = this.getRoomsXmlCurrency();
 
     if (booking) {
-      booking.forEach((booking, index) => {
+      booking.forEach((bookingRoom, index) => {
+        const locRate = Number(Number(this.props.paymentInfo.locRate).toFixed(2));
         rows.push(
           <tr key={(1 + index) * 1000} className="booking-room">
-            <td>{booking.room.roomType.text}</td>
+            <td>{bookingRoom.room.roomType.text}</td>
             <td><span
-              className="booking-price">{this.props.paymentInfo.currency} {this.state.rates && (booking.room.totalSellingPrice.amt * this.state.rates[roomsXMLCurrency][this.props.paymentInfo.currency]).toFixed(2)} ({(booking.room.totalSellingPrice.locPrice).toFixed(4)} LOC)</span>
+              className="booking-price">{this.props.paymentInfo.currency} {(bookingRoom.room.totalSellingPrice.locPrice * locRate).toFixed(2)} ({(bookingRoom.room.totalSellingPrice.locPrice).toFixed(4)} LOC)</span>
             </td>
           </tr>
         );
@@ -425,15 +506,16 @@ class HotelBookingConfirmPage extends React.Component {
   }
 
   addCheckInClauseRow(fees, rows, arrivalDate) {
-    const fiatPrice = this.state.data && this.state.data.fiatPrice;
+    // const fiatPrice = this.state.data && this.state.data.fiatPrice;
     const locPrice = this.state.data && this.state.data.locPrice;
+    const locRate = Number(Number(this.props.paymentInfo.locRate).toFixed(2));
     const roomsXMLCurrency = this.getRoomsXmlCurrency();
     rows.push(
       <tr key={2}>
         <td
           key={fees.length}>{`Cancel on ${moment(arrivalDate).format('DD MMM YYYY')}`}</td>
         <td><span
-          className="booking-price">{this.props.paymentInfo.currency} {this.state.rates && (fiatPrice * this.state.rates[roomsXMLCurrency][this.props.paymentInfo.currency]).toFixed(2)} ({(locPrice).toFixed(4)} LOC)</span>
+          className="booking-price">{this.props.paymentInfo.currency} {(locPrice * locRate).toFixed(2)} ({(locPrice).toFixed(4)} LOC)</span>
         </td>
       </tr>
     );
@@ -441,6 +523,7 @@ class HotelBookingConfirmPage extends React.Component {
 
   getRoomFees() {
     const arrivalDate = this.state.data.booking.hotelBooking[0].arrivalDate;
+    const fiatPriceInEUR = this.state.data && this.state.fiatPriceInEUR;
     const rows = [];
     const fees = this.getCancellationFees();
     const roomsXMLCurrency = this.getRoomsXmlCurrency();
@@ -449,19 +532,24 @@ class HotelBookingConfirmPage extends React.Component {
       this.addFreeClauseRow(rows, arrivalDate);
       this.addCheckInClauseRow(fees, rows, arrivalDate);
     } else {
+      const locRate = Number(Number(this.props.paymentInfo.locRate).toFixed(2));
       fees.forEach((fee, feeIndex) => {
         if (fee.amt === 0 && fee.loc === 0) {
           this.addFreeClauseRow(rows, fee.from);
         } else {
           let date = moment(fee.from).add(1, 'days').format('DD MMM YYYY');
+          const arrivalDateFormat = moment(arrivalDate).format('DD MMM YYYY');
+          let amount = fee.amt;
           if (fee.from === arrivalDate) {
             date = arrivalDate;
+          } else if (date === arrivalDateFormat) {
+            amount = fiatPriceInEUR;
           }
           rows.push(
             <tr key={3 * 1000 + feeIndex + 1}>
               <td>{`Cancel after ${date} including`}</td>
               <td><span
-                className="booking-price">{this.props.paymentInfo.currency} {this.state.rates && (fee.amt * this.state.rates[roomsXMLCurrency][this.props.paymentInfo.currency]).toFixed(2)} ({(fee.loc).toFixed(4)} LOC)</span>
+                className="booking-price">{this.props.paymentInfo.currency} {(locRate * fee.loc).toFixed(2)} ({(fee.loc).toFixed(4)} LOC)</span>
               </td>
             </tr>
           );
@@ -498,14 +586,16 @@ class HotelBookingConfirmPage extends React.Component {
     const isMobile = this.props.location.pathname.indexOf('/mobile') !== -1;
 
     const booking = this.state.data && this.state.data.booking.hotelBooking;
-    const fiatPrice = this.state.data && this.state.data.fiatPrice;
+    // const fiatPrice = this.state.data && this.state.data.fiatPrice;
     const locPrice = this.state.data && this.state.data.locPrice;
+    const isVerify = true;
+    const locRate = Number(Number(this.props.paymentInfo.locRate).toFixed(2));
     const roomsXMLCurrency = this.getRoomsXmlCurrency();
 
     return (
       <div>
         <div>
-          <div className="booking-steps">
+          <div className="booking-steps sm-none">
             <div className="container">
               <p>1. Provide Guest Information</p>
               <p>2. Review Room Details</p>
@@ -520,45 +610,60 @@ class HotelBookingConfirmPage extends React.Component {
                 <div className="booking-details">
                   <h2>Confirm and Pay</h2>
                   <hr />
-                  <div className="row text-center room-dates">
-                    {moment(booking[0].arrivalDate, 'YYYY-MM-DD').format('DD MMM, YYYY')} <i
-                      className="fa fa-long-arrow-right"></i> {moment(booking[0].arrivalDate, 'YYYY-MM-DD').add(booking[0].nights, 'days').format('DD MMM, YYYY')}
-                  </div>
-                  <div className="row room-table">
-                    <table>
-                      <thead>
-                        <tr>
-                          <th>Room Type</th>
-                          <th>Price</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {this.getRoomRows(booking)}
-                      </tbody>
-                    </table>
-                  </div>
-                  <hr />
-                  <div className="cancelation-fees">
-                    <h4>Cancelation Fees</h4>
-                    <button onClick={() => this.toggleCanxDetails()}>{this.state.showRoomsCanxDetails ? 'Hide' : 'Show'}</button>
-                  </div>
-                  {this.state.showRoomsCanxDetails ? this.getRoomFees(booking) : null}
-                  <hr />
-                  <div className="row order-name">
-                    <p>Name: <span
-                      className="booking-for">{this.props.userInfo.firstName} {this.props.userInfo.lastName}</span></p>
-                  </div>
-                  <div className="row order-total">
-                    <p>Order Total: <span
-                      className="booking-price">{this.props.paymentInfo.currency} {this.state.rates && (fiatPrice * this.state.rates[roomsXMLCurrency][this.props.paymentInfo.currency]).toFixed(2)} ({(locPrice).toFixed(4)} LOC)</span>
-                    </p>
+                  <div className="confirm-pay-info">
+                    <div className="cancelation-fees-info">
+                      <div className="row text-center room-dates">
+                        {moment(booking[0].arrivalDate, 'YYYY-MM-DD').format('DD MMM, YYYY')} <i
+                          className="fa fa-long-arrow-right"></i> {moment(booking[0].arrivalDate, 'YYYY-MM-DD').add(booking[0].nights, 'days').format('DD MMM, YYYY')}
+                      </div>
+                      <div className="row room-table">
+                        <table>
+                          <thead>
+                            <tr>
+                              <th>Room Type</th>
+                              <th>Price</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {this.getRoomRows(booking)}
+                          </tbody>
+                        </table>
+                      </div>
+                      <hr />
+                      <div className="cancelation-fees">
+                        <h4>Cancelation Fees</h4>
+                        <button className="btn btn-primary" onClick={() => this.toggleCanxDetails()}>{this.state.showRoomsCanxDetails ? 'Hide' : 'Show'}</button>
+                      </div>
+                      {this.state.showRoomsCanxDetails ? this.getRoomFees(booking) : null}
+                    </div>
+                    <div className="total-prices-info">
+                      <div className="row order-name">
+                        <p>Name: &nbsp;</p>
+                        <p className="booking-for">{this.props.userInfo.firstName} {this.props.userInfo.lastName}</p>
+                      </div>
+                      <div className="row order-total">
+                        <div>
+                          <p>Timer: <strong>{this.state.seconds}</strong> sec</p>
+                          <p className="booking-card-price">Order Card Total: {this.props.paymentInfo.currency} {(locRate * locPrice).toFixed(4)}</p>
+                          {isVerify
+                            ? <button className="btn btn-primary btn-book" onClick={() => this.payWithCard()}>Pay with card</button>
+                            : (<React.Fragment>
+                              <div className="not-verify-info">Your profile is already not verify. <p> Please verify first. </p></div>
+                              <Link to="/profile/me/edit">Profile page</Link>
+                            </React.Fragment>)
+                          }
+                        </div>
+                        <div>
+                          <p>Order LOC Total:</p>
+                          <p className="booking-price">LOC {(locPrice).toFixed(4)}</p>
+                          {!this.state.confirmed
+                            ? <button className="btn btn-primary btn-book" onClick={(e) => this.openModal(PASSWORD_PROMPT, e)}>Pay with LOC</button>
+                            : <button className="btn btn-primary btn-book" disabled>Processing Payment...</button>
+                          }</div>
+                      </div>
+                    </div>
                   </div>
                 </div>
-                {!this.state.confirmed
-                  ? <button className="btn btn-primary btn-book" onClick={(e) => this.openModal(PASSWORD_PROMPT, e)}>Confirm and Pay</button>
-                  : <button className="btn btn-primary btn-book" disabled>Processing Payment...</button>
-                }
-
                 {isMobile &&
                   <div>
                     <button className="btn btn-primary btn-book" onClick={(e) => this.props.history.goBack()}>Back</button>
@@ -579,12 +684,11 @@ class HotelBookingConfirmPage extends React.Component {
                 isActive={this.props.modalsInfo.isActive[PASSWORD_PROMPT]}
                 text={'Enter your wallet password'}
                 placeholder={'Wallet password'}
-                handleSubmit={() => this.handleSubmitSingleWithdrawer()}
+                handleSubmit={() => this.handleSubmit()}
                 closeModal={this.closeModal}
                 password={this.state.password}
                 onChange={this.onChange}
               />
-
               {/* {!isMobile && (
                 <ReCAPTCHA
                   ref={el => this.captcha = el}
