@@ -58,6 +58,7 @@
   "INVALID_DATE_FOR_WITHDRAW": "The reservation is not ready for withdraw",
   "WITHDRAW_ARRAY_GREATER_THAN_POSSIBLE": "The withdraw dates array is greater than the maximum possible",
   "INVALID_WITHDRAWER": "The withdrawer and the address from the reservations are different",
-  "INVALID_BOOKING_FOR_WITHDRAW": "The reservation was already withdrawed"
+  "INVALID_BOOKING_FOR_WITHDRAW": "The reservation was already withdrawed",
+  "FAILED_APPROVE": "Network Error. Please, try again later"
 
 }
