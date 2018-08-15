@@ -11,7 +11,8 @@ import {
   REGISTER,
   SAVE_WALLET,
   SEND_RECOVERY_EMAIL,
-  UPDATE_COUNTRY
+  UPDATE_COUNTRY,
+  EMAIL_VERIFICATION
 } from '../../constants/modals.js';
 
 import {
@@ -35,6 +36,7 @@ import AirdropLoginModal from '../profile/airdrop/AirdropLoginModal';
 import UpdateCountryModal from './modals/UpdateCountryModal';
 import AirdropRegisterModal from '../profile/airdrop/AirdropRegisterModal';
 import ChangePasswordModal from './modals/ChangePasswordModal';
+import EmailVerificationModal from './modals/EmailVerificationModal';
 import { Config } from '../../config';
 import ConfirmWalletModal from './modals/ConfirmWalletModal';
 import CreateWalletModal from './modals/CreateWalletModal';
@@ -67,6 +69,7 @@ class MainNav extends React.Component {
       loginEmail: '',
       loginPassword: '',
       country: { id: 1 },
+      emailVerificationToken: '',
       walletPassword: '',
       repeatWalletPassword: '',
       mnemonicWords: '',
@@ -223,6 +226,11 @@ class MainNav extends React.Component {
       this.setState({ isUpdatingCountry: false });
     }
 
+    if (this.state.isVerifyingEmail) {
+      user.emailVerificationToken = this.state.emailVerificationToken;
+      this.setState({ isVerifyingEmail: false });
+    }
+
     requester.login(user).then(res => {
       if (res.success) {
         res.body.then(data => {
@@ -247,13 +255,19 @@ class MainNav extends React.Component {
               this.openModal(CREATE_WALLET);
             });
           } else if (errors.hasOwnProperty('CountryNull')) {
-            NotificationManager.warning(errors['CountryNull'].message);
+            NotificationManager.warning(errors['CountryNull'].message, '', LONG);
             this.getCountries();
             this.setState({ isUpdatingCountry: true }, () => {
               this.closeModal(LOGIN);
               this.openModal(UPDATE_COUNTRY);
             });
-          }else {
+          } else if (errors.hasOwnProperty('EmailNotVerified')) {
+            NotificationManager.warning(errors['EmailNotVerified'].message, '', LONG);
+            this.setState({ isVerifyingEmail: true }, () => {
+              this.closeModal(LOGIN);
+              this.openModal(EMAIL_VERIFICATION);
+            });
+          } else {
             for (let key in errors) {
               if (typeof errors[key] !== 'function') {
                 NotificationManager.warning(errors[key].message, '', LONG);
@@ -593,6 +607,7 @@ class MainNav extends React.Component {
           <RegisterModal isActive={this.props.modalsInfo.isActive[REGISTER]} openModal={this.openModal} closeModal={this.closeModal} signUpEmail={this.state.signUpEmail} signUpFirstName={this.state.signUpFirstName} signUpLastName={this.state.signUpLastName} signUpPassword={this.state.signUpPassword} countries={this.state.countries} onChange={this.onChange} handleChangeCountry={this.handleChangeCountry} />
           <AirdropRegisterModal isActive={this.props.modalsInfo.isActive[AIRDROP_REGISTER]} openModal={this.openModal} closeModal={this.closeModal} signUpEmail={this.state.signUpEmail} signUpFirstName={this.state.signUpFirstName} signUpLastName={this.state.signUpLastName} signUpPassword={this.state.signUpPassword} onChange={this.onChange} />
           <UpdateCountryModal isActive={this.props.modalsInfo.isActive[UPDATE_COUNTRY]} openModal={this.openModal} closeModal={this.closeModal} country={this.state.country} countries={this.state.countries} handleUpdateCountry={this.handleUpdateCountry} handleChangeCountry={this.handleChangeCountry} />
+          <EmailVerificationModal isActive={this.props.modalsInfo.isActive[EMAIL_VERIFICATION]} openModal={this.openModal} closeModal={this.closeModal} onChange={this.onChange} emailVerificationToken={this.state.emailVerificationToken} handleLogin={this.handleLogin} />
 
           <Navbar>
             <Navbar.Header>
