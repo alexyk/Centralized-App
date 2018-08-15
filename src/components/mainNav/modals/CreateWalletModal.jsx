@@ -41,7 +41,7 @@ function CreateWalletModal(props) {
 
   return (
     <div>
-      <Modal show={props.isActive} className="modal fade myModal">
+      <Modal show={true} className="modal fade myModal">
         <Modal.Header>
           <h1>Please setup your personal wallet password</h1>
           <button type="button" className="close" onClick={(e) => props.closeModal(CREATE_WALLET, e)}>&times;</button>
@@ -56,7 +56,12 @@ function CreateWalletModal(props) {
               <img src={Config.getValue('basePath') + 'images/login-pass.png'} className='password-image' alt="pass" />
               <input type="password" name="repeatWalletPassword" value={props.repeatWalletPassword} onChange={props.onChange} className="with-icon" placeholder="Re-enter password" />
             </div>
-            <p>Your password should be at least 8 characters long, containing a symbol and a letter.</p>
+            <div className="modal-input-label">Your password shoud:</div>
+            <ul className="password-requirements">
+              <li>be at least 8 characters long</li>
+              <li>contain at least one symbol</li>
+              <li>contain at least one character</li>
+            </ul>
             <hr />
             <p>Your LOC wallet is Blockchain based and you are the only person to have access to it. It will not be hosted on our server. When you are adding funds to it, your funds will be in your complete control and possession therefore It is very important not to share your wallet password with anyone. For security reasons we will not store this password and there will be no way for you to recover it through our site.</p>
             <button type="submit" className="btn btn-primary">Submit password</button>
