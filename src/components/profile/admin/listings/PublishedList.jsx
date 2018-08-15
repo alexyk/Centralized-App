@@ -1,24 +1,26 @@
-import '../../../styles/css/components/captcha/captcha-container.css';
+import '../../../../styles/css/components/captcha/captcha-container.css';
 
-import { Config } from '../../../config';
-import ContactHostModal from '../../common/modals/ContactHostModal';
+import { NavLink, withRouter } from 'react-router-dom';
+
+import AdminNav from '../AdminNav';
+import { Config } from '../../../../config';
+import ContactHostModal from '../../../common/modals/ContactHostModal';
 import Filter from './Filter';
 import Lightbox from 'react-images';
 import ListItem from './ListItem';
-import NoEntriesMessage from '../common/NoEntriesMessage';
+import NoEntriesMessage from '../../common/NoEntriesMessage';
 import { NotificationManager } from 'react-notifications';
-import Pagination from '../../common/pagination/Pagination';
+import Pagination from '../../../common/pagination/Pagination';
 import PropTypes from 'prop-types';
 import ReCAPTCHA from 'react-google-recaptcha';
 import React from 'react';
 import queryString from 'query-string';
-import requester from '../../../initDependencies';
-import { withRouter } from 'react-router-dom';
+import requester from '../../../../initDependencies';
 
-import { MESSAGE_SENT } from '../../../constants/infoMessages.js';
-import { LISTING_UNPUBLISHED } from '../../../constants/successMessages.js';
-import { UNCATEGORIZED_ERROR } from '../../../constants/errorMessages.js';
-import { LONG } from '../../../constants/notificationDisplayTimes.js';
+import { MESSAGE_SENT } from '../../../../constants/infoMessages.js';
+import { LISTING_UNPUBLISHED } from '../../../../constants/successMessages.js';
+import { UNCATEGORIZED_ERROR } from '../../../../constants/errorMessages.js';
+import { LONG } from '../../../../constants/notificationDisplayTimes.js';
 
 class PublishedList extends React.Component {
   constructor(props) {
@@ -321,80 +323,114 @@ class PublishedList extends React.Component {
     }
 
     return (
-      <div className="my-reservations">
-        <section id="profile-my-reservations">
-          <div>
-            <Filter
-              countries={this.state.countries}
-              cities={this.state.cities}
-              city={this.state.city}
-              country={this.state.country}
-              name={this.state.name}
-              hostEmail={this.state.hostEmail}
-              handleSelectCountry={this.handleSelectCountry}
-              handleSelectCity={this.handleSelectCity}
-              onSearch={this.onSearch}
-              loading={this.state.countries === [] || this.state.countries.length === 0}
-              onChange={this.onChange} />
+      <div>
+        <AdminNav>
+          <li><NavLink exact activeClassName="active" to="/profile/admin/listings/unpublished"><h2>Unpublished</h2></NavLink></li>
+          <li><NavLink exact activeClassName="active" to="/profile/admin/listings/published"><h2>Published</h2></NavLink></li>
+        </AdminNav>
+        <div className="my-reservations">
+          <section id="profile-my-reservations">
+            <div>
+              <Filter
+                countries={this.state.countries}
+                cities={this.state.cities}
+                city={this.state.city}
+                country={this.state.country}
+                name={this.state.name}
+                hostEmail={this.state.hostEmail}
+                handleSelectCountry={this.handleSelectCountry}
+                handleSelectCity={this.handleSelectCity}
+                onSearch={this.onSearch}
+                loading={this.state.countries === [] || this.state.countries.length === 0}
+                onChange={this.onChange} />
 
-            <ContactHostModal
-              id={this.state.selectedListing}
-              isActive={this.state.isShownContactHostModal}
-              closeModal={this.closeContactHostModal}
-              handleContactHost={this.handleContactHost}
-            />
+              <ContactHostModal
+                id={this.state.selectedListing}
+                isActive={this.state.isShownContactHostModal}
+                closeModal={this.closeContactHostModal}
+                handleContactHost={this.handleContactHost}
+              />
 
-            {this.state.listings.length === 0
-              ? <NoEntriesMessage text="No listings to show" />
-              : <div>
-                {this.state.listings.map((l, i) => {
-                  return (
-                    <ListItem
-                      key={i}
-                      item={l}
-                      isExpanded={this.state.expandedListings[l.id]}
-                      openLightbox={this.openLightbox}
-                      openContactHostModal={this.openContactHostModal}
+              {this.state.listings.length === 0
+                ? <NoEntriesMessage text="No listings to show" />
+                : <div>
+                  {/* <div className="table-header bold">
+                  <div className="col-md-1">
+                  </div>
+                  <div className="col-md-4">
+                    <span>Name</span>
+                  </div>
+                  <div className="col-md-2">
+                    <span>Price</span>
+                  </div>
+                  <div className="col-md-3">
+                    <span>Actions</span>
+                  </div>
+                  <div className="col-md-2">
+                    <span>Contact host</span>
+                  </div>
+                </div> */}
+
+                  {/* TODO: Fix event emmiter warning from this piece of code */}
+
+                  {/* <ListingRow
+                      action="Unpublish"
+                      canDelete={false}
                       updateListingStatus={this.updateListingStatus}
-                      handleExpandListing={this.handleExpandListing}
-                      handleShrinkListing={this.handleShrinkListing}
-                    />
-                  );
-                })}
+                      actionClass="btn btn-danger"
+                      listing={item}
+                      key={i}
+                      openModal={this.openModal}
+                    /> */}
+                  {this.state.listings.map((l, i) => {
+                    return (
+                      <ListItem
+                        key={i}
+                        item={l}
+                        isExpanded={this.state.expandedListings[l.id]}
+                        openLightbox={this.openLightbox}
+                        openContactHostModal={this.openContactHostModal}
+                        updateListingStatus={this.updateListingStatus}
+                        handleExpandListing={this.handleExpandListing}
+                        handleShrinkListing={this.handleShrinkListing}
+                      />
+                    );
+                  })}
+                </div>
+              }
+
+              <Pagination
+                loading={this.state.totalReservations === 0}
+                onPageChange={this.onPageChange}
+                currentPage={this.state.currentPage + 1}
+                pageSize={20}
+                totalElements={this.state.totalElements}
+              />
+
+              {this.state.lightboxIsOpen && images !== null &&
+                <Lightbox
+                  currentImage={this.state.currentImage}
+                  images={images}
+                  isOpen={this.state.lightboxIsOpen}
+                  onClickNext={this.gotoNext}
+                  onClickPrev={this.gotoPrevious}
+                  onClickThumbnail={this.gotoImage}
+                  onClose={this.closeLightbox}
+                />
+              }
+
+              <div className='captcha-container'>
+                <ReCAPTCHA
+                  ref={el => this.captcha = el}
+                  size="invisible"
+                  sitekey={Config.getValue('recaptchaKey')}
+                  onChange={token => { this.handleDeleteListing(token); this.captcha.reset(); }}
+                />
+
               </div>
-            }
-
-            <Pagination
-              loading={this.state.totalReservations === 0}
-              onPageChange={this.onPageChange}
-              currentPage={this.state.currentPage + 1}
-              pageSize={20}
-              totalElements={this.state.totalElements}
-            />
-
-            {this.state.lightboxIsOpen && images !== null &&
-              <Lightbox
-                currentImage={this.state.currentImage}
-                images={images}
-                isOpen={this.state.lightboxIsOpen}
-                onClickNext={this.gotoNext}
-                onClickPrev={this.gotoPrevious}
-                onClickThumbnail={this.gotoImage}
-                onClose={this.closeLightbox}
-              />
-            }
-
-            <div className='captcha-container'>
-              <ReCAPTCHA
-                ref={el => this.captcha = el}
-                size="invisible"
-                sitekey={Config.getValue('recaptchaKey')}
-                onChange={token => { this.handleDeleteListing(token); this.captcha.reset(); }}
-              />
-
             </div>
-          </div>
-        </section>
+          </section>
+        </div>
       </div>
     );
   }

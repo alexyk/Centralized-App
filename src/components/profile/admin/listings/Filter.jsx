@@ -1,8 +1,8 @@
+import '../../../../styles/css/components/profile/admin_panel/filter.css';
+
 import PropTypes from 'prop-types';
 import React from 'react';
 import Select from 'react-select';
-
-import '../../../styles/css/components/profile/admin_panel/filter.css';
 
 function Filter(props) {
   if (props.loading) {
