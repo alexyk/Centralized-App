@@ -24,7 +24,11 @@ export async function getGasPrice() {
 
   try {
     let response = await axios.get(GAS_STATION_API);
-    return ethers.utils.parseUnits((response.data.average / 10).toString(10), 'gwei');
+    let averageGasPrice = ethers.utils.parseUnits((response.data.average / 10).toString(10), 'gwei');
+    let fastGasPrice = ethers.utils.parseUnits((response.data.fast / 10).toString(10), 'gwei');
+    let currentGasPrice = (averageGasPrice.add(fastGasPrice)).div(2)
+
+    return currentGasPrice
 
   } catch (e) {
     const nodeProvider = getNodeProvider();
