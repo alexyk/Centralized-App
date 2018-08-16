@@ -596,7 +596,7 @@ class HotelsSearchPage extends React.Component {
                 }
               </div>
               <div className="col-md-9">
-                <div className="list-hotel-box" id="list-hotel-box">
+                <div>
                   {this.state.showMap
                     ? <div>
                       <MultiMarkerGoogleMap

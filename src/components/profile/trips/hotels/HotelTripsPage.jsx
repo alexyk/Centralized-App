@@ -15,7 +15,7 @@ import { HotelReservation } from '../../../../services/blockchain/hotelReservati
 import { PASSWORD_PROMPT } from '../../../../constants/modals.js';
 import { closeModal, openModal } from '../../../../actions/modalsInfo.js';
 
-import { CANCELLING_RESERVATION } from '../../../../constants/infoMessages.js';
+import { RESERVATION_CANCELLED } from '../../../../constants/infoMessages.js';
 import { BOOKING_REQUEST_SENT } from '../../../../constants/successMessages.js';
 import { CANCELLATION_NOT_POSSIBLE } from '../../../../constants/warningMessages.js';
 import { LONG } from '../../../../constants/notificationDisplayTimes.js';
@@ -87,36 +87,17 @@ class HotelTripsPage extends React.Component {
   handleCancelTrip() {
     let bookingForCancellation = {};
     bookingForCancellation.bookingId = this.state.bookingPrepareId;
-    requester.cancelBooking(bookingForCancellation).then(res => {
-      if (res.success === true) {
-        requester.getMyJsonFile().then(res => {
-          res.body.then(data => {
-            NotificationManager.info(CANCELLING_RESERVATION, 'Transactions', LONG);
-            this.closeModal(PASSWORD_PROMPT);
+    requester.cancelBooking(bookingForCancellation)
+      .then(res => res.body)
+      .then(data => {
+        if (data.success) {
+          NotificationManager.info(RESERVATION_CANCELLED, '', LONG);
+        } else {
+          NotificationManager.warning(CANCELLATION_NOT_POSSIBLE, '', LONG);
+        }
+      });
 
-            HotelReservation.cancelReservation(data.jsonFile, this.state.password, this.state.bookingPrepareId.toString()).then(response => {
-              // console.log(response);
-            }).catch(error => {
-              if (error.hasOwnProperty('message')) {
-                NotificationManager.warning(error.message, 'Cancel Reservation', LONG);
-              } else if (error.hasOwnProperty('err') && error.err.hasOwnProperty('message')) {
-                NotificationManager.warning(error.err.message, 'Cancel Reservation', LONG);
-              } else if (typeof x === 'string') {
-                NotificationManager.warning(error, 'Cancel Reservation', LONG);
-              } else {
-                NotificationManager.warning(error, '', LONG);
-              }
-
-              this.closeModal(PASSWORD_PROMPT);
-            });
-          });
-        });
-
-      } else {
-        NotificationManager.warning(CANCELLATION_NOT_POSSIBLE, LONG);
-        this.closeModal(PASSWORD_PROMPT);
-      }
-    });
+    this.closeModal(PASSWORD_PROMPT);
   }
 
   setTripIsAccepted(tripId, isAccepted) {

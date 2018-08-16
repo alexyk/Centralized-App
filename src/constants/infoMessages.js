@@ -8,3 +8,4 @@ export const ROOM_NO_LONGER_AVAILABLE = 'The room that you requested is no longe
 export const VERIFICATION_EMAIL_SENT = 'Verification email has been sent. Please follow the link to confirm your email.';
 export const MESSAGE_SENT = 'Message sent.';
 export const CANCELLING_RESERVATION = 'Your reservation is being cancelled...';
+export const RESERVATION_CANCELLED = 'Your reservation has been cancelled. You will receive an email confirming your cancellation.';
