@@ -20,7 +20,7 @@ function CreateWalletModal(props) {
       NotificationManager.warning(WALLET_INVALID_PASSWORD_LENGTH, '', LONG);
     } else if (!validator.matches(props.walletPassword, /[a-zA-Z]+/)) {
       NotificationManager.warning('Passwords should contain at least one character.', '', LONG);
-    } else if (!validator.matches(props.walletPassword, /[$@$!%*#?&]+/)) {
+    } else if (!validator.matches(props.walletPassword, /[@$!%*#?&]+/)) {
       NotificationManager.warning('Passwords should contain at least one special character.', '', LONG);
     } else {
       try {
@@ -60,10 +60,11 @@ function CreateWalletModal(props) {
             <ul className="password-requirements">
               <li>be at least 8 characters long</li>
               <li>contain at least one symbol</li>
+              {/* <li>(<span className="important-text">@$!%*#?&</span>)</li> */}
               <li>contain at least one character</li>
             </ul>
             <hr />
-            <p>Your LOC wallet is Blockchain based and you are the only person to have access to it. It will not be hosted on our server. When you are adding funds to it, your funds will be in your complete control and possession therefore It is very important not to share your wallet password with anyone. For security reasons we will not store this password and there will be no way for you to recover it through our site.</p>
+            <p><span className="important-text">Important:</span> Your LOC wallet is Blockchain based and you are the only person to have access to it. It will not be hosted on our server. When you are adding funds to it, your funds will be in your complete control and possession therefore It is very important not to share your wallet password with anyone. For security reasons we will not store this password and there will be no way for you to recover it through our site.</p>
             <button type="submit" className="btn btn-primary">Submit password</button>
             <div className="clearfix"></div>
           </form>
