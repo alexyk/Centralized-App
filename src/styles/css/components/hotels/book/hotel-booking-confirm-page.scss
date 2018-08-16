@@ -89,4 +89,12 @@
       }
     }
   }
-} 
+}
+
+.sms {
+  display: grid;
+  grid-template-columns: 80% 20%;
+  .sms-button {
+    max-height: 50px;
+  }
+}

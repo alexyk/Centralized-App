@@ -2,16 +2,15 @@ import 'react-notifications/lib/notifications.css';
 import '../../../styles/css/components/profile/me/my-profile-edit-form.css';
 
 import { Config } from '../../../config';
+import { LONG } from '../../../constants/notificationDisplayTimes.js';
 import { NotificationManager } from 'react-notifications';
+import { PROFILE_SUCCESSFULLY_UPDATED } from '../../../constants/successMessages.js';
 import ReCAPTCHA from 'react-google-recaptcha';
 import React from 'react';
 import Select from '../../common/google/GooglePlacesAutocomplete';
+import { UNCATEGORIZED_ERROR } from '../../../constants/errorMessages.js';
 import moment from 'moment';
 import requester from '../../../initDependencies';
-
-import { PROFILE_SUCCESSFULLY_UPDATED } from '../../../constants/successMessages.js';
-import { UNCATEGORIZED_ERROR } from '../../../constants/errorMessages.js';
-import { LONG } from '../../../constants/notificationDisplayTimes.js';
 
 class ProfileEditForm extends React.Component {
   constructor(props) {
@@ -164,11 +163,11 @@ class ProfileEditForm extends React.Component {
         <form onSubmit={(e) => { e.preventDefault(); this.captcha.execute(); }}>
           <div className="name">
             <div className="first">
-              <label htmlFor="fname">First name</label>
+              <label htmlFor="fname">First name <span className="mandatory">*</span></label>
               <input id="fname" name="firstName" value={this.state.firstName} onChange={this.onChange} type="text" required />
             </div>
             <div className="last">
-              <label htmlFor="lname">Last name</label>
+              <label htmlFor="lname">Last name <span className="mandatory">*</span></label>
               <input id="lname" name="lastName" value={this.state.lastName} onChange={this.onChange} type="text" required />
             </div>
             <br className="clear-both" />
@@ -230,7 +229,7 @@ class ProfileEditForm extends React.Component {
           </div>
           <div className="text"><span>We user this data for analysis and never share it with other users.</span></div>
           <div className="phone">
-            <label htmlFor="phone">Phone number <img src={Config.getValue('basePath') + 'images/icon-lock.png'} className="lock" alt="lock-o" /></label>
+            <label htmlFor="phone">Phone number <span className="mandatory">*</span><img src={Config.getValue('basePath') + 'images/icon-lock.png'} className="lock" alt="lock-o" /></label>
             <input id="phone" name="phoneNumber" value={this.state.phoneNumber} onChange={this.onChange} type="text" />
           </div>
           <div className="text"><span>We won&#39;t share your phone number with other LockTrip users.</span></div>
@@ -269,7 +268,7 @@ class ProfileEditForm extends React.Component {
               <label htmlFor="address">Where do you live</label>
               <div className='select'>
                 <select name="country" id="address" onChange={this.updateCountry} value={JSON.stringify(this.state.country)}>
-                  <option disabled value="">Country</option>
+                  <option disabled value="">Country <span className="mandatory">*</span></option>
                   {this.state.countries.map((item, i) => {
                     return <option key={i} value={JSON.stringify(item)}>{item.name}</option>;
                   })}
@@ -277,7 +276,7 @@ class ProfileEditForm extends React.Component {
               </div>
             </div>
             <div className="city">
-              <label htmlFor="city">Which city</label>
+              <label htmlFor="city">Which city <span className="mandatory">*</span></label>
               <div className='select'>
                 <Select
                   style={{ width: '100%' }}
@@ -304,7 +303,7 @@ class ProfileEditForm extends React.Component {
           </div>
 
           <div className="address">
-            <label htmlFor="address">Address</label>
+            <label htmlFor="address">Address <span className="mandatory">*</span></label>
             <input id="address" name="address" value={this.state.address} onChange={this.onChange} type="text" placeholder='Enter your address' />
           </div>
 
@@ -312,6 +311,8 @@ class ProfileEditForm extends React.Component {
             <label htmlFor="zip-code">Zip Code</label>
             <input id="zip-code" name="zipCode" value={this.state.zipCode} onChange={this.onChange} type="text" placeholder='Enter your zip code' />
           </div>
+
+          <p className="text"><span className="mandatory">*</span> Fields mandatory for payment with Credit Card</p>
 
           <ReCAPTCHA
             ref={el => this.captcha = el}

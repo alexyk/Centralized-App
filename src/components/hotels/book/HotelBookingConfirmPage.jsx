@@ -2,6 +2,7 @@ import '../../../styles/css/components/hotels/book/hotel-booking-confirm-page.cs
 
 import { EXTRA_LONG, LONG } from '../../../constants/notificationDisplayTimes.js';
 import { Link, withRouter } from 'react-router-dom';
+import { PASSWORD_PROMPT, SMS_VERIFICATION } from '../../../constants/modals.js';
 import { ROOMS_XML_CURRENCY, ROOMS_XML_CURRENCY_DEV } from '../../../constants/currencies.js';
 import { closeModal, openModal } from '../../../actions/modalsInfo.js';
 import { setCurrency, setLocRate } from '../../../actions/paymentInfo';
@@ -10,12 +11,12 @@ import { Config } from '../../../config.js';
 import { HotelReservation } from '../../../services/blockchain/hotelReservation';
 import { LOC_PAYMENT_INITIATED } from '../../../constants/successMessages.js';
 import { NotificationManager } from 'react-notifications';
-import { PASSWORD_PROMPT } from '../../../constants/modals.js';
 import { PROCESSING_TRANSACTION } from '../../../constants/infoMessages.js';
 import PasswordModal from '../../common/modals/PasswordModal';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { SEARCH_EXPIRED } from '../../../constants/infoMessages.js';
+import SMSCodeModal from '../modals/SMSCodeModal';
 import { connect } from 'react-redux';
 import moment from 'moment';
 import requester from '../../../initDependencies';
@@ -590,7 +591,7 @@ class HotelBookingConfirmPage extends React.Component {
   }
 
   isUserInfoIsComplete(userInfo) {
-    let infoFieldsToCheck = ['firstName', 'lastName', 'phoneNumber'];
+    let infoFieldsToCheck = ['firstName', 'lastName', 'phoneNumber', 'city', 'country', 'address', 'zipCode'];
 
     for (let i = 0; i < infoFieldsToCheck.length; i++) {
       let item = infoFieldsToCheck[i];
@@ -676,20 +677,21 @@ class HotelBookingConfirmPage extends React.Component {
                         <div>
                           <p>Timer: <strong>{this.state.seconds}</strong> sec</p>
                           <p className="booking-card-price">Order Card Total: {this.props.paymentInfo.currency} {(locRate * locPrice).toFixed(4)}</p>
-
-                          {!isUserInfoIsComplete ? <div>Your profile isn't complete go to Profile and edit your info</div> : this.state.userInfo.verified
-                            ? <button className="btn btn-primary btn-book" onClick={() => this.payWithCard()} disabled>Pay with card</button>
+                          <p>Pay with Credit Card</p>
+                          {!isUserInfoIsComplete ? <div>Your profile isn't complete to pay with credit card. Please go to <Link to="/profile/me/edit">Edit Profile</Link> and provide mandatory information</div> : this.state.userInfo.verified
+                            ? <button className="btn btn-primary btn-book" onClick={() => this.payWithCard()}>Pay with card</button>
                             :
-                            // (<React.Fragment>
-                            //   <div className="not-verify-info">Your profile is already not verify. <p> Please verify first. </p></div>
-                            //   <Link to="/profile/me/edit">Profile page</Link>
-                            // </React.Fragment>)
                             <div>
+                              <p>To be able to make reservations your profile should be verified</p>
                               <div>
-                                <p>Verfy your account with CardID in your profile personal info and wait up to 72 hours for admin to verfy you </p>
+                                <p>Verfy it with Government ID and wait up to 72 hours for Administrator to verfy you</p>
                               </div>
                               <div>
-                                <p>Verify your booking with SMS code and pay with card immediately</p>
+                                <p>Verify your booking <button onClick={(e) => this.openModal(SMS_VERIFICATION, e)}>with SMS code</button> and pay with Credit Card immediately</p>
+                                <SMSCodeModal
+                                  isActive={this.props.modalsInfo.isActive[SMS_VERIFICATION]}
+                                  closeModal={this.closeModal}
+                                  onChange={this.onChange} />
                               </div>
                             </div>
                           }
