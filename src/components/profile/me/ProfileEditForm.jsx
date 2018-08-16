@@ -28,6 +28,7 @@ class ProfileEditForm extends React.Component {
       gender: '',
       country: { id: 1, name: 'US', code: 'US' },
       city: '',
+      state: '',
       address: '',
       locAddress: '',
       zipCode: '',
@@ -72,9 +73,10 @@ class ProfileEditForm extends React.Component {
           phoneNumber: data.phoneNumber ? data.phoneNumber : '',
           preferredLanguage: data.preferredLanguage ? data.preferredLanguage : '',
           preferredCurrency: data.preferredCurrency ? data.preferredCurrency.id : '',
-          gender: data.gender? data.gender : '',
+          gender: data.gender ? data.gender : '',
           country: data.country ? data.country : { name: 'United States of America', id: 1, code: 'US' },
           city: data.city ? data.city : '',
+          state: data.state ? data.state : '',
           address: data.address ? data.address : '',
           locAddress: data.locAddress !== null ? data.locAddress : '',
           jsonFile: data.jsonFile !== null ? data.jsonFile : '',
@@ -110,6 +112,7 @@ class ProfileEditForm extends React.Component {
       gender: this.state.gender,
       country: parseInt(this.state.country.id, 10),
       city: this.state.city,
+      state: this.state.state,
       address: this.state.address,
       birthday: birthday,
       locAddress: this.state.locAddress,
@@ -155,7 +158,7 @@ class ProfileEditForm extends React.Component {
     for (let i = (new Date()).getFullYear(); i >= 1940; i--) {
       years.push(<option key={i} value={i}>{i}</option>);
     }
-
+    console.log(this.state.country);
     return (
       <div id="my-profile-edit-form">
         <h2>Edit Profile</h2>
@@ -265,7 +268,7 @@ class ProfileEditForm extends React.Component {
           </div>
           <div className="address-city">
             <div className="address">
-              <label htmlFor="address">Where do you live</label>
+              <label htmlFor="address">Where do you live <span className="mandatory">*</span></label>
               <div className='select'>
                 <select name="country" id="address" onChange={this.updateCountry} value={JSON.stringify(this.state.country)}>
                   <option disabled value="">Country <span className="mandatory">*</span></option>
@@ -297,10 +300,13 @@ class ProfileEditForm extends React.Component {
                 </select> */}
               </div>
             </div>
-
-
             <br className="clear-both" />
           </div>
+
+          {['Canada', 'India', 'United States of America'].includes(this.state.country.name) ? <div className="state">
+            <label htmlFor="state">State <span className="mandatory">*</span></label>
+            <input id="state" name="state" value={this.state.state} onChange={this.onChange} type="text" placeholder='Enter your state' />
+          </div> : null}
 
           <div className="address">
             <label htmlFor="address">Address <span className="mandatory">*</span></label>
