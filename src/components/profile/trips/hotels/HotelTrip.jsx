@@ -1,13 +1,12 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { Link } from 'react-router-dom';
-import moment from 'moment';
+import '../../../../styles/css/components/profile/trips/hotel-trips-table.css';
 
-import ProfileFlexContainer from '../../flexContainer/ProfileFlexContainer';
 import { Config } from '../../../../config';
 import HotelIcon from '../../../../styles/images/icon-hotel.png';
-
-import '../../../../styles/css/components/profile/trips/hotel-trips-table.css';
+import { Link } from 'react-router-dom';
+import ProfileFlexContainer from '../../flexContainer/ProfileFlexContainer';
+import PropTypes from 'prop-types';
+import React from 'react';
+import moment from 'moment';
 
 class HotelTrip extends React.Component {
   capitalize(string) {
@@ -48,11 +47,32 @@ class HotelTrip extends React.Component {
   }
 
   render() {
+    const tripStatuses = {
+      DONE: 'COMPLETE',
+      CONFIRMED: 'PENDING',
+      FAIL: 'PAYMENT FAILED',
+      FAILED: 'BOOKING FAILED',
+      PENDING: 'PENDING',
+      QUEUED: 'PENDING',
+      QUEUED_FOR_CONFIRMATION: 'PENDING',
+      CANCELED: 'CANCELED'
+    };
+
+    const tripStatusToolTips = {
+      'COMPLETE': 'Your reservation is complete',
+      'PENDING': 'Contact us if status is still Pending after 30 minutes',
+      'PAYMENT FAILED': 'Your payment failed please contact us',
+      'BOOKING FAILED': 'Your booking failed please contact us',
+      'CANCELED': 'You canceled your reservation'
+    };
+
+    const status = tripStatuses[this.props.trip.status];
+    const statusMessage = tripStatusToolTips[status];
 
     const dates = this.extractDatesData(this.props.trip);
-    const { hotel_photo, hotel_name, hostEmail, hostPhone,  } = this.props.trip;
+    const { hotel_photo, hotel_name, hostEmail, hostPhone, } = this.props.trip;
 
-    console.log(this.props.tomorrow)
+    const isCompleted = status === 'COMPLETE' && this.isFutureDate(moment().format('YYYY-MM-DD'), this.props.trip.arrival_date);
 
     return (
       <ProfileFlexContainer styleClass={`flex-container-row ${this.props.styleClass}`}>
@@ -84,25 +104,20 @@ class HotelTrip extends React.Component {
             </div>
           </div>
           <div className="flex-row-child trips-actions">
-            {(this.props.trip.status && this.props.trip.status.toUpperCase() === 'DONE') ||
-            this.props.trip.has_details !== 0 ?
-              <i className="fa fa-bolt icon" /> : null}
+            {status === 'COMPLETE' && this.props.trip.has_details === 1 && <i className="fa fa-bolt icon" />}
             <div className="content-row">
-              {this.props.trip.status && this.props.trip.status.toUpperCase() === 'DONE' && this.isFutureDate(moment().format('YYYY-MM-DD'), this.props.trip.arrival_date) &&
+              {isCompleted &&
                 <button type="submit" onClick={e => { e.preventDefault(); this.props.onTripSelect(this.props.trip.id); this.props.handleCancelReservation(); }}>Cancel Trip</button>
               }
-              {this.props.trip.has_details === 0 ?
-                null :
-                <Link to={`/profile/trips/hotels/${this.props.trip.id}`}>Details</Link>}
+              {this.props.trip.has_details === 1 && <Link to={`/profile/trips/hotels/${this.props.trip.id}`}>Details</Link>}
             </div>
           </div>
           <div className="flex-row-child trips-status">
-            {
-              <span className="status">{this.capitalize(this.props.trip.status != null && this.props.trip.status.length > 0 ? this.props.trip.status : 'PENDING')}</span>
+            {this.props.trip.status &&
+              <span className="status">{status}</span>
             }
-            <span>&nbsp;</span>
-            {this.props.trip.status && this.props.trip.status.toUpperCase() === 'FAILED' &&
-              <div className="icon-question" title={this.props.trip.error ? this.props.trip.error : 'Transaction failed.'}></div>
+            {this.props.trip.status &&
+              <span className="icon-question" title={this.props.trip.error ? this.props.trip.error : statusMessage}></span>
             }
             {this.props.trip.status && this.props.trip.status.toUpperCase() === 'DONE' &&
               <div>Reference No.: {this.props.trip.booking_id}</div>

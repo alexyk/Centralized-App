@@ -5,25 +5,25 @@ import PropTypes from 'prop-types';
 import React from 'react';
 
 function ListItem(props) {
-  const { firstName, id, lastName, city, country, email, phoneNumber, idCardPicture, address, zipCode } = props.item;
+  const { firstName, id, lastName, city, country, email, phoneNumber, idCardPicture, idCardHolderPicture, address, zipCode } = props.item;
   const verified = props.verified;
 
   return (
     <div className="unpublished-item">
       <div className="unpublished-item_images">
-        <img src={Config.getValue('imgHost') + idCardPicture} />
+        {idCardPicture && <img src={Config.getValue('imgHost') + idCardPicture} />}
       </div>
       <div className="unpublished-item_content">
         <div className="header">
           <h2><span>{firstName} {lastName}</span></h2>
           <h6>{email}</h6>
 
-          <p>City: {city ? city : 'Missing'}</p>
-          <p>Country: {country && country.name ? country.name : 'Missing'}</p>
           <p>Phone number: {phoneNumber ? phoneNumber : 'Missing'}</p>
+          <p>Country: {country && country.name ? country.name : 'Missing'}</p>
+          <p>City: {city ? city : 'Missing'}</p>
           <p>Address: {address ? address : 'Missing'}</p>
           <p>Zip code: {zipCode ? zipCode : 'Missing'}</p>
-          <img src={idCardPicture} style={{width: '50%'}} />
+          {idCardHolderPicture && <img src={Config.getValue('imgHost') + idCardHolderPicture} style={{width: '50%'}} />}
         </div>
 
         <div className="unpublished-item_actions">
