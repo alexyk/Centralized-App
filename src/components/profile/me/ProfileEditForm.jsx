@@ -224,7 +224,7 @@ class ProfileEditForm extends React.Component {
                   <option disabled value="">Gender</option>
                   <option value="male">Male</option>
                   <option value="female">Female</option>
-                  <option value="other">Other</option>
+                  <option value="other">Rather not say</option>
                 </select>
               </div>
             </div>
