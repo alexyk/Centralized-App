@@ -280,25 +280,17 @@ class ProfileEditForm extends React.Component {
             </div>
             <div className="city">
               <label htmlFor="city">Which city <span className="mandatory">*</span></label>
-              <div className='select'>
-                <Select
-                  style={{ width: '100%' }}
-                  value={this.state.city}
-                  onChange={this.onChange}
-                  name="city"
-                  onPlaceSelected={this.handleCitySelect}
-                  types={['(cities)']}
-                  componentRestrictions={{ country: this.state.country.code.toLowerCase() }}
-                  disabled={!this.state.country}
-                  placeholder='Choose your city'
-                />
-                {/* <select name="city" id="city" onChange={this.onChange} value={this.state.city}>
-                  <option disabled value="">City</option>
-                  {this.state.cities.map((item, i) => {
-                    return <option key={i} value={item.id}>{item.name}</option>;
-                  })}
-                </select> */}
-              </div>
+              <Select
+                style={{ width: '100%' }}
+                value={this.state.city}
+                onChange={this.onChange}
+                name="city"
+                onPlaceSelected={this.handleCitySelect}
+                types={['(cities)']}
+                componentRestrictions={{ country: this.state.country.code.toLowerCase() }}
+                disabled={!this.state.country}
+                placeholder='Choose your city'
+              />
             </div>
             <br className="clear-both" />
           </div>
