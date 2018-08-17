@@ -71,23 +71,20 @@
     "why-did-you-update": "^0.1.1"
   },
   "scripts": {
+    "test": "react-scripts test --env=jsdom",
     "analyze": "source-map-explorer build/static/js/main.*",
     "start-js": "react-scripts start",
-    "start": "sh -ac '. ./.env; npm-run-all --parallel watch-css start-js'",
-    "start-dev": "sh -ac '. ./.env.development; react-scripts start'",
-    "build-js": "react-scripts build",
+    "start": "sh -ac '. ./.env; npm run all'",
+    "start/stage": "sh -ac '. ./.env.staging; npm run all'",
+    "start/prod": "sh -ac '. ./.env.production; npm run all'",
     "build": "npm-run-all build-css build-js",
-    "start-stage": "sh -ac '. ./.env.staging; react-scripts start'",
-    "build/stage": "sh -ac '. ./.env.staging; npm run build'",
-    "start-prod": "sh -ac '. ./.env.production; react-scripts start'",
-    "build/prod": "sh -ac '. ./.env.production; npm run build'",
-    "build/dev": "sh -ac '. ./.env.development; npm run build'",
+    "build-js": "react-scripts build",
     "build/local": "sh -ac '. ./.env; npm run build'",
-    "test": "react-scripts test --env=jsdom",
-    "eject": "react-scripts eject",
-    "bundle-css": "lessc src/app.less",
+    "build/stage": "sh -ac '. ./.env.staging; npm run build'",
+    "build/prod": "sh -ac '. ./.env.production; npm run build'",
     "build-css": "node-sass-chokidar ./src/ --output ./src/",
-    "watch-css": "node-sass-chokidar ./src/ --output ./src/ --watch"
+    "watch-css": "node-sass-chokidar ./src/ --output ./src/ --watch",
+    "all": "npm-run-all --parallel watch-css start-js"
   },
   "devDependencies": {
     "babel-eslint": "^8.2.1",

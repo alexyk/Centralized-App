@@ -5,8 +5,6 @@ import { Config } from '../../../config';
 import { NotificationManager } from 'react-notifications';
 import ReCAPTCHA from 'react-google-recaptcha';
 import React from 'react';
-import Select from '../../common/google/GooglePlacesAutocomplete';
-import moment from 'moment';
 import requester from '../../../initDependencies';
 
 class ProfileAdditionalInfo extends React.Component {

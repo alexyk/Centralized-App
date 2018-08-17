@@ -636,7 +636,7 @@ class StaticHotelsSearchPage extends React.Component {
                 </div>
               </div>
               <div className="col-md-9">
-                <div className="list-hotel-box" id="list-hotel-box">
+                <div>
                   {this.state.showMap
                     ? <div>
                       {this.state.mapLoading

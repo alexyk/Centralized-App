@@ -23,6 +23,7 @@ import requester from '../../../initDependencies';
 import { setBestPrice } from '../../../actions/bookingBestPrice';
 
 const ERROR_MESSAGE_TIME = 20000;
+const SEARCH_EXPIRE_TIME = 900000;
 
 class HotelBookingConfirmPage extends React.Component {
   constructor(props) {
@@ -73,7 +74,7 @@ class HotelBookingConfirmPage extends React.Component {
     requester.createReservation(booking).then(res => {
       if (res.success) {
         res.body.then(data => {
-          this.setState({ data: data, booking: booking }, this.initializeSocket());
+          this.setState({ data: data, booking: booking });
           // requester.getLocRateByCurrency(data.currency).then(res => {
           //   res.body.then(locData => {
           //     this.setState({ locRate: locData[0]['price_' + data.currency.toLowerCase()] });
@@ -101,13 +102,13 @@ class HotelBookingConfirmPage extends React.Component {
     this.timeout = setTimeout(() => {
       NotificationManager.info(SEARCH_EXPIRED, '', EXTRA_LONG);
       this.props.history.push('/hotels');
-    }, 600000);
+    }, SEARCH_EXPIRE_TIME);
   }
 
   componentWillUnmount() {
     clearTimeout(this.timeout);
     clearInterval(this.timer);
-    this.disconnectSocket();
+    // this.disconnectSocket();
   }
 
   tick() {
@@ -425,16 +426,16 @@ class HotelBookingConfirmPage extends React.Component {
           }).catch(error => {
             if (error.hasOwnProperty('message')) {
               if (error.message === 'nonce too low') {
-                NotificationManager.warning('You have a pending transaction. Please try again later.', 'Send Tokens', ERROR_MESSAGE_TIME);
+                NotificationManager.warning('You have a pending transaction. Please try again later.', 'Transactions', ERROR_MESSAGE_TIME);
               } else {
-                NotificationManager.warning(error.message, 'Send Tokens', ERROR_MESSAGE_TIME);
+                NotificationManager.warning(error.message, 'Transactions', ERROR_MESSAGE_TIME);
               }
             } else if (error.hasOwnProperty('err') && error.err.hasOwnProperty('message')) {
-              NotificationManager.warning(error.err.message, 'Send Tokens', ERROR_MESSAGE_TIME);
+              NotificationManager.warning(error.err.message, 'Transactions', ERROR_MESSAGE_TIME);
             } else if (typeof x === 'string') {
-              NotificationManager.warning(error, 'Send Tokens', ERROR_MESSAGE_TIME);
+              NotificationManager.warning(error, 'Transactions', ERROR_MESSAGE_TIME);
             } else {
-              NotificationManager.warning(error, ERROR_MESSAGE_TIME);
+              NotificationManager.warning(error, 'Transactions', ERROR_MESSAGE_TIME);
             }
 
             this.closeModal(PASSWORD_PROMPT);
@@ -728,7 +729,7 @@ class HotelBookingConfirmPage extends React.Component {
                 isActive={this.props.modalsInfo.isActive[PASSWORD_PROMPT]}
                 text={'Enter your wallet password'}
                 placeholder={'Wallet password'}
-                handleSubmit={() => this.handleSubmit()}
+                handleSubmit={() => this.handleSubmitSingleWithdrawer()}
                 closeModal={this.closeModal}
                 password={this.state.password}
                 onChange={this.onChange}
