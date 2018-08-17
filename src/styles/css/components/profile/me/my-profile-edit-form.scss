@@ -1,4 +1,5 @@
 @import '../../../vendors/include-media';
+@import '../../../base/variables';
 #my-profile-edit-form {
   width: 100%;
   select {
@@ -103,5 +104,6 @@ textarea {
   border-radius: 5px;
 }
 .mandatory {
-  color: #FF0000;
+  color: $moderate-red;
+  font-weight: 700;
 }

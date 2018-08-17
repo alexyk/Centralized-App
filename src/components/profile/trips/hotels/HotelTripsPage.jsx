@@ -115,6 +115,7 @@ class HotelTripsPage extends React.Component {
     this.setState({ currentPage: page, loading: true }, () => {
       requester.getMyHotelBookings([`page=${page - 1}`]).then(res => {
         res.body.then(data => {
+          console.log(data.content);
           this.setState({
             trips: data.content,
             totalTrips: data.totalElements,
