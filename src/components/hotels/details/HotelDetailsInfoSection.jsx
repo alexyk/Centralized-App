@@ -1,13 +1,13 @@
-import PropTypes from 'prop-types';
+import { Config } from '../../../config';
 import HotelDetailsAmenityColumn from './HotelDetailsAmenityColumn';
 import HotelDetailsReviewBox from './HotelDetailsReviewBox';
+import { LOGIN } from '../../../constants/modals.js';
+import PropTypes from 'prop-types';
+import { ROOMS_XML_CURRENCY } from '../../../constants/currencies.js';
 import React from 'react';
 import { connect } from 'react-redux';
-import { withRouter } from 'react-router-dom';
-import { LOGIN } from '../../../constants/modals.js';
-import { ROOMS_XML_CURRENCY } from '../../../constants/currencies.js';
 import { openModal } from '../../../actions/modalsInfo.js';
-import { Config } from '../../../config';
+import { withRouter } from 'react-router-dom';
 
 function HotelDetailsInfoSection(props) {
   const getAmenities = (amenities) => {
@@ -105,7 +105,7 @@ function HotelDetailsInfoSection(props) {
 
       {mostPopularFacilities.length > 0 && amenities[0].length > 0 &&
 
-        <div className="facilities">
+        <div className="facilities" id="facilities">
           <h2>Facilities</h2>
           <hr />
           <div className="icons">
