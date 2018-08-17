@@ -55,7 +55,7 @@ class HotelTrip extends React.Component {
       PENDING: 'PENDING',
       QUEUED: 'PENDING',
       QUEUED_FOR_CONFIRMATION: 'PENDING',
-      CANCELED: 'CANCELED'
+      CANCELLED: 'CANCELLED'
     };
 
     const tripStatusToolTips = {
@@ -63,7 +63,7 @@ class HotelTrip extends React.Component {
       'PENDING': 'Contact us if status is still Pending after 30 minutes',
       'PAYMENT FAILED': 'Your payment failed please contact us',
       'BOOKING FAILED': 'Your booking failed please contact us',
-      'CANCELED': 'You canceled your reservation'
+      'CANCELLED': 'You canceled your reservation'
     };
 
     const status = tripStatuses[this.props.trip.status];
