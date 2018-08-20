@@ -52,10 +52,15 @@ $breakpoints: (
           border-radius: 50%;
           margin-right: 10px;
           .number {
-            margin-top: 9px;
-            font-size: 13px;
-            color: #d97a61;
+            margin-top: 6px;
+            // font-size: 13px;
+            // color: #d97a61;
             font-weight: 600;
+          }
+          i {
+            margin-top: 7px;
+            color: #d97a61;
+            font-weight: 400;
           }
         }
 
