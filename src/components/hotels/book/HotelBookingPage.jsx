@@ -207,7 +207,7 @@ class HotelBookingPage extends React.Component {
   }
 
   isValidNames() {
-    const regexp = /^([a-zA-Z]{1,}[-]*[a-zA-Z]{1,})$/;
+    const regexp = /(^([a-zA-Z]{2,}([a-zA-Z]+|([-][a-zA-Z][a-zA-Z]+)))$)?/;
     const rooms = this.state.rooms;
     for (let i = 0; i < rooms.length; i++) {
       const adults = rooms[i].adults;
