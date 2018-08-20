@@ -27,10 +27,18 @@ function Result(props) {
   };
 
   const SlickButton = props => {
-    const {currentSlide, slideCount, ...arrowProps} = props;
+    const { currentSlide, slideCount, ...arrowProps } = props;
     return (
       <button type="button" {...arrowProps}>
       </button>
+    );
+  };
+
+  const getPrice = () => {
+    return (
+      <div className="">
+
+      </div>
     );
   };
 
@@ -40,7 +48,7 @@ function Result(props) {
   let { id, name, generalDescription, hotelPhoto, star } = props.hotel;
   let { price } = props;
   const photoUrl = hotelPhoto && hotelPhoto.url ? hotelPhoto.url : hotelPhoto;
-  const pictures = photoUrl ? [ { thumbnail: `${Config.getValue('imgHost')}${photoUrl}` }, { thumbnail: `${Config.getValue('imgHost')}${photoUrl}` } ] : [];
+  const pictures = photoUrl ? [{ thumbnail: `${Config.getValue('imgHost')}${photoUrl}` }, { thumbnail: `${Config.getValue('imgHost')}${photoUrl}` }] : [];
   const { locRate, rates } = props;
   const { currencySign } = props.paymentInfo;
   const isPriceLoaded = !!price;
@@ -96,7 +104,18 @@ function Result(props) {
             {calculateStars(star)}
           </div>
         </div>
-        <div>{generalDescription && ReactHtmlParser(generalDescription + (generalDescription.length < 250 ? '' : '...'))}</div>
+        <div className="result-description">{generalDescription && ReactHtmlParser(generalDescription + (generalDescription.length < 250 ? '' : '...'))}</div>
+        <div className="result-mobile-pricing">
+          {!isPriceLoaded
+            ? (!props.allElements ? <div className="loader" style={{ width: '100%', fontSize: '14px' }}></div> : <span style={{ padding: '20px 10px 10px 10px' }}>Unavailable</span>)
+            : <span className="price">{props.userInfo.isLogged && `${currencySign} ${priceInSelectedCurrency}`}</span>
+          }
+          {isPriceLoaded && <span>(LOC {locPrice})</span>}
+          {!isPriceLoaded && props.allElements
+            ? <a href="#" className="mobile-btn-disabled">Unavailable</a>
+            : <a href={`${redirectURL}/${id}${search.substr(0, endOfSearch)}`} className="mobile-btn">Book now</a>
+          }
+        </div>
       </div>
 
       <div className="result-pricing">
