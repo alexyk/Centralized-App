@@ -8,6 +8,25 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import moment from 'moment';
 
+const STATUS = {
+  DONE: 'COMPLETE',
+  CONFIRMED: 'PENDING',
+  FAIL: 'PAYMENT FAILED',
+  FAILED: 'BOOKING FAILED',
+  PENDING: 'PENDING',
+  QUEUED: 'PENDING',
+  QUEUED_FOR_CONFIRMATION: 'PENDING',
+  CANCELLED: 'CANCELLED'
+};
+
+const STATUS_TOOLTIP = {
+  'COMPLETE': 'Your reservation is complete',
+  'PENDING': 'Contact us if status is still Pending after 30 minutes',
+  'PAYMENT FAILED': 'Your payment failed please contact us',
+  'BOOKING FAILED': 'Your booking failed please contact us',
+  'CANCELLED': 'You canceled your reservation'
+};
+
 class HotelTrip extends React.Component {
   capitalize(string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
@@ -47,27 +66,9 @@ class HotelTrip extends React.Component {
   }
 
   render() {
-    const tripStatuses = {
-      DONE: 'COMPLETE',
-      CONFIRMED: 'PENDING',
-      FAIL: 'PAYMENT FAILED',
-      FAILED: 'BOOKING FAILED',
-      PENDING: 'PENDING',
-      QUEUED: 'PENDING',
-      QUEUED_FOR_CONFIRMATION: 'PENDING',
-      CANCELLED: 'CANCELLED'
-    };
 
-    const tripStatusToolTips = {
-      'COMPLETE': 'Your reservation is complete',
-      'PENDING': 'Contact us if status is still Pending after 30 minutes',
-      'PAYMENT FAILED': 'Your payment failed please contact us',
-      'BOOKING FAILED': 'Your booking failed please contact us',
-      'CANCELLED': 'You canceled your reservation'
-    };
-
-    const status = tripStatuses[this.props.trip.status];
-    const statusMessage = tripStatusToolTips[status];
+    const status = STATUS[this.props.trip.status];
+    const statusMessage = STATUS_TOOLTIP[status];
 
     const dates = this.extractDatesData(this.props.trip);
     const { hotel_photo, hotel_name, hostEmail, hostPhone, } = this.props.trip;
