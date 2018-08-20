@@ -1,18 +1,18 @@
+import { EXTRA_LONG, LONG } from '../../../constants/notificationDisplayTimes.js';
+import { INVALID_CHILD_AGE, INVALID_GUEST_NAME } from '../../../constants/warningMessages.js';
+
 import { Config } from '../../../config';
 import { NotificationManager } from 'react-notifications';
 import PropTypes from 'prop-types';
 import { ROOMS_XML_CURRENCY } from '../../../constants/currencies.js';
 import React from 'react';
+import { SEARCH_EXPIRED } from '../../../constants/infoMessages.js';
 import { connect } from 'react-redux';
 import moment from 'moment';
 import requester from '../../../initDependencies';
 import { setCurrency } from '../../../actions/paymentInfo';
 import validator from 'validator';
 import { withRouter } from 'react-router-dom';
-
-import { SEARCH_EXPIRED } from '../../../constants/infoMessages.js';
-import { INVALID_CHILD_AGE, INVALID_GUEST_NAME } from '../../../constants/warningMessages.js';
-import { LONG, EXTRA_LONG } from '../../../constants/notificationDisplayTimes.js';
 
 class HotelBookingPage extends React.Component {
   constructor(props) {
@@ -207,7 +207,7 @@ class HotelBookingPage extends React.Component {
   }
 
   isValidNames() {
-    const regexp = /^[a-zA-Z]{3,}$/;
+    const regexp = /^([a-zA-Z]{1,}[-]*[a-zA-Z]{1,})$/;
     const rooms = this.state.rooms;
     for (let i = 0; i < rooms.length; i++) {
       const adults = rooms[i].adults;
@@ -308,7 +308,7 @@ class HotelBookingPage extends React.Component {
                               <label htmlFor="title">Guest</label>
                               <select
                                 className="title-select"
-                                name="title" 
+                                name="title"
                                 value={this.state.rooms[roomIndex].adults[adultIndex].title}
                                 onChange={(e) => { this.handleAdultChange(e, roomIndex, adultIndex); }}
                               >
