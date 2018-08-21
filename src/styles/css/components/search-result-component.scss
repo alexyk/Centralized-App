@@ -266,6 +266,14 @@ $media-expressions: (
     div {
       text-align: right;
     }
+    .btn {
+      width: 100%;
+      text-align: right;
+      background: none;
+      color: $moderate-red;
+      font-size: 14px;
+      font-weight: 400;
+    }
   }
 	.btn {
 		padding: 12px;
