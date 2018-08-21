@@ -8,8 +8,8 @@ function DeletionModal(props) {
     <div>
       <Modal show={props.isActive} onHide={props.onHide} className="modal fade myModal">
         <Modal.Header>
+          <h1>Delete Listing</h1>
           <button type="button" className="close" onClick={props.onHide}>&times;</button>
-          <h2>Delete Listing</h2>
         </Modal.Header>
         <Modal.Body>
           <p>Are you sure you want to delete &quot;{props.deletingName}&quot;?</p>

@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import HomesSearchBarDatePicker from './HomesSearchBarDatePicker';
 import moment from 'moment';
+import StringUtils from '../../../services/utilities/stringUtilities.js';
 
 const HomesSearchBar = (props) => (
   <div className="source-panel">
@@ -16,7 +17,7 @@ const HomesSearchBar = (props) => (
           required="required">
           <option disabled value="">Choose a location</option>
           {props.countries.map((item, i) => {
-            return <option key={i} value={item.id}>{item.name}</option>;
+            return <option key={i} value={item.id}>{StringUtils.shorten(item.name,30)}</option>;
           })}
         </select>
       }

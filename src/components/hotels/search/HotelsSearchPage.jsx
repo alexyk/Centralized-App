@@ -15,6 +15,7 @@ import SockJsClient from 'react-stomp';
 import { connect } from 'react-redux';
 import moment from 'moment';
 import requester from '../../../initDependencies';
+import { CurrencyConverter } from '../../../services/utilities/currencyConverter';
 import uuid from 'uuid';
 import { withRouter } from 'react-router-dom';
 
@@ -513,12 +514,15 @@ class HotelsSearchPage extends React.Component {
 
   applyFilters() {
     const currentPage = 0;
-    const { priceRange, orderBy } = this.state;
-    const userCurrencyRate = this.state.rates[ROOMS_XML_CURRENCY][this.props.paymentInfo.currency];
+    const { priceRange, orderBy, rates } = this.state;
+    const currency = this.props.paymentInfo;
     const stars = this.state.stars.filter(x => x).length > 0 ? this.state.stars.slice(0) : [true, true, true, true, true];
     const filteredListings = this.state.listings
       .slice(0)
-      .filter(x => (priceRange[0] <= x.price * userCurrencyRate && x.price * userCurrencyRate <= priceRange[1]) && stars[x.stars - 1]);
+      .filter(x => {
+        const convertedCurrency = CurrencyConverter.convert(rates, ROOMS_XML_CURRENCY, currency, x.price);
+        return (priceRange[0] <= (convertedCurrency) && (convertedCurrency) <= priceRange[1]) && stars[x.stars - 1];
+      });
 
     if (orderBy === 'asc') {
       filteredListings.sort((x, y) => x.price > y.price ? 1 : -1);
@@ -596,7 +600,7 @@ class HotelsSearchPage extends React.Component {
                 }
               </div>
               <div className="col-md-9">
-                <div className="list-hotel-box" id="list-hotel-box">
+                <div>
                   {this.state.showMap
                     ? <div>
                       <MultiMarkerGoogleMap

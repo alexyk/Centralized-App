@@ -4,6 +4,8 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { SEND_RECOVERY_EMAIL, ENTER_RECOVERY_TOKEN } from '../../../constants/modals.js';
 
+import '../../../styles/css/components/modals/modal.css';
+
 function SendRecoveryEmailModal(props) {
 
   return (
@@ -15,9 +17,9 @@ function SendRecoveryEmailModal(props) {
         </Modal.Header>
         <Modal.Body>
           <form onSubmit={(e) => { e.preventDefault(); props.handleSubmitRecoveryEmail(); }}>
-            <div className="form-group">
-              <img src={Config.getValue('basePath') + 'images/login-mail.png'} alt="email" />
-              <input type="email" name="recoveryEmail" value={props.recoveryEmail} onChange={props.onChange} className="form-control" placeholder="Email address" />
+            <div className="input-container">
+              <img src={Config.getValue('basePath') + 'images/login-mail.png'} className="email-image" alt="email" />
+              <input type="email" name="recoveryEmail" value={props.recoveryEmail} onChange={props.onChange} className="with-icon" placeholder="Email address" />
             </div>
 
             <div className="login-sign">

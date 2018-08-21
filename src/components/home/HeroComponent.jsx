@@ -1,11 +1,15 @@
-import React from 'react';
+import BancorConvertWidget from '../external/BancorConvertWidget';
+// import HomesHeroComponent from './HomesHeroComponent';
+// import PopularListingsCarousel from '../common/listing/PopularListingsCarousel';
 import PropTypes from 'prop-types';
+import React from 'react';
 import moment from 'moment';
 import { withRouter } from 'react-router-dom';
 import requester from '../../initDependencies';
 import HomesSearchBar from '../homes/search/HomesSearchBar';
 import HotelsSearchBar from '../hotels/search/HotelsSearchBar';
 import ListingTypeNav from '../common/listingTypeNav/ListingTypeNav';
+// import PopularDestinationsCarousel from '../hotels/carousel/PopularDestinationsCarousel';
 
 import '../../styles/css/components/hero-component.css';
 import '../../styles/css/components/tabs-component.css';
@@ -14,8 +18,8 @@ class HeroComponent extends React.Component {
   constructor(props) {
     super(props);
 
-    let startDate = moment();
-    let endDate = moment().add(1, 'day');
+    let startDate = moment().add(1, 'day');
+    let endDate = moment().add(2, 'day');
 
     this.state = {
       countryId: '',
@@ -30,6 +34,7 @@ class HeroComponent extends React.Component {
     this.handleSearch = this.handleSearch.bind(this);
     this.handleDatePick = this.handleDatePick.bind(this);
     this.redirectToSearchPage = this.redirectToSearchPage.bind(this);
+    this.handleDestinationPick = this.handleDestinationPick.bind(this);
   }
 
   componentDidMount() {
@@ -68,6 +73,11 @@ class HeroComponent extends React.Component {
       startDate: picker.startDate,
       endDate: picker.endDate,
     });
+  }  
+  
+  handleDestinationPick(region) {
+    this.setState({ countryId: region.countryId.toString() });
+    document.getElementsByName('stay')[0].click();
   }
 
   redirectToSearchPage(queryString) {

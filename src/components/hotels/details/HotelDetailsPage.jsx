@@ -3,7 +3,7 @@ import '../../../styles/css/components/carousel-component.css';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 
-import { setRegion, setSearchInfo } from '../../../actions/searchInfo';
+import { setSearchInfo } from '../../../actions/searchInfo';
 
 import { Config } from '../../../config';
 import HotelDetailsInfoSection from './HotelDetailsInfoSection';
@@ -20,6 +20,11 @@ import { parse } from 'query-string';
 import requester from '../../../initDependencies';
 import { setCurrency } from '../../../actions/paymentInfo';
 import { withRouter } from 'react-router-dom';
+
+import { CHECKING_ROOM_AVAILABILITY, ROOM_NO_LONGER_AVAILABLE } from '../../../constants/infoMessages.js';
+import { UNCATEGORIZED_ERROR } from '../../../constants/errorMessages.js';
+import { INVALID_SEARCH_DATE, ALL_ROOMS_TAKEN } from '../../../constants/warningMessages.js';
+import { LONG } from '../../../constants/notificationDisplayTimes.js';
 
 class HotelDetailsPage extends React.Component {
   constructor(props) {
@@ -67,16 +72,9 @@ class HotelDetailsPage extends React.Component {
   componentDidMount() {
     const id = this.props.match.params.id;
     const searchParams = this.getNewSearchParams();
-    const search = this.getSearchParams();
     requester.getHotelById(id, searchParams).then(res => {
       res.body.then(data => {
         this.setState({ data: data, loading: false });
-        const regionId = search.get('region') || (data.region && data.region.externalId);
-        requester.getRegionNameById(regionId).then(res => {
-          res.body.then(data => {
-            this.props.dispatch(setRegion(data));
-          });
-        });
       });
     });
 
@@ -185,7 +183,7 @@ class HotelDetailsPage extends React.Component {
     const range = prices.filter(x => x.start >= startDate && x.end < endDate);
     const isInvalidRange = range.filter(x => !x.available).length > 0;
     if (isInvalidRange) {
-      NotificationManager.warning('There is a unavailable day in your select range', 'Calendar Operations');
+      NotificationManager.warning(INVALID_SEARCH_DATE, 'Calendar Operations', LONG);
       this.setState({ calendarStartDate: undefined, calendarEndDate: undefined });
     }
     else {
@@ -295,7 +293,7 @@ class HotelDetailsPage extends React.Component {
 
   handleBookRoom(roomsResults) {
     this.setState({ loadingRooms: true });
-    NotificationManager.info('Checking room availability...');
+    NotificationManager.info(CHECKING_ROOM_AVAILABILITY, '', LONG);
     const rooms = this.props.searchInfo.rooms.map((room) => {
       const adults = [];
       const children = room.children;
@@ -335,14 +333,14 @@ class HotelDetailsPage extends React.Component {
     try {
       this.checkNextRoom(allRooms, 0, booking);
     } catch (e) {
-      NotificationManager.error('Something went wrong...');
+      NotificationManager.error(UNCATEGORIZED_ERROR, '', LONG);
     }
   }
 
   checkNextRoom(allRooms, index, booking) {
     const isWebView = this.props.location.pathname.indexOf('/mobile') !== -1;
     if (index >= allRooms.length) {
-      NotificationManager.warning('Unfortunatelly all rooms in that hotel were already taken, please try another one.', '', 5000);
+      NotificationManager.warning(ALL_ROOMS_TAKEN, '', LONG);
       const search = this.props.location.search;
       const rootURL = !isWebView ? '/hotels/listings' : '/mobile/search';
       const URL = `${rootURL}/${search}`;
@@ -354,7 +352,7 @@ class HotelDetailsPage extends React.Component {
     requester.createReservation(booking).then(res => {
       if (res.success) {
         if (index !== 0) {
-          NotificationManager.info('The room that you requested is no longer available. You were given a similar room which may have slightly different price and extras.', '', 5000);
+          NotificationManager.info(ROOM_NO_LONGER_AVAILABLE, '', LONG);
         }
 
         const id = this.props.match.params.id;
@@ -366,7 +364,7 @@ class HotelDetailsPage extends React.Component {
         this.checkNextRoom(allRooms, index + 1, booking);
       }
     }).catch(() => {
-      NotificationManager.error('Something went wrong...');
+      NotificationManager.error(UNCATEGORIZED_ERROR, '', LONG);
     });
   }
 

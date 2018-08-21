@@ -5,6 +5,8 @@ import ReCAPTCHA from 'react-google-recaptcha';
 import React from 'react';
 import { withRouter } from 'react-router-dom';
 
+import '../../../styles/css/components/modals/modal.css';
+
 const modal = {
   current: 'showContactHostModal',
 };
@@ -34,10 +36,9 @@ class ContactHostModal extends React.Component {
           </Modal.Header>
           <Modal.Body>
             <form onSubmit={(e) => { e.preventDefault(); this.captcha.execute(); }}>
-              <div className="form-group">
-                <textarea rows="4" name="message" value={this.state.message} onChange={this.onChange} className="form-control text-area"></textarea>
+              <div className="input-container">
+                <textarea rows="4" name="message" value={this.state.message} onChange={this.onChange}></textarea>
               </div>
-
 
               <ReCAPTCHA
                 ref={el => this.captcha = el}

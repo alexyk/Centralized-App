@@ -23,7 +23,16 @@ import request from 'superagent';
 import requester from '../../initDependencies';
 import update from 'react-addons-update';
 
-
+import { 
+  INVALID_TITLE,
+  INVALID_ADDRESS,
+  INVALID_SUMMARY,
+  MISSING_ADDRESS,
+  MISSING_CITY,
+  MISSING_COUNTRY,
+  MISSING_PICTURE,
+} from '../../constants/warningMessages.js';
+import { LONG } from '../../constants/notificationDisplayTimes.js';
 
 const host = Config.getValue('apiHost');
 const LOCKTRIP_UPLOAD_URL = `${host}images/upload`;
@@ -306,7 +315,7 @@ class CreateListingPage extends React.Component {
           const errors = data.errors;
           for (let key in errors) {
             if (typeof errors[key] !== 'function') {
-              NotificationManager.warning(errors[key].message);
+              NotificationManager.warning(errors[key].message, '', LONG);
             }
           }
         });
@@ -484,25 +493,25 @@ class CreateListingPage extends React.Component {
   finish() {
     const { name, street, city, country, isAddressSelected, text, uploadedFilesUrls } = this.state;
     if (name.length < 2) {
-      NotificationManager.warning('Title should be at least 2 characters');
+      NotificationManager.warning(INVALID_TITLE, '', LONG);
       this.props.history.push('/profile/listings/create/landing/');
     } else if (!isAddressSelected) {
-      NotificationManager.warning('Select a valid address');
+      NotificationManager.warning(MISSING_ADDRESS, '', LONG);
       this.props.history.push('/profile/listings/create/location/');
     } else if (street.length < 6) {
-      NotificationManager.warning('Address should be at least 6 characters long');
+      NotificationManager.warning(INVALID_ADDRESS, '' , LONG);
       this.props.history.push('/profile/listings/create/location/');
     } else if (!city || city.trim() === '') {
-      NotificationManager.warning('City is required');
+      NotificationManager.warning(MISSING_CITY, '', LONG);
       this.props.history.push('/profile/listings/create/location/');
     } else if (!country || country.trim() === '') {
-      NotificationManager.warning('Country is required');
+      NotificationManager.warning(MISSING_COUNTRY, '', LONG);
       this.props.history.push('/profile/listings/create/location/');
     } else if (text.length < 6) {
-      NotificationManager.warning('Summary should be at least 6 characters long');
+      NotificationManager.warning(INVALID_SUMMARY, '', LONG);
       this.props.history.push('/profile/listings/create/description/');
     } else if (uploadedFilesUrls.length < 1) {
-      NotificationManager.warning('At least 1 picture is required');
+      NotificationManager.warning(MISSING_PICTURE, '', LONG);
       this.props.history.push('/profile/listings/create/photos/');
     } else {
       this.captcha.execute();

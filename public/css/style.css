@@ -2957,11 +2957,11 @@ td {
     color: #d87a61;
 }
 
-#room-book-confirm .order-total,
+/* #room-book-confirm .order-total,
 .order-name p {
     text-align: right;
     padding-right: 20px;
-}
+} */
 
 #room-book-confirm::after {
     content: '';

@@ -2,6 +2,8 @@ import { Modal } from 'react-bootstrap';
 import PropTypes from 'prop-types';
 import React from 'react';
 
+import { Config } from '../../../config.js';
+
 import { PASSWORD_PROMPT } from '../../../constants/modals.js';
 
 function PasswordModal(props) {
@@ -15,7 +17,10 @@ function PasswordModal(props) {
         </Modal.Header>
         <Modal.Body>
           <form onSubmit={(e) => { e.preventDefault(); props.handleSubmit(); }}>
-            <input type="password" placeholder={props.placeholder} name="password" value={props.password} className="form-control" onChange={props.onChange} />
+            <div className="input-container">
+              <img src={Config.getValue('basePath') + 'images/login-pass.png'} className="password-image" alt="pass" />
+              <input type="password" placeholder={props.placeholder} name="password" value={props.password} className="with-icon" onChange={props.onChange} />
+            </div>
             <button type="submit" className="btn btn-primary">Confirm</button>
           </form>
         </Modal.Body>

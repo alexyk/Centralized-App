@@ -74,7 +74,6 @@ class MessagesChatPage extends React.Component {
       recipient: this.state.recipientId,
       message: this.state.message
     };
-    console.log(this.props.match.params.id);
     requester.sendMessage(message, this.props.match.params.id).then(res => {
       res.body.then(data => {
         let messages = this.state.messages;
