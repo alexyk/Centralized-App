@@ -201,10 +201,10 @@ class ProfileVerificationPage extends React.Component {
     const isTwoPicturesUploaded = this.state.uploadedFilegovernmentIdHolderPhoto != null && this.state.uploadedFilegovernmentIdPhoto != null;
     const saveButtonClass = this.state.uploadedFilegovernmentIdPhoto == null || this.state.uploadedFilegovernmentIdHolderPhoto == null ? 'unactive' : 'active';
     return (
-      <div>
+      <div id="profile-trust-and-verification">
         <h2>Identification</h2>
         <hr />
-        <h5>For your security and your host's, we need to verify your identity. The informaction you share will be used only for verification. You'll only ever need to do this once.</h5>
+        <h5>Your Government ID will be used for verification of your identity and allowing you access to certain features. It will not be shared with anyone else.</h5>
 
         {this.state.verified == true ? <div>Verified</div> : this.state.governmentIdHolderPhoto == 'true' && this.state.governmentIdPhoto == 'true' ? <div>Pending</div> :
           <div>
@@ -236,8 +236,8 @@ class ProfileVerificationPage extends React.Component {
               <div className="left-part">
                 <h2>{this.state.activeTab == true ? 'Government ID' : 'Holder + Government ID'}</h2>
                 {this.state.activeTab == true ?
-                  <h5>Phasellus imperdiet purus sit amet turpis sagittis, in efficitur augue ornare. Duis id lorem mauris. Morbi volutpat augue quis ex sodales, a dignissim velit vehicula. Nam ut mauris non tortor interdum ultricies. Praesent vulputate ultrices ex, sed vulputate nulla tempus eu.</h5> :
-                  <h5>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean sed suscipit lorem, id cursus tellus. Nam finibus, ante vel consequat euismod, libero nisl pellentesque eros, ultricies iaculis augue purus in mauris. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos.</h5>
+                  <h5>Upload an existing picture of your ID or use your web camera to take one.</h5> :
+                  <h5>In order to be sure that the cardholder is you, we need you to be on the picture holding the card near your face.</h5>
                 }
               </div>
               <div className="right-part">
