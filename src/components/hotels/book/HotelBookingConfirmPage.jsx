@@ -21,6 +21,7 @@ import { connect } from 'react-redux';
 import moment from 'moment';
 import requester from '../../../initDependencies';
 import { setBestPrice } from '../../../actions/bookingBestPrice';
+import { CurrencyConverter } from '../../../services/utilities/currencyConverter';
 
 const ERROR_MESSAGE_TIME = 20000;
 const SEARCH_EXPIRE_TIME = 900000;
@@ -493,13 +494,14 @@ class HotelBookingConfirmPage extends React.Component {
     const roomsXMLCurrency = this.getRoomsXmlCurrency();
 
     if (booking) {
+      const locRate = Number(Number(this.props.paymentInfo.locRate).toFixed(2));
+      const currency = this.props.paymentInfo.currency;
       booking.forEach((bookingRoom, index) => {
-        const locRate = Number(Number(this.props.paymentInfo.locRate).toFixed(2));
         rows.push(
           <tr key={(1 + index) * 1000} className="booking-room">
             <td>{bookingRoom.room.roomType.text}</td>
             <td><span
-              className="booking-price">{this.props.paymentInfo.currency} {this.state.rates && (bookingRoom.room.totalSellingPrice.amt * this.state.rates[ROOMS_XML_CURRENCY][this.props.paymentInfo.currency]).toFixed(2)} ({(bookingRoom.room.totalSellingPrice.amt / this.state.locRate).toFixed(4)} LOC)</span>
+              className="booking-price">{currency} {this.state.rates && (CurrencyConverter.convert(this.state.rates, ROOMS_XML_CURRENCY, currency, bookingRoom.room.totalSellingPrice.amt)).toFixed(2)} ({(bookingRoom.room.totalSellingPrice.amt / this.state.locRate).toFixed(4)} LOC)</span>
             </td>
           </tr>
         );
@@ -525,12 +527,13 @@ class HotelBookingConfirmPage extends React.Component {
     const locPrice = this.state.data && this.state.data.locPrice;
     const locRate = Number(Number(this.props.paymentInfo.locRate).toFixed(2));
     const roomsXMLCurrency = this.getRoomsXmlCurrency();
+    const currency = this.props.paymentInfo.currency;
     rows.push(
       <tr key={2}>
         <td
           key={fees.length}>{`Cancel on ${moment(arrivalDate).format('DD MMM YYYY')}`}</td>
         <td><span
-          className="booking-price">{this.props.paymentInfo.currency} {(fiatPrice * this.state.rates[ROOMS_XML_CURRENCY][this.props.paymentInfo.currency]).toFixed(2)} ({(fiatPrice / this.state.locRate).toFixed(4)} LOC)</span>
+          className="booking-price">{currency} {this.state.rates && (CurrencyConverter.convert(this.state.rates, ROOMS_XML_CURRENCY, currency, fiatPrice)).toFixed(2)} ({(fiatPrice / this.state.locRate).toFixed(4)} LOC)</span>
         </td>
       </tr>
     );
@@ -542,6 +545,7 @@ class HotelBookingConfirmPage extends React.Component {
     const rows = [];
     const fees = this.getCancellationFees();
     const roomsXMLCurrency = this.getRoomsXmlCurrency();
+    const currency = this.props.paymentInfo.currency;
 
     if (fees.length === 0) {
       this.addFreeClauseRow(rows, arrivalDate);
@@ -567,7 +571,7 @@ class HotelBookingConfirmPage extends React.Component {
             <tr key={3 * 1000 + feeIndex + 1}>
               <td>{`Cancel after ${date} including`}</td>
               <td><span
-                className="booking-price">{this.props.paymentInfo.currency} {(this.state.rates && (amount * this.state.rates[ROOMS_XML_CURRENCY][this.props.paymentInfo.currency])).toFixed(2)} ({(amount / this.state.locRate).toFixed(4)} LOC)</span>
+                className="booking-price">{currency} {this.state.rates && (CurrencyConverter.convert(this.state.rates, ROOMS_XML_CURRENCY, currency, amount)).toFixed(2)} ({(amount / this.state.locRate).toFixed(4)} LOC)</span>
               </td>
             </tr>
           );
@@ -628,12 +632,14 @@ class HotelBookingConfirmPage extends React.Component {
 
     const booking = data && data.booking.hotelBooking;
     const fiatPrice = data && data.fiatPrice;
-    const locPrice =  fiatPrice / locRate; // this.state.data && this.state.data.locPrice;
+    const locPrice = fiatPrice / locRate; // this.state.data && this.state.data.locPrice;
     const isUserInfoIsComplete = this.isUserInfoIsComplete(userInfo);
 
     const isVerify = true;
     // const locRate = Number(Number(this.props.paymentInfo.locRate).toFixed(2));
     const roomsXMLCurrency = this.getRoomsXmlCurrency();
+    const currency = this.props.paymentInfo.currency;
+
     return (
       <div>
         <div>
@@ -723,7 +729,7 @@ class HotelBookingConfirmPage extends React.Component {
                     <button className="btn btn-primary btn-book" onClick={(e) => this.props.history.goBack()}>Back</button>
                     <select
                       className="currency"
-                      value={this.props.paymentInfo.currency}
+                      value={currency}
                       style={{ 'height': '40px', 'marginBottom': '10px', 'textAlignLast': 'right', 'paddingRight': '45%', 'direction': 'rtl' }}
                       onChange={(e) => this.props.dispatch(setCurrency(e.target.value))}
                     >

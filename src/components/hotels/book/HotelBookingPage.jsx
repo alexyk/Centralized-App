@@ -12,6 +12,7 @@ import moment from 'moment';
 import requester from '../../../initDependencies';
 import { setCurrency } from '../../../actions/paymentInfo';
 import validator from 'validator';
+import { CurrencyConverter } from '../../../services/utilities/currencyConverter';
 import { withRouter } from 'react-router-dom';
 
 class HotelBookingPage extends React.Component {
@@ -142,7 +143,7 @@ class HotelBookingPage extends React.Component {
   getNewSearchParams() {
     const array = [];
     const pairs = this.props.location.search.substr(1).split('&');
-    for(let i = 0; i < pairs.length; i++) {
+    for (let i = 0; i < pairs.length; i++) {
       let pair = pairs[i];
       array.push(pair);
     }
@@ -247,8 +248,9 @@ class HotelBookingPage extends React.Component {
     const hotelCityName = this.state.hotel && this.state.hotel.city;
     const rooms = this.state.rooms;
     // console.log(this.state.pictures);
+    const currency = this.props.paymentInfo.currency;
     const hotelPicUrl = this.state.pictures && this.state.pictures.length > 0 ? this.state.pictures[0].url : '/listings/images/default.png';
-    const priceInSelectedCurrency = this.state.rates && Number(this.state.totalPrice * this.state.rates[ROOMS_XML_CURRENCY][this.props.paymentInfo.currency]).toFixed(2);
+    const priceInSelectedCurrency = this.state.rates && Number(CurrencyConverter.convert(this.state.rates, ROOMS_XML_CURRENCY, currency, this.state.totalPrice)).toFixed(2);
 
     return (
       <div>
@@ -283,7 +285,7 @@ class HotelBookingPage extends React.Component {
                       } else {
                         return (
                           <h6 key={index}>
-                            {room.name}, {this.state.nights} nights: {this.props.paymentInfo.currencySign}{this.state.rates && (room.price * this.state.rates[ROOMS_XML_CURRENCY][this.props.paymentInfo.currency]).toFixed(2)} (LOC {Number(room.price / this.state.locRate).toFixed(2)})
+                            {room.name}, {this.state.nights} nights: {this.props.paymentInfo.currencySign}{this.state.rates && (CurrencyConverter.convert(this.state.rates, ROOMS_XML_CURRENCY, currency, room.price)).toFixed(2)} (LOC {Number(room.price / this.state.locRate).toFixed(2)})
                           </h6>
                         );
                       }

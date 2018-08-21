@@ -10,6 +10,8 @@ import PropTypes from 'prop-types';
 import { ROOMS_XML_CURRENCY } from '../../../constants/currencies.js';
 import React from 'react';
 import ReactHtmlParser from 'react-html-parser';
+import { CurrencyConverter } from '../../../services/utilities/currencyConverter';
+
 import Slider from 'react-slick';
 import { connect } from 'react-redux';
 
@@ -45,7 +47,7 @@ function Result(props) {
   const { currencySign } = props.paymentInfo;
   const isPriceLoaded = !!price;
   let locPrice = ((price / locRate) / props.nights).toFixed(2);
-  const priceInSelectedCurrency = rates && ((price * (rates[ROOMS_XML_CURRENCY][props.paymentInfo.currency])) / props.nights).toFixed(2);
+  const priceInSelectedCurrency = rates && ((CurrencyConverter.convert(rates, ROOMS_XML_CURRENCY, props.paymentInfo.currency, price)) / props.nights).toFixed(2);
 
   generalDescription = generalDescription && generalDescription.substr(0, 250);
 
