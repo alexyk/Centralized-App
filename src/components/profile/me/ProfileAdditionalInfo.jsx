@@ -25,12 +25,13 @@ class ProfileAdditionalInfo extends React.Component {
 
   async componentDidMount() {
     requester.getUserInfo().then(res => res.body).then(data => {
-
-      this.setState({
-        aboutMe: data.userIdentity.aboutMe !== null ? data.userIdentity.aboutMe : '',
-        work: data.userIdentity.work !== null ? data.userIdentity.work : '',
-        school: data.userIdentity.school !== null ? data.userIdentity.school : '',
-      });
+      if (data.userIdentity) {
+        this.setState({
+          aboutMe: data.userIdentity.aboutMe !== null ? data.userIdentity.aboutMe : '',
+          work: data.userIdentity.work !== null ? data.userIdentity.work : '',
+          school: data.userIdentity.school !== null ? data.userIdentity.school : '',
+        });
+      }
     }).then(() => {
       this.setState({ loading: false });
     });

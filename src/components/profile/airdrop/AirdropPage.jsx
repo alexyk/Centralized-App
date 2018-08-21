@@ -56,12 +56,12 @@ class AirdropPage extends Component {
   componentWillMount() {
     if (this.props.location.search && this.props.location.search.indexOf('emailtoken') !== -1) {
       requester.verifyUserEmail(this.props.location.search).then(() => {
-        console.log('verifying user email');
+        // console.log('verifying user email');
         NotificationManager.success(EMAIL_VERIFIED, '', LONG);
         if (this.isUserLogged()) {
           requester.getUserAirdropInfo().then(res => {
             res.body.then(data => {
-              console.log('dispatching user info');
+              // console.log('dispatching user info');
               this.dispatchAirdropInfo(data);
             });
           });

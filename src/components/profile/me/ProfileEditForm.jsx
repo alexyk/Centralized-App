@@ -158,7 +158,7 @@ class ProfileEditForm extends React.Component {
     for (let i = (new Date()).getFullYear(); i >= 1940; i--) {
       years.push(<option key={i} value={i}>{i}</option>);
     }
-    console.log(this.state.country);
+    // console.log(this.state.country);
     return (
       <div id="my-profile-edit-form">
         <h2>Edit Profile</h2>

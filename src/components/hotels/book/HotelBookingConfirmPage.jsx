@@ -360,7 +360,7 @@ class HotelBookingConfirmPage extends React.Component {
                   queryString: queryString
                 };
 
-                console.log(bookingConfirmObj);
+                // console.log(bookingConfirmObj);
                 requester.confirmBooking(bookingConfirmObj).then(() => {
                   NotificationManager.success(LOC_PAYMENT_INITIATED, '', LONG);
                   setTimeout(() => {
@@ -691,9 +691,10 @@ class HotelBookingConfirmPage extends React.Component {
                       </div>
                       <div className="row order-total">
                         <div>
-                          <p>Timer: <strong>{seconds}</strong> sec</p>
+                          {/* <p>Timer: <strong>{seconds}</strong> sec</p> */}
                           <p className="booking-card-price">Order Card Total: {this.props.paymentInfo.currency} {rates && (fiatPrice * rates[ROOMS_XML_CURRENCY][this.props.paymentInfo.currency]).toFixed(2)}</p>
-                          <p>Pay with Credit Card</p>
+                          <p>Order LOC Total: <span className="booking-price">LOC {(locPrice).toFixed(4)}</span></p>
+                          {/* <p>Pay with Credit Card</p>
                           {!isUserInfoIsComplete ? <div>Your profile isn't complete to pay with credit card. Please go to <Link to="/profile/me/edit">Edit Profile</Link> and provide mandatory information</div> : userInfo.verified
                             ? <button className="btn btn-primary btn-book" onClick={() => this.payWithCard()}>Pay with card</button>
                             :
@@ -710,11 +711,10 @@ class HotelBookingConfirmPage extends React.Component {
                                   onChange={this.onChange} />
                               </div>
                             </div>
-                          }
+                          } */}
                         </div>
                         <div>
-                          <p>Order LOC Total:</p>
-                          <p className="booking-price">LOC {(locPrice).toFixed(4)}</p>
+                          {/* <p className="booking-price">LOC {(locPrice).toFixed(4)}</p> */}
 
                           {!confirmed
                             ? <button className="btn btn-primary btn-book" onClick={(e) => this.openModal(PASSWORD_PROMPT, e)}>Pay with LOC</button>
