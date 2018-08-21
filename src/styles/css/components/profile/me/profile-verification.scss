@@ -5,6 +5,11 @@
 @import '../../../base/mixins';
 @import '../../../base/helpers';
 
+.webcam {
+  width: 100%;
+  height: 100%;
+}
+
 #profile-trust-and-verification {
   hr {
     border-color: #DDD;
@@ -75,10 +80,6 @@
       color: $white;
       content: "\f00d";
     }
-  }
-  .webcam {
-    width: 100%;
-    height: 100%;
   }
   .button {
     display: flex;
