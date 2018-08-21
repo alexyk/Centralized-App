@@ -74,7 +74,7 @@ class RoomInfoModal extends React.Component {
 
   render() {
 
-    console.log(this.state);
+    // console.log(this.state);
     return (
       <div>
         <Modal show={this.props.isActive} onHide={e => this.props.closeModal(SMS_VERIFICATION)} className="modal fade myModal">

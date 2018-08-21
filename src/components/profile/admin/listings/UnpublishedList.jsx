@@ -75,7 +75,7 @@ class UnpublishedList extends React.Component {
 
   componentDidMount() {
     let search = this.buildSearchTerm();
-    console.log(search.searchTermMap);
+    // console.log(search.searchTermMap);
     requester.getAllUnpublishedListings(search.searchTermMap).then(res => {
       res.body.then(data => {
         this.setState({ listings: data.content, loading: false, totalElements: data.totalElements });

@@ -17,8 +17,6 @@ class NavProfile extends React.Component {
     requester.getUserInfo().then(res => {
       res.body.then(data => {
         this.setState({ roles: data.roles, loading: false });
-        console.log("asd");
-        console.log(data.roles);
       });
     });
   }

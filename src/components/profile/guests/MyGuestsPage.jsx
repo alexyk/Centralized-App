@@ -66,7 +66,7 @@ class MyGuestsPage extends React.Component {
   acceptReservation(captchaToken) {
     const id = this.state.selectedReservationId;
     requester.acceptReservation(id, captchaToken).then(res => {
-      console.log(res);
+      // console.log(res);
       if (res.success) {
         this.setReservationIsAccepted(id, true);
         NotificationManager.success(RESERVATION_ACCEPTED, 'Reservation Operations', LONG);

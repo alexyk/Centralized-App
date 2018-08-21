@@ -66,7 +66,6 @@ class HotelTripDetails extends React.Component {
     const bookingId = this.props.match.params.id;
     requester.getHotelBookingDetails(bookingId).then(res => {
       res.body.then(data => {
-        console.log(data);
         if (data) {
           const bookingData = data;
           this.extractDatesData(bookingData);
