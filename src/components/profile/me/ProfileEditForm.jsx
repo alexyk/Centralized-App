@@ -316,8 +316,6 @@ class ProfileEditForm extends React.Component {
               <select name="countryState" id="countryState" onChange={this.onChange} value={this.state.countryState}>
                 <option disabled value="">State</option>
                 {this.state.states.map((item, i) => {
-                  console.log('asq')
-                  console.log(item);
                   return <option key={i} value={item.id}>{item.name}</option>;
                 })}
               </select>
