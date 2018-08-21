@@ -28,7 +28,7 @@ class ProfileEditForm extends React.Component {
       gender: '',
       country: { id: 1, name: 'US', code: 'US' },
       city: '',
-      state: '',
+      countryState: '',
       address: '',
       locAddress: '',
       zipCode: '',
@@ -36,6 +36,7 @@ class ProfileEditForm extends React.Component {
       currencies: [],
       cities: [],
       countries: [],
+      states: [],
       loading: true
     };
 
@@ -76,7 +77,7 @@ class ProfileEditForm extends React.Component {
           gender: data.gender ? data.gender : '',
           country: data.country ? data.country : { name: 'United States of America', id: 1, code: 'US' },
           city: data.city ? data.city : '',
-          state: data.state ? data.state : '',
+          countryState: data.countryState ? data.countryState.id : '',
           address: data.address ? data.address : '',
           locAddress: data.locAddress !== null ? data.locAddress : '',
           jsonFile: data.jsonFile !== null ? data.jsonFile : '',
@@ -86,6 +87,12 @@ class ProfileEditForm extends React.Component {
           month: month,
           year: year
         });
+
+        if (data.country && ['Canada', 'India', 'United States of America'].includes(data.country.name)) {
+          requester.getStates(this.state.country.id)
+            .then(res => res.body)
+            .then(data => this.setState({ states: data }));
+        }
       }).then(() => {
         this.setState({ loading: false });
       });
@@ -102,7 +109,6 @@ class ProfileEditForm extends React.Component {
 
   updateUser(captchaToken) {
     let birthday = `${this.state.day}/${this.state.month}/${this.state.year}`;
-
     let userInfo = {
       firstName: this.state.firstName,
       lastName: this.state.lastName,
@@ -112,7 +118,7 @@ class ProfileEditForm extends React.Component {
       gender: this.state.gender,
       country: parseInt(this.state.country.id, 10),
       city: this.state.city,
-      state: this.state.state,
+      countryState: parseInt(this.state.countryState, 10),
       address: this.state.address,
       birthday: birthday,
       locAddress: this.state.locAddress,
@@ -138,13 +144,22 @@ class ProfileEditForm extends React.Component {
   }
 
   updateCountry(e) {
+    let value = JSON.parse(e.target.value);
+
+    if (['Canada', 'India', 'United States of America'].includes(value.name)) {
+      requester.getStates(value.id)
+        .then(res => res.body)
+        .then(data => this.setState({ states: data }));
+    }
+
     this.setState({
-      country: JSON.parse(e.target.value),
+      country: value,
       city: ''
     });
   }
 
   handleCitySelect(place) {
+    console.log(place);
     this.setState({ city: place.formatted_address });
   }
 
@@ -271,7 +286,7 @@ class ProfileEditForm extends React.Component {
               <label htmlFor="address">Where do you live <span className="mandatory">*</span></label>
               <div className='select'>
                 <select name="country" id="address" onChange={this.updateCountry} value={JSON.stringify(this.state.country)}>
-                  <option disabled value="">Country <span className="mandatory">*</span></option>
+                  <option disabled value="">Country</option>
                   {this.state.countries.map((item, i) => {
                     return <option key={i} value={JSON.stringify(item)}>{item.name}</option>;
                   })}
@@ -295,9 +310,18 @@ class ProfileEditForm extends React.Component {
             <br className="clear-both" />
           </div>
 
-          {['Canada', 'India', 'United States of America'].includes(this.state.country.name) ? <div className="state">
-            <label htmlFor="state">State <span className="mandatory">*</span></label>
-            <input id="state" name="state" value={this.state.state} onChange={this.onChange} type="text" placeholder='Enter your state' />
+          {['Canada', 'India', 'United States of America'].includes(this.state.country.name) ? <div className="countryState">
+            <label htmlFor="countryState">State <span className="mandatory">*</span></label>
+            <div className='select'>
+              <select name="countryState" id="countryState" onChange={this.onChange} value={this.state.countryState}>
+                <option disabled value="">State</option>
+                {this.state.states.map((item, i) => {
+                  console.log('asq')
+                  console.log(item);
+                  return <option key={i} value={item.id}>{item.name}</option>;
+                })}
+              </select>
+            </div>
           </div> : null}
 
           <div className="address">
