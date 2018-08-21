@@ -185,8 +185,8 @@ class Result extends React.Component {
             {isPriceLoaded && <div className="price">1 night: LOC {locPrice}</div>}
             <div>
               {!isPriceLoaded && this.props.allElements
-                ? <button disabled className="btn">Unavailable</button>
-                : <Link className="btn" to={`${redirectURL}/${id}${search.substr(0, endOfSearch)}`}>Book now</Link>
+                ? <button disabled className="mobile-pricing-button">Unavailable</button>
+                : <Link className="mobile-pricing-button" to={`${redirectURL}/${id}${search.substr(0, endOfSearch)}`}>Book now</Link>
               }
             </div>
           </div>
