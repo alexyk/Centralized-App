@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 import 'react-notifications/lib/notifications.css';
 
@@ -10,6 +11,10 @@ import { Config } from '../../../config';
 import { TokenTransactions } from '../../../services/blockchain/tokenTransactions';
 
 import '../../../styles/css/components/profile/wallet/wallet-index-page.css';
+
+import { PROCESSING_TRANSACTION } from '../../../constants/infoMessages.js';
+import { TRANSACTION_SUCCESSFUL } from '../../../constants/successMessages.js';
+import { LONG } from '../../../constants/notificationDisplayTimes.js';
 
 class WalletIndexPage extends React.Component {
   constructor(props) {
@@ -34,7 +39,7 @@ class WalletIndexPage extends React.Component {
 
   sendTokens() {
     // console.log('amount : ' + this.state.locAmount * Math.pow(10, 18));
-    NotificationManager.info('We are processing your transaction through the ethereum network. It might freeze your screen for about 10 seconds...', 'Transactions');
+    NotificationManager.info(PROCESSING_TRANSACTION, 'Transactions', LONG);
     setTimeout(() => {
       TokenTransactions.sendTokens(
         this.state.jsonFile,
@@ -42,22 +47,22 @@ class WalletIndexPage extends React.Component {
         this.state.recipientAddress,
         (this.state.locAmount * Math.pow(10, 18)).toString()
       ).then(() => {
-        NotificationManager.success('Transaction made successfully', 'Send Tokens');
+        NotificationManager.success(TRANSACTION_SUCCESSFUL, 'Send Tokens', LONG);
         this.setState({
           recipientAddress: '',
           locAmount: 0,
           password: ''
         });
         // console.log(x);
-      }).catch(x => {
-        if (x.hasOwnProperty('message')) {
-          NotificationManager.warning(x.message, 'Send Tokens');
-        } else if (x.hasOwnProperty('err') && x.err.hasOwnProperty('message')) {
-          NotificationManager.warning(x.err.message, 'Send Tokens');
-        } else if (typeof x === 'string') {
-          NotificationManager.warning(x, 'Send Tokens');
+      }).catch(error => {
+        if (error.hasOwnProperty('message')) {
+          NotificationManager.warning(error.message, 'Send Tokens', LONG);
+        } else if (error.hasOwnProperty('err') && error.err.hasOwnProperty('message')) {
+          NotificationManager.warning(error.err.message, 'Send Tokens', LONG);
+        } else if (typeof error === 'string') {
+          NotificationManager.warning(error, 'Send Tokens', LONG);
         } else {
-          console.log(x);
+          console.log(error);
         }
       });
     }, 1000);
@@ -129,6 +134,10 @@ class WalletIndexPage extends React.Component {
     );
   }
 }
+
+WalletIndexPage.propTypes = {
+  userInfo: PropTypes.object
+};
 
 const mapStateToProps = (state) => ({
   userInfo: state.userInfo

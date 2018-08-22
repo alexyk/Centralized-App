@@ -9,6 +9,7 @@ function PopularDestinationsCarousel(props) {
   const pictures = [
     {
       id: 52612,
+      countryId: 2,
       query: 'London',
       image: `${Config.getValue('basePath')}images/destinations/London.png`,
       searchUrl: `hotels/listings?region=52612&currency=${props.paymentInfo.currency}&startDate=${moment().add(1, 'days').format('DD/MM/YYYY')}&endDate=${moment().add(2, 'days').format('DD/MM/YYYY')}&rooms=%5B%7B"adults":2,"children":%5B%5D%7D%5D`,
@@ -16,18 +17,21 @@ function PopularDestinationsCarousel(props) {
     {
       id: 18417,
       query: 'Madrid',
+      countryId: 3,
       image: `${Config.getValue('basePath')}images/destinations/Madrid.png`,
       searchUrl: `hotels/listings?region=18417&currency=${props.paymentInfo.currency}&startDate=${moment().add(1, 'days').format('DD/MM/YYYY')}&endDate=${moment().add(2, 'days').format('DD/MM/YYYY')}&rooms=%5B%7B"adults":2,"children":%5B%5D%7D%5D`,
     },
     {
       id: 16471,
       query: 'Paris',
+      countryId: 6,
       image: `${Config.getValue('basePath')}images/destinations/Paris.png`,
       searchUrl: `hotels/listings?region=16471&currency=${props.paymentInfo.currency}&startDate=${moment().add(1, 'days').format('DD/MM/YYYY')}&endDate=${moment().add(2, 'days').format('DD/MM/YYYY')}&rooms=%5B%7B"adults":2,"children":%5B%5D%7D%5D`,
     },
     {
       id: 15375,
       query: 'Sydney',
+      countryId: 24,
       image: `${Config.getValue('basePath')}images/destinations/Sydney.png`,
       searchUrl: `hotels/listings?region=15286&currency=${props.paymentInfo.currency}&startDate=${moment().add(1, 'days').format('DD/MM/YYYY')}&endDate=${moment().add(2, 'days').format('DD/MM/YYYY')}&rooms=%5B%7B"adults":2,"children":%5B%5D%7D%5D`,
     },
@@ -38,7 +42,7 @@ function PopularDestinationsCarousel(props) {
   const SlickButton = (props) => {
     const { currentSlide, slideCount, ...arrowProps } = props;
     return (
-      <button type="button" {...arrowProps} />
+      <button type="button" {...arrowProps} style={{ display: 'none' }}/>
     );
   };
 
@@ -79,7 +83,7 @@ function PopularDestinationsCarousel(props) {
         {pictures.map((dest, i) => {
           return (
             <div key={i} className="popular-destination-image-container">
-              <div onClick={() => props.handleDestinationPick({ id: dest.id, query: dest.query }, dest.searchUrl)}>
+              <div onClick={() => props.handleDestinationPick({ id: dest.id, countryId: dest.countryId, query: dest.query }, dest.searchUrl)}>
                 <img src={dest.image} alt={dest.query} />
               </div>
             </div>

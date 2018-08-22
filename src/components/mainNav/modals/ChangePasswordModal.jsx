@@ -4,6 +4,8 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { CHANGE_PASSWORD } from '../../../constants/modals.js';
 
+import '../../../styles/css/components/modals/modal.css';
+
 function ChangePasswordModal(props) {
 
   return (
@@ -15,14 +17,14 @@ function ChangePasswordModal(props) {
         </Modal.Header>
         <Modal.Body>
           <form onSubmit={(e) => { e.preventDefault(); props.handlePasswordChange(); }}>
-            <div className="form-group">
-              <img src={Config.getValue('basePath') + 'images/login-mail.png'} alt="email" />
-              <input type="password" name="newPassword" value={props.newPassword} onChange={props.onChange} className="form-control" placeholder="New password" />
+            <div className="input-container">
+              <img src={Config.getValue('basePath') + 'images/login-pass.png'} className="password-image" alt="password" />
+              <input type="password" name="newPassword" value={props.newPassword} onChange={props.onChange} className="with-icon" placeholder="New password" />
             </div>
 
-            <div className="form-group">
-              <img src={Config.getValue('basePath') + 'images/login-mail.png'} alt="email" />
-              <input type="password" name="confirmNewPassword" value={props.confirmNewPassword} onChange={props.onChange} className="form-control" placeholder="Confirm password" />
+            <div className="input-container">
+              <img src={Config.getValue('basePath') + 'images/login-pass.png'} className="password-image" alt="re-enter password" />
+              <input type="password" name="confirmNewPassword" value={props.confirmNewPassword} onChange={props.onChange} className="with-icon" placeholder="Re-enter password" />
             </div>
 
             <button type="submit" className="btn btn-primary">Save Password</button>

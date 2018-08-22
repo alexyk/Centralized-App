@@ -31,3 +31,8 @@ export const searchInfo = {
   SET_CHILDREN: 'SET_CHILDREN',
   SET_SEARCH_INFO: 'SET_SEARCH_INFO'
 };
+
+// bestPrice actions
+export const bookingBestPrice = {
+  SET_BEST_PRICE: 'SET_BEST_PRICE',
+};

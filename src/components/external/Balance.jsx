@@ -7,6 +7,9 @@ import React from 'react';
 import requester from '../../initDependencies';
 import {withRouter} from 'react-router-dom';
 
+import { COPIED_TO_CLIPBOARD } from '../../constants/infoMessages.js';
+import { LONG } from '../../constants/notificationDisplayTimes.js';
+
 class Balance extends React.Component {
   constructor(props) {
     super(props);
@@ -34,7 +37,6 @@ class Balance extends React.Component {
 
   send() {
     requester.getExternalCampaignBalance({ email: this.state.email }).then(res => {
-      console.log(res);
       if (res.success) {
         res.body.then(data => {
           this.setState({balance: data.count, refLink: Config.getValue("basePath") + "vote?ref=" + data.referralId});
@@ -82,7 +84,7 @@ class Balance extends React.Component {
                            type="text" disabled="disabled" value={this.state.refLink} />
                     &nbsp;
                     <CopyToClipboard text={this.state.refLink} onCopy={() => {
-                      NotificationManager.info('Copied to clipboard.');
+                      NotificationManager.info(COPIED_TO_CLIPBOARD, '', LONG);
                     }}><a href="#" className="btn">Copy</a></CopyToClipboard>
                   </div>
                   }

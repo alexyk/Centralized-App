@@ -9,9 +9,7 @@ import {
 
 const ERROR = require('./../config/errors.json');
 const gasConfig = require('./../config/gas-config.json');
-const {
-  TIMES_GAS_AMOUNT
-} = require('../config/constants.json');
+
 
 export class TokenValidators {
 

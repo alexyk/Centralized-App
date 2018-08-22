@@ -21,6 +21,12 @@ import { setIsLogged } from '../../../actions/userInfo';
 import validator from 'validator';
 import { withRouter } from 'react-router-dom';
 
+import { LONG } from '../../../constants/notificationDisplayTimes.js';
+import { SOCIAL_PROFILE_EMPTY, INVALID_URL } from '../../../constants/errorMessages.js';
+import { PROFILE_SUCCESSFULLY_UPDATED, EMAIL_VERIFIED, VOTE_URL_SUCCESSFULLY_SAVED } from '../../../constants/successMessages.js';
+import { VERIFICATION_EMAIL_SENT, COPIED_TO_CLIPBOARD } from '../../../constants/infoMessages.js';
+import { INVALID_TOKEN } from '../../../constants/warningMessages.js';
+
 class AirdropPage extends Component {
   constructor(props) {
     super(props);
@@ -50,12 +56,12 @@ class AirdropPage extends Component {
   componentWillMount() {
     if (this.props.location.search && this.props.location.search.indexOf('emailtoken') !== -1) {
       requester.verifyUserEmail(this.props.location.search).then(() => {
-        console.log('verifying user email');
-        NotificationManager.info('Email verified.');
+        // console.log('verifying user email');
+        NotificationManager.success(EMAIL_VERIFIED, '', LONG);
         if (this.isUserLogged()) {
           requester.getUserAirdropInfo().then(res => {
             res.body.then(data => {
-              console.log('dispatching user info');
+              // console.log('dispatching user info');
               this.dispatchAirdropInfo(data);
             });
           });
@@ -161,7 +167,7 @@ class AirdropPage extends Component {
                         res.body.then(data => {
                           this.dispatchAirdropInfo(data);
                           // console.log('user info dispatched')
-                          NotificationManager.info('Verification email has been sent. Please follow the link to confirm your email.');
+                          NotificationManager.info(VERIFICATION_EMAIL_SENT, '', LONG);
                         });
                       });
                     });
@@ -179,7 +185,7 @@ class AirdropPage extends Component {
           this.logout();
           this.openModal(AIRDROP_REGISTER);
         } else {
-          NotificationManager.warning('Token expired or invalid');
+          NotificationManager.warning(INVALID_TOKEN, '', LONG);
           this.props.location.href = '/airdrop';
         }
       }).catch(e => {
@@ -227,9 +233,9 @@ class AirdropPage extends Component {
             });
           });
         });
-        NotificationManager.info('Profile saved.');
+        NotificationManager.success(PROFILE_SUCCESSFULLY_UPDATED, '', LONG);
       } else {
-        NotificationManager.info('Profile cannot be empty.');
+        NotificationManager.error(SOCIAL_PROFILE_EMPTY, '', LONG);
       }
     });
   }
@@ -237,18 +243,18 @@ class AirdropPage extends Component {
   handleResendVerificationEmail(e) {
     e.preventDefault();
     requester.resendConfirmationEmail().then(() => {
-      NotificationManager.info('Verification email has been sent.');
+      NotificationManager.info(VERIFICATION_EMAIL_SENT, '', LONG);
     });
   }
 
   handleSaveVoteUrl() {
     if (!validator.isURL(this.state.voteUrl)) {
-      NotificationManager.info('Enter a valid URL.');
+      NotificationManager.error(INVALID_URL, '', LONG);
     } else {
       const { voteUrl } = this.state;
       requester.editAirdropVoteUrl({ voteUrl }).then(() => {
         this.setState({ isVoteUrlEdited: false });
-        NotificationManager.info('Vote URL saved.');
+        NotificationManager.info(VOTE_URL_SUCCESSFULLY_SAVED, '', LONG);
       }).catch(error => {
         console.log(error);
       });
@@ -310,7 +316,14 @@ class AirdropPage extends Component {
               <div className="balance-row">
                 <div className="balance-row__label"><span className="emphasized-text">Your Referral URL</span></div>
                 <div className="balance-row__content"><span className="referral-url">{this.props.airdropInfo.refLink.toString().replace('alpha.', '')}</span></div>
-                <CopyToClipboard text={this.props.airdropInfo.refLink.toString().replace('alpha.', '')} onCopy={() => { NotificationManager.info('Copied to clipboard.'); }}><button className="referral-url-copy">Copy to Clipboard</button></CopyToClipboard>
+                <CopyToClipboard 
+                  text={this.props.airdropInfo.refLink.toString().replace('alpha.', '')} 
+                  onCopy={() => { 
+                    NotificationManager.info(COPIED_TO_CLIPBOARD, '', LONG); 
+                  }}
+                >
+                  <button className="referral-url-copy">Copy to Clipboard</button>
+                </CopyToClipboard>
               </div>
 
               <div className="balance-row">

@@ -66,6 +66,9 @@ $breakpoints: (
       .status {
         font-weight: 400;
       }
+      .icon-question {
+        margin: 0 5px;
+      }
     }
   }
 
@@ -90,7 +93,7 @@ $breakpoints: (
     }
 
     .tablet-col-2 {
-      width: 70%; 
+      width: 70%;
       flex-wrap: wrap;
       @include icon();
       .trips-location,
