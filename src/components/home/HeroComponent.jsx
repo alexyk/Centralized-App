@@ -1,3 +1,5 @@
+import BancorConvertWidget from '../external/BancorConvertWidget';
+// import HomesHeroComponent from './HomesHeroComponent';
 // import PopularListingsCarousel from '../common/listing/PopularListingsCarousel';
 import PropTypes from 'prop-types';
 import React from 'react';
@@ -7,6 +9,7 @@ import requester from '../../initDependencies';
 import HomesSearchBar from '../homes/search/HomesSearchBar';
 import HotelsSearchBar from '../hotels/search/HotelsSearchBar';
 import ListingTypeNav from '../common/listingTypeNav/ListingTypeNav';
+// import PopularDestinationsCarousel from '../hotels/carousel/PopularDestinationsCarousel';
 
 import '../../styles/css/components/hero-component.css';
 import '../../styles/css/components/tabs-component.css';
