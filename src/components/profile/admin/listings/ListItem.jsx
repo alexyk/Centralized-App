@@ -5,8 +5,6 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import Slider from 'react-slick';
 
-let slider = null;
-
 function ListItem(props) {
   const { id, name, lastModify, descriptionText, pictures, currencyCode, defaultDailyPrice, state } = props.item;
   const thumbnails = pictures.map((p, i) => { return { thumbnail: `${Config.getValue('imgHost')}${p.thumbnail}`, index: i }; });
@@ -14,15 +12,17 @@ function ListItem(props) {
     pictures.push({ thumbnail: `${Config.getValue('imgHost')}/listings/images/default.png` });
   }
 
-  const leftButton = <button></button>;
-  const rightButton = <button></button>;
+  const SlickButton = ({ currentSlide, slideCount, ...props }) => (
+    <button {...props} />
+  );
+
   const settings = {
     infinite: true,
     speed: 500,
     slidesToShow: 1,
     slidesToScroll: 1,
-    nextArrow: rightButton,
-    prevArrow: leftButton
+    nextArrow: <SlickButton />,
+    prevArrow: <SlickButton />
   };
 
   let description = descriptionText;
@@ -34,7 +34,7 @@ function ListItem(props) {
     <div className="unpublished-item">
       <div className="unpublished-item_images">
         {thumbnails &&
-          <Slider ref={s => slider = s}
+          <Slider
             {...settings}>
             {thumbnails.map((picture, i) => {
               return (
@@ -60,25 +60,25 @@ function ListItem(props) {
           <div className="minor-actions">
             {descriptionText && descriptionText.length > 300 &&
               (!props.isExpanded
-                ? <div>{ descriptionText.length > 300 && <a href="#" onClick={(e) => props.handleExpandListing(e, id)}>Expand</a>}</div>
-                : <div><a href="#" onClick={(e) => props.handleShrinkListing(e, id)}>Hide</a></div>
+                ? <div>{descriptionText.length > 300 && <a href="" onClick={(e) => props.handleExpandListing(e, id)}>Expand</a>}</div>
+                : <div><a href="" onClick={(e) => props.handleShrinkListing(e, id)}>Hide</a></div>
               )
             }
 
-            <div><a href="#" onClick={(e) => props.openContactHostModal(e, id)}>Contact Host</a></div>
+            <div><a href="" onClick={(e) => props.openContactHostModal(e, id)}>Contact Host</a></div>
             {state === 'inactive' &&
-              <div><a href="#" className="delete" onClick={(e) => props.handleOpenDeleteListingModal(e, id, name)}>Delete</a></div>
+              <div><a href="" className="delete" onClick={(e) => props.handleOpenDeleteListingModal(e, id, name)}>Delete</a></div>
             }
           </div>
           <div className="major-actions">
             {state === 'inactive' &&
-              <div><a href="#" onClick={(e) => props.updateListingStatus(e, id, 'active')}>Approve</a></div>
+              <div><a href="" onClick={(e) => props.updateListingStatus(e, id, 'active')}>Approve</a></div>
             }
             {state === 'inactive' &&
-              <div><a href="#" onClick={(e) => props.updateListingStatus(e, id, 'denied')}>Deny</a></div>
+              <div><a href="" onClick={(e) => props.updateListingStatus(e, id, 'denied')}>Deny</a></div>
             }
             {state === 'active' &&
-              <div><a href="#" onClick={(e) => props.updateListingStatus(e, id, 'inactive')}>Unpublish</a></div>
+              <div><a href="" onClick={(e) => props.updateListingStatus(e, id, 'inactive')}>Unpublish</a></div>
             }
           </div>
         </div>

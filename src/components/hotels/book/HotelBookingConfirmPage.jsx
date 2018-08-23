@@ -1,27 +1,26 @@
 import '../../../styles/css/components/hotels/book/hotel-booking-confirm-page.css';
 
 import { EXTRA_LONG, LONG } from '../../../constants/notificationDisplayTimes.js';
-import { Link, withRouter } from 'react-router-dom';
-import { PASSWORD_PROMPT, SMS_VERIFICATION } from '../../../constants/modals.js';
 import { ROOMS_XML_CURRENCY, ROOMS_XML_CURRENCY_DEV } from '../../../constants/currencies.js';
 import { closeModal, openModal } from '../../../actions/modalsInfo.js';
 import { setCurrency, setLocRate } from '../../../actions/paymentInfo';
 
 import { Config } from '../../../config.js';
+import { CurrencyConverter } from '../../../services/utilities/currencyConverter';
 import { HotelReservation } from '../../../services/blockchain/hotelReservation';
 import { LOC_PAYMENT_INITIATED } from '../../../constants/successMessages.js';
 import { NotificationManager } from 'react-notifications';
+import { PASSWORD_PROMPT } from '../../../constants/modals.js';
 import { PROCESSING_TRANSACTION } from '../../../constants/infoMessages.js';
 import PasswordModal from '../../common/modals/PasswordModal';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { SEARCH_EXPIRED } from '../../../constants/infoMessages.js';
-import SMSCodeModal from '../modals/SMSCodeModal';
 import { connect } from 'react-redux';
 import moment from 'moment';
 import requester from '../../../initDependencies';
 import { setBestPrice } from '../../../actions/bookingBestPrice';
-import { CurrencyConverter } from '../../../services/utilities/currencyConverter';
+import { withRouter } from 'react-router-dom';
 
 const ERROR_MESSAGE_TIME = 20000;
 const SEARCH_EXPIRE_TIME = 900000;
@@ -392,7 +391,7 @@ class HotelBookingConfirmPage extends React.Component {
     const password = this.state.password;
     const preparedBookingId = this.state.data.preparedBookingId;
     const wei = (this.tokensToWei(this.state.data.locPrice.toString()));
-    console.log(wei);
+    // console.log(wei);
     const booking = this.state.data.booking.hotelBooking;
     const endDate = moment.utc(booking[0].arrivalDate, 'YYYY-MM-DD').add(booking[0].nights, 'days');
 
@@ -405,8 +404,8 @@ class HotelBookingConfirmPage extends React.Component {
     requester.getMyJsonFile().then(res => {
       res.body.then(data => {
         setTimeout(() => {
-          console.log('HotelBookingConfirmPage.jsx, wei:', wei.toString());
-          console.log('HotelBookingConfirmPage.jsx, end date:', endDate.unix().toString());
+          // console.log('HotelBookingConfirmPage.jsx, wei:', wei.toString());
+          // console.log('HotelBookingConfirmPage.jsx, end date:', endDate.unix().toString());
 
           HotelReservation.createSimpleReservationSingleWithdrawer(
             data.jsonFile,
@@ -414,7 +413,7 @@ class HotelBookingConfirmPage extends React.Component {
             wei.toString(),
             endDate.unix().toString(),
           ).then(transaction => {
-            console.log('transaction', transaction);
+            // console.log('transaction', transaction);
             const bookingConfirmObj = {
               bookingId: preparedBookingId,
               transactionHash: transaction.hash,
@@ -428,7 +427,7 @@ class HotelBookingConfirmPage extends React.Component {
               }, 2000);
             }).catch(error => {
               NotificationManager.success('Something with your transaction went wrong...', '', LONG);
-              console.log(error);
+              // console.log(error);
             });
           }).catch(error => {
             if (error.hasOwnProperty('message')) {
@@ -481,20 +480,18 @@ class HotelBookingConfirmPage extends React.Component {
   getRoomsXmlCurrency() {
     const env = Config.getValue('env');
     if (env === 'staging' || env === 'development') {
-      console.log('staging');
+      // console.log('staging');
       return ROOMS_XML_CURRENCY;
     } else {
-      console.log('prod');
+      // console.log('prod');
       return ROOMS_XML_CURRENCY_DEV;
     }
   }
 
   getRoomRows(booking) {
     const rows = [];
-    const roomsXMLCurrency = this.getRoomsXmlCurrency();
 
     if (booking) {
-      const locRate = Number(Number(this.props.paymentInfo.locRate).toFixed(2));
       const currency = this.props.paymentInfo.currency;
       booking.forEach((bookingRoom, index) => {
         rows.push(
@@ -524,9 +521,6 @@ class HotelBookingConfirmPage extends React.Component {
 
   addCheckInClauseRow(fees, rows, arrivalDate) {
     const fiatPrice = this.state.data && this.state.data.fiatPrice;
-    const locPrice = this.state.data && this.state.data.locPrice;
-    const locRate = Number(Number(this.props.paymentInfo.locRate).toFixed(2));
-    const roomsXMLCurrency = this.getRoomsXmlCurrency();
     const currency = this.props.paymentInfo.currency;
     rows.push(
       <tr key={2}>
@@ -544,14 +538,12 @@ class HotelBookingConfirmPage extends React.Component {
     // const fiatPriceInEUR = this.state.data && this.state.fiatPriceInEUR;
     const rows = [];
     const fees = this.getCancellationFees();
-    const roomsXMLCurrency = this.getRoomsXmlCurrency();
     const currency = this.props.paymentInfo.currency;
 
     if (fees.length === 0) {
       this.addFreeClauseRow(rows, arrivalDate);
       this.addCheckInClauseRow(fees, rows, arrivalDate);
     } else {
-      const locRate = Number(Number(this.props.paymentInfo.locRate).toFixed(2));
       fees.forEach((fee, feeIndex) => {
         if (fee.amt === 0 && fee.loc === 0) {
           this.addFreeClauseRow(rows, fee.from);
@@ -559,13 +551,11 @@ class HotelBookingConfirmPage extends React.Component {
           let date = moment(fee.from).add(1, 'days').format('DD MMM YYYY');
           const arrivalDateFormat = moment(arrivalDate).format('DD MMM YYYY');
           let amount = fee.amt;
-          let locAmount = fee.loc;
           if (fee.from === arrivalDate) {
             date = arrivalDate;
           } else if (date === arrivalDateFormat) {
             // amount = fiatPriceInEUR;
             amount = this.state.data && this.state.data.fiatPrice;
-            locAmount = this.state.data && this.state.data.locPrice;
           }
           rows.push(
             <tr key={3 * 1000 + feeIndex + 1}>
@@ -612,7 +602,7 @@ class HotelBookingConfirmPage extends React.Component {
 
       for (let key in userInfo) {
         if (userInfo.hasOwnProperty(key)) {
-          if (key == item && userInfo[key] == null) {
+          if (key === item && userInfo[key] === null) {
             return false;
           }
         }
@@ -624,8 +614,8 @@ class HotelBookingConfirmPage extends React.Component {
   }
 
   render() {
-    const { data, rates, locRate, userInfo, showRoomsCanxDetails, seconds, confirmed, password } = this.state;
-    if (userInfo == null) {
+    const { data, rates, locRate, userInfo, showRoomsCanxDetails, confirmed, password } = this.state;
+    if (userInfo === null) {
       return <div className="loader"></div>;
     }
     const isMobile = this.props.location.pathname.indexOf('/mobile') !== -1;
@@ -633,11 +623,10 @@ class HotelBookingConfirmPage extends React.Component {
     const booking = data && data.booking.hotelBooking;
     const fiatPrice = data && data.fiatPrice;
     const locPrice = fiatPrice / locRate; // this.state.data && this.state.data.locPrice;
-    const isUserInfoIsComplete = this.isUserInfoIsComplete(userInfo);
+    // const isUserInfoIsComplete = this.isUserInfoIsComplete(userInfo);
 
-    const isVerify = true;
+    // const isVerify = true;
     // const locRate = Number(Number(this.props.paymentInfo.locRate).toFixed(2));
-    const roomsXMLCurrency = this.getRoomsXmlCurrency();
     const currency = this.props.paymentInfo.currency;
 
     return (

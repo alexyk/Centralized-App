@@ -1,11 +1,12 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { withRouter } from 'react-router-dom';
-import { connect } from 'react-redux';
-import { setCurrency, setLocRate } from '../../actions/paymentInfo';
-import requester from '../../initDependencies';
-
 import '../../styles/css/components/footer/footer-component.css';
+
+import { setCurrency, setLocRate } from '../../actions/paymentInfo';
+
+import PropTypes from 'prop-types';
+import React from 'react';
+import { connect } from 'react-redux';
+import requester from '../../initDependencies';
+import { withRouter } from 'react-router-dom';
 
 class Footer extends React.Component {
   componentDidMount() {
@@ -44,10 +45,10 @@ class Footer extends React.Component {
                     <li>
                       <h5>LockTrip</h5>
                     </li>
-                    <li><a href="#">Help</a></li>
-                    <li><a href="#">Terms and Conditions</a></li>
-                    <li><a href="#">Legal Information</a></li>
-                    <li><a href="#">Privacy Policy</a></li>
+                    <li><a href="">Help</a></li>
+                    <li><a href="">Terms and Conditions</a></li>
+                    <li><a href="">Legal Information</a></li>
+                    <li><a href="">Privacy Policy</a></li>
                   </ul>
                 </li>
                 <li>
@@ -55,10 +56,10 @@ class Footer extends React.Component {
                     <li>
                       <h5>Hosting</h5>
                     </li>
-                    <li><a href="#">Why Host</a></li>
-                    <li><a href="#">Hospitality</a></li>
-                    <li><a href="#">Responsible Hosting</a></li>
-                    <li><a href="#">Community Center</a></li>
+                    <li><a href="">Why Host</a></li>
+                    <li><a href="">Hospitality</a></li>
+                    <li><a href="">Responsible Hosting</a></li>
+                    <li><a href="">Community Center</a></li>
                   </ul>
                 </li>
               </ul>

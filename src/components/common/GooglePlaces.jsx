@@ -1,7 +1,7 @@
-import React from 'react';
-import { withRouter } from 'react-router-dom';
 import { Config } from '../../config';
+import React from 'react';
 import Select from './google/GooglePlacesAutocomplete';
+import { withRouter } from 'react-router-dom';
 
 class GooglePlaces extends React.Component {
   constructor(props) {
@@ -55,7 +55,7 @@ class GooglePlaces extends React.Component {
 
   handleAddressSelect(place) {
     if (place) {
-      console.log(place);
+      // console.log(place);
     }
   }
 

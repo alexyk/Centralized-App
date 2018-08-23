@@ -3,13 +3,11 @@ import '../../../../styles/css/components/captcha/captcha-container.css';
 import { NavLink, withRouter } from 'react-router-dom';
 
 import AdminNav from '../AdminNav';
-import { Config } from '../../../../config';
 import ListItem from './ListItem';
 import NoEntriesMessage from '../../common/NoEntriesMessage';
 import { NotificationManager } from 'react-notifications';
 import Pagination from '../../../common/pagination/Pagination';
 import PropTypes from 'prop-types';
-import ReCAPTCHA from 'react-google-recaptcha';
 import React from 'react';
 import queryString from 'query-string';
 import requester from '../../../../initDependencies';
@@ -93,14 +91,16 @@ class VerifiedList extends React.Component {
 
   render() {
     if (this.state.loading) {
-      return <div className="loader" style={{ 'margin-bottom': '40px' }}></div>;
+      return <div className="loader" style={{ 'marginBottom': '40px' }}></div>;
     }
 
     return (
       <div>
         <AdminNav>
-          <li><NavLink exact activeClassName="active" to="/profile/admin/users/unverified"><h2>Unverified</h2></NavLink></li>
-          <li><NavLink exact activeClassName="active" to="/profile/admin/users/verified"><h2>Verified</h2></NavLink></li>
+          <div>
+            <li><NavLink exact activeClassName="active" to="/profile/admin/users/unverified"><h2>Unverified</h2></NavLink></li>
+            <li><NavLink exact activeClassName="active" to="/profile/admin/users/verified"><h2>Verified</h2></NavLink></li>
+          </div>
         </AdminNav>
         <div className="my-reservations">
           <section id="profile-my-reservations">

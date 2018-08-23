@@ -159,7 +159,7 @@ class ProfileEditForm extends React.Component {
   }
 
   handleCitySelect(place) {
-    console.log(place);
+    // console.log(place);
     this.setState({ city: place.formatted_address });
   }
 

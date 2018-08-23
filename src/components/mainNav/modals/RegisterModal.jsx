@@ -1,36 +1,26 @@
-import React from 'react';
-import validator from 'validator';
-import PropTypes from 'prop-types';
-import { Modal } from 'react-bootstrap';
-import { NotificationManager } from 'react-notifications';
+import '../../../styles/css/components/modals/modal.css';
 
-import { Config } from '../../../config';
-import requester from '../../../initDependencies';
-import StringUtils from '../../../services/utilities/stringUtilities.js';
-import { REGISTER, CREATE_WALLET } from '../../../constants/modals.js';
-
+import { CREATE_WALLET, REGISTER } from '../../../constants/modals.js';
 import {
-  INVALID_EMAIL,
   EMAIL_ALREADY_EXISTS,
+  INVALID_EMAIL,
   INVALID_FIRST_NAME,
   INVALID_LAST_NAME,
   PROFILE_INVALID_PASSWORD_LENGTH,
   PROFILE_PASSWORD_REQUIREMENTS
 } from '../../../constants/warningMessages.js';
-import { LONG } from '../../../constants/notificationDisplayTimes.js';
 
-import '../../../styles/css/components/modals/modal.css';
+import { Config } from '../../../config';
+import { LONG } from '../../../constants/notificationDisplayTimes.js';
+import { Modal } from 'react-bootstrap';
+import { NotificationManager } from 'react-notifications';
+import PropTypes from 'prop-types';
+import React from 'react';
+import StringUtils from '../../../services/utilities/stringUtilities.js';
+import requester from '../../../initDependencies';
+import validator from 'validator';
 
 function RegisterModal(props) {
-
-  const getShortName = (name, length) => {
-    if (name.length <= length) {
-      return name;
-    }
-
-    return `${name.substring(0, length)}...`;
-  };
-
   const openWalletInfo = () => {
     requester.getEmailFreeResponse(props.signUpEmail).then(res => {
       res.body.then(data => {

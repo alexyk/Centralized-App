@@ -11,7 +11,7 @@ function ListItem(props) {
   return (
     <div className="unpublished-item">
       <div className="unpublished-item_images">
-        {idCardPicture && <img src={Config.getValue('imgHost') + idCardPicture} />}
+        {idCardPicture && <img alt="id-card" src={Config.getValue('imgHost') + idCardPicture} />}
       </div>
       <div className="unpublished-item_content">
         <div className="header">
@@ -23,7 +23,7 @@ function ListItem(props) {
           <p>City: {city ? city : 'Missing'}</p>
           <p>Address: {address ? address : 'Missing'}</p>
           <p>Zip code: {zipCode ? zipCode : 'Missing'}</p>
-          {idCardHolderPicture && <img src={Config.getValue('imgHost') + idCardHolderPicture} style={{width: '50%'}} />}
+          {idCardHolderPicture && <img alt="id-card-and-holder" src={Config.getValue('imgHost') + idCardHolderPicture} style={{width: '50%'}} />}
         </div>
 
         <div className="unpublished-item_actions">
@@ -32,10 +32,10 @@ function ListItem(props) {
           </div>
           <div className="major-actions">
             {verified === false &&
-              <div><a href="#" onClick={(e) => props.updateUserStatus(e, id, true)}>Verify</a></div>
+              <div><a href="" onClick={(e) => props.updateUserStatus(e, id, true)}>Verify</a></div>
             }
             {verified === true &&
-              <div><a href="#" onClick={(e) => props.updateUserStatus(e, id, false)}>Unverify</a></div>
+              <div><a href="" onClick={(e) => props.updateUserStatus(e, id, false)}>Unverify</a></div>
             }
           </div>
         </div>

@@ -2,6 +2,7 @@ import { EXTRA_LONG, LONG } from '../../../constants/notificationDisplayTimes.js
 import { INVALID_CHILD_AGE, INVALID_GUEST_NAME } from '../../../constants/warningMessages.js';
 
 import { Config } from '../../../config';
+import { CurrencyConverter } from '../../../services/utilities/currencyConverter';
 import { NotificationManager } from 'react-notifications';
 import PropTypes from 'prop-types';
 import { ROOMS_XML_CURRENCY } from '../../../constants/currencies.js';
@@ -12,7 +13,6 @@ import moment from 'moment';
 import requester from '../../../initDependencies';
 import { setCurrency } from '../../../actions/paymentInfo';
 import validator from 'validator';
-import { CurrencyConverter } from '../../../services/utilities/currencyConverter';
 import { withRouter } from 'react-router-dom';
 
 class HotelBookingPage extends React.Component {
@@ -354,7 +354,7 @@ class HotelBookingPage extends React.Component {
                 {this.props.location.pathname.indexOf('/mobile') !== -1 &&
                   <div>
                     <div className="col col-md-12" style={{ 'padding': '0', 'margin': '10px 0' }}>
-                      <button className="btn btn-primary btn-book" onClick={(e) => this.props.history.goBack()}>Back</button>
+                      <button className="btn btn-primary btn-book" onClick={() => this.props.history.goBack()}>Back</button>
                     </div>
                     <select
                       className="currency"

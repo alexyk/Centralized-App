@@ -1,20 +1,16 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-
 import 'react-notifications/lib/notifications.css';
-
-import { NotificationManager } from 'react-notifications';
-import requester from '../../../initDependencies';
-import { connect } from 'react-redux';
-
-import { Config } from '../../../config';
-import { TokenTransactions } from '../../../services/blockchain/tokenTransactions';
-
 import '../../../styles/css/components/profile/wallet/wallet-index-page.css';
 
-import { PROCESSING_TRANSACTION } from '../../../constants/infoMessages.js';
-import { TRANSACTION_SUCCESSFUL } from '../../../constants/successMessages.js';
+import { Config } from '../../../config';
 import { LONG } from '../../../constants/notificationDisplayTimes.js';
+import { NotificationManager } from 'react-notifications';
+import { PROCESSING_TRANSACTION } from '../../../constants/infoMessages.js';
+import PropTypes from 'prop-types';
+import React from 'react';
+import { TRANSACTION_SUCCESSFUL } from '../../../constants/successMessages.js';
+import { TokenTransactions } from '../../../services/blockchain/tokenTransactions';
+import { connect } from 'react-redux';
+import requester from '../../../initDependencies';
 
 class WalletIndexPage extends React.Component {
   constructor(props) {
@@ -62,7 +58,7 @@ class WalletIndexPage extends React.Component {
         } else if (typeof error === 'string') {
           NotificationManager.warning(error, 'Send Tokens', LONG);
         } else {
-          console.log(error);
+          // console.log(error);
         }
       });
     }, 1000);

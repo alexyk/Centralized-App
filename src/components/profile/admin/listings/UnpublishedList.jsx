@@ -1,14 +1,18 @@
 import '../../../../styles/css/components/captcha/captcha-container.css';
 
+import { LISTING_APPROVED, LISTING_DELETED, LISTING_DENIED } from '../../../../constants/successMessages.js';
 import { NavLink, withRouter } from 'react-router-dom';
+import { PROPERTY_CANNOT_BE_DELETED, UNCATEGORIZED_ERROR } from '../../../../constants/errorMessages.js';
 
 import AdminNav from '../AdminNav';
 import { Config } from '../../../../config';
 import ContactHostModal from '../../../common/modals/ContactHostModal';
 import DeletionModal from '../../../common/modals/DeletionModal';
 import Filter from './Filter';
+import { LONG } from '../../../../constants/notificationDisplayTimes.js';
 import Lightbox from 'react-images';
 import ListItem from './ListItem';
+import { MESSAGE_SENT } from '../../../../constants/infoMessages.js';
 import NoEntriesMessage from '../../common/NoEntriesMessage';
 import { NotificationManager } from 'react-notifications';
 import Pagination from '../../../common/pagination/Pagination';
@@ -18,11 +22,6 @@ import React from 'react';
 import filterListings from '../../../../actions/filterListings';
 import queryString from 'query-string';
 import requester from '../../../../initDependencies';
-
-import { MESSAGE_SENT } from '../../../../constants/infoMessages.js';
-import { LISTING_APPROVED, LISTING_DENIED, LISTING_DELETED } from '../../../../constants/successMessages.js';
-import { UNCATEGORIZED_ERROR, PROPERTY_CANNOT_BE_DELETED } from '../../../../constants/errorMessages.js';
-import { LONG } from '../../../../constants/notificationDisplayTimes.js';
 
 class UnpublishedList extends React.Component {
   constructor(props) {
@@ -295,7 +294,7 @@ class UnpublishedList extends React.Component {
         }
         this.handleCloseDeleteListing();
       }).catch(e => {
-        console.log(e);
+        // console.log(e);
         this.handleCloseDeleteListing();
       });
   }
@@ -387,8 +386,10 @@ class UnpublishedList extends React.Component {
     return (
       <div>
         <AdminNav>
-          <li><NavLink exact activeClassName="active" to="/profile/admin/listings/unpublished"><h2>Unpublished</h2></NavLink></li>
-          <li><NavLink exact activeClassName="active" to="/profile/admin/listings/published"><h2>Published</h2></NavLink></li>
+          <div>
+            <li><NavLink exact activeClassName="active" to="/profile/admin/listings/unpublished"><h2>Unpublished</h2></NavLink></li>
+            <li><NavLink exact activeClassName="active" to="/profile/admin/listings/published"><h2>Published</h2></NavLink></li>
+          </div>
         </AdminNav>
         <div className="my-reservations">
           <section id="profile-my-reservations">
