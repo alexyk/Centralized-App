@@ -2,6 +2,7 @@ import { EXTRA_LONG, LONG } from '../../../constants/notificationDisplayTimes.js
 import { INVALID_CHILD_AGE, INVALID_GUEST_NAME } from '../../../constants/warningMessages.js';
 
 import { Config } from '../../../config';
+import { CurrencyConverter } from '../../../services/utilities/currencyConverter';
 import { NotificationManager } from 'react-notifications';
 import PropTypes from 'prop-types';
 import { ROOMS_XML_CURRENCY } from '../../../constants/currencies.js';
@@ -12,7 +13,6 @@ import moment from 'moment';
 import requester from '../../../initDependencies';
 import { setCurrency } from '../../../actions/paymentInfo';
 import validator from 'validator';
-import { CurrencyConverter } from '../../../services/utilities/currencyConverter';
 import { withRouter } from 'react-router-dom';
 
 class HotelsBookingPage extends React.Component {
@@ -112,14 +112,14 @@ class HotelsBookingPage extends React.Component {
   getRoomsFromURL(searchParams) {
     const searchRooms = JSON.parse(decodeURI(searchParams.get('rooms')));
     const result = [];
-    for (let i = 0; i < searchRooms.length; i++) {
-      const searchRoom = searchRooms[i];
+    for (let roomIndex = 0; roomIndex < searchRooms.length; roomIndex++) {
+      const searchRoom = searchRooms[roomIndex];
       const adults = [];
-      for (let j = 0; j < searchRoom.adults; j++) {
+      for (let guestIndex = 0; guestIndex < searchRoom.adults; guestIndex++) {
         const adult = {
-          title: i === 0 && j === 0 && this.props.userInfo.gender === 'women' ? 'Mrs' : 'Mr',
-          firstName: i === 0 && j === 0 ? this.props.userInfo.firstName : 'Optional',
-          lastName: i === 0 && j === 0 ? this.props.userInfo.lastName : 'Optional',
+          title: roomIndex === 0 && guestIndex === 0 && this.props.userInfo.gender === 'women' ? 'Mrs' : 'Mr',
+          firstName: roomIndex === 0 && guestIndex === 0 ? this.props.userInfo.firstName : guestIndex > 0 ? 'Optional' : '',
+          lastName: roomIndex === 0 && guestIndex === 0 ? this.props.userInfo.lastName : guestIndex > 0 ? 'Optional' : '',
         };
 
         adults.push(adult);
@@ -226,7 +226,7 @@ class HotelsBookingPage extends React.Component {
   }
 
   isValidNames() {
-    const regexp = /^([a-zA-Z]{2,}([a-zA-Z]+|([-][a-zA-Z]{2,})))$/;
+    const regexp = /^([A-Za-z]{2,}([-\s][A-Za-z]{2,})?)$/;
     const rooms = this.state.rooms;
     for (let i = 0; i < rooms.length; i++) {
       const adults = rooms[i].adults;

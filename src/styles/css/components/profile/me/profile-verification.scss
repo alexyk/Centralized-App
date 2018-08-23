@@ -14,7 +14,7 @@
   hr {
     border-color: #DDD;
   }
-  
+
   .box {
     background-color: white;
     border: 1px solid #DDD;
@@ -29,8 +29,28 @@
       "navigation navigation"
       "left-part right-part";
     align-items: center;
+    @include media('<=tablet') {
+      grid-template-columns: auto;
+      grid-template-areas:
+        "navigation"
+        "left-part"
+        "right-part";
+    }
     .navigation-tab {
       grid-area: navigation;
+      @include media('<=tablet') {
+        flex-direction: column;
+      }
+      a {
+        display: block;
+        width: 100%;
+        span {
+          font-size: 1.2em;
+        }
+        h2 {
+          font-size: 1.5em;
+        }
+      }
     }
     .left-part {
       grid-area: left-part;
@@ -39,7 +59,7 @@
       grid-area: right-part;
       text-align: center;
     }
-  
+
     i {
       margin: 0 5px;
     }
@@ -53,7 +73,7 @@
       top: 5px;
       right: 10px;
     }
-  
+
     .step-check.checked:before {
       font-size: 0.5em;
       padding: 5px;
@@ -64,12 +84,12 @@
       color: $white;
       content: "\f00c";
     }
-  
+
     .step-check.unchecked {
       opacity: 0.5;
       background: $moderate-red;
     }
-  
+
     .step-check.unchecked:before {
       font-size: 0.5em;
       padding: 5px;
