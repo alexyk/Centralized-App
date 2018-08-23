@@ -15,7 +15,7 @@ import validator from 'validator';
 import { CurrencyConverter } from '../../../services/utilities/currencyConverter';
 import { withRouter } from 'react-router-dom';
 
-class HotelBookingPage extends React.Component {
+class HotelsBookingPage extends React.Component {
   constructor(props) {
     super(props);
 
@@ -25,20 +25,42 @@ class HotelBookingPage extends React.Component {
       loading: true,
     };
 
-    this.timeout = null;
     this.handleAdultChange = this.handleAdultChange.bind(this);
     this.handleChildAgeChange = this.handleChildAgeChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.requestHotel = this.requestHotel.bind(this);
+    this.requestHotelRooms = this.requestHotelRooms.bind(this);
+    this.requestLocRate = this.requestLocRate.bind(this);
+    this.requestCurrencyRates = this.requestCurrencyRates.bind(this);
+
+    this.requestNewQuoteID = this.requestNewQuoteID.bind(this);
   }
 
   componentDidMount() {
+    this.requestHotel();
+    this.requestHotelRooms();
+    this.requestLocRate();
+    this.requestCurrencyRates();
+  }
+
+  requestNewQuoteID() {
+    const id = this.props.match.params.id;
+    const searchParams = this.getNewSearchParams();
+    const quoteId = searchParams.pop().split('=')[1];
+    requester.getHotelRooms(id, searchParams).then(res => {
+      res.body.then(data => {
+        console.log(data);
+      });
+    });
+  }
+
+  requestHotel() {
     const id = this.props.match.params.id;
     const searchParams = this.getNewSearchParams();
     const searchString = this.getSearchParams();
-
     const quoteId = searchString.get('quoteId');
-    const rooms = this.getRooms(searchString);
-    const nights = this.getNights(searchString);
+    const rooms = this.getRoomsFromURL(searchString);
+    const nights = this.calculateReservationTotalNights(searchString);
     searchParams.pop();
     requester.getHotelById(id, searchParams).then(res => {
       res.body.then(data => {
@@ -52,11 +74,24 @@ class HotelBookingPage extends React.Component {
         });
       });
     });
+  }
 
+  requestCurrencyRates() {
+    requester.getCurrencyRates().then(res => {
+      res.body.then(data => {
+        this.setState({ rates: data });
+      });
+    });
+  }
+
+  requestHotelRooms() {
+    const id = this.props.match.params.id;
+    const searchParams = this.getNewSearchParams();
+    const quoteId = searchParams.pop().split('=')[1];
     requester.getHotelRooms(id, searchParams).then(res => {
       res.body.then(data => {
         const roomResults = data.filter(x => x.quoteId === quoteId)[0].roomsResults;
-        const totalPrice = this.getTotalPrice(roomResults);
+        const totalPrice = this.calculateRoomsTotalPrice(roomResults);
         this.setState({
           roomResults: roomResults,
           totalPrice: totalPrice,
@@ -64,25 +99,9 @@ class HotelBookingPage extends React.Component {
         });
       });
     });
-
-    this.getLocRate();
-    requester.getCurrencyRates().then(res => {
-      res.body.then(data => {
-        this.setState({ rates: data });
-      });
-    });
-
-    this.timeout = setTimeout(() => {
-      NotificationManager.info(SEARCH_EXPIRED, '', EXTRA_LONG);
-      this.props.history.push('/hotels');
-    }, 600000);
   }
 
-  componentWillUnmount() {
-    clearTimeout(this.timeout);
-  }
-
-  getLocRate() {
+  requestLocRate() {
     requester.getLocRateByCurrency(ROOMS_XML_CURRENCY).then(res => {
       res.body.then(data => {
         this.setState({ locRate: Number(data[0][`price_${ROOMS_XML_CURRENCY.toLowerCase()}`]) });
@@ -90,7 +109,7 @@ class HotelBookingPage extends React.Component {
     });
   }
 
-  getRooms(searchParams) {
+  getRoomsFromURL(searchParams) {
     const searchRooms = JSON.parse(decodeURI(searchParams.get('rooms')));
     const result = [];
     for (let i = 0; i < searchRooms.length; i++) {
@@ -118,7 +137,7 @@ class HotelBookingPage extends React.Component {
     return result;
   }
 
-  getTotalPrice(roomResults) {
+  calculateRoomsTotalPrice(roomResults) {
     let total = 0;
     for (let i = 0; i < roomResults.length; i++) {
       total += roomResults[i].price;
@@ -127,7 +146,7 @@ class HotelBookingPage extends React.Component {
     return total;
   }
 
-  getNights(searchParams) {
+  calculateReservationTotalNights(searchParams) {
     const start = moment(searchParams.get('startDate'), 'DD/MM/YYYY');
     const end = moment(searchParams.get('endDate'), 'DD/MM/YYYY');
     return end.diff(start, 'days');
@@ -203,7 +222,6 @@ class HotelBookingPage extends React.Component {
       const isWebView = this.props.location.pathname.indexOf('/mobile') !== -1;
       const rootURL = !isWebView ? '/hotels/listings/book/confirm' : '/mobile/book/confirm';
       this.props.history.push(`${rootURL}/${id}${query}`);
-      // window.location.href = `/hotels/listings/book/confirm/${id}${query}`;
     }
   }
 
@@ -215,9 +233,6 @@ class HotelBookingPage extends React.Component {
       for (let j = 0; j < adults.length; j++) {
         const first = adults[j].firstName;
         const last = adults[j].lastName;
-        // console.log(adults[j]);
-        // console.log(validator.matches(first, regexp));
-        // console.log(validator.matches(last, regexp));
         if (!(validator.matches(first, regexp) && validator.matches(last, regexp))) {
           return false;
         }
@@ -351,6 +366,7 @@ class HotelBookingPage extends React.Component {
                 <div className="col col-md-12" style={{ 'padding': '0', 'margin': '10px 0' }}>
                   <button className="btn btn-primary btn-book" onClick={this.handleSubmit}>Proceed</button>
                 </div>
+                <div className="btn" onClick={this.requestNewQuoteID}>Request new QuoteID</div>
                 {this.props.location.pathname.indexOf('/mobile') !== -1 &&
                   <div>
                     <div className="col col-md-12" style={{ 'padding': '0', 'margin': '10px 0' }}>
@@ -377,7 +393,7 @@ class HotelBookingPage extends React.Component {
   }
 }
 
-HotelBookingPage.propTypes = {
+HotelsBookingPage.propTypes = {
   countries: PropTypes.array,
   match: PropTypes.object,
 
@@ -399,4 +415,4 @@ function mapStateToProps(state) {
   };
 }
 
-export default withRouter(connect(mapStateToProps)(HotelBookingPage));
+export default withRouter(connect(mapStateToProps)(HotelsBookingPage));

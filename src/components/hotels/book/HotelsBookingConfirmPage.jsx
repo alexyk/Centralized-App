@@ -26,7 +26,7 @@ import { CurrencyConverter } from '../../../services/utilities/currencyConverter
 const ERROR_MESSAGE_TIME = 20000;
 const SEARCH_EXPIRE_TIME = 900000;
 
-class HotelBookingConfirmPage extends React.Component {
+class HotelsBookingConfirmPage extends React.Component {
   constructor(props) {
     super(props);
 
@@ -481,10 +481,8 @@ class HotelBookingConfirmPage extends React.Component {
   getRoomsXmlCurrency() {
     const env = Config.getValue('env');
     if (env === 'staging' || env === 'development') {
-      console.log('staging');
       return ROOMS_XML_CURRENCY;
     } else {
-      console.log('prod');
       return ROOMS_XML_CURRENCY_DEV;
     }
   }
@@ -767,7 +765,7 @@ class HotelBookingConfirmPage extends React.Component {
   }
 }
 
-HotelBookingConfirmPage.propTypes = {
+HotelsBookingConfirmPage.propTypes = {
   countries: PropTypes.array,
   match: PropTypes.object,
 
@@ -791,4 +789,4 @@ function mapStateToProps(state) {
   };
 }
 
-export default withRouter(connect(mapStateToProps)(HotelBookingConfirmPage));
+export default withRouter(connect(mapStateToProps)(HotelsBookingConfirmPage));
