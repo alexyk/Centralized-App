@@ -18,7 +18,7 @@ import {
 import {
   INVALID_EMAIL,
   INVALID_PASSWORD,
-  INVALID_TOKEN,
+  INVALID_SECURITY_CODE,
   PASSWORDS_DONT_MATCH,
   PROFILE_PASSWORD_REQUIREMENTS
 } from '../../constants/warningMessages';
@@ -515,7 +515,7 @@ class MainNav extends React.Component {
         this.openModal(CHANGE_PASSWORD);
       }
       else {
-        NotificationManager.warning(INVALID_TOKEN, '', LONG);
+        NotificationManager.warning(INVALID_SECURITY_CODE, '', LONG);
       }
     });
   }

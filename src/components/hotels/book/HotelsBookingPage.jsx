@@ -33,7 +33,7 @@ class HotelsBookingPage extends React.Component {
     this.requestLocRate = this.requestLocRate.bind(this);
     this.requestCurrencyRates = this.requestCurrencyRates.bind(this);
 
-    this.requestNewQuoteID = this.requestNewQuoteID.bind(this);
+    // this.requestNewQuoteID = this.requestNewQuoteID.bind(this);
   }
 
   componentDidMount() {
@@ -43,16 +43,16 @@ class HotelsBookingPage extends React.Component {
     this.requestCurrencyRates();
   }
 
-  requestNewQuoteID() {
-    const id = this.props.match.params.id;
-    const searchParams = this.getNewSearchParams();
-    const quoteId = searchParams.pop().split('=')[1];
-    requester.getHotelRooms(id, searchParams).then(res => {
-      res.body.then(data => {
-        console.log(data);
-      });
-    });
-  }
+  // requestNewQuoteID() {
+  //   const id = this.props.match.params.id;
+  //   const searchParams = this.getNewSearchParams();
+  //   const quoteId = searchParams.pop().split('=')[1];
+  //   requester.getHotelRooms(id, searchParams).then(res => {
+  //     res.body.then(data => {
+  //       console.log(data);
+  //     });
+  //   });
+  // }
 
   requestHotel() {
     const id = this.props.match.params.id;
@@ -366,7 +366,6 @@ class HotelsBookingPage extends React.Component {
                 <div className="col col-md-12" style={{ 'padding': '0', 'margin': '10px 0' }}>
                   <button className="btn btn-primary btn-book" onClick={this.handleSubmit}>Proceed</button>
                 </div>
-                <div className="btn" onClick={this.requestNewQuoteID}>Request new QuoteID</div>
                 {this.props.location.pathname.indexOf('/mobile') !== -1 &&
                   <div>
                     <div className="col col-md-12" style={{ 'padding': '0', 'margin': '10px 0' }}>
