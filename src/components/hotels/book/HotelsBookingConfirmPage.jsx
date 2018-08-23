@@ -25,12 +25,13 @@ import { withRouter } from 'react-router-dom';
 const ERROR_MESSAGE_TIME = 20000;
 const SEARCH_EXPIRE_TIME = 900000;
 
-class HotelBookingConfirmPage extends React.Component {
+class HotelsBookingConfirmPage extends React.Component {
   constructor(props) {
     super(props);
 
+    this.searchExpirationTimeout = null;
+    this.socketTickInterval = null;
     this.captcha = null;
-    this.timer = null;
     this.socket = null;
 
     this.state = {
@@ -44,14 +45,17 @@ class HotelBookingConfirmPage extends React.Component {
       seconds: 0,
     };
 
-    this.timeout = null;
-
     this.openModal = this.openModal.bind(this);
     this.closeModal = this.closeModal.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.onChange = this.onChange.bind(this);
     this.toggleCanxDetails = this.toggleCanxDetails.bind(this);
     this.handleSubmitSingleWithdrawer = this.handleSubmitSingleWithdrawer.bind(this);
+    this.requestBookingData = this.requestBookingData.bind(this);
+    this.requestUserInfo = this.requestUserInfo.bind(this);
+    this.requestCurrencyRates = this.requestCurrencyRates.bind(this);
+    this.requestLocRateByCurrency = this.requestLocRateByCurrency.bind(this);
+    this.setSearchExpirationTimeout = this.setSearchExpirationTimeout.bind(this);
     this.tick = this.tick.bind(this);
 
     // SOCKET BINDINGS
@@ -62,36 +66,27 @@ class HotelBookingConfirmPage extends React.Component {
   }
 
   componentDidMount() {
+    this.requestUserInfo();
+    this.requestBookingData();
+    this.setSearchExpirationTimeout();
+  }
+
+  componentWillUnmount() {
+    clearTimeout(this.searchExpirationTimeout);
+    clearInterval(this.socketTickInterval);
+    // this.disconnectSocket();
+  }
+
+  requestBookingData() {
     const search = this.props.location.search;
     const searchParams = this.getSearchParams(search);
     const booking = JSON.parse(decodeURI(searchParams.get('booking')));
-    requester.getUserInfo().then(res => {
-      res.body.then(data => {
-        this.setState({ userInfo: data });
-      });
-    });
-
     requester.createReservation(booking).then(res => {
       if (res.success) {
         res.body.then(data => {
           this.setState({ data: data, booking: booking });
-          // requester.getLocRateByCurrency(data.currency).then(res => {
-          //   res.body.then(locData => {
-          //     this.setState({ locRate: locData[0]['price_' + data.currency.toLowerCase()] });
-          //   });
-          // });
-
-          requester.getLocRateByCurrency(ROOMS_XML_CURRENCY).then(res => {
-            res.body.then(data => {
-              this.setState({ locRate: Number(data[0][`price_${ROOMS_XML_CURRENCY.toLowerCase()}`]) });
-            });
-          });
-
-          requester.getCurrencyRates().then(res => {
-            res.body.then(data => {
-              this.setState({ rates: data });
-            });
-          });
+          this.requestLocRateByCurrency();
+          this.requestCurrencyRates();
         });
       } else {
         res.errors.then((res) => {
@@ -104,17 +99,37 @@ class HotelBookingConfirmPage extends React.Component {
         });
       }
     });
+  }
 
-    this.timeout = setTimeout(() => {
+  requestUserInfo() {
+    requester.getUserInfo().then(res => {
+      res.body.then(data => {
+        this.setState({ userInfo: data });
+      });
+    });
+  }
+
+  requestCurrencyRates() {
+    requester.getCurrencyRates().then(res => {
+      res.body.then(data => {
+        this.setState({ rates: data });
+      });
+    });
+  }
+
+  requestLocRateByCurrency() {
+    requester.getLocRateByCurrency(ROOMS_XML_CURRENCY).then(res => {
+      res.body.then(data => {
+        this.setState({ locRate: Number(data[0][`price_${ROOMS_XML_CURRENCY.toLowerCase()}`]) });
+      });
+    });
+  }
+
+  setSearchExpirationTimeout() {
+    this.searchExpirationTimeout = setTimeout(() => {
       NotificationManager.info(SEARCH_EXPIRED, '', EXTRA_LONG);
       this.props.history.push('/hotels');
     }, SEARCH_EXPIRE_TIME);
-  }
-
-  componentWillUnmount() {
-    clearTimeout(this.timeout);
-    clearInterval(this.timer);
-    // this.disconnectSocket();
   }
 
   tick() {
@@ -151,7 +166,7 @@ class HotelBookingConfirmPage extends React.Component {
   connectSocket() {
     const locAmount = this.state.data && this.state.data.locPrice;
     this.socket.send(JSON.stringify({ locAmount }));
-    this.timer = setInterval(this.tick, 1000);
+    this.socketTickInterval = setInterval(this.tick, 1000);
   }
 
   handleReceiveMessage(event) {
@@ -480,10 +495,8 @@ class HotelBookingConfirmPage extends React.Component {
   getRoomsXmlCurrency() {
     const env = Config.getValue('env');
     if (env === 'staging' || env === 'development') {
-      // console.log('staging');
       return ROOMS_XML_CURRENCY;
     } else {
-      // console.log('prod');
       return ROOMS_XML_CURRENCY_DEV;
     }
   }
@@ -756,7 +769,7 @@ class HotelBookingConfirmPage extends React.Component {
   }
 }
 
-HotelBookingConfirmPage.propTypes = {
+HotelsBookingConfirmPage.propTypes = {
   countries: PropTypes.array,
   match: PropTypes.object,
 
@@ -780,4 +793,4 @@ function mapStateToProps(state) {
   };
 }
 
-export default withRouter(connect(mapStateToProps)(HotelBookingConfirmPage));
+export default withRouter(connect(mapStateToProps)(HotelsBookingConfirmPage));

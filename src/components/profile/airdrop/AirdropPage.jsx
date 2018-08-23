@@ -13,7 +13,7 @@ import { airdropModals, openModal } from '../../../actions/modalsInfo';
 
 import { Config } from '../../../config';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
-import { INVALID_TOKEN } from '../../../constants/warningMessages.js';
+import { INVALID_SECURITY_CODE } from '../../../constants/warningMessages.js';
 import { LONG } from '../../../constants/notificationDisplayTimes.js';
 import NavProfile from '../NavProfile';
 import NoEntriesMessage from '../common/NoEntriesMessage';
@@ -184,7 +184,7 @@ class AirdropPage extends Component {
           this.logout();
           this.openModal(AIRDROP_REGISTER);
         } else {
-          NotificationManager.warning(INVALID_TOKEN, '', LONG);
+          NotificationManager.warning(INVALID_SECURITY_CODE, '', LONG);
           this.props.location.href = '/airdrop';
         }
       }).catch(e => {

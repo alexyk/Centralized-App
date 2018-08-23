@@ -26,9 +26,13 @@ import { UNCATEGORIZED_ERROR } from '../../../constants/errorMessages.js';
 import { INVALID_SEARCH_DATE, ALL_ROOMS_TAKEN } from '../../../constants/warningMessages.js';
 import { LONG } from '../../../constants/notificationDisplayTimes.js';
 
+const SEARCH_EXPIRATION_TIME = 30000;
+
 class HotelDetailsPage extends React.Component {
   constructor(props) {
     super(props);
+
+    this.searchRenewalTimeout = null;
 
     let startDate = moment().add(1, 'day');
     let endDate = moment().add(2, 'day');
@@ -67,6 +71,9 @@ class HotelDetailsPage extends React.Component {
     this.next = this.next.bind(this);
     this.previous = this.previous.bind(this);
     this.redirectToSearchPage = this.redirectToSearchPage.bind(this);
+
+    this.setSearchRenewalTimeout = this.setSearchRenewalTimeout.bind(this);
+    this.clearSearchRenewalTimeout = this.clearSearchRenewalTimeout.bind(this);
   }
 
   componentDidMount() {
@@ -107,7 +114,27 @@ class HotelDetailsPage extends React.Component {
         nights: this.props.searchInfo.nights,
       });
 
+      this.setSearchRenewalTimeout();
     }
+  }
+
+  componentWillUnmount() {
+    this.clearSearchRenewalTimeout();
+  }
+
+  setSearchRenewalTimeout() {
+    const isTimeoutSet = !!this.searchRenewalTimeout;
+    if (!isTimeoutSet) {
+      this.searchRenewalTimeout = setTimeout(() => {
+        console.log('modal opened');
+      }, SEARCH_EXPIRATION_TIME);
+      console.log('timeout set');
+    }
+  }
+
+  clearSearchRenewalTimeout() {
+    clearTimeout(this.searchRenewalTimeout);
+    console.log('timeout cleared');
   }
 
   redirectToSearchPage(queryString) {

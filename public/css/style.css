@@ -2095,18 +2095,36 @@ li.dropdown {
     flex-direction: column;
 }
 
-.my-reservations .reservation-box-pending {
+#profile-my-reservations .reservation-box-pending {
     text-align: center;
-    margin-top: 10px;
-    margin-bottom: 0;
+    margin-top: 5px;
+    background-color: white;
+    padding: 1%;
+    border: 1px solid #CCCCCC;
+    border-radius: 5px;
 }
 
-.my-reservations .reservation-box-pending a {
+#profile-my-reservations .reservation-box-pending a {
     text-decoration: underline;
     cursor: pointer;
+    padding-bottom: 10px;
+    color: #E98B73;
+    background: none;
+    border: none;
+    outline: none;
+    padding: 1px 6px 10px;
 }
 
-.my-reservations .reservation-box-pending .fa-link {
+#profile-my-reservations .reservation-box-pending button {
+    color: #E98B73;
+    background: none;
+}
+
+#profile-my-reservations .reservation-box-pending button .fa-link {
+    padding: 0 5px;    
+}
+
+#profile-my-reservations .reservation-box-pending .fa-link {
     cursor: pointer;
 }
 
