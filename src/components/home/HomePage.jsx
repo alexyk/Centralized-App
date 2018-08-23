@@ -1,6 +1,6 @@
 import BancorConvertWidget from '../external/BancorConvertWidget';
 import PopularDestinationsCarousel from '../hotels/carousel/PopularDestinationsCarousel';
-import PopularListingItem from '../common/listing/PopularListingItem';
+import PopularItem from './PopularItem';
 import HeroComponent from './HeroComponent';
 import PropTypes from 'prop-types';
 import React from 'react';
@@ -10,10 +10,12 @@ import { setRegion } from '../../actions/searchInfo';
 import { withRouter } from 'react-router-dom';
 import HomePageContentItem from './HomePageContentItem';
 import requester from '../../initDependencies';
+import moment from 'moment';
 
 import '../../styles/css/components/home/home_page.css';
 
-let slider = null;
+let sliderHotels = null;
+let sliderListings = null;
 
 const SlickButton = (props) => {
   const { currentSlide, slideCount, ...arrowProps } = props;
@@ -28,12 +30,11 @@ class HomePage extends React.Component {
 
     this.state = {
       listings: '',
+      hotels: '',
     };
 
     this.handleDestinationPick = this.handleDestinationPick.bind(this);
     this.redirectToSearchPage = this.redirectToSearchPage.bind(this);
-    this.next = this.next.bind(this);
-    this.prev = this.prev.bind(this);
   }
 
   componentDidMount() {
@@ -43,9 +44,15 @@ class HomePage extends React.Component {
       });
     });
 
+    fetch('http://localhost:8080/api/hotels/top')
+      .then(res => {
+        res.json().then(data => {
+          this.setState({ hotels: data.content });
+        });
+      });
+
     requester.getCountries().then(res => {
       res.body.then(data => {
-        console.log(data);
         this.setState({ countries: data });
       });
     });
@@ -60,16 +67,15 @@ class HomePage extends React.Component {
     this.props.history.push('/hotels/listings' + queryString);
   }
 
-  next() {
-    this.slider.slickNext();
+  next(slider) {
+    slider.slickNext();
   }
 
-  prev() {
-    this.slider.slickPrev();
+  prev(slider) {
+    slider.slickPrev();
   }
 
-  render() {
-    const { listings } = this.state;
+  getSlider(items, itemsType) {
     const settings = {
       infinite: true,
       speed: 500,
@@ -99,6 +105,43 @@ class HomePage extends React.Component {
         }
       ]
     };
+
+    let slider = itemsType === 'hotels' ? this.sliderHotels : this.sliderListings;
+
+    return items ?
+      <div>
+        <Slider ref={s => slider = s}
+          {...settings}>
+          {items.map((item, i) => {
+            let itemLink = '';
+            if (itemsType === 'hotels') {
+              itemLink = `/hotels/listings/${item.id}?region=4455&currency=${this.props.paymentInfo.currency}&startDate=${moment(new Date(new Date().setHours(24)), 'DD/MM/YYYY').format('DD/MM/YYYY')}&endDate=${moment(new Date(new Date().setHours(48)), 'DD/MM/YYYY').format('DD/MM/YYYY')}&rooms=%5B%7B"adults":1,"children":%5B%5D%7D%5D`;
+            } else {
+              itemLink = `/homes/listings/${item.id}?startDate=${moment(new Date(new Date().setHours(24)), 'DD/MM/YYYY').format('DD/MM/YYYY')}&endDate=${moment(new Date(new Date().setHours(48)), 'DD/MM/YYYY').format('DD/MM/YYYY')}&rooms=%5B%7B"adults":1,"children":%5B%5D%7D%5D`;
+            }
+            return (
+              <PopularItem
+                key={i}
+                item={item}
+                itemType={itemsType}
+                itemLink={itemLink}
+              />
+            );
+          })}
+        </Slider>
+        <div className="carousel-nav">
+          <ul>
+            <li><button className="icon-arrow-left" onClick={() => this.prev(slider)}></button></li>
+            <li><button className="btn">See all</button></li>
+            <li><button className="icon-arrow-right" onClick={() => this.next(slider)}></button></li>
+          </ul>
+        </div>
+      </div> : <div className="loader sm-none"></div>;
+  }
+
+  render() {
+    const { listings, hotels } = this.state;
+
     return (
       <div>
         <HeroComponent homePage={this.props.homePage} />
@@ -107,56 +150,38 @@ class HomePage extends React.Component {
           <HomePageContentItem
             title="Explore"
             text="What are you looking for?"
-            content={
-              <ul className="categories">
-                <li>
-                  <a href="#"><img src="/images/hotels.jpg" alt="hotels" />
-                    <h3>Hotels</h3>
-                  </a>
-                </li>
-                <li className="homes">
-                  <a href="#"><img src="/images/homes.jpg" alt="homes" />
-                    <h3>Homes</h3>
-                  </a>
-                </li>
-              </ul>}
-          />
+          >
+            <ul className="categories">
+              <li>
+                <a href="#"><img src="/images/hotels.jpg" alt="hotels" />
+                  <h3>Hotels</h3>
+                </a>
+              </li>
+              <li className="homes">
+                <a href="#"><img src="/images/homes.jpg" alt="homes" />
+                  <h3>Homes</h3>
+                </a>
+              </li>
+            </ul>
+          </HomePageContentItem>
           <HomePageContentItem
             title="Popular"
             text="Hotels around the world"
-            content={<h3>Work in progress - waiting end point from backend team.</h3>}
-          />
+          >
+            {this.getSlider(hotels, 'hotels')}
+          </HomePageContentItem>
           <HomePageContentItem
             title="Popular"
             text="Homes around the world"
-            content={listings &&
-              <div>
-                <Slider ref={s => this.slider = s}
-                  {...settings}>
-                  {listings.map((listing, i) => {
-                    return (
-                      <PopularListingItem
-                        key={i}
-                        listing={listing}
-                        listingsType="homes"
-                      />
-                    );
-                  })}
-                </Slider>
-                <div className="carousel-nav">
-                  <ul>
-                    <li><button className="icon-arrow-left" onClick={this.prev}></button></li>
-                    <li><button className="btn">See all</button></li>
-                    <li><button className="icon-arrow-right" onClick={this.next}></button></li>
-                  </ul>
-                </div>
-              </div>}
-          />
+          >
+            {this.getSlider(listings, 'homes')}
+          </HomePageContentItem>
           <HomePageContentItem
             title="Top Destinations"
             text="Discover your next experience"
-            content={<PopularDestinationsCarousel handleDestinationPick={this.handleDestinationPick} />}
-          />
+          >
+            <PopularDestinationsCarousel handleDestinationPick={this.handleDestinationPick} />
+          </HomePageContentItem>
           <section className="get-started">
             <h2>Host on LocKchain</h2>
             <div className="get-started-content">Easily list your home or hotel on LockChain and start earning money</div>
@@ -176,7 +201,15 @@ HomePage.propTypes = {
   history: PropTypes.object,
 
   // Redux props
-  dispatch: PropTypes.func
+  dispatch: PropTypes.func,
+  paymentInfo: PropTypes.object
 };
 
-export default connect()(withRouter(HomePage));
+function mapStateToProps(state) {
+  const { paymentInfo } = state;
+  return {
+    paymentInfo
+  };
+}
+
+export default connect(mapStateToProps)(withRouter(HomePage));
