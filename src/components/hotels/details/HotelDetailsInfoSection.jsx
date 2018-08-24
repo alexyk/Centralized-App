@@ -1,5 +1,3 @@
-import { Config } from '../../../config';
-import HotelDetailsAmenityColumn from './HotelDetailsAmenityColumn';
 import HotelDetailsReviewBox from './HotelDetailsReviewBox';
 import { LOGIN } from '../../../constants/modals.js';
 import PropTypes from 'prop-types';
@@ -9,27 +7,9 @@ import { openModal } from '../../../actions/modalsInfo.js';
 import { withRouter } from 'react-router-dom';
 import { CurrencyConverter } from '../../../services/utilities/currencyConverter';
 import { RoomsXMLCurrency } from '../../../services/utilities/roomsXMLCurrency';
+import Facilities from './Facilities';
 
 function HotelDetailsInfoSection(props) {
-  const getAmenities = (amenities) => {
-    const result = new Array(3);
-    for (let i = 0; i < 3; i++) {
-      result[i] = new Array(0);
-    }
-
-    for (let i = 0; i < amenities.length; i++) {
-      if (i % 3 === 0) {
-        result[0].push(amenities[i]);
-      } else if (i % 3 === 1) {
-        result[1].push(amenities[i]);
-      } else if (i % 3 === 2) {
-        result[2].push(amenities[i]);
-      }
-    }
-
-    return result;
-  };
-
   const getTotalPrice = (room) => {
     let total = 0;
     for (let i = 0; i < room.length; i++) {
@@ -58,8 +38,6 @@ function HotelDetailsInfoSection(props) {
   };
 
   const { hotelAmenities, city, country, generalDescription } = props.data;
-  const mostPopularFacilities = hotelAmenities.filter(a => a.picture != null).slice(0, 5);
-  const amenities = getAmenities(hotelAmenities);
   const address = props.data.additionalInfo.mainAddress;
   const rooms = props.hotelRooms;
   let roomsResults = [];
@@ -105,34 +83,7 @@ function HotelDetailsInfoSection(props) {
         <span dangerouslySetInnerHTML={{ __html: generalDescription }}></span>
       </div>
 
-
-      {mostPopularFacilities.length > 0 && amenities[0].length > 0 &&
-
-        <div className="facilities" id="facilities">
-          <h2>Facilities</h2>
-          <hr />
-          <div className="icons">
-            {mostPopularFacilities.map((item, i) => {
-              return (
-                item.picture != null && (
-                  <div key={i} className="icon-facilities" tooltip={item.text}>
-                    <span className="icon-image" style={{ textAlign: 'center', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                      <img src={Config.getValue('imgHost') + item.picture} style={{ width: '60%', height: '60%' }} alt="" />
-                    </span>
-                  </div>
-                )
-              );
-            })}
-            <div className="clearfix" />
-          </div>
-          <div className="row">
-            <HotelDetailsAmenityColumn amenities={amenities[0]} />
-            <HotelDetailsAmenityColumn amenities={amenities[1]} />
-            <HotelDetailsAmenityColumn amenities={amenities[2]} />
-          </div>
-          <div className="clearfix" />
-        </div>
-      }
+      <Facilities facilities={hotelAmenities} />
       <div className="clearfix" />
 
       <div className="hotel-extras">
