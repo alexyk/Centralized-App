@@ -39,7 +39,6 @@ class HotelBookingConfirmPage extends React.Component {
       data: null,
       showRoomsCanxDetails: false,
       loading: true,
-      locRate: null,
       password: '',
       confirmed: false,
       fiatPriceInCurrentCurrency: null,
@@ -148,6 +147,7 @@ class HotelBookingConfirmPage extends React.Component {
   handleReceiveMessage(event) {
     const fiatPriceInEUR = (JSON.parse(event.data)).fiatAmount;
     const fiatPriceInCurrentCurrency = CurrencyConverter.convert(this.state.rates, DEFAULT_CRYPTO_CURRENCY, this.props.paymentInfo.currency, fiatPriceInEUR);
+    console.log(fiatPriceInCurrentCurrency / this.state.locPrice);
     this.props.dispatch(setBestPrice(fiatPriceInCurrentCurrency));
   }
 
@@ -480,7 +480,7 @@ class HotelBookingConfirmPage extends React.Component {
           <tr key={(1 + index) * 1000} className="booking-room">
             <td>{bookingRoom.room.roomType.text}</td>
             <td><span
-              className="booking-price">{currency} {this.state.rates && (CurrencyConverter.convert(this.state.rates, RoomsXMLCurrency.get(), currency, bookingRoom.room.totalSellingPrice.amt)).toFixed(2)} ({(bookingRoom.room.totalSellingPrice.amt / this.state.locRate).toFixed(4)} LOC)</span>
+              className="booking-price">{currency} {this.state.rates && (CurrencyConverter.convert(this.state.rates, RoomsXMLCurrency.get(), currency, bookingRoom.room.totalSellingPrice.amt)).toFixed(2)} ({(bookingRoom.room.totalSellingPrice.amt / this.props.paymentInfo.locRate).toFixed(4)} LOC)</span>
             </td>
           </tr>
         );
@@ -503,15 +503,13 @@ class HotelBookingConfirmPage extends React.Component {
 
   addCheckInClauseRow(fees, rows, arrivalDate) {
     const fiatPrice = this.state.data && this.state.data.fiatPrice;
-    // const locPrice = this.state.data && this.state.data.locPrice;
-    // const locRate = Number(Number(this.props.paymentInfo.locRate).toFixed(2));
     const currency = this.props.paymentInfo.currency;
     rows.push(
       <tr key={2}>
         <td
           key={fees.length}>{`Cancel on ${moment(arrivalDate).format('DD MMM YYYY')}`}</td>
         <td><span
-          className="booking-price">{currency} {this.state.rates && (CurrencyConverter.convert(this.state.rates, RoomsXMLCurrency.get(), currency, fiatPrice)).toFixed(2)} ({(fiatPrice / this.state.locRate).toFixed(4)} LOC)</span>
+          className="booking-price">{currency} {this.state.rates && (CurrencyConverter.convert(this.state.rates, RoomsXMLCurrency.get(), currency, fiatPrice)).toFixed(2)} ({(fiatPrice / this.props.paymentInfo.locRate).toFixed(4)} LOC)</span>
         </td>
       </tr>
     );
@@ -519,7 +517,6 @@ class HotelBookingConfirmPage extends React.Component {
 
   getRoomFees() {
     const arrivalDate = this.state.data.booking.hotelBooking[0].arrivalDate;
-    // const fiatPriceInEUR = this.state.data && this.state.fiatPriceInEUR;
     const rows = [];
     const fees = this.getCancellationFees();
     const currency = this.props.paymentInfo.currency;
@@ -528,7 +525,6 @@ class HotelBookingConfirmPage extends React.Component {
       this.addFreeClauseRow(rows, arrivalDate);
       this.addCheckInClauseRow(fees, rows, arrivalDate);
     } else {
-      // const locRate = Number(Number(this.props.paymentInfo.locRate).toFixed(2));
       fees.forEach((fee, feeIndex) => {
         if (fee.amt === 0 && fee.loc === 0) {
           this.addFreeClauseRow(rows, fee.from);
@@ -536,19 +532,16 @@ class HotelBookingConfirmPage extends React.Component {
           let date = moment(fee.from).add(1, 'days').format('DD MMM YYYY');
           const arrivalDateFormat = moment(arrivalDate).format('DD MMM YYYY');
           let amount = fee.amt;
-          // let locAmount = fee.loc;
           if (fee.from === arrivalDate) {
             date = arrivalDate;
           } else if (date === arrivalDateFormat) {
-            // amount = fiatPriceInEUR;
             amount = this.state.data && this.state.data.fiatPrice;
-            // locAmount = this.state.data && this.state.data.locPrice;
           }
           rows.push(
             <tr key={3 * 1000 + feeIndex + 1}>
               <td>{`Cancel after ${date} including`}</td>
               <td><span
-                className="booking-price">{currency} {this.state.rates && (CurrencyConverter.convert(this.state.rates, RoomsXMLCurrency.get(), currency, amount)).toFixed(2)} ({(amount / this.state.locRate).toFixed(4)} LOC)</span>
+                className="booking-price">{currency} {this.state.rates && (CurrencyConverter.convert(this.state.rates, RoomsXMLCurrency.get(), currency, amount)).toFixed(2)} ({(amount / this.props.paymentInfo.locRate).toFixed(4)} LOC)</span>
               </td>
             </tr>
           );
