@@ -19,6 +19,7 @@ class DashboardPage extends React.Component {
     requester.getMyReservations(['page=0']).then((resReservations) => {
       resReservations.body.then(dataReservations => {
         requester.getMyTrips(['page=0']).then((resHomeTrips) => {
+          console.log(resHomeTrips);
           resHomeTrips.body.then(dataHomeTrips => {
             requester.getMyHotelBookings().then((resHotelTrips) => {
               resHotelTrips.body.then(dataHotelTrips => {
