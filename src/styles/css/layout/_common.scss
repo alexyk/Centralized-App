@@ -260,7 +260,7 @@ select {
 
 .lg-none {
 	display: block !important;
-	@include media(">=desktop") {
+	@include media(">=tablet") {
 		display: none !important;
 	}
 }
