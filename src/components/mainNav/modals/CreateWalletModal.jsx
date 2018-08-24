@@ -1,16 +1,17 @@
-import { NotificationManager } from 'react-notifications';
+import '../../../styles/css/components/modals/modal.css';
+
+import { CREATE_WALLET, SAVE_WALLET } from '../../../constants/modals.js';
+
+import { CREATING_WALLET } from '../../../constants/infoMessages.js';
 import { Config } from '../../../config';
+import { LONG } from '../../../constants/notificationDisplayTimes.js';
 import { Modal } from 'react-bootstrap';
+import { NotificationManager } from 'react-notifications';
 import PropTypes from 'prop-types';
 import React from 'react';
-import validator from 'validator';
-import { Wallet } from '../../../services/blockchain/wallet.js';
-import { CREATE_WALLET, SAVE_WALLET } from '../../../constants/modals.js';
 import { WALLET_INVALID_PASSWORD_LENGTH } from '../../../constants/warningMessages.js';
-import { CREATING_WALLET } from '../../../constants/infoMessages.js';
-import { LONG } from '../../../constants/notificationDisplayTimes.js';
-
-import '../../../styles/css/components/modals/modal.css';
+import { Wallet } from '../../../services/blockchain/wallet.js';
+import validator from 'validator';
 
 function CreateWalletModal(props) {
   const submitPassword = () => {
@@ -34,7 +35,7 @@ function CreateWalletModal(props) {
         });
       } catch (error) {
         NotificationManager.info(error, '', LONG);
-        console.log(error);
+        // console.log(error);
       }
     }
   };

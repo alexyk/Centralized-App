@@ -71,7 +71,7 @@ class HotelTrip extends React.Component {
     const statusMessage = STATUS_TOOLTIP[status];
 
     const dates = this.extractDatesData(this.props.trip);
-    const { hotel_photo, hotel_name, hostEmail, hostPhone, } = this.props.trip;
+    const { hotel_photo, hotel_name, hostEmail, hostPhone } = this.props.trip;
 
     const isCompleted = status === 'COMPLETE' && this.isFutureDate(moment().format('YYYY-MM-DD'), this.props.trip.arrival_date);
 

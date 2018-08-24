@@ -1,14 +1,13 @@
 import '../../../styles/css/components/profile/me/profile-verification.css';
 import '../../../styles/css/components/profile/admin_panel/navigation-tab.css';
 
-import { NavLink, withRouter } from 'react-router-dom';
 import { closeModal, openModal } from '../../../actions/modalsInfo';
 
 import { CAPTURE_IMAGE } from '../../../constants/modals.js';
 import CaptureImageModal from './modals/CaptureImageModal';
 import { Config } from '../../../config';
 import Dropzone from 'react-dropzone';
-import {NotificationManager} from 'react-notifications';
+import { NotificationManager } from 'react-notifications';
 import PropTypes from 'prop-types';
 import React from 'react';
 import VerificationItem from './VerificationItem';
@@ -16,6 +15,7 @@ import Webcam from 'react-webcam';
 import { connect } from 'react-redux';
 import request from 'superagent';
 import requester from '../../../initDependencies';
+import { withRouter } from 'react-router-dom';
 
 const API_HOST = Config.getValue('apiHost');
 const LOCKTRIP_UPLOAD_URL = `${API_HOST}users/me/identity/images/upload`;
@@ -131,13 +131,13 @@ class ProfileVerificationPage extends React.Component {
 
   onImageDrop(file, photoName) {
 
-    if (photoName == 'governmentIdPhoto') {
+    if (photoName === 'governmentIdPhoto') {
       this.state.cardIdTabs.push('cardId');
-      this.setState({activeTab: false});
+      this.setState({ activeTab: false });
     }
-    if (photoName == 'governmentIdHolderPhoto') {
+    if (photoName === 'governmentIdHolderPhoto') {
       this.state.cardIdTabs.push('cardIdHolder');
-      this.setState({activeTab: ''});
+      this.setState({ activeTab: '' });
     }
 
     this.setState({
@@ -146,13 +146,13 @@ class ProfileVerificationPage extends React.Component {
   }
 
   onCaptureDrop(photoName) {
-    if (photoName == 'governmentIdPhoto') {
+    if (photoName === 'governmentIdPhoto') {
       this.state.cardIdTabs.push('cardId');
-      this.setState({activeTab: false});
+      this.setState({ activeTab: false });
     }
-    if (photoName == 'governmentIdHolderPhoto') {
+    if (photoName === 'governmentIdHolderPhoto') {
       this.state.cardIdTabs.push('cardIdHolder');
-      this.setState({activeTab: ''});
+      this.setState({ activeTab: '' });
     }
 
     let imageURL = this.webcam.getScreenshot();
@@ -183,10 +183,10 @@ class ProfileVerificationPage extends React.Component {
   }
 
   changeTabStatus(state) {
-    if (state == 'cardId') {
+    if (state === 'cardId') {
       this.setState({ activeTab: true });
     }
-    if (state == 'cardIdHolder') {
+    if (state === 'cardIdHolder') {
       this.setState({ activeTab: false });
     }
     // this.state.cardIdTabs.push(state);
@@ -199,21 +199,21 @@ class ProfileVerificationPage extends React.Component {
 
     // console.log(this.state);
     const isTwoPicturesUploaded = this.state.uploadedFilegovernmentIdHolderPhoto != null && this.state.uploadedFilegovernmentIdPhoto != null;
-    const saveButtonClass = this.state.uploadedFilegovernmentIdPhoto == null || this.state.uploadedFilegovernmentIdHolderPhoto == null ? 'unactive' : 'active';
+    const saveButtonClass = this.state.uploadedFilegovernmentIdPhoto === null || this.state.uploadedFilegovernmentIdHolderPhoto === null ? 'unactive' : 'active';
     return (
       <div id="profile-trust-and-verification">
         <h2>Identification</h2>
         <hr />
         <h5>Your Government ID will be used for verification of your identity and allowing you access to certain features. It will not be shared with anyone else.</h5>
 
-        {this.state.verified == true ? <div>Verified</div> : this.state.governmentIdHolderPhoto == 'true' && this.state.governmentIdPhoto == 'true' ? <div>Pending</div> :
+        {this.state.verified === true ? <div>Verified</div> : this.state.governmentIdHolderPhoto === 'true' && this.state.governmentIdPhoto === 'true' ? <div>Pending</div> :
           <div>
             <div className="box">
               <ul className="navigation-tab">
                 <li>
-                  <a href="#"
+                  <a href=""
                     onClick={() => this.changeTabStatus('cardId')}
-                    className={this.state.activeTab == true ? 'active' : ''}>
+                    className={this.state.activeTab === true ? 'active' : ''}>
                     <h2>
                       {this.state.cardIdTabs.includes('cardId') ?
                         <span className="step-check checked"></span> :
@@ -222,9 +222,9 @@ class ProfileVerificationPage extends React.Component {
                   </a>
                 </li>
                 <li>
-                  <a href="#"
+                  <a href=""
                     onClick={() => this.changeTabStatus('cardIdHolder')}
-                    className={this.state.activeTab == false ? 'active' : ''}>
+                    className={this.state.activeTab === false ? 'active' : ''}>
                     <h2>
                       {this.state.cardIdTabs.includes('cardIdHolder') ?
                         <span className="step-check checked"></span> :
@@ -234,14 +234,14 @@ class ProfileVerificationPage extends React.Component {
                 </li>
               </ul>
               <div className="left-part">
-                <h2>{this.state.activeTab == true ? 'Government ID' : 'Holder + Government ID'}</h2>
-                {this.state.activeTab == true ?
+                <h2>{this.state.activeTab === true ? 'Government ID' : 'Holder + Government ID'}</h2>
+                {this.state.activeTab === true ?
                   <h5>Upload an existing picture of your ID or use your web camera to take one.</h5> :
                   <h5>In order to be sure that the cardholder is you, we need you to be on the picture holding the card near your face.</h5>
                 }
               </div>
               <div className="right-part">
-                {this.state.activeTab == true ? <div>
+                {this.state.activeTab === true ? <div>
                   <Dropzone
                     className="button"
                     style={this.state.uploadedFilegovernmentIdPhoto === null ? null : { backgroundColor: '#a2c5bf' }}
@@ -308,7 +308,7 @@ class ProfileVerificationPage extends React.Component {
                 {this.state.error ? <div className="error">{this.state.error}</div> : null}
               </div>
             </div>
-            <button disabled={!isTwoPicturesUploaded} onClick={this.updateUserIdentity} className={'button' + ' ' + saveButtonClass}>Save ID</button>
+            <button disabled={!isTwoPicturesUploaded} onClick={this.updateUserIdentity} className={'button ' + saveButtonClass}>Save ID</button>
           </div>}
         <br />
         <h2>Your verified info</h2>

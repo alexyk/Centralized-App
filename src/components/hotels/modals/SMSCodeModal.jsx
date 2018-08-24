@@ -5,7 +5,6 @@ import { NotificationManager } from 'react-notifications';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { SMS_VERIFICATION } from '../../../constants/modals';
-import requester from 'locktrip-service-layer';
 
 class RoomInfoModal extends React.Component {
   constructor(props) {
@@ -41,10 +40,10 @@ class RoomInfoModal extends React.Component {
   verifySMSCode() {
     var debug = 321897;
 
-    if (this.state.timerOn == false) {
+    if (this.state.timerOn === false) {
       NotificationManager.info('First send SMS');
     }
-    else if (this.state.SMSCode == debug) {
+    else if (this.state.SMSCode === debug) {
       NotificationManager.success('Your reservation is verified with SMS');
       this.props.closeModal(SMS_VERIFICATION);
     }
@@ -77,17 +76,17 @@ class RoomInfoModal extends React.Component {
     // console.log(this.state);
     return (
       <div>
-        <Modal show={this.props.isActive} onHide={e => this.props.closeModal(SMS_VERIFICATION)} className="modal fade myModal">
+        <Modal show={this.props.isActive} onHide={() => this.props.closeModal(SMS_VERIFICATION)} className="modal fade myModal">
           <Modal.Header>
             <h1>SMS Verfication</h1>
-            <button type="button" className="close" onClick={(e) => this.props.closeModal(SMS_VERIFICATION)}>&times;</button>
+            <button type="button" className="close" onClick={() => this.props.closeModal(SMS_VERIFICATION)}>&times;</button>
           </Modal.Header>
           <Modal.Body>
             <div className="sms">
               <input type="text" className="sms-field" value={this.state.SMSCode} name="SMSCode" onChange={this.onChange} />
               {!this.state.timerOn ? <button onClick={this.sendSMSCode} className="sms-button">Send SMS</button> : <button disabled className="sms-button">{(this.state.seconds < 10 ? '0' : '') + String(this.state.seconds) + 's'}</button>}
             </div>
-            <button className="btn btn-primary" onClick={(e) => this.verifySMSCode()}>Verify</button>
+            <button className="btn btn-primary" onClick={() => this.verifySMSCode()}>Verify</button>
           </Modal.Body>
         </Modal>
       </div>

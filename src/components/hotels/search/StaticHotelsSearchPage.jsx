@@ -408,7 +408,7 @@ class StaticHotelsSearchPage extends React.Component {
           });
         });
       } else {
-        console.log('Search expired');
+        // console.log('Search expired');
       }
     });
   }
@@ -509,7 +509,7 @@ class StaticHotelsSearchPage extends React.Component {
                 this.toggleMap();
               });
             } else {
-              console.log('Search expired');
+              // console.log('Search expired');
             }
           });
         }
@@ -559,7 +559,7 @@ class StaticHotelsSearchPage extends React.Component {
             }
           });
           const hotels = _.mapKeys(listings, 'id');
-          
+
           this.setState({
             hotels,
             totalElements: data.totalElements,
@@ -631,7 +631,7 @@ class StaticHotelsSearchPage extends React.Component {
 
                 <div className="map">
                   <div className="img-holder">
-                    <a href="#" onClick={this.toggleMap}>See Results {this.state.showMap ? 'List' : 'on Map'}</a>
+                    <a href="" onClick={this.toggleMap}>See Results {this.state.showMap ? 'List' : 'on Map'}</a>
                   </div>
                 </div>
               </div>

@@ -55,6 +55,7 @@ $breakpoints: (
       width: 20%;
       button {
         padding-bottom: 10px;
+        padding-left: 0;
         color: #E98B73;
         background: none;
         border: none;
@@ -169,4 +170,14 @@ $breakpoints: (
       }
     }
   }
+}
+
+@include media("<=phone") {
+  #profile-my-reservations {
+    .reservation-box-pending {
+      margin-top: -9%;
+      margin-bottom: 10%;
+      padding: 2%;
+    }
+  } 
 }

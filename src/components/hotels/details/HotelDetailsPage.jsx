@@ -26,9 +26,13 @@ import { UNCATEGORIZED_ERROR } from '../../../constants/errorMessages.js';
 import { INVALID_SEARCH_DATE, ALL_ROOMS_TAKEN } from '../../../constants/warningMessages.js';
 import { LONG } from '../../../constants/notificationDisplayTimes.js';
 
+const SEARCH_EXPIRATION_TIME = 30000;
+
 class HotelDetailsPage extends React.Component {
   constructor(props) {
     super(props);
+
+    this.searchRenewalTimeout = null;
 
     let startDate = moment().add(1, 'day');
     let endDate = moment().add(2, 'day');
@@ -67,6 +71,9 @@ class HotelDetailsPage extends React.Component {
     this.next = this.next.bind(this);
     this.previous = this.previous.bind(this);
     this.redirectToSearchPage = this.redirectToSearchPage.bind(this);
+
+    this.setSearchRenewalTimeout = this.setSearchRenewalTimeout.bind(this);
+    this.clearSearchRenewalTimeout = this.clearSearchRenewalTimeout.bind(this);
   }
 
   componentDidMount() {
@@ -107,7 +114,27 @@ class HotelDetailsPage extends React.Component {
         nights: this.props.searchInfo.nights,
       });
 
+      this.setSearchRenewalTimeout();
     }
+  }
+
+  componentWillUnmount() {
+    this.clearSearchRenewalTimeout();
+  }
+
+  setSearchRenewalTimeout() {
+    const isTimeoutSet = !!this.searchRenewalTimeout;
+    if (!isTimeoutSet) {
+      this.searchRenewalTimeout = setTimeout(() => {
+        console.log('modal opened');
+      }, SEARCH_EXPIRATION_TIME);
+      console.log('timeout set');
+    }
+  }
+
+  clearSearchRenewalTimeout() {
+    clearTimeout(this.searchRenewalTimeout);
+    console.log('timeout cleared');
   }
 
   redirectToSearchPage(queryString) {
@@ -128,7 +155,7 @@ class HotelDetailsPage extends React.Component {
   getNewSearchParams() {
     const array = [];
     const pairs = this.props.location.search.substr(1).split('&');
-    for(let i = 0; i < pairs.length; i++) {
+    for (let i = 0; i < pairs.length; i++) {
       let pair = pairs[i];
       array.push(pair);
     }
@@ -473,47 +500,41 @@ class HotelDetailsPage extends React.Component {
               </div>
             </nav>
 
-            <section id="hotel-info">
+            <HotelDetailsInfoSection
+              nights={this.state.nights}
+              onApply={this.handleApply}
+              startDate={this.state.calendarStartDate}
+              endDate={this.state.calendarEndDate}
+              data={this.state.data}
+              hotelRooms={this.state.hotelRooms}
+              locRate={this.state.locRate}
+              rates={this.state.rates}
+              loading={this.state.loading}
+              currencySign={this.props.paymentInfo.currencySign}
+              handleBookRoom={this.handleBookRoom}
+              checkAvailability={this.checkAvailability}
+              loadingRooms={this.state.loadingRooms}
+            />
+
+            {/* MOBILE ONLY START */}
+            {this.props.location.pathname.indexOf('/mobile') !== -1 &&
               <div className="container">
-
-                <HotelDetailsInfoSection
-                  nights={this.state.nights}
-                  onApply={this.handleApply}
-                  startDate={this.state.calendarStartDate}
-                  endDate={this.state.calendarEndDate}
-                  data={this.state.data}
-                  hotelRooms={this.state.hotelRooms}
-                  locRate={this.state.locRate}
-                  rates={this.state.rates}
-                  loading={this.state.loading}
-                  currencySign={this.props.paymentInfo.currencySign}
-                  handleBookRoom={this.handleBookRoom}
-                  checkAvailability={this.checkAvailability}
-                  loadingRooms={this.state.loadingRooms}
-                />
-              </div>
-
-              {/* MOBILE ONLY START */}
-              {this.props.location.pathname.indexOf('/mobile') !== -1 &&
-                <div className="container">
-                  <button className="btn" style={{ 'width': '100%', 'marginBottom': '20px' }} onClick={(e) => this.props.history.goBack()}>Back</button>
-                  <div className="select">
-                    <select
-                      className="currency"
-                      value={this.props.paymentInfo.currency}
-                      style={{ 'height': '40px', 'margin': '10px 0', 'textAlignLast': 'right', 'paddingRight': '45%', 'direction': 'rtl' }}
-                      onChange={(e) => this.props.dispatch(setCurrency(e.target.value))}
-                    >
-                      <option value="EUR">EUR</option>
-                      <option value="USD">USD</option>
-                      <option value="GBP">GBP</option>
-                    </select>
-                  </div>
+                <button className="btn" style={{ 'width': '100%', 'marginBottom': '20px' }} onClick={(e) => this.props.history.goBack()}>Back</button>
+                <div className="select">
+                  <select
+                    className="currency"
+                    value={this.props.paymentInfo.currency}
+                    style={{ 'height': '40px', 'margin': '10px 0', 'textAlignLast': 'right', 'paddingRight': '45%', 'direction': 'rtl' }}
+                    onChange={(e) => this.props.dispatch(setCurrency(e.target.value))}
+                  >
+                    <option value="EUR">EUR</option>
+                    <option value="USD">USD</option>
+                    <option value="GBP">GBP</option>
+                  </select>
                 </div>
-              }
-              {/* MOBILE ONLY END */}
-
-            </section>
+              </div>
+            }
+            {/* MOBILE ONLY END */}
           </div>
         }
       </div>

@@ -6,26 +6,21 @@ import {
   CHANGE_PASSWORD,
   CONFIRM_WALLET,
   CREATE_WALLET,
+  EMAIL_VERIFICATION,
   ENTER_RECOVERY_TOKEN,
   LOGIN,
   REGISTER,
   SAVE_WALLET,
   SEND_RECOVERY_EMAIL,
-  UPDATE_COUNTRY,
-  EMAIL_VERIFICATION
+  UPDATE_COUNTRY
 } from '../../constants/modals.js';
-
 import {
   INVALID_EMAIL,
   INVALID_PASSWORD,
-  INVALID_TOKEN,
+  INVALID_SECURITY_CODE,
   PASSWORDS_DONT_MATCH,
   PROFILE_PASSWORD_REQUIREMENTS
 } from '../../constants/warningMessages';
-
-import { VERIFICATION_EMAIL_SENT } from '../../constants/infoMessages.js';
-import { LONG } from '../../constants/notificationDisplayTimes.js';
-
 import { Link, withRouter } from 'react-router-dom';
 import { MenuItem, Nav, NavDropdown, NavItem, Navbar } from 'react-bootstrap/lib';
 import { PASSWORD_SUCCESSFULLY_CHANGED, PROFILE_SUCCESSFULLY_CREATED } from '../../constants/successMessages.js';
@@ -33,17 +28,17 @@ import { closeModal, openModal } from '../../actions/modalsInfo';
 import { setIsLogged, setUserInfo } from '../../actions/userInfo';
 
 import AirdropLoginModal from '../profile/airdrop/AirdropLoginModal';
-import UpdateCountryModal from './modals/UpdateCountryModal';
 import AirdropRegisterModal from '../profile/airdrop/AirdropRegisterModal';
 import ChangePasswordModal from './modals/ChangePasswordModal';
-import EmailVerificationModal from './modals/EmailVerificationModal';
 import { Config } from '../../config';
 import ConfirmWalletModal from './modals/ConfirmWalletModal';
 import CreateWalletModal from './modals/CreateWalletModal';
+import EmailVerificationModal from './modals/EmailVerificationModal';
 import EnterRecoveryTokenModal from './modals/EnterRecoveryTokenModal';
+import { LONG } from '../../constants/notificationDisplayTimes.js';
 import LoginModal from './modals/LoginModal';
-import { NOT_FOUND } from '../../constants/errorMessages';
 import { MISSING_AIRDROP_INFO } from '../../constants/warningMessages.js';
+import { NOT_FOUND } from '../../constants/errorMessages';
 import { NotificationManager } from 'react-notifications';
 import PropTypes from 'prop-types';
 import ReCAPTCHA from 'react-google-recaptcha';
@@ -51,11 +46,13 @@ import React from 'react';
 import RegisterModal from './modals/RegisterModal';
 import SaveWalletModal from './modals/SaveWalletModal';
 import SendRecoveryEmailModal from './modals/SendRecoveryEmailModal';
+import UpdateCountryModal from './modals/UpdateCountryModal';
+import { VERIFICATION_EMAIL_SENT } from '../../constants/infoMessages.js';
 import { Wallet } from '../../services/blockchain/wallet.js';
 import { connect } from 'react-redux';
+import queryString from 'query-string';
 import requester from '../../initDependencies';
 import { setAirdropInfo } from '../../actions/airdropInfo';
-import queryString from 'query-string';
 
 class MainNav extends React.Component {
   constructor(props) {
@@ -97,6 +94,7 @@ class MainNav extends React.Component {
 
     this.openModal = this.openModal.bind(this);
     this.closeModal = this.closeModal.bind(this);
+    this.clearStateOnCloseModal = this.clearStateOnCloseModal.bind(this);
 
     this.messageListener = this.messageListener.bind(this);
     this.getCountOfMessages = this.getCountOfMessages.bind(this);
@@ -127,7 +125,7 @@ class MainNav extends React.Component {
     }
 
     if (queryParams.emailVerificationToken) {
-      this.setState({ 
+      this.setState({
         emailVerificationToken: queryParams.emailVerificationToken,
         isVerifyingEmail: true,
       });
@@ -230,16 +228,16 @@ class MainNav extends React.Component {
       this.setState({ isUpdatingWallet: false });
     }
 
-    if (this.state.isUpdatingCountry) {
+    if (this.state.isUpdatingCountry && this.state.country) {
       user.country = this.state.country.id;
       this.closeModal(UPDATE_COUNTRY);
-      this.setState({ isUpdatingCountry: false });
+      this.setState({ isUpdatingCountry: false, country: { id: 1 } });
     }
 
-    if (this.state.isVerifyingEmail) {
+    if (this.state.isVerifyingEmail && this.state.emailVerificationToken) {
       user.emailVerificationToken = this.state.emailVerificationToken;
       this.closeModal(EMAIL_VERIFICATION);
-      this.setState({ isVerifyingEmail: false });
+      this.setState({ isVerifyingEmail: false, emailVerificationToken: '' });
     }
 
     requester.login(user).then(res => {
@@ -323,7 +321,7 @@ class MainNav extends React.Component {
       } else {
         res.errors.then(res => {
           const errors = res;
-          console.log(errors);
+          // console.log(errors);
           if (errors.hasOwnProperty('JsonFileNull')) {
             NotificationManager.warning(errors['JsonFileNull'].message, '', LONG);
             this.setState({ isUpdatingWallet: true }, () => {
@@ -352,15 +350,15 @@ class MainNav extends React.Component {
         if (data.participates) {
           this.dispatchAirdropInfo(data);
         } else {
-          console.log('user not yet moved from temp to main');
+          // console.log('user not yet moved from temp to main');
           const token = this.props.location.search.split('=')[1];
           requester.checkIfAirdropUserExists(token).then(res => {
             res.body.then(user => {
               const currentEmail = localStorage[Config.getValue('domainPrefix') + '.auth.username'];
               if (user.email === currentEmail && user.exists) {
-                console.log('users match');
+                // console.log('users match');
                 requester.verifyUserAirdropInfo(token).then(() => {
-                  console.log('user moved from temp to main');
+                  // console.log('user moved from temp to main');
                   NotificationManager.info(VERIFICATION_EMAIL_SENT, '', LONG);
                   requester.getUserAirdropInfo().then(res => {
                     res.body.then(data => {
@@ -369,7 +367,7 @@ class MainNav extends React.Component {
                   });
                 });
               } else {
-                console.log('users dont match', user.email, currentEmail);
+                // console.log('users dont match', user.email, currentEmail);
               }
             });
           });
@@ -445,11 +443,18 @@ class MainNav extends React.Component {
       e.preventDefault();
     }
 
-    this.setState({
-      country: { id: 1 },
-    });
-
+    this.clearStateOnCloseModal();
     this.props.dispatch(closeModal(modal));
+  }
+
+  clearStateOnCloseModal(modal) {
+    if (modal === LOGIN) {
+      this.setState({ loginEmail: '', loginPassword: '' });
+    } else if (modal === EMAIL_VERIFICATION) {
+      this.setState({ isVerifyingEmail: false, emailVerificationToken: '' });
+    }
+    
+    this.setState({ country: { id: 1 } });
   }
 
   messageListener() {
@@ -515,7 +520,7 @@ class MainNav extends React.Component {
         this.openModal(CHANGE_PASSWORD);
       }
       else {
-        NotificationManager.warning(INVALID_TOKEN, '', LONG);
+        NotificationManager.warning(INVALID_SECURITY_CODE, '', LONG);
       }
     });
   }
@@ -576,6 +581,8 @@ class MainNav extends React.Component {
         return this.handleConfirmWallet;
       case 'changePassword':
         return this.handlePasswordChange;
+      default:
+        return null;
     }
   }
 

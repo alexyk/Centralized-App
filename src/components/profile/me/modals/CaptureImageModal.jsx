@@ -6,10 +6,6 @@ import PropTypes from 'prop-types';
 import React from 'react';
 
 class CaptureImageModal extends React.Component {
-  constructor(props) {
-    super(props);
-  }
-
   render() {
     const props = this.props;
     return (

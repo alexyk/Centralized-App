@@ -1,10 +1,6 @@
 import React, { Component } from 'react';
 
 class BancorConvertWidget extends Component {
-  constructor(props) {
-    super(props);
-  }
-
   componentDidMount() {
     if (window.BancorConvertWidget && !window.BancorConvertWidget.isInitialized) {
       window.BancorConvertWidget.init({

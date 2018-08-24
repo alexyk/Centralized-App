@@ -1,9 +1,9 @@
+import { Config } from '../../../config.js';
+import PropTypes from 'prop-types';
 import React from 'react';
 import Slider from 'react-slick';
-import PropTypes from 'prop-types';
-import { Config } from '../../../config.js';
-import moment from 'moment';
 import { connect } from 'react-redux';
+import moment from 'moment';
 
 function PopularDestinationsCarousel(props) {
   const pictures = [
@@ -37,14 +37,9 @@ function PopularDestinationsCarousel(props) {
     },
   ];
 
-  let slider = null;
-
-  const SlickButton = (props) => {
-    const { currentSlide, slideCount, ...arrowProps } = props;
-    return (
-      <button type="button" {...arrowProps} />
-    );
-  };
+  const SlickButton = ({ currentSlide, slideCount, ...props }) => (
+    <button {...props} />
+  );
 
   const settings = {
     infinite: true,
@@ -78,7 +73,7 @@ function PopularDestinationsCarousel(props) {
 
   return (
     <div>
-      <Slider ref={s => slider = s}
+      <Slider
         {...settings}>
         {pictures.map((dest, i) => {
           return (

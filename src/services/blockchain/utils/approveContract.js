@@ -3,7 +3,7 @@ import {
 } from '../config/contracts-config.js';
 import {
   getNonceNumber
-} from "./ethFuncs"
+} from './ethFuncs';
 
 const gasConfig = require('./../config/gas-config.json');
 const ERROR = require('./../config/errors.json');
@@ -21,7 +21,7 @@ export async function approveContract(
   const allowance = await locContract.allowance(wallet.address, contractAddressToApprove)
   let nonce = await getNonceNumber(wallet.address);
   if (allowance.gte(amount)) {
-    return nonce
+    return nonce;
   }
 
   var overrideOptions = {
@@ -32,7 +32,7 @@ export async function approveContract(
 
   await wallet.provider.waitForTransaction(approve.hash);
   let txResult = await wallet.provider.getTransactionReceipt(approve.hash);
-  if (txResult.status = failedSatusCode) {
+  if (txResult.status === failedSatusCode) {
     throw new Error(ERROR.FAILED_APPROVE);
   }
 

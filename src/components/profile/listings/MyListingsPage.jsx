@@ -2,18 +2,17 @@ import '../../../styles/css/components/profile/listings/my-listings-page.css';
 
 import { Config } from '../../../config';
 import DeletionModal from '../../common/modals/DeletionModal';
+import { LISTING_DELETED } from '../../../constants/successMessages.js';
+import { LONG } from '../../../constants/notificationDisplayTimes.js';
 import { Link } from 'react-router-dom';
 import MyListingsInProgressItem from './MyListingsInProgressItem';
 import MyListingsItemRow from './MyListingsItemRow';
 import { NotificationManager } from 'react-notifications';
+import { PROPERTY_CANNOT_BE_DELETED } from '../../../constants/errorMessages.js';
 import ReCAPTCHA from 'react-google-recaptcha';
 import React from 'react';
 import filterListings from '../../../actions/filterListings';
 import requester from '../../../initDependencies';
-
-import { LISTING_DELETED } from '../../../constants/successMessages.js';
-import { PROPERTY_CANNOT_BE_DELETED } from '../../../constants/errorMessages.js';
-import { LONG } from '../../../constants/notificationDisplayTimes.js';
 
 class MyListingsPage extends React.Component {
   constructor(props) {
@@ -117,7 +116,7 @@ class MyListingsPage extends React.Component {
       }
       this.handleCloseDeleteListing();
     }).catch(e => {
-      console.log(e);
+      // console.log(e);
       this.handleCloseDeleteListing();
     });
   }

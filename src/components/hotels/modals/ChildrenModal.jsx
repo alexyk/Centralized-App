@@ -1,11 +1,9 @@
+import {CHILDREN} from '../../../constants/modals';
 import {Modal} from 'react-bootstrap';
 import PropTypes from 'prop-types';
 import React from 'react';
 import {connect} from 'react-redux';
-
 import {setRooms} from '../../../actions/searchInfo';
-
-import {CHILDREN} from '../../../constants/modals';
 
 function ChildrenModal(props) {
 
@@ -82,7 +80,7 @@ function ChildrenModal(props) {
                         <div key={childIndex} className="col col-md-2">
                           <select name={`children${roomIndex}age`} className="form-control children-age-select"
                             value={child.age} onChange={(e) => handleChildAgeChange(e, roomIndex, childIndex)}>
-                            <option value="" selected disabled required>Age</option>
+                            <option value="" disabled required>Age</option>
                             <option value="1">1</option>
                             <option value="2">2</option>
                             <option value="3">3</option>

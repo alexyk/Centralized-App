@@ -16,10 +16,10 @@ function EnterRecoveryTokenModal(props) {
         </Modal.Header>
         <Modal.Body>
           <form onSubmit={(e) => { e.preventDefault(); props.handleSubmitRecoveryToken(); }}>
-            <p>A confirmation email has been sent. To enter a new password open the link from your email or enter the token in the field below. </p>
+            <p>A confirmation email has been sent. To enter a new password open the link from your email or enter the security code in the field below. </p>
             <div className="input-container">
               <img src={Config.getValue('basePath') + 'images/login-mail.png'} className="email-image" alt="email" />
-              <input type="text" name="recoveryToken" value={props.recoveryToken} onChange={props.onChange} className="with-icon" placeholder="Token" />
+              <input type="text" name="recoveryToken" value={props.recoveryToken} onChange={props.onChange} className="with-icon" placeholder="Security Code" />
             </div>
 
             <button type="submit" className="btn btn-primary">Proceed to Password Change</button>

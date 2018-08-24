@@ -1,12 +1,13 @@
 import {
+  HotelReservationFactoryContract,
+  SimpleReservationMultipleWithdrawersContract
+} from '../config/contracts-config';
+import {
   addDaysToNow,
   formatTimestamp,
   formatTimestampToDays
-} from "../utils/timeHelper";
-import {
-  HotelReservationFactoryContract,
-  SimpleReservationMultipleWithdrawersContract
-} from "../config/contracts-config";
+} from '../utils/timeHelper';
+
 import ethers from 'ethers';
 
 const ERROR = require('./../config/errors.json');
@@ -173,7 +174,7 @@ export class ReservationValidators {
     const nowUnixFormatted = formatTimestamp(new Date().getTime() / secondsInMilliSeconds | 0);
     let dayInSeconds = 60 * 60 * 24;
     let yearsPeriodInSeconds = ((dayInSeconds * yearInDays) + (leapYearDay * 2)) * yearsForTimeValidation;
-    if (reservationStartDate < nowUnixFormatted || reservationStartDate > (nowUnixFormatted + yearsPeriodInSeconds) || reservationStartDate.toString().length != timestampInSecondsLength) {
+    if (reservationStartDate < nowUnixFormatted || reservationStartDate > (nowUnixFormatted + yearsPeriodInSeconds) || reservationStartDate.toString().length !== timestampInSecondsLength) {
       throw new Error(ERROR.INVALID_PERIOD_START);
     }
 
@@ -181,7 +182,7 @@ export class ReservationValidators {
       throw new Error(ERROR.INVALID_PERIOD);
     }
 
-    if (reservationEndDate > (nowUnixFormatted + yearsPeriodInSeconds) || reservationEndDate.toString().length != timestampInSecondsLength) {
+    if (reservationEndDate > (nowUnixFormatted + yearsPeriodInSeconds) || reservationEndDate.toString().length !== timestampInSecondsLength) {
       throw new Error(ERROR.INVALID_PERIOD_END);
     }
 
@@ -199,7 +200,7 @@ export class ReservationValidators {
     let dayInSeconds = 60 * 60 * 24;
     let yearsPeriodInSeconds = ((dayInSeconds * yearInDays) + (leapYearDay * 2)) * yearsForTimeValidation;
 
-    if (withdrawDate > (nowUnixFormatted + yearsPeriodInSeconds) || withdrawDate.toString().length != timestampInSecondsLength) {
+    if (withdrawDate > (nowUnixFormatted + yearsPeriodInSeconds) || withdrawDate.toString().length !== timestampInSecondsLength) {
       throw new Error(ERROR.INVALID_WITHDRAW_DATE);
     }
   }
@@ -208,7 +209,7 @@ export class ReservationValidators {
     const nowDaysFormatted = formatTimestampToDays(new Date().getTime() / secondsInMilliSeconds | 0);
     let dayInSeconds = 60 * 60 * 24;
     let yearsPeriodInSeconds = ((dayInSeconds * yearInDays) + (leapYearDay * 2)) * yearsForTimeValidation;
-    if (withdrawDate > (nowDaysFormatted + yearsPeriodInSeconds) || withdrawDate.toString().length != timestampInDaysLength) {
+    if (withdrawDate > (nowDaysFormatted + yearsPeriodInSeconds) || withdrawDate.toString().length !== timestampInDaysLength) {
       throw new Error(ERROR.INVALID_WITHDRAW_DATE);
     }
   }
@@ -274,11 +275,11 @@ export class ReservationValidators {
         throw new Error(ERROR.INVALID_DATE_FOR_WITHDRAW)
       }
 
-      if (reservationMapping[0] != senderAddress) {
+      if (reservationMapping[0] !== senderAddress) {
         throw new Error(ERROR.INVALID_WITHDRAWER)
       }
 
-      if (reservationMapping[1] == 0) {
+      if (reservationMapping[1] === 0) {
         throw new Error(ERROR.INVALID_BOOKING_FOR_WITHDRAW)
       }
     }

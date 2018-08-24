@@ -6,18 +6,15 @@ import '../../../styles/css/components/hotels_search/result/results_holder__hote
 import { Link, withRouter } from 'react-router-dom';
 
 import { Config } from '../../../config';
+import { CurrencyConverter } from '../../../services/utilities/currencyConverter';
 import PropTypes from 'prop-types';
 import { ROOMS_XML_CURRENCY } from '../../../constants/currencies.js';
 import React from 'react';
 import ReactHtmlParser from 'react-html-parser';
-import { CurrencyConverter } from '../../../services/utilities/currencyConverter';
-
 import Slider from 'react-slick';
-import { connect } from 'react-redux';
 import StringUtils from '../../../services/utilities/stringUtilities';
 import _ from 'lodash';
-
-let slider = null;
+import { connect } from 'react-redux';
 
 const SCREEN_SIZE_SMALL = 'SMALL';
 const SCREEN_SIZE_MEDIUM = 'MEDIUM';
@@ -48,7 +45,7 @@ class Result extends React.Component {
     const screenWidth = window.innerWidth;
     const screenSize = this.getScreenSize(screenWidth);
 
-    this.state = { 
+    this.state = {
       screenWidth: screenWidth,
       titleLength: this.getTitleLength(screenSize),
       descriptionLength: this.getDescriptionLength(screenSize),
@@ -65,7 +62,7 @@ class Result extends React.Component {
   componentWillUnmount() {
     window.removeEventListener('resize', this.updateWindowDimensions);
   }
-  
+
   updateWindowDimensions() {
     const width = window.innerWidth;
     const screenSize = this.getScreenSize(width);
@@ -102,17 +99,6 @@ class Result extends React.Component {
     return starsElements;
   }
 
-  SlickButton(props) {
-    const { currentSlide, slideCount, ...arrowProps } = props;
-    return (
-      <button type="button" {...arrowProps}>
-      </button>
-    );
-  }
-
-  // const leftButton = <button type="button" data-role="none" className="slick-arrow slick-next" style={{ display: 'block' }}></button>;
-  // const rightButton = <button></button>;
-
   render() {
     let { id, name, generalDescription, hotelPhoto, star } = this.props.hotel;
     let { price } = this.props;
@@ -131,13 +117,17 @@ class Result extends React.Component {
       pictures.push({ thumbnail: `${Config.getValue('imgHost')}/listings/images/default.png` });
     }
 
+    const SlickButton = ({ currentSlide, slideCount, ...props }) => (
+      <button {...props} />
+    );
+
     const settings = {
       infinite: true,
       speed: 500,
       slidesToShow: 1,
       slidesToScroll: 1,
-      nextArrow: <this.SlickButton />,
-      prevArrow: <this.SlickButton />
+      nextArrow: <SlickButton />,
+      prevArrow: <SlickButton />
     };
 
     const redirectURL = this.props.location.pathname.indexOf('mobile') === -1
@@ -151,7 +141,7 @@ class Result extends React.Component {
       <div className="result" >
         <div className="result-images">
           {pictures &&
-            <Slider ref={s => slider = s}
+            <Slider
               {...settings}>
               {pictures.map((picture, i) => {
                 return (
@@ -214,6 +204,7 @@ Result.propTypes = {
   nights: PropTypes.number,
   locRate: PropTypes.number,
   rates: PropTypes.any,
+  price: PropTypes.any,
 
   // Router props
   location: PropTypes.object,

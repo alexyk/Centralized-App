@@ -1,24 +1,22 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import ReCAPTCHA from 'react-google-recaptcha';
-import { Link } from 'react-router-dom';
-import { withRouter } from 'react-router-dom';
-import { NotificationManager } from 'react-notifications';
-import { connect } from 'react-redux';
-
-import HotelTripsList from './HotelTripsList';
-import Pagination from '../../../common/pagination/Pagination';
-import PasswordModal from '../../../common/modals/PasswordModal';
-import requester from '../../../../initDependencies';
-import { Config } from '../../../../config';
-import { HotelReservation } from '../../../../services/blockchain/hotelReservation';
-import { PASSWORD_PROMPT } from '../../../../constants/modals.js';
 import { closeModal, openModal } from '../../../../actions/modalsInfo.js';
 
-import { RESERVATION_CANCELLED } from '../../../../constants/infoMessages.js';
 import { BOOKING_REQUEST_SENT } from '../../../../constants/successMessages.js';
 import { CANCELLATION_NOT_POSSIBLE } from '../../../../constants/warningMessages.js';
+import { Config } from '../../../../config';
+import HotelTripsList from './HotelTripsList';
 import { LONG } from '../../../../constants/notificationDisplayTimes.js';
+import { Link } from 'react-router-dom';
+import { NotificationManager } from 'react-notifications';
+import { PASSWORD_PROMPT } from '../../../../constants/modals.js';
+import Pagination from '../../../common/pagination/Pagination';
+import PasswordModal from '../../../common/modals/PasswordModal';
+import PropTypes from 'prop-types';
+import { RESERVATION_CANCELLED } from '../../../../constants/infoMessages.js';
+import ReCAPTCHA from 'react-google-recaptcha';
+import React from 'react';
+import { connect } from 'react-redux';
+import requester from '../../../../initDependencies';
+import { withRouter } from 'react-router-dom';
 
 class HotelTripsPage extends React.Component {
   constructor(props) {
@@ -114,7 +112,7 @@ class HotelTripsPage extends React.Component {
     this.setState({ currentPage: page, loading: true }, () => {
       requester.getMyHotelBookings([`page=${page - 1}`]).then(res => {
         res.body.then(data => {
-          console.log(data.content);
+          // console.log(data.content);
           this.setState({
             trips: data.content,
             totalTrips: data.totalElements,
@@ -149,7 +147,7 @@ class HotelTripsPage extends React.Component {
               trips={this.state.trips}
               currentTripId={this.state.currentTripId}
               onTripSelect={this.onTripSelect}
-              handleCancelReservation={(e) => this.openModal(PASSWORD_PROMPT)}
+              handleCancelReservation={() => this.openModal(PASSWORD_PROMPT)}
               loading={this.state.loading}
             />
 

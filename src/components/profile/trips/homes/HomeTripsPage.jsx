@@ -7,8 +7,8 @@ import ReCAPTCHA from 'react-google-recaptcha';
 import { Config } from '../../../../config';
 import CancellationModal from '../../../common/modals/CancellationModal';
 import Pagination from '../../../common/pagination/Pagination';
-import HomeTripsTable from './HomeTripsTable';
 import requester from '../../../../initDependencies';
+import HomeTripsList from './HomeTripsList';
 
 import { withRouter } from 'react-router-dom';
 
@@ -153,11 +153,14 @@ class HomeTripsPage extends React.Component {
           <div>
             <h2>Upcoming Trips ({this.state.totalTrips})</h2>
             <hr />
-            <HomeTripsTable
+
+            <HomeTripsList
               trips={this.state.trips}
               currentTripId={this.state.currentTripId}
               onTripSelect={this.onTripSelect}
-              onTripCancel={() => this.openModal('showCancelTripModal')} />
+              handleCancelReservation={() => this.openModal('showCancelTripModal')}
+              loading={this.state.loading}
+            />
 
             <Pagination
               loading={this.state.totalListings === 0}

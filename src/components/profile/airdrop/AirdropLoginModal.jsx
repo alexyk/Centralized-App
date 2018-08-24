@@ -1,18 +1,18 @@
+import { AIRDROP_LOGIN, REGISTER, SEND_RECOVERY_EMAIL } from '../../../constants/modals.js';
+
 import { Config } from '../../../config';
 import { Modal } from 'react-bootstrap';
 import PropTypes from 'prop-types';
 import ReCAPTCHA from 'react-google-recaptcha';
 import React from 'react';
-import { AIRDROP_LOGIN, REGISTER, SEND_RECOVERY_EMAIL } from '../../../constants/modals.js';
 
 let captcha = undefined;
 
 function AirdropLoginModal(props) {
-  let isCloseMessage = false;
 
   return (
     <div>
-      <Modal show={props.isActive} onHide={() => {isCloseMessage = true;}} className="modal fade myModal">
+      <Modal show={props.isActive} onHide={() => props.closeModal(AIRDROP_LOGIN)} className="modal fade myModal">
         <Modal.Header>
           <h1>Login airdrop</h1>
           <button type="button" className="close" onClick={() => props.closeModal(AIRDROP_LOGIN)}>&times;</button>

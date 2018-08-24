@@ -1,9 +1,6 @@
-import { Config } from '../../../config';
 import { Modal } from 'react-bootstrap';
-import PropTypes from 'prop-types';
 import React from 'react';
-import { LOGIN, UPDATE_COUNTRY } from '../../../constants/modals.js';
-
+import { UPDATE_COUNTRY } from '../../../constants/modals.js';
 import { connect } from 'react-redux';
 
 function UpdateCountryModal(props) {
