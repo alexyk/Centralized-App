@@ -451,7 +451,7 @@ class UnpublishedList extends React.Component {
                 loading={this.state.totalReservations === 0}
                 onPageChange={this.onPageChange}
                 currentPage={this.state.currentPage + 1}
-                pageSize={20}
+                pageSize={10}
                 totalElements={this.state.totalElements}
               />
             </div>
