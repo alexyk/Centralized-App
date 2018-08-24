@@ -1,29 +1,20 @@
 import 'react-select/dist/react-select.css';
-import { withRouter } from 'react-router-dom';
+import '../../../styles/css/components/profile/listings/listing-location.css';
 
-import { NotificationManager } from 'react-notifications';
+import { INVALID_ADDRESS, MISSING_ADDRESS, MISSING_CITY, MISSING_COUNTRY } from '../../../constants/warningMessages.js';
 
 import Autocomplete from 'react-google-autocomplete';
 import BasicsAside from '../aside/BasicsAside';
+import FooterNav from '../navigation/FooterNav';
+import { LONG } from '../../../constants/notificationDisplayTimes.js';
 import ListingCrudNav from '../navigation/ListingCrudNav';
+import LocationPicker from 'react-location-picker';
+import { NotificationManager } from 'react-notifications';
 import PropTypes from 'prop-types';
 import React from 'react';
-import FooterNav from '../navigation/FooterNav';
-
-import { MISSING_ADDRESS, INVALID_ADDRESS, MISSING_CITY, MISSING_COUNTRY } from '../../../constants/warningMessages.js';
-import { LONG } from '../../../constants/notificationDisplayTimes.js';
-
-import '../../../styles/css/components/profile/listings/listing-location.css';
+import { withRouter } from 'react-router-dom';
 
 function ListingLocation(props) {
-
-  const handleOnPlaceSelected = (place) => {
-    if (place.address_components !== undefined) {
-      let addressComponentsMap = props.convertGoogleApiAddressComponents(place);
-      changeAddressComponents(addressComponentsMap);
-    }
-  };
-
   const getWarningMessage = (message) => {
     NotificationManager.warning(message, '', LONG);
     props.onChange({ target: { name: 'street', value: '' } });
@@ -34,18 +25,25 @@ function ListingLocation(props) {
 
   const handleStreetSelected = (place) => {
     if (place.address_components) {
-      const addressComponentsMap = props.convertGoogleApiAddressComponents(place);
-      if (addressComponentsMap.filter(x => x.type === 'route')[0] && place.geometry.location.lng() && place.geometry.location.lat()) {
+      let addressComponentsMap = props.convertGoogleApiAddressComponents(place);
+      let lat = place.geometry.location.lat();
+      let lng = place.geometry.location.lng();
+      console.log(place);
+      console.log(lat);
+      console.log(lng);
+      props.onChange({ target: { name: 'lng', value: undefined } });
+      props.onChange({ target: { name: 'lat', value: undefined } });
+      if (addressComponentsMap.filter(x => x.type === 'route')[0] && lat && lng) {
         const addressNumber = addressComponentsMap.filter(x => x.type === 'street_number')[0] ? addressComponentsMap.filter(x => x.type === 'street_number')[0].name : '';
         const addressRoute = addressComponentsMap.filter(x => x.type === 'route')[0].name;
-        if (!addressNumber) {
+        if (!addressRoute) {
           getWarningMessage('Please fill valid address - location and number');
         } else {
-          const address = `${addressNumber}, ${addressRoute}`;
+          const address = `${addressNumber ? addressNumber + ' ' : ''}${addressRoute}`;
           props.onChange({ target: { name: 'street', value: address } });
-          props.onChange({ target: { name: 'isAddressSelected', value: true } });
           props.onChange({ target: { name: 'lng', value: place.geometry.location.lng() } });
           props.onChange({ target: { name: 'lat', value: place.geometry.location.lat() } });
+          props.onChange({ target: { name: 'isAddressSelected', value: true } });
           changeAddressComponents(addressComponentsMap);
         }
       } else {
@@ -56,11 +54,18 @@ function ListingLocation(props) {
 
   const changeAddressComponents = (addressComponentsMap) => {
     let addressCountry = addressComponentsMap.filter(x => x.type === 'country')[0];
-    let addressCityName = addressComponentsMap.filter(x => x.type === 'locality')[0];
+    let addressCityName = addressComponentsMap.filter(x => x.type === 'locality')[0]
+      || addressComponentsMap.filter(x => x.type === 'postal_town')[0]
+      || addressComponentsMap.filter(x => x.type === 'administrative_area_level_2')[0];
     let addressStateName = addressComponentsMap.filter(x => x.type === 'administrative_area_level_1')[0];
 
+    if (addressCityName) {
+      props.onChange({ target: { name: 'city', value: addressCityName ? addressCityName.name : '' } });
+    }
+    else {
+      getWarningMessage('An error has occurred. Please contact with support');
+    }
     props.onChange({ target: { name: 'country', value: addressCountry ? addressCountry.name : '' } });
-    props.onChange({ target: { name: 'city', value: addressCityName ? addressCityName.name : '' } });
     props.onChange({ target: { name: 'state', value: addressStateName ? addressStateName.name : '' } });
     props.onChange({ target: { name: 'countryCode', value: addressCountry ? addressCountry.shortName : '' } });
   };
@@ -76,6 +81,11 @@ function ListingLocation(props) {
     ? () => { props.updateProgress(1); }
     : () => { showErrors(props.values); };
 
+  const defaultPosition = {
+    lat: Number(props.values.lat),
+    lng: Number(props.values.lng)
+  };
+
   return (
     <div id="create-listing-location">
       <ListingCrudNav progress='33%' />
@@ -90,58 +100,41 @@ function ListingLocation(props) {
                 <h2>Where&rsquo;s your place located?</h2>
                 <hr />
                 <div className="col-md-12">
-                  <div className="col-md-6">
-                    <div className="form-group">
-                      <label htmlFor="city">City</label>
-                      <Autocomplete
+                  <div className="form-group">
+                    <label htmlFor="street">Street address</label>
+                    <Autocomplete
+                      value={street}
+                      onChange={onAddressChange}
+                      name="street"
+                      onPlaceSelected={handleStreetSelected}
+                      types={['address']}
+                      placeholder="e.g. 123 Easy Street"
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label htmlFor="country">Country/Region</label>
+                    <input id="country" name="country" onChange={props.onChange} value={country} placeholder="-- Select country/region --" />
+                  </div>
+                  <div className="form-group">
+                    <label htmlFor="city">City</label>
+                    <input id="city" name="city" onChange={props.onChange} value={city} />
+                  </div>
 
-                        value={city}
-                        onChange={props.onChange}
-                        name="city"
-                        onPlaceSelected={handleOnPlaceSelected}
-                        types={['(cities)']}
-                      />
-                    </div>
+                  <div className="form-group">
+                    <label htmlFor="country">State</label>
+                    <input id="state" name="state" onChange={props.onChange} value={state} />
                   </div>
-                  <div className="col-md-6">
-                    <div className="form-group">
-                      <label htmlFor="country">Country</label>
-                      <input style={{ background: '#AAA', opacity: 0.5 }} disabled  id="country" name="country" value={country} />
-                    </div>
+                  <div className="protection-message">
+                    <p><i className="fa fa-2x fa-lightbulb-o" aria-hidden="true"></i>Your exact address will only be shared with confirmed guests.</p>
                   </div>
-                  <div className="col-md-6">
-                  </div>
-                </div>
-                <div className="col-md-12">
-                  <div className="col-md-6">
-                    <div className="form-group">
-                      <label htmlFor="street">Address</label>
-                      <Autocomplete
-
-                        value={street}
-                        onChange={onAddressChange}
-                        name="street"
-                        onPlaceSelected={handleStreetSelected}
-                        types={['address']}
-                      />
-                      {/* <input className="form-control" id="street" name="street" value={street} onChange={props.onChange} /> */}
-                    </div>
-                  </div>
-                  <div className="col-md-6">
-                    <div className="form-group">
-                      <label htmlFor="country">State</label>
-                      <input style={{ background: '#AAA', opacity: 0.5 }} disabled  id="state" name="state" value={state} />
-                    </div>
-                  </div>
-                </div>
-                <div className="col-md-12">
-                </div>
-                <div className="col-md-12">
-                  <div className="col-md-12">
-                    <div className="col-md-12 protection-message">
-                      <p><i className="fa fa-2x fa-lightbulb-o" aria-hidden="true"></i>Your exact address will only be shared with confirmed guests.</p>
-                    </div>
-                  </div>
+                  {props.values.lat && props.values.lng && <LocationPicker
+                    containerElement={<div style={{ height: '100%' }} />}
+                    mapElement={<div style={{ height: '400px' }} />}
+                    defaultPosition={defaultPosition}
+                    onChange={props.handleLocationChange}
+                    radius={-1}
+                    zoom={16}
+                  />}
                 </div>
               </div>
             </div>
@@ -203,6 +196,7 @@ ListingLocation.propTypes = {
   next: PropTypes.string,
   convertGoogleApiAddressComponents: PropTypes.func,
   routes: PropTypes.object,
+  handleLocationChange: PropTypes.func,
 
   // Router props
   location: PropTypes.object,

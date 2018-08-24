@@ -1,6 +1,16 @@
+import {
+  INVALID_ADDRESS,
+  INVALID_SUMMARY,
+  INVALID_TITLE,
+  MISSING_ADDRESS,
+  MISSING_CITY,
+  MISSING_COUNTRY,
+  MISSING_PICTURE,
+} from '../../constants/warningMessages.js';
 import { Route, Switch, withRouter } from 'react-router-dom';
 
 import { Config } from '../../config';
+import { LONG } from '../../constants/notificationDisplayTimes.js';
 import ListingAccommodations from './steps/ListingAccommodations';
 import ListingChecking from './steps/ListingChecking';
 import ListingDescription from './steps/ListingDescription';
@@ -22,17 +32,6 @@ import moment from 'moment';
 import request from 'superagent';
 import requester from '../../initDependencies';
 import update from 'react-addons-update';
-
-import { 
-  INVALID_TITLE,
-  INVALID_ADDRESS,
-  INVALID_SUMMARY,
-  MISSING_ADDRESS,
-  MISSING_CITY,
-  MISSING_COUNTRY,
-  MISSING_PICTURE,
-} from '../../constants/warningMessages.js';
-import { LONG } from '../../constants/notificationDisplayTimes.js';
 
 const host = Config.getValue('apiHost');
 const LOCKTRIP_UPLOAD_URL = `${host}images/upload`;
@@ -113,6 +112,7 @@ class CreateListingPage extends React.Component {
     this.updateProgress = this.updateProgress.bind(this);
     this.onSortEnd = this.onSortEnd.bind(this);
     this.finish = this.finish.bind(this);
+    this.handleLocationChange = this.handleLocationChange.bind(this);
   }
 
   componentDidMount() {
@@ -295,6 +295,10 @@ class CreateListingPage extends React.Component {
     }
   }
 
+  handleLocationChange({ position, address }) {
+    this.setState({ lat: position.lat, lng: position.lng, mapAddress: address });
+  }
+
   createListing(captchaToken) {
 
     let listing = this.createListingObject();
@@ -474,11 +478,9 @@ class CreateListingPage extends React.Component {
 
   convertGoogleApiAddressComponents(place) {
     let addressComponents = place.address_components;
-
     let addressComponentsArr = [];
 
     for (let i = 0; i < addressComponents.length; i++) {
-
       let addressComponent = {
         name: addressComponents[i].long_name,
         shortName: addressComponents[i].short_name,
@@ -499,7 +501,7 @@ class CreateListingPage extends React.Component {
       NotificationManager.warning(MISSING_ADDRESS, '', LONG);
       this.props.history.push('/profile/listings/create/location/');
     } else if (street.length < 6) {
-      NotificationManager.warning(INVALID_ADDRESS, '' , LONG);
+      NotificationManager.warning(INVALID_ADDRESS, '', LONG);
       this.props.history.push('/profile/listings/create/location/');
     } else if (!city || city.trim() === '') {
       NotificationManager.warning(MISSING_CITY, '', LONG);
@@ -586,6 +588,7 @@ class CreateListingPage extends React.Component {
             updateProgress={this.updateProgress}
             routes={routes}
             prev={routes.safetyamenities}
+            handleLocationChange={this.handleLocationChange}
             convertGoogleApiAddressComponents={this.convertGoogleApiAddressComponents}
             next={routes.description} />} />
           <Route exact path={routes.description} render={() => <ListingDescription
