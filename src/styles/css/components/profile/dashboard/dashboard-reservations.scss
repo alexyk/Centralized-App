@@ -1,6 +1,15 @@
-$breakpoints: ( 'xs-phone': 320px, 'phone': 480px, 'tablet': 768px, 'desktop': 1024px, 'widescreen': 1200px);
+$breakpoints: (
+	'xs-phone': 320px,
+	'phone': 480px,
+	'tablet': 768px,
+	'desktop': 1024px,
+	'widescreen': 1200px
+);
+
 @import '../../../vendors/include-media';
+
 @import '../../../base/mixins';
+
 .dashboard-flex-reservations-container {
   align-items: center;
   font-size: 18px;
