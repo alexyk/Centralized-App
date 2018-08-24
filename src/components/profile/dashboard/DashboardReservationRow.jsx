@@ -65,8 +65,8 @@ function DashboardReservationRow(props) {
           <span> - </span>
           <span>{props.reservation.currencyCode} {props.reservation.price}</span>
         </div>
-        <div className="flex-row-child dashboard-date">
-          {props.reservation.creationDate && <p><span className="lg-none creation-date">Creation Date:&nbsp;</span>{dates.creationDate.day} {dates.creationDate.month}</p>}
+        <div className="flex-row-child dashboard-date tablet-none">
+          {props.reservation.creationDate && <p>{dates.creationDate.day} {dates.creationDate.month}</p>}
         </div>
       </div>
     </ProfileFlexContainer>

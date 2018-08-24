@@ -29,31 +29,18 @@ $breakpoints: ( 'xs-phone': 320px, 'phone': 480px, 'tablet': 768px, 'desktop': 1
     .dashboard-dates {
       width: 34%;
       @include checkInCheckoutDates();
-      @include media("<=phone") {
-        order: 2;
-      }
     }
     .dashboard-nights {
       width: 27%;
     }
     .dashboard-status {
       width: 27%;
-      span {
-        @include media("<=phone") {
-          font-size: 0.9em;
-        }
-      }
       .status {
         font-weight: 400;
       }
     }
     .dashboard-date {
       width: 10%;
-      @include media("<=tablet") {
-        order: 1;
-        width: 100%;
-        text-align: center;
-      }
     }
   }
   @include media("<=tablet") {
@@ -83,27 +70,15 @@ $breakpoints: ( 'xs-phone': 320px, 'phone': 480px, 'tablet': 768px, 'desktop': 1
       .dashboard-nights {
         margin-bottom: 5%;
       }
-      .dashboard-date {
-        order: 1;
-        width: 100%;
-        text-align: center;
-        .creation-date {
-          display: inline-block !important;
-          font-weight: 400;
-        }
-      }
       .dashboard-dates {
         @include rowWithIconInMobile(center, 100%);
-        order: 2;
       }
       .dashboard-nights {
         @include rowWithIconInMobile(center, 100%);
-        order: 3;
       }
       .dashboard-status {
         width: 100%;
         @include statusRowInMobile();
-        order: 4;
       }
     }
   }
@@ -123,25 +98,8 @@ $breakpoints: ( 'xs-phone': 320px, 'phone': 480px, 'tablet': 768px, 'desktop': 1
     .tablet-col-2 {
       display: flex;
       width: 100%;
-      .dashboard-date {
-        order: 1;
-        margin-top: 5%;
-      }
       .dashboard-dates {
-        font-size: 1em;
-        order: 2;
-        .icon {
-          margin-right: 0;
-        }
-      }
-      .dashboard-nights {
-        order: 3;
-        .icon {
-          margin-right: 0;
-        }
-      }
-      .dashboard-status {
-        order: 4;
+        margin-top: 5%;
       }
     }
   }

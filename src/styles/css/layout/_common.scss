@@ -258,9 +258,9 @@ select {
 	}
 }
 
-.lg-none {
+.tablet-none {
 	display: block !important;
-	@include media(">=tablet") {
+	@include media("<tablet") {
 		display: none !important;
 	}
 }
