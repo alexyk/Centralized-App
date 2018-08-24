@@ -11,7 +11,6 @@ import HotelsSearchBar from '../search/HotelsSearchBar';
 import Lightbox from 'react-images';
 import { NotificationManager } from 'react-notifications';
 import PropTypes from 'prop-types';
-import { ROOMS_XML_CURRENCY } from '../../../constants/currencies.js';
 import React from 'react';
 import Slider from 'react-slick';
 import { connect } from 'react-redux';
@@ -25,6 +24,7 @@ import { CHECKING_ROOM_AVAILABILITY, ROOM_NO_LONGER_AVAILABLE } from '../../../c
 import { UNCATEGORIZED_ERROR } from '../../../constants/errorMessages.js';
 import { INVALID_SEARCH_DATE, ALL_ROOMS_TAKEN } from '../../../constants/warningMessages.js';
 import { LONG } from '../../../constants/notificationDisplayTimes.js';
+import { RoomsXMLCurrency } from '../../../services/utilities/roomsXMLCurrency';
 
 const SEARCH_EXPIRATION_TIME = 30000;
 
@@ -181,9 +181,9 @@ class HotelDetailsPage extends React.Component {
   }
 
   getLocRate() {
-    requester.getLocRateByCurrency(ROOMS_XML_CURRENCY).then(res => {
+    requester.getLocRateByCurrency(RoomsXMLCurrency.get()).then(res => {
       res.body.then(data => {
-        this.setState({ locRate: Number(data[0][`price_${ROOMS_XML_CURRENCY.toLowerCase()}`]) });
+        this.setState({ locRate: Number(data[0][`price_${RoomsXMLCurrency.get().toLowerCase()}`]) });
       });
     });
   }

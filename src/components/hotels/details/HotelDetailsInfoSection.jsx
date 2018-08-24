@@ -3,12 +3,12 @@ import HotelDetailsAmenityColumn from './HotelDetailsAmenityColumn';
 import HotelDetailsReviewBox from './HotelDetailsReviewBox';
 import { LOGIN } from '../../../constants/modals.js';
 import PropTypes from 'prop-types';
-import { ROOMS_XML_CURRENCY } from '../../../constants/currencies.js';
 import React from 'react';
 import { connect } from 'react-redux';
 import { openModal } from '../../../actions/modalsInfo.js';
 import { withRouter } from 'react-router-dom';
 import { CurrencyConverter } from '../../../services/utilities/currencyConverter';
+import { RoomsXMLCurrency } from '../../../services/utilities/roomsXMLCurrency';
 
 function HotelDetailsInfoSection(props) {
   const getAmenities = (amenities) => {
@@ -176,7 +176,7 @@ function HotelDetailsInfoSection(props) {
                           <div key={roomIndex} className="room">
                             <span>{room.name} ({room.mealType}) - </span>
                             {props.userInfo.isLogged &&
-                              <span>{props.currencySign}{props.rates && Number((CurrencyConverter.convert(props.rates, ROOMS_XML_CURRENCY, currency, room.price)) / props.nights).toFixed(2)} </span>
+                              <span>{props.currencySign}{props.rates && Number((CurrencyConverter.convert(props.rates, RoomsXMLCurrency.get(), currency, room.price)) / props.nights).toFixed(2)} </span>
                             }
                             <span>
                               {props.userInfo.isLogged && '('}
@@ -193,7 +193,7 @@ function HotelDetailsInfoSection(props) {
                       <span className="price-details">
                         <span>{props.nights} {props.nights === 1 ? 'night: ' : 'nights: '}</span>
                         {props.userInfo.isLogged &&
-                          <span>{props.currencySign}{props.rates && Number(CurrencyConverter.convert(props.rates, ROOMS_XML_CURRENCY, currency, getTotalPrice(results[0].roomsResults))).toFixed(2)} (</span>
+                          <span>{props.currencySign}{props.rates && Number(CurrencyConverter.convert(props.rates, RoomsXMLCurrency.get(), currency, getTotalPrice(results[0].roomsResults))).toFixed(2)} (</span>
                         }
                         <span>{Number(getTotalPrice(results[0].roomsResults) / props.locRate).toFixed(2)} LOC{props.userInfo.isLogged ? ')' : ''}</span>
                       </span>

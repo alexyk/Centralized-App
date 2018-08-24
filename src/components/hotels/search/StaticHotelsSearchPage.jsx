@@ -8,7 +8,6 @@ import HotelsSearchBar from './HotelsSearchBar';
 import MultiMarkerGoogleMap from './google-map/MultiMarkerGoogleMap';
 import Pagination from '../../common/pagination/Pagination';
 import PropTypes from 'prop-types';
-import { ROOMS_XML_CURRENCY } from '../../../constants/currencies.js';
 import React from 'react';
 import ResultsHolder from './ResultsHolder';
 import Stomp from 'stompjs';
@@ -20,6 +19,7 @@ import requester from '../../../initDependencies';
 import { setCurrency } from '../../../actions/paymentInfo';
 import uuid from 'uuid';
 import { withRouter } from 'react-router-dom';
+import { RoomsXMLCurrency } from '../../../services/utilities/roomsXMLCurrency';
 
 const DEBUG_SOCKET = false;
 const DELAY_INTERVAL = 100;
@@ -89,9 +89,9 @@ class StaticHotelsSearchPage extends React.Component {
   }
 
   componentDidMount() {
-    requester.getLocRateByCurrency(ROOMS_XML_CURRENCY).then(res => {
+    requester.getLocRateByCurrency(RoomsXMLCurrency.get()).then(res => {
       res.body.then(data => {
-        this.setState({ locRate: Number(data[0][`price_${ROOMS_XML_CURRENCY.toLowerCase()}`]) });
+        this.setState({ locRate: Number(data[0][`price_${RoomsXMLCurrency.get().toLowerCase()}`]) });
       });
     });
 

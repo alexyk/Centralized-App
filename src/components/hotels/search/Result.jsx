@@ -7,8 +7,8 @@ import { Link, withRouter } from 'react-router-dom';
 
 import { Config } from '../../../config';
 import { CurrencyConverter } from '../../../services/utilities/currencyConverter';
+import { RoomsXMLCurrency } from '../../../services/utilities/roomsXMLCurrency';
 import PropTypes from 'prop-types';
-import { ROOMS_XML_CURRENCY } from '../../../constants/currencies.js';
 import React from 'react';
 import ReactHtmlParser from 'react-html-parser';
 import Slider from 'react-slick';
@@ -108,7 +108,7 @@ class Result extends React.Component {
     const { currencySign } = this.props.paymentInfo;
     const isPriceLoaded = !!price;
     let locPrice = ((price / locRate) / this.props.nights).toFixed(2);
-    const priceInSelectedCurrency = rates && ((CurrencyConverter.convert(rates, ROOMS_XML_CURRENCY, this.props.paymentInfo.currency, price)) / this.props.nights).toFixed(2);
+    const priceInSelectedCurrency = rates && ((CurrencyConverter.convert(rates, RoomsXMLCurrency.get(), this.props.paymentInfo.currency, price)) / this.props.nights).toFixed(2);
 
     name = name && StringUtils.shorten(name, this.state.titleLength);
     generalDescription = generalDescription && StringUtils.shorten(generalDescription, this.state.descriptionLength);

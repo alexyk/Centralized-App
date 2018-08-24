@@ -1,19 +1,18 @@
-import { EXTRA_LONG, LONG } from '../../../constants/notificationDisplayTimes.js';
+import { LONG } from '../../../constants/notificationDisplayTimes.js';
 import { INVALID_CHILD_AGE, INVALID_GUEST_NAME } from '../../../constants/warningMessages.js';
 
 import { Config } from '../../../config';
 import { CurrencyConverter } from '../../../services/utilities/currencyConverter';
 import { NotificationManager } from 'react-notifications';
 import PropTypes from 'prop-types';
-import { ROOMS_XML_CURRENCY } from '../../../constants/currencies.js';
 import React from 'react';
-import { SEARCH_EXPIRED } from '../../../constants/infoMessages.js';
 import { connect } from 'react-redux';
 import moment from 'moment';
 import requester from '../../../initDependencies';
 import { setCurrency } from '../../../actions/paymentInfo';
 import validator from 'validator';
 import { withRouter } from 'react-router-dom';
+import { RoomsXMLCurrency } from '../../../services/utilities/roomsXMLCurrency';
 
 class HotelsBookingPage extends React.Component {
   constructor(props) {
@@ -102,9 +101,9 @@ class HotelsBookingPage extends React.Component {
   }
 
   requestLocRate() {
-    requester.getLocRateByCurrency(ROOMS_XML_CURRENCY).then(res => {
+    requester.getLocRateByCurrency(RoomsXMLCurrency.get()).then(res => {
       res.body.then(data => {
-        this.setState({ locRate: Number(data[0][`price_${ROOMS_XML_CURRENCY.toLowerCase()}`]) });
+        this.setState({ locRate: Number(data[0][`price_${RoomsXMLCurrency.get().toLowerCase()}`]) });
       });
     });
   }
@@ -265,7 +264,7 @@ class HotelsBookingPage extends React.Component {
     // console.log(this.state.pictures);
     const currency = this.props.paymentInfo.currency;
     const hotelPicUrl = this.state.pictures && this.state.pictures.length > 0 ? this.state.pictures[0].url : '/listings/images/default.png';
-    const priceInSelectedCurrency = this.state.rates && Number(CurrencyConverter.convert(this.state.rates, ROOMS_XML_CURRENCY, currency, this.state.totalPrice)).toFixed(2);
+    const priceInSelectedCurrency = this.state.rates && Number(CurrencyConverter.convert(this.state.rates, RoomsXMLCurrency.get(), currency, this.state.totalPrice)).toFixed(2);
 
     return (
       <div>
@@ -300,7 +299,7 @@ class HotelsBookingPage extends React.Component {
                       } else {
                         return (
                           <h6 key={index}>
-                            {room.name}, {this.state.nights} nights: {this.props.paymentInfo.currencySign}{this.state.rates && (CurrencyConverter.convert(this.state.rates, ROOMS_XML_CURRENCY, currency, room.price)).toFixed(2)} (LOC {Number(room.price / this.state.locRate).toFixed(2)})
+                            {room.name}, {this.state.nights} nights: {this.props.paymentInfo.currencySign}{this.state.rates && (CurrencyConverter.convert(this.state.rates, RoomsXMLCurrency.get(), currency, room.price)).toFixed(2)} (LOC {Number(room.price / this.state.locRate).toFixed(2)})
                           </h6>
                         );
                       }
