@@ -1,4 +1,3 @@
-import { Config } from '../../../config';
 import HotelDetailsReviewBox from './HotelDetailsReviewBox';
 import { LOGIN, EMAIL_VERIFICATION } from '../../../constants/modals.js';
 import PropTypes from 'prop-types';

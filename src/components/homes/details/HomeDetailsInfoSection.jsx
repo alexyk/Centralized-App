@@ -1,38 +1,36 @@
 import ContactHostModal from '../../common/modals/ContactHostModal';
 import PropTypes from 'prop-types';
-import HomeDetailsAmenityColumn from './HomeDetailsAmenityColumn';
 import HomeDetailsCalendar from './HomeDetailsCalendar';
 import HomeReservationPanel from './HomeReservationPanel';
 import HomeDetailsReviewBox from './HomeDetailsReviewBox';
 import React from 'react';
 import { withRouter } from 'react-router-dom';
-import { Config } from '../../../config';
 import Facilities from '../../hotels/details/Facilities';
 
 function HomeDetailsInfoSection(props) {
-  const getAmenities = (amenities) => {
-    const result = new Array(3);
-    for (let i = 0; i < 3; i++) {
-      result[i] = new Array(0);
-    }
+  // const getAmenities = (amenities) => {
+  //   const result = new Array(3);
+  //   for (let i = 0; i < 3; i++) {
+  //     result[i] = new Array(0);
+  //   }
 
-    for (let i = 0; i < amenities.length; i++) {
-      if (i % 3 === 0) {
-        result[0].push(amenities[i]);
-      } else if (i % 3 === 1) {
-        result[1].push(amenities[i]);
-      } else if (i % 3 === 2) {
-        result[2].push(amenities[i]);
-      }
-    }
+  //   for (let i = 0; i < amenities.length; i++) {
+  //     if (i % 3 === 0) {
+  //       result[0].push(amenities[i]);
+  //     } else if (i % 3 === 1) {
+  //       result[1].push(amenities[i]);
+  //     } else if (i % 3 === 2) {
+  //       result[2].push(amenities[i]);
+  //     }
+  //   }
 
-    return result;
-  };
+  //   return result;
+  // };
 
   const allAmenities = props.data.amenities;
   const calendar = props.calendar;
-  const mostPopularFacilities = allAmenities.filter(a => a.picture != null).slice(0, 5);
-  const amenities = getAmenities(allAmenities);
+  // const mostPopularFacilities = allAmenities.filter(a => a.picture != null).slice(0, 5);
+  // const amenities = getAmenities(allAmenities);
   const { street, city, country } = props.data;
   if (calendar === null) {
     return <div>Loading...</div>;
