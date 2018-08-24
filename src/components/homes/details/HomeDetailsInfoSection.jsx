@@ -7,6 +7,7 @@ import HomeDetailsReviewBox from './HomeDetailsReviewBox';
 import React from 'react';
 import { withRouter } from 'react-router-dom';
 import { Config } from '../../../config';
+import Facilities from '../../hotels/details/Facilities';
 
 function HomeDetailsInfoSection(props) {
   const getAmenities = (amenities) => {
@@ -60,35 +61,7 @@ function HomeDetailsInfoSection(props) {
             {props.data.descriptionText}
           </div>
 
-          {mostPopularFacilities.length > 0 && amenities[0].length > 0 &&
-            <div className="facilities">
-              <h2>Facilities</h2>
-              <hr />
-              <div className="icons">
-                {mostPopularFacilities.map((item, i) => {
-                  return (
-                    item.picture != null && (
-                      <div key={i} className="icon-facilities" tooltip={item.name}>
-                        <span className="icon-image" style={{ textAlign: 'center', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                          <img src={Config.getValue('imgHost') + item.picture} style={{ width: '60%', height: '60%' }} alt="Popular home" />
-                          {/* <b>{item.picture}</b> */}
-                        </span>
-                      </div>
-                    )
-                  );
-                })}
-                <div className="clearfix" />
-              </div>
-              <div className="row">
-                <HomeDetailsAmenityColumn amenities={amenities[0]} />
-                <HomeDetailsAmenityColumn amenities={amenities[1]} />
-                <HomeDetailsAmenityColumn amenities={amenities[2]} />
-              </div>
-              <div className="clearfix" />
-
-            </div>
-          }
-          <div className="clearfix" />
+          <Facilities facilities={allAmenities} />
 
           <div className="hotel-extras">
 
