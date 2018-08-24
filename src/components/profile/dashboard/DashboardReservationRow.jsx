@@ -10,6 +10,12 @@ function DashboardReservationRow(props) {
   const extractDatesData = (reservation) => {
     const startDateMoment = moment(reservation.startDate);
     const endDateMoment = moment(reservation.endDate);
+    const creationDateMoment = moment(reservation.creationDate);
+
+    const creationDate = {
+      day: creationDateMoment.format('D'),
+      month: creationDateMoment.format('MMM').toLowerCase()
+    };
 
     const checkIn = {
       day: startDateMoment.format('DD'),
@@ -23,7 +29,7 @@ function DashboardReservationRow(props) {
       month: endDateMoment.format('MMM').toLowerCase()
     };
 
-    return { checkIn, checkOut };
+    return { creationDate, checkIn, checkOut };
   };
 
   const dates = extractDatesData(props.reservation);
@@ -60,7 +66,7 @@ function DashboardReservationRow(props) {
           <span>{props.reservation.currencyCode} {props.reservation.price}</span>
         </div>
         <div className="flex-row-child dashboard-date">
-          {/* Creation date */}
+          {props.reservation.creationDate && <p><span className="lg-none creation-date">Creation Date:&nbsp;</span>{dates.creationDate.day} {dates.creationDate.month}</p>}
         </div>
       </div>
     </ProfileFlexContainer>
