@@ -1,8 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import HomesSearchBarDatePicker from './HomesSearchBarDatePicker';
+import SearchBarDatePicker from '../../common/search/SearchBarDatePicker';
 import moment from 'moment';
 import StringUtils from '../../../services/utilities/stringUtilities.js';
+import { setAdults, setChildren, setDates, setRegion, setRooms, setRoomsByCountOfRooms } from '../../../actions/searchInfo';
 
 const HomesSearchBar = (props) => (
   <div className="source-panel">
@@ -25,7 +26,7 @@ const HomesSearchBar = (props) => (
 
     <div className="check-wrap source-panel-item">
       <div className="check">
-        <HomesSearchBarDatePicker
+        <SearchBarDatePicker
           startDate={props.startDate}
           endDate={props.endDate}
           onApply={props.handleDatePick}

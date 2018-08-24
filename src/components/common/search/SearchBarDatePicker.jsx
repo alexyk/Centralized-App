@@ -3,10 +3,14 @@ import React from 'react';
 import moment from 'moment';
 import PropTypes from 'prop-types';
 
-function HotelsSearchBarDatePicker(props) {
+function SearchBarDatePicker(props) {
   const { startDate, endDate } = props;
   const start = (startDate && startDate.format('DD/MM/YYYY')) || '';
-  const end = (endDate && endDate.format('DD/MM/YYYY')) || '';
+  let end = (endDate && endDate.format('DD/MM/YYYY')) || '';
+
+  if (end && start === end) {
+    end = endDate.add(1, 'days').format('DD/MM/YYYY');
+  }
 
   let label = start + ' - ' + end;
 
@@ -17,9 +21,6 @@ function HotelsSearchBarDatePicker(props) {
 
   return (
     <div>
-      {/* <div className="input-daterange">
-        <div className="form-group has-feedback has-feedback-left"> */}
-      {/* <i className="icon icon-calendar form-control-feedback"></i> */}
       <span>Check in &amp; Check out</span>
       <DateRangePicker
         autoUpdateInput={true}
@@ -45,7 +46,7 @@ function HotelsSearchBarDatePicker(props) {
   );
 }
 
-HotelsSearchBarDatePicker.propTypes = {
+SearchBarDatePicker.propTypes = {
   startDate: PropTypes.any,
   endDate: PropTypes.any,
   isInvalidDate: PropTypes.bool,
@@ -53,4 +54,4 @@ HotelsSearchBarDatePicker.propTypes = {
   onApply: PropTypes.func,
 };
 
-export default HotelsSearchBarDatePicker;
+export default SearchBarDatePicker;

@@ -3,7 +3,7 @@ import { setAdults, setChildren, setDates, setRegion, setRooms, setRoomsByCountO
 
 import { CHILDREN } from '../../../constants/modals';
 import ChildrenModal from '../modals/ChildrenModal';
-import HotelsSearchBarDatePicker from './HotelsSearchBarDatePicker';
+import SearchBarDatePicker from '../../common/search/SearchBarDatePicker';
 import PropTypes from 'prop-types';
 import React from 'react';
 import Select from 'react-select';
@@ -118,7 +118,7 @@ function HotelsSearchBar(props) {
           handleSubmit={handleSubmitModal}
         />
         <div className="check">
-          <HotelsSearchBarDatePicker
+          <SearchBarDatePicker
             id='search-bar-date-picker'
             startDate={props.searchInfo.startDate}
             endDate={props.searchInfo.endDate}

@@ -7,20 +7,16 @@ import React from 'react';
 import Slider from 'react-slick';
 import { connect } from 'react-redux';
 import { setRegion } from '../../actions/searchInfo';
-import { withRouter } from 'react-router-dom';
+import { withRouter, Link } from 'react-router-dom';
 import HomePageContentItem from './HomePageContentItem';
 import requester from '../../initDependencies';
 import moment from 'moment';
 
 import '../../styles/css/components/home/home_page.css';
 
-let sliderHotels = null;
-let sliderListings = null;
-
-const SlickButton = (props) => {
-  const { currentSlide, slideCount, ...arrowProps } = props;
+const SlickButton = ({ currentSlide, slideCount, ...arrowProps }) => {
   return (
-    <button type="button" {...arrowProps} style={{ display: 'none' }} />
+    <button {...arrowProps} style={{ display: 'none' }} />
   );
 };
 
@@ -33,6 +29,10 @@ class HomePage extends React.Component {
       hotels: '',
     };
 
+
+    this.sliderHotels = null;
+    this.sliderListings = null;
+
     this.handleDestinationPick = this.handleDestinationPick.bind(this);
     this.redirectToSearchPage = this.redirectToSearchPage.bind(this);
   }
@@ -44,12 +44,11 @@ class HomePage extends React.Component {
       });
     });
 
-    fetch('http://localhost:8080/api/hotels/top')
-      .then(res => {
-        res.json().then(data => {
-          this.setState({ hotels: data.content });
-        });
+    requester.getTopHotels().then(res => {
+      res.body.then(data => {
+        this.setState({ hotels: data.content });
       });
+    });
 
     requester.getCountries().then(res => {
       res.body.then(data => {
@@ -115,7 +114,7 @@ class HomePage extends React.Component {
           {items.map((item, i) => {
             let itemLink = '';
             if (itemsType === 'hotels') {
-              itemLink = `/hotels/listings/${item.id}?region=4455&currency=${this.props.paymentInfo.currency}&startDate=${moment(new Date(new Date().setHours(24)), 'DD/MM/YYYY').format('DD/MM/YYYY')}&endDate=${moment(new Date(new Date().setHours(48)), 'DD/MM/YYYY').format('DD/MM/YYYY')}&rooms=%5B%7B"adults":1,"children":%5B%5D%7D%5D`;
+              itemLink = `/hotels/listings/${item.id}?region=${item.region}&currency=${this.props.paymentInfo.currency}&startDate=${moment(new Date(new Date().setHours(24)), 'DD/MM/YYYY').format('DD/MM/YYYY')}&endDate=${moment(new Date(new Date().setHours(48)), 'DD/MM/YYYY').format('DD/MM/YYYY')}&rooms=%5B%7B"adults":1,"children":%5B%5D%7D%5D`;
             } else {
               itemLink = `/homes/listings/${item.id}?startDate=${moment(new Date(new Date().setHours(24)), 'DD/MM/YYYY').format('DD/MM/YYYY')}&endDate=${moment(new Date(new Date().setHours(48)), 'DD/MM/YYYY').format('DD/MM/YYYY')}&rooms=%5B%7B"adults":1,"children":%5B%5D%7D%5D`;
             }
@@ -153,14 +152,16 @@ class HomePage extends React.Component {
           >
             <ul className="categories">
               <li>
-                <a href="#"><img src="/images/hotels.jpg" alt="hotels" />
+                <Link to="/hotels">
+                  <img src="/images/hotels.jpg" alt="hotels" />
                   <h3>Hotels</h3>
-                </a>
+                </Link>
               </li>
               <li className="homes">
-                <a href="#"><img src="/images/homes.jpg" alt="homes" />
+                <Link to="/homes">
+                  <img src="/images/homes.jpg" alt="homes" />
                   <h3>Homes</h3>
-                </a>
+                </Link>
               </li>
             </ul>
           </HomePageContentItem>
