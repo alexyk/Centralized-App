@@ -642,20 +642,19 @@ button.disabled:hover {
     margin: 10px 0 30px 0;
 }
 
-.hotel-content .facilities {
+/* .hotel-content .facilities {
   margin-bottom: 10px;
-}
+} */
 
-.hotel-content .facilities .icons {
+/* .hotel-content .facilities .icons {
   margin-bottom: 20px;
-}
+} */
 
 .hotel-content .hotel-extras-list {
-    font-size: 16px;
-    margin: 7px 0;
+    margin: 10px 0;
 }
 
-.icon-facilities {
+/* .icon-facilities {
     display: block;
     float: left;
     margin-right: 20px;
@@ -680,7 +679,7 @@ button.disabled:hover {
   border: none;
   outline: none;
   color: #D87A61;
-}
+} */
 
 .hotel-chekin-box .has-feedback-left .form-control-feedback {
     left: 0;
@@ -3180,7 +3179,7 @@ td {
 }
 
 /* TOOLTIP */
-[tooltip]{
+/* [tooltip]{
   position:relative;
 }
 [tooltip]:hover::after,
@@ -3214,4 +3213,4 @@ td {
     border-radius: 5px;
     pointer-events: none;
     opacity:0;
-}
+} */

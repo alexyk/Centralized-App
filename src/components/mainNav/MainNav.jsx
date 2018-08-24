@@ -94,6 +94,7 @@ class MainNav extends React.Component {
 
     this.openModal = this.openModal.bind(this);
     this.closeModal = this.closeModal.bind(this);
+    this.clearStateOnCloseModal = this.clearStateOnCloseModal.bind(this);
 
     this.messageListener = this.messageListener.bind(this);
     this.getCountOfMessages = this.getCountOfMessages.bind(this);
@@ -227,16 +228,16 @@ class MainNav extends React.Component {
       this.setState({ isUpdatingWallet: false });
     }
 
-    if (this.state.isUpdatingCountry) {
+    if (this.state.isUpdatingCountry && this.state.country) {
       user.country = this.state.country.id;
       this.closeModal(UPDATE_COUNTRY);
-      this.setState({ isUpdatingCountry: false });
+      this.setState({ isUpdatingCountry: false, country: { id: 1 } });
     }
 
-    if (this.state.isVerifyingEmail) {
+    if (this.state.isVerifyingEmail && this.state.emailVerificationToken) {
       user.emailVerificationToken = this.state.emailVerificationToken;
       this.closeModal(EMAIL_VERIFICATION);
-      this.setState({ isVerifyingEmail: false });
+      this.setState({ isVerifyingEmail: false, emailVerificationToken: '' });
     }
 
     requester.login(user).then(res => {
@@ -442,11 +443,18 @@ class MainNav extends React.Component {
       e.preventDefault();
     }
 
-    this.setState({
-      country: { id: 1 },
-    });
-
+    this.clearStateOnCloseModal();
     this.props.dispatch(closeModal(modal));
+  }
+
+  clearStateOnCloseModal(modal) {
+    if (modal === LOGIN) {
+      this.setState({ loginEmail: '', loginPassword: '' });
+    } else if (modal === EMAIL_VERIFICATION) {
+      this.setState({ isVerifyingEmail: false, emailVerificationToken: '' });
+    }
+    
+    this.setState({ country: { id: 1 } });
   }
 
   messageListener() {

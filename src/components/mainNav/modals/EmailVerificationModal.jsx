@@ -16,14 +16,14 @@ function EmailVerificationModal(props) {
           <button type="button" className="close" onClick={() => props.closeModal(EMAIL_VERIFICATION)}>&times;</button>
         </Modal.Header>
         <Modal.Body>
-          <p>Please send us the token that you have received on your email.</p>
+          <p>Please send us the security code that you have received on your email.</p>
           <form onSubmit={(e) => { e.preventDefault(); props.handleLogin(); }}>
             <div className="input-container">
               <img src={Config.getValue('basePath') + 'images/login-mail.png'} className="email-image" alt="mail" />
-              <input type="text" name="emailVerificationToken" value={props.emailVerificationToken} onChange={props.onChange} className="with-icon" placeholder="Email verification token" required autoFocus />
+              <input type="text" name="emailVerificationToken" value={props.emailVerificationToken} onChange={props.onChange} className="with-icon" placeholder="Email verification security code" required autoFocus />
             </div>
 
-            <button type="submit" className="btn btn-primary">Send Token</button>
+            <button type="submit" className="btn btn-primary">Send Security Code</button>
             <div className="clearfix"></div>
           </form>
         </Modal.Body>
