@@ -15,6 +15,7 @@ import Slider from 'react-slick';
 import StringUtils from '../../../services/utilities/stringUtilities';
 import _ from 'lodash';
 import { connect } from 'react-redux';
+import HotelItemRatingBox from '../../common/hotel/HotelItemRatingBox'; 
 
 const SCREEN_SIZE_SMALL = 'SMALL';
 const SCREEN_SIZE_MEDIUM = 'MEDIUM';
@@ -89,16 +90,6 @@ class Result extends React.Component {
     return TITLE_LENGTH[screenSize];
   }
 
-  calculateStars(ratingNumber) {
-    let starsElements = [];
-    let rating = Math.round(ratingNumber);
-    for (let i = 0; i < rating; i++) {
-      starsElements.push(<span key={i} className="full-star"></span>);
-    }
-
-    return starsElements;
-  }
-
   render() {
     let { id, name, generalDescription, hotelPhoto, star } = this.props.hotel;
     let { price } = this.props;
@@ -159,12 +150,7 @@ class Result extends React.Component {
         <div className="result-content">
           <div>
             <h4><Link to={`${redirectURL}/${id}${search.substr(0, endOfSearch)}`}>{name}</Link></h4>
-            <div className="rating">
-              <span>Rating: </span>
-              <div className="rating-holder">
-                {this.calculateStars(star)}
-              </div>
-            </div>
+            <HotelItemRatingBox rating={star} />
           </div>
           <div className="result-description">{generalDescription && ReactHtmlParser(generalDescription)}</div>
           <div className="result-mobile-pricing">

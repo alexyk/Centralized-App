@@ -104,8 +104,15 @@ class HomePage extends React.Component {
         }
       ]
     };
-
+    
+    let allLink = '/hotels';
     let slider = itemsType === 'hotels' ? this.sliderHotels : this.sliderListings;
+
+    if (itemsType === 'hotels') {
+      allLink = items && `/hotels/listings?region=${items[0].region}&currency=${this.props.paymentInfo.currency}&startDate=${moment(new Date(new Date().setHours(24)), 'DD/MM/YYYY').format('DD/MM/YYYY')}&endDate=${moment(new Date(new Date().setHours(48)), 'DD/MM/YYYY').format('DD/MM/YYYY')}&rooms=%5B%7B"adults":2,"children":%5B%5D%7D%5D`;
+    } else {
+      allLink = `/homes/listings?countryId=2&startDate=${moment(new Date(new Date().setHours(24)), 'DD/MM/YYYY').format('DD/MM/YYYY')}&endDate=${moment(new Date(new Date().setHours(48)), 'DD/MM/YYYY').format('DD/MM/YYYY')}&guest=2`;
+    }
 
     return items ?
       <div>
@@ -131,7 +138,7 @@ class HomePage extends React.Component {
         <div className="carousel-nav">
           <ul>
             <li><button className="icon-arrow-left" onClick={() => this.prev(slider)}></button></li>
-            <li><button className="btn">See all</button></li>
+            <li><Link to={allLink} className="btn">See all</Link></li>            
             <li><button className="icon-arrow-right" onClick={() => this.next(slider)}></button></li>
           </ul>
         </div>
@@ -186,7 +193,7 @@ class HomePage extends React.Component {
           <section className="get-started">
             <h2>Host on LocKchain</h2>
             <div className="get-started-content">Easily list your home or hotel on LockChain and start earning money</div>
-            <button className="btn">Get started</button>
+            <Link to="/profile/listings/create/landing" className="btn">Get started</Link>
             <div className="get-started-graphic" />
           </section>
         </section>

@@ -148,6 +148,15 @@ $media-expressions: (
 				height: 40px;
 			}
 		}
+		a {
+			@include animate(color background);
+			height: 47px;
+			min-width: 100%;
+			@include media(">=desktop") {
+				min-width: 80px;
+				height: 40px;
+			}
+		}
 		.btn {
 			min-width: 100%;
 			display: flex;

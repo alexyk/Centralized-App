@@ -128,12 +128,17 @@
         .list-property-description {
           padding: 5%;
           text-align: left;
+          .country {
+            font-size: 16px;
+            margin-bottom: 5px;
+          }
           .name {
             display: block;
             height: 42px;
             letter-spacing: .03em;
             font-size: 18px;
             margin-bottom: 10px;
+            font-weight: 400;
           }
           .list-hotel-rating {
             display: inline-block;
@@ -157,6 +162,7 @@
           }
           .list-property-price {
             font-size: 18px;
+            font-weight: 400;
             letter-spacing: -.05em;
           }
         }

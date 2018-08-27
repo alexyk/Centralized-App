@@ -5,6 +5,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import ListingItemRatingBox from '../common/listing/ListingItemRatingBox';
+import HotelItemRatingBox from '../common/hotel/HotelItemRatingBox';
 
 let slider = null;
 
@@ -65,15 +66,20 @@ function PopularItem(props) {
           </div>
           <div className="list-property-description">
             <div className="popular-list-data">
+              <div className="country">{item.countryName} &bull; {item.cityName}</div>
               <div className="name">
                 {item.name.substr(0, 35)}{item.name.length > 35 ? '...' : ''}
               </div>
-              <ListingItemRatingBox
-                rating={rating}
-                isHomePage={true}
-              />
+              {itemType === 'homes' ?
+                <ListingItemRatingBox
+                  rating={rating}
+                  isHomePage={true}
+                /> :
+                <HotelItemRatingBox
+                  rating={rating}
+                />}
             </div>
-            <div className="list-property-price"><strong>{paymentInfo.currencySign}{price} <span>(LOC {(price / paymentInfo.locRate).toFixed(2)})</span></strong> per night</div>
+            {itemType === 'homes' && <div className="list-property-price">{paymentInfo.currencySign}{price} <span>(LOC {(price / paymentInfo.locRate).toFixed(2)})</span> per night</div>}
             <div className="clearfix">
             </div>
           </div>

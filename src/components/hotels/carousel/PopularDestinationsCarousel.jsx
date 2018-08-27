@@ -33,7 +33,7 @@ function PopularDestinationsCarousel(props) {
       countryId: 24,
       query: 'Sydney',
       image: `${Config.getValue('basePath')}images/destinations/Sydney.png`,
-      searchUrl: `hotels/listings?region=15286&currency=${props.paymentInfo.currency}&startDate=${moment().add(1, 'days').format('DD/MM/YYYY')}&endDate=${moment().add(2, 'days').format('DD/MM/YYYY')}&rooms=%5B%7B"adults":2,"children":%5B%5D%7D%5D`,
+      searchUrl: `hotels/listings?region=15375&currency=${props.paymentInfo.currency}&startDate=${moment().add(1, 'days').format('DD/MM/YYYY')}&endDate=${moment().add(2, 'days').format('DD/MM/YYYY')}&rooms=%5B%7B"adults":2,"children":%5B%5D%7D%5D`,
     },
   ];
 
