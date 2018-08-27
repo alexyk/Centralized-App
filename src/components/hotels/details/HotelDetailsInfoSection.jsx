@@ -152,7 +152,6 @@ function HotelDetailsInfoSection(props) {
                             }
                             <span>{Number(getTotalPrice(results[0].roomsResults) / props.locRate).toFixed(2)} LOC{props.userInfo.isLogged ? ')' : ''}</span>
                           </span>
-
                         </div>
                       </div>
                       <div className="col col-md-3 content-center">
