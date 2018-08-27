@@ -64,13 +64,15 @@ class App extends React.Component {
   setUserInfo() {
     requester.getUserInfo().then(res => {
       res.body.then(data => {
+        console.log(data);
         Wallet.getBalance(data.locAddress).then(eth => {
           const ethBalance = eth / (Math.pow(10, 18));
           Wallet.getTokenBalance(data.locAddress).then(loc => {
             const locBalance = loc / (Math.pow(10, 18));
-            const { firstName, lastName, phoneNumber, email, locAddress, gender } = data;
+            const { firstName, lastName, phoneNumber, email, locAddress, gender, verified } = data;
+            console.log(verified);
             this.props.dispatch(setIsLogged(true));
-            this.props.dispatch(setUserInfo(firstName, lastName, phoneNumber, email, locAddress, ethBalance, locBalance, gender));
+            this.props.dispatch(setUserInfo(firstName, lastName, phoneNumber, email, locAddress, ethBalance, locBalance, gender, verified));
           });
         });
       });

@@ -21,6 +21,7 @@ import moment from 'moment';
 import requester from '../../../initDependencies';
 import { setBestPrice } from '../../../actions/bookingBestPrice';
 import { withRouter } from 'react-router-dom';
+import BookingSteps from '../../common/utility/BookingSteps';
 
 const ERROR_MESSAGE_TIME = 20000;
 const SEARCH_EXPIRE_TIME = 900000;
@@ -645,12 +646,8 @@ class HotelsBookingConfirmPage extends React.Component {
     return (
       <div>
         <div>
-          <div className="booking-steps sm-none">
-            <div className="container">
-              <p>1. Provide Guest Information</p>
-              <p>2. Review Room Details</p>
-              <p>3. Confirm and Pay</p>
-            </div>
+          <div className="sm-none">
+            <BookingSteps steps={['Provide Guest Information', 'Review Room Details', 'Confirm and Pay']} />
           </div>
 
           {!data ?

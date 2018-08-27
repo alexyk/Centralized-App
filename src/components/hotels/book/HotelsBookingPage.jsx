@@ -13,6 +13,7 @@ import requester from '../../../initDependencies';
 import { setCurrency } from '../../../actions/paymentInfo';
 import validator from 'validator';
 import { withRouter } from 'react-router-dom';
+import BookingSteps from '../../common/utility/BookingSteps';
 
 class HotelsBookingPage extends React.Component {
   constructor(props) {
@@ -268,13 +269,7 @@ class HotelsBookingPage extends React.Component {
 
     return (
       <div>
-        <div className="booking-steps">
-          <div className="container">
-            <p>1. Provide Guest Information</p>
-            <p>2. Review Room Details</p>
-            <p>3. Confirm and Pay</p>
-          </div>
-        </div>
+        <BookingSteps steps={['Provide Guest Information', 'Review Room Details', 'Confirm and Pay']} />
 
         {!this.state.hotel ?
           <div className="loader"></div> :

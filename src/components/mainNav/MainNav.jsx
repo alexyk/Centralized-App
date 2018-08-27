@@ -257,7 +257,7 @@ class MainNav extends React.Component {
       this.setState({ isUpdatingCountry: false, country: { id: 1 } });
     }
 
-    if (this.state.isVerifyingEmail && this.state.emailVerificationToken) {
+    if (!this.state.isVerifyingEmail && this.state.emailVerificationToken) {
       user.emailVerificationToken = this.state.emailVerificationToken;
       this.closeModal(EMAIL_VERIFICATION);
       this.setState({ isVerifyingEmail: false, emailVerificationToken: '' });
@@ -428,9 +428,9 @@ class MainNav extends React.Component {
           const ethBalance = eth / (Math.pow(10, 18));
           Wallet.getTokenBalance(data.locAddress).then(loc => {
             const locBalance = loc / (Math.pow(10, 18));
-            const { firstName, lastName, phoneNumber, email, locAddress, gender, isEmailVerified } = data;
+            const { firstName, lastName, phoneNumber, email, locAddress, gender, verirified } = data;
             this.props.dispatch(setIsLogged(true));
-            this.props.dispatch(setUserInfo(firstName, lastName, phoneNumber, email, locAddress, ethBalance, locBalance, gender, isEmailVerified));
+            this.props.dispatch(setUserInfo(firstName, lastName, phoneNumber, email, locAddress, ethBalance, locBalance, gender, verirified));
           });
         });
       });
