@@ -30,8 +30,6 @@ function HotelDetailsInfoSection(props) {
   };
 
   const getButton = (resultIndex) => {
-    console.log(props.userInfo.isLogged);
-    console.log(props.userInfo.isEmailVerified);
     if (!props.userInfo.isLogged) {
       return <button className="btn btn-primary" onClick={(e) => props.dispatch(openModal(LOGIN, e))}>Login</button>;
     } else if (!props.userInfo.isEmailVerified) {
