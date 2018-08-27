@@ -42,6 +42,11 @@ export default function reducer(state = initialState, action) {
         gender: action.gender,
         isEmailVerified: action.isEmailVerified
       };
+    case userInfo.SET_IS_EMAIL_VERIFIED:
+      return {
+        ...state,
+        isEmailVerified: action.isEmailVerified
+      };
     default:
       return state;
   }

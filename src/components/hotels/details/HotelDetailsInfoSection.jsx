@@ -8,6 +8,8 @@ import { withRouter } from 'react-router-dom';
 import { CurrencyConverter } from '../../../services/utilities/currencyConverter';
 import { RoomsXMLCurrency } from '../../../services/utilities/roomsXMLCurrency';
 import Facilities from './Facilities';
+import requester from '../../../initDependencies';
+import { setIsEmailVerified } from '../../../actions/userInfo';
 
 function HotelDetailsInfoSection(props) {
   const getTotalPrice = (room) => {
@@ -29,13 +31,23 @@ function HotelDetailsInfoSection(props) {
     return starsElements;
   };
 
+  const hangleBookNowClick = (resultIndex) => {    requester.getUserInfo().then(res => res.body)
+    .then(data => {
+      const { isEmailVerified } = data;
+      props.dispatch(setIsEmailVerified(true));
+      if (!isEmailVerified) {
+        props.dispatch(openModal(EMAIL_VERIFICATION));
+      } else {
+        props.handleBookRoom(roomsResults.slice(resultIndex));
+      }
+    });
+  };
+
   const getButton = (resultIndex) => {
     if (!props.userInfo.isLogged) {
       return <button className="btn btn-primary" onClick={(e) => props.dispatch(openModal(LOGIN, e))}>Login</button>;
-    } else if (!props.userInfo.isEmailVerified) {
-      return <button className="btn btn-primary" onClick={() => props.dispatch(openModal(EMAIL_VERIFICATION))}>Book Now</button>;
     } else {
-      return <button className="btn btn-primary" onClick={() => props.handleBookRoom(roomsResults.slice(resultIndex))}>Book Now</button>;
+      return <button className="btn btn-primary" onClick={() => hangleBookNowClick(resultIndex)}>Book Now</button>;
     }
   };
 
