@@ -92,15 +92,15 @@ class WalletIndexPage extends React.Component {
               <h2>Your Wallet</h2>
               <div className="loc-address">
                 <label htmlFor="loc-address">Your ETH/LOC address <img src={Config.getValue('basePath') + 'images/icon-lock.png'} className="lock" alt="lock-o" /></label>
-                <input className="disable-input" id="loc-address" name="locAddress" value={this.state.locAddress} type="text" disabled="disabled" />
+                <input className="disable-input" id="loc-address" name="locAddress" value={this.state.locAddress} type="text" readOnly />
               </div>
               <div className="loc-balance">
                 <label htmlFor="loc-balance">LOC Balance</label>
-                <input className="disable-input" id="loc-balance" name="locBalance" value={this.props.userInfo.locBalance} type="text" disabled="disabled" />
+                <input className="disable-input" id="loc-balance" name="locBalance" value={this.props.userInfo.locBalance} type="text" readOnly />
               </div>
               <div className="eth-balance">
                 <label htmlFor="eth-balance">ETH Balance</label>
-                <input className="disable-input" id="eth-balance" name="ethBalance" value={this.props.userInfo.ethBalance} type="text" disabled="disabled" />
+                <input className="disable-input" id="eth-balance" name="ethBalance" value={this.props.userInfo.ethBalance} type="text" readOnly />
               </div>
               <h2>Send Tokens</h2>
               <form onSubmit={(e) => { e.preventDefault(); this.sendTokens(); }}>
