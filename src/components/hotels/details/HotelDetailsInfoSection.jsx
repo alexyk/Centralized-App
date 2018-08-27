@@ -1,5 +1,5 @@
 import HotelDetailsReviewBox from './HotelDetailsReviewBox';
-import { LOGIN } from '../../../constants/modals.js';
+import { LOGIN, EMAIL_VERIFICATION } from '../../../constants/modals.js';
 import PropTypes from 'prop-types';
 import { ROOMS_XML_CURRENCY } from '../../../constants/currencies.js';
 import React from 'react';
@@ -32,6 +32,8 @@ function HotelDetailsInfoSection(props) {
   const getButton = (resultIndex) => {
     if (!props.userInfo.isLogged) {
       return <button className="btn btn-primary" onClick={(e) => props.dispatch(openModal(LOGIN, e))}>Login</button>;
+    } else if (!props.userInfo.isEmailVerified) {
+      return <button className="btn btn-primary" onClick={() => props.dispatch(openModal(EMAIL_VERIFICATION))}>Book Now</button>;
     } else {
       return <button className="btn btn-primary" onClick={() => props.handleBookRoom(roomsResults.slice(resultIndex))}>Book Now</button>;
     }

@@ -1,8 +1,8 @@
-import { LONG } from '../../../constants/notificationDisplayTimes.js';
 import { INVALID_CHILD_AGE, INVALID_GUEST_NAME } from '../../../constants/warningMessages.js';
 
 import { Config } from '../../../config';
 import { CurrencyConverter } from '../../../services/utilities/currencyConverter';
+import { LONG } from '../../../constants/notificationDisplayTimes.js';
 import { NotificationManager } from 'react-notifications';
 import PropTypes from 'prop-types';
 import { ROOMS_XML_CURRENCY } from '../../../constants/currencies.js';
