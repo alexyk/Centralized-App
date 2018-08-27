@@ -6,7 +6,7 @@ function BookingSteps(props) {
     <div className="booking-steps">
       <div className="container">
         {props.steps && props.steps.map((step, index) => {
-          return <p key={index}>{index}. {step}</p>;
+          return <p key={index}>{index + 1}. {step}</p>;
         })}
       </div>
     </div>
