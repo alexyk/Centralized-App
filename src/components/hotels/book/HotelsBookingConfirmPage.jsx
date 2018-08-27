@@ -659,7 +659,8 @@ class HotelBookingConfirmPage extends React.Component {
                           <p className="booking-card-price">Order Card Total: {currency} {fiatPriceInCurrentCurrency && (fiatPriceInCurrentCurrency).toFixed(2)}</p>
                           {/* <p>Order LOC Total: <span className="booking-price">LOC {(locPrice).toFixed(4)}</span></p> */}
                           <p>Pay with Credit Card</p>
-                          {!isUserInfoIsComplete ? <div>Your profile isn't complete to pay with credit card. Please go to <Link to="/profile/me/edit">Edit Profile</Link> and provide mandatory information</div> : userInfo.verified
+                          <button className="btn btn-primary btn-book" onClick={() => this.payWithCard()}>Pay with card</button>
+                          {/* {!isUserInfoIsComplete ? <div>Your profile isn't complete to pay with credit card. Please go to <Link to="/profile/me/edit">Edit Profile</Link> and provide mandatory information</div> : userInfo.verified
                             ? <button className="btn btn-primary btn-book" onClick={() => this.payWithCard()}>Pay with card</button>
                             :
                             <div>
@@ -675,7 +676,7 @@ class HotelBookingConfirmPage extends React.Component {
                                   onChange={this.onChange} />
                               </div>
                             </div>
-                          }
+                          } */}
                         </div>
                         <div>
                           {/* <p className="booking-price">LOC {(locPrice).toFixed(4)}</p> */}
