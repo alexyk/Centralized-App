@@ -9,7 +9,6 @@ import { CurrencyConverter } from '../../../services/utilities/currencyConverter
 import { RoomsXMLCurrency } from '../../../services/utilities/roomsXMLCurrency';
 import Facilities from './Facilities';
 import requester from '../../../initDependencies';
-import { setIsEmailVerified } from '../../../actions/userInfo';
 
 function HotelDetailsInfoSection(props) {
   const getTotalPrice = (room) => {
@@ -34,7 +33,6 @@ function HotelDetailsInfoSection(props) {
   const hangleBookNowClick = (resultIndex) => {    requester.getUserInfo().then(res => res.body)
     .then(data => {
       const { isEmailVerified } = data;
-      props.dispatch(setIsEmailVerified(true));
       if (!isEmailVerified) {
         props.dispatch(openModal(EMAIL_VERIFICATION));
       } else {

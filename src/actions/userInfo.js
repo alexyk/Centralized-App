@@ -21,10 +21,3 @@ export function setUserInfo(firstName, lastName, phoneNumber, email, locAddress,
     isEmailVerified
   };
 }
-
-export function setIsEmailVerified(isEmailVerified) {
-  return {
-    type: userInfo.SET_IS_EMAIL_VERIFIED,
-    isEmailVerified
-  };
-}
