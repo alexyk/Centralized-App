@@ -8,6 +8,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import moment from 'moment';
+import queryString from 'query-string';
 import requester from '../../../initDependencies';
 import { setCurrency } from '../../../actions/paymentInfo';
 import validator from 'validator';
@@ -215,9 +216,11 @@ class HotelsBookingPage extends React.Component {
         currency: currency
       };
 
+      const queryParams = queryString.parse(this.props.location.search);
+
       const encodedBooking = encodeURI(JSON.stringify(booking));
       const id = this.props.match.params.id;
-      const query = `?booking=${encodedBooking}`;
+      const query = `?region=${queryParams.region}&startDate=${queryParams.startDate}&endDate=${queryParams.endDate}&booking=${encodedBooking}`;
       const isWebView = this.props.location.pathname.indexOf('/mobile') !== -1;
       const rootURL = !isWebView ? '/hotels/listings/book/confirm' : '/mobile/book/confirm';
       this.props.history.push(`${rootURL}/${id}${query}`);
