@@ -5,7 +5,8 @@ import {
   SimpleReservationMultipleWithdrawersContract,
   SimpleReservationMultipleWithdrawersContractWithWallet,
   SimpleReservationSingleWithdrawerContract,
-  SimpleReservationSingleWithdrawerContractWithWallet
+  SimpleReservationSingleWithdrawerContractWithWallet,
+  LOCTokenContractWithWallet
 } from "./config/contracts-config";
 import {
   ReservationValidators
@@ -23,7 +24,9 @@ import {
 } from "./utils/approveContract";
 import {
   getGasPrice,
-  arrayToUtf8BytesArrayConverter
+  arrayToUtf8BytesArrayConverter,
+  getNonceNumber,
+  createSignedTransaction
 } from "./utils/ethFuncs"
 import ethers from 'ethers';
 import {
@@ -260,27 +263,37 @@ export class HotelReservation {
 
     let wallet = await ethers.Wallet.fromEncryptedWallet(jsonObj, password);
     const gasPrice = await getGasPrice();
+    let nonce = await getNonceNumber(wallet.address);
+    const locContract = await LOCTokenContractWithWallet(wallet)
 
-    let overrideOptions = {
+    let approveTxParams = {
+      contract: locContract,
+      function: 'approve',
+      wallet: wallet,
+      gasLimit: gasConfig.approve,
+      gasPrice: gasPrice,
+      nonce: nonce,
+      to: locContract.address
+    };
+
+    let createReservationTxParams = {
+      contract: SimpleReservationSingleWithdrawerContract,
+      function: 'createReservation',
+      wallet: wallet,
       gasLimit: gasConfig.simpleReservationSingleWithdrawer.create,
       gasPrice: gasPrice,
-    };
+      nonce: nonce + 1,
+      to: SimpleReservationSingleWithdrawerContract.address
+    }
+
     await ReservationValidators.validateSimpleReservationSingleWithdrawerParams(jsonObj, password, reservationCostLOC, withdrawDateFormatted)
 
     await TokenValidators.validateLocBalance(wallet.address, reservationCostLOC, wallet, gasConfig.simpleReservationSingleWithdrawer.create);
-    await EtherValidators.validateEthBalance(wallet, overrideOptions.gasLimit);
+    await EtherValidators.validateEthBalance(wallet, createReservationTxParams.gasLimit);
 
-    let currentNonce = await approveContract(wallet, reservationCostLOC, SimpleReservationSingleWithdrawerContract.address, gasPrice);
-    overrideOptions.nonce = currentNonce;
+    let approveTx = createSignedTransaction(approveTxParams, SimpleReservationSingleWithdrawerContract.address, reservationCostLOC)
+    let createReservationTx = createSignedTransaction(createReservationTxParams, reservationCostLOC, withdrawDateFormatted)
 
-    let reservationWithWalletInstance = SimpleReservationSingleWithdrawerContractWithWallet(wallet);
-
-    const createReservationSingleWithdrawerTxResult = await reservationWithWalletInstance.createReservation(
-      reservationCostLOC,
-      withdrawDateFormatted,
-      overrideOptions
-    );
-
-    return createReservationSingleWithdrawerTxResult;
+    return [approveTx, createReservationTx];
   }
 }

@@ -11,6 +11,7 @@ const {
   failedSatusCode
 } = require('../config/constants.json');
 
+//TODO: Delete this whole file
 export async function approveContract(
   wallet,
   amount,
@@ -28,13 +29,32 @@ export async function approveContract(
     gasLimit: gasConfig.approve,
     gasPrice: gasPrice
   };
-  const approve = await locContract.approve(contractAddressToApprove, amount, overrideOptions);
+  console.log(locContract.interface);
 
-  await wallet.provider.waitForTransaction(approve.hash);
-  let txResult = await wallet.provider.getTransactionReceipt(approve.hash);
-  if (txResult.status = failedSatusCode) {
-    throw new Error(ERROR.FAILED_APPROVE);
+  const approveFunc = locContract.interface.functions.approve(contractAddressToApprove, amount);
+  console.log(locContract)
+  console.log("KYP");
+
+
+  let approveTx = {
+    gasPrice: overrideOptions.gasPrice,
+    gasLimit: overrideOptions.gasLimit,
+    data: approveFunc.data,
+    to: locContract.address,
+    nonce: nonce
   }
 
-  return nonce + 1;
+  let signedApproveTx = wallet.sign(approveTx);
+  console.log(signedApproveTx);
+
+
+  // const approve = await locContract.approve(contractAddressToApprove, amount, overrideOptions);
+
+  // await wallet.provider.waitForTransaction(approve.hash);
+  // let txResult = await wallet.provider.getTransactionReceipt(approve.hash);
+  // if (txResult.status = failedSatusCode) {
+  //   throw new Error(ERROR.FAILED_APPROVE);
+  // }
+
+  return signedApproveTx;
 }

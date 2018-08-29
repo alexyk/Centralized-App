@@ -155,3 +155,25 @@ export async function getNonceNumber(walletAddress) {
   const nodeProvider = getNodeProvider();
   return await nodeProvider.getTransactionCount(walletAddress);
 }
+
+export function createSignedTransaction(transactionOptions, ...functionParams) {
+
+  let currentFunc = transactionOptions.contract.interface.functions[`${transactionOptions.function}`];
+
+
+
+  const func = currentFunc(...functionParams);
+
+  let funcTx = {
+    gasPrice: transactionOptions.gasPrice,
+    gasLimit: transactionOptions.gasLimit,
+    data: func.data,
+    to: transactionOptions.to,
+    nonce: transactionOptions.nonce
+  }
+  console.log(funcTx);
+
+  let signedFuncTx = transactionOptions.wallet.sign(funcTx);
+
+  return signedFuncTx;
+}
