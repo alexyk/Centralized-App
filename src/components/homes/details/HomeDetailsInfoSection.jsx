@@ -50,8 +50,7 @@ function HomeDetailsInfoSection(props) {
           <p>{street}, {city.name}, {country.name}</p>
           <div className="btn-home-details-info-section-container">
             <button className="btn btn-primary" onClick={props.openModal}>Contact Host</button>
-            <Link to="/homes/listings/booking/" className="btn btn-primary btn-home-details-info-section-container">Book Now</Link>
-            {/* <a className="btn btn-primary btn-home-details-info-section-container" href="http://localhost:3000/homes/listings/booking/" >Book now</a> */}
+            <Link to={`/homes/listings/book/${props.match.params.id}${props.location.search}`} className="btn btn-primary btn-home-details-info-section-container">Book Now</Link>
           </div>
 
           <HomeDetailsCalendar
@@ -144,7 +143,10 @@ HomeDetailsInfoSection.propTypes = {
   prices: PropTypes.array,
   openModal: PropTypes.func,
   calendar: PropTypes.array,
-  descriptionText: PropTypes.string
+  descriptionText: PropTypes.string,
+
+  // start Router props
+  location: PropTypes.object,
 };
 
 export default withRouter(HomeDetailsInfoSection);

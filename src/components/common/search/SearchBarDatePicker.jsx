@@ -2,17 +2,25 @@ import DateRangePicker from 'react-bootstrap-daterangepicker';
 import React from 'react';
 import moment from 'moment';
 import PropTypes from 'prop-types';
+import SearchBarDatePickerHidePreview from './SearchBarDatePickerHidePreview';
 
 function SearchBarDatePicker(props) {
-  const { startDate, endDate } = props;
+  let { startDate, endDate } = props;
   const start = (startDate && startDate.format('DD/MM/YYYY')) || '';
   let end = (endDate && endDate.format('DD/MM/YYYY')) || '';
 
   if (end && start === end) {
-    end = endDate.add(1, 'days').format('DD/MM/YYYY');
+    endDate = endDate.add(1, 'days');
   }
 
-  let label = start + ' - ' + end;
+  const datesDetails = {
+    startDateDay: startDate.format('DD'),
+    startDateMonth: startDate.format('MMM').toUpperCase(),
+    startDateDayOfWeek: startDate.format('ddd').toUpperCase(),
+    endDateDay: endDate.format('DD'),
+    endDateMonth: endDate.format('MMM').toUpperCase(),
+    endDateDayOfWeek: endDate.format('ddd').toUpperCase()
+  };
 
   const pickerProps = {
     startDate,
@@ -20,29 +28,20 @@ function SearchBarDatePicker(props) {
   };
 
   return (
-    <div>
-      <span>Check in &amp; Check out</span>
-      <DateRangePicker
-        autoUpdateInput={true}
-        onApply={props.onApply}
-        isInvalidDate={props.isInvalidDate}
-        autoApply={true}
-        minDate={moment().format('DD/MM/YYYY')}
-        maxDate={moment().add(12, 'months').format('DD/MM/YYYY')}
-        locale={{ format: 'DD/MM/YYYY' }}
-        {...pickerProps}
-        {...props}>
-        <input
-          className="datepicker-input"
-          readOnly
-          required="required"
-          autoComplete="off"
-          placeholder="Select date"
-          name="stay"
-          value={label}
-        />
-      </DateRangePicker>
-    </div>
+    <DateRangePicker
+      autoUpdateInput={true}
+      onApply={props.onApply}
+      isInvalidDate={props.isInvalidDate}
+      autoApply={true}
+      minDate={moment().format('DD/MM/YYYY')}
+      maxDate={moment().add(12, 'months').format('DD/MM/YYYY')}
+      locale={{ format: 'DD/MM/YYYY' }}
+      {...pickerProps}
+      {...props}>
+      <div>
+        <SearchBarDatePickerHidePreview datesDetails={datesDetails} />
+      </div>
+    </DateRangePicker>
   );
 }
 

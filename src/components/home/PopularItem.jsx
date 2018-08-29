@@ -29,10 +29,9 @@ function PopularItem(props) {
     pictures = pictures.map(x => { return { thumbnail: Config.getValue('imgHost') + x.thumbnail }; });
   }
 
-  const SlickButton = props => {
-    const { currentSlide, slideCount, ...arrowProps } = props;
+  const SlickButton = ({ currentSlide, slideCount, ...arrowProps }) => {
     return (
-      <button type="button" {...arrowProps} />
+      <button {...arrowProps} />
     );
   };
 

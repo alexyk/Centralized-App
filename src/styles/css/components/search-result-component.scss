@@ -199,7 +199,6 @@ $media-expressions: (
 		@include media(">=desktop") {
 			padding-top: 11px;
       margin-right: 33px;
-      min-width: 367px;
 		}
   }
   // &-description {

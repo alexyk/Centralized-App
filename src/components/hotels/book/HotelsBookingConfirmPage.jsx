@@ -647,7 +647,7 @@ class HotelsBookingConfirmPage extends React.Component {
       <div>
         <div>
           <div className="sm-none">
-            <BookingSteps steps={['Provide Guest Information', 'Review Room Details', 'Confirm and Pay']} />
+            <BookingSteps steps={['Provide Guest Information', 'Review Room Details', 'Confirm and Pay']} currentStepIndex={2} />
           </div>
 
           {!data ?

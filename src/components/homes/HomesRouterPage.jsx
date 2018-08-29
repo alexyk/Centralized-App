@@ -5,8 +5,8 @@ import React from 'react';
 import HomePage from '../home/HomePage';
 import HomesSearchPage from './search/HomesSearchPage';
 import HomeDetailsPage from './details/HomeDetailsPage';
-import HomesBookingPage from './booking/HomesBookingPage';
 import requester from '../../initDependencies';
+import HomesBookingRouterPage from './booking/HomesBookingRouterPage';
 
 class HomesRouterPage extends React.Component {
   constructor(props) {
@@ -31,8 +31,8 @@ class HomesRouterPage extends React.Component {
         <Switch>
           <Route exact path="/homes" render={() => <HomePage homePage="homes" />} />
           <Route exact path="/homes/listings" render={() => <HomesSearchPage countries={this.state.countries} />} />
-          <Route exact path="/homes/listings/booking" render={() => <HomesBookingPage countries={this.state.countries} />} />
           <Route exact path="/homes/listings/:id" render={() => <HomeDetailsPage countries={this.state.countries} />} />
+          <Route path="/homes/listings/book" render={() => <HomesBookingRouterPage />} />
         </Switch>
       </div>
     );

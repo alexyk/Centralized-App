@@ -3,7 +3,7 @@ import PopularDestinationsCarousel from '../hotels/carousel/PopularDestinationsC
 import PopularItem from './PopularItem';
 import HeroComponent from './HeroComponent';
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, { Fragment } from 'react';
 import Slider from 'react-slick';
 import { connect } from 'react-redux';
 import { setRegion } from '../../actions/searchInfo';
@@ -115,7 +115,7 @@ class HomePage extends React.Component {
     }
 
     return items ?
-      <div>
+      <Fragment>
         <Slider ref={s => slider = s}
           {...settings}>
           {items.map((item, i) => {
@@ -142,7 +142,7 @@ class HomePage extends React.Component {
             <li><button className="icon-arrow-right" onClick={() => this.next(slider)}></button></li>
           </ul>
         </div>
-      </div> : <div className="loader sm-none"></div>;
+      </Fragment> : <div className="loader sm-none"></div>;
   }
 
   render() {

@@ -269,7 +269,7 @@ class HotelsBookingPage extends React.Component {
 
     return (
       <div>
-        <BookingSteps steps={['Provide Guest Information', 'Review Room Details', 'Confirm and Pay']} />
+        <BookingSteps steps={['Provide Guest Information', 'Review Room Details', 'Confirm and Pay']} currentStepIndex={1} />
 
         {!this.state.hotel ?
           <div className="loader"></div> :

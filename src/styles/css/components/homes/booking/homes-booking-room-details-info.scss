@@ -1,0 +1,186 @@
+@import '../../../vendors/include-media';
+
+.right-part {
+    width: 50%;
+    @include media("<=tablet") {
+      width: 100%;
+    }
+    h2 {
+      @include media("<=tablet") {
+        padding-top: 10px;
+      }
+    }
+    h3 {
+      font-weight: 400;
+      font-size: 24px;
+      border-bottom: 1px solid #CCC;
+      padding-bottom: 10px;
+      margin: 30px 0;
+    }
+    .icons-container-space {
+      display: flex;
+      justify-content: space-between;
+      text-align: center;
+      @include media("<=tablet") {
+        justify-content: space-around;
+      }
+      div {
+        @include media("<=tablet") {
+          width: 10%;
+        }
+      }
+      p {
+        margin-top: 10px;
+        @include media("<=tablet") {
+          font-size: 14px;
+        }
+      }
+    }
+    .arrangements-container div {
+      display: flex;
+      margin: 20px 0;
+      p {
+        margin-top: 15px;
+        margin-bottom: 0;
+      }
+      span {
+        color: #54585B;
+        font-weight: 400;
+      }
+      img {
+        padding: 0 20px;
+      }
+    }
+    .hotel-rules-container {
+      p {
+        margin-bottom: 10px;
+      }
+      .check-in,
+      .check-out {
+        margin: 5% 0 2%;
+        display: inline-flex;
+        width: 100%;
+      }
+      .check-in-text,
+      .check-out-text {
+        width: 20%;
+        font-size: 18px;
+      }
+      .check-in-line,
+      .check-out-line {
+        display: flex;
+        width: 80%;
+        flex-direction: column;
+        margin-top: -2%;
+        #check_in_hour,
+        #check_out_hour {
+          color: #898C8D;
+          font-size: 15px;
+          margin-bottom: 1%;
+          display: flex;
+          justify-content: flex-end;
+          width: 70px;
+          min-width: 60px;
+          transition: width 1s ease-in-out, margin-left 1s ease-in-out;
+        }
+        .lines {
+          display: inline-flex;
+          margin-bottom: 3%;
+          #check_in_line_2,
+          #check_out_line_1 {
+            width: 0;
+            transition: width 1s ease-in-out;
+          }
+          #check_in_line_1,
+          #check_out_line_3 {
+            width: 100%;
+          }
+          #check_in_line_1,
+          #check_in_line_3 {
+            border-bottom: 3px solid #cccccc;
+          }
+          #check_in_line_2 {
+            border-bottom: 3px solid black;
+          }
+          #check_out_line_2 {
+            border-bottom: 3px solid black;
+          }
+          #check_out_line_1,
+          #check_out_line_3 {
+            border-bottom: 3px solid #cccccc;
+          }
+        }
+        #check_in_tooltip,
+        #check_out_tooltip {
+          margin-left: 0;
+          font-size: 14px;
+          display: flex;
+          justify-content: flex-end;
+          transition: width 1s ease-in-out, margin 1s ease-in-out;
+          width: 110px;
+          .tooltip-content {
+            width: 110px;
+            text-align: center;
+            border-radius: 2px;
+            padding: 1% 2%;
+            color: white;
+            position: relative;
+            background: #a2c5bf;
+            border: 1px solid #a2c5bf;
+          }
+          .tooltip-content:after, .tooltip-content:before {
+            bottom: 100%;
+            border: solid transparent;
+            content: " ";
+            height: 0;
+            width: 0;
+            position: absolute;
+            pointer-events: none;
+          }
+          
+          .tooltip-content:after {
+            border-color: rgba(162, 197, 191, 0);
+            border-bottom-color: #a2c5bf;
+            border-width: 6px;
+            margin-left: -6px;
+          }
+          .tooltip-content:before {
+            border-color: rgba(162, 197, 191, 0);
+            border-bottom-color: #a2c5bf;
+            border-width: 7px;
+            margin-left: -7px;
+          }
+        }
+        #check_in_tooltip {
+          .tooltip-content:after, .tooltip-content:before {
+            left: 15%;
+          }
+        }
+        #check_out_tooltip {
+          .tooltip-content:after, .tooltip-content:before {
+            left: 85%;
+          }
+        }
+      }
+
+      @include media("<=phone") {
+        .check-in-text,
+        .check-out-text {
+          width: 30%;
+        }
+
+        .check-in-line,
+        .check-out-line {
+          width: 70%;
+        }
+      }
+    }
+    .btn {
+      margin: 30px 0;
+      width: 40%;
+      float: right;
+      @include media("<=tablet") {
+        width: 100%;
+      }
+    }
+  }

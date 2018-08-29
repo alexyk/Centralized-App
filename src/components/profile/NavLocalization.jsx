@@ -46,6 +46,7 @@ class NavLocalization extends Component {
             {this.props.location.pathname !== '/hotels'
               && this.props.location.pathname !== '/homes'
               && (this.props.location.pathname.indexOf('/hotels/listings/book') === -1
+              && this.props.location.pathname.indexOf('/homes/listings/book') === -1
                 && this.props.location.pathname.indexOf('/profile') === -1)
               && this.props.location.pathname.indexOf('/airdrop') === -1
               ? <ul className="tabset">

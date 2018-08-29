@@ -2836,19 +2836,6 @@ h3 {
     float: right
 }
 
-.booking-steps {
-    background-color: rgb(34, 56, 67);
-    margin-bottom: 20px;
-}
-
-.booking-steps p {
-    float: none;
-    display: inline-block;
-    color: #fff;
-    font-size: 18px;
-    margin: 15px 30px 15px 0;
-}
-
 /* Hotel Details Rooms */
 
 .hotel-content .room-group {
