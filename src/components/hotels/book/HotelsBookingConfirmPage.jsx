@@ -1,7 +1,7 @@
 import '../../../styles/css/components/hotels/book/hotel-booking-confirm-page.css';
 
 import { EXTRA_LONG, LONG } from '../../../constants/notificationDisplayTimes.js';
-import { withRouter } from 'react-router-dom';
+import { withRouter, Link } from 'react-router-dom';
 import { PASSWORD_PROMPT } from '../../../constants/modals.js';
 import { closeModal, openModal } from '../../../actions/modalsInfo.js';
 import { setCurrency } from '../../../actions/paymentInfo';
@@ -620,7 +620,7 @@ class HotelBookingConfirmPage extends React.Component {
     const isMobile = this.props.location.pathname.indexOf('/mobile') !== -1;
 
     const booking = data && data.booking.hotelBooking;
-    // const isUserInfoIsComplete = this.isUserInfoIsComplete(userInfo);
+    const isUserInfoIsComplete = this.isUserInfoIsComplete(userInfo);
     const currency = this.props.paymentInfo.currency;
 
     return (
