@@ -150,7 +150,9 @@ class HotelBookingConfirmPage extends React.Component {
   }
 
   disconnectSocket() {
-    this.socket.close();
+    if (this.socket) {
+      this.socket.close();
+    }
   }
 
   payWithCreditCard(path) {
@@ -188,6 +190,8 @@ class HotelBookingConfirmPage extends React.Component {
       bookingId: data.preparedBookingId,
       backUrl: this.createBackUrl(),
     };
+
+    console.log(paymentInfo);
 
     requester.verifyCreditCardPayment(paymentInfo)
       .then(res => {
@@ -602,6 +606,12 @@ class HotelBookingConfirmPage extends React.Component {
 
   }
 
+  getButtonIfUserHasFullInfo(isUserInfoIsComplete) {
+    return isUserInfoIsComplete 
+      ? (<button className="btn btn-primary btn-book" onClick={() => this.payWithCard()}>Pay with card</button>)
+      : (<div>Your profile isn't complete to pay with credit card. Please go to <Link to="/profile/me/edit">Edit Profile</Link> and provide mandatory information</div>)
+  }
+
   render() {
     const { data, userInfo, showRoomsCanxDetails, seconds, confirmed, password, fiatPriceInEUR, locPrice, rates } = this.state;
     if (userInfo == null) {
@@ -668,7 +678,7 @@ class HotelBookingConfirmPage extends React.Component {
                           <p className="booking-card-price">Order Card Total: {currency} {fiatPriceInEUR && (CurrencyConverter.convert(rates, DEFAULT_CRYPTO_CURRENCY, currency, fiatPriceInEUR)).toFixed(2)}</p>
                           {/* <p>Order LOC Total: <span className="booking-price">LOC {(locPrice).toFixed(4)}</span></p> */}
                           <p>Pay with Credit Card</p>
-                          <button className="btn btn-primary btn-book" onClick={() => this.payWithCard()}>Pay with card</button>
+                          {this.getButtonIfUserHasFullInfo(isUserInfoIsComplete)}
                           {/* {!isUserInfoIsComplete ? <div>Your profile isn't complete to pay with credit card. Please go to <Link to="/profile/me/edit">Edit Profile</Link> and provide mandatory information</div> : userInfo.verified
                             ? <button className="btn btn-primary btn-book" onClick={() => this.payWithCard()}>Pay with card</button>
                             :
