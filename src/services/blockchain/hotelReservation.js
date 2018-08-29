@@ -266,33 +266,25 @@ export class HotelReservation {
     let nonce = await getNonceNumber(wallet.address);
     const locContract = await LOCTokenContractWithWallet(wallet)
 
-    let approveTxParams = {
-      contract: locContract,
-      function: 'approve',
-      wallet: wallet,
+    let approveTxOptions = {
       gasLimit: gasConfig.approve,
       gasPrice: gasPrice,
-      nonce: nonce,
-      to: locContract.address
+      nonce: nonce
     };
 
-    let createReservationTxParams = {
-      contract: SimpleReservationSingleWithdrawerContract,
-      function: 'createReservation',
-      wallet: wallet,
+    let createReservationTxOptions = {
       gasLimit: gasConfig.simpleReservationSingleWithdrawer.create,
       gasPrice: gasPrice,
-      nonce: nonce + 1,
-      to: SimpleReservationSingleWithdrawerContract.address
+      nonce: nonce + 1
     }
 
     await ReservationValidators.validateSimpleReservationSingleWithdrawerParams(jsonObj, password, reservationCostLOC, withdrawDateFormatted)
 
     await TokenValidators.validateLocBalance(wallet.address, reservationCostLOC, wallet, gasConfig.simpleReservationSingleWithdrawer.create);
-    await EtherValidators.validateEthBalance(wallet, createReservationTxParams.gasLimit);
+    await EtherValidators.validateEthBalance(wallet, createReservationTxOptions.gasLimit);
 
-    let approveTx = createSignedTransaction(approveTxParams, SimpleReservationSingleWithdrawerContract.address, reservationCostLOC)
-    let createReservationTx = createSignedTransaction(createReservationTxParams, reservationCostLOC, withdrawDateFormatted)
+    let approveTx = createSignedTransaction(locContract, 'approve', wallet, approveTxOptions, locContract.address, SimpleReservationSingleWithdrawerContract.address, reservationCostLOC)
+    let createReservationTx = createSignedTransaction(SimpleReservationSingleWithdrawerContract, 'createReservation', wallet, createReservationTxOptions, SimpleReservationSingleWithdrawerContract.address, reservationCostLOC, withdrawDateFormatted)
 
     return [approveTx, createReservationTx];
   }
