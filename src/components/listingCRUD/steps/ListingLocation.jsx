@@ -10,6 +10,8 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import FooterNav from '../navigation/FooterNav';
 
+import '../../../styles/css/components/profile/listings/listing-location.css';
+
 function ListingLocation(props) {
 
   const handleOnPlaceSelected = (place) => {
@@ -67,12 +69,12 @@ function ListingLocation(props) {
 
   const { country, city, street, state } = props.values;
   const next = validateInput(props.values) ? props.next : props.location.pathname;
-  const handleClickNext = validateInput(props.values) 
+  const handleClickNext = validateInput(props.values)
     ? () => { props.updateProgress(1); }
     : () => { showErrors(props.values); };
 
   return (
-    <div>
+    <div id="create-listing-location">
       <ListingCrudNav progress='33%' />
       <div className="container">
         <div className="row">
@@ -89,7 +91,7 @@ function ListingLocation(props) {
                     <div className="form-group">
                       <label htmlFor="city">City</label>
                       <Autocomplete
-                        className="form-control"
+
                         value={city}
                         onChange={props.onChange}
                         name="city"
@@ -101,7 +103,7 @@ function ListingLocation(props) {
                   <div className="col-md-6">
                     <div className="form-group">
                       <label htmlFor="country">Country</label>
-                      <input style={{ background: '#AAA', opacity: 0.5 }} disabled className="form-control" id="country" name="country" value={country} />
+                      <input style={{ background: '#AAA', opacity: 0.5 }} disabled  id="country" name="country" value={country} />
                     </div>
                   </div>
                   <div className="col-md-6">
@@ -112,7 +114,7 @@ function ListingLocation(props) {
                     <div className="form-group">
                       <label htmlFor="street">Address</label>
                       <Autocomplete
-                        className="form-control"
+
                         value={street}
                         onChange={onAddressChange}
                         name="street"
@@ -125,7 +127,7 @@ function ListingLocation(props) {
                   <div className="col-md-6">
                     <div className="form-group">
                       <label htmlFor="country">State</label>
-                      <input style={{ background: '#AAA', opacity: 0.5 }} disabled className="form-control" id="state" name="state" value={state} />
+                      <input style={{ background: '#AAA', opacity: 0.5 }} disabled  id="state" name="state" value={state} />
                     </div>
                   </div>
                 </div>

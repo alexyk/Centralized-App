@@ -5,7 +5,8 @@ import React from 'react';
 import HomesHomePage from './HomesHomePage';
 import HomesSearchPage from './search/HomesSearchPage';
 import HomeDetailsPage from './details/HomeDetailsPage';
-import { getCountries } from '../../requester';
+import HomesBookingPage from './booking/HomesBookingPage';
+import requester from '../../initDependencies';
 
 class HomesRouterPage extends React.Component {
   constructor(props) {
@@ -17,8 +18,10 @@ class HomesRouterPage extends React.Component {
   }
 
   componentDidMount() {
-    getCountries(true).then(data => {
-      this.setState({ countries: data.content });
+    requester.getCountries().then(res => {
+      res.body.then(data => {
+        this.setState({ countries: data });
+      });
     });
   }
 
@@ -28,6 +31,7 @@ class HomesRouterPage extends React.Component {
         <Switch>
           <Route exact path="/homes" render={() => <HomesHomePage countries={this.state.countries} />} />
           <Route exact path="/homes/listings" render={() => <HomesSearchPage countries={this.state.countries} />} />
+          <Route exact path="/homes/listings/booking" render={() => <HomesBookingPage countries={this.state.countries} />} />
           <Route exact path="/homes/listings/:id" render={() => <HomeDetailsPage countries={this.state.countries} />} />
         </Switch>
       </div>

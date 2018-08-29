@@ -1,23 +1,24 @@
-import { withRouter } from 'react-router-dom';
-import { NotificationManager } from 'react-notifications';
-import { Config } from '../../../config';
-import PropTypes from 'prop-types';
-import HotelDetailsInfoSection from './HotelDetailsInfoSection';
-import React from 'react';
-import { connect } from 'react-redux';
-import { setCurrency } from '../../../actions/paymentInfo';
-import moment from 'moment';
-import { parse } from 'query-string';
-import { ROOMS_XML_CURRENCY } from '../../../constants/currencies.js';
-import Lightbox from 'react-images';
-
 import '../../../styles/css/main.css';
 import '../../../styles/css/components/carousel-component.css';
-import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 
-import { getHotelById, getHotelRooms, getRegionNameById, getLocRateInUserSelectedCurrency, getCurrencyRates, testBook } from '../../../requester';
+import ChildrenModal from '../modals/ChildrenModal';
+import { Config } from '../../../config';
+import HotelDetailsInfoSection from './HotelDetailsInfoSection';
+import HotelsSearchBar from '../search/HotelsSearchBar';
+import Lightbox from 'react-images';
+import { NotificationManager } from 'react-notifications';
+import PropTypes from 'prop-types';
+import { ROOMS_XML_CURRENCY } from '../../../constants/currencies.js';
+import React from 'react';
+import Slider from 'react-slick';
+import { connect } from 'react-redux';
+import moment from 'moment';
+import { parse } from 'query-string';
+import requester from '../../../initDependencies';
+import { setCurrency } from '../../../actions/paymentInfo';
+import { withRouter } from 'react-router-dom';
 
 class MobileHotelDetailsPage extends React.Component {
   constructor(props) {
@@ -87,22 +88,30 @@ class MobileHotelDetailsPage extends React.Component {
     const id = this.props.match.params.id;
     const search = this.props.location.search;
     console.log(search);
-    getHotelById(id, search).then((data) => {
-      this.setState({ data: data, loading: false });
-      const searchParams = this.getSearchParams(this.props.location.search);
-      const regionId = searchParams.get('region') || data.region.externalId;
-      getRegionNameById(regionId).then((json) => {
-        this.setState({ region: json });
+    requester.getHotelById(id, search).then(res => {
+      res.body.then(data => {
+        this.setState({ data: data, loading: false });
+        const searchParams = this.getSearchParams(this.props.location.search);
+        const regionId = searchParams.get('region') || data.region.externalId;
+        requester.getRegionNameById(regionId).then(res => {
+          res.body.then(data => {
+            this.setState({ region: data });
+          });
+        });
       });
     });
 
-    getHotelRooms(id, search).then((data) => {
-      this.setState({ hotelRooms: data, loadingRooms: false });
+    requester.getHotelRooms(id, search).then(res => {
+      res.body.then(data => {
+        this.setState({ hotelRooms: data, loadingRooms: false });
+      });
     });
 
     this.getLocRate();
-    getCurrencyRates().then((json) => {
-      this.setState({ rates: json });
+    requester.getCurrencyRates().then(res => {
+      res.body.then(data => {
+        this.setState({ rates: data });
+      });
     });
   }
 
@@ -154,8 +163,10 @@ class MobileHotelDetailsPage extends React.Component {
   }
 
   getLocRate() {
-    getLocRateInUserSelectedCurrency(ROOMS_XML_CURRENCY).then((json) => {
-      this.setState({ locRate: Number(json[0][`price_${ROOMS_XML_CURRENCY.toLowerCase()}`]) });
+    requester.getLocRateByCurrency(ROOMS_XML_CURRENCY).then(res => {
+      res.body.then(data => {
+        this.setState({ locRate: Number(data[0][`price_${ROOMS_XML_CURRENCY.toLowerCase()}`]) });
+      });
     });
   }
 
@@ -433,9 +444,9 @@ class MobileHotelDetailsPage extends React.Component {
     const roomAvailability = new Map(this.state.roomAvailability);
     roomAvailability.set(quoteId, 'loading');
     this.setState({ roomAvailability: roomAvailability }, () => {
-      testBook(booking).then((res) => {
+      requester.createReservation(booking).then(res => {
         const updatedRoomAvailability = new Map(this.state.roomAvailability);
-        if (res.ok) {
+        if (res.success) {
           updatedRoomAvailability.set(quoteId, true);
         } else {
           updatedRoomAvailability.set(quoteId, false);
@@ -502,8 +513,8 @@ class MobileHotelDetailsPage extends React.Component {
     }
 
     booking.quoteId = allRooms[index].quoteId;
-    testBook(booking).then((res) => {
-      if (res.ok) {
+    requester.createReservation(booking).then(res => {
+      if (res.success) {
         if (index !== 0) {
           NotificationManager.info('The room that you requested is no longer available. You were given a similar room which may have slightly different price and extras.', '', 5000);
         }
@@ -533,9 +544,9 @@ class MobileHotelDetailsPage extends React.Component {
       loading = true;
     } else {
       images = [];
-      if (this.state.data.hotelPhotos) {
-        images = this.state.data.hotelPhotos.map((image, index) => {
-          return { src: Config.getValue('imgHost') + image.url, index: index };
+      if (this.state.data.photos) {
+        images = this.state.data.photos.map((x, i) => {
+          return { src: Config.getValue('imgHost') + x, index: i };
         });
       }
     }
@@ -571,11 +582,29 @@ class MobileHotelDetailsPage extends React.Component {
               currentImage={this.state.currentImage}
               images={images}
               isOpen={this.state.lightboxIsOpen}
+              // onClickImage={this.handleClickImage}
               onClickNext={this.gotoNext}
               onClickPrev={this.gotoPrevious}
               onClickThumbnail={this.gotoImage}
               onClose={this.closeLightbox}
             />}
+            {/* <section className="hotel-gallery"> */}
+            {/* <div className="hotel-gallery-bgr lg-none" style={(images && images.length > 0) ? { 'backgroundImage': 'url("' + images[0].src + '")' } : { backgroundColor: '#AAA' }}>
+              <div className="container">
+                <a onClick={(e => this.openLightbox(e))} className="btn btn-primary btn-gallery">Open Gallery</a>
+                {images !== null && <Lightbox
+                  currentImage={this.state.currentImage}
+                  images={images}
+                  isOpen={this.state.lightboxIsOpen}
+                  onClickImage={this.handleClickImage}
+                  onClickNext={this.gotoNext}
+                  onClickPrev={this.gotoPrevious}
+                  onClickThumbnail={this.gotoImage}
+                  onClose={this.closeLightbox}
+                />}
+              </div>
+            </div> */}
+            {/* </section> */}
             <div className='hotel-details-carousel'>
               <Slider
                 ref={c => (this.slider = c)}
@@ -587,6 +616,12 @@ class MobileHotelDetailsPage extends React.Component {
                     </div>
                   );
                 })}
+                {/* <div><div className='slide' style={{ 'backgroundImage': 'url("' + left + '")' }}></div></div>
+                <div><div className='slide' style={{ 'backgroundImage': 'url("' + right + '")' }}></div></div>
+                <div><div className='slide' style={{ 'backgroundImage': 'url("' + current + '")' }}></div></div>
+                <div><div className='slide' style={{ 'backgroundImage': 'url("' + right + '")' }}></div></div>
+                <div><div className='slide' style={{ 'backgroundImage': 'url("' + left + '")' }}></div></div>
+                <div><div className='slide' style={{ 'backgroundImage': 'url("' + current + '")' }}></div></div> */}
               </Slider>
             </div>
             <div className="main-carousel">
@@ -676,6 +711,8 @@ MobileHotelDetailsPage.propTypes = {
   paymentInfo: PropTypes.object
 };
 
+export default withRouter(connect(mapStateToProps)(MobileHotelDetailsPage));
+
 function mapStateToProps(state) {
   const { userInfo, paymentInfo, modalsInfo } = state;
   return {
@@ -684,5 +721,3 @@ function mapStateToProps(state) {
     modalsInfo
   };
 }
-
-export default withRouter(connect(mapStateToProps)(MobileHotelDetailsPage));

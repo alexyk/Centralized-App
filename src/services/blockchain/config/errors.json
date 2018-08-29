@@ -28,7 +28,7 @@
   "EMPTY_REQ_BODY": "Request body is empty",
   "INVALID_RATE": "Rate should be > 0",
   "INSUFFICIENT_AMOUNT_LOC": "Insufficient LOC amount",
-  "INSUFFICIENT_AMOUNT_ETH": "Insufficient ETH amount",
+  "INSUFFICIENT_AMOUNT_ETH": "Insufficient ETH amount.",
   "INSUFFICIENT_AMOUNT_ETH_EXCHANGE_CONTRACT": "Insufficient ETH amount in the exchange contract",
   "MISSING_RENTAL_ID": "Missing rental id",
   "MISSING_RESERVATION_ID": "Missing reservation id",
@@ -58,6 +58,7 @@
   "INVALID_DATE_FOR_WITHDRAW": "The reservation is not ready for withdraw",
   "WITHDRAW_ARRAY_GREATER_THAN_POSSIBLE": "The withdraw dates array is greater than the maximum possible",
   "INVALID_WITHDRAWER": "The withdrawer and the address from the reservations are different",
-  "INVALID_BOOKING_FOR_WITHDRAW": "The reservation was already withdrawed"
+  "INVALID_BOOKING_FOR_WITHDRAW": "The reservation was already withdrawed",
+  "FAILED_APPROVE": "Network Error. Please, try again later"
 
 }

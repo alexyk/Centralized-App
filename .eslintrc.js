@@ -39,6 +39,7 @@ module.exports = {
     "react/jsx-pascal-case": 0,
     "jsx-a11y/anchor-is-valid": 0,
     "jsx-a11y/href-no-hash": "off",
-    "no-unused-vars": "warn"
+    "no-unused-vars": "warn",
+    "react/prop-types": [2, { ignore: ['children'] }]
   }
 }

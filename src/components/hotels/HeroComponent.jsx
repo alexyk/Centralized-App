@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import '../../styles/css/components/hero-component.css';
 import '../../styles/css/components/tabs-component.css';
 import SearchBar from './search/HotelsSearchBar';
@@ -13,28 +14,16 @@ function HeroComponent(props) {
           <h2>Browse for homes &amp; hotels worldwide</h2>
           <div className="source-data">
             <ListingTypeNav />
-            <SearchBar
-              startDate={props.startDate}
-              endDate={props.endDate}
-              region={props.region}
-              adults={props.adults}
-              hasChildren={props.hasChildren}
-              rooms={props.rooms}
-              guests={props.guests}
-              onChange={props.onChange}
-              handleRoomsChange={props.handleRoomsChange}
-              handleSearch={props.handleSearch}
-              handleDatePick={props.handleDatePick}
-              handleSelectRegion={props.handleSelectRegion}
-              handleToggleChildren={props.handleToggleChildren}
-              handleOpenSelect={props.handleOpenSelect}
-              handleCloseSelect={props.handleCloseSelect}
-            />
+            <SearchBar redirectToSearchPage={props.redirectToSearchPage} />
           </div>
         </div>
       </div>
     </div>
   );
 }
+
+HeroComponent.propTypes = {
+  redirectToSearchPage: PropTypes.func
+};
 
 export default HeroComponent;

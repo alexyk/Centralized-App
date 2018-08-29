@@ -8,10 +8,12 @@ import ListingCrudNav from '../navigation/ListingCrudNav';
 import Textarea from '../textbox/Textarea';
 import FooterNav from '../navigation/FooterNav';
 
+import '../../../styles/css/components/profile/listings/listing-description.css';
+
 function ListingDescription(props) {
-  const { text, interaction } = props.values;  
+  const { text, interaction } = props.values;
   const next = validateInput(props.values) ? props.next : props.location.pathname;
-  const handleClickNext = validateInput(props.values) 
+  const handleClickNext = validateInput(props.values)
     ? () => { props.updateProgress(1); }
     : () => { showErrors(props.values); };
   return (
@@ -23,7 +25,7 @@ function ListingDescription(props) {
             <div className="col-md-3">
               <PlaceDescriptionAside routes={props.routes} />
             </div>
-            <div className="reservation-hotel-review-room col-md-9">
+            <div id="reservation-hotel-review-room" className="col-md-9">
               <h2>Tell your guests about your place</h2>
               <hr />
 

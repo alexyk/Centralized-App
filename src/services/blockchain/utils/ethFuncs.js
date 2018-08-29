@@ -24,7 +24,8 @@ export async function getGasPrice() {
 
   try {
     let response = await axios.get(GAS_STATION_API);
-    return ethers.utils.parseUnits((response.data.average / 10).toString(10), 'gwei');
+
+    return ethers.utils.parseUnits((response.data.fast / 10).toString(10), 'gwei');
 
   } catch (e) {
     const nodeProvider = getNodeProvider();
@@ -148,4 +149,9 @@ export async function arrayToUtf8BytesArrayConverter(arrayToConvert) {
     arrayInBytes.push(itemInBytes);
   }
   return arrayInBytes
+}
+
+export async function getNonceNumber(walletAddress) {
+  const nodeProvider = getNodeProvider();
+  return await nodeProvider.getTransactionCount(walletAddress);
 }

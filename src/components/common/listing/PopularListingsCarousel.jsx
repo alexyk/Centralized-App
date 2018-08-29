@@ -1,6 +1,6 @@
 import React from 'react';
 import PopularListingItem from './PopularListingItem';
-import OwlCarousel from 'react-owl-carousel';
+// import OwlCarousel from 'react-owl-carousel';
 import PropTypes from 'prop-types';
 
 class PopularListingsCarousel extends React.Component {
@@ -11,7 +11,7 @@ class PopularListingsCarousel extends React.Component {
   render() {
     return (
       <div>
-        <OwlCarousel
+        {/* <OwlCarousel
           className="owl-theme"
           loop
           mouseDrag={false}
@@ -45,7 +45,7 @@ class PopularListingsCarousel extends React.Component {
               />
             );
           })}
-        </OwlCarousel>
+        </OwlCarousel> */}
       </div>
     );
   }

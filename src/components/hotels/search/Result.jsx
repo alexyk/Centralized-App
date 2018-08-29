@@ -11,7 +11,7 @@ import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 
-import '../../../styles/css/components/hotels_search/results_holder__hotels.css';
+import '../../../styles/css/components/hotels_search/result/results_holder__hotels.css';
 
 let slider = null;
 
@@ -37,9 +37,10 @@ function Result(props) {
   // const leftButton = <button type="button" data-role="none" className="slick-arrow slick-next" style={{ display: 'block' }}></button>;
   // const rightButton = <button></button>;
 
-  let { id, name, generalDescription, hotelPhotos, star } = props.hotel;
+  let { id, name, generalDescription, hotelPhoto, star } = props.hotel;
   let { price } = props;
-  const pictures = hotelPhotos && hotelPhotos.slice(0, 3).map(pic => { return { thumbnail: `${Config.getValue('imgHost')}${pic.url}` }; });
+  const photoUrl = hotelPhoto && hotelPhoto.url ? hotelPhoto.url : hotelPhoto;
+  const pictures = photoUrl ? [ { thumbnail: `${Config.getValue('imgHost')}${photoUrl}` }, { thumbnail: `${Config.getValue('imgHost')}${photoUrl}` } ] : [];
   const { locRate, rates } = props;
   const { currencySign } = props.paymentInfo;
   const isPriceLoaded = !!price;
@@ -65,7 +66,8 @@ function Result(props) {
     ? '/hotels/listings'
     : '/mobile/details';
 
-  // console.log('render', price);
+  const search = props.location.search;
+  const endOfSearch = search.indexOf('&filters=') !== -1 ? search.indexOf('&filters=') : search.length;
 
   return (
     <div className="result" >
@@ -76,7 +78,7 @@ function Result(props) {
             {pictures.map((picture, i) => {
               return (
                 <div key={i}>
-                  <Link to={`${redirectURL}/${id}${props.location.search}`} key={i}>
+                  <Link to={`${redirectURL}/${id}${search.substr(0, endOfSearch)}`} key={i}>
                     <div style={{ backgroundImage: 'url(' + picture.thumbnail + ')' }}>
                     </div>
                   </Link>
@@ -87,14 +89,14 @@ function Result(props) {
         }
       </div>
       <div className="result-content">
-        <h4><Link to={`${redirectURL}/${id}${props.location.search}`}>{name}</Link></h4>
+        <h4><Link to={`${redirectURL}/${id}${search.substr(0, endOfSearch)}`}>{name}</Link></h4>
         <div className="rating">
           <span>Rating: </span>
           <div className="rating-holder">
             {calculateStars(star)}
           </div>
         </div>
-        <p>{generalDescription && ReactHtmlParser(generalDescription + (generalDescription.length < 250 ? '' : '...'))}</p>
+        <div>{generalDescription && ReactHtmlParser(generalDescription + (generalDescription.length < 250 ? '' : '...'))}</div>
       </div>
 
       <div className="result-pricing">
@@ -106,7 +108,7 @@ function Result(props) {
         {isPriceLoaded && <span>(LOC {locPrice})</span>}
         {!isPriceLoaded && props.allElements
           ? <button disabled className="btn">Unavailable</button>
-          : <Link className="btn" to={`${redirectURL}/${id}${props.location.search}`}>Book now</Link>
+          : <Link className="btn" to={`${redirectURL}/${id}${search.substr(0, endOfSearch)}`}>Book now</Link>
         }
       </div>
     </div>

@@ -1,24 +1,22 @@
 // import FilterPanel from './filter/FilterPanel';
+
 import Pagination, { DEFAULT_PAGE_SIZE } from '../../common/pagination/Pagination';
-import ResultsHolder from './ResultsHolder';
-import PropTypes from 'prop-types';
-import React from 'react';
-import { withRouter } from 'react-router-dom';
-import moment from 'moment';
-import { connect } from 'react-redux';
-import { ROOMS_XML_CURRENCY } from '../../../constants/currencies.js';
 
-import MultiMarkerGoogleMap from './google-map/MultiMarkerGoogleMap';
-import HotelsSearchBar from './HotelsSearchBar';
-import FilterPanel from './filter/FilterPanel';
 import ChildrenModal from '../modals/ChildrenModal';
-import SockJsClient from 'react-stomp';
-import uuid from 'uuid';
-
-
 import { Config } from '../../../config.js';
-
-import { getRegionNameById, getCurrencyRates, getLocRateInUserSelectedCurrency } from '../../../requester';
+import FilterPanel from './filter/FilterPanel';
+import HotelsSearchBar from './HotelsSearchBar';
+import MultiMarkerGoogleMap from './google-map/MultiMarkerGoogleMap';
+import PropTypes from 'prop-types';
+import { ROOMS_XML_CURRENCY } from '../../../constants/currencies.js';
+import React from 'react';
+import ResultsHolder from './ResultsHolder';
+import SockJsClient from 'react-stomp';
+import { connect } from 'react-redux';
+import moment from 'moment';
+import requester from '../../../initDependencies';
+import uuid from 'uuid';
+import { withRouter } from 'react-router-dom';
 
 class HotelsSearchPage extends React.Component {
   constructor(props) {
@@ -33,7 +31,7 @@ class HotelsSearchPage extends React.Component {
       endDate: endDate,
       adults: '2',
       children: '0',
-      rooms: [{ adults: '2', children: [] }],
+      rooms: [{ adults: 1, children: [] }],
       priceRange: [0, 5000],
       orderBy: '',
       stars: [false, false, false, false, false],
@@ -80,8 +78,10 @@ class HotelsSearchPage extends React.Component {
 
   componentDidMount() {
     this.getLocRate();
-    getCurrencyRates().then((json) => {
-      this.setState({ rates: json });
+    requester.getCurrencyRates().then(res => {
+      res.body.then(data => {
+        this.setState({ rates: data });
+      });
     });
 
     if (!localStorage.getItem('uuid')) {
@@ -113,17 +113,19 @@ class HotelsSearchPage extends React.Component {
       });
 
       this.geocoder = new window.google.maps.Geocoder();
-      getRegionNameById(regionId).then((json) => {
-        this.setState({ region: json });
-        const address = json.query;
+      requester.getRegionNameById(regionId).then(res => {
+        res.body.then(data => {
+          this.setState({ region: data });
+          const address = data.query;
 
-        this.geocoder.geocode({ 'address': address }, (results, status) => {
-          if (status === window.google.maps.GeocoderStatus.OK) {
-            this.setState({
-              lat: results[0].geometry.location.lat(),
-              lon: results[0].geometry.location.lng(),
-            });
-          }
+          this.geocoder.geocode({ 'address': address }, (results, status) => {
+            if (status === window.google.maps.GeocoderStatus.OK) {
+              this.setState({
+                lat: results[0].geometry.location.lat(),
+                lon: results[0].geometry.location.lng(),
+              });
+            }
+          });
         });
       });
     }
@@ -147,7 +149,7 @@ class HotelsSearchPage extends React.Component {
     for (let i = 0; i < rooms.length; i++) {
       adults += Number(rooms[i].adults);
     }
-    return adults.toString();
+    return adults;
   }
 
   getHasChildren(rooms) {
@@ -160,8 +162,10 @@ class HotelsSearchPage extends React.Component {
   }
 
   getLocRate() {
-    getLocRateInUserSelectedCurrency(ROOMS_XML_CURRENCY).then((json) => {
-      this.setState({ locRate: Number(json[0][`price_${ROOMS_XML_CURRENCY.toLowerCase()}`]) });
+    requester.getLocRateByCurrency(ROOMS_XML_CURRENCY).then(res => {
+      res.body.then(data => {
+        this.setState({ locRate: Number(data[0][`price_${ROOMS_XML_CURRENCY.toLowerCase()}`]) });
+      });
     });
   }
 
@@ -282,7 +286,7 @@ class HotelsSearchPage extends React.Component {
     while (adults > 0) {
       // console.log(`${adults} / ${rooms.length - index} = ${Math.ceil(adults / (rooms.length - index))}`)
       const quotient = Math.ceil(adults / (rooms.length - index));
-      rooms[index].adults = quotient.toString();
+      rooms[index].adults = quotient;
       adults -= quotient;
       index++;
     }
@@ -401,7 +405,7 @@ class HotelsSearchPage extends React.Component {
     let rooms = this.state.rooms.slice();
     if (rooms.length < value) {
       while (rooms.length < value) {
-        rooms.push({ adults: '2', children: [] });
+        rooms.push({ adults: 1, children: [] });
       }
     } else if (rooms.length > value) {
       rooms = rooms.slice(0, value);
@@ -649,6 +653,16 @@ class HotelsSearchPage extends React.Component {
   }
 }
 
+export default withRouter(connect(mapStateToProps)(HotelsSearchPage));
+
+function mapStateToProps(state) {
+  const { paymentInfo, userInfo } = state;
+  return {
+    paymentInfo,
+    userInfo
+  };
+}
+
 HotelsSearchPage.propTypes = {
   countries: PropTypes.array,
 
@@ -660,13 +674,3 @@ HotelsSearchPage.propTypes = {
   paymentInfo: PropTypes.object,
   userInfo: PropTypes.object
 };
-
-function mapStateToProps(state) {
-  const { paymentInfo, userInfo } = state;
-  return {
-    paymentInfo,
-    userInfo
-  };
-}
-
-export default withRouter(connect(mapStateToProps)(HotelsSearchPage));

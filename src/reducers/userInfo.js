@@ -2,7 +2,14 @@ import { userInfo } from '../actions/actionTypes';
 
 const initialState = {
   isLogged: false,
-  showLogin: false
+  firstName: '',
+  lastName: '',
+  phoneNumber: '',
+  email: '',
+  locAddress: '',
+  locBalance: '',
+  ethBalance: '',
+  gender: ''
 };
 
 export default function reducer(state = initialState, action) {
@@ -11,13 +18,14 @@ export default function reducer(state = initialState, action) {
       return {
         ...state,
         isLogged: action.isLogged,
-        firstName: action.isLogged ? state.firstName : undefined,
-        lastName: action.isLogged ? state.lastName : undefined,
-        phoneNumber: action.isLogged ? state.phoneNumber : undefined,
-        email: action.isLogged ? state.email : undefined,
-        locAddress: action.isLogged ? state.locAddress : undefined,
-        locBalance: action.isLogged ? state.locBalance : undefined,
-        ethBalance: action.isLogged ? state.ethBalance : undefined,
+        firstName: action.isLogged ? state.firstName : null,
+        lastName: action.isLogged ? state.lastName : null,
+        phoneNumber: action.isLogged ? state.phoneNumber : null,
+        email: action.isLogged ? state.email : null,
+        locAddress: action.isLogged ? state.locAddress : null,
+        locBalance: action.isLogged ? state.locBalance : null,
+        ethBalance: action.isLogged ? state.ethBalance : null,
+        gender: action.isLogged ? state.gender : null
       };
     case userInfo.SET_USER_INFO:
       return {
@@ -29,6 +37,7 @@ export default function reducer(state = initialState, action) {
         locAddress: action.locAddress,
         locBalance: action.locBalance,
         ethBalance: action.ethBalance,
+        gender: action.gender
       };
     default:
       return state;

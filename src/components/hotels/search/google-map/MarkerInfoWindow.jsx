@@ -13,7 +13,7 @@ function MarkerInfoWindow(props) {
     return starsElements;
   };
   
-  const photoURL = `${Config.getValue('imgHost')}${props.hotel.photos[0]}`;
+  const photoURL = props.hotel.thumbnail && `${Config.getValue('imgHost')}${props.hotel.thumbnail.url}`;
   const { id, name, stars } = props.hotel;
   const { isLogged, currencySign, fiatPrice, locPrice, rootUrl } = props;
   
