@@ -92,7 +92,7 @@ function HomesBookingRoomDetailsInfo(props) {
         <p>FREE! One child under 2 years stays free of charge in a crib.</p>
         <p>There is no capacity for extra beds in the room.</p>
       </div>
-      <button className="btn" onClick={() => props.handleSubmit()}>Proceed</button>
+      <button className="btn" onClick={() => props.handleSubmit()}>Agree &amp; Continue</button>
     </div>
   );
 }

@@ -26,3 +26,4 @@ export const CANCELLATION_NOT_POSSIBLE = 'We cannot cancel your reservation.';
 export const INVALID_LOC_ADDRESS = 'LOC Address should be at least 20 characters long.';
 export const INVALID_PICTURE = 'Maximum file upload size is 10MB. Supported media formats are jpg, jpeg, png.';
 export const MISSING_AIRDROP_INFO = 'No airdrop information about this profile';
+export const MISSING_NAMES = 'Name is required!';

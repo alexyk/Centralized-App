@@ -6,11 +6,5 @@
     @include media("<=tablet") {
       flex-direction: column;
     }
-    .confirm-and-pay-details {
-      width: 50%;
-      @include media("<=tablet") {
-        width: 100%;
-      }
-    }
   }
 }

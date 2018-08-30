@@ -1,13 +1,13 @@
 import React, { Fragment } from 'react';
-import requester from '../../../initDependencies';
-import PropTypes from 'prop-types';
 import { withRouter } from 'react-router-dom';
-
-import '../../../styles/css/components/homes/booking/homes-booking-page.css';
+import PropTypes from 'prop-types';
+import { parse } from 'query-string';
 import BookingSteps from '../../common/utility/BookingSteps';
 import HomesBookingRoomDetailsInfo from './HomesBookingRoomDetailsInfo';
 import HomesBookingListingDetailsInfo from './HomesBookingListingDetailsInfo';
-import { QueryParser } from '../../../services/utilities/queryParser.js';
+import requester from '../../../initDependencies';
+
+import '../../../styles/css/components/homes/booking/homes-booking-page.css';
 
 class HomesBookingPage extends React.Component {
   constructor(props) {
@@ -31,7 +31,7 @@ class HomesBookingPage extends React.Component {
         this.setState({
           listing: data,
           checkInStart: Number(data.checkinStart.substring(0, 2)),
-          checkInEnd: data.checkinEnd ? Number(data.checkinEnd.substring(0, 2)) : 24,
+          checkInEnd: data.checkinEnd && data.checkinEnd !== '00:00:00' ? Number(data.checkinEnd.substring(0, 2)) : 24,
           checkOutStart: data.checkOutStart ? Number(data.checkOutStart.substring(0, 2)) : 0,
           checkOutEnd: data.checkOutEnd ? Number(data.checkOutEnd.substring(0, 2)) : 12,
         }, () => this.setCheckInOutHours());
@@ -95,7 +95,7 @@ class HomesBookingPage extends React.Component {
           <div className="container">
             <HomesBookingListingDetailsInfo
               listing={listing}
-              searchParams={QueryParser.parse(this.props.location.search)}
+              searchParams={parse(this.props.location.search)}
               rates={rates}
             />
             <HomesBookingRoomDetailsInfo
