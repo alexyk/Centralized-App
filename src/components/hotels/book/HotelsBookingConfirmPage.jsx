@@ -43,7 +43,7 @@ class HotelBookingConfirmPage extends React.Component {
       confirmed: false,
       fiatPriceInCurrentCurrency: null,
       locPrice: null,
-      seconds: 0
+      seconds: 30
     };
 
     this.timeout = null;
@@ -113,11 +113,11 @@ class HotelBookingConfirmPage extends React.Component {
   tick() {
     const { seconds } = this.state;
     let { fiatPriceInCurrentCurrency } = this.state;
-    if (seconds === 29) {
+    if (seconds === 1) {
       const bestPrice = this.props.bookingBestPrice.price;
       this.setState({
         fiatPriceInCurrentCurrency: bestPrice,
-        seconds: 0,
+        seconds: 30,
       });
     } else {
       if (fiatPriceInCurrentCurrency === null) {
@@ -125,7 +125,7 @@ class HotelBookingConfirmPage extends React.Component {
       }
       this.setState((prevState) => {
         return {
-          seconds: prevState.seconds + 1,
+          seconds: prevState.seconds - 1,
           fiatPriceInCurrentCurrency
         };
       });
@@ -497,7 +497,7 @@ class HotelBookingConfirmPage extends React.Component {
   addFreeClauseRow(rows, date) {
     rows.push(
       <tr key={1}>
-        <td>{`Cancellation fee before ${moment(date).format('DD MMM YYYY')}  including`}</td>
+        <td>{`Cancelling on or before ${moment(date).format('DD MMM YYYY')} will cost you`}</td>
         <td><span
           className="booking-price">{this.props.paymentInfo.currency} 0.00 (0.0000 LOC)</span>
         </td>
@@ -511,7 +511,7 @@ class HotelBookingConfirmPage extends React.Component {
     rows.push(
       <tr key={2}>
         <td
-          key={fees.length}>{`Cancel on ${moment(arrivalDate).format('DD MMM YYYY')}`}</td>
+          key={fees.length}>{`Cancelling on ${moment(arrivalDate).format('DD MMM YYYY')} will cost you`}</td>
         <td><span
           className="booking-price">{currency} {this.state.rates && (CurrencyConverter.convert(this.state.rates, RoomsXMLCurrency.get(), currency, fiatPrice)).toFixed(2)} ({(fiatPrice / this.props.paymentInfo.locRate).toFixed(4)} LOC)</span>
         </td>
@@ -543,7 +543,7 @@ class HotelBookingConfirmPage extends React.Component {
           }
           rows.push(
             <tr key={3 * 1000 + feeIndex + 1}>
-              <td>{`Cancel after ${date} including`}</td>
+              <td>{`Canceling on or after ${date} will cost you`}</td>
               <td><span
                 className="booking-price">{currency} {this.state.rates && (CurrencyConverter.convert(this.state.rates, RoomsXMLCurrency.get(), currency, amount)).toFixed(2)} ({(amount / this.props.paymentInfo.locRate).toFixed(4)} LOC)</span>
               </td>
@@ -552,25 +552,25 @@ class HotelBookingConfirmPage extends React.Component {
         }
       });
 
-      if (fees[fees.length - 1].from !== arrivalDate && fees[fees.length - 1].loc !== this.state.data.locPrice) {
+      console.log(fees);
+      console.log(this.state.data);
+      if (fees[fees.length - 1].from !== arrivalDate && fees[fees.length - 1].amt !== this.state.data.fiatPrice) {
         this.addCheckInClauseRow(fees, rows, arrivalDate);
       }
     }
 
     return (
-      <div className="row cancelation-table" >
-        <table>
-          <thead>
-            <tr>
-              <th>Cancelation condition</th>
-              <th>Price</th>
-            </tr>
-          </thead>
-          <tbody>
-            {rows}
-          </tbody>
-        </table>
-      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>Cancelation condition</th>
+            <th>Price</th>
+          </tr>
+        </thead>
+        <tbody>
+          {rows}
+        </tbody>
+      </table>
     );
   }
 
@@ -598,7 +598,7 @@ class HotelBookingConfirmPage extends React.Component {
   }
 
   getButtonIfUserHasFullInfo(isUserInfoIsComplete) {
-    return isUserInfoIsComplete 
+    return isUserInfoIsComplete
       ? (<button className="btn btn-primary btn-book" onClick={() => this.payWithCard()}>Pay with card</button>)
       : (<div>Your profile isn't complete to pay with credit card. Please go to <Link to="/profile/me/edit">Edit Profile</Link> and provide mandatory information</div>)
   }
@@ -615,62 +615,63 @@ class HotelBookingConfirmPage extends React.Component {
     const currency = this.props.paymentInfo.currency;
 
     return (
-      <div>
-        <div>
-          <div className="booking-steps sm-none">
-            <div className="container">
-              <p>1. Provide Guest Information</p>
-              <p>2. Review Room Details</p>
-              <p>3. Confirm and Pay</p>
-            </div>
+      <React.Fragment>
+        <div className="booking-steps sm-none">
+          <div className="container">
+            <p>1. Provide Guest Information</p>
+            <p>2. Review Room Details</p>
+            <p>3. Confirm and Pay</p>
           </div>
+        </div>
 
-          {!data ?
-            <div className="loader"></div> :
-            <div id="room-book-confirm">
-              <div className="container">
-                <div className="booking-details">
+        {!data ?
+          <div className="loader"></div> :
+          <div id="room-book-confirm">
+            <div className="container">
+              <div className="booking-details">
+
+                <div className="booking-details-header">
                   <h2>Confirm and Pay</h2>
-                  <hr />
-                  <div className="confirm-pay-info">
-                    <div className="cancelation-fees-info">
-                      <div className="row text-center room-dates">
-                        {moment(booking[0].arrivalDate, 'YYYY-MM-DD').format('DD MMM, YYYY')} <i
-                          className="fa fa-long-arrow-right"></i> {moment(booking[0].arrivalDate, 'YYYY-MM-DD').add(booking[0].nights, 'days').format('DD MMM, YYYY')}
-                      </div>
-                      <div className="row room-table">
-                        <table>
-                          <thead>
-                            <tr>
-                              <th>Room Type</th>
-                              <th>Price</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {this.getRoomRows(booking)}
-                          </tbody>
-                        </table>
-                      </div>
-                      <hr />
-                      <div className="cancelation-fees">
-                        <h4>Cancelation Fees</h4>
-                        <button className="btn btn-primary" onClick={() => this.toggleCanxDetails()}>{showRoomsCanxDetails ? 'Hide' : 'Show'}</button>
-                      </div>
-                      {showRoomsCanxDetails ? this.getRoomFees(booking) : null}
+                  <h2>Name: {this.props.userInfo.firstName} {this.props.userInfo.lastName}</h2>
+                </div>
+
+                <div className="confirm-pay-info">
+                  <div className="text-center room-dates">
+                    {moment(booking[0].arrivalDate, 'YYYY-MM-DD').format('DD MMM, YYYY')} <i
+                      className="fa fa-long-arrow-right"></i> {moment(booking[0].arrivalDate, 'YYYY-MM-DD').add(booking[0].nights, 'days').format('DD MMM, YYYY')}
+                  </div>
+                  <div className="tables-container">
+                    <div className="confirm-and-pay-table">
+                      <h4>Payment Details</h4>
+                      <table>
+                        <thead>
+                          <tr>
+                            <th>Room Type</th>
+                            <th>Price</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {this.getRoomRows(booking)}
+                        </tbody>
+                      </table>
                     </div>
-                    <div className="total-prices-info">
-                      <div className="row order-name">
-                        <p>Name: &nbsp;</p>
-                        <p className="booking-for">{this.props.userInfo.firstName} {this.props.userInfo.lastName}</p>
+                    <div className="confirm-and-pay-table">
+                      <h4>Cancelation Details</h4>
+                      {/* <button className="btn btn-primary" onClick={() => this.toggleCanxDetails()}>{showRoomsCanxDetails ? 'Hide' : 'Show'}</button> */}
+                      {this.getRoomFees(booking)}
+                    </div>
+                  </div>
+                  <div className="payment-methods">
+                    <div className="payment-methods-card">
+                      <p className="booking-card-price">
+                        Order Card Total: {currency} {fiatPriceInCurrentCurrency && (fiatPriceInCurrentCurrency).toFixed(2)}
+                      </p>
+                      <div className="price-update-timer" title="Seconds until we update your quoted price">
+                        <i className="fa fa-clock-o" aria-hidden="true"></i>&nbsp;{seconds} sec &nbsp;
                       </div>
-                      <div className="row order-total">
-                        <div>
-                          <p>Timer: <strong>{seconds}</strong> sec</p>
-                          <p className="booking-card-price">Order Card Total: {currency} {fiatPriceInCurrentCurrency && (fiatPriceInCurrentCurrency).toFixed(2)}</p>
-                          {/* <p>Order LOC Total: <span className="booking-price">LOC {(locPrice).toFixed(4)}</span></p> */}
-                          <p>Pay with Credit Card</p>
-                          {this.getButtonIfUserHasFullInfo(isUserInfoIsComplete)}
-                          {/* {!isUserInfoIsComplete ? <div>Your profile isn't complete to pay with credit card. Please go to <Link to="/profile/me/edit">Edit Profile</Link> and provide mandatory information</div> : userInfo.verified
+                      {this.getButtonIfUserHasFullInfo(isUserInfoIsComplete)}
+                      {/* <p>Order LOC Total: <span className="booking-price">LOC {(locPrice).toFixed(4)}</span></p> */}
+                      {/* {!isUserInfoIsComplete ? <div>Your profile isn't complete to pay with credit card. Please go to <Link to="/profile/me/edit">Edit Profile</Link> and provide mandatory information</div> : userInfo.verified
                             ? <button className="btn btn-primary btn-book" onClick={() => this.payWithCard()}>Pay with card</button>
                             :
                             <div>
@@ -687,57 +688,46 @@ class HotelBookingConfirmPage extends React.Component {
                               </div>
                             </div>
                           } */}
-                        </div>
-                        <div>
-                          {/* <p className="booking-price">LOC {(locPrice).toFixed(4)}</p> */}
-                          <p>Order LOC Total: <span className="booking-price">LOC {(locPrice).toFixed(4)}</span></p>
-                          {!confirmed
-                            ? <button className="btn btn-primary btn-book" onClick={(e) => this.openModal(PASSWORD_PROMPT, e)}>Pay with LOC</button>
-                            : <button className="btn btn-primary btn-book" disabled>Processing Payment...</button>
-                          }</div>
-                      </div>
+                    </div>
+                    <div className="payment-methods-loc">
+                      {/* <p className="booking-price">LOC {(locPrice).toFixed(4)}</p> */}
+                      <p>Order LOC Total: <span className="booking-price">LOC {(locPrice).toFixed(4)}</span></p>
+                      {!confirmed
+                        ? <button className="btn btn-primary btn-book" onClick={(e) => this.openModal(PASSWORD_PROMPT, e)}>Pay with LOC</button>
+                        : <button className="btn btn-primary btn-book" disabled>Processing Payment...</button>
+                      }
                     </div>
                   </div>
                 </div>
-                {isMobile &&
-                  <div>
-                    <button className="btn btn-primary btn-book" onClick={(e) => this.props.history.goBack()}>Back</button>
-                    <select
-                      className="currency"
-                      value={currency}
-                      style={{ 'height': '40px', 'marginBottom': '10px', 'textAlignLast': 'right', 'paddingRight': '45%', 'direction': 'rtl' }}
-                      onChange={(e) => this.props.dispatch(setCurrency(e.target.value))}
-                    >
-                      <option value="EUR">EUR</option>
-                      <option value="USD">USD</option>
-                      <option value="GBP">GBP</option>
-                    </select>
-                  </div>
-                }
               </div>
-              <PasswordModal
-                isActive={this.props.modalsInfo.isActive[PASSWORD_PROMPT]}
-                text={'Enter your wallet password'}
-                placeholder={'Wallet password'}
-                handleSubmit={() => this.handleSubmitSingleWithdrawer()}
-                closeModal={this.closeModal}
-                password={password}
-                onChange={this.onChange}
-              />
-              {/* {!isMobile && (
-                <ReCAPTCHA
-                  ref={el => this.captcha = el}
-                  size="invisible"
-                  sitekey={Config.getValue('recaptchaKey')}
-                  onChange={(token) => {
-                    this.handleSubmit(token);
-                    this.captcha.reset();
-                  }}
-                />)} */}
+              {isMobile &&
+                <div>
+                  <button className="btn btn-primary btn-book" onClick={(e) => this.props.history.goBack()}>Back</button>
+                  <select
+                    className="currency"
+                    value={currency}
+                    style={{ 'height': '40px', 'marginBottom': '10px', 'textAlignLast': 'right', 'paddingRight': '45%', 'direction': 'rtl' }}
+                    onChange={(e) => this.props.dispatch(setCurrency(e.target.value))}
+                  >
+                    <option value="EUR">EUR</option>
+                    <option value="USD">USD</option>
+                    <option value="GBP">GBP</option>
+                  </select>
+                </div>
+              }
             </div>
-          }
-        </div>
-      </div>
+            <PasswordModal
+              isActive={this.props.modalsInfo.isActive[PASSWORD_PROMPT]}
+              text={'Enter your wallet password'}
+              placeholder={'Wallet password'}
+              handleSubmit={() => this.handleSubmitSingleWithdrawer()}
+              closeModal={this.closeModal}
+              password={password}
+              onChange={this.onChange}
+            />
+          </div>
+        }
+      </React.Fragment>
     );
   }
 }
