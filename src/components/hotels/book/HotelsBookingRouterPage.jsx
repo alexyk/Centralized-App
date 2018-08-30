@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import React, { Fragment } from 'react';
 import HotelsBookingPage from './HotelsBookingPage';
 import HotelsBookingConfirmPage from './HotelsBookingConfirmPage';
+import ConfirmProfilePage from './ConfirmProfilePage';
 
 const SEARCH_EXPIRATION_TIME = 10000;
 
@@ -43,8 +44,9 @@ class HotelsBookingRouterPage extends React.Component {
     return (
       <Fragment>
         <Switch>
-          <Route exact path="/hotels/listings/book/:id" render={() => <HotelsBookingPage />} />
+          <Route exact path="/hotels/listings/book/profile" render={() => <ConfirmProfilePage />} />
           <Route exact path="/hotels/listings/book/confirm/:id" render={() => <HotelsBookingConfirmPage />} />
+          <Route exact path="/hotels/listings/book/:id" render={() => <HotelsBookingPage />} />
         </Switch>
       </Fragment>
     );

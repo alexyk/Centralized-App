@@ -565,8 +565,6 @@ class HotelBookingConfirmPage extends React.Component {
         }
       });
 
-      console.log(fees);
-      console.log(this.state.data);
       if (fees[fees.length - 1].from !== arrivalDate && fees[fees.length - 1].amt !== this.state.data.fiatPrice) {
         this.addCheckInClauseRow(fees, rows, arrivalDate);
       }
@@ -608,7 +606,7 @@ class HotelBookingConfirmPage extends React.Component {
 
   getButtonIfUserHasFullInfo(isUserInfoIsComplete) {
     return isUserInfoIsComplete
-      ? (<button className="btn btn-primary btn-book" onClick={() => this.payWithCard()}>Pay with card</button>)
+      ? (<button className="btn btn-primary btn-book" onClick={() => this.payWithCard()}>Pay with Credit Card</button>)
       : (<div>Your profile isn't complete to pay with credit card. Please go to <Link to="/profile/me/edit">Edit Profile</Link> and provide mandatory information</div>);
   }
 
@@ -702,7 +700,7 @@ class HotelBookingConfirmPage extends React.Component {
                       {/* <p className="booking-price">LOC {(locPrice).toFixed(4)}</p> */}
                       <p>Order LOC Total: <span className="booking-price">LOC {(locPrice).toFixed(4)}</span></p>
                       {!confirmed
-                        ? <button className="btn btn-primary btn-book" onClick={(e) => this.openModal(PASSWORD_PROMPT, e)}>Pay with LOC</button>
+                        ? <button className="btn btn-primary btn-book" onClick={(e) => this.openModal(PASSWORD_PROMPT, e)}>Pay with LOC Tokens</button>
                         : <button className="btn btn-primary btn-book" disabled>Processing Payment...</button>
                       }
                     </div>
