@@ -1,8 +1,8 @@
 import '../../../styles/css/components/hotels/book/hotel-booking-confirm-page.css';
 
 import { EXTRA_LONG, LONG } from '../../../constants/notificationDisplayTimes.js';
-import { Link, withRouter } from 'react-router-dom';
-import { PASSWORD_PROMPT, SMS_VERIFICATION } from '../../../constants/modals.js';
+import { withRouter, Link } from 'react-router-dom';
+import { PASSWORD_PROMPT } from '../../../constants/modals.js';
 import { closeModal, openModal } from '../../../actions/modalsInfo.js';
 import { setCurrency } from '../../../actions/paymentInfo';
 
@@ -14,8 +14,9 @@ import { PROCESSING_TRANSACTION } from '../../../constants/infoMessages.js';
 import PasswordModal from '../../common/modals/PasswordModal';
 import PropTypes from 'prop-types';
 import React from 'react';
+import queryString from 'query-string';
 import { SEARCH_EXPIRED } from '../../../constants/infoMessages.js';
-import SMSCodeModal from '../modals/SMSCodeModal';
+// import SMSCodeModal from '../modals/SMSCodeModal';
 import { connect } from 'react-redux';
 import moment from 'moment';
 import requester from '../../../initDependencies';
@@ -41,7 +42,7 @@ class HotelBookingConfirmPage extends React.Component {
       loading: true,
       password: '',
       confirmed: false,
-      fiatPriceInCurrentCurrency: null,
+      fiatPriceInEUR: null,
       locPrice: null,
       seconds: 30
     };
@@ -79,7 +80,6 @@ class HotelBookingConfirmPage extends React.Component {
           requester.createReservation(booking).then(res => {
             if (res.success) {
               res.body.then(data => {
-                console.log(data);
                 const fiatPriceInCurrentCurrency = CurrencyConverter.convert(this.state.rates, RoomsXMLCurrency.get(), this.props.paymentInfo.currency, data.fiatPrice);
                 this.setState({ data: data, booking: booking, locPrice: fiatPriceInCurrentCurrency / this.props.paymentInfo.locRate }, () => this.initializeSocket());
               });
@@ -112,21 +112,21 @@ class HotelBookingConfirmPage extends React.Component {
 
   tick() {
     const { seconds } = this.state;
-    let { fiatPriceInCurrentCurrency } = this.state;
+    let { fiatPriceInEUR } = this.state;
     if (seconds === 1) {
       const bestPrice = this.props.bookingBestPrice.price;
       this.setState({
-        fiatPriceInCurrentCurrency: bestPrice,
-        seconds: 30,
+        fiatPriceInEUR: bestPrice,
+        seconds: 0,
       });
     } else {
-      if (fiatPriceInCurrentCurrency === null) {
-        fiatPriceInCurrentCurrency = this.props.bookingBestPrice.price;
+      if (fiatPriceInEUR === null) {
+        fiatPriceInEUR = this.props.bookingBestPrice.price;
       }
       this.setState((prevState) => {
         return {
           seconds: prevState.seconds - 1,
-          fiatPriceInCurrentCurrency
+          fiatPriceInEUR
         };
       });
     }
@@ -146,9 +146,7 @@ class HotelBookingConfirmPage extends React.Component {
 
   handleReceiveMessage(event) {
     const fiatPriceInEUR = (JSON.parse(event.data)).fiatAmount;
-    const fiatPriceInCurrentCurrency = CurrencyConverter.convert(this.state.rates, DEFAULT_CRYPTO_CURRENCY, this.props.paymentInfo.currency, fiatPriceInEUR);
-    console.log(fiatPriceInCurrentCurrency / this.state.locPrice);
-    this.props.dispatch(setBestPrice(fiatPriceInCurrentCurrency));
+    this.props.dispatch(setBestPrice(fiatPriceInEUR));
   }
 
   disconnectSocket() {
@@ -157,14 +155,40 @@ class HotelBookingConfirmPage extends React.Component {
     }
   }
 
+  payWithCreditCard(path) {
+    const form = document.createElement('form');
+    form.method = 'post';
+    form.action = path;
+    form.style = 'display: none';
+
+    document.body.appendChild(form);
+    form.submit();
+  }
+
+  createBackUrl() {
+    const currency = this.props.paymentInfo.currency;
+    const queryParams = queryString.parse(this.props.location.search);
+    const decodeBooking = JSON.parse(decodeURI(queryParams.booking));
+    let rooms = decodeBooking.rooms;
+    rooms.forEach((room) => {
+      room.adults = room.adults.length;
+    });
+
+    const id = this.props.match.params.id;
+    rooms = encodeURI(JSON.stringify(rooms));
+
+    return `hotels/listings/${id}?region=${queryParams.region}&currency=${currency}&startDate=${queryParams.startDate}&endDate=${queryParams.endDate}&rooms=${rooms}`;
+  }
+
   payWithCard() {
-    const { data, fiatPriceInCurrentCurrency } = this.state;
+    const { data, fiatPriceInEUR, rates } = this.state;
     const currency = this.props.paymentInfo.currency;
     const paymentInfo = {
-      fiatAmount: fiatPriceInCurrentCurrency,
+      fiatAmount: CurrencyConverter.convert(rates, DEFAULT_CRYPTO_CURRENCY, currency, fiatPriceInEUR),
       locAmount: data.locPrice,
       currency,
       bookingId: data.preparedBookingId,
+      backUrl: this.createBackUrl(),
     };
 
     console.log(paymentInfo);
@@ -172,8 +196,12 @@ class HotelBookingConfirmPage extends React.Component {
     requester.verifyCreditCardPayment(paymentInfo)
       .then(res => {
         res.body.then((data) => {
-          // requester.payWithCreditCard(res.url);
-          window.location.href = data.url;
+          const env = Config.getValue('env');
+          if (env === 'staging' || env === 'development') {
+            window.location.href = data.url;
+          } else {
+            this.payWithCreditCard(data.url);
+          }
         });
       });
   }
@@ -187,21 +215,6 @@ class HotelBookingConfirmPage extends React.Component {
     }
 
     return map;
-  }
-
-  getTotalPrice(roomResults) {
-    let total = 0;
-    for (let i = 0; i < roomResults.length; i++) {
-      total += roomResults[i].price;
-    }
-
-    return total;
-  }
-
-  getNights(searchParams) {
-    const start = moment(searchParams.get('startDate'), 'DD/MM/YYYY');
-    const end = moment(searchParams.get('endDate'), 'DD/MM/YYYY');
-    return end.diff(start, 'days');
   }
 
   getNumberOfTravelers() {
@@ -574,10 +587,6 @@ class HotelBookingConfirmPage extends React.Component {
     );
   }
 
-  getLastDate(fees) {
-    return fees.sort((x, y) => x.from < y.from ? 1 : -1)[0];
-  }
-
   isUserInfoIsComplete(userInfo) {
     let infoFieldsToCheck = ['firstName', 'lastName', 'phoneNumber', 'city', 'country', 'address', 'zipCode'];
 
@@ -600,11 +609,11 @@ class HotelBookingConfirmPage extends React.Component {
   getButtonIfUserHasFullInfo(isUserInfoIsComplete) {
     return isUserInfoIsComplete
       ? (<button className="btn btn-primary btn-book" onClick={() => this.payWithCard()}>Pay with card</button>)
-      : (<div>Your profile isn't complete to pay with credit card. Please go to <Link to="/profile/me/edit">Edit Profile</Link> and provide mandatory information</div>)
+      : (<div>Your profile isn't complete to pay with credit card. Please go to <Link to="/profile/me/edit">Edit Profile</Link> and provide mandatory information</div>);
   }
 
   render() {
-    const { data, userInfo, showRoomsCanxDetails, seconds, confirmed, password, fiatPriceInCurrentCurrency, locPrice } = this.state;
+    const { data, userInfo, showRoomsCanxDetails, seconds, confirmed, password, fiatPriceInEUR, locPrice, rates } = this.state;
     if (userInfo == null) {
       return <div className="loader"></div>;
     }
@@ -664,7 +673,7 @@ class HotelBookingConfirmPage extends React.Component {
                   <div className="payment-methods">
                     <div className="payment-methods-card">
                       <p className="booking-card-price">
-                        Order Card Total: {currency} {fiatPriceInCurrentCurrency && (fiatPriceInCurrentCurrency).toFixed(2)}
+                        Order Card Total: {currency} {fiatPriceInEUR && (fiatPriceInEUR).toFixed(2)}
                       </p>
                       <div className="price-update-timer" title="Seconds until we update your quoted price">
                         <i className="fa fa-clock-o" aria-hidden="true"></i>&nbsp;{seconds} sec &nbsp;

@@ -6,10 +6,8 @@ class RoomsXMLCurrency {
   static get() {
     const env = Config.getValue('env');
     if (env === 'staging' || env === 'development') {
-      // console.log('staging');
       return ROOMS_XML_CURRENCY_DEV;
     } else {
-      // console.log('prod');
       return ROOMS_XML_CURRENCY;
     }
   }
