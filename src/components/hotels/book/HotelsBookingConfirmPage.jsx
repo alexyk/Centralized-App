@@ -117,7 +117,7 @@ class HotelBookingConfirmPage extends React.Component {
       const bestPrice = this.props.bookingBestPrice.price;
       this.setState({
         fiatPriceInEUR: bestPrice,
-        seconds: 0,
+        seconds: 30,
       });
     } else {
       if (fiatPriceInEUR === null) {
@@ -673,7 +673,7 @@ class HotelBookingConfirmPage extends React.Component {
                   <div className="payment-methods">
                     <div className="payment-methods-card">
                       <p className="booking-card-price">
-                        Order Card Total: {currency} {fiatPriceInEUR && (fiatPriceInEUR).toFixed(2)}
+                        Order Card Total: {currency} {fiatPriceInEUR && (CurrencyConverter.convert(rates, DEFAULT_CRYPTO_CURRENCY, currency, fiatPriceInEUR)).toFixed(2)}
                       </p>
                       <div className="price-update-timer" title="Seconds until we update your quoted price">
                         <i className="fa fa-clock-o" aria-hidden="true"></i>&nbsp;{seconds} sec &nbsp;
