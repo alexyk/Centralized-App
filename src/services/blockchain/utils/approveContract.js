@@ -11,6 +11,7 @@ const {
   failedSatusCode
 } = require('../config/constants.json');
 
+//TODO: Delete this whole file
 export async function approveContract(
   wallet,
   amount,
@@ -28,6 +29,7 @@ export async function approveContract(
     gasLimit: gasConfig.approve,
     gasPrice: gasPrice
   };
+
   const approve = await locContract.approve(contractAddressToApprove, amount, overrideOptions);
 
   await wallet.provider.waitForTransaction(approve.hash);
