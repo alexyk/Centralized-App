@@ -29,32 +29,14 @@ export async function approveContract(
     gasLimit: gasConfig.approve,
     gasPrice: gasPrice
   };
-  console.log(locContract.interface);
 
-  const approveFunc = locContract.interface.functions.approve(contractAddressToApprove, amount);
-  console.log(locContract)
-  console.log("KYP");
+  const approve = await locContract.approve(contractAddressToApprove, amount, overrideOptions);
 
-
-  let approveTx = {
-    gasPrice: overrideOptions.gasPrice,
-    gasLimit: overrideOptions.gasLimit,
-    data: approveFunc.data,
-    to: locContract.address,
-    nonce: nonce
+  await wallet.provider.waitForTransaction(approve.hash);
+  let txResult = await wallet.provider.getTransactionReceipt(approve.hash);
+  if (txResult.status = failedSatusCode) {
+    throw new Error(ERROR.FAILED_APPROVE);
   }
 
-  let signedApproveTx = wallet.sign(approveTx);
-  console.log(signedApproveTx);
-
-
-  // const approve = await locContract.approve(contractAddressToApprove, amount, overrideOptions);
-
-  // await wallet.provider.waitForTransaction(approve.hash);
-  // let txResult = await wallet.provider.getTransactionReceipt(approve.hash);
-  // if (txResult.status = failedSatusCode) {
-  //   throw new Error(ERROR.FAILED_APPROVE);
-  // }
-
-  return signedApproveTx;
+  return nonce + 1;
 }
