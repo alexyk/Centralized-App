@@ -673,7 +673,7 @@ class HotelBookingConfirmPage extends React.Component {
                       <p className="booking-card-price">
                         Order Card Total: {currency} {fiatPriceInEUR && (CurrencyConverter.convert(rates, DEFAULT_CRYPTO_CURRENCY, currency, fiatPriceInEUR)).toFixed(2)}
                       </p>
-                      <div className="price-update-timer" title="Seconds until we update your quoted price">
+                      <div className="price-update-timer" tooltip="Seconds until we update your quoted price">
                         <i className="fa fa-clock-o" aria-hidden="true"></i>&nbsp;{seconds} sec &nbsp;
                       </div>
                       {this.getButtonIfUserHasFullInfo(isUserInfoIsComplete)}

@@ -328,7 +328,7 @@ class ProfileEditForm extends React.Component {
           </div>
 
           <div className="zip-code">
-            <label htmlFor="zip-code">Zip Code</label>
+            <label htmlFor="zip-code">Zip Code <span className="mandatory">*</span></label>
             <input id="zip-code" name="zipCode" value={this.state.zipCode} onChange={this.onChange} type="text" placeholder='Enter your zip code' />
           </div>
 

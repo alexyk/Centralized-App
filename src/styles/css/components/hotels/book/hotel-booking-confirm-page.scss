@@ -21,10 +21,10 @@
         flex-direction: column;
       }
       .confirm-and-pay-table {
-        border: 1px solid rgb(169, 169, 169);
+        border: 1px solid #cfcfcf;
         margin: 20px 0;
         padding: 10px;
-        border-radius: 2px;
+        border-radius: 5px;
         width: 50%;
         background-color: #fff;
         &:first-child {
@@ -59,6 +59,7 @@
           color: $white;
           background-color: $light-cyan;
           margin-bottom: 10px;
+          cursor: pointer;
         }
       }
       &-loc {
@@ -136,22 +137,32 @@
         }
       }
     }
+
+    // ICON TOOLTIPS
+  [tooltip]{
+    position:relative;
   }
-
-
-
-// #room-book-confirm {
-//   margin-top: 20px;
-// }
-
-// #room-book-confirm .booking-details {
-//   /* width: 50%; */
-//   margin: 0 auto;
-//   background-color: white;
-//   padding: 20px;
-//   margin-bottom: 30px;
-//   border-radius: 3px;
-// }
+  [tooltip]:hover::after,
+  [tooltip]:hover::before {
+    opacity:1;
+  }
+  [tooltip]::after {
+      content: attr(tooltip);
+      position: absolute;
+      left: 50%;
+      // top: 6px;
+      transform: translateX(30%) translateY(-30%);
+      background: rgba(88, 88, 88, 0.7);
+      text-align: center;
+      color: #fff;
+      padding: 4px 2px;
+      // font-size: 12px;
+      min-width: 200px;
+      border-radius: 2px;
+      pointer-events: none;
+      opacity:0;
+  }
+}
 
 #room-book-confirm table {
   margin: 0 auto;
