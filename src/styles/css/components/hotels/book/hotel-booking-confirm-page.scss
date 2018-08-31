@@ -58,15 +58,6 @@
         width: 100%;
         padding: 10px;
         margin-bottom: 20px;
-        .price-update-timer {
-          padding: 10px;
-          font-weight: 400;
-          border-radius: 3px;
-          color: $white;
-          background-color: $light-cyan;
-          margin-bottom: 10px;
-          cursor: pointer;
-        }
       }
       &-loc {
         display: flex;        
@@ -78,6 +69,14 @@
         width: 100%;
         padding: 10px;
         margin-bottom: 20px;
+        .price-update-timer {
+          padding: 10px;
+          font-weight: 400;
+          border-radius: 3px;
+          color: $white;
+          background-color: $light-cyan;
+          margin-bottom: 10px;
+        }
       }
       .important {
         font-weight: 400;
@@ -150,29 +149,29 @@
     }
 
     // ICON TOOLTIPS
-  [tooltip]{
-    position:relative;
-  }
-  [tooltip]:hover::after,
-  [tooltip]:hover::before {
-    opacity:1;
-  }
-  [tooltip]::after {
-      content: attr(tooltip);
-      position: absolute;
-      left: 50%;
-      // top: 6px;
-      transform: translateX(-130%) translateY(-30%);
-      background: rgba(88, 88, 88, 0.7);
-      text-align: center;
-      color: #fff;
-      padding: 4px 2px;
-      // font-size: 12px;
-      min-width: 200px;
-      border-radius: 2px;
-      pointer-events: none;
-      opacity:0;
-  }
+  // [tooltip]{
+  //   position:relative;
+  // }
+  // [tooltip]:hover::after,
+  // [tooltip]:hover::before {
+  //   opacity:1;
+  // }
+  // [tooltip]::after {
+  //     content: attr(tooltip);
+  //     position: absolute;
+  //     left: 50%;
+  //     // top: 6px;
+  //     transform: translateX(-130%) translateY(-30%);
+  //     background: rgba(88, 88, 88, 0.7);
+  //     text-align: center;
+  //     color: #fff;
+  //     padding: 4px 2px;
+  //     // font-size: 12px;
+  //     min-width: 200px;
+  //     border-radius: 2px;
+  //     pointer-events: none;
+  //     opacity:0;
+  // }
 }
 
 #room-book-confirm table {
