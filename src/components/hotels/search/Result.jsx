@@ -104,7 +104,7 @@ class Result extends React.Component {
   }
 
   render() {
-    let { id, name, generalDescription, hotelPhoto, star } = this.props.hotel;
+    let { id, name, generalDescription, star } = this.props.hotel;
     let { price } = this.props;
 
     const { locRate, rates } = this.props;
