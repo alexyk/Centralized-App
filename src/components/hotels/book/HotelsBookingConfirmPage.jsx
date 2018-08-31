@@ -191,19 +191,13 @@ class HotelBookingConfirmPage extends React.Component {
       backUrl: this.createBackUrl(),
     };
 
-    console.log(paymentInfo);
-
-    requester.verifyCreditCardPayment(paymentInfo)
-      .then(res => {
-        res.body.then((data) => {
-          const env = Config.getValue('env');
-          if (env === 'staging' || env === 'development') {
-            window.location.href = data.url;
-          } else {
-            this.payWithCreditCard(data.url);
-          }
-        });
-      });
+    const search = this.props.location.search;
+    const id = this.props.match.params.id;
+    this.props.history.push({
+      pathname: `/hotels/listings/book/profile/${id}`,
+      search: search,
+      state: { paymentInfo: paymentInfo }
+    });
   }
 
   getSearchParams() {

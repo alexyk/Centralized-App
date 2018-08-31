@@ -44,7 +44,7 @@ class HotelsBookingRouterPage extends React.Component {
     return (
       <Fragment>
         <Switch>
-          <Route exact path="/hotels/listings/book/profile" render={() => <ConfirmProfilePage />} />
+          <Route exact path="/hotels/listings/book/profile/:id" render={() => <ConfirmProfilePage />} />
           <Route exact path="/hotels/listings/book/confirm/:id" render={() => <HotelsBookingConfirmPage />} />
           <Route exact path="/hotels/listings/book/:id" render={() => <HotelsBookingPage />} />
         </Switch>

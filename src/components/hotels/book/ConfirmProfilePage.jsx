@@ -1,8 +1,9 @@
 import '../../../styles/css/components/hotels/book/profile-confirm-form.css';
+import '../../../styles/css/components/captcha/captcha-container.css';
 
-import { Modal } from 'react-bootstrap';
 import PropTypes from 'prop-types';
 import React from 'react';
+import { withRouter } from 'react-router-dom';
 
 import { Config } from '../../../config.js';
 import requester from '../../../initDependencies';
@@ -10,6 +11,7 @@ import StringUtils from '../../../services/utilities/stringUtilities';
 import ReCAPTCHA from 'react-google-recaptcha';
 import Select from '../../common/google/GooglePlacesAutocomplete';
 import moment from 'moment';
+import queryString from 'query-string';
 
 import { PASSWORD_PROMPT } from '../../../constants/modals.js';
 import '../../../styles/css/components/profile/me/my-profile-edit-form.css';
@@ -37,6 +39,7 @@ class ConfirmProfilePage extends React.Component {
     this.handleCitySelect = this.handleCitySelect.bind(this);
     this.updateCountry = this.updateCountry.bind(this);
     this.updateUserProfile = this.updateUserProfile.bind(this);
+    this.payWithCard = this.payWithCard.bind(this);
     this.executeCaptcha = this.executeCaptcha.bind(this);
   }
 
@@ -69,6 +72,49 @@ class ConfirmProfilePage extends React.Component {
       .catch(error => console.log(error));
   }
 
+
+
+  payWithCreditCard(path) {
+    const form = document.createElement('form');
+    form.method = 'post';
+    form.action = path;
+    form.style = 'display: none';
+
+    document.body.appendChild(form);
+    form.submit();
+  }
+
+  createBackUrl() {
+    const currency = this.props.paymentInfo.currency;
+    const queryParams = queryString.parse(this.props.location.search);
+    const decodeBooking = JSON.parse(decodeURI(queryParams.booking));
+    let rooms = decodeBooking.rooms;
+    rooms.forEach((room) => {
+      room.adults = room.adults.length;
+    });
+
+    const id = this.props.match.params.id;
+    rooms = encodeURI(JSON.stringify(rooms));
+
+    return `hotels/listings/${id}?region=${queryParams.region}&currency=${currency}&startDate=${queryParams.startDate}&endDate=${queryParams.endDate}&rooms=${rooms}`;
+  }
+
+  payWithCard() {
+    const { paymentInfo } = this.props.location.state;
+    console.log(paymentInfo);
+    requester.verifyCreditCardPayment(paymentInfo)
+      .then(res => {
+        res.body.then((data) => {
+          const env = Config.getValue('env');
+          if (env === 'staging' || env === 'development') {
+            window.location.href = data.url;
+          } else {
+            this.payWithCreditCard(data.url);
+          }
+        });
+      });
+  }
+
   onChange(event) {
     const userInfo = { ...this.state.userInfo };
     userInfo[event.target.name] = event.target.value;
@@ -86,7 +132,11 @@ class ConfirmProfilePage extends React.Component {
     userInfo.state = userInfo.state && userInfo.state.id;
     console.log(userInfo);
     requester.updateUserInfo(userInfo, captchaToken).then(res => {
-      console.log('success');
+      if (res.success) {
+        this.payWithCard();
+      } else {
+        console.log("Error");
+      }
     });
   }
 
@@ -96,7 +146,7 @@ class ConfirmProfilePage extends React.Component {
     if (['Canada', 'India', 'United States of America'].includes(value.name)) {
       requester.getStates(value.id)
         .then(res => res.body)
-        .then(data => { console.log(data); this.setState({ states: data })});
+        .then(data => { console.log(data); this.setState({ states: data }) });
     }
 
     const userInfo = { ...this.state.userInfo };
@@ -200,24 +250,16 @@ class ConfirmProfilePage extends React.Component {
             </div>
 
             <p className="text"><span className="mandatory">*</span> Fields mandatory for payment with Credit Card</p>
-
-            <ReCAPTCHA
-              ref={el => this.captcha = el}
-              size="invisible"
-              sitekey={Config.getValue('recaptchaKey')}
-              onChange={token => { this.updateUser(token); this.captcha.reset(); }}
-            />
-
+            <div className="captcha-container">
+              <ReCAPTCHA
+                ref={el => this.captcha = el}
+                size="invisible"
+                sitekey={Config.getValue('recaptchaKey')}
+                onChange={token => { this.updateUserProfile(token); this.captcha.reset(); }}
+              />
+            </div>
             <button type="submit" className="btn">Proceed</button>
           </form>
-
-
-          <ReCAPTCHA
-            ref={el => this.captcha = el}
-            size="invisible"
-            sitekey={Config.getValue('recaptchaKey')}
-            onChange={token => { this.updateUserProfile(token); this.captcha.reset(); }}
-          />
         </div>
       </React.Fragment>
     );
@@ -227,4 +269,4 @@ class ConfirmProfilePage extends React.Component {
 ConfirmProfilePage.propTypes = {
 };
 
-export default ConfirmProfilePage;
+export default withRouter(ConfirmProfilePage);
