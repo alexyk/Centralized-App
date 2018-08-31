@@ -3,28 +3,28 @@ import '../../../styles/css/components/carousel-component.css';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 
-import { setSearchInfo } from '../../../actions/searchInfo';
+import { ALL_ROOMS_TAKEN, INVALID_SEARCH_DATE } from '../../../constants/warningMessages.js';
+import { CHECKING_ROOM_AVAILABILITY, ROOM_NO_LONGER_AVAILABLE } from '../../../constants/infoMessages.js';
 
 import { Config } from '../../../config';
 import HotelDetailsInfoSection from './HotelDetailsInfoSection';
 import HotelsSearchBar from '../search/HotelsSearchBar';
+import { LONG } from '../../../constants/notificationDisplayTimes.js';
 import Lightbox from 'react-images';
 import { NotificationManager } from 'react-notifications';
 import PropTypes from 'prop-types';
 import { ROOMS_XML_CURRENCY } from '../../../constants/currencies.js';
 import React from 'react';
 import Slider from 'react-slick';
+import { UNCATEGORIZED_ERROR } from '../../../constants/errorMessages.js';
+import _ from 'lodash';
 import { connect } from 'react-redux';
 import moment from 'moment';
 import { parse } from 'query-string';
 import requester from '../../../initDependencies';
 import { setCurrency } from '../../../actions/paymentInfo';
+import { setSearchInfo } from '../../../actions/searchInfo';
 import { withRouter } from 'react-router-dom';
-
-import { CHECKING_ROOM_AVAILABILITY, ROOM_NO_LONGER_AVAILABLE } from '../../../constants/infoMessages.js';
-import { UNCATEGORIZED_ERROR } from '../../../constants/errorMessages.js';
-import { INVALID_SEARCH_DATE, ALL_ROOMS_TAKEN } from '../../../constants/warningMessages.js';
-import { LONG } from '../../../constants/notificationDisplayTimes.js';
 
 const SEARCH_EXPIRATION_TIME = 30000;
 
@@ -409,8 +409,9 @@ class HotelDetailsPage extends React.Component {
     } else {
       images = [];
       if (this.state.data.hotelPhotos) {
-        images = this.state.data.hotelPhotos.map((image, index) => {
-          return { src: Config.getValue('imgHost') + image.url, index: index };
+        let sortedImages = _.orderBy(this.state.data.hotelPhotos, ['url'], ['asc']);
+        images = sortedImages.map((image, index) => {
+          return { src: Config.getValue('imgHost') + image.url, index };
         });
       }
     }
