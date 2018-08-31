@@ -1,11 +1,12 @@
+import '../../styles/css/components/tabs-component.css';
+
+import { NavLink, withRouter } from 'react-router-dom';
 import React, { Component } from 'react';
+import { setCurrency, setLocRate } from '../../actions/paymentInfo';
+
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { NavLink, withRouter } from 'react-router-dom';
-import { setCurrency, setLocRate } from '../../actions/paymentInfo';
 import requester from '../../initDependencies';
-
-import '../../styles/css/components/tabs-component.css';
 
 class NavLocalization extends Component {
   componentDidMount() {
@@ -57,8 +58,10 @@ class NavLocalization extends Component {
             }
 
             <div className="info-details">
-              <span className="cross-rate">LOC/{currency}</span>
-              <span className="rate">{Number(locRate).toFixed(2)} {currency}</span>
+              <p className="loc-rate">
+                <span className="cross-rate">LOC/{currency} </span>
+                <span className="rate">{Number(locRate).toFixed(2)} {currency}</span>
+              </p>
 
               {isLogged &&
                 <div className="balance-info">

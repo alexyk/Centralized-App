@@ -7,13 +7,13 @@ import {
   CONFIRM_WALLET,
   CREATE_WALLET,
   EMAIL_VERIFICATION,
+  ENTER_EMAIL_VERIFICATION_SECURITY_TOKEN,
   ENTER_RECOVERY_TOKEN,
   LOGIN,
   REGISTER,
   SAVE_WALLET,
   SEND_RECOVERY_EMAIL,
-  UPDATE_COUNTRY,
-  ENTER_EMAIL_VERIFICATION_SECURITY_TOKEN
+  UPDATE_COUNTRY
 } from '../../constants/modals.js';
 import {
   INVALID_EMAIL,
@@ -24,7 +24,8 @@ import {
 } from '../../constants/warningMessages';
 import { Link, withRouter } from 'react-router-dom';
 import { MenuItem, Nav, NavDropdown, NavItem, Navbar } from 'react-bootstrap/lib';
-import { PASSWORD_SUCCESSFULLY_CHANGED, PROFILE_SUCCESSFULLY_CREATED, EMAIL_VERIFIED } from '../../constants/successMessages.js';
+import { NOT_FOUND, UNCATEGORIZED_ERROR } from '../../constants/errorMessages';
+import { PASSWORD_SUCCESSFULLY_CHANGED, PROFILE_SUCCESSFULLY_CREATED } from '../../constants/successMessages.js';
 import { closeModal, openModal } from '../../actions/modalsInfo';
 import { setIsLogged, setUserInfo } from '../../actions/userInfo';
 
@@ -35,12 +36,11 @@ import { Config } from '../../config';
 import ConfirmWalletModal from './modals/ConfirmWalletModal';
 import CreateWalletModal from './modals/CreateWalletModal';
 import EmailVerificationModal from './modals/EmailVerificationModal';
-import EnterRecoveryTokenModal from './modals/EnterRecoveryTokenModal';
 import EnterEmailVerificationTokenModal from './modals/EnterEmailVerificationTokenModal';
+import EnterRecoveryTokenModal from './modals/EnterRecoveryTokenModal';
 import { LONG } from '../../constants/notificationDisplayTimes.js';
 import LoginModal from './modals/LoginModal';
 import { MISSING_AIRDROP_INFO } from '../../constants/warningMessages.js';
-import { NOT_FOUND, UNCATEGORIZED_ERROR } from '../../constants/errorMessages';
 import { NotificationManager } from 'react-notifications';
 import PropTypes from 'prop-types';
 import ReCAPTCHA from 'react-google-recaptcha';
