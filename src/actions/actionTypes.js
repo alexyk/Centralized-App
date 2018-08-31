@@ -34,5 +34,5 @@ export const searchInfo = {
 
 // bestPrice actions
 export const bookingBestPrice = {
-  SET_BEST_PRICE: 'SET_BEST_PRICE',
+  SET_BEST_LOC_PRICE: 'SET_BEST_LOC_PRICE',
 };
