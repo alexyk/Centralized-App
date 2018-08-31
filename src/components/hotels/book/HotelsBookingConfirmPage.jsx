@@ -615,7 +615,8 @@ class HotelBookingConfirmPage extends React.Component {
     const booking = data && data.booking.hotelBooking;
     const isUserInfoIsComplete = this.isUserInfoIsComplete(userInfo);
     const currency = this.props.paymentInfo.currency;
-
+    const currencySign = this.props.paymentInfo.currencySign;
+    
     return (
       <React.Fragment>
         <div className="booking-steps sm-none">
@@ -693,7 +694,7 @@ class HotelBookingConfirmPage extends React.Component {
                     </div>
                     <div className="payment-methods-loc">
                       {/* <p className="booking-price">LOC {(locPrice).toFixed(4)}</p> */}
-                      <p>Pay Directly With LOC: $102.1234</p>
+                      <p>Pay Directly With LOC: {currencySign}{fiatPriceRoomsXML && (CurrencyConverter.convert(rates, RoomsXMLCurrency.get(), currency, fiatPriceRoomsXML)).toFixed(2)}</p>
                       <p>Order LOC Total: <span className="booking-price">LOC {locPrice && (locPrice).toFixed(4)}</span></p>
                       <p>(Click <a href="#">here</a> to learn how you can buy LOC directly to enjoy cheaper travel)</p>
                       {!confirmed
