@@ -607,7 +607,7 @@ class HotelBookingConfirmPage extends React.Component {
 
   getButtonIfUserHasFullInfo(isUserInfoIsComplete) {
     return isUserInfoIsComplete
-      ? (<button className="btn btn-primary btn-book" onClick={() => this.payWithCard()}>Pay with Credit Card</button>)
+      ? (<button className="btn btn-primary" onClick={() => this.payWithCard()}>Pay with Credit Card</button>)
       : (<div>Your profile isn't complete to pay with credit card. Please go to <Link to="/profile/me/edit">Edit Profile</Link> and provide mandatory information</div>);
   }
 
@@ -672,7 +672,7 @@ class HotelBookingConfirmPage extends React.Component {
                   <div className="payment-methods">
                     <div className="payment-methods-card">
                       <p className="booking-card-price">
-                        Order Card Total: {currency} {fiatPriceRoomsXML && (CurrencyConverter.convert(rates, RoomsXMLCurrency.get(), currency, fiatPriceRoomsXML)).toFixed(2)}
+                        Pay with Credit Card: Current Market Price - {currency} {fiatPriceRoomsXML && (CurrencyConverter.convert(rates, RoomsXMLCurrency.get(), currency, fiatPriceRoomsXML)).toFixed(2)} Will update in..
                       </p>
                       <div className="price-update-timer" tooltip="Seconds until we update your quoted price">
                         <i className="fa fa-clock-o" aria-hidden="true"></i>&nbsp;{seconds} sec &nbsp;
@@ -699,10 +699,12 @@ class HotelBookingConfirmPage extends React.Component {
                     </div>
                     <div className="payment-methods-loc">
                       {/* <p className="booking-price">LOC {(locPrice).toFixed(4)}</p> */}
+                      <p>Pay Directly With LOC: $102.1234</p>
                       <p>Order LOC Total: <span className="booking-price">LOC {locPrice && (locPrice).toFixed(4)}</span></p>
+                      <p>(Click <a href="#">here</a> to learn how you can buy LOC directly to enjoy cheaper travel)</p>
                       {!confirmed
-                        ? <button className="btn btn-primary btn-book" onClick={(e) => this.openModal(PASSWORD_PROMPT, e)}>Pay with LOC Tokens</button>
-                        : <button className="btn btn-primary btn-book" disabled>Processing Payment...</button>
+                        ? <button className="btn btn-primary" onClick={(e) => this.openModal(PASSWORD_PROMPT, e)}>Pay with LOC Tokens</button>
+                        : <button className="btn btn-primary" disabled>Processing Payment...</button>
                       }
                     </div>
                   </div>

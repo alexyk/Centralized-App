@@ -22,9 +22,9 @@
       }
       .confirm-and-pay-table {
         border: 1px solid #cfcfcf;
+        border-radius: 5px;
         margin: 20px 0;
         padding: 10px;
-        border-radius: 5px;
         width: 50%;
         background-color: #fff;
         &:first-child {
@@ -42,16 +42,22 @@
     .payment-methods {
       display: flex;
       justify-content: space-between;
+      flex-direction: column;
+      align-items: flex-end;
       @include media("<=tablet") {
         // margin-top: 20px;
-        flex-direction: column;
-        text-align: center;
+        text-align: right;
       }
       &-card {
         display: flex;
         flex-direction: column;
-        align-items: flex-start;
+        align-items: flex-end;
         justify-content: space-between;
+        border: 1px solid #cfcfcf;
+        border-radius: 5px;
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 20px;
         .price-update-timer {
           padding: 10px;
           font-weight: 400;
@@ -67,6 +73,11 @@
         flex-direction: column;
         align-items: flex-end;
         justify-content: space-between;
+        border: 1px solid #cfcfcf;
+        border-radius: 5px;
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 20px;
       }
     }
     // .total-prices-info {
@@ -127,13 +138,7 @@
         padding: 10px;
         @include media("<=tablet") {
           width: 100%;
-          margin-bottom: 10%;
-        }
-        &.btn-book {
-          // margin-bottom: 10%;
-          @include media("<=tablet") {
-            margin-bottom: 5%;
-          }
+          margin-bottom: 10px;
         }
       }
     }
@@ -151,7 +156,7 @@
       position: absolute;
       left: 50%;
       // top: 6px;
-      transform: translateX(30%) translateY(-30%);
+      transform: translateX(-130%) translateY(-30%);
       background: rgba(88, 88, 88, 0.7);
       text-align: center;
       color: #fff;
