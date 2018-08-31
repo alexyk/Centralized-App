@@ -637,6 +637,7 @@ class HotelBookingConfirmPage extends React.Component {
                   <h2>Confirm and Pay</h2>
                   <h2>Name: {this.props.userInfo.firstName} {this.props.userInfo.lastName}</h2>
                 </div>
+                <hr className="header-underline"/>
 
                 <div className="confirm-pay-info">
                   <div className="text-center room-dates">
@@ -658,6 +659,7 @@ class HotelBookingConfirmPage extends React.Component {
                         </tbody>
                       </table>
                     </div>
+                    <hr className="table-splitter"/>
                     <div className="confirm-and-pay-table">
                       <h4>Cancelation Details</h4>
                       {/* <button className="btn btn-primary" onClick={() => this.toggleCanxDetails()}>{showRoomsCanxDetails ? 'Hide' : 'Show'}</button> */}
@@ -667,8 +669,9 @@ class HotelBookingConfirmPage extends React.Component {
                   <div className="payment-methods">
                     <div className="payment-methods-card">
                       <p className="booking-card-price">
-                        Pay with Credit Card: Current Market Price - {currency} {fiatPriceRoomsXML && (CurrencyConverter.convert(rates, RoomsXMLCurrency.get(), currency, fiatPriceRoomsXML)).toFixed(2)} Will update in..
+                        Pay with Credit Card: Current Market Price: <span className="important">{currency} {fiatPriceRoomsXML && (CurrencyConverter.convert(rates, RoomsXMLCurrency.get(), currency, fiatPriceRoomsXML)).toFixed(2)}</span>
                       </p>
+                      <p>Will update in..</p>
                       <div className="price-update-timer" tooltip="Seconds until we update your quoted price">
                         <i className="fa fa-clock-o" aria-hidden="true"></i>&nbsp;{seconds} sec &nbsp;
                       </div>
@@ -694,8 +697,8 @@ class HotelBookingConfirmPage extends React.Component {
                     </div>
                     <div className="payment-methods-loc">
                       {/* <p className="booking-price">LOC {(locPrice).toFixed(4)}</p> */}
-                      <p>Pay Directly With LOC: {currencySign}{fiatPriceRoomsXML && (CurrencyConverter.convert(rates, RoomsXMLCurrency.get(), currency, fiatPriceRoomsXML)).toFixed(2)}</p>
-                      <p>Order LOC Total: <span className="booking-price">LOC {locPrice && (locPrice).toFixed(4)}</span></p>
+                      <p>Pay Directly With LOC: <span className="important">{currencySign}{fiatPriceRoomsXML && (CurrencyConverter.convert(rates, RoomsXMLCurrency.get(), currency, fiatPriceRoomsXML)).toFixed(2)}</span></p>
+                      <p>Order LOC Total: <span className="important">LOC {locPrice && (locPrice).toFixed(4)}</span></p>
                       <p>(Click <a href="#">here</a> to learn how you can buy LOC directly to enjoy cheaper travel)</p>
                       {!confirmed
                         ? <button className="btn btn-primary" onClick={(e) => this.openModal(PASSWORD_PROMPT, e)}>Pay with LOC Tokens</button>

@@ -12,6 +12,7 @@ import ReCAPTCHA from 'react-google-recaptcha';
 import Select from '../../common/google/GooglePlacesAutocomplete';
 import moment from 'moment';
 import queryString from 'query-string';
+import { NotificationManager } from 'react-notifications';
 
 import { PASSWORD_PROMPT } from '../../../constants/modals.js';
 import '../../../styles/css/components/profile/me/my-profile-edit-form.css';
@@ -135,7 +136,7 @@ class ConfirmProfilePage extends React.Component {
       if (res.success) {
         this.payWithCard();
       } else {
-        console.log("Error");
+        NotificationManager.error('Invalid user information.');
       }
     });
   }
@@ -195,14 +196,14 @@ class ConfirmProfilePage extends React.Component {
 
             <div className="phone">
               <label htmlFor="phone">Phone number <span className="mandatory">*</span><img src={Config.getValue('basePath') + 'images/icon-lock.png'} className="lock" alt="lock-o" /></label>
-              <input id="phone" name="phoneNumber" value={this.state.userInfo.phoneNumber} onChange={this.onChange} type="text" />
+              <input id="phone" name="phoneNumber" value={this.state.userInfo.phoneNumber} onChange={this.onChange} type="text" required/>
             </div>
 
             <div className="address-city">
               <div className="address">
                 <label htmlFor="address">Country <span className="mandatory">*</span></label>
                 <div className='select'>
-                  <select name="country" onChange={this.updateCountry} value={JSON.stringify(this.state.userInfo.country)}>
+                  <select name="country" onChange={this.updateCountry} value={JSON.stringify(this.state.userInfo.country)} required>
                     <option disabled value="">Country</option>
                     {this.state.countries.map((item, i) => {
                       return <option key={i} value={JSON.stringify(item)}>{item.name}</option>;
@@ -222,6 +223,7 @@ class ConfirmProfilePage extends React.Component {
                   componentRestrictions={{ country: this.state.userInfo.country.code.toLowerCase() }}
                   disabled={!this.state.userInfo.country}
                   placeholder='Choose your city'
+                  required
                 />
               </div>
               <br className="clear-both" />
@@ -230,7 +232,7 @@ class ConfirmProfilePage extends React.Component {
             {['Canada', 'India', 'United States of America'].includes(this.state.userInfo.country.name) ? <div className="countryState">
               <label htmlFor="countryState">State <span className="mandatory">*</span></label>
               <div className='select'>
-                <select name="countryState" onChange={this.onChange} value={this.state.userInfo.countryState}>
+                <select name="countryState" onChange={this.onChange} value={this.state.userInfo.countryState} required>
                   <option disabled value="">State</option>
                   {this.state.states.map((item, i) => {
                     return <option key={i} value={item.id}>{item.name}</option>;
@@ -241,12 +243,12 @@ class ConfirmProfilePage extends React.Component {
 
             <div className="address">
               <label htmlFor="address">Address <span className="mandatory">*</span></label>
-              <input id="address" name="address" value={this.state.userInfo.address} onChange={this.onChange} type="text" placeholder='Enter your address' />
+              <input id="address" name="address" value={this.state.userInfo.address} onChange={this.onChange} type="text" placeholder='Enter your address' required/>
             </div>
 
             <div className="zip-code">
               <label htmlFor="zip-code">Zip Code <span className="mandatory">*</span></label>
-              <input id="zip-code" name="zipCode" value={this.state.zipCode} onChange={this.onChange} type="text" placeholder='Enter your zip code' />
+              <input id="zip-code" name="zipCode" value={this.state.zipCode} onChange={this.onChange} type="text" placeholder='Enter your zip code' required/>
             </div>
 
             <p className="text"><span className="mandatory">*</span> Fields mandatory for payment with Credit Card</p>
