@@ -25,8 +25,6 @@ class HomesBookingConfirmPage extends React.Component {
       lastName: props.userInfo.lastName,
     };
 
-    console.log(this.state);
-
     this.handleChange = this.handleChange.bind(this);
   }
 
@@ -61,7 +59,6 @@ class HomesBookingConfirmPage extends React.Component {
     const { listing, firstName, lastName } = this.state;
 
     const queryParams = parse(this.props.location.search);
-    console.log(queryParams);
 
     const requestInfo = {
       listingId: listing.id,
@@ -72,16 +69,15 @@ class HomesBookingConfirmPage extends React.Component {
       email: this.props.userInfo.email,
       phone: this.props.userInfo.phoneNumber,
     };
-    console.log(requestInfo);
 
     requester.requestBooking(requestInfo, captchaToken).then(res => {
       this.setState({ sending: false });
       if (!res.success) {
-        NotificationManager.warning('Please sign-in/register to able to make bookings', '', LONG);
+        NotificationManager.warning('', '', LONG);
       } else {
         res.body.then(data => {
           if (data.success) {
-            this.props.history.push('/profile/trips?id=' + data.id);
+            this.props.history.push('/profile/trips/homes');
           } else {
             NotificationManager.error(data.message, '', LONG);
           }
