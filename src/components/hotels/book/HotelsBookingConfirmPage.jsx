@@ -55,6 +55,10 @@ class HotelBookingConfirmPage extends React.Component {
     this.onChange = this.onChange.bind(this);
     this.toggleCanxDetails = this.toggleCanxDetails.bind(this);
     this.handleSubmitSingleWithdrawer = this.handleSubmitSingleWithdrawer.bind(this);
+    this.requestUserInfo = this.requestUserInfo.bind(this);
+    this.requestBookingInfo = this.requestBookingInfo.bind(this);
+    this.requestCurrencyRates = this.requestCurrencyRates.bind(this);
+    this.setSearchExpirationTimeout = this.setSearchExpirationTimeout.bind(this);
     this.tick = this.tick.bind(this);
 
     // SOCKET BINDINGS
@@ -65,15 +69,24 @@ class HotelBookingConfirmPage extends React.Component {
   }
 
   componentDidMount() {
-    const search = this.props.location.search;
-    const searchParams = this.getSearchParams(search);
-    const booking = JSON.parse(decodeURI(searchParams.get('booking')));
+    this.requestUserInfo();
+    this.requestBookingInfo();
+    this.requestCurrencyRates();
+    this.setSearchExpirationTimeout();
+  }
+
+  requestUserInfo() {
     requester.getUserInfo().then(res => {
       res.body.then(data => {
         this.setState({ userInfo: data });
       });
     });
+  }
 
+  requestBookingInfo() {
+    const search = this.props.location.search;
+    const searchParams = this.getSearchParams(search);
+    const booking = JSON.parse(decodeURI(searchParams.get('booking')));
     requester.createReservation(booking).then(res => {
       if (res.success) {
         res.body.then(data => {
@@ -91,13 +104,17 @@ class HotelBookingConfirmPage extends React.Component {
         });
       }
     });
+  }
 
+  requestCurrencyRates() {
     requester.getCurrencyRates().then(res => {
       res.body.then(data => {
         this.setState({ rates: data });
       });
     });
+  }
 
+  setSearchExpirationTimeout() {
     this.timeout = setTimeout(() => {
       NotificationManager.info(SEARCH_EXPIRED, '', EXTRA_LONG);
       this.props.history.push('/hotels');
@@ -662,48 +679,51 @@ class HotelBookingConfirmPage extends React.Component {
                     <hr className="table-splitter" />
                     <div className="confirm-and-pay-table">
                       <h4>Cancelation Details</h4>
-                      {/* <button className="btn btn-primary" onClick={() => this.toggleCanxDetails()}>{showRoomsCanxDetails ? 'Hide' : 'Show'}</button> */}
                       {this.getRoomFees(booking)}
                     </div>
                   </div>
                   <div className="payment-methods">
                     <div className="payment-methods-card">
-                      <p className="booking-card-price">
-                        Pay with Credit Card: Current Market Price: <span className="important">{currency} {fiatPriceRoomsXML && (CurrencyConverter.convert(rates, RoomsXMLCurrency.get(), currency, fiatPriceRoomsXML)).toFixed(2)}</span>
-                      </p>
-                      {this.getButtonIfUserHasFullInfo(isUserInfoIsComplete)}
-                      {/* <p>Order LOC Total: <span className="booking-price">LOC {(locPrice).toFixed(4)}</span></p> */}
-                      {/* {!isUserInfoIsComplete ? <div>Your profile isn't complete to pay with credit card. Please go to <Link to="/profile/me/edit">Edit Profile</Link> and provide mandatory information</div> : userInfo.verified
-                            ? <button className="btn btn-primary btn-book" onClick={() => this.payWithCard()}>Pay with card</button>
-                            :
-                            <div>
-                              <p>To be able to make reservations your profile should be verified</p>
-                              <div>
-                                <p>Verfy it with Government ID and wait up to 72 hours for Administrator to verfy you</p>
-                              </div>
-                              <div>
-                                <p>Verify your booking <button onClick={(e) => this.openModal(SMS_VERIFICATION, e)}>with SMS code</button> and pay with Credit Card immediately</p>
-                                <SMSCodeModal
-                                  isActive={this.props.modalsInfo.isActive[SMS_VERIFICATION]}
-                                  closeModal={this.closeModal}
-                                  onChange={this.onChange} />
-                              </div>
-                            </div>
-                          } */}
+                      <div className="details">
+                        <p className="booking-card-price">
+                          Pay with Credit Card: Current Market Price: <span className="important">{currencySign}{fiatPriceRoomsXML && (CurrencyConverter.convert(rates, RoomsXMLCurrency.get(), currency, fiatPriceRoomsXML)).toFixed(2)}</span>
+                        </p>
+                        {this.getButtonIfUserHasFullInfo(isUserInfoIsComplete)}
+                      </div>
+                      <div className="logos">
+                        <div className="logos-row">
+                          <div className="logo visa">
+                            <img src={Config.getValue('basePath') + 'images/logos/visa.png'} alt="Visa Logo" />
+                          </div>
+                          <div className="logo mastercard">
+                            <img src={Config.getValue('basePath') + 'images/logos/mastercard.png'} alt="Mastercard Logo" />
+                          </div>
+                        </div>
+                        <div className="logos-row">
+                          <div className="logo safecharge">
+                            <img src={Config.getValue('basePath') + 'images/logos/safecharge.png'} alt="Safecharge Logo" />
+                          </div>
+                        </div>
+                      </div>
                     </div>
                     <div className="payment-methods-loc">
-                      {/* <p className="booking-price">LOC {(locPrice).toFixed(4)}</p> */}
-                      <p>Pay Directly With LOC: <span className="important">{currencySign}{fiatPriceRoomsXML && (CurrencyConverter.convert(rates, RoomsXMLCurrency.get(), currency, fiatPriceRoomsXML)).toFixed(2)}</span></p>
-                      <p>Order LOC Total: <span className="important">LOC {locPrice && (locPrice).toFixed(4)}</span></p>
-                      <p>Will update in..</p>
-                      <div className="price-update-timer" tooltip="Seconds until we update your quoted price">
-                        <i className="fa fa-clock-o" aria-hidden="true"></i>&nbsp;{seconds} sec &nbsp;
+                      <div className="details">
+                        <p>Pay Directly With LOC: <span className="important">{currencySign}{fiatPriceRoomsXML && (CurrencyConverter.convert(rates, RoomsXMLCurrency.get(), currency, fiatPriceRoomsXML)).toFixed(2)}</span></p>
+                        <p>Order LOC Total: <span className="important">LOC {locPrice && (locPrice).toFixed(4)}</span></p>
+                        <div className="price-update-timer" tooltip="Seconds until we update your quoted price">
+                          LOC price will update in <i className="fa fa-clock-o" aria-hidden="true"></i>&nbsp;{seconds} sec &nbsp;
+                        </div>
+                        <p>(Click <a href="#">here</a> to learn how you can buy LOC directly to enjoy cheaper travel)</p>
+                        {!confirmed
+                          ? <button className="btn btn-primary" onClick={(e) => this.openModal(PASSWORD_PROMPT, e)}>Pay with LOC Tokens</button>
+                          : <button className="btn btn-primary" disabled>Processing Payment...</button>
+                        }
                       </div>
-                      <p>(Click <a href="#">here</a> to learn how you can buy LOC directly to enjoy cheaper travel)</p>
-                      {!confirmed
-                        ? <button className="btn btn-primary" onClick={(e) => this.openModal(PASSWORD_PROMPT, e)}>Pay with LOC Tokens</button>
-                        : <button className="btn btn-primary" disabled>Processing Payment...</button>
-                      }
+                      <div className="logos">
+                        <div className="logo loc">
+                          <img src={Config.getValue('basePath') + 'images/logos/loc.jpg'} alt="Visa Logo" />
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>

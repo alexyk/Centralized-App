@@ -12,6 +12,9 @@
   }
   h2 {
     padding-top: 0;
+    @include media('<desktop') {
+      margin-top: 20px;
+    }
   }
   label {
     display: block;

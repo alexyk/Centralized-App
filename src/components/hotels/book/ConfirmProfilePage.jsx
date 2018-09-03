@@ -14,8 +14,6 @@ import moment from 'moment';
 import queryString from 'query-string';
 import { NotificationManager } from 'react-notifications';
 
-import { PASSWORD_PROMPT } from '../../../constants/modals.js';
-import '../../../styles/css/components/profile/me/my-profile-edit-form.css';
 
 class ConfirmProfilePage extends React.Component {
   constructor(props) {
@@ -41,10 +39,18 @@ class ConfirmProfilePage extends React.Component {
     this.updateCountry = this.updateCountry.bind(this);
     this.updateUserProfile = this.updateUserProfile.bind(this);
     this.payWithCard = this.payWithCard.bind(this);
+    this.requestUserInfo = this.requestUserInfo.bind(this);
+    this.requestCountries = this.requestCountries.bind(this);
+    this.requestStates = this.requestStates.bind(this);
     this.executeCaptcha = this.executeCaptcha.bind(this);
   }
 
   componentDidMount() {
+    this.requestUserInfo();
+    this.requestCountries();
+  }
+
+  requestUserInfo() {
     requester.getUserInfo()
       .then(res => res.body)
       .then(userInfo => {
@@ -57,22 +63,25 @@ class ConfirmProfilePage extends React.Component {
         }
 
         if (['Canada', 'India', 'United States of America'].includes(userInfo.country.name)) {
-          requester.getStates(userInfo.country.id)
-            .then(res => res.body)
-            .then(data => { this.setState({ states: data }) });
+          this.requestStates(userInfo.country.id);
         }
-
-        console.log(userInfo);
 
         this.setState({ userInfo, loading: false });
       });
+  }
 
+  requestCountries() {
     requester.getCountries()
       .then(res => res.body)
       .then(data => this.setState({ countries: data }))
       .catch(error => console.log(error));
   }
 
+  requestStates(countryId) {
+    requester.getStates(countryId)
+      .then(res => res.body)
+      .then(data => { this.setState({ states: data }); });
+  }
 
 
   payWithCreditCard(path) {
@@ -147,7 +156,7 @@ class ConfirmProfilePage extends React.Component {
     if (['Canada', 'India', 'United States of America'].includes(value.name)) {
       requester.getStates(value.id)
         .then(res => res.body)
-        .then(data => { console.log(data); this.setState({ states: data }) });
+        .then(data => { console.log(data); this.setState({ states: data }); });
     }
 
     const userInfo = { ...this.state.userInfo };
@@ -180,7 +189,7 @@ class ConfirmProfilePage extends React.Component {
 
 
         <div className="container" id="booking-profile-confirm">
-          <h2>Review your billing information</h2>
+          <h2>Review Billing Information</h2>
           <form onSubmit={(e) => { e.preventDefault(); this.captcha.execute(); }}>
             <div className="name">
               <div className="first">
@@ -206,7 +215,7 @@ class ConfirmProfilePage extends React.Component {
                   <select name="country" onChange={this.updateCountry} value={JSON.stringify(this.state.userInfo.country)} required>
                     <option disabled value="">Country</option>
                     {this.state.countries.map((item, i) => {
-                      return <option key={i} value={JSON.stringify(item)}>{item.name}</option>;
+                      return <option key={i} value={JSON.stringify(item)}>{StringUtils.shorten(item.name, 30)}</option>;
                     })}
                   </select>
                 </div>
@@ -269,6 +278,12 @@ class ConfirmProfilePage extends React.Component {
 }
 
 ConfirmProfilePage.propTypes = {
+  // Redux
+  paymentInfo: PropTypes.object,
+
+  // Router
+  location: PropTypes.object,
+  match: PropTypes.object
 };
 
 export default withRouter(ConfirmProfilePage);
