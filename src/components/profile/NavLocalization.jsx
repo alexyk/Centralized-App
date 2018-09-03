@@ -41,7 +41,7 @@ class NavLocalization extends Component {
 
     requester.getCurrencyRates().then(res => {
       res.body.then(data => {
-        this.setState({ rates: data });
+        this.setState({ rates: data }, () => this.props.dispatch(setLocRate(this.calculateLocRate(this.state.locAmount, currency))));
       });
     });
   }
@@ -116,7 +116,7 @@ class NavLocalization extends Component {
             <div className="info-details">
               <span className="cross-rate">LOC/{currency}</span>
               <span className="rate">{Number(locRate).toFixed(4)} {currency}</span>
-
+              
               {isLogged &&
                 <div className="balance-info">
                   <div className="balance">
