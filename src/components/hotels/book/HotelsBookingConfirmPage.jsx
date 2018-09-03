@@ -4,7 +4,7 @@ import { EXTRA_LONG, LONG } from '../../../constants/notificationDisplayTimes.js
 import { withRouter, Link } from 'react-router-dom';
 import { PASSWORD_PROMPT } from '../../../constants/modals.js';
 import { closeModal, openModal } from '../../../actions/modalsInfo.js';
-import { setCurrency } from '../../../actions/paymentInfo';
+import { setCurrency, setBookingCofirmPage, setLocRate, setLocRateInEur } from '../../../actions/paymentInfo';
 
 import { Config } from '../../../config.js';
 import { HotelReservation } from '../../../services/blockchain/hotelReservation';
@@ -74,6 +74,19 @@ class HotelBookingConfirmPage extends React.Component {
     this.requestBookingInfo();
     this.requestCurrencyRates();
     this.setSearchExpirationTimeout();
+
+    this.props.dispatch(setBookingCofirmPage(true));
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const { currency } = nextProps.paymentInfo;
+    if (currency !== this.props.paymentInfo.currency) {
+      localStorage['currency'] = currency;
+      const { fiatPriceRoomsXML, rates } = this.state;
+      const fiatAmount = fiatPriceRoomsXML && CurrencyConverter.convert(rates, RoomsXMLCurrency.get(), DEFAULT_CRYPTO_CURRENCY, fiatPriceRoomsXML);
+      this.props.dispatch(setLocRate(this.calculateLocRate(this.state.locPrice, currency, fiatAmount), true, 'ConfirmPage'));
+      this.props.dispatch(setLocRateInEur(fiatAmount / this.state.locPrice, true, 'ConfirmPage'));
+    }
   }
 
   requestUserInfo() {
@@ -123,6 +136,7 @@ class HotelBookingConfirmPage extends React.Component {
   }
 
   componentWillUnmount() {
+    this.props.dispatch(setBookingCofirmPage(false));
     clearTimeout(this.timeout);
     clearInterval(this.timer);
     this.disconnectSocket();
@@ -156,6 +170,11 @@ class HotelBookingConfirmPage extends React.Component {
     }
   }
 
+  calculateLocRate(locAmount, currency, fiatAmount) {
+    const fiat = this.state.rates && CurrencyConverter.convert(this.state.rates, DEFAULT_CRYPTO_CURRENCY, currency, fiatAmount);
+    return fiat / locAmount;
+  }
+
   initializeSocket() {
     this.socket = new WebSocket(Config.getValue('SOCKET_HOST_PRICE'));
     this.socket.onmessage = this.handleReceiveMessage;
@@ -171,6 +190,10 @@ class HotelBookingConfirmPage extends React.Component {
 
   handleReceiveMessage(event) {
     const locPrice = (JSON.parse(event.data)).locAmount;
+    const { fiatPriceRoomsXML, rates } = this.state;
+    const fiatAmount = fiatPriceRoomsXML && CurrencyConverter.convert(rates, RoomsXMLCurrency.get(), DEFAULT_CRYPTO_CURRENCY, fiatPriceRoomsXML);
+    this.props.dispatch(setLocRateInEur(fiatAmount / locPrice, true, 'ConfirmPage'));
+    this.props.dispatch(setLocRate(this.calculateLocRate(locPrice, this.props.paymentInfo.currency, fiatAmount), true, 'ConfirmPage'));
     this.props.dispatch(setBestLocPrice(locPrice));
   }
 

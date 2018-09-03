@@ -19,7 +19,7 @@ function HotelDetailsInfoSection(props) {
       total += room[i].price;
     }
 
-    return CurrencyConverter.convert(props.rates, RoomsXMLCurrency.get(), props.paymentInfo.currency, total);
+    return total;
   };
 
   const calculateStars = (ratingNumber) => {
