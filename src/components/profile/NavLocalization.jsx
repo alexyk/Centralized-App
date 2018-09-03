@@ -42,8 +42,8 @@ class NavLocalization extends Component {
     requester.getCurrencyRates().then(res => {
       res.body.then(data => {
         this.setState({ rates: data }, () => {
-          this.props.dispatch(setLocRateInEur(DEFAULT_EUR_AMOUNT / this.state.locAmount));
-          this.props.dispatch(setLocRate(this.calculateLocRate(this.state.locAmount, currency)));
+          this.props.dispatch(setLocRateInEur(DEFAULT_EUR_AMOUNT / this.state.locAmount, false, 'Nav'));
+          this.props.dispatch(setLocRate(this.calculateLocRate(this.state.locAmount, currency), false, 'Nav'));
         });
       });
     });
@@ -54,8 +54,8 @@ class NavLocalization extends Component {
     if (currency !== this.props.paymentInfo.currency) {
       localStorage['currency'] = currency;
 
-      this.props.dispatch(setLocRateInEur(DEFAULT_EUR_AMOUNT / this.state.locAmount));
-      this.props.dispatch(setLocRate(this.calculateLocRate(this.state.locAmount, currency)));
+      this.props.dispatch(setLocRateInEur(DEFAULT_EUR_AMOUNT / this.state.locAmount, false, 'Nav'));
+      this.props.dispatch(setLocRate(this.calculateLocRate(this.state.locAmount, currency), false, 'Nav'));
     }
   }
 
@@ -84,8 +84,8 @@ class NavLocalization extends Component {
     const locRateInEUR = this.calculateLocRate(locAmount, DEFAULT_CRYPTO_CURRENCY);
     const locRateInCurrentCurrency = this.calculateLocRate(locAmount, this.props.paymentInfo.currency);
     
-    this.props.dispatch(setLocRate(locRateInCurrentCurrency));
-    this.props.dispatch(setLocRateInEur(locRateInEUR));
+    this.props.dispatch(setLocRate(locRateInCurrentCurrency), false, 'Nav');
+    this.props.dispatch(setLocRateInEur(locRateInEUR, false, 'Nav'));
   }
 
   disconnectSocket() {
@@ -153,7 +153,7 @@ class NavLocalization extends Component {
                   value={this.props.paymentInfo.currency}
                   onChange={(e) => {
                     this.props.dispatch(setCurrency(e.target.value));
-                    this.props.dispatch(setLocRate(this.calculateLocRate(this.state.locAmount, e.target.value)));
+                    this.props.dispatch(setLocRate(this.calculateLocRate(this.state.locAmount, e.target.value), false, 'Nav'));
                   }}
                 >
                   <option value="EUR">EUR</option>

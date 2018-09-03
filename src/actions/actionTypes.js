@@ -8,7 +8,8 @@ export const userInfo = {
 export const paymentInfo = {
   SET_CURRENCY: 'SET_CURRENCY',
   SET_LOC_RATE: 'SET_LOC_RATE',
-  SET_LOC_RATE_IN_EUR: 'SET_LOC_RATE_IN_EUR'
+  SET_LOC_RATE_IN_EUR: 'SET_LOC_RATE_IN_EUR',
+  SET_IS_BOOKING_CONFIRM_PAGE: 'SET_IS_BOOKING_CONFIRM_PAGE',
 };
 
 // paymentInfo actions
