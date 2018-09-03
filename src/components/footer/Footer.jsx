@@ -85,8 +85,8 @@ class Footer extends React.Component {
             </div>
           </div>
           <div className="bottom-footer">
-            <span>Copyright 2018 LockTrip</span>
-            <span>All Rights Reserved</span>
+            <span>Copyright &copy; 2018 LockTrip. </span>
+            <span>All Rights Reserved.</span>
           </div>
         </div>
       </footer>
