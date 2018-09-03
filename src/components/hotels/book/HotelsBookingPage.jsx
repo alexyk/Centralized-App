@@ -41,7 +41,6 @@ class HotelsBookingPage extends React.Component {
     this.requestHotel();
     this.requestHotelRooms();
     this.requestCurrencyRates();
-    this.props.setRedirectSearchString(this.props.location.search);
   }
 
   // requestNewQuoteID() {
@@ -104,11 +103,21 @@ class HotelsBookingPage extends React.Component {
           NotificationManager.warning('Room is no longer available', '', LONG);
           const pathname = this.props.location.pathname.indexOf('/mobile') !== -1 ? '/mobile/details' : '/hotels/listings';
           const id = this.props.match.params.id;
-          const search = this.props.location.search;
-          this.props.history.push(`${pathname}/${id}${search}`);
+          const queryString = this.getQueryString(queryString.parse(this.props.location.search));
+          this.props.history.push(`${pathname}/${id}${queryString}`);
         }
       });
     });
+  }
+
+  getQueryString(queryStringParameters) {
+    let queryString = '?';
+    queryString += 'region=' + encodeURI(queryStringParameters.region);
+    queryString += '&currency=' + encodeURI(queryStringParameters.currency);
+    queryString += '&startDate=' + encodeURI(queryStringParameters.startDate);
+    queryString += '&endDate=' + encodeURI(queryStringParameters.endDate);
+    queryString += '&rooms=' + encodeURI(queryStringParameters.rooms);
+    return queryString;
   }
 
   getRoomsFromURL(searchParams) {

@@ -5,7 +5,6 @@ import { withRouter, Link } from 'react-router-dom';
 import { PASSWORD_PROMPT } from '../../../constants/modals.js';
 import { closeModal, openModal } from '../../../actions/modalsInfo.js';
 import { setCurrency } from '../../../actions/paymentInfo';
-import { CSSTransitionGroup } from 'react-transition-group';
 
 import { Config } from '../../../config.js';
 import { HotelReservation } from '../../../services/blockchain/hotelReservation';
@@ -104,7 +103,7 @@ class HotelBookingConfirmPage extends React.Component {
               NotificationManager.warning('Room is no longer available', '', LONG);
               const pathname = this.props.location.pathname.indexOf('/mobile') !== -1 ? '/mobile/details' : '/hotels/listings';
               const id = this.props.match.params.id;
-              const search = this.props.search;
+              const search = this.getQueryString(queryString.parse(this.props.location.search));
               this.props.history.push(`${pathname}/${id}${search}`);
             }
           } else {
@@ -117,6 +116,18 @@ class HotelBookingConfirmPage extends React.Component {
         });
       }
     });
+  }
+
+  
+
+  getQueryString(queryStringParameters) {
+    let queryString = '?';
+    queryString += 'region=' + encodeURI(queryStringParameters.region);
+    queryString += '&currency=' + encodeURI(queryStringParameters.currency);
+    queryString += '&startDate=' + encodeURI(queryStringParameters.startDate);
+    queryString += '&endDate=' + encodeURI(queryStringParameters.endDate);
+    queryString += '&rooms=' + encodeURI(queryStringParameters.rooms);
+    return queryString;
   }
 
   requestCurrencyRates() {
@@ -729,16 +740,7 @@ class HotelBookingConfirmPage extends React.Component {
                     <div className="payment-methods-loc">
                       <div className="details">
                         <p>Pay Directly With LOC: <span className="important">{currencySign}{fiatPriceRoomsXML && (CurrencyConverter.convert(rates, RoomsXMLCurrency.get(), currency, fiatPriceRoomsXML)).toFixed(2)}</span></p>
-                        <p>Order LOC Total:&nbsp;
-                          <CSSTransitionGroup
-                            transitionName="example"
-                            transitionAppear={true}
-                            transitionAppearTimeout={1500}
-                            transitionEnter={false}
-                            transitionLeave={false}>
-                            <span className="important">LOC {locPrice && (locPrice).toFixed(4)}</span>
-                          </CSSTransitionGroup>
-                        </p>
+                        <p>Order LOC Total: <span className="important">LOC {locPrice && (locPrice).toFixed(4)}</span></p>
                         <div className="price-update-timer" tooltip="Seconds until we update your quoted price">
                           LOC price will update in <i className="fa fa-clock-o" aria-hidden="true"></i>&nbsp;{seconds} sec &nbsp;
                         </div>

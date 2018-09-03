@@ -15,14 +15,10 @@ class HotelsBookingRouterPage extends React.Component {
     this.searchRenewalTimeout = null;
     this.setSearchRenewalTimeout();
 
-    this.state = {
-      id: null,
-      search: ''
-    };
+    this.state = {};
 
     this.setSearchRenewalTimeout = this.setSearchRenewalTimeout.bind(this);
     this.clearSearchRenewalTimeout = this.clearSearchRenewalTimeout.bind(this);
-    this.setRedirectSearchString = this.setRedirectSearchString.bind(this);
   }
 
   componentWillUnmount() {
@@ -54,7 +50,7 @@ class HotelsBookingRouterPage extends React.Component {
         <Switch>
           <Route exact path="/hotels/listings/book/profile/:id" render={() => <ConfirmProfilePage />} />
           <Route exact path="/hotels/listings/book/confirm/:id" render={() => <HotelsBookingConfirmPage />} />
-          <Route exact path="/hotels/listings/book/:id" render={() => <HotelsBookingPage setRedirectSearchString={this.setRedirectSearchString} />} />
+          <Route exact path="/hotels/listings/book/:id" render={() => <HotelsBookingPage />} />
         </Switch>
       </Fragment>
     );
