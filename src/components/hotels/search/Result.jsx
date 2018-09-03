@@ -19,6 +19,7 @@ import { connect } from 'react-redux';
 const SCREEN_SIZE_SMALL = 'SMALL';
 const SCREEN_SIZE_MEDIUM = 'MEDIUM';
 const SCREEN_SIZE_LARGE = 'LARGE';
+const DEFAULT_CRYPTO_CURRENCY = 'EUR';
 
 const BREAKPOINTS = {
   SMALL: 370,
@@ -107,7 +108,8 @@ class Result extends React.Component {
     const { locRate, rates } = this.props;
     const { currencySign } = this.props.paymentInfo;
     const isPriceLoaded = !!price;
-    let locPrice = ((price / locRate) / this.props.nights).toFixed(2);
+    const priceInEUR = rates && ((CurrencyConverter.convert(rates, RoomsXMLCurrency.get(), DEFAULT_CRYPTO_CURRENCY, price)) / this.props.nights).toFixed(2);
+    let locPrice = locRate !== 0 && (priceInEUR / locRate).toFixed(2);
     const priceInSelectedCurrency = rates && ((CurrencyConverter.convert(rates, RoomsXMLCurrency.get(), this.props.paymentInfo.currency, price)) / this.props.nights).toFixed(2);
 
     name = name && StringUtils.shorten(name, this.state.titleLength);

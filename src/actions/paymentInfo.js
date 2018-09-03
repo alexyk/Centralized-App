@@ -13,3 +13,10 @@ export function setLocRate(locRate) {
     locRate
   };
 }
+
+export function setLocRateInEur(locRateInEur) {
+  return {
+    type: paymentInfo.SET_LOC_RATE_IN_EUR,
+    locRateInEur
+  };
+}

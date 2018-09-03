@@ -3,7 +3,8 @@ import { paymentInfo } from '../actions/actionTypes';
 const initialState = {
   currency: localStorage['currency'] ? localStorage['currency'] : 'USD',
   currencySign: localStorage['currencySign'] ? localStorage['currencySign'] : '$',
-  locRate: null
+  locRate: null,
+  locRateInEur: null
 };
 
 export default function reducer(state = initialState, action) {
@@ -21,6 +22,12 @@ export default function reducer(state = initialState, action) {
       return {
         ...state,
         locRate: action.locRate
+      };
+
+    case paymentInfo.SET_LOC_RATE_IN_EUR:
+      return {
+        ...state,
+        locRateInEur: action.locRateInEur
       };
 
     default:

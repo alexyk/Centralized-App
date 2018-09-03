@@ -89,12 +89,6 @@ class StaticHotelsSearchPage extends React.Component {
   }
 
   componentDidMount() {
-    requester.getLocRateByCurrency(RoomsXMLCurrency.get()).then(res => {
-      res.body.then(data => {
-        this.setState({ locRate: Number(data[0][`price_${RoomsXMLCurrency.get().toLowerCase()}`]) });
-      });
-    });
-
     requester.getCurrencyRates().then(res => {
       res.body.then(data => {
         this.setState({ rates: data });
@@ -646,7 +640,7 @@ class StaticHotelsSearchPage extends React.Component {
                           lon={this.state.lon}
                           hotels={hotels}
                           mapInfo={this.state.mapInfo}
-                          locRate={this.state.locRate}
+                          locRate={this.props.paymentInfo.locRateInEur}
                           rates={this.state.rates}
                           paymentInfo={this.props.paymentInfo}
                           isLogged={this.props.userInfo.isLogged}
@@ -662,7 +656,7 @@ class StaticHotelsSearchPage extends React.Component {
                           hotels={hotels}
                           priceMap={[]}
                           allElements={this.state.allElements}
-                          locRate={this.state.locRate}
+                          locRate={this.props.paymentInfo.locRateInEur}
                           rates={this.state.rates}
                           nights={this.state.nights}
                           loading={this.state.loading}

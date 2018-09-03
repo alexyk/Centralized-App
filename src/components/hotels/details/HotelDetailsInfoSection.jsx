@@ -10,6 +10,8 @@ import { RoomsXMLCurrency } from '../../../services/utilities/roomsXMLCurrency';
 import Facilities from './Facilities';
 import requester from '../../../initDependencies';
 
+const DEFAULT_CRYPTO_CURRENCY = 'EUR';
+
 function HotelDetailsInfoSection(props) {
   const getTotalPrice = (room) => {
     let total = 0;
@@ -17,7 +19,7 @@ function HotelDetailsInfoSection(props) {
       total += room[i].price;
     }
 
-    return total;
+    return CurrencyConverter.convert(props.rates, RoomsXMLCurrency.get(), DEFAULT_CRYPTO_CURRENCY, total);
   };
 
   const calculateStars = (ratingNumber) => {
@@ -30,15 +32,16 @@ function HotelDetailsInfoSection(props) {
     return starsElements;
   };
 
-  const hangleBookNowClick = (resultIndex) => {    requester.getUserInfo().then(res => res.body)
-    .then(data => {
-      const { isEmailVerified } = data;
-      if (!isEmailVerified) {
-        props.dispatch(openModal(EMAIL_VERIFICATION));
-      } else {
-        props.handleBookRoom(roomsResults.slice(resultIndex));
-      }
-    });
+  const hangleBookNowClick = (resultIndex) => {
+    requester.getUserInfo().then(res => res.body)
+      .then(data => {
+        const { isEmailVerified } = data;
+        if (!isEmailVerified) {
+          props.dispatch(openModal(EMAIL_VERIFICATION));
+        } else {
+          props.handleBookRoom(roomsResults.slice(resultIndex));
+        }
+      });
   };
 
   const getButton = (resultIndex) => {
@@ -145,7 +148,7 @@ function HotelDetailsInfoSection(props) {
                                 }
                                 <span>
                                   {props.userInfo.isLogged && '('}
-                                  {Number((room.price / props.nights) / props.locRate).toFixed(2)} LOC
+                                  {Number((CurrencyConverter.convert(props.rates, roomsXMLCurrency, DEFAULT_CRYPTO_CURRENCY, room.price) / props.nights) / props.locRate).toFixed(2)} LOC
                               {props.userInfo.isLogged && ')'} / night
                             </span>
                               </div>
@@ -160,7 +163,7 @@ function HotelDetailsInfoSection(props) {
                             {props.userInfo.isLogged &&
                               <span>{props.currencySign}{props.rates && Number(CurrencyConverter.convert(props.rates, roomsXMLCurrency, currency, getTotalPrice(results[0].roomsResults))).toFixed(2)} (</span>
                             }
-                            <span>{Number(getTotalPrice(results[0].roomsResults) / props.locRate).toFixed(2)} LOC{props.userInfo.isLogged ? ')' : ''}</span>
+                            <span>{props.rates && Number(getTotalPrice(results[0].roomsResults) / props.locRate).toFixed(2)} LOC{props.userInfo.isLogged ? ')' : ''}</span>
                           </span>
                         </div>
                       </div>

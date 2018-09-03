@@ -15,6 +15,8 @@ import validator from 'validator';
 import { withRouter } from 'react-router-dom';
 import { RoomsXMLCurrency } from '../../../services/utilities/roomsXMLCurrency';
 
+const DEFAULT_CRYPTO_CURRENCY = 'EUR';
+
 class HotelsBookingPage extends React.Component {
   constructor(props) {
     super(props);
@@ -30,7 +32,6 @@ class HotelsBookingPage extends React.Component {
     this.handleSubmit = this.handleSubmit.bind(this);
     this.requestHotel = this.requestHotel.bind(this);
     this.requestHotelRooms = this.requestHotelRooms.bind(this);
-    this.requestLocRate = this.requestLocRate.bind(this);
     this.requestCurrencyRates = this.requestCurrencyRates.bind(this);
 
     // this.requestNewQuoteID = this.requestNewQuoteID.bind(this);
@@ -39,7 +40,6 @@ class HotelsBookingPage extends React.Component {
   componentDidMount() {
     this.requestHotel();
     this.requestHotelRooms();
-    this.requestLocRate();
     this.requestCurrencyRates();
   }
 
@@ -97,14 +97,6 @@ class HotelsBookingPage extends React.Component {
           totalPrice: totalPrice,
           loading: false,
         });
-      });
-    });
-  }
-
-  requestLocRate() {
-    requester.getLocRateByCurrency(RoomsXMLCurrency.get()).then(res => {
-      res.body.then(data => {
-        this.setState({ locRate: Number(data[0][`price_${RoomsXMLCurrency.get().toLowerCase()}`]) });
       });
     });
   }
@@ -264,6 +256,7 @@ class HotelsBookingPage extends React.Component {
     const hotelMainAddress = this.state.hotel && this.state.hotel.additionalInfo.mainAddress;
     const hotelCityName = this.state.hotel && this.state.hotel.city;
     const rooms = this.state.rooms;
+    const rates = this.state.rates;
     // console.log(this.state.pictures);
     const currency = this.props.paymentInfo.currency;
     const hotelPicUrl = this.state.pictures && this.state.pictures.length > 0 ? this.state.pictures[0].url : '/listings/images/default.png';
@@ -296,21 +289,21 @@ class HotelsBookingPage extends React.Component {
                       if (!this.props.userInfo.isLogged) {
                         return (
                           <h6 key={index}>
-                            {room.name}, {this.state.nights} nights: LOC {Number(room.price / this.state.locRate).toFixed(2)}
+                            {room.name}, {this.state.nights} nights: LOC {rates && Number(CurrencyConverter.convert(this.state.rates, RoomsXMLCurrency.get(), DEFAULT_CRYPTO_CURRENCY, room.price) / this.props.paymentInfo.locRateInEur).toFixed(2)}
                           </h6>
                         );
                       } else {
                         return (
                           <h6 key={index}>
-                            {room.name}, {this.state.nights} nights: {this.props.paymentInfo.currencySign}{this.state.rates && (CurrencyConverter.convert(this.state.rates, RoomsXMLCurrency.get(), currency, room.price)).toFixed(2)} (LOC {Number(room.price / this.state.locRate).toFixed(2)})
+                            {room.name}, {this.state.nights} nights: {this.props.paymentInfo.currencySign}{rates && (CurrencyConverter.convert(this.state.rates, RoomsXMLCurrency.get(), currency, room.price)).toFixed(2)} (LOC {rates && Number(CurrencyConverter.convert(this.state.rates, RoomsXMLCurrency.get(), DEFAULT_CRYPTO_CURRENCY, room.price) / this.props.paymentInfo.locRateInEur).toFixed(2)})
                           </h6>
                         );
                       }
                     })}
                     <hr />
                     {this.props.userInfo.isLogged ?
-                      <h6 className="total-price">Total: {this.props.paymentInfo.currencySign}{priceInSelectedCurrency} (LOC {Number(this.state.totalPrice / this.state.locRate).toFixed(2)})</h6> :
-                      <h6 className="total-price">Total: LOC {Number(this.state.totalPrice / this.state.locRate).toFixed(2)}</h6>
+                      <h6 className="total-price">Total: {this.props.paymentInfo.currencySign}{priceInSelectedCurrency} (LOC {rates && Number(CurrencyConverter.convert(this.state.rates, RoomsXMLCurrency.get(), DEFAULT_CRYPTO_CURRENCY, this.state.totalPrice) / this.props.paymentInfo.locRateInEur).toFixed(2)})</h6> :
+                      <h6 className="total-price">Total: LOC {rates && Number(CurrencyConverter.convert(rates, RoomsXMLCurrency.get(), currency, this.state.totalPrice) / this.props.paymentInfo.locRateInEur).toFixed(2)}</h6>
                     }
                     <div className="clearfix"></div>
                   </div>
