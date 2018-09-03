@@ -314,9 +314,9 @@ class AirdropPage extends Component {
 
               <div className="balance-row">
                 <div className="balance-row__label"><span className="emphasized-text">Your Referral URL</span></div>
-                <div className="balance-row__content"><span className="referral-url">{this.props.airdropInfo.refLink.toString().replace('alpha.', '')}</span></div>
+                <div className="balance-row__content"><span className="referral-url">{this.props.airdropInfo.refLink.toString().replace('alpha.', '').replace('beta.', '')}</span></div>
                 <CopyToClipboard
-                  text={this.props.airdropInfo.refLink.toString().replace('alpha.', '')}
+                  text={this.props.airdropInfo.refLink.toString().replace('alpha.', '').replace('beta.', '')}
                   onCopy={() => {
                     NotificationManager.info(COPIED_TO_CLIPBOARD, '', LONG);
                   }}
