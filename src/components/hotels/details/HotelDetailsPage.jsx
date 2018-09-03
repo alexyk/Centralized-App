@@ -91,7 +91,6 @@ class HotelDetailsPage extends React.Component {
       });
     });
 
-    this.getLocRate();
     requester.getCurrencyRates().then(res => {
       res.body.then(data => {
         this.setState({ rates: data });
@@ -178,14 +177,6 @@ class HotelDetailsPage extends React.Component {
       }
     }
     return false;
-  }
-
-  getLocRate() {
-    requester.getLocRateByCurrency(RoomsXMLCurrency.get()).then(res => {
-      res.body.then(data => {
-        this.setState({ locRate: Number(data[0][`price_${RoomsXMLCurrency.get().toLowerCase()}`]) });
-      });
-    });
   }
 
   updateParamsMap(key, value) {
@@ -507,7 +498,7 @@ class HotelDetailsPage extends React.Component {
               endDate={this.state.calendarEndDate}
               data={this.state.data}
               hotelRooms={this.state.hotelRooms}
-              locRate={this.state.locRate}
+              locRate={this.props.paymentInfo.locRateInEur}
               rates={this.state.rates}
               loading={this.state.loading}
               currencySign={this.props.paymentInfo.currencySign}

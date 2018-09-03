@@ -44,6 +44,7 @@ class HotelBookingConfirmPage extends React.Component {
       confirmed: false,
       fiatPriceRoomsXML: null,
       locPrice: null,
+      locRate: null,
       seconds: 30
     };
 
@@ -129,21 +130,27 @@ class HotelBookingConfirmPage extends React.Component {
 
   tick() {
     const { seconds } = this.state;
-    let { locPrice } = this.state;
+    let { locPrice, locRate } = this.state;
     if (seconds === 1) {
       const bestLocPrice = this.props.bookingBestPrice.locPrice;
+      const locRate = this.props.paymentInfo.locRateInEur;
       this.setState({
         locPrice: bestLocPrice,
         seconds: 30,
+        locRate
       });
     } else {
       if (locPrice === null) {
         locPrice = this.props.bookingBestPrice.locPrice;
       }
+      if (!locRate) {
+        locRate = this.props.paymentInfo.locRateInEur;
+      }
       this.setState((prevState) => {
         return {
           seconds: prevState.seconds - 1,
-          locPrice
+          locPrice,
+          locRate
         };
       });
     }
@@ -509,7 +516,7 @@ class HotelBookingConfirmPage extends React.Component {
           <tr key={(1 + index) * 1000} className="booking-room">
             <td>{bookingRoom.room.roomType.text}</td>
             <td><span
-              className="booking-price">{paymentInfo.currency} {this.state.rates && (CurrencyConverter.convert(this.state.rates, RoomsXMLCurrency.get(), paymentInfo.currency, bookingRoom.room.totalSellingPrice.amt)).toFixed(2)} ({(bookingRoom.room.totalSellingPrice.amt / paymentInfo.locRate).toFixed(4)} LOC)</span>
+              className="booking-price">{paymentInfo.currency} {this.state.rates && (CurrencyConverter.convert(this.state.rates, RoomsXMLCurrency.get(), paymentInfo.currency, bookingRoom.room.totalSellingPrice.amt)).toFixed(2)} ({this.state.rates && this.state.locRate && (CurrencyConverter.convert(this.state.rates, RoomsXMLCurrency.get(), DEFAULT_CRYPTO_CURRENCY, bookingRoom.room.totalSellingPrice.amt) / this.state.locRate).toFixed(4)} LOC)</span>
             </td>
           </tr>
         );
@@ -538,7 +545,7 @@ class HotelBookingConfirmPage extends React.Component {
         <td
           key={fees.length}>{`Cancelling on ${moment(arrivalDate).format('DD MMM YYYY')} will cost you`}</td>
         <td><span
-          className="booking-price">{currency} {this.state.rates && (CurrencyConverter.convert(this.state.rates, RoomsXMLCurrency.get(), currency, fiatPrice)).toFixed(2)} ({(fiatPrice / this.props.paymentInfo.locRate).toFixed(4)} LOC)</span>
+          className="booking-price">{currency} {this.state.rates && (CurrencyConverter.convert(this.state.rates, RoomsXMLCurrency.get(), currency, fiatPrice)).toFixed(2)} ({this.state.rates && this.state.locRate && (CurrencyConverter.convert(this.state.rates, RoomsXMLCurrency.get(), DEFAULT_CRYPTO_CURRENCY, fiatPrice) / this.state.locRate).toFixed(4)} LOC)</span>
         </td>
       </tr>
     );
@@ -570,7 +577,7 @@ class HotelBookingConfirmPage extends React.Component {
             <tr key={3 * 1000 + feeIndex + 1}>
               <td>{`Canceling on or after ${date} will cost you`}</td>
               <td><span
-                className="booking-price">{currency} {this.state.rates && (CurrencyConverter.convert(this.state.rates, RoomsXMLCurrency.get(), currency, amount)).toFixed(2)} ({(amount / this.props.paymentInfo.locRate).toFixed(4)} LOC)</span>
+                className="booking-price">{currency} {this.state.rates && (CurrencyConverter.convert(this.state.rates, RoomsXMLCurrency.get(), currency, amount)).toFixed(2)} ({this.state.rates && this.state.locRate && (CurrencyConverter.convert(this.state.rates, RoomsXMLCurrency.get(), DEFAULT_CRYPTO_CURRENCY, amount) / this.state.locRate).toFixed(4)} LOC)</span>
               </td>
             </tr>
           );

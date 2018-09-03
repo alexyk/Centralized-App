@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { NavLink, withRouter } from 'react-router-dom';
 import requester from '../../initDependencies';
-import { setCurrency, setLocRate } from '../../actions/paymentInfo';
+import { setCurrency, setLocRate, setLocRateInEur } from '../../actions/paymentInfo';
 import { CurrencyConverter } from '../../services/utilities/currencyConverter';
 import { Config } from '../../config.js';
 
@@ -41,7 +41,10 @@ class NavLocalization extends Component {
 
     requester.getCurrencyRates().then(res => {
       res.body.then(data => {
-        this.setState({ rates: data }, () => this.props.dispatch(setLocRate(this.calculateLocRate(this.state.locAmount, currency))));
+        this.setState({ rates: data }, () => {
+          this.props.dispatch(setLocRateInEur(DEFAULT_EUR_AMOUNT / this.state.locAmount));
+          this.props.dispatch(setLocRate(this.calculateLocRate(this.state.locAmount, currency)));
+        });
       });
     });
   }
@@ -51,6 +54,7 @@ class NavLocalization extends Component {
     if (currency !== this.props.paymentInfo.currency) {
       localStorage['currency'] = currency;
 
+      this.props.dispatch(setLocRateInEur(DEFAULT_EUR_AMOUNT / this.state.locAmount));
       this.props.dispatch(setLocRate(this.calculateLocRate(this.state.locAmount, currency)));
     }
   }
@@ -77,10 +81,11 @@ class NavLocalization extends Component {
   handleReceiveMessage(event) {
     const locAmount = (JSON.parse(event.data)).locAmount;
     this.setState({ locAmount });
-    const locRate = this.calculateLocRate(locAmount, this.props.paymentInfo.currency);
-    console.log(locRate);
-
-    this.props.dispatch(setLocRate(locRate));
+    const locRateInEUR = this.calculateLocRate(locAmount, DEFAULT_CRYPTO_CURRENCY);
+    const locRateInCurrentCurrency = this.calculateLocRate(locAmount, this.props.paymentInfo.currency);
+    
+    this.props.dispatch(setLocRate(locRateInCurrentCurrency));
+    this.props.dispatch(setLocRateInEur(locRateInEUR));
   }
 
   disconnectSocket() {
@@ -116,7 +121,7 @@ class NavLocalization extends Component {
             <div className="info-details">
               <span className="cross-rate">LOC/{currency}</span>
               <span className="rate">{Number(locRate).toFixed(4)} {currency}</span>
-              
+
               {isLogged &&
                 <div className="balance-info">
                   <div className="balance">
