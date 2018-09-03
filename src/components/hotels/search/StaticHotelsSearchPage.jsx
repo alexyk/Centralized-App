@@ -144,7 +144,7 @@ class StaticHotelsSearchPage extends React.Component {
       this.props.dispatch(setSearchInfo(startDate, endDate, region, rooms, adults, hasChildren));
 
       this.setState({
-        nights: this.props.searchInfo.nights,
+        nights: endDate.diff(startDate, 'days'),
         page: page ? Number(page) : 0,
       });
 

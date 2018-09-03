@@ -111,7 +111,7 @@ class HotelDetailsPage extends React.Component {
       this.props.dispatch(setSearchInfo(startDate, endDate, this.props.searchInfo.region, rooms, adults, hasChildren));
 
       this.setState({
-        nights: this.props.searchInfo.nights,
+        nights: endDate.diff(startDate, 'days'),
       });
 
       this.setSearchRenewalTimeout();

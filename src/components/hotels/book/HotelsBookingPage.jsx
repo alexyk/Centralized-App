@@ -22,6 +22,7 @@ class HotelsBookingPage extends React.Component {
       // rooms: [{ adults: [{ title: '', firstName: '', lastName: '' }], children: [] }],
       data: null,
       loading: true,
+      userInfo: {}
     };
 
     this.handleAdultChange = this.handleAdultChange.bind(this);
@@ -31,6 +32,7 @@ class HotelsBookingPage extends React.Component {
     this.requestHotelRooms = this.requestHotelRooms.bind(this);
     this.requestLocRate = this.requestLocRate.bind(this);
     this.requestCurrencyRates = this.requestCurrencyRates.bind(this);
+    this.requestUserInfo = this.requestUserInfo.bind(this);
 
     // this.requestNewQuoteID = this.requestNewQuoteID.bind(this);
   }
@@ -70,6 +72,8 @@ class HotelsBookingPage extends React.Component {
           pictures: data.hotelPhotos,
           loading: false,
           quoteId: quoteId
+        }, () => {
+          this.requestUserInfo();
         });
       });
     });
@@ -108,6 +112,18 @@ class HotelsBookingPage extends React.Component {
     });
   }
 
+  requestUserInfo() {
+    requester.getUserInfo()
+      .then(res => res.body)
+      .then(userInfo => this.setState({ userInfo }, () => {
+        const rooms = [...this.state.rooms];
+        rooms[0].adults[0].firstName = userInfo.firstName;
+        rooms[0].adults[0].lastName = userInfo.lastName;
+        rooms[0].adults[0].title = userInfo.gender === 'female' ? 'Mrs' : 'Mr',
+        this.setState({ rooms });
+      }));
+  }
+
   getRoomsFromURL(searchParams) {
     const searchRooms = JSON.parse(decodeURI(searchParams.get('rooms')));
     const result = [];
@@ -116,9 +132,9 @@ class HotelsBookingPage extends React.Component {
       const adults = [];
       for (let guestIndex = 0; guestIndex < searchRoom.adults; guestIndex++) {
         const adult = {
-          title: roomIndex === 0 && guestIndex === 0 && this.props.userInfo.gender === 'women' ? 'Mrs' : 'Mr',
-          firstName: roomIndex === 0 && guestIndex === 0 ? this.props.userInfo.firstName : guestIndex > 0 ? 'Optional' : '',
-          lastName: roomIndex === 0 && guestIndex === 0 ? this.props.userInfo.lastName : guestIndex > 0 ? 'Optional' : '',
+          title: roomIndex === 0 && guestIndex === 0 && this.state.userInfo.gender === 'women' ? 'Mrs' : 'Mr',
+          firstName: roomIndex === 0 && guestIndex === 0 ? this.state.userInfo.firstName : guestIndex > 0 ? 'Optional' : '',
+          lastName: roomIndex === 0 && guestIndex === 0 ? this.state.userInfo.lastName : guestIndex > 0 ? 'Optional' : '',
         };
 
         adults.push(adult);
