@@ -90,13 +90,22 @@ class HotelsBookingPage extends React.Component {
     const quoteId = searchParams.pop().split('=')[1];
     requester.getHotelRooms(id, searchParams).then(res => {
       res.body.then(data => {
-        const roomResults = data.filter(x => x.quoteId === quoteId)[0].roomsResults;
-        const totalPrice = this.calculateRoomsTotalPrice(roomResults);
-        this.setState({
-          roomResults: roomResults,
-          totalPrice: totalPrice,
-          loading: false,
-        });
+        const roomResults = data.filter(x => x.quoteId === quoteId)[0];
+        if (roomResults) {
+          const room = roomResults.roomsResults;
+          const totalPrice = this.calculateRoomsTotalPrice(room);
+          this.setState({
+            roomResults: room,
+            totalPrice: totalPrice,
+            loading: false,
+          });
+        } else {
+          NotificationManager.warning('Room is no longer available', '', LONG);
+          const pathname = this.props.location.pathname.indexOf('/mobile') !== -1 ? '/mobile/details' : '/hotels/listings';
+          const id = this.props.match.params.id;
+          const search = this.props.location.search;
+          this.props.history.push(`${pathname}/${id}${search}`);
+        }
       });
     });
   }
