@@ -659,7 +659,7 @@ class HotelBookingConfirmPage extends React.Component {
 
                 <div className="booking-details-header">
                   <h2>Confirm and Pay</h2>
-                  <h2>Name: {this.props.userInfo.firstName} {this.props.userInfo.lastName}</h2>
+                  <h2>{this.props.userInfo.firstName} {this.props.userInfo.lastName}</h2>
                 </div>
                 <hr className="header-underline" />
 
