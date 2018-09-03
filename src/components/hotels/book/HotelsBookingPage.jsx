@@ -41,6 +41,7 @@ class HotelsBookingPage extends React.Component {
     this.requestHotel();
     this.requestHotelRooms();
     this.requestCurrencyRates();
+    this.props.setRedirectSearchString(this.props.location.search);
   }
 
   // requestNewQuoteID() {
