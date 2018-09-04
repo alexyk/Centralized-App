@@ -1,20 +1,19 @@
 import '../../styles/css/components/tabs-component.css';
+import '../../styles/css/components/tabs-component.css';
 
 import { NavLink, withRouter } from 'react-router-dom';
 import React, { Component } from 'react';
-import { setCurrency, setLocRate } from '../../actions/paymentInfo';
+import { setCurrency, setLocRate, setLocRateInEur } from '../../actions/paymentInfo';
 
+import { Config } from '../../config.js';
+import { CurrencyConverter } from '../../services/utilities/currencyConverter';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import requester from '../../initDependencies';
-import { setCurrency, setLocRate, setLocRateInEur } from '../../actions/paymentInfo';
-import { CurrencyConverter } from '../../services/utilities/currencyConverter';
-import { Config } from '../../config.js';
-import '../../styles/css/components/tabs-component.css';
 
 const DEFAULT_EUR_AMOUNT = 1000;
 const DEFAULT_CRYPTO_CURRENCY = 'EUR';
-  
+
 class NavLocalization extends Component {
   constructor(props) {
     super(props);
@@ -86,7 +85,7 @@ class NavLocalization extends Component {
     this.setState({ locAmount });
     const locRateInEUR = this.calculateLocRate(locAmount, DEFAULT_CRYPTO_CURRENCY);
     const locRateInCurrentCurrency = this.calculateLocRate(locAmount, this.props.paymentInfo.currency);
-    
+
     this.props.dispatch(setLocRate(locRateInCurrentCurrency, false, 'Nav'));
     this.props.dispatch(setLocRateInEur(locRateInEUR, false, 'Nav'));
   }

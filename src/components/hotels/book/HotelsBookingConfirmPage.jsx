@@ -1,28 +1,35 @@
 import '../../../styles/css/components/hotels/book/hotel-booking-confirm-page.css';
 
 import { EXTRA_LONG, LONG } from '../../../constants/notificationDisplayTimes.js';
-import { withRouter, Link } from 'react-router-dom';
-import { PASSWORD_PROMPT } from '../../../constants/modals.js';
+import { Link, withRouter } from 'react-router-dom';
 import { closeModal, openModal } from '../../../actions/modalsInfo.js';
-import { setCurrency, setBookingCofirmPage, setLocRate, setLocRateInEur } from '../../../actions/paymentInfo';
+import { setBookingCofirmPage, setCurrency, setLocRate, setLocRateInEur } from '../../../actions/paymentInfo';
 
 import { Config } from '../../../config.js';
+import { CurrencyConverter } from '../../../services/utilities/currencyConverter';
 import { HotelReservation } from '../../../services/blockchain/hotelReservation';
 import { LOC_PAYMENT_INITIATED } from '../../../constants/successMessages.js';
 import { NotificationManager } from 'react-notifications';
+import { PASSWORD_PROMPT } from '../../../constants/modals.js';
 import { PROCESSING_TRANSACTION } from '../../../constants/infoMessages.js';
 import PasswordModal from '../../common/modals/PasswordModal';
 import PropTypes from 'prop-types';
 import React from 'react';
-import queryString from 'query-string';
+import { RoomsXMLCurrency } from '../../../services/utilities/roomsXMLCurrency';
 import { SEARCH_EXPIRED } from '../../../constants/infoMessages.js';
-// import SMSCodeModal from '../modals/SMSCodeModal';
 import { connect } from 'react-redux';
 import moment from 'moment';
+import queryString from 'query-string';
 import requester from '../../../initDependencies';
 import { setBestLocPrice } from '../../../actions/bookingBestPrice';
-import { CurrencyConverter } from '../../../services/utilities/currencyConverter';
-import { RoomsXMLCurrency } from '../../../services/utilities/roomsXMLCurrency';
+
+// import SMSCodeModal from '../modals/SMSCodeModal';
+
+
+
+
+
+
 
 const ERROR_MESSAGE_TIME = 20000;
 const SEARCH_EXPIRE_TIME = 900000;
@@ -131,7 +138,7 @@ class HotelBookingConfirmPage extends React.Component {
     });
   }
 
-  
+
 
   getQueryString(queryStringParameters) {
     let queryString = '?';
@@ -767,7 +774,7 @@ class HotelBookingConfirmPage extends React.Component {
                         <div className="price-update-timer" tooltip="Seconds until we update your quoted price">
                           LOC price will update in <i className="fa fa-clock-o" aria-hidden="true"></i>&nbsp;{seconds} sec &nbsp;
                         </div>
-                        <p>(Click <a href="#">here</a> to learn how you can buy LOC directly to enjoy cheaper travel)</p>
+                        <p>(Click <a href="">here</a> to learn how you can buy LOC directly to enjoy cheaper travel)</p>
                         {!confirmed
                           ? <button className="btn btn-primary" onClick={(e) => this.openModal(PASSWORD_PROMPT, e)}>Pay with LOC Tokens</button>
                           : <button className="btn btn-primary" disabled>Processing Payment...</button>
