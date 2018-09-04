@@ -1,36 +1,24 @@
 import '../../styles/css/components/footer/footer-component.css';
 
-import { setCurrency, setLocRate } from '../../actions/paymentInfo';
+import { setCurrency } from '../../actions/paymentInfo';
 
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import requester from '../../initDependencies';
 import { withRouter } from 'react-router-dom';
 
 class Footer extends React.Component {
   componentDidMount() {
-    const { currency, locRate } = this.props.paymentInfo;
+    const { currency } = this.props.paymentInfo;
     if (localStorage['currency']) setCurrency(localStorage['currency']);
     else localStorage['currency'] = currency;
-
-    if (!locRate) this.getAndSetLocRate(currency);
   }
 
   componentWillReceiveProps(nextProps) {
-    const { currency, locRate } = nextProps.paymentInfo;
-    if (!locRate || currency !== this.props.paymentInfo.currency) {
-      this.getAndSetLocRate(currency);
+    const { currency } = nextProps.paymentInfo;
+    if (currency !== this.props.paymentInfo.currency) {
       localStorage['currency'] = currency;
     }
-  }
-
-  getAndSetLocRate(currency) {
-    requester.getLocRateByCurrency(currency).then(res => {
-      res.body.then(data => {
-        this.props.dispatch(setLocRate(data[0][`price_${currency.toLowerCase()}`]));
-      });
-    });
   }
 
   render() {
@@ -85,8 +73,8 @@ class Footer extends React.Component {
             </div>
           </div>
           <div className="bottom-footer">
-            <span>Copyright 2017 LockChain</span>
-            <span>All Rights Reserved</span>
+            <span>Copyright &copy; 2018 LockTrip. </span>
+            <span>All Rights Reserved.</span>
           </div>
         </div>
       </footer>

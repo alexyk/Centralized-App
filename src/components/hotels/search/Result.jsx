@@ -7,18 +7,20 @@ import { Link, withRouter } from 'react-router-dom';
 
 import { Config } from '../../../config';
 import { CurrencyConverter } from '../../../services/utilities/currencyConverter';
+import { RoomsXMLCurrency } from '../../../services/utilities/roomsXMLCurrency';
 import PropTypes from 'prop-types';
-import { ROOMS_XML_CURRENCY } from '../../../constants/currencies.js';
 import React from 'react';
 import ReactHtmlParser from 'react-html-parser';
 import Slider from 'react-slick';
 import StringUtils from '../../../services/utilities/stringUtilities';
 import _ from 'lodash';
 import { connect } from 'react-redux';
+import requester from '../../../initDependencies';
 
 const SCREEN_SIZE_SMALL = 'SMALL';
 const SCREEN_SIZE_MEDIUM = 'MEDIUM';
 const SCREEN_SIZE_LARGE = 'LARGE';
+const DEFAULT_CRYPTO_CURRENCY = 'EUR';
 
 const BREAKPOINTS = {
   SMALL: 370,
@@ -44,11 +46,14 @@ class Result extends React.Component {
 
     const screenWidth = window.innerWidth;
     const screenSize = this.getScreenSize(screenWidth);
+    const photoUrl = this.props.hotel.hotelPhoto && this.props.hotel.hotelPhoto.url ? this.props.hotel.hotelPhoto.url : this.props.hotel.hotelPhoto;
 
     this.state = {
       screenWidth: screenWidth,
       titleLength: this.getTitleLength(screenSize),
       descriptionLength: this.getDescriptionLength(screenSize),
+      pictures: photoUrl ? [{ url: photoUrl }, { url: photoUrl }] : [],
+      loadedPictures: true
     };
 
     this.updateWindowDimensions = _.debounce(this.updateWindowDimensions.bind(this), 500);
@@ -100,34 +105,65 @@ class Result extends React.Component {
   }
 
   render() {
-    let { id, name, generalDescription, hotelPhoto, star } = this.props.hotel;
+    let { id, name, generalDescription, star } = this.props.hotel;
     let { price } = this.props;
-    const photoUrl = hotelPhoto && hotelPhoto.url ? hotelPhoto.url : hotelPhoto;
-    const pictures = photoUrl ? [{ thumbnail: `${Config.getValue('imgHost')}${photoUrl}` }, { thumbnail: `${Config.getValue('imgHost')}${photoUrl}` }] : [];
+
     const { locRate, rates } = this.props;
     const { currencySign } = this.props.paymentInfo;
     const isPriceLoaded = !!price;
-    let locPrice = ((price / locRate) / this.props.nights).toFixed(2);
-    const priceInSelectedCurrency = rates && ((CurrencyConverter.convert(rates, ROOMS_XML_CURRENCY, this.props.paymentInfo.currency, price)) / this.props.nights).toFixed(2);
+    const priceInEUR = rates && ((CurrencyConverter.convert(rates, RoomsXMLCurrency.get(), DEFAULT_CRYPTO_CURRENCY, price)) / this.props.nights).toFixed(2);
+    let locPrice = locRate !== 0 && (priceInEUR / locRate).toFixed(2);
+    const priceInSelectedCurrency = rates && ((CurrencyConverter.convert(rates, RoomsXMLCurrency.get(), this.props.paymentInfo.currency, price)) / this.props.nights).toFixed(2);
 
     name = name && StringUtils.shorten(name, this.state.titleLength);
     generalDescription = generalDescription && StringUtils.shorten(generalDescription, this.state.descriptionLength);
 
-    if (pictures && pictures.length < 1) {
-      pictures.push({ thumbnail: `${Config.getValue('imgHost')}/listings/images/default.png` });
+    if (this.state.pictures && this.state.pictures.length < 1) {
+      this.state.pictures.push({ thumbnail: `${Config.getValue('imgHost')}/listings/images/default.png` });
     }
+
+    const SlickButtonLoad = ({ currentSlide, slideCount, ...props }) => (
+      <button {...props} onClick={() => {
+        this.setState({ loadedPictures: false });
+        requester.getHotelPictures(this.props.hotel.id).then(res => {
+          res.body.then(data => {
+            let images = _.orderBy(data, ['url'], ['asc']);
+            images.push(images.shift());
+            this.setState({ pictures: images, loadedPictures: true, calledBackendForAllImages: true }, () => {
+              props.onClick();
+            });
+          });
+        });
+      }} />
+    );
 
     const SlickButton = ({ currentSlide, slideCount, ...props }) => (
       <button {...props} />
     );
 
+
+
     const settings = {
       infinite: true,
-      speed: 500,
+      speed: 300,
       slidesToShow: 1,
       slidesToScroll: 1,
-      nextArrow: <SlickButton />,
-      prevArrow: <SlickButton />
+      nextArrow: this.state.calledBackendForAllImages === true ? <SlickButton /> : <SlickButtonLoad />,
+      prevArrow: this.state.calledBackendForAllImages === true ? <SlickButton /> : <SlickButtonLoad />,
+      beforeChange: (current, next) => {
+        // console.log(event, slick);
+        if (!this.state.calledBackendForAllImages) {
+          this.setState({ loadedPictures: false });
+          requester.getHotelPictures(this.props.hotel.id).then(res => {
+            res.body.then(data => {
+              let images = _.orderBy(data, ['url'], ['asc']);
+              images.push(images.shift());
+              this.setState({ pictures: images, loadedPictures: true, calledBackendForAllImages: true }, () => {
+              });
+            });
+          });
+        }
+      }
     };
 
     const redirectURL = this.props.location.pathname.indexOf('mobile') === -1
@@ -140,20 +176,21 @@ class Result extends React.Component {
     return (
       <div className="result" >
         <div className="result-images">
-          {pictures &&
+          {this.state.pictures && this.state.loadedPictures === true ?
             <Slider
+              ref={c => (this.slider = c)}
               {...settings}>
-              {pictures.map((picture, i) => {
+              {this.state.pictures.map((picture, i) => {
                 return (
                   <div key={i}>
                     <Link to={`${redirectURL}/${id}${search.substr(0, endOfSearch)}`} key={i}>
-                      <div style={{ backgroundImage: 'url(' + picture.thumbnail + ')' }}>
+                      <div style={{ backgroundImage: 'url(' + Config.getValue('imgHost') + picture.url + ')' }}>
                       </div>
                     </Link>
                   </div>
                 );
               })}
-            </Slider>
+            </Slider> : <div style={{ width: '240px' }} />
           }
         </div>
         <div className="result-content">

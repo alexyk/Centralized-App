@@ -264,11 +264,11 @@ class MainNav extends React.Component {
       this.setState({ isUpdatingCountry: false, country: { id: 1, name: 'United States of America' }, countryState: '' });
     }
 
-    if (this.state.isVerifyingEmail && this.state.emailVerificationToken) {
-      user.emailVerificationToken = this.state.emailVerificationToken;
-      this.closeModal(ENTER_EMAIL_VERIFICATION_SECURITY_TOKEN);
-      this.setState({ isVerifyingEmail: false, emailVerificationToken: '' });
-    }
+    // if (this.state.isVerifyingEmail && this.state.emailVerificationToken) {
+    //   user.emailVerificationToken = this.state.emailVerificationToken;
+    //   this.closeModal(EMAIL_VERIFICATION);
+    //   this.setState({ isVerifyingEmail: false, emailVerificationToken: '' });
+    // }
 
     requester.login(user).then(res => {
       if (res.success) {
@@ -302,11 +302,12 @@ class MainNav extends React.Component {
               this.openModal(UPDATE_COUNTRY);
             });
           } else if (errors.hasOwnProperty('EmailNotVerified')) {
-            NotificationManager.warning(errors['EmailNotVerified'].message, '', LONG);
-            this.setState({ isVerifyingEmail: true }, () => {
-              this.closeModal(LOGIN);
-              this.openModal(ENTER_EMAIL_VERIFICATION_SECURITY_TOKEN);
-            });
+            // NotificationManager.warning(errors['EmailNotVerified'].message, '', LONG);
+            // this.setState({ isVerifyingEmail: true }, () => {
+            //   this.closeModal(LOGIN);
+            //   this.openModal(EMAIL_VERIFICATION);
+            // });
+            console.log('EmailNotVerifiedException');
           } else {
             for (let key in errors) {
               if (typeof errors[key] !== 'function') {
@@ -431,7 +432,6 @@ class MainNav extends React.Component {
   setUserInfo() {
     requester.getUserInfo().then(res => {
       res.body.then(data => {
-        console.log(data);
         Wallet.getBalance(data.locAddress).then(eth => {
           const ethBalance = eth / (Math.pow(10, 18));
           Wallet.getTokenBalance(data.locAddress).then(loc => {
@@ -482,9 +482,10 @@ class MainNav extends React.Component {
   clearStateOnCloseModal(modal) {
     if (modal === LOGIN) {
       this.setState({ loginEmail: '', loginPassword: '' });
-    } else if (modal === EMAIL_VERIFICATION) {
-      this.setState({ isVerifyingEmail: false, emailVerificationToken: '' });
-    }
+    } 
+    // else if (modal === EMAIL_VERIFICATION) {
+    //   this.setState({ isVerifyingEmail: false, emailVerificationToken: '' });
+    // }
 
     this.setState({ country: { id: 1, name: 'United States of America' }, countryState: '' });
   }

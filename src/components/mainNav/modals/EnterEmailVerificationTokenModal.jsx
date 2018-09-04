@@ -1,7 +1,7 @@
 import { Modal } from 'react-bootstrap';
 import PropTypes from 'prop-types';
 import React from 'react';
-import { EMAIL_VERIFICATION } from '../../../constants/modals.js';
+import { ENTER_EMAIL_VERIFICATION_SECURITY_TOKEN } from '../../../constants/modals.js';
 
 import '../../../styles/css/components/modals/modal.css';
 
@@ -9,10 +9,10 @@ function EmailVerificationModal(props) {
 
   return (
     <div>
-      <Modal show={props.isActive} onHide={() => props.closeModal(EMAIL_VERIFICATION)} className="modal fade myModal">
+      <Modal show={props.isActive} onHide={() => props.closeModal(ENTER_EMAIL_VERIFICATION_SECURITY_TOKEN)} className="modal fade myModal">
         <Modal.Header>
           <h1>Email Verification</h1>
-          <button type="button" className="close" onClick={() => props.closeModal(EMAIL_VERIFICATION)}>&times;</button>
+          <button type="button" className="close" onClick={() => props.closeModal(ENTER_EMAIL_VERIFICATION_SECURITY_TOKEN)}>&times;</button>
         </Modal.Header>
         <Modal.Body>
           <p>It seems that your email has not yet been verified. Email with a security code has been sent to you. Please enter the security code in the field below.</p>

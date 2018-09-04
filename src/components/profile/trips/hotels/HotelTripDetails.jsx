@@ -5,6 +5,7 @@ import { Link, withRouter } from 'react-router-dom';
 import FillStar from '../../../../styles/images/fill-star.png';
 import LogoLockTrip from '../../../../styles/images/logolocktrip.png';
 import React from 'react';
+import PropTypes from 'prop-types';
 import Star from '../../../../styles/images/star.png';
 import moment from 'moment';
 import requester from '../../../../initDependencies';
@@ -35,52 +36,30 @@ class HotelTripDetails extends React.Component {
         longitude: '',
         checkIn: '',
         checkOut: '',
+        safeChargeError: '',
       }
     };
   }
 
   componentDidMount() {
-    // this comments paragraphes are for local testing.
-
-    // const bookingDataMock = {
-    //   'hotelName': 'COMO Metropolitan London', // done
-    //   'hotelId': 6669, // unused
-    //   'guestsCount': 2, // done
-    //   'startDate': 1530230400000,
-    //   'endDate': 1530316800000,
-    //   'roomType': 'City Room - Double', // done
-    //   'boardType': 'Hot Breack', // done
-    //   'bookingId': 720120716, // done
-    //   'hotelAddress': '19 Old Park Lane', // done
-    //   'hotelPhone': '44-20-74471000', // done
-    //   'hotelScore': 5, // done
-    //   'hotelUrl': 'http://localhost:3000/hotels/listings/6669?region52612&currency=GBP&startDate30/06/2018&endDate=01/07/2018&rooms=%5b%7B%22adults%22:2,%22children%22:%5B%5D%7D%5D', // unused
-    //   'hotelPhoto': 'https://static.locktrip.com/hotels/images/img-2-2846718761338376-53815.png', // done
-    //   'staticImagesUrl': 'https://static.locktrip.com/public/images', // unused
-    //   'staticFontsUrl': 'https://static.locktrip.com/public/fonts', // unused
-    //   'locationUrl': 'http://maps.google.com/?q=51.505029,-0.150089', // unused
-    //   'latitude': '51.505029', // done
-    //   'longitude': '-0.150089', // done
-    // };
     const bookingId = this.props.match.params.id;
-    requester.getHotelBookingDetails(bookingId).then(res => {
-      res.body.then(data => {
-        if (data) {
-          const bookingData = data;
-          this.extractDatesData(bookingData);
-          this.setState({
-            bookingData,
-          });
-        }
-        // this.extractDatesData(bookingDataMock);
-        // this.setState({
-        //   bookingData: bookingDataMock,
-        // });
-      })
-        .catch((err) => {
-          // console.log(err);
+    if (bookingId === 'error_url') {
+      this.setState({
+        safeChargeError: true,
+      });
+    } else {
+      requester.getHotelBookingDetails(bookingId).then(res => {
+        res.body.then(data => {
+          if (data) {
+            const bookingData = data;
+            this.extractDatesData(bookingData);
+            this.setState({
+              bookingData,
+            });
+          }
         });
-    });
+      });
+    }
   }
 
   extractDatesData(bookingData) {
@@ -151,10 +130,17 @@ class HotelTripDetails extends React.Component {
   }
 
   render() {
-    const { bookingData } = this.state;
+    const { bookingData, safeChargeError } = this.state;
     const checkInData = bookingData.checkIn;
     const checkOutData = bookingData.checkOut;
 
+    if (safeChargeError) {
+      return (
+        <section className="details-view safecharge-error" id="details">
+          <h2>Something wrong with your credit card payment request!</h2>
+        </section>
+      );
+    }
 
     return (
       <div>
@@ -228,5 +214,9 @@ class HotelTripDetails extends React.Component {
     );
   }
 }
+
+HotelTripDetails.propTypes = {
+  match: PropTypes.object,
+};
 
 export default withRouter(HotelTripDetails);

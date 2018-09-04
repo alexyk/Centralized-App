@@ -1,18 +1,21 @@
+import { LONG } from '../../../constants/notificationDisplayTimes.js';
 import { INVALID_CHILD_AGE, INVALID_GUEST_NAME } from '../../../constants/warningMessages.js';
 
 import { Config } from '../../../config';
 import { CurrencyConverter } from '../../../services/utilities/currencyConverter';
-import { LONG } from '../../../constants/notificationDisplayTimes.js';
 import { NotificationManager } from 'react-notifications';
 import PropTypes from 'prop-types';
-import { ROOMS_XML_CURRENCY } from '../../../constants/currencies.js';
 import React from 'react';
 import { connect } from 'react-redux';
 import moment from 'moment';
+import queryString from 'query-string';
 import requester from '../../../initDependencies';
 import { setCurrency } from '../../../actions/paymentInfo';
 import validator from 'validator';
 import { withRouter } from 'react-router-dom';
+import { RoomsXMLCurrency } from '../../../services/utilities/roomsXMLCurrency';
+
+const DEFAULT_CRYPTO_CURRENCY = 'EUR';
 
 class HotelsBookingPage extends React.Component {
   constructor(props) {
@@ -22,6 +25,7 @@ class HotelsBookingPage extends React.Component {
       // rooms: [{ adults: [{ title: '', firstName: '', lastName: '' }], children: [] }],
       data: null,
       loading: true,
+      userInfo: {}
     };
 
     this.handleAdultChange = this.handleAdultChange.bind(this);
@@ -29,8 +33,8 @@ class HotelsBookingPage extends React.Component {
     this.handleSubmit = this.handleSubmit.bind(this);
     this.requestHotel = this.requestHotel.bind(this);
     this.requestHotelRooms = this.requestHotelRooms.bind(this);
-    this.requestLocRate = this.requestLocRate.bind(this);
     this.requestCurrencyRates = this.requestCurrencyRates.bind(this);
+    this.requestUserInfo = this.requestUserInfo.bind(this);
 
     // this.requestNewQuoteID = this.requestNewQuoteID.bind(this);
   }
@@ -38,7 +42,6 @@ class HotelsBookingPage extends React.Component {
   componentDidMount() {
     this.requestHotel();
     this.requestHotelRooms();
-    this.requestLocRate();
     this.requestCurrencyRates();
   }
 
@@ -70,6 +73,8 @@ class HotelsBookingPage extends React.Component {
           pictures: data.hotelPhotos,
           loading: false,
           quoteId: quoteId
+        }, () => {
+          this.requestUserInfo();
         });
       });
     });
@@ -89,23 +94,46 @@ class HotelsBookingPage extends React.Component {
     const quoteId = searchParams.pop().split('=')[1];
     requester.getHotelRooms(id, searchParams).then(res => {
       res.body.then(data => {
-        const roomResults = data.filter(x => x.quoteId === quoteId)[0].roomsResults;
-        const totalPrice = this.calculateRoomsTotalPrice(roomResults);
-        this.setState({
-          roomResults: roomResults,
-          totalPrice: totalPrice,
-          loading: false,
-        });
+        const roomResults = data.filter(x => x.quoteId === quoteId)[0];
+        if (roomResults) {
+          const room = roomResults.roomsResults;
+          const totalPrice = this.calculateRoomsTotalPrice(room);
+          this.setState({
+            roomResults: room,
+            totalPrice: totalPrice,
+            loading: false,
+          });
+        } else {
+          NotificationManager.warning('Room is no longer available', '', LONG);
+          const pathname = this.props.location.pathname.indexOf('/mobile') !== -1 ? '/mobile/details' : '/hotels/listings';
+          const id = this.props.match.params.id;
+          const search = this.getQueryString(queryString.parse(this.props.location.search));
+          this.props.history.push(`${pathname}/${id}${search}`);
+        }
       });
     });
   }
 
-  requestLocRate() {
-    requester.getLocRateByCurrency(ROOMS_XML_CURRENCY).then(res => {
-      res.body.then(data => {
-        this.setState({ locRate: Number(data[0][`price_${ROOMS_XML_CURRENCY.toLowerCase()}`]) });
-      });
-    });
+  getQueryString(queryStringParameters) {
+    let queryString = '?';
+    queryString += 'region=' + encodeURI(queryStringParameters.region);
+    queryString += '&currency=' + encodeURI(queryStringParameters.currency);
+    queryString += '&startDate=' + encodeURI(queryStringParameters.startDate);
+    queryString += '&endDate=' + encodeURI(queryStringParameters.endDate);
+    queryString += '&rooms=' + encodeURI(queryStringParameters.rooms);
+    return queryString;
+  }
+
+  requestUserInfo() {
+    requester.getUserInfo()
+      .then(res => res.body)
+      .then(userInfo => this.setState({ userInfo }, () => {
+        const rooms = [...this.state.rooms];
+        rooms[0].adults[0].firstName = userInfo.firstName;
+        rooms[0].adults[0].lastName = userInfo.lastName;
+        rooms[0].adults[0].title = userInfo.gender === 'female' ? 'Mrs' : 'Mr';
+        this.setState({ rooms });
+      }));
   }
 
   getRoomsFromURL(searchParams) {
@@ -116,9 +144,9 @@ class HotelsBookingPage extends React.Component {
       const adults = [];
       for (let guestIndex = 0; guestIndex < searchRoom.adults; guestIndex++) {
         const adult = {
-          title: roomIndex === 0 && guestIndex === 0 && this.props.userInfo.gender === 'women' ? 'Mrs' : 'Mr',
-          firstName: roomIndex === 0 && guestIndex === 0 ? this.props.userInfo.firstName : guestIndex > 0 ? 'Optional' : '',
-          lastName: roomIndex === 0 && guestIndex === 0 ? this.props.userInfo.lastName : guestIndex > 0 ? 'Optional' : '',
+          title: roomIndex === 0 && guestIndex === 0 && this.state.userInfo.gender === 'women' ? 'Mrs' : 'Mr',
+          firstName: roomIndex === 0 && guestIndex === 0 ? this.state.userInfo.firstName : guestIndex > 0 ? 'Optional' : '',
+          lastName: roomIndex === 0 && guestIndex === 0 ? this.state.userInfo.lastName : guestIndex > 0 ? 'Optional' : '',
         };
 
         adults.push(adult);
@@ -215,9 +243,11 @@ class HotelsBookingPage extends React.Component {
         currency: currency
       };
 
+      const queryParams = queryString.parse(this.props.location.search);
+
       const encodedBooking = encodeURI(JSON.stringify(booking));
       const id = this.props.match.params.id;
-      const query = `?booking=${encodedBooking}`;
+      const query = `?region=${queryParams.region}&startDate=${queryParams.startDate}&endDate=${queryParams.endDate}&booking=${encodedBooking}`;
       const isWebView = this.props.location.pathname.indexOf('/mobile') !== -1;
       const rootURL = !isWebView ? '/hotels/listings/book/confirm' : '/mobile/book/confirm';
       this.props.history.push(`${rootURL}/${id}${query}`);
@@ -261,10 +291,11 @@ class HotelsBookingPage extends React.Component {
     const hotelMainAddress = this.state.hotel && this.state.hotel.additionalInfo.mainAddress;
     const hotelCityName = this.state.hotel && this.state.hotel.city;
     const rooms = this.state.rooms;
+    const rates = this.state.rates;
     // console.log(this.state.pictures);
     const currency = this.props.paymentInfo.currency;
     const hotelPicUrl = this.state.pictures && this.state.pictures.length > 0 ? this.state.pictures[0].url : '/listings/images/default.png';
-    const priceInSelectedCurrency = this.state.rates && Number(CurrencyConverter.convert(this.state.rates, ROOMS_XML_CURRENCY, currency, this.state.totalPrice)).toFixed(2);
+    const priceInSelectedCurrency = this.state.rates && Number(CurrencyConverter.convert(this.state.rates, RoomsXMLCurrency.get(), currency, this.state.totalPrice)).toFixed(2);
 
     return (
       <div>
@@ -293,21 +324,21 @@ class HotelsBookingPage extends React.Component {
                       if (!this.props.userInfo.isLogged) {
                         return (
                           <h6 key={index}>
-                            {room.name}, {this.state.nights} nights: LOC {Number(room.price / this.state.locRate).toFixed(2)}
+                            {room.name}, {this.state.nights} nights: LOC {rates && Number(CurrencyConverter.convert(this.state.rates, RoomsXMLCurrency.get(), DEFAULT_CRYPTO_CURRENCY, room.price) / this.props.paymentInfo.locRateInEur).toFixed(2)}
                           </h6>
                         );
                       } else {
                         return (
                           <h6 key={index}>
-                            {room.name}, {this.state.nights} nights: {this.props.paymentInfo.currencySign}{this.state.rates && (CurrencyConverter.convert(this.state.rates, ROOMS_XML_CURRENCY, currency, room.price)).toFixed(2)} (LOC {Number(room.price / this.state.locRate).toFixed(2)})
+                            {room.name}, {this.state.nights} nights: {this.props.paymentInfo.currencySign}{rates && (CurrencyConverter.convert(this.state.rates, RoomsXMLCurrency.get(), currency, room.price)).toFixed(2)} (LOC {rates && Number(CurrencyConverter.convert(this.state.rates, RoomsXMLCurrency.get(), DEFAULT_CRYPTO_CURRENCY, room.price) / this.props.paymentInfo.locRateInEur).toFixed(2)})
                           </h6>
                         );
                       }
                     })}
                     <hr />
                     {this.props.userInfo.isLogged ?
-                      <h6 className="total-price">Total: {this.props.paymentInfo.currencySign}{priceInSelectedCurrency} (LOC {Number(this.state.totalPrice / this.state.locRate).toFixed(2)})</h6> :
-                      <h6 className="total-price">Total: LOC {Number(this.state.totalPrice / this.state.locRate).toFixed(2)}</h6>
+                      <h6 className="total-price">Total: {this.props.paymentInfo.currencySign}{priceInSelectedCurrency} (LOC {rates && Number(CurrencyConverter.convert(this.state.rates, RoomsXMLCurrency.get(), DEFAULT_CRYPTO_CURRENCY, this.state.totalPrice) / this.props.paymentInfo.locRateInEur).toFixed(2)})</h6> :
+                      <h6 className="total-price">Total: LOC {rates && Number(CurrencyConverter.convert(rates, RoomsXMLCurrency.get(), currency, this.state.totalPrice) / this.props.paymentInfo.locRateInEur).toFixed(2)}</h6>
                     }
                     <div className="clearfix"></div>
                   </div>
