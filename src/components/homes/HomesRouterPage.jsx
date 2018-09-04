@@ -29,7 +29,7 @@ class HomesRouterPage extends React.Component {
     return (
       <div>
         <Switch>
-          <Route exact path="/homes" render={() => <HomePage homePage="homes" />} />
+          <Route exact path="/homes" render={() => <HomePage homePage="homes" listings={this.props.listings} hotels={this.props.hotels} />} />
           <Route exact path="/homes/listings" render={() => <HomesSearchPage countries={this.state.countries} />} />
           <Route exact path="/homes/listings/:id" render={() => <HomeDetailsPage countries={this.state.countries} />} />
           <Route path="/homes/listings/book" render={() => <HomesBookingRouterPage />} />
@@ -40,6 +40,9 @@ class HomesRouterPage extends React.Component {
 }
 
 HomesRouterPage.propTypes = {
+  listings: PropTypes.array,
+  hotels: PropTypes.array,
+
   location: PropTypes.object,
   history: PropTypes.object,
 };
