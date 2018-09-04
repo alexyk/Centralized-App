@@ -7,13 +7,13 @@ import {
   CONFIRM_WALLET,
   CREATE_WALLET,
   EMAIL_VERIFICATION,
+  ENTER_EMAIL_VERIFICATION_SECURITY_TOKEN,
   ENTER_RECOVERY_TOKEN,
   LOGIN,
   REGISTER,
   SAVE_WALLET,
   SEND_RECOVERY_EMAIL,
-  UPDATE_COUNTRY,
-  ENTER_EMAIL_VERIFICATION_SECURITY_TOKEN
+  UPDATE_COUNTRY
 } from '../../constants/modals.js';
 import {
   INVALID_EMAIL,
@@ -24,6 +24,7 @@ import {
 } from '../../constants/warningMessages';
 import { Link, withRouter } from 'react-router-dom';
 import { MenuItem, Nav, NavDropdown, NavItem, Navbar } from 'react-bootstrap/lib';
+import { NOT_FOUND, UNCATEGORIZED_ERROR } from '../../constants/errorMessages';
 import { PASSWORD_SUCCESSFULLY_CHANGED, PROFILE_SUCCESSFULLY_CREATED } from '../../constants/successMessages.js';
 import { closeModal, openModal } from '../../actions/modalsInfo';
 import { setIsLogged, setUserInfo } from '../../actions/userInfo';
@@ -35,12 +36,11 @@ import { Config } from '../../config';
 import ConfirmWalletModal from './modals/ConfirmWalletModal';
 import CreateWalletModal from './modals/CreateWalletModal';
 import EmailVerificationModal from './modals/EmailVerificationModal';
-import EnterRecoveryTokenModal from './modals/EnterRecoveryTokenModal';
 import EnterEmailVerificationTokenModal from './modals/EnterEmailVerificationTokenModal';
+import EnterRecoveryTokenModal from './modals/EnterRecoveryTokenModal';
 import { LONG } from '../../constants/notificationDisplayTimes.js';
 import LoginModal from './modals/LoginModal';
 import { MISSING_AIRDROP_INFO } from '../../constants/warningMessages.js';
-import { NOT_FOUND, UNCATEGORIZED_ERROR } from '../../constants/errorMessages';
 import { NotificationManager } from 'react-notifications';
 import PropTypes from 'prop-types';
 import ReCAPTCHA from 'react-google-recaptcha';
@@ -68,8 +68,8 @@ class MainNav extends React.Component {
       signUpLocAddress: '',
       loginEmail: '',
       loginPassword: '',
-      country: { id: 1 },
-      // emailVerificationToken: '',
+      country: '',
+      emailVerificationToken: '',
       walletPassword: '',
       repeatWalletPassword: '',
       mnemonicWords: '',
@@ -84,6 +84,7 @@ class MainNav extends React.Component {
       isUpdatingWallet: false,
       confirmedRegistration: false,
       currentReCaptcha: '',
+      countryState: ''
     };
 
     this.onChange = this.onChange.bind(this);
@@ -165,7 +166,13 @@ class MainNav extends React.Component {
   }
 
   handleChangeCountry(e) {
-    this.setState({ country: JSON.parse(e.target.value) });
+    if (!e.target.value) {
+      this.setState({ country: '' });
+    }
+    else {
+      this.getStates(JSON.parse(e.target.value).id);
+      this.setState({ country: JSON.parse(e.target.value) });
+    }
   }
 
   handleMnemonicWordsChange(e) {
@@ -255,8 +262,11 @@ class MainNav extends React.Component {
 
     if (this.state.isUpdatingCountry && this.state.country) {
       user.country = this.state.country.id;
+      if (this.state.countryState) {
+        user.countryState = Number(this.state.countryState);
+      }
       this.closeModal(UPDATE_COUNTRY);
-      this.setState({ isUpdatingCountry: false, country: { id: 1 } });
+      this.setState({ isUpdatingCountry: false, country: '', countryState: '' });
     }
 
     // if (this.state.isVerifyingEmail && this.state.emailVerificationToken) {
@@ -476,12 +486,12 @@ class MainNav extends React.Component {
   clearStateOnCloseModal(modal) {
     if (modal === LOGIN) {
       this.setState({ loginEmail: '', loginPassword: '' });
-    } 
+    }
     // else if (modal === EMAIL_VERIFICATION) {
     //   this.setState({ isVerifyingEmail: false, emailVerificationToken: '' });
     // }
 
-    this.setState({ country: { id: 1 } });
+    this.setState({ country: '', countryState: '' });
   }
 
   messageListener() {
@@ -583,10 +593,21 @@ class MainNav extends React.Component {
       .then(data => this.setState({ countries: data }));
   }
 
+  getStates(id) {
+    requester.getStates(id)
+      .then(response => response.body)
+      .then(data => this.setState({ states: data }));
+  }
+
   handleUpdateCountry() {
     if (this.state.country) {
+      if (['Canada', 'India', 'United States of America'].includes(this.state.country.name) && !this.state.countryState) {
+        NotificationManager.error('Please select a valid state.', '', LONG);
+        return;
+      }
       this.closeModal(UPDATE_COUNTRY);
       this.handleLogin();
+
     } else {
       NotificationManager.error('Please select a valid country.', '', LONG);
     }
@@ -665,7 +686,7 @@ class MainNav extends React.Component {
           <AirdropLoginModal isActive={this.props.modalsInfo.isActive[AIRDROP_LOGIN]} openModal={this.openModal} closeModal={this.closeModal} loginEmail={this.state.loginEmail} loginPassword={this.state.loginPassword} onChange={this.onChange} handleLogin={this.handleAirdropLogin} />
           <RegisterModal isActive={this.props.modalsInfo.isActive[REGISTER]} openModal={this.openModal} closeModal={this.closeModal} signUpEmail={this.state.signUpEmail} signUpFirstName={this.state.signUpFirstName} signUpLastName={this.state.signUpLastName} signUpPassword={this.state.signUpPassword} countries={this.state.countries} onChange={this.onChange} handleChangeCountry={this.handleChangeCountry} />
           <AirdropRegisterModal isActive={this.props.modalsInfo.isActive[AIRDROP_REGISTER]} openModal={this.openModal} closeModal={this.closeModal} signUpEmail={this.state.signUpEmail} signUpFirstName={this.state.signUpFirstName} signUpLastName={this.state.signUpLastName} signUpPassword={this.state.signUpPassword} onChange={this.onChange} />
-          <UpdateCountryModal isActive={this.props.modalsInfo.isActive[UPDATE_COUNTRY]} openModal={this.openModal} closeModal={this.closeModal} country={this.state.country} countries={this.state.countries} handleUpdateCountry={this.handleUpdateCountry} handleChangeCountry={this.handleChangeCountry} />
+          <UpdateCountryModal isActive={this.props.modalsInfo.isActive[UPDATE_COUNTRY]} openModal={this.openModal} closeModal={this.closeModal} onChange={this.onChange} country={this.state.country} countries={this.state.countries} states={this.state.states} countryState={this.state.countryState} handleUpdateCountry={this.handleUpdateCountry} handleChangeCountry={this.handleChangeCountry} />
           <EmailVerificationModal isActive={this.props.modalsInfo.isActive[EMAIL_VERIFICATION]} openModal={this.openModal} closeModal={this.closeModal} onChange={this.onChange} requestVerificationEmail={this.requestVerificationEmail} />
           <EnterEmailVerificationTokenModal isActive={this.props.modalsInfo.isActive[ENTER_EMAIL_VERIFICATION_SECURITY_TOKEN]} openModal={this.openModal} closeModal={this.closeModal} onChange={this.onChange} handleLogin={this.handleLogin} emailVerificationToken={this.state.emailVerificationToken} />
 

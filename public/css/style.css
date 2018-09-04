@@ -2120,7 +2120,7 @@ li.dropdown {
 }
 
 #profile-my-reservations .reservation-box-pending button .fa-link {
-    padding: 0 5px;    
+    padding: 0 5px;
 }
 
 #profile-my-reservations .reservation-box-pending .fa-link {
@@ -2242,6 +2242,13 @@ li.dropdown {
     padding-left: 100px;
     padding-right: 100px;
     margin-top: 100px;
+}
+
+@media(max-width: 768px) {
+  #popular-hotels-box {
+    padding-left: 40px;
+    padding-right: 40px;
+  }
 }
 
 #popular-hotels-box h2 {
@@ -3133,3 +3140,6 @@ h3 {
     pointer-events: none;
     opacity:0;
 } */
+.slick-prev:before, .slick-next:before {
+  color: #d87a61!important;
+}
