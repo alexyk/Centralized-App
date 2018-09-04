@@ -210,7 +210,8 @@ class AirdropPage extends Component {
     const referralCount = info.referralCount;
     const isCampaignSuccessfullyCompleted = info.isCampaignSuccessfullyCompleted;
     const voteUrl = info.voteUrl ? info.voteUrl : '';
-    this.props.dispatch(setAirdropInfo(email, facebookProfile, telegramProfile, twitterProfile, redditProfile, refLink, participates, isVerifyEmail, referralCount, isCampaignSuccessfullyCompleted, voteUrl));
+    const finalizedStatus = info.finalizedStatus;
+    this.props.dispatch(setAirdropInfo(email, facebookProfile, telegramProfile, twitterProfile, redditProfile, refLink, participates, isVerifyEmail, referralCount, isCampaignSuccessfullyCompleted, voteUrl, finalizedStatus));
     this.props.airdropInfo.referralCount = referralCount;
     this.props.airdropInfo.isCampaignSuccessfullyCompleted = isCampaignSuccessfullyCompleted;
     this.setState({ voteUrl: voteUrl, loading: false });
