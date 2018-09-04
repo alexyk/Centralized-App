@@ -37,13 +37,20 @@ $media-expressions: (
 		justify-content: space-between;
 	}
 	&-details {
-		display: none;
+		// display: none;
 		flex-direction: column;
 		align-items: center;
 		@include media(">=desktop") {
 			flex-direction: row;
 			display: flex;
-		}
+    }
+    .loc-rate {
+      margin: 0;
+      @include media("<tablet") {
+        text-align: left;
+        padding: 10px 0;
+      }
+    }
 		.rate {
 			font-weight: 400;
 			font-size: 14px;
@@ -52,7 +59,10 @@ $media-expressions: (
 			@include media(">=desktop") {
 				margin-right: 19px;
 				margin-bottom: 0;
-			}
+      }
+      @include media("<tablet") {
+        font-size: 1em;
+      }
 		}
 	}
 	.cross-rate {
@@ -63,31 +73,43 @@ $media-expressions: (
       margin-right: 11px;
       padding-top: 10px;
       padding-bottom: 10px;
-		}
+    }
+    @include media("<tablet") {
+      font-size: 1em;
+      margin-right: 2%;
+    }
   }
   .balance-info {
     display: flex;
+    @include media("<tablet") {
+      display: block;
+    }
   }
 	.balance {
-		display: flex;
 		align-items: center;
     margin-bottom: 15px;
     margin-right: 10px;
 		@include media(">=desktop") {
 			margin-top: 10px;
 			margin-bottom: 10px;
-		}
+    }
+    @include media("<tablet") {
+      margin-right: 0;
+    }
 		.value {
 			border: 1px dashed $gray;
 			// border-right: none;
 			border-radius: 3px 0 0 3px;
 			display: flex;
 			align-items: center;
-			padding: 8px 10px;
+			padding: 12px 10px;
 			font-size: 14px;
 			@include media(">=desktop") {
 				min-width: 211px;
-			}
+      }
+      @include media("<tablet") {
+        background-color: #fff;
+      }
 			span {
 				&:last-child {
 					font-weight: 400;
@@ -114,8 +136,11 @@ $media-expressions: (
 		min-width: 120px;
 		margin-bottom: 15px;
 		@include media(">=tablet") {
-			margin-bottom: 0;
-		}
+      margin-bottom: 0;
+    }
+    @include media("<tablet") {
+      display: none;
+    }
 		select {
 			background: transparent;
       border: none;
