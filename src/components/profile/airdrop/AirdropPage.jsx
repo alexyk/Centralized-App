@@ -287,7 +287,7 @@ class AirdropPage extends Component {
   _getVerifiedStatus() {
     return [
       <div className="balance-row__label">
-        <span className="step-check checked"  style={{"margin-top": "0.4em"}}></span>
+        <span className="step-check checked"  style={{"margin-top": "-0.4em"}}></span>
         <span className="emphasized-text">Verified Balance</span>
       </div>,
       <div className="balance-row__content">$10</div>
