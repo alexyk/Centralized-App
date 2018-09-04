@@ -103,6 +103,12 @@ class StaticHotelsSearchPage extends React.Component {
 
     const query = this.props.location.search;
     const queryParams = queryString.parse(query);
+
+    console.log(this.props.paymentInfo.currency);
+    if (!this.props.paymentInfo.currency) {
+      this.props.dispatch(setCurrency(queryParams.currency));
+    }
+
     const { region } = queryParams;
 
     if (this.isSearchReady()) {
