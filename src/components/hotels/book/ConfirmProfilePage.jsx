@@ -111,7 +111,6 @@ class ConfirmProfilePage extends React.Component {
 
   payWithCard() {
     const { paymentInfo } = this.props.location.state;
-    console.log(paymentInfo);
     requester.verifyCreditCardPayment(paymentInfo)
       .then(res => {
         res.body.then((data) => {
