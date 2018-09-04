@@ -83,7 +83,6 @@ class NavLocalization extends Component {
     this.setState({ locAmount });
     const locRateInEUR = this.calculateLocRate(locAmount, DEFAULT_CRYPTO_CURRENCY);
     const locRateInCurrentCurrency = this.calculateLocRate(locAmount, this.props.paymentInfo.currency);
-    console.log(locRateInCurrentCurrency);
     
     this.props.dispatch(setLocRate(locRateInCurrentCurrency, false, 'Nav'));
     this.props.dispatch(setLocRateInEur(locRateInEUR, false, 'Nav'));
