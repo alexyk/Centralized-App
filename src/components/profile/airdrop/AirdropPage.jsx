@@ -287,10 +287,10 @@ class AirdropPage extends Component {
   _getVerifiedStatus() {
     return [
       <div className="balance-row__label">
-        <span className="step-check checked"></span>
+        <span className="step-check checked"  style={{"margin-top": "0.4em"}}></span>
         <span className="emphasized-text">Verified Balance</span>
       </div>,
-      <div className="balance-row__content">${this.props.airdropInfo.isCampaignSuccessfullyCompleted ? this.props.airdropInfo.referralCount * 5 + 10 : this.props.airdropInfo.referralCount * 5}</div>
+      <div className="balance-row__content">$10</div>
     ];
   }
 
@@ -304,10 +304,10 @@ class AirdropPage extends Component {
   _getFailedStatus() {
     return [
       <div className="balance-row__label">
-        <span className="step-check unchecked"></span>
+        <span className="step-check unchecked" style={{"margin-top": "1.5em"}}></span>
         <span className="mandatory">Duplicate accounting/multi accounting has been detected. As a result your balance has been voided.</span>
       </div>,
-      <div className="balance-row__content">$0</div>
+      <div className="balance-row__content centered-balance">$0</div>
     ];
   }
 
