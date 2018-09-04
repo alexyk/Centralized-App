@@ -3,20 +3,14 @@ import '../../../styles/css/components/carousel-component.css';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 
-import { ALL_ROOMS_TAKEN, INVALID_SEARCH_DATE } from '../../../constants/warningMessages.js';
-import { CHECKING_ROOM_AVAILABILITY, ROOM_NO_LONGER_AVAILABLE } from '../../../constants/infoMessages.js';
-
 import { Config } from '../../../config';
 import HotelDetailsInfoSection from './HotelDetailsInfoSection';
 import HotelsSearchBar from '../search/HotelsSearchBar';
-import { LONG } from '../../../constants/notificationDisplayTimes.js';
 import Lightbox from 'react-images';
 import { NotificationManager } from 'react-notifications';
 import PropTypes from 'prop-types';
-import { ROOMS_XML_CURRENCY } from '../../../constants/currencies.js';
 import React from 'react';
 import Slider from 'react-slick';
-import { UNCATEGORIZED_ERROR } from '../../../constants/errorMessages.js';
 import _ from 'lodash';
 import { connect } from 'react-redux';
 import moment from 'moment';
@@ -25,6 +19,11 @@ import requester from '../../../initDependencies';
 import { setCurrency } from '../../../actions/paymentInfo';
 import { setSearchInfo } from '../../../actions/searchInfo';
 import { withRouter } from 'react-router-dom';
+
+import { CHECKING_ROOM_AVAILABILITY, ROOM_NO_LONGER_AVAILABLE } from '../../../constants/infoMessages.js';
+import { UNCATEGORIZED_ERROR } from '../../../constants/errorMessages.js';
+import { INVALID_SEARCH_DATE, ALL_ROOMS_TAKEN } from '../../../constants/warningMessages.js';
+import { LONG } from '../../../constants/notificationDisplayTimes.js';
 
 const SEARCH_EXPIRATION_TIME = 30000;
 
@@ -91,7 +90,6 @@ class HotelDetailsPage extends React.Component {
       });
     });
 
-    this.getLocRate();
     requester.getCurrencyRates().then(res => {
       res.body.then(data => {
         this.setState({ rates: data });
@@ -178,14 +176,6 @@ class HotelDetailsPage extends React.Component {
       }
     }
     return false;
-  }
-
-  getLocRate() {
-    requester.getLocRateByCurrency(ROOMS_XML_CURRENCY).then(res => {
-      res.body.then(data => {
-        this.setState({ locRate: Number(data[0][`price_${ROOMS_XML_CURRENCY.toLowerCase()}`]) });
-      });
-    });
   }
 
   updateParamsMap(key, value) {
@@ -508,7 +498,7 @@ class HotelDetailsPage extends React.Component {
               endDate={this.state.calendarEndDate}
               data={this.state.data}
               hotelRooms={this.state.hotelRooms}
-              locRate={this.state.locRate}
+              locRate={this.props.paymentInfo.locRateInEur}
               rates={this.state.rates}
               loading={this.state.loading}
               currencySign={this.props.paymentInfo.currencySign}

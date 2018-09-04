@@ -24,7 +24,7 @@ import {
 } from '../../constants/warningMessages';
 import { Link, withRouter } from 'react-router-dom';
 import { MenuItem, Nav, NavDropdown, NavItem, Navbar } from 'react-bootstrap/lib';
-import { PASSWORD_SUCCESSFULLY_CHANGED, PROFILE_SUCCESSFULLY_CREATED, EMAIL_VERIFIED } from '../../constants/successMessages.js';
+import { PASSWORD_SUCCESSFULLY_CHANGED, PROFILE_SUCCESSFULLY_CREATED } from '../../constants/successMessages.js';
 import { closeModal, openModal } from '../../actions/modalsInfo';
 import { setIsLogged, setUserInfo } from '../../actions/userInfo';
 
@@ -69,7 +69,7 @@ class MainNav extends React.Component {
       loginEmail: '',
       loginPassword: '',
       country: { id: 1 },
-      emailVerificationToken: '',
+      // emailVerificationToken: '',
       walletPassword: '',
       repeatWalletPassword: '',
       mnemonicWords: '',
@@ -259,11 +259,11 @@ class MainNav extends React.Component {
       this.setState({ isUpdatingCountry: false, country: { id: 1 } });
     }
 
-    if (this.state.isVerifyingEmail && this.state.emailVerificationToken) {
-      user.emailVerificationToken = this.state.emailVerificationToken;
-      this.closeModal(ENTER_EMAIL_VERIFICATION_SECURITY_TOKEN);
-      this.setState({ isVerifyingEmail: false, emailVerificationToken: '' });
-    }
+    // if (this.state.isVerifyingEmail && this.state.emailVerificationToken) {
+    //   user.emailVerificationToken = this.state.emailVerificationToken;
+    //   this.closeModal(EMAIL_VERIFICATION);
+    //   this.setState({ isVerifyingEmail: false, emailVerificationToken: '' });
+    // }
 
     requester.login(user).then(res => {
       if (res.success) {
@@ -296,11 +296,12 @@ class MainNav extends React.Component {
               this.openModal(UPDATE_COUNTRY);
             });
           } else if (errors.hasOwnProperty('EmailNotVerified')) {
-            NotificationManager.warning(errors['EmailNotVerified'].message, '', LONG);
-            this.setState({ isVerifyingEmail: true }, () => {
-              this.closeModal(LOGIN);
-              this.openModal(ENTER_EMAIL_VERIFICATION_SECURITY_TOKEN);
-            });
+            // NotificationManager.warning(errors['EmailNotVerified'].message, '', LONG);
+            // this.setState({ isVerifyingEmail: true }, () => {
+            //   this.closeModal(LOGIN);
+            //   this.openModal(EMAIL_VERIFICATION);
+            // });
+            console.log('EmailNotVerifiedException');
           } else {
             for (let key in errors) {
               if (typeof errors[key] !== 'function') {
@@ -475,9 +476,10 @@ class MainNav extends React.Component {
   clearStateOnCloseModal(modal) {
     if (modal === LOGIN) {
       this.setState({ loginEmail: '', loginPassword: '' });
-    } else if (modal === EMAIL_VERIFICATION) {
-      this.setState({ isVerifyingEmail: false, emailVerificationToken: '' });
-    }
+    } 
+    // else if (modal === EMAIL_VERIFICATION) {
+    //   this.setState({ isVerifyingEmail: false, emailVerificationToken: '' });
+    // }
 
     this.setState({ country: { id: 1 } });
   }

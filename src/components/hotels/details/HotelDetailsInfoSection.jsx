@@ -1,13 +1,16 @@
 import HotelDetailsReviewBox from './HotelDetailsReviewBox';
 import { LOGIN, EMAIL_VERIFICATION } from '../../../constants/modals.js';
 import PropTypes from 'prop-types';
-import { ROOMS_XML_CURRENCY } from '../../../constants/currencies.js';
 import React from 'react';
 import { connect } from 'react-redux';
 import { openModal } from '../../../actions/modalsInfo.js';
 import { withRouter } from 'react-router-dom';
 import { CurrencyConverter } from '../../../services/utilities/currencyConverter';
+import { RoomsXMLCurrency } from '../../../services/utilities/roomsXMLCurrency';
 import Facilities from './Facilities';
+import requester from '../../../initDependencies';
+
+const DEFAULT_CRYPTO_CURRENCY = 'EUR';
 
 function HotelDetailsInfoSection(props) {
   const getTotalPrice = (room) => {
@@ -29,15 +32,23 @@ function HotelDetailsInfoSection(props) {
     return starsElements;
   };
 
+  const hangleBookNowClick = (resultIndex) => {
+    requester.getUserInfo().then(res => res.body)
+      .then(data => {
+        const { isEmailVerified } = data;
+        if (!isEmailVerified) {
+          props.dispatch(openModal(EMAIL_VERIFICATION));
+        } else {
+          props.handleBookRoom(roomsResults.slice(resultIndex));
+        }
+      });
+  };
+
   const getButton = (resultIndex) => {
     if (!props.userInfo.isLogged) {
       return <button className="btn btn-primary" onClick={(e) => props.dispatch(openModal(LOGIN, e))}>Login</button>;
-    } 
-    // else if (!props.userInfo.isEmailVerified) {
-    //   return <button className="btn btn-primary" onClick={() => props.dispatch(openModal(EMAIL_VERIFICATION))}>Book Now</button>;
-    // } 
-    else {
-      return <button className="btn btn-primary" onClick={() => props.handleBookRoom(roomsResults.slice(resultIndex))}>Book Now</button>;
+    } else {
+      return <button className="btn btn-primary" onClick={() => hangleBookNowClick(resultIndex)}>Book Now</button>;
     }
   };
 
@@ -71,9 +82,9 @@ function HotelDetailsInfoSection(props) {
   }
 
   const currency = props.paymentInfo.currency;
+  const roomsXMLCurrency = RoomsXMLCurrency.get();
 
   return (
-
     <section id="hotel-info">
       <div className="container">
         <div className="hotel-content" id="hotel-section">
@@ -133,11 +144,11 @@ function HotelDetailsInfoSection(props) {
                               <div key={roomIndex} className="room">
                                 <span>{room.name} ({room.mealType}) - </span>
                                 {props.userInfo.isLogged &&
-                                  <span>{props.currencySign}{props.rates && Number((CurrencyConverter.convert(props.rates, ROOMS_XML_CURRENCY, currency, room.price)) / props.nights).toFixed(2)} </span>
+                                  <span>{props.currencySign}{props.rates && Number((CurrencyConverter.convert(props.rates, roomsXMLCurrency, currency, room.price)) / props.nights).toFixed(2)} </span>
                                 }
                                 <span>
                                   {props.userInfo.isLogged && '('}
-                                  {Number((room.price / props.nights) / props.locRate).toFixed(2)} LOC
+                                  {Number((CurrencyConverter.convert(props.rates, roomsXMLCurrency, DEFAULT_CRYPTO_CURRENCY, room.price) / props.nights) / props.locRate).toFixed(2)} LOC
                               {props.userInfo.isLogged && ')'} / night
                             </span>
                               </div>
@@ -150,11 +161,10 @@ function HotelDetailsInfoSection(props) {
                           <span className="price-details">
                             <span>{props.nights} {props.nights === 1 ? 'night: ' : 'nights: '}</span>
                             {props.userInfo.isLogged &&
-                              <span>{props.currencySign}{props.rates && Number(CurrencyConverter.convert(props.rates, ROOMS_XML_CURRENCY, currency, getTotalPrice(results[0].roomsResults))).toFixed(2)} (</span>
+                              <span>{props.currencySign}{props.rates && Number(CurrencyConverter.convert(props.rates, roomsXMLCurrency, currency, getTotalPrice(results[0].roomsResults))).toFixed(2)} (</span>
                             }
-                            <span>{Number(getTotalPrice(results[0].roomsResults) / props.locRate).toFixed(2)} LOC{props.userInfo.isLogged ? ')' : ''}</span>
+                            <span>{props.rates && Number(CurrencyConverter.convert(props.rates, roomsXMLCurrency, DEFAULT_CRYPTO_CURRENCY, getTotalPrice(results[0].roomsResults)) / props.locRate).toFixed(2)} LOC{props.userInfo.isLogged ? ')' : ''}</span>
                           </span>
-
                         </div>
                       </div>
                       <div className="col col-md-3 content-center">
