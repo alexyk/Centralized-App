@@ -26,7 +26,7 @@ class ProfileEditForm extends React.Component {
       day: '',
       year: '',
       gender: '',
-      country: { id: 1, name: 'US', code: 'US' },
+      country: { id: 1, name: 'United States of America', code: 'US' },
       city: '',
       countryState: '',
       address: '',
