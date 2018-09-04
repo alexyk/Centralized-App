@@ -34,7 +34,7 @@ class HomesBookingPage extends React.Component {
           checkInEnd: data.checkinEnd && data.checkinEnd !== '00:00:00' ? Number(data.checkinEnd.substring(0, 2)) : 24,
           checkOutStart: data.checkOutStart ? Number(data.checkOutStart.substring(0, 2)) : 0,
           checkOutEnd: data.checkOutEnd ? Number(data.checkOutEnd.substring(0, 2)) : 12,
-        }, () => this.setCheckInOutHours());
+        }); //, () => this.setCheckInOutHours());
       });
     });
 

@@ -11,6 +11,7 @@ import requester from '../../../initDependencies';
 import { Config } from '../../../config';
 import { LONG } from '../../../constants/notificationDisplayTimes.js';
 import { MISSING_NAMES } from '../../../constants/warningMessages.js';
+import { UNCATEGORIZED_ERROR } from '../../../constants/errorMessages.js';
 
 import '../../../styles/css/components/homes/booking/homes-booking-confirm-page.css';
 
@@ -42,6 +43,13 @@ class HomesBookingConfirmPage extends React.Component {
         this.setState({ rates: data });
       });
     });
+
+    requester.getUserInfo()
+      .then(res => res.body)
+      .then(userInfo => this.setState({
+        firstName: userInfo.firstName,
+        lastName: userInfo.lastName
+      }));
   }
 
   handleChange(e) {
@@ -73,7 +81,7 @@ class HomesBookingConfirmPage extends React.Component {
     requester.requestBooking(requestInfo, captchaToken).then(res => {
       this.setState({ sending: false });
       if (!res.success) {
-        NotificationManager.warning('', '', LONG);
+        NotificationManager.warning(UNCATEGORIZED_ERROR, '', LONG);
       } else {
         res.body.then(data => {
           if (data.success) {
@@ -160,7 +168,7 @@ HomesBookingConfirmPage.propTypes = {
   // Router props
   location: PropTypes.object,
   history: PropTypes.object,
-  
+
   // Redux props
   userInfo: PropTypes.object,
 };
