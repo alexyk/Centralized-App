@@ -14,11 +14,9 @@ import CreateListingPage from '../listingCRUD/CreateListingPage';
 import EditListingPage from '../listingCRUD/EditListingPage';
 import Footer from '../footer/Footer';
 import HomeRouterPage from '../home/HomeRouterPage';
-import HomesRouterPage from '../homes/HomesRouterPage';
 import HotelsBookingConfirmPage from '../hotels/book/HotelsBookingConfirmPage';
 import HotelsBookingPage from '../hotels/book/HotelsBookingPage';
 import HotelDetailsPage from '../hotels/details/HotelDetailsPage';
-import HotelsRouterPage from '../hotels/HotelsRouterPage';
 import MainNav from '../mainNav/MainNav';
 import NavLocalization from '../profile/NavLocalization';
 import { NotificationContainer } from 'react-notifications';
@@ -129,8 +127,8 @@ class App extends React.Component {
           <Route exact path="/profile/listings/calendar/:id" render={() => !this.isAuthenticated() ? <Redirect to="/" /> : <CalendarPage />} />
           <Route exact path="/profile/account/notifications" render={() => !this.isAuthenticated() ? <Redirect to="/" /> : <AccountNotificationsPage />} />
           <Route exact path="/users/resetPassword/:confirm" render={() => <HomeRouterPage />} />
-          <Route path="/homes" render={() => <HomesRouterPage />} />
-          <Route path="/hotels" render={() => <HotelsRouterPage />} />
+          <Route path="/homes" render={() => <HomeRouterPage />} />
+          <Route path="/hotels" render={() => <HomeRouterPage />} />
           <Route path="/profile/listings/create" render={() => !this.isAuthenticated() ? <Redirect to="/" /> : <CreateListingPage />} />
           <Route path="/profile/" render={() => !this.isAuthenticated() ? <Redirect to="/" /> : <ProfilePage location={this.props.location} />} />
           <Route path="/airdrop" render={() => <AirdropPage />} />

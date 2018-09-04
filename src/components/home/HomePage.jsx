@@ -9,7 +9,6 @@ import { connect } from 'react-redux';
 import { setRegion } from '../../actions/searchInfo';
 import { withRouter, Link } from 'react-router-dom';
 import HomePageContentItem from './HomePageContentItem';
-import requester from '../../initDependencies';
 import moment from 'moment';
 
 import '../../styles/css/components/home/home_page.css';
@@ -24,37 +23,11 @@ class HomePage extends React.Component {
   constructor(props) {
     super(props);
 
-    this.state = {
-      listings: '',
-      hotels: '',
-    };
-
-
     this.sliderHotels = null;
     this.sliderListings = null;
 
     this.handleDestinationPick = this.handleDestinationPick.bind(this);
     this.redirectToSearchPage = this.redirectToSearchPage.bind(this);
-  }
-
-  componentDidMount() {
-    requester.getTopListings().then(res => {
-      res.body.then(data => {
-        this.setState({ listings: data.content });
-      });
-    });
-
-    requester.getTopHotels().then(res => {
-      res.body.then(data => {
-        this.setState({ hotels: data.content });
-      });
-    });
-
-    requester.getCountries().then(res => {
-      res.body.then(data => {
-        this.setState({ countries: data });
-      });
-    });
   }
 
   handleDestinationPick(region, searchUrl) {
@@ -104,7 +77,7 @@ class HomePage extends React.Component {
         }
       ]
     };
-    
+
     let allLink = '/hotels';
     let slider = itemsType === 'hotels' ? this.sliderHotels : this.sliderListings;
 
@@ -138,7 +111,7 @@ class HomePage extends React.Component {
         <div className="carousel-nav">
           <ul>
             <li><button className="icon-arrow-left" onClick={() => this.prev(slider)}></button></li>
-            <li><Link to={allLink} className="btn">See all</Link></li>            
+            <li><Link to={allLink} className="btn">See all</Link></li>
             <li><button className="icon-arrow-right" onClick={() => this.next(slider)}></button></li>
           </ul>
         </div>
@@ -146,7 +119,7 @@ class HomePage extends React.Component {
   }
 
   render() {
-    const { listings, hotels } = this.state;
+    const { listings, hotels } = this.props;
 
     return (
       <div>
@@ -176,13 +149,13 @@ class HomePage extends React.Component {
             title="Popular"
             text="Hotels around the world"
           >
-            {this.getSlider(hotels, 'hotels')}
+            {hotels[0] && this.getSlider(hotels, 'hotels')}
           </HomePageContentItem>
           <HomePageContentItem
             title="Popular"
             text="Homes around the world"
           >
-            {this.getSlider(listings, 'homes')}
+            {listings[0] && this.getSlider(listings, 'homes')}
           </HomePageContentItem>
           <HomePageContentItem
             title="Top Destinations"
@@ -204,6 +177,8 @@ class HomePage extends React.Component {
 
 HomePage.propTypes = {
   homePage: PropTypes.string,
+  listings: PropTypes.array,
+  hotels: PropTypes.array,
 
   // Router props
   history: PropTypes.object,
