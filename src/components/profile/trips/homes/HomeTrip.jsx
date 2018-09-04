@@ -92,16 +92,17 @@ function HotelTrip(props) {
           </div>
         </div>
       </ProfileFlexContainer>
-      <div className="reservation-box-pending">
-        {hostLocAddress && !accepted ?
+      {hostLocAddress && !accepted &&
+        <div className="reservation-box-pending">
           <div>
             Please pay {locPrice} LOC to <a href={`https://etherscan.io/address/${hostLocAddress}`} target="_blank">{hostLocAddress.substr(0, 7)}</a>
             <CopyToClipboard text={hostLocAddress}>
               <button><i className="fa fa-link" aria-hidden="true" title="Copy LOC Address"></i></button>
             </CopyToClipboard>
             Click <a href="https://medium.com/@LockChainCo/how-to-create-a-personal-wallet-with-myetherwallet-com-and-buy-loc-with-eth-for-beginners-c395fd303d1" rel="noopener noreferrer" target="_blank">here</a> for more instructions.
-          </div> : ''}
-      </div>
+          </div>
+        </div>
+      }
     </React.Fragment>
   );
 }

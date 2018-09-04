@@ -2090,7 +2090,7 @@ li.dropdown {
 
 #profile-my-reservations .reservation-box-pending {
     text-align: center;
-    margin-top: 5px;
+    margin-top: 0px;
     background-color: white;
     padding: 1%;
     border: 1px solid #CCCCCC;
