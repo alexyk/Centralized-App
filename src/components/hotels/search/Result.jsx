@@ -15,7 +15,7 @@ import Slider from 'react-slick';
 import StringUtils from '../../../services/utilities/stringUtilities';
 import _ from 'lodash';
 import { connect } from 'react-redux';
-import HotelItemRatingBox from '../../common/hotel/HotelItemRatingBox'; 
+import HotelItemRatingBox from '../../common/hotel/HotelItemRatingBox';
 import requester from '../../../initDependencies';
 
 const SCREEN_SIZE_SMALL = 'SMALL';
@@ -189,7 +189,7 @@ class Result extends React.Component {
         <div className="result-content">
           <div>
             <h4><Link target={isMobile === false ? '_blank' : '_self'} to={`${redirectURL}/${id}${search.substr(0, endOfSearch)}`}>{name}</Link></h4>
-            <HotelItemRatingBox rating={star} />
+            {/* <HotelItemRatingBox rating={star} /> */}
             <div className="rating">
               <span>Rating: </span>
               <div className="rating-holder">
