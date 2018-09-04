@@ -50,6 +50,10 @@ class AirdropPage extends Component {
     this.handleEditSubmit = this.handleEditSubmit.bind(this);
     this.handleSaveVoteUrl = this.handleSaveVoteUrl.bind(this);
     this.onChange = this.onChange.bind(this);
+    this.getBalanceContainer = this.getBalanceContainer.bind(this);
+    this._getVerifiedStatus = this._getVerifiedStatus.bind(this);
+    this._getUnverifiedStatus = this._getUnverifiedStatus.bind(this);
+    this._getFailedStatus = this._getFailedStatus.bind(this);
   }
 
   componentWillMount() {
@@ -268,6 +272,44 @@ class AirdropPage extends Component {
     this.setState({ [e.target.name]: e.target.value });
   }
 
+  getBalanceContainer() {
+   switch (this.props.airdropInfo.finalizedStatus) {
+     case 'VERIFIED':
+       return this._getVerifiedStatus();
+     case 'FAILED':
+       return this._getFailedStatus();
+     default:
+       return this._getUnverifiedStatus();
+   }
+  }
+
+  _getVerifiedStatus() {
+    return [
+      <div className="balance-row__label">
+        <span className="step-check checked"></span>
+        <span className="emphasized-text">Verified Balance</span>
+      </div>,
+      <div className="balance-row__content">${this.props.airdropInfo.isCampaignSuccessfullyCompleted ? this.props.airdropInfo.referralCount * 5 + 10 : this.props.airdropInfo.referralCount * 5}</div>
+    ];
+  }
+
+  _getUnverifiedStatus() {
+    return [
+      <div className="balance-row__label"><span className="emphasized-text">Unverified Balance</span></div>,
+      <div className="balance-row__content">${this.props.airdropInfo.isCampaignSuccessfullyCompleted ? this.props.airdropInfo.referralCount * 5 + 10 : this.props.airdropInfo.referralCount * 5}</div>
+    ];
+  }
+
+  _getFailedStatus() {
+    return [
+      <div className="balance-row__label">
+        <span className="step-check unchecked"></span>
+        <span className="mandatory">Duplicate accounting/multi accounting has been detected. As a result your balance has been voided.</span>
+      </div>,
+      <div className="balance-row__content">$0</div>
+    ];
+  }
+
   render() {
     // if (this.state.loading) {
     //   return <div className="loader"></div>;
@@ -308,8 +350,7 @@ class AirdropPage extends Component {
 
             <div className="balance-info">
               <div className="balance-row">
-                <div className="balance-row__label"><span className="emphasized-text">Unverified Balance</span></div>
-                <div className="balance-row__content">${this.props.airdropInfo.isCampaignSuccessfullyCompleted ? this.props.airdropInfo.referralCount * 5 + 10 : this.props.airdropInfo.referralCount * 5}</div>
+                {this.getBalanceContainer()}
               </div>
 
               <div className="balance-row">
