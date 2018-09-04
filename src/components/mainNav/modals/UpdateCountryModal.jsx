@@ -27,7 +27,7 @@ function UpdateCountryModal(props) {
             <label htmlFor="country">Where do you live</label>
             <div className='select'>
               <select name="country" id="country" onChange={props.handleChangeCountry} value={JSON.stringify(props.country)} style={{ padding: '10px', maxWidth: '100%' }}>
-                <option value="" disabled selected>Country</option>
+                <option value="" selected>Country</option>
                 {props.countries && props.countries.map((item, i) => {
                   return <option key={i} value={JSON.stringify(item)} style={{ minWidth: '100%', maxWidth: '0' }}>{getShortName(item.name, 30)}</option>;
                 })}
@@ -38,7 +38,7 @@ function UpdateCountryModal(props) {
               <label htmlFor="countryState">State</label>
               <div className='select'>
                 <select name="countryState" id="countryState" onChange={props.onChange} value={props.countryState} style={{ padding: '10px', maxWidth: '100%' }}>
-                  <option disabled value="">State</option>
+                  <option value="">State</option>
                   {props.states && props.states.map((item, i) => {
                     return <option key={i} value={item.id} style={{ minWidth: '100%', maxWidth: '0' }}>{item.name}</option>;
                   })}

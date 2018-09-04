@@ -68,7 +68,7 @@ class MainNav extends React.Component {
       signUpLocAddress: '',
       loginEmail: '',
       loginPassword: '',
-      country: { id: 1, name: 'United States of America', code: 'US' },
+      country: '',
       emailVerificationToken: '',
       walletPassword: '',
       repeatWalletPassword: '',
@@ -166,8 +166,13 @@ class MainNav extends React.Component {
   }
 
   handleChangeCountry(e) {
-    this.getStates(JSON.parse(e.target.value).id);
-    this.setState({ country: JSON.parse(e.target.value) });
+    if (!e.target.value) {
+      this.setState({ country: '' });
+    }
+    else {
+      this.getStates(JSON.parse(e.target.value).id);
+      this.setState({ country: JSON.parse(e.target.value) });
+    }
   }
 
   handleMnemonicWordsChange(e) {
@@ -261,7 +266,7 @@ class MainNav extends React.Component {
         user.countryState = Number(this.state.countryState);
       }
       this.closeModal(UPDATE_COUNTRY);
-      this.setState({ isUpdatingCountry: false, country: { id: 1, name: 'United States of America' }, countryState: '' });
+      this.setState({ isUpdatingCountry: false, country: '', countryState: '' });
     }
 
     // if (this.state.isVerifyingEmail && this.state.emailVerificationToken) {
@@ -296,7 +301,6 @@ class MainNav extends React.Component {
           } else if (errors.hasOwnProperty('CountryNull')) {
             NotificationManager.warning(errors['CountryNull'].message, '', LONG);
             this.getCountries();
-            this.getStates(this.state.country.id);
             this.setState({ isUpdatingCountry: true }, () => {
               this.closeModal(LOGIN);
               this.openModal(UPDATE_COUNTRY);
@@ -482,12 +486,12 @@ class MainNav extends React.Component {
   clearStateOnCloseModal(modal) {
     if (modal === LOGIN) {
       this.setState({ loginEmail: '', loginPassword: '' });
-    } 
+    }
     // else if (modal === EMAIL_VERIFICATION) {
     //   this.setState({ isVerifyingEmail: false, emailVerificationToken: '' });
     // }
 
-    this.setState({ country: { id: 1, name: 'United States of America' }, countryState: '' });
+    this.setState({ country: '', countryState: '' });
   }
 
   messageListener() {

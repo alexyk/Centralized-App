@@ -5,10 +5,10 @@ import { Config } from '../../../config';
 import { LONG } from '../../../constants/notificationDisplayTimes.js';
 import { NotificationManager } from 'react-notifications';
 import { PROFILE_SUCCESSFULLY_UPDATED } from '../../../constants/successMessages.js';
+import { PROFILE_UPDATE_ERROR } from '../../../constants/errorMessages.js';
 import ReCAPTCHA from 'react-google-recaptcha';
 import React from 'react';
 import Select from '../../common/google/GooglePlacesAutocomplete';
-import { PROFILE_UPDATE_ERROR } from '../../../constants/errorMessages.js';
 import moment from 'moment';
 import requester from '../../../initDependencies';
 
@@ -26,7 +26,7 @@ class ProfileEditForm extends React.Component {
       day: '',
       year: '',
       gender: '',
-      country: { id: 1, name: 'United States of America', code: 'US' },
+      country: '',
       city: '',
       countryState: '',
       address: '',
@@ -75,7 +75,7 @@ class ProfileEditForm extends React.Component {
           preferredLanguage: data.preferredLanguage ? data.preferredLanguage : '',
           preferredCurrency: data.preferredCurrency ? data.preferredCurrency.id : '',
           gender: data.gender ? data.gender : '',
-          country: data.country ? data.country : { name: 'United States of America', id: 1, code: 'US' },
+          country: data.country ? data.country : '',
           city: data.city ? data.city : '',
           countryState: data.countryState ? data.countryState.id : '',
           address: data.address ? data.address : '',
