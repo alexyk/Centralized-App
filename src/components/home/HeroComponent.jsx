@@ -1,13 +1,11 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { NotificationManager } from 'react-notifications';
 import moment from 'moment';
 import { withRouter } from 'react-router-dom';
 import requester from '../../initDependencies';
 import HomesSearchBar from '../homes/search/HomesSearchBar';
 import HotelsSearchBar from '../hotels/search/HotelsSearchBar';
 import ListingTypeNav from '../common/listingTypeNav/ListingTypeNav';
-import { LONG } from '../../constants/notificationDisplayTimes.js';
 
 import '../../styles/css/components/hero-component.css';
 import '../../styles/css/components/tabs-component.css';
@@ -55,18 +53,14 @@ class HeroComponent extends React.Component {
 
   handleSearch(e) {
     e.preventDefault();
-    if (!this.state.countryId) {
-      NotificationManager.warning('Missing country', '', LONG);
-    } else {
-      let queryString = '?';
+    let queryString = '?';
 
-      queryString += 'countryId=' + this.state.countryId;
-      queryString += '&startDate=' + this.state.startDate.format('DD/MM/YYYY');
-      queryString += '&endDate=' + this.state.endDate.format('DD/MM/YYYY');
-      queryString += '&guests=' + this.state.guests;
+    queryString += 'countryId=' + this.state.countryId;
+    queryString += '&startDate=' + this.state.startDate.format('DD/MM/YYYY');
+    queryString += '&endDate=' + this.state.endDate.format('DD/MM/YYYY');
+    queryString += '&guests=' + this.state.guests;
 
-      this.props.history.push('/homes/listings' + queryString);
-    }
+    this.props.history.push('/homes/listings' + queryString);
   }
 
   handleDatePick(event, picker) {

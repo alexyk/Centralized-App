@@ -27,7 +27,6 @@ class HomesBookingPage extends React.Component {
   componentDidMount() {
     requester.getListing(this.props.match.params.id).then(res => {
       res.body.then((data) => {
-        console.log(data);
         this.setState({
           listing: data,
           checkInStart: Number(data.checkinStart.substring(0, 2)),

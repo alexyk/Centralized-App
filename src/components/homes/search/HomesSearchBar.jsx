@@ -5,7 +5,7 @@ import moment from 'moment';
 import StringUtils from '../../../services/utilities/stringUtilities.js';
 
 const HomesSearchBar = (props) => (
-  <div className="source-panel">
+  <form className="source-panel" onSubmit={props.handleSearch}>
     <div className="source-panel-select source-panel-item">
       {/* <i className="icon icon-map form-control-feedback"></i> */}
       {props.countries &&
@@ -68,8 +68,8 @@ const HomesSearchBar = (props) => (
         placeholder="Guests"
         value={props.guests} />
     </div> */}
-    <button className="btn btn-primary" onClick={props.handleSearch}>Search</button>
-  </div>
+    <button type="submit" className="btn btn-primary">Search</button>
+  </form>
 );
 
 const calculateNights = (startDate, endDate) => {

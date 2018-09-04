@@ -189,13 +189,7 @@ class Result extends React.Component {
         <div className="result-content">
           <div>
             <h4><Link target={isMobile === false ? '_blank' : '_self'} to={`${redirectURL}/${id}${search.substr(0, endOfSearch)}`}>{name}</Link></h4>
-            {/* <HotelItemRatingBox rating={star} /> */}
-            <div className="rating">
-              <span>Rating: </span>
-              <div className="rating-holder">
-                {this.calculateStars(star)}
-              </div>
-            </div>
+            <HotelItemRatingBox rating={star} />
           </div>
           <div className="result-description">{generalDescription && ReactHtmlParser(generalDescription)}</div>
           <div className="result-mobile-pricing">

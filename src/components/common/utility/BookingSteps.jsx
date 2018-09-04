@@ -11,7 +11,7 @@ function BookingSteps(props) {
         {props.steps && props.steps.map((step, index) => {
           const isStepActive = props.currentStepIndex >= index;
           if (index === props.steps.length - 1) {
-            return <p className={`step ${isStepActive ? 'active' : ''}`}>{index + 1}. {step}</p>;
+            return <p className={`step ${isStepActive ? 'active' : ''}`} key={index}>{index + 1}. {step}</p>;
           }
           return (
             <Fragment key={index}>
