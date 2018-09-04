@@ -2,9 +2,13 @@ import 'react-notifications/lib/notifications.css';
 import '../../../styles/css/components/profile/me/my-profile-edit-form.css';
 
 import { Config } from '../../../config';
+import { LONG } from '../../../constants/notificationDisplayTimes.js';
 import { NotificationManager } from 'react-notifications';
+import { PROFILE_SUCCESSFULLY_UPDATED } from '../../../constants/successMessages.js';
 import ReCAPTCHA from 'react-google-recaptcha';
 import React from 'react';
+import Select from '../../common/google/GooglePlacesAutocomplete';
+import { UNCATEGORIZED_ERROR } from '../../../constants/errorMessages.js';
 import moment from 'moment';
 import requester from '../../../initDependencies';
 
@@ -22,13 +26,17 @@ class ProfileEditForm extends React.Component {
       day: '',
       year: '',
       gender: '',
-      country: '',
+      country: { id: 1, name: 'US', code: 'US' },
       city: '',
+      countryState: '',
+      address: '',
       locAddress: '',
+      zipCode: '',
       jsonFile: '',
       currencies: [],
       cities: [],
       countries: [],
+      states: [],
       loading: true
     };
 
@@ -36,19 +44,19 @@ class ProfileEditForm extends React.Component {
     this.onChange = this.onChange.bind(this);
     this.changeDropdownValue = this.changeDropdownValue.bind(this);
     this.updateUser = this.updateUser.bind(this);
-    this.updateCities = this.updateCities.bind(this);
     this.updateCountry = this.updateCountry.bind(this);
+    this.handleCitySelect = this.handleCitySelect.bind(this);
   }
 
-  componentDidMount() {
-    requester.getCountries().then(res => {
-      res.body.then(data => {
-        this.setState({ countries: data.content });
-      });
-    });
+  async componentDidMount() {
+    requester.getCountries()
+      .then(res => res.body)
+      .then(data => this.setState({ countries: data }))
+      .catch(error => console.log(error));
 
-    requester.getUserInfo().then(res => {
-      res.body.then(data => {
+    requester.getUserInfo()
+      .then(res => res.body)
+      .then(data => {
         let day = '';
         let month = '';
         let year = '';
@@ -61,31 +69,33 @@ class ProfileEditForm extends React.Component {
         }
 
         this.setState({
-          firstName: data.firstName !== null ? data.firstName : '',
-          lastName: data.lastName !== null ? data.lastName : '',
-          phoneNumber: data.phoneNumber !== null ? data.phoneNumber : '',
-          preferredLanguage: data.preferredLanguage !== null ? data.preferredLanguage : '',
-          preferredCurrency: data.preferredCurrency !== null ? data.preferredCurrency.id : '',
-          gender: data.gender !== null ? data.gender : '',
-          country: data.country !== null ? data.country.id : '1',
-          city: data.city !== null ? data.city.id : '1',
+          firstName: data.firstName ? data.firstName : '',
+          lastName: data.lastName ? data.lastName : '',
+          phoneNumber: data.phoneNumber ? data.phoneNumber : '',
+          preferredLanguage: data.preferredLanguage ? data.preferredLanguage : '',
+          preferredCurrency: data.preferredCurrency ? data.preferredCurrency.id : '',
+          gender: data.gender ? data.gender : '',
+          country: data.country ? data.country : { name: 'United States of America', id: 1, code: 'US' },
+          city: data.city ? data.city : '',
+          countryState: data.countryState ? data.countryState.id : '',
+          address: data.address ? data.address : '',
           locAddress: data.locAddress !== null ? data.locAddress : '',
           jsonFile: data.jsonFile !== null ? data.jsonFile : '',
+          zipCode: data.zipCode !== null ? data.zipCode : '',
           currencies: data.currencies,
           day: day,
           month: month,
           year: year
-        }, () => {
-          requester.getCities(this.state.country).then(res => {
-            res.body.then(data => {
-              this.setState({ cities: data.content });
-            });
-          });
         });
+
+        if (data.country && ['Canada', 'India', 'United States of America'].includes(data.country.name)) {
+          requester.getStates(this.state.country.id)
+            .then(res => res.body)
+            .then(data => this.setState({ states: data }));
+        }
+      }).then(() => {
+        this.setState({ loading: false });
       });
-    }).then(() => {
-      this.setState({ loading: false });
-    });
   }
 
   onChange(e) {
@@ -98,9 +108,7 @@ class ProfileEditForm extends React.Component {
   }
 
   updateUser(captchaToken) {
-    let birthday;
-    birthday = `${this.state.day}/${this.state.month}/${this.state.year}`;
-
+    let birthday = `${this.state.day}/${this.state.month}/${this.state.year}`;
     let userInfo = {
       firstName: this.state.firstName,
       lastName: this.state.lastName,
@@ -108,47 +116,51 @@ class ProfileEditForm extends React.Component {
       preferredLanguage: this.state.preferredLanguage,
       preferredCurrency: parseInt(this.state.preferredCurrency, 10),
       gender: this.state.gender,
-      country: parseInt(this.state.country, 10),
-      city: parseInt(this.state.city, 10),
+      country: parseInt(this.state.country.id, 10),
+      city: this.state.city,
+      countryState: parseInt(this.state.countryState, 10),
+      address: this.state.address,
       birthday: birthday,
       locAddress: this.state.locAddress,
-      jsonFile: this.state.jsonFile
+      jsonFile: this.state.jsonFile,
+      zipCode: this.state.zipCode,
     };
 
     Object.keys(userInfo).forEach((key) => (userInfo[key] === null || userInfo[key] === '') && delete userInfo[key]);
 
     requester.updateUserInfo(userInfo, captchaToken).then(res => {
       if (res.success) {
-        NotificationManager.success('Successfully updated your profile', 'Update user profile');
+        NotificationManager.success(PROFILE_SUCCESSFULLY_UPDATED, '', LONG);
         this.componentDidMount();
       }
       else {
-        NotificationManager.error('Something went wrong...');
+        NotificationManager.error(UNCATEGORIZED_ERROR, '', LONG);
       }
     }).catch(errors => {
       for (var e in errors) {
-        NotificationManager.warning(errors[e].message);
+        NotificationManager.warning(errors[e].message, '', LONG);
       }
     });
   }
 
   updateCountry(e) {
+    let value = JSON.parse(e.target.value);
+
+    if (['Canada', 'India', 'United States of America'].includes(value.name)) {
+      requester.getStates(value.id)
+        .then(res => res.body)
+        .then(data => this.setState({ states: data }));
+    }
+
     this.setState({
-      [e.target.name]: e.target.value,
-    }, () => {
-      this.updateCities();
+      country: value,
+      city: ''
     });
   }
 
-  updateCities() {
-    requester.getCities(this.state.country).then(res => {
-      res.body.then(data => {
-        this.setState({
-          city: '1',
-          cities: data.content,
-        });
-      });
-    });
+  handleCitySelect(place) {
+    // console.log(place);
+    this.setState({ city: place.formatted_address });
   }
 
   render() {
@@ -161,7 +173,7 @@ class ProfileEditForm extends React.Component {
     for (let i = (new Date()).getFullYear(); i >= 1940; i--) {
       years.push(<option key={i} value={i}>{i}</option>);
     }
-
+    // console.log(this.state.country);
     return (
       <div id="my-profile-edit-form">
         <h2>Edit Profile</h2>
@@ -169,11 +181,11 @@ class ProfileEditForm extends React.Component {
         <form onSubmit={(e) => { e.preventDefault(); this.captcha.execute(); }}>
           <div className="name">
             <div className="first">
-              <label htmlFor="fname">First name</label>
+              <label htmlFor="fname">First name <span className="mandatory">*</span></label>
               <input id="fname" name="firstName" value={this.state.firstName} onChange={this.onChange} type="text" required />
             </div>
             <div className="last">
-              <label htmlFor="lname">Last name</label>
+              <label htmlFor="lname">Last name <span className="mandatory">*</span></label>
               <input id="lname" name="lastName" value={this.state.lastName} onChange={this.onChange} type="text" required />
             </div>
             <br className="clear-both" />
@@ -225,9 +237,9 @@ class ProfileEditForm extends React.Component {
               <div className='select'>
                 <select name="gender" id="sex" onChange={this.onChange} value={this.state.gender}>
                   <option disabled value="">Gender</option>
-                  <option value="men">Men</option>
-                  <option value="women">Women</option>
-                  <option value="other">Other</option>
+                  <option value="male">Male</option>
+                  <option value="female">Female</option>
+                  <option value="other">Rather not say</option>
                 </select>
               </div>
             </div>
@@ -235,7 +247,7 @@ class ProfileEditForm extends React.Component {
           </div>
           <div className="text"><span>We user this data for analysis and never share it with other users.</span></div>
           <div className="phone">
-            <label htmlFor="phone">Phone number <img src={Config.getValue('basePath') + 'images/icon-lock.png'} className="lock" alt="lock-o" /></label>
+            <label htmlFor="phone">Phone number <span className="mandatory">*</span><img src={Config.getValue('basePath') + 'images/icon-lock.png'} className="lock" alt="lock-o" /></label>
             <input id="phone" name="phoneNumber" value={this.state.phoneNumber} onChange={this.onChange} type="text" />
           </div>
           <div className="text"><span>We won&#39;t share your phone number with other LockTrip users.</span></div>
@@ -271,30 +283,56 @@ class ProfileEditForm extends React.Component {
           </div>
           <div className="address-city">
             <div className="address">
-              <label htmlFor="address">Where you live</label>
+              <label htmlFor="address">Where do you live <span className="mandatory">*</span></label>
               <div className='select'>
-                <select name="country" id="address" onChange={this.updateCountry} value={this.state.country}>
+                <select name="country" id="address" onChange={this.updateCountry} value={JSON.stringify(this.state.country)}>
                   <option disabled value="">Country</option>
                   {this.state.countries.map((item, i) => {
-                    return <option key={i} value={item.id}>{item.name}</option>;
+                    return <option key={i} value={JSON.stringify(item)}>{item.name}</option>;
                   })}
                 </select>
               </div>
             </div>
             <div className="city">
-              <label htmlFor="city">Which city</label>
-              <div className='select'>
-                <select name="city" id="city" onChange={this.onChange} value={this.state.city}>
-                  <option disabled value="">City</option>
-                  {this.state.cities.map((item, i) => {
-                    return <option key={i} value={item.id}>{item.name}</option>;
-                  })}
-                </select>
-              </div>
+              <label htmlFor="city">Which city <span className="mandatory">*</span></label>
+              <Select
+                style={{ width: '100%' }}
+                value={this.state.city}
+                onChange={this.onChange}
+                name="city"
+                onPlaceSelected={this.handleCitySelect}
+                types={['(cities)']}
+                componentRestrictions={{ country: this.state.country.code.toLowerCase() }}
+                disabled={!this.state.country}
+                placeholder='Choose your city'
+              />
             </div>
-
             <br className="clear-both" />
           </div>
+
+          {['Canada', 'India', 'United States of America'].includes(this.state.country.name) ? <div className="countryState">
+            <label htmlFor="countryState">State <span className="mandatory">*</span></label>
+            <div className='select'>
+              <select name="countryState" id="countryState" onChange={this.onChange} value={this.state.countryState}>
+                <option disabled value="">State</option>
+                {this.state.states.map((item, i) => {
+                  return <option key={i} value={item.id}>{item.name}</option>;
+                })}
+              </select>
+            </div>
+          </div> : null}
+
+          <div className="address">
+            <label htmlFor="address">Address <span className="mandatory">*</span></label>
+            <input id="address" name="address" value={this.state.address} onChange={this.onChange} type="text" placeholder='Enter your address' />
+          </div>
+
+          <div className="zip-code">
+            <label htmlFor="zip-code">Zip Code</label>
+            <input id="zip-code" name="zipCode" value={this.state.zipCode} onChange={this.onChange} type="text" placeholder='Enter your zip code' />
+          </div>
+
+          <p className="text"><span className="mandatory">*</span> Fields mandatory for payment with Credit Card</p>
 
           <ReCAPTCHA
             ref={el => this.captcha = el}

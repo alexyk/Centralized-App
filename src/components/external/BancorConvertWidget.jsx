@@ -1,12 +1,8 @@
 import React, { Component } from 'react';
 
 class BancorConvertWidget extends Component {
-  constructor(props) {
-    super(props);
-  }
-
   componentDidMount() {
-    if (window.BancorConvertWidget) {
+    if (window.BancorConvertWidget && !window.BancorConvertWidget.isInitialized) {
       window.BancorConvertWidget.init({
         'type': '1',
         'baseCurrencyId': '5b27eb823751b7bb8dad17bb',

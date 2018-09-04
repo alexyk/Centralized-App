@@ -52,7 +52,7 @@ $media-expressions: (
 	color: $dark-gray;
 	margin-bottom: 20px;
 	display: flex;
-	flex-direction: column;
+	flex-direction: row;
 	justify-content: space-between;
 	@include media(">=tablet") {
 		flex-direction: row;
@@ -62,7 +62,7 @@ $media-expressions: (
   }
 	> div {
 		width: 100%;
-		margin-bottom: 10px;
+		// margin-bottom: 10px;
 		&:last-child {
 			margin-bottom: 0;
 		}
@@ -77,9 +77,11 @@ $media-expressions: (
 	&-images {
 		position: relative;
     height: 190px;
-		display: flex;
-		@include media(">=desktop") {
-			margin-right: 25px;
+    display: flex;
+    width: 140px !important;
+    margin-right: 15px;
+		@include media(">=tablet") {
+      margin-right: 25px;
       width: 240px !important;
     }
 		button {
@@ -150,13 +152,9 @@ $media-expressions: (
 	.rating {
 		color: #898c8d;
 		margin-bottom: 10px;
-		@include media(">=desktop") {
-			display: flex;
-		}
+    display: flex;
 		.rating-holder {
-			@include media(">=desktop") {
-				margin: 0 7px;
-			}
+      margin: 0 7px;
 		}
 	}
 	p {
@@ -193,12 +191,22 @@ $media-expressions: (
 	}
 	&-content {
     overflow: hidden;
+    @include media("<tablet") {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
 		@include media(">=desktop") {
 			padding-top: 11px;
       margin-right: 33px;
       min-width: 367px;
 		}
-	}
+  }
+  // &-description {
+  //   @include media("<=phone") {
+  //     display: none;
+  //   }
+  // }
 	&-pricing {
 		background: $light-gray;
 		display: flex;
@@ -208,6 +216,9 @@ $media-expressions: (
 		padding: 5px;
 		@include media(">=desktop") {
 			min-width: 195px;
+    }
+    @include media("<tablet") {
+			display: none;
 		}
 		.price-for {
 			position: relative;
@@ -241,7 +252,31 @@ $media-expressions: (
 			font-weight: 400;
 			margin-bottom: 21px;
 		}
-	}
+  }
+  &-mobile-pricing {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    @include media(">=tablet") {
+			display: none !important;
+    }
+    .price {
+      font-weight: 600;
+    }
+    div {
+      text-align: right;
+    }
+    .mobile-pricing-button {
+      display: block;
+      width: 100%;
+      text-align: right;
+      background: none;
+      color: $moderate-red;
+      font-size: 16px;
+      font-weight: 400;
+      padding: 10px 0 10px 10px;
+    }
+  }
 	.btn {
 		padding: 12px;
 		@include media(">=desktop") {

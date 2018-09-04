@@ -1,14 +1,13 @@
+import '../../../../styles/css/components/profile/trips/details.css';
 
-import React from 'react';
-import moment from 'moment';
 import { Link, withRouter } from 'react-router-dom';
 
 import FillStar from '../../../../styles/images/fill-star.png';
 import LogoLockTrip from '../../../../styles/images/logolocktrip.png';
+import React from 'react';
 import Star from '../../../../styles/images/star.png';
+import moment from 'moment';
 import requester from '../../../../initDependencies';
-
-import '../../../../styles/css/components/profile/trips/details.css';
 
 class HotelTripDetails extends React.Component {
   constructor(props) {
@@ -66,7 +65,6 @@ class HotelTripDetails extends React.Component {
     const bookingId = this.props.match.params.id;
     requester.getHotelBookingDetails(bookingId).then(res => {
       res.body.then(data => {
-        console.log(data);
         if (data) {
           const bookingData = data;
           this.extractDatesData(bookingData);
@@ -80,7 +78,7 @@ class HotelTripDetails extends React.Component {
         // });
       })
         .catch((err) => {
-          console.log(err);
+          // console.log(err);
         });
     });
   }

@@ -1,4 +1,5 @@
 import { Link, withRouter } from 'react-router-dom';
+
 import PropTypes from 'prop-types';
 import React from 'react';
 import { React_Bootstrap_Carousel as ReactBootstrapCarousel } from 'react-bootstrap-carousel';
@@ -39,7 +40,8 @@ function ListingItemPictureCarousel(props) {
           rightIcon={rightIcon}
           indicators={false}
           className="carousel-fade"
-          onSelect={() => console.log('click')}>
+        // onSelect={() => console.log('click')}
+        >
           {pictures.map((item, i) => {
             return getCarouselItem(item, i);
           })}

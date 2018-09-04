@@ -15,8 +15,8 @@ import EditListingPage from '../listingCRUD/EditListingPage';
 import Footer from '../footer/Footer';
 import HomeRouterPage from '../home/HomeRouterPage';
 import HomesRouterPage from '../homes/HomesRouterPage';
-import HotelBookingConfirmPage from '../hotels/book/HotelBookingConfirmPage';
-import HotelBookingPage from '../hotels/book/HotelBookingPage';
+import HotelsBookingConfirmPage from '../hotels/book/HotelsBookingConfirmPage';
+import HotelsBookingPage from '../hotels/book/HotelsBookingPage';
 import HotelDetailsPage from '../hotels/details/HotelDetailsPage';
 import HotelsRouterPage from '../hotels/HotelsRouterPage';
 import MainNav from '../mainNav/MainNav';
@@ -32,6 +32,7 @@ import { connect } from 'react-redux';
 import moment from 'moment';
 import queryString from 'query-string';
 import requester from '../../initDependencies';
+import GooglePlaces from '../common/GooglePlaces';
 
 // if (process.env.NODE_ENV === 'development') {
 //   console.log(process.env.NODE_ENV);
@@ -137,12 +138,13 @@ class App extends React.Component {
           <Route path="/softuni" render={() => <WorldKuCoinCampaign />} />
           <Route path="/vote" render={() => <WorldKuCoinCampaign />} />
           <Route path="/campaigns/balance/check" render={() => <Balance />} />
+          <Route path="/google" render={() => <GooglePlaces />} />
 
           {/* MOBILE ONLY START */}
           <Route path="/mobile/search" render={() => <StaticHotelsSearchPage />} />
           <Route path="/mobile/details/:id" render={() => <HotelDetailsPage />} />
-          <Route path="/mobile/book/confirm/:id" render={() => <HotelBookingConfirmPage />} />
-          <Route path="/mobile/book/:id" render={() => <HotelBookingPage />} />
+          <Route path="/mobile/book/confirm/:id" render={() => <HotelsBookingConfirmPage />} />
+          <Route path="/mobile/book/:id" render={() => <HotelsBookingPage />} />
           {/* MOBILE ONLY END */}
 
           <Route render={() => <HomeRouterPage />} />

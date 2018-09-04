@@ -16,7 +16,6 @@ $breakpoints: (
   .icon {
     display: none;
   }
-
   .tablet-col-1 {
     display: inline-flex;
     width: 32%;
@@ -25,7 +24,6 @@ $breakpoints: (
       min-width: 80px;
       @include imageHost();
     }
-
     .dashboard-booker {
       padding-right: 10%;
       width: 67%;
@@ -34,7 +32,6 @@ $breakpoints: (
       }
     }
   }
-
   .tablet-col-2 {
     display: inline-flex;
     width: 68%;
@@ -42,24 +39,19 @@ $breakpoints: (
       width: 34%;
       @include checkInCheckoutDates();
     }
-
     .dashboard-nights {
-      width: 22%;
-
+      width: 27%;
     }
-
     .dashboard-status {
       width: 27%;
       .status {
         font-weight: 400;
       }
     }
-    
     .dashboard-date {
-      width: 17%;
+      width: 10%;
     }
   }
-
   @include media("<=tablet") {
     padding: 5%;
     &.flex-container-header {
@@ -78,7 +70,6 @@ $breakpoints: (
         margin-top: 10%;
       }
     }
-
     .tablet-col-2 {
       display: flex;
       flex-direction: column;
@@ -100,7 +91,6 @@ $breakpoints: (
       }
     }
   }
-
   @include media("<=phone") {
     flex-wrap: wrap;
     margin-bottom: 10%;
@@ -115,7 +105,7 @@ $breakpoints: (
       }
     }
     .tablet-col-2 {
-      display: block;
+      display: flex;
       width: 100%;
       .dashboard-dates {
         margin-top: 5%;

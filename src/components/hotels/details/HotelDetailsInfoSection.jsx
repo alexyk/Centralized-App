@@ -1,34 +1,15 @@
-import PropTypes from 'prop-types';
-import HotelDetailsAmenityColumn from './HotelDetailsAmenityColumn';
 import HotelDetailsReviewBox from './HotelDetailsReviewBox';
+import { LOGIN, EMAIL_VERIFICATION } from '../../../constants/modals.js';
+import PropTypes from 'prop-types';
+import { ROOMS_XML_CURRENCY } from '../../../constants/currencies.js';
 import React from 'react';
 import { connect } from 'react-redux';
-import { withRouter } from 'react-router-dom';
-import { LOGIN } from '../../../constants/modals.js';
-import { ROOMS_XML_CURRENCY } from '../../../constants/currencies.js';
 import { openModal } from '../../../actions/modalsInfo.js';
-import { Config } from '../../../config';
+import { withRouter } from 'react-router-dom';
+import { CurrencyConverter } from '../../../services/utilities/currencyConverter';
+import Facilities from './Facilities';
 
 function HotelDetailsInfoSection(props) {
-  const getAmenities = (amenities) => {
-    const result = new Array(3);
-    for (let i = 0; i < 3; i++) {
-      result[i] = new Array(0);
-    }
-
-    for (let i = 0; i < amenities.length; i++) {
-      if (i % 3 === 0) {
-        result[0].push(amenities[i]);
-      } else if (i % 3 === 1) {
-        result[1].push(amenities[i]);
-      } else if (i % 3 === 2) {
-        result[2].push(amenities[i]);
-      }
-    }
-
-    return result;
-  };
-
   const getTotalPrice = (room) => {
     let total = 0;
     for (let i = 0; i < room.length; i++) {
@@ -51,14 +32,16 @@ function HotelDetailsInfoSection(props) {
   const getButton = (resultIndex) => {
     if (!props.userInfo.isLogged) {
       return <button className="btn btn-primary" onClick={(e) => props.dispatch(openModal(LOGIN, e))}>Login</button>;
-    } else {
+    } 
+    // else if (!props.userInfo.isEmailVerified) {
+    //   return <button className="btn btn-primary" onClick={() => props.dispatch(openModal(EMAIL_VERIFICATION))}>Book Now</button>;
+    // } 
+    else {
       return <button className="btn btn-primary" onClick={() => props.handleBookRoom(roomsResults.slice(resultIndex))}>Book Now</button>;
     }
   };
 
   const { hotelAmenities, city, country, generalDescription } = props.data;
-  const mostPopularFacilities = hotelAmenities.filter(a => a.picture != null).slice(0, 5);
-  const amenities = getAmenities(hotelAmenities);
   const address = props.data.additionalInfo.mainAddress;
   const rooms = props.hotelRooms;
   let roomsResults = [];
@@ -87,137 +70,116 @@ function HotelDetailsInfoSection(props) {
     roomsResults = roomsResults.sort((x, y) => getTotalPrice(x[0].roomsResults) > getTotalPrice(y[0].roomsResults) ? 1 : -1);
   }
 
+  const currency = props.paymentInfo.currency;
+
   return (
-    <div className="hotel-content" id="hotel-section">
-      <h2> {props.data.name} </h2>
-      <div className="list-hotel-rating">
-        <div className="list-hotel-rating-stars">
-          {calculateStars(props.data.stars)}
-        </div>
-      </div>
-      <div className="clearfix" />
-      <p>{address} {city}, {country}</p>
-      <div className="list-hotel-description">
-        <h2>Description</h2>
-        <span dangerouslySetInnerHTML={{ __html: generalDescription }}></span>
-      </div>
 
-
-      {mostPopularFacilities.length > 0 && amenities[0].length > 0 &&
-
-        <div className="facilities">
-          <h2>Facilities</h2>
-          <hr />
-          <div className="icons">
-            {mostPopularFacilities.map((item, i) => {
-              return (
-                item.picture != null && (
-                  <div key={i} className="icon-facilities" tooltip={item.text}>
-                    <span className="icon-image" style={{ textAlign: 'center', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                      <img src={Config.getValue('imgHost') + item.picture} style={{ width: '60%', height: '60%' }} alt="" />
-                    </span>
-                  </div>
-                )
-              );
-            })}
-            <div className="clearfix" />
-          </div>
-          <div className="row">
-            <HotelDetailsAmenityColumn amenities={amenities[0]} />
-            <HotelDetailsAmenityColumn amenities={amenities[1]} />
-            <HotelDetailsAmenityColumn amenities={amenities[2]} />
+    <section id="hotel-info">
+      <div className="container">
+        <div className="hotel-content" id="hotel-section">
+          <h2> {props.data.name} </h2>
+          <div className="list-hotel-rating">
+            <div className="list-hotel-rating-stars">
+              {calculateStars(props.data.star)}
+            </div>
           </div>
           <div className="clearfix" />
-        </div>
-      }
-      <div className="clearfix" />
-
-      <div className="hotel-extras">
-        {props.descriptionsAccessInfo &&
-          <div id="hotel-rules">
-            <h2>Access info</h2>
-            <p>{props.data.descriptionsAccessInfo}</p>
-            <hr />
+          <p>{address} {city}, {country}</p>
+          <div className="list-hotel-description">
+            <h2>Description</h2>
+            <span dangerouslySetInnerHTML={{ __html: generalDescription }}></span>
           </div>
-        }
-        <div className="clearfix" />
 
-        {props.data.reviews && props.data.reviews.length > 0 &&
-          <div id="reviews">
-            <h2>User Rating &amp; Reviews</h2>
-            {props.data.reviews.map((item, i) => {
-              return (
-                <HotelDetailsReviewBox
-                  key={i}
-                  rating={item.average}
-                  reviewText={item.comments}
-                />
-              );
-            })}
-            <hr />
-          </div>
-        }
-        <div className="clearfix" />
+          <Facilities facilities={hotelAmenities} />
 
-        <div id="rooms">
-          <h2>Available Rooms</h2>
-          {props.loadingRooms
-            ? <div className="loader"></div>
-            : <div>{roomsResults && roomsResults.map((results, resultIndex) => {
-              return (
-                <div key={resultIndex} className="row room-group">
-                  <div className="col col-md-6 parent vertical-block-center">
-                    <div className="room-titles">
-                      {results[0].roomsResults && results[0].roomsResults.map((room, roomIndex) => {
-                        return (
-                          <div key={roomIndex} className="room">
-                            <span>{room.name} ({room.mealType}) - </span>
-                            {props.userInfo.isLogged &&
-                              <span>{props.currencySign}{props.rates && Number((room.price * props.rates[ROOMS_XML_CURRENCY][props.paymentInfo.currency]) / props.nights).toFixed(2)} </span>
-                            }
-                            <span>
-                              {props.userInfo.isLogged && '('}
-                              {Number((room.price / props.nights) / props.locRate).toFixed(2)} LOC
+          <div className="hotel-extras">
+            {props.descriptionsAccessInfo &&
+              <div id="hotel-rules">
+                <h2>Access info</h2>
+                <p>{props.data.descriptionsAccessInfo}</p>
+                <hr />
+              </div>
+            }
+            <div className="clearfix" />
+
+            {props.data.reviews && props.data.reviews.length > 0 &&
+              <div id="reviews">
+                <h2>User Rating &amp; Reviews</h2>
+                {props.data.reviews.map((item, i) => {
+                  return (
+                    <HotelDetailsReviewBox
+                      key={i}
+                      rating={item.average}
+                      reviewText={item.comments}
+                    />
+                  );
+                })}
+                <hr />
+              </div>
+            }
+            <div className="clearfix" />
+
+            <div id="rooms">
+              <h2>Available Rooms</h2>
+              {props.loadingRooms
+                ? <div className="loader"></div>
+                : <div>{roomsResults && roomsResults.map((results, resultIndex) => {
+                  return (
+                    <div key={resultIndex} className="row room-group">
+                      <div className="col col-md-6 parent vertical-block-center">
+                        <div className="room-titles">
+                          {results[0].roomsResults && results[0].roomsResults.map((room, roomIndex) => {
+                            return (
+                              <div key={roomIndex} className="room">
+                                <span>{room.name} ({room.mealType}) - </span>
+                                {props.userInfo.isLogged &&
+                                  <span>{props.currencySign}{props.rates && Number((CurrencyConverter.convert(props.rates, ROOMS_XML_CURRENCY, currency, room.price)) / props.nights).toFixed(2)} </span>
+                                }
+                                <span>
+                                  {props.userInfo.isLogged && '('}
+                                  {Number((room.price / props.nights) / props.locRate).toFixed(2)} LOC
                               {props.userInfo.isLogged && ')'} / night
                             </span>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </div>
-                  <div className="col col-md-3">
-                    <div className="book-details vertical-block-center">
-                      <span className="price-details">
-                        <span>{props.nights} {props.nights === 1 ? 'night: ' : 'nights: '}</span>
-                        {props.userInfo.isLogged &&
-                          <span>{props.currencySign}{props.rates && Number(getTotalPrice(results[0].roomsResults) * props.rates[ROOMS_XML_CURRENCY][props.paymentInfo.currency]).toFixed(2)} (</span>
-                        }
-                        <span>{Number(getTotalPrice(results[0].roomsResults) / props.locRate).toFixed(2)} LOC{props.userInfo.isLogged ? ')' : ''}</span>
-                      </span>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+                      <div className="col col-md-3">
+                        <div className="book-details vertical-block-center">
+                          <span className="price-details">
+                            <span>{props.nights} {props.nights === 1 ? 'night: ' : 'nights: '}</span>
+                            {props.userInfo.isLogged &&
+                              <span>{props.currencySign}{props.rates && Number(CurrencyConverter.convert(props.rates, ROOMS_XML_CURRENCY, currency, getTotalPrice(results[0].roomsResults))).toFixed(2)} (</span>
+                            }
+                            <span>{Number(getTotalPrice(results[0].roomsResults) / props.locRate).toFixed(2)} LOC{props.userInfo.isLogged ? ')' : ''}</span>
+                          </span>
 
+                        </div>
+                      </div>
+                      <div className="col col-md-3 content-center">
+                        {getButton(resultIndex)}
+                      </div>
                     </div>
-                  </div>
-                  <div className="col col-md-3 content-center">
-                    {getButton(resultIndex)}
-                  </div>
+                  );
+                })}
                 </div>
-              );
-            })}
+              }
             </div>
-          }
-        </div>
-        <div className="clearfix" />
+            <div className="clearfix" />
 
-        <div id="map">
-          <h2>Location</h2>
-          <iframe title="location" src={`https://maps.google.com/maps?q=${props.data.latitude},${props.data.longitude}&z=15&output=embed`}
-            width="100%" height="400" frameBorder="0" style={{ border: 0 }} />
-          <hr />
+            <div id="map">
+              <h2>Location</h2>
+              <iframe title="location" src={`https://maps.google.com/maps?q=${props.data.latitude},${props.data.longitude}&z=15&output=embed`}
+                width="100%" height="400" frameBorder="0" style={{ border: 0 }} />
+              <hr />
+            </div>
+            <div className="clearfix" />
+          </div>
+          <div className="clearfix"></div>
         </div>
-        <div className="clearfix" />
       </div>
-      <div className="clearfix"></div>
-    </div>
+    </section>
   );
 }
 

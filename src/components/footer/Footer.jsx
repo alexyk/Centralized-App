@@ -1,11 +1,12 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { withRouter } from 'react-router-dom';
-import { connect } from 'react-redux';
-import { setCurrency, setLocRate } from '../../actions/paymentInfo';
-import requester from '../../initDependencies';
-
 import '../../styles/css/components/footer/footer-component.css';
+
+import { setCurrency, setLocRate } from '../../actions/paymentInfo';
+
+import PropTypes from 'prop-types';
+import React from 'react';
+import { connect } from 'react-redux';
+import requester from '../../initDependencies';
+import { withRouter } from 'react-router-dom';
 
 class Footer extends React.Component {
   componentDidMount() {
@@ -44,10 +45,10 @@ class Footer extends React.Component {
                     <li>
                       <h5>LockTrip</h5>
                     </li>
-                    <li><a href="#">Help</a></li>
-                    <li><a href="#">Terms and Conditions</a></li>
-                    <li><a href="#">Legal Information</a></li>
-                    <li><a href="#">Privacy Policy</a></li>
+                    <li><a href="">Help</a></li>
+                    <li><a href="">Terms and Conditions</a></li>
+                    <li><a href="">Legal Information</a></li>
+                    <li><a href="">Privacy Policy</a></li>
                   </ul>
                 </li>
                 <li>
@@ -55,18 +56,18 @@ class Footer extends React.Component {
                     <li>
                       <h5>Hosting</h5>
                     </li>
-                    <li><a href="#">Why Host</a></li>
-                    <li><a href="#">Hospitality</a></li>
-                    <li><a href="#">Responsible Hosting</a></li>
-                    <li><a href="#">Community Center</a></li>
+                    <li><a href="">Why Host</a></li>
+                    <li><a href="">Hospitality</a></li>
+                    <li><a href="">Responsible Hosting</a></li>
+                    <li><a href="">Community Center</a></li>
                   </ul>
                 </li>
               </ul>
             </nav>
             <div className="language-and-currency">
               <div className="select">
-                <select className="language">
-                  <option value="English" selected>English</option>
+                <select className="language" defaultValue="English">
+                  <option value="English">English</option>
                   {/* <option value="Deutch">Deutch</option>
                   <option value="Espanol">Espanol</option> */}
                 </select>
@@ -76,7 +77,7 @@ class Footer extends React.Component {
                   value={this.props.paymentInfo.currency}
                   onChange={(e) => this.props.dispatch(setCurrency(e.target.value))}
                 >
-                  <option value="EUR" selected>Euro</option>
+                  <option value="EUR">Euro</option>
                   <option value="USD">US Dollar</option>
                   <option value="GBP">GB Pound</option>
                 </select>
@@ -84,8 +85,8 @@ class Footer extends React.Component {
             </div>
           </div>
           <div className="bottom-footer">
-            <span>Copyright 2017 LockChain</span>
-            <span>All Rights Reserved</span>
+            <span>Copyright &copy; 2018 LockTrip. </span>
+            <span>All Rights Reserved.</span>
           </div>
         </div>
       </footer>

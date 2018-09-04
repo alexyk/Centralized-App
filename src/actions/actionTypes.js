@@ -12,7 +12,6 @@ export const paymentInfo = {
 
 // paymentInfo actions
 export const modalsInfo = {
-  SET_SHOW_LOGIN: 'SET_SHOW_LOGIN',
   OPEN_MODAL: 'OPEN_MODAL',
   CLOSE_MODAL: 'CLOSE_MODAL'
 };
@@ -31,4 +30,9 @@ export const searchInfo = {
   SET_ADULTS: 'SET_ADULTS',
   SET_CHILDREN: 'SET_CHILDREN',
   SET_SEARCH_INFO: 'SET_SEARCH_INFO'
+};
+
+// bestPrice actions
+export const bookingBestPrice = {
+  SET_BEST_PRICE: 'SET_BEST_PRICE',
 };

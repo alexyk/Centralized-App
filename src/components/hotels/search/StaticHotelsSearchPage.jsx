@@ -144,7 +144,7 @@ class StaticHotelsSearchPage extends React.Component {
       this.props.dispatch(setSearchInfo(startDate, endDate, region, rooms, adults, hasChildren));
 
       this.setState({
-        nights: this.props.searchInfo.nights,
+        nights: endDate.diff(startDate, 'days'),
         page: page ? Number(page) : 0,
       });
 
@@ -195,8 +195,6 @@ class StaticHotelsSearchPage extends React.Component {
     if (!DEBUG_SOCKET) {
       this.client.debug = () => { };
     }
-
-    console.log(this.client);
 
     this.client.connect(null, null, this.subscribe);
   }
@@ -410,7 +408,7 @@ class StaticHotelsSearchPage extends React.Component {
           });
         });
       } else {
-        console.log('Search expired');
+        // console.log('Search expired');
       }
     });
   }
@@ -511,7 +509,7 @@ class StaticHotelsSearchPage extends React.Component {
                 this.toggleMap();
               });
             } else {
-              console.log('Search expired');
+              // console.log('Search expired');
             }
           });
         }
@@ -561,7 +559,7 @@ class StaticHotelsSearchPage extends React.Component {
             }
           });
           const hotels = _.mapKeys(listings, 'id');
-          
+
           this.setState({
             hotels,
             totalElements: data.totalElements,
@@ -633,12 +631,12 @@ class StaticHotelsSearchPage extends React.Component {
 
                 <div className="map">
                   <div className="img-holder">
-                    <a href="#" onClick={this.toggleMap}>See Results {this.state.showMap ? 'List' : 'on Map'}</a>
+                    <a href="" onClick={this.toggleMap}>See Results {this.state.showMap ? 'List' : 'on Map'}</a>
                   </div>
                 </div>
               </div>
               <div className="col-md-9">
-                <div className="list-hotel-box" id="list-hotel-box">
+                <div>
                   {this.state.showMap
                     ? <div>
                       {this.state.mapLoading

@@ -2,6 +2,8 @@ import { Route, Switch, withRouter } from 'react-router-dom';
 
 import { Config } from '../../config';
 import DefaultListing from './DefaultListing';
+import { LISTING_UPDATED } from '../../constants/successMessages.js';
+import { LONG } from '../../constants/notificationDisplayTimes.js';
 import ListingAccommodations from './steps/ListingAccommodations';
 import ListingChecking from './steps/ListingChecking';
 import ListingDescription from './steps/ListingDescription';
@@ -116,6 +118,7 @@ class EditListingPage extends React.Component {
     this.updateProgress = this.updateProgress.bind(this);
     this.onSortEnd = this.onSortEnd.bind(this);
     this.finish = this.finish.bind(this);
+    this.handleLocationChange = this.handleLocationChange.bind(this);
   }
 
   componentWillMount() {
@@ -199,6 +202,8 @@ class EditListingPage extends React.Component {
       cleaningFee: data.cleaningFee,
       depositRate: data.depositRate,
       currency: data.currency,
+      lat: data.details.lat,
+      lng: data.details.lng
     });
   }
 
@@ -393,6 +398,10 @@ class EditListingPage extends React.Component {
     this.editCaptcha.execute();
   }
 
+  handleLocationChange({ position, address }) {
+    this.setState({ lat: position.lat, lng: position.lng, mapAddress: address });
+  }
+
   editListing(captchaToken) {
     this.setState({ loading: true });
     let listing = this.createListingObject();
@@ -412,7 +421,7 @@ class EditListingPage extends React.Component {
             const errors = data.errors;
             for (let key in errors) {
               if (typeof errors[key] !== 'function') {
-                NotificationManager.warning(errors[key].message);
+                NotificationManager.warning(errors[key].message, '', LONG);
               }
             }
           });
@@ -423,7 +432,7 @@ class EditListingPage extends React.Component {
         if (res.success) {
           this.setState({ loading: false });
           this.props.history.push('/profile/listings');
-          NotificationManager.success('Successfully updated your listing');
+          NotificationManager.success(LISTING_UPDATED, 'Listing Operations', LONG);
 
         } else {
           this.setState({ loading: false });
@@ -431,7 +440,7 @@ class EditListingPage extends React.Component {
             const errors = data.errors;
             for (let key in errors) {
               if (typeof errors[key] !== 'function') {
-                NotificationManager.warning(errors[key].message);
+                NotificationManager.warning(errors[key].message, '', LONG);
               }
             }
           });
@@ -671,6 +680,7 @@ class EditListingPage extends React.Component {
             routes={routes}
             prev={routes.safetyamenities}
             next={routes.description}
+            handleLocationChange={this.handleLocationChange}
             convertGoogleApiAddressComponents={this.convertGoogleApiAddressComponents} />} />
           <Route exact path={routes.description} render={() => <ListingDescription
             values={this.state}

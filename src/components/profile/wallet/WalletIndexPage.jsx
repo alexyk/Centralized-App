@@ -1,15 +1,16 @@
-import React from 'react';
-
 import 'react-notifications/lib/notifications.css';
-
-import { NotificationManager } from 'react-notifications';
-import requester from '../../../initDependencies';
-import { connect } from 'react-redux';
+import '../../../styles/css/components/profile/wallet/wallet-index-page.css';
 
 import { Config } from '../../../config';
+import { LONG } from '../../../constants/notificationDisplayTimes.js';
+import { NotificationManager } from 'react-notifications';
+import { PROCESSING_TRANSACTION } from '../../../constants/infoMessages.js';
+import PropTypes from 'prop-types';
+import React from 'react';
+import { TRANSACTION_SUCCESSFUL } from '../../../constants/successMessages.js';
 import { TokenTransactions } from '../../../services/blockchain/tokenTransactions';
-
-import '../../../styles/css/components/profile/wallet/wallet-index-page.css';
+import { connect } from 'react-redux';
+import requester from '../../../initDependencies';
 
 class WalletIndexPage extends React.Component {
   constructor(props) {
@@ -34,7 +35,7 @@ class WalletIndexPage extends React.Component {
 
   sendTokens() {
     // console.log('amount : ' + this.state.locAmount * Math.pow(10, 18));
-    NotificationManager.info('We are processing your transaction through the ethereum network. It might freeze your screen for about 10 seconds...', 'Transactions');
+    NotificationManager.info(PROCESSING_TRANSACTION, 'Transactions', LONG);
     setTimeout(() => {
       TokenTransactions.sendTokens(
         this.state.jsonFile,
@@ -42,22 +43,22 @@ class WalletIndexPage extends React.Component {
         this.state.recipientAddress,
         (this.state.locAmount * Math.pow(10, 18)).toString()
       ).then(() => {
-        NotificationManager.success('Transaction made successfully', 'Send Tokens');
+        NotificationManager.success(TRANSACTION_SUCCESSFUL, 'Send Tokens', LONG);
         this.setState({
           recipientAddress: '',
           locAmount: 0,
           password: ''
         });
         // console.log(x);
-      }).catch(x => {
-        if (x.hasOwnProperty('message')) {
-          NotificationManager.warning(x.message, 'Send Tokens');
-        } else if (x.hasOwnProperty('err') && x.err.hasOwnProperty('message')) {
-          NotificationManager.warning(x.err.message, 'Send Tokens');
-        } else if (typeof x === 'string') {
-          NotificationManager.warning(x, 'Send Tokens');
+      }).catch(error => {
+        if (error.hasOwnProperty('message')) {
+          NotificationManager.warning(error.message, 'Send Tokens', LONG);
+        } else if (error.hasOwnProperty('err') && error.err.hasOwnProperty('message')) {
+          NotificationManager.warning(error.err.message, 'Send Tokens', LONG);
+        } else if (typeof error === 'string') {
+          NotificationManager.warning(error, 'Send Tokens', LONG);
         } else {
-          console.log(x);
+          // console.log(error);
         }
       });
     }, 1000);
@@ -91,15 +92,15 @@ class WalletIndexPage extends React.Component {
               <h2>Your Wallet</h2>
               <div className="loc-address">
                 <label htmlFor="loc-address">Your ETH/LOC address <img src={Config.getValue('basePath') + 'images/icon-lock.png'} className="lock" alt="lock-o" /></label>
-                <input className="disable-input" id="loc-address" name="locAddress" value={this.state.locAddress} type="text" disabled="disabled" />
+                <input className="disable-input" id="loc-address" name="locAddress" value={this.state.locAddress} type="text" readOnly />
               </div>
               <div className="loc-balance">
                 <label htmlFor="loc-balance">LOC Balance</label>
-                <input className="disable-input" id="loc-balance" name="locBalance" value={this.props.userInfo.locBalance} type="text" disabled="disabled" />
+                <input className="disable-input" id="loc-balance" name="locBalance" value={this.props.userInfo.locBalance} type="text" readOnly />
               </div>
               <div className="eth-balance">
                 <label htmlFor="eth-balance">ETH Balance</label>
-                <input className="disable-input" id="eth-balance" name="ethBalance" value={this.props.userInfo.ethBalance} type="text" disabled="disabled" />
+                <input className="disable-input" id="eth-balance" name="ethBalance" value={this.props.userInfo.ethBalance} type="text" readOnly />
               </div>
               <h2>Send Tokens</h2>
               <form onSubmit={(e) => { e.preventDefault(); this.sendTokens(); }}>
@@ -129,6 +130,10 @@ class WalletIndexPage extends React.Component {
     );
   }
 }
+
+WalletIndexPage.propTypes = {
+  userInfo: PropTypes.object
+};
 
 const mapStateToProps = (state) => ({
   userInfo: state.userInfo

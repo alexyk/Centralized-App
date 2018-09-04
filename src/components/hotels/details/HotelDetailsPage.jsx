@@ -3,27 +3,36 @@ import '../../../styles/css/components/carousel-component.css';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 
-import { setRegion, setSearchInfo } from '../../../actions/searchInfo';
+import { ALL_ROOMS_TAKEN, INVALID_SEARCH_DATE } from '../../../constants/warningMessages.js';
+import { CHECKING_ROOM_AVAILABILITY, ROOM_NO_LONGER_AVAILABLE } from '../../../constants/infoMessages.js';
 
 import { Config } from '../../../config';
 import HotelDetailsInfoSection from './HotelDetailsInfoSection';
 import HotelsSearchBar from '../search/HotelsSearchBar';
+import { LONG } from '../../../constants/notificationDisplayTimes.js';
 import Lightbox from 'react-images';
 import { NotificationManager } from 'react-notifications';
 import PropTypes from 'prop-types';
 import { ROOMS_XML_CURRENCY } from '../../../constants/currencies.js';
 import React from 'react';
 import Slider from 'react-slick';
+import { UNCATEGORIZED_ERROR } from '../../../constants/errorMessages.js';
+import _ from 'lodash';
 import { connect } from 'react-redux';
 import moment from 'moment';
 import { parse } from 'query-string';
 import requester from '../../../initDependencies';
 import { setCurrency } from '../../../actions/paymentInfo';
+import { setSearchInfo } from '../../../actions/searchInfo';
 import { withRouter } from 'react-router-dom';
+
+const SEARCH_EXPIRATION_TIME = 30000;
 
 class HotelDetailsPage extends React.Component {
   constructor(props) {
     super(props);
+
+    this.searchRenewalTimeout = null;
 
     let startDate = moment().add(1, 'day');
     let endDate = moment().add(2, 'day');
@@ -62,22 +71,17 @@ class HotelDetailsPage extends React.Component {
     this.next = this.next.bind(this);
     this.previous = this.previous.bind(this);
     this.redirectToSearchPage = this.redirectToSearchPage.bind(this);
+
+    this.setSearchRenewalTimeout = this.setSearchRenewalTimeout.bind(this);
+    this.clearSearchRenewalTimeout = this.clearSearchRenewalTimeout.bind(this);
   }
 
   componentDidMount() {
     const id = this.props.match.params.id;
     const searchParams = this.getNewSearchParams();
-    const search = this.getSearchParams();
     requester.getHotelById(id, searchParams).then(res => {
       res.body.then(data => {
         this.setState({ data: data, loading: false });
-
-        const regionId = search.get('region') || data.region && data.region.externalId;
-        requester.getRegionNameById(regionId).then(res => {
-          res.body.then(data => {
-            this.props.dispatch(setRegion(data));
-          });
-        });
       });
     });
 
@@ -107,10 +111,30 @@ class HotelDetailsPage extends React.Component {
       this.props.dispatch(setSearchInfo(startDate, endDate, this.props.searchInfo.region, rooms, adults, hasChildren));
 
       this.setState({
-        nights: this.props.searchInfo.nights,
+        nights: endDate.diff(startDate, 'days'),
       });
 
+      this.setSearchRenewalTimeout();
     }
+  }
+
+  componentWillUnmount() {
+    this.clearSearchRenewalTimeout();
+  }
+
+  setSearchRenewalTimeout() {
+    const isTimeoutSet = !!this.searchRenewalTimeout;
+    if (!isTimeoutSet) {
+      this.searchRenewalTimeout = setTimeout(() => {
+        console.log('modal opened');
+      }, SEARCH_EXPIRATION_TIME);
+      console.log('timeout set');
+    }
+  }
+
+  clearSearchRenewalTimeout() {
+    clearTimeout(this.searchRenewalTimeout);
+    console.log('timeout cleared');
   }
 
   redirectToSearchPage(queryString) {
@@ -131,7 +155,7 @@ class HotelDetailsPage extends React.Component {
   getNewSearchParams() {
     const array = [];
     const pairs = this.props.location.search.substr(1).split('&');
-    for(let i = 0; i < pairs.length; i++) {
+    for (let i = 0; i < pairs.length; i++) {
       let pair = pairs[i];
       array.push(pair);
     }
@@ -186,7 +210,7 @@ class HotelDetailsPage extends React.Component {
     const range = prices.filter(x => x.start >= startDate && x.end < endDate);
     const isInvalidRange = range.filter(x => !x.available).length > 0;
     if (isInvalidRange) {
-      NotificationManager.warning('There is a unavailable day in your select range', 'Calendar Operations');
+      NotificationManager.warning(INVALID_SEARCH_DATE, 'Calendar Operations', LONG);
       this.setState({ calendarStartDate: undefined, calendarEndDate: undefined });
     }
     else {
@@ -296,7 +320,7 @@ class HotelDetailsPage extends React.Component {
 
   handleBookRoom(roomsResults) {
     this.setState({ loadingRooms: true });
-    NotificationManager.info('Checking room availability...');
+    NotificationManager.info(CHECKING_ROOM_AVAILABILITY, '', LONG);
     const rooms = this.props.searchInfo.rooms.map((room) => {
       const adults = [];
       const children = room.children;
@@ -336,14 +360,14 @@ class HotelDetailsPage extends React.Component {
     try {
       this.checkNextRoom(allRooms, 0, booking);
     } catch (e) {
-      NotificationManager.error('Something went wrong...');
+      NotificationManager.error(UNCATEGORIZED_ERROR, '', LONG);
     }
   }
 
   checkNextRoom(allRooms, index, booking) {
     const isWebView = this.props.location.pathname.indexOf('/mobile') !== -1;
     if (index >= allRooms.length) {
-      NotificationManager.warning('Unfortunatelly all rooms in that hotel were already taken, please try another one.', '', 5000);
+      NotificationManager.warning(ALL_ROOMS_TAKEN, '', LONG);
       const search = this.props.location.search;
       const rootURL = !isWebView ? '/hotels/listings' : '/mobile/search';
       const URL = `${rootURL}/${search}`;
@@ -355,7 +379,7 @@ class HotelDetailsPage extends React.Component {
     requester.createReservation(booking).then(res => {
       if (res.success) {
         if (index !== 0) {
-          NotificationManager.info('The room that you requested is no longer available. You were given a similar room which may have slightly different price and extras.', '', 5000);
+          NotificationManager.info(ROOM_NO_LONGER_AVAILABLE, '', LONG);
         }
 
         const id = this.props.match.params.id;
@@ -367,7 +391,7 @@ class HotelDetailsPage extends React.Component {
         this.checkNextRoom(allRooms, index + 1, booking);
       }
     }).catch(() => {
-      NotificationManager.error('Something went wrong...');
+      NotificationManager.error(UNCATEGORIZED_ERROR, '', LONG);
     });
   }
 
@@ -385,8 +409,9 @@ class HotelDetailsPage extends React.Component {
     } else {
       images = [];
       if (this.state.data.hotelPhotos) {
-        images = this.state.data.hotelPhotos.map((image, index) => {
-          return { src: Config.getValue('imgHost') + image.url, index: index };
+        let sortedImages = _.orderBy(this.state.data.hotelPhotos, ['url'], ['asc']);
+        images = sortedImages.map((image, index) => {
+          return { src: Config.getValue('imgHost') + image.url, index };
         });
       }
     }
@@ -476,47 +501,41 @@ class HotelDetailsPage extends React.Component {
               </div>
             </nav>
 
-            <section id="hotel-info">
+            <HotelDetailsInfoSection
+              nights={this.state.nights}
+              onApply={this.handleApply}
+              startDate={this.state.calendarStartDate}
+              endDate={this.state.calendarEndDate}
+              data={this.state.data}
+              hotelRooms={this.state.hotelRooms}
+              locRate={this.state.locRate}
+              rates={this.state.rates}
+              loading={this.state.loading}
+              currencySign={this.props.paymentInfo.currencySign}
+              handleBookRoom={this.handleBookRoom}
+              checkAvailability={this.checkAvailability}
+              loadingRooms={this.state.loadingRooms}
+            />
+
+            {/* MOBILE ONLY START */}
+            {this.props.location.pathname.indexOf('/mobile') !== -1 &&
               <div className="container">
-
-                <HotelDetailsInfoSection
-                  nights={this.state.nights}
-                  onApply={this.handleApply}
-                  startDate={this.state.calendarStartDate}
-                  endDate={this.state.calendarEndDate}
-                  data={this.state.data}
-                  hotelRooms={this.state.hotelRooms}
-                  locRate={this.state.locRate}
-                  rates={this.state.rates}
-                  loading={this.state.loading}
-                  currencySign={this.props.paymentInfo.currencySign}
-                  handleBookRoom={this.handleBookRoom}
-                  checkAvailability={this.checkAvailability}
-                  loadingRooms={this.state.loadingRooms}
-                />
-              </div>
-
-              {/* MOBILE ONLY START */}
-              {this.props.location.pathname.indexOf('/mobile') !== -1 &&
-                <div className="container">
-                  <button className="btn" style={{ 'width': '100%', 'marginBottom': '20px' }} onClick={(e) => this.props.history.goBack()}>Back</button>
-                  <div className="select">
-                    <select
-                      className="currency"
-                      value={this.props.paymentInfo.currency}
-                      style={{ 'height': '40px', 'margin': '10px 0', 'textAlignLast': 'right', 'paddingRight': '45%', 'direction': 'rtl' }}
-                      onChange={(e) => this.props.dispatch(setCurrency(e.target.value))}
-                    >
-                      <option value="EUR">EUR</option>
-                      <option value="USD">USD</option>
-                      <option value="GBP">GBP</option>
-                    </select>
-                  </div>
+                <button className="btn" style={{ 'width': '100%', 'marginBottom': '20px' }} onClick={(e) => this.props.history.goBack()}>Back</button>
+                <div className="select">
+                  <select
+                    className="currency"
+                    value={this.props.paymentInfo.currency}
+                    style={{ 'height': '40px', 'margin': '10px 0', 'textAlignLast': 'right', 'paddingRight': '45%', 'direction': 'rtl' }}
+                    onChange={(e) => this.props.dispatch(setCurrency(e.target.value))}
+                  >
+                    <option value="EUR">EUR</option>
+                    <option value="USD">USD</option>
+                    <option value="GBP">GBP</option>
+                  </select>
                 </div>
-              }
-              {/* MOBILE ONLY END */}
-
-            </section>
+              </div>
+            }
+            {/* MOBILE ONLY END */}
           </div>
         }
       </div>

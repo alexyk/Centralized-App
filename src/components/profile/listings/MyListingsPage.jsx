@@ -2,16 +2,17 @@ import '../../../styles/css/components/profile/listings/my-listings-page.css';
 
 import { Config } from '../../../config';
 import DeletionModal from '../../common/modals/DeletionModal';
+import { LISTING_DELETED } from '../../../constants/successMessages.js';
+import { LONG } from '../../../constants/notificationDisplayTimes.js';
 import { Link } from 'react-router-dom';
 import MyListingsInProgressItem from './MyListingsInProgressItem';
 import MyListingsItemRow from './MyListingsItemRow';
 import { NotificationManager } from 'react-notifications';
+import { PROPERTY_CANNOT_BE_DELETED } from '../../../constants/errorMessages.js';
 import ReCAPTCHA from 'react-google-recaptcha';
 import React from 'react';
 import filterListings from '../../../actions/filterListings';
 import requester from '../../../initDependencies';
-
-
 
 class MyListingsPage extends React.Component {
   constructor(props) {
@@ -109,13 +110,13 @@ class MyListingsPage extends React.Component {
         const listings = this.state[listingStateKey];
         const filteredListings = listings.filter(x => x.id !== deletingId);
         this.setState({ [listingStateKey]: filteredListings });
-        NotificationManager.success('Listing deleted');
+        NotificationManager.success(LISTING_DELETED, '', LONG);
       } else {
-        NotificationManager.error('Cannot delete this property. It might have reservations or other irrevocable actions.');
+        NotificationManager.error(PROPERTY_CANNOT_BE_DELETED, 'Listing Operations', LONG);
       }
       this.handleCloseDeleteListing();
     }).catch(e => {
-      console.log(e);
+      // console.log(e);
       this.handleCloseDeleteListing();
     });
   }

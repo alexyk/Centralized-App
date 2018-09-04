@@ -25,7 +25,7 @@ function MessagesChat(props) {
 
 MessagesChat.propTypes = {
   message: PropTypes.object,
-  sender: PropTypes.object,
+  sender: PropTypes.bool,
   queueMessage: PropTypes.bool,
   children: PropTypes.object
 };

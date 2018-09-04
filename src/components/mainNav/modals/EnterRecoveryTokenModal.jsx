@@ -4,8 +4,9 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { ENTER_RECOVERY_TOKEN } from '../../../constants/modals.js';
 
-function EnterRecoveryTokenModal(props) {
+import '../../../styles/css/components/modals/modal.css';
 
+function EnterRecoveryTokenModal(props) {
   return (
     <div>
       <Modal show={props.isActive} onHide={e => props.closeModal(ENTER_RECOVERY_TOKEN, e)} className="modal fade myModal">
@@ -14,11 +15,11 @@ function EnterRecoveryTokenModal(props) {
           <button type="button" className="close" onClick={(e) => props.closeModal(ENTER_RECOVERY_TOKEN, e)}>&times;</button>
         </Modal.Header>
         <Modal.Body>
-          <p>A confirmation email has been sent. To enter a new password open the link from your email or enter the token in the field below. </p>
           <form onSubmit={(e) => { e.preventDefault(); props.handleSubmitRecoveryToken(); }}>
-            <div className="form-group">
-              <img src={Config.getValue('basePath') + 'images/login-mail.png'} alt="email" />
-              <input type="text" name="recoveryToken" value={props.recoveryToken} onChange={props.onChange} className="form-control" placeholder="Token" />
+            <p>A confirmation email has been sent. To enter a new password open the link from your email or enter the security code in the field below. </p>
+            <div className="input-container">
+              <img src={Config.getValue('basePath') + 'images/login-mail.png'} className="email-image" alt="email" />
+              <input type="text" name="recoveryToken" value={props.recoveryToken} onChange={props.onChange} className="with-icon" placeholder="Security Code" />
             </div>
 
             <button type="submit" className="btn btn-primary">Proceed to Password Change</button>

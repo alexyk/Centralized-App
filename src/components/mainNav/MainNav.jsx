@@ -6,22 +6,25 @@ import {
   CHANGE_PASSWORD,
   CONFIRM_WALLET,
   CREATE_WALLET,
+  EMAIL_VERIFICATION,
   ENTER_RECOVERY_TOKEN,
   LOGIN,
   REGISTER,
   SAVE_WALLET,
-  SEND_RECOVERY_EMAIL
+  SEND_RECOVERY_EMAIL,
+  UPDATE_COUNTRY,
+  ENTER_EMAIL_VERIFICATION_SECURITY_TOKEN
 } from '../../constants/modals.js';
 import {
   INVALID_EMAIL,
   INVALID_PASSWORD,
-  INVALID_TOKEN,
+  INVALID_SECURITY_CODE,
   PASSWORDS_DONT_MATCH,
   PROFILE_PASSWORD_REQUIREMENTS
 } from '../../constants/warningMessages';
 import { Link, withRouter } from 'react-router-dom';
 import { MenuItem, Nav, NavDropdown, NavItem, Navbar } from 'react-bootstrap/lib';
-import { PASSWORD_SUCCESSFULLY_CHANGED, PROFILE_SUCCESSFULLY_CREATED } from '../../constants/successMessages.js';
+import { PASSWORD_SUCCESSFULLY_CHANGED, PROFILE_SUCCESSFULLY_CREATED, EMAIL_VERIFIED } from '../../constants/successMessages.js';
 import { closeModal, openModal } from '../../actions/modalsInfo';
 import { setIsLogged, setUserInfo } from '../../actions/userInfo';
 
@@ -31,9 +34,13 @@ import ChangePasswordModal from './modals/ChangePasswordModal';
 import { Config } from '../../config';
 import ConfirmWalletModal from './modals/ConfirmWalletModal';
 import CreateWalletModal from './modals/CreateWalletModal';
+import EmailVerificationModal from './modals/EmailVerificationModal';
 import EnterRecoveryTokenModal from './modals/EnterRecoveryTokenModal';
+import EnterEmailVerificationTokenModal from './modals/EnterEmailVerificationTokenModal';
+import { LONG } from '../../constants/notificationDisplayTimes.js';
 import LoginModal from './modals/LoginModal';
-import { NOT_FOUND } from '../../constants/errorMessages';
+import { MISSING_AIRDROP_INFO } from '../../constants/warningMessages.js';
+import { NOT_FOUND, UNCATEGORIZED_ERROR } from '../../constants/errorMessages';
 import { NotificationManager } from 'react-notifications';
 import PropTypes from 'prop-types';
 import ReCAPTCHA from 'react-google-recaptcha';
@@ -41,8 +48,11 @@ import React from 'react';
 import RegisterModal from './modals/RegisterModal';
 import SaveWalletModal from './modals/SaveWalletModal';
 import SendRecoveryEmailModal from './modals/SendRecoveryEmailModal';
+import UpdateCountryModal from './modals/UpdateCountryModal';
+import { VERIFICATION_EMAIL_SENT } from '../../constants/infoMessages.js';
 import { Wallet } from '../../services/blockchain/wallet.js';
 import { connect } from 'react-redux';
+import queryString from 'query-string';
 import requester from '../../initDependencies';
 import { setAirdropInfo } from '../../actions/airdropInfo';
 
@@ -58,7 +68,10 @@ class MainNav extends React.Component {
       signUpLocAddress: '',
       loginEmail: '',
       loginPassword: '',
+      country: { id: 1 },
+      emailVerificationToken: '',
       walletPassword: '',
+      repeatWalletPassword: '',
       mnemonicWords: '',
       userName: '',
       userToken: '',
@@ -83,6 +96,7 @@ class MainNav extends React.Component {
 
     this.openModal = this.openModal.bind(this);
     this.closeModal = this.closeModal.bind(this);
+    this.clearStateOnCloseModal = this.clearStateOnCloseModal.bind(this);
 
     this.messageListener = this.messageListener.bind(this);
     this.getCountOfMessages = this.getCountOfMessages.bind(this);
@@ -91,17 +105,15 @@ class MainNav extends React.Component {
     this.handleSubmitRecoveryToken = this.handleSubmitRecoveryToken.bind(this);
     this.handleSubmitRecoveryEmail = this.handleSubmitRecoveryEmail.bind(this);
     this.handleConfirmWallet = this.handleConfirmWallet.bind(this);
+    this.handleUpdateCountry = this.handleUpdateCountry.bind(this);
+    this.handleChangeCountry = this.handleChangeCountry.bind(this);
+    this.requestVerificationEmail = this.requestVerificationEmail.bind(this);
 
     this.executeReCaptcha = this.executeReCaptcha.bind(this);
-    // this.executeLoginCaptcha = this.executeLoginCaptcha.bind(this);
-    // this.executeChangePasswordCaptcha = this.executeChangePasswordCaptcha.bind(this);
-    // this.executeSendRecoveryEmailCaptcha = this.executeSendRecoveryEmailCaptcha.bind(this);
-    // this.executeConfirmWalletCaptcha = this.executeConfirmWalletCaptcha.bind(this);
     this.getReCaptchaFunction = this.getReCaptchaFunction.bind(this);
   }
 
   componentDidMount() {
-    // if localStorage data shows that user is logged in, then setIsLogged(true) in Redux
     if (
       localStorage[Config.getValue('domainPrefix') + '.auth.locktrip'] &&
       localStorage[Config.getValue('domainPrefix') + '.auth.username']
@@ -109,22 +121,51 @@ class MainNav extends React.Component {
       this.setUserInfo();
     }
 
-    const search = this.props.location.search;
-    const searchParams = search.split('=');
-    if (searchParams[0] === '?token') {
+    const queryParams = queryString.parse(this.props.location.search);
+    if (queryParams.token) {
+      this.setState({ recoveryToken: queryParams.token });
       this.openModal(ENTER_RECOVERY_TOKEN);
-      // this.setState({
-      //   recoveryToken: searchParams[1],
-      //   enterRecoveryToken: true,
-      // });
     }
 
+    if (queryParams.emailVerificationToken) {
+      this.setState({
+        emailVerificationToken: queryParams.emailVerificationToken,
+        isVerifyingEmail: true,
+      });
+      this.openModal(LOGIN);
+    }
+
+    // if (queryParams.emailVerificationSecurityCode) {
+    //   const { emailVerificationSecurityCode } = queryParams;
+    //   requester.verifyEmailSecurityCode({ emailVerificationSecurityCode })
+    //     .then(res => res.body)
+    //     .then(data => {
+    //       if (data.isEmailVerified) {
+    //         NotificationManager.success(EMAIL_VERIFIED, '', LONG);
+    //         this.setUserInfo();
+    //       }
+    //     });
+
+    //   this.removeVerificationCodeFromURL();
+    // }
 
     this.messageListener();
   }
 
+  removeVerificationCodeFromURL() {
+    const path = this.props.location.pathname;
+    const search = this.props.location.search;
+    const indexOfSecurityCode = search.indexOf('&emailVerificationSecurityCode=');
+    const pushURL = path + search.substring(0, indexOfSecurityCode);
+    this.props.history.push(pushURL);
+  }
+
   onChange(e) {
     this.setState({ [e.target.name]: e.target.value });
+  }
+
+  handleChangeCountry(e) {
+    this.setState({ country: JSON.parse(e.target.value) });
   }
 
   handleMnemonicWordsChange(e) {
@@ -138,6 +179,7 @@ class MainNav extends React.Component {
       firstName: this.state.signUpFirstName,
       lastName: this.state.signUpLastName,
       password: this.state.signUpPassword,
+      country: this.state.country.id,
       locAddress: localStorage.walletAddress,
       jsonFile: localStorage.walletJson,
       image: Config.getValue('basePath') + 'images/default.png'
@@ -152,18 +194,16 @@ class MainNav extends React.Component {
           confirmedRegistration: false,
         });
         this.openModal(LOGIN);
-        NotificationManager.success(PROFILE_SUCCESSFULLY_CREATED);
-        // this.captcha.reset();
+        NotificationManager.success(PROFILE_SUCCESSFULLY_CREATED, '', LONG);
       }
       else {
         res.errors.then(res => {
           const errors = res;
           for (let key in errors) {
             if (typeof errors[key] !== 'function') {
-              NotificationManager.warning(errors[key].message, 'Field: ' + key.toUpperCase());
+              NotificationManager.warning(errors[key].message, 'Field: ' + key.toUpperCase(), LONG);
             }
           }
-          // this.captcha.reset();
         });
       }
     });
@@ -185,14 +225,14 @@ class MainNav extends React.Component {
     requester.register(user, captchaToken).then(res => {
       if (res.success) {
         this.openModal(AIRDROP_LOGIN);
-        NotificationManager.success(PROFILE_SUCCESSFULLY_CREATED);
+        NotificationManager.success(PROFILE_SUCCESSFULLY_CREATED, '', LONG);
       }
       else {
         res.errors.then(res => {
           const errors = res;
           for (let key in errors) {
             if (typeof errors[key] !== 'function') {
-              NotificationManager.warning(errors[key].message, 'Field: ' + key.toUpperCase());
+              NotificationManager.warning(errors[key].message, 'Field: ' + key.toUpperCase(), LONG);
             }
           }
         });
@@ -200,7 +240,7 @@ class MainNav extends React.Component {
     });
   }
 
-  handleLogin(captchaToken) {
+  handleLogin() {
     let user = {
       email: this.state.loginEmail,
       password: this.state.loginPassword
@@ -213,7 +253,19 @@ class MainNav extends React.Component {
       this.setState({ isUpdatingWallet: false });
     }
 
-    requester.login(user, captchaToken).then(res => {
+    if (this.state.isUpdatingCountry && this.state.country) {
+      user.country = this.state.country.id;
+      this.closeModal(UPDATE_COUNTRY);
+      this.setState({ isUpdatingCountry: false, country: { id: 1 } });
+    }
+
+    if (this.state.isVerifyingEmail && this.state.emailVerificationToken) {
+      user.emailVerificationToken = this.state.emailVerificationToken;
+      this.closeModal(ENTER_EMAIL_VERIFICATION_SECURITY_TOKEN);
+      this.setState({ isVerifyingEmail: false, emailVerificationToken: '' });
+    }
+
+    requester.login(user).then(res => {
       if (res.success) {
         res.body.then(data => {
           localStorage[Config.getValue('domainPrefix') + '.auth.locktrip'] = data.Authorization;
@@ -231,23 +283,35 @@ class MainNav extends React.Component {
         res.errors.then(res => {
           const errors = res.errors;
           if (errors.hasOwnProperty('JsonFileNull')) {
-            NotificationManager.warning(errors['JsonFileNull'].message);
+            NotificationManager.warning(errors['JsonFileNull'].message, '', LONG);
             this.setState({ isUpdatingWallet: true }, () => {
               this.closeModal(LOGIN);
               this.openModal(CREATE_WALLET);
             });
+          } else if (errors.hasOwnProperty('CountryNull')) {
+            NotificationManager.warning(errors['CountryNull'].message, '', LONG);
+            this.getCountries();
+            this.setState({ isUpdatingCountry: true }, () => {
+              this.closeModal(LOGIN);
+              this.openModal(UPDATE_COUNTRY);
+            });
+          } else if (errors.hasOwnProperty('EmailNotVerified')) {
+            NotificationManager.warning(errors['EmailNotVerified'].message, '', LONG);
+            this.setState({ isVerifyingEmail: true }, () => {
+              this.closeModal(LOGIN);
+              this.openModal(ENTER_EMAIL_VERIFICATION_SECURITY_TOKEN);
+            });
           } else {
             for (let key in errors) {
               if (typeof errors[key] !== 'function') {
-                NotificationManager.warning(errors[key].message);
+                NotificationManager.warning(errors[key].message, '', LONG);
               }
             }
           }
         }).catch(errors => {
           for (var e in errors) {
-            NotificationManager.warning(errors[e].message);
+            NotificationManager.warning(errors[e].message, '', LONG);
           }
-          // this.captcha.reset();
         });
       }
     });
@@ -282,9 +346,9 @@ class MainNav extends React.Component {
       } else {
         res.errors.then(res => {
           const errors = res;
-          console.log(errors);
+          // console.log(errors);
           if (errors.hasOwnProperty('JsonFileNull')) {
-            NotificationManager.warning(errors['JsonFileNull'].message);
+            NotificationManager.warning(errors['JsonFileNull'].message, '', LONG);
             this.setState({ isUpdatingWallet: true }, () => {
               this.closeModal(AIRDROP_LOGIN);
               this.openModal(CREATE_WALLET);
@@ -292,13 +356,13 @@ class MainNav extends React.Component {
           } else {
             for (let key in errors) {
               if (typeof errors[key] !== 'function') {
-                NotificationManager.warning(errors[key].message);
+                NotificationManager.warning(errors[key].message, '', LONG);
               }
             }
           }
         }).catch(errors => {
           for (var e in errors) {
-            NotificationManager.warning(errors[e].message);
+            NotificationManager.warning(errors[e].message, '', LONG);
           }
         });
       }
@@ -311,16 +375,16 @@ class MainNav extends React.Component {
         if (data.participates) {
           this.dispatchAirdropInfo(data);
         } else {
-          console.log('user not yet moved from temp to main');
+          // console.log('user not yet moved from temp to main');
           const token = this.props.location.search.split('=')[1];
           requester.checkIfAirdropUserExists(token).then(res => {
             res.body.then(user => {
               const currentEmail = localStorage[Config.getValue('domainPrefix') + '.auth.username'];
               if (user.email === currentEmail && user.exists) {
-                console.log('users match');
+                // console.log('users match');
                 requester.verifyUserAirdropInfo(token).then(() => {
-                  console.log('user moved from temp to main');
-                  NotificationManager.info('Verification email has been sent. Please follow the link to confirm your email.');
+                  // console.log('user moved from temp to main');
+                  NotificationManager.info(VERIFICATION_EMAIL_SENT, '', LONG);
                   requester.getUserAirdropInfo().then(res => {
                     res.body.then(data => {
                       this.dispatchAirdropInfo(data);
@@ -328,13 +392,13 @@ class MainNav extends React.Component {
                   });
                 });
               } else {
-                console.log('users dont match', user.email, currentEmail);
+                // console.log('users dont match', user.email, currentEmail);
               }
             });
           });
         }
       }).catch(() => {
-        NotificationManager.warning('No airdrop information about this profile');
+        NotificationManager.warning(MISSING_AIRDROP_INFO, '', LONG);
         this.props.history.push('/airdrop');
       });
     });
@@ -365,9 +429,9 @@ class MainNav extends React.Component {
           const ethBalance = eth / (Math.pow(10, 18));
           Wallet.getTokenBalance(data.locAddress).then(loc => {
             const locBalance = loc / (Math.pow(10, 18));
-            const { firstName, lastName, phoneNumber, email, locAddress, gender } = data;
+            const { firstName, lastName, phoneNumber, email, locAddress, gender, isEmailVerified } = data;
             this.props.dispatch(setIsLogged(true));
-            this.props.dispatch(setUserInfo(firstName, lastName, phoneNumber, email, locAddress, ethBalance, locBalance, gender));
+            this.props.dispatch(setUserInfo(firstName, lastName, phoneNumber, email, locAddress, ethBalance, locBalance, gender, isEmailVerified));
           });
         });
       });
@@ -404,7 +468,18 @@ class MainNav extends React.Component {
       e.preventDefault();
     }
 
+    this.clearStateOnCloseModal();
     this.props.dispatch(closeModal(modal));
+  }
+
+  clearStateOnCloseModal(modal) {
+    if (modal === LOGIN) {
+      this.setState({ loginEmail: '', loginPassword: '' });
+    } else if (modal === EMAIL_VERIFICATION) {
+      this.setState({ isVerifyingEmail: false, emailVerificationToken: '' });
+    }
+
+    this.setState({ country: { id: 1 } });
   }
 
   messageListener() {
@@ -431,17 +506,17 @@ class MainNav extends React.Component {
     const password = this.state.newPassword;
     const confirm = this.state.confirmNewPassword;
     if (password !== confirm) {
-      NotificationManager.warning(PASSWORDS_DONT_MATCH);
+      NotificationManager.warning(PASSWORDS_DONT_MATCH, '', LONG);
       return;
     }
 
     if (password.length < 6 || password.length > 30) {
-      NotificationManager.warning(INVALID_PASSWORD);
+      NotificationManager.warning(INVALID_PASSWORD, '', LONG);
       return;
     }
 
     if (!password.match('^([^\\s]*[a-zA-Z]+.*?[0-9]+[^\\s]*|[^\\s]*[0-9]+.*?[a-zA-Z]+[^\\s]*)$')) {
-      NotificationManager.warning(PROFILE_PASSWORD_REQUIREMENTS);
+      NotificationManager.warning(PROFILE_PASSWORD_REQUIREMENTS, '', LONG);
       return;
     }
 
@@ -454,10 +529,10 @@ class MainNav extends React.Component {
       if (res.success) {
         this.closeModal(CHANGE_PASSWORD);
         this.openModal(LOGIN);
-        NotificationManager.success(PASSWORD_SUCCESSFULLY_CHANGED);
+        NotificationManager.success(PASSWORD_SUCCESSFULLY_CHANGED, '', LONG);
       }
       else {
-        NotificationManager.error(NOT_FOUND);
+        NotificationManager.error(NOT_FOUND, '', LONG);
       }
       // this.captcha.reset();
     });
@@ -470,7 +545,7 @@ class MainNav extends React.Component {
         this.openModal(CHANGE_PASSWORD);
       }
       else {
-        NotificationManager.warning(INVALID_TOKEN);
+        NotificationManager.warning(INVALID_SECURITY_CODE, '', LONG);
       }
     });
   }
@@ -484,9 +559,8 @@ class MainNav extends React.Component {
         this.openModal(ENTER_RECOVERY_TOKEN);
       }
       else {
-        NotificationManager.warning(INVALID_EMAIL);
+        NotificationManager.warning(INVALID_EMAIL, '', LONG);
       }
-      // this.captcha.reset();
     });
   }
 
@@ -501,23 +575,41 @@ class MainNav extends React.Component {
     }
   }
 
+  getCountries() {
+    requester.getCountries()
+      .then(response => response.body)
+      .then(data => this.setState({ countries: data }));
+  }
+
+  handleUpdateCountry() {
+    if (this.state.country) {
+      this.closeModal(UPDATE_COUNTRY);
+      this.handleLogin();
+    } else {
+      NotificationManager.error('Please select a valid country.', '', LONG);
+    }
+  }
+
   executeReCaptcha(currentReCaptcha) {
     this.setState({
       currentReCaptcha
     }, () => this.captcha.execute());
   }
 
-  // executeChangePasswordCaptcha() {
-  //   this.changePasswordCaptcha.execute();
-  // }
+  requestVerificationEmail() {
+    const emailVerificationRedirectURL = this.props.location.pathname + this.props.location.search;
+    requester.sendVerificationEmail({ emailVerificationRedirectURL })
+      .then(res => res.body)
+      .then(data => {
+        if (data.isVerificationEmailSent) {
+          NotificationManager.success(VERIFICATION_EMAIL_SENT, '', LONG);
+        } else {
+          NotificationManager.error(UNCATEGORIZED_ERROR, '', LONG);
+        }
+      });
 
-  // executeSendRecoveryEmailCaptcha() {
-  //   this.sendRecoveryEmailCaptcha.execute();
-  // }
-
-  // executeConfirmWalletCaptcha() {
-  //   this.confirmWalletCaptcha.execute();
-  // }
+    this.closeModal(EMAIL_VERIFICATION);
+  }
 
   getReCaptchaFunction(currentReCaptcha) {
     switch (currentReCaptcha) {
@@ -529,6 +621,8 @@ class MainNav extends React.Component {
         return this.handleConfirmWallet;
       case 'changePassword':
         return this.handlePasswordChange;
+      default:
+        return null;
     }
   }
 
@@ -558,41 +652,20 @@ class MainNav extends React.Component {
                 />
               )
             }
-            {/* <ReCAPTCHA
-              ref={el => this.loginCaptcha = el}
-              size="invisible"
-              sitekey={Config.getValue('recaptchaKey')}
-              onChange={(token) => { this.handleLogin(token); this.loginCaptcha.reset(); }}
-            />
-            <ReCAPTCHA
-              ref={el => this.changePasswordCaptcha = el}
-              size="invisible"
-              sitekey={Config.getValue('recaptchaKey')}
-              onChange={(token) => { this.handlePasswordChange(token); this.changePasswordCaptcha.reset(); }}
-            />
-            <ReCAPTCHA
-              ref={el => this.sendRecoveryEmailCaptcha = el}
-              size="invisible"
-              sitekey={Config.getValue('recaptchaKey')}
-              onChange={token => { this.handleSubmitRecoveryEmail(token); this.sendRecoveryEmailCaptcha.reset(); }}
-            />
-            <ReCAPTCHA
-              ref={el => this.confirmWalletCaptcha = el}
-              size="invisible"
-              sitekey={Config.getValue('recaptchaKey')}
-              onChange={(token) => { this.handleConfirmWallet(token); this.confirmWalletCaptcha.reset(); }}
-            /> */}
           </div>
-          <CreateWalletModal setUserInfo={this.setUserInfo} userToken={this.state.userToken} userName={this.state.userName} walletPassword={this.state.walletPassword} isActive={this.props.modalsInfo.modals.get(CREATE_WALLET)} openModal={this.openModal} closeModal={this.closeModal} onChange={this.onChange} />
-          <SaveWalletModal setUserInfo={this.setUserInfo} userToken={this.state.userToken} userName={this.state.userName} isActive={this.props.modalsInfo.modals.get(SAVE_WALLET)} openModal={this.openModal} closeModal={this.closeModal} onChange={this.onChange} />
-          <ConfirmWalletModal isActive={this.props.modalsInfo.modals.get(CONFIRM_WALLET)} openModal={this.openModal} closeModal={this.closeModal} handleMnemonicWordsChange={this.handleMnemonicWordsChange} mnemonicWords={this.state.mnemonicWords} handleConfirmWallet={() => this.executeReCaptcha('confirmWallet')} confirmedRegistration={this.state.confirmedRegistration} />
-          <SendRecoveryEmailModal isActive={this.props.modalsInfo.modals.get(SEND_RECOVERY_EMAIL)} openModal={this.openModal} closeModal={this.closeModal} recoveryEmail={this.state.recoveryEmail} handleSubmitRecoveryEmail={() => this.executeReCaptcha('recoveryEmail')} onChange={this.onChange} />
-          <EnterRecoveryTokenModal isActive={this.props.modalsInfo.modals.get(ENTER_RECOVERY_TOKEN)} openModal={this.openModal} closeModal={this.closeModal} onChange={this.onChange} recoveryToken={this.state.recoveryToken} handleSubmitRecoveryToken={this.handleSubmitRecoveryToken} />
-          <ChangePasswordModal isActive={this.props.modalsInfo.modals.get(CHANGE_PASSWORD)} openModal={this.openModal} closeModal={this.closeModal} newPassword={this.state.newPassword} confirmNewPassword={this.state.confirmNewPassword} onChange={this.onChange} handlePasswordChange={() => this.executeReCaptcha('changePassword')} />
-          <LoginModal isActive={this.props.modalsInfo.modals.get(LOGIN)} openModal={this.openModal} closeModal={this.closeModal} loginEmail={this.state.loginEmail} loginPassword={this.state.loginPassword} onChange={this.onChange} handleLogin={() => this.executeReCaptcha('login')} />
-          <AirdropLoginModal isActive={this.props.modalsInfo.modals.get(AIRDROP_LOGIN)} openModal={this.openModal} closeModal={this.closeModal} loginEmail={this.state.loginEmail} loginPassword={this.state.loginPassword} onChange={this.onChange} handleLogin={this.handleAirdropLogin} />
-          <RegisterModal isActive={this.props.modalsInfo.modals.get(REGISTER)} openModal={this.openModal} closeModal={this.closeModal} signUpEmail={this.state.signUpEmail} signUpFirstName={this.state.signUpFirstName} signUpLastName={this.state.signUpLastName} signUpPassword={this.state.signUpPassword} onChange={this.onChange} />
-          <AirdropRegisterModal isActive={this.props.modalsInfo.modals.get(AIRDROP_REGISTER)} openModal={this.openModal} closeModal={this.closeModal} signUpEmail={this.state.signUpEmail} signUpFirstName={this.state.signUpFirstName} signUpLastName={this.state.signUpLastName} signUpPassword={this.state.signUpPassword} onChange={this.onChange} />
+          <CreateWalletModal setUserInfo={this.setUserInfo} userToken={this.state.userToken} userName={this.state.userName} walletPassword={this.state.walletPassword} repeatWalletPassword={this.state.repeatWalletPassword} isActive={this.props.modalsInfo.isActive[CREATE_WALLET]} openModal={this.openModal} closeModal={this.closeModal} onChange={this.onChange} />
+          <SaveWalletModal setUserInfo={this.setUserInfo} userToken={this.state.userToken} userName={this.state.userName} isActive={this.props.modalsInfo.isActive[SAVE_WALLET]} openModal={this.openModal} closeModal={this.closeModal} onChange={this.onChange} />
+          <ConfirmWalletModal isActive={this.props.modalsInfo.isActive[CONFIRM_WALLET]} openModal={this.openModal} closeModal={this.closeModal} handleMnemonicWordsChange={this.handleMnemonicWordsChange} mnemonicWords={this.state.mnemonicWords} handleConfirmWallet={() => this.executeReCaptcha('confirmWallet')} confirmedRegistration={this.state.confirmedRegistration} />
+          <SendRecoveryEmailModal isActive={this.props.modalsInfo.isActive[SEND_RECOVERY_EMAIL]} openModal={this.openModal} closeModal={this.closeModal} recoveryEmail={this.state.recoveryEmail} handleSubmitRecoveryEmail={() => this.executeReCaptcha('recoveryEmail')} onChange={this.onChange} />
+          <EnterRecoveryTokenModal isActive={this.props.modalsInfo.isActive[ENTER_RECOVERY_TOKEN]} openModal={this.openModal} closeModal={this.closeModal} onChange={this.onChange} recoveryToken={this.state.recoveryToken} handleSubmitRecoveryToken={this.handleSubmitRecoveryToken} />
+          <ChangePasswordModal isActive={this.props.modalsInfo.isActive[CHANGE_PASSWORD]} openModal={this.openModal} closeModal={this.closeModal} newPassword={this.state.newPassword} confirmNewPassword={this.state.confirmNewPassword} onChange={this.onChange} handlePasswordChange={() => this.executeReCaptcha('changePassword')} />
+          <LoginModal isActive={this.props.modalsInfo.isActive[LOGIN]} openModal={this.openModal} closeModal={this.closeModal} loginEmail={this.state.loginEmail} loginPassword={this.state.loginPassword} onChange={this.onChange} handleLogin={this.handleLogin} />
+          <AirdropLoginModal isActive={this.props.modalsInfo.isActive[AIRDROP_LOGIN]} openModal={this.openModal} closeModal={this.closeModal} loginEmail={this.state.loginEmail} loginPassword={this.state.loginPassword} onChange={this.onChange} handleLogin={this.handleAirdropLogin} />
+          <RegisterModal isActive={this.props.modalsInfo.isActive[REGISTER]} openModal={this.openModal} closeModal={this.closeModal} signUpEmail={this.state.signUpEmail} signUpFirstName={this.state.signUpFirstName} signUpLastName={this.state.signUpLastName} signUpPassword={this.state.signUpPassword} countries={this.state.countries} onChange={this.onChange} handleChangeCountry={this.handleChangeCountry} />
+          <AirdropRegisterModal isActive={this.props.modalsInfo.isActive[AIRDROP_REGISTER]} openModal={this.openModal} closeModal={this.closeModal} signUpEmail={this.state.signUpEmail} signUpFirstName={this.state.signUpFirstName} signUpLastName={this.state.signUpLastName} signUpPassword={this.state.signUpPassword} onChange={this.onChange} />
+          <UpdateCountryModal isActive={this.props.modalsInfo.isActive[UPDATE_COUNTRY]} openModal={this.openModal} closeModal={this.closeModal} country={this.state.country} countries={this.state.countries} handleUpdateCountry={this.handleUpdateCountry} handleChangeCountry={this.handleChangeCountry} />
+          <EmailVerificationModal isActive={this.props.modalsInfo.isActive[EMAIL_VERIFICATION]} openModal={this.openModal} closeModal={this.closeModal} onChange={this.onChange} requestVerificationEmail={this.requestVerificationEmail} />
+          <EnterEmailVerificationTokenModal isActive={this.props.modalsInfo.isActive[ENTER_EMAIL_VERIFICATION_SECURITY_TOKEN]} openModal={this.openModal} closeModal={this.closeModal} onChange={this.onChange} handleLogin={this.handleLogin} emailVerificationToken={this.state.emailVerificationToken} />
 
           <Navbar>
             <Navbar.Header>
@@ -627,7 +700,7 @@ class MainNav extends React.Component {
                 </Nav>
                 : <Nav pullRight={true}>
                   <NavItem componentClass={Link} to="/login" onClick={() => this.openModal(LOGIN)}>Login</NavItem>
-                  <NavItem componentClass={Link} to="/signup" onClick={() => this.openModal(REGISTER)}>Register</NavItem>
+                  <NavItem componentClass={Link} to="/signup" onClick={() => { this.openModal(REGISTER); this.getCountries(); }}>Register</NavItem>
                 </Nav>
               }
             </Navbar.Collapse>

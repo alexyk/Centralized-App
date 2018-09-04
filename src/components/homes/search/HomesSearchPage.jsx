@@ -208,7 +208,6 @@ class HomesSearchPage extends React.Component {
       pairs.push(keys[i] + '=' + this.createParam(searchParams.get(keys[i])));
     }
 
-    console.log(pairs);
     return pairs;
   }
 
