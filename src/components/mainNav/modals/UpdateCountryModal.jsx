@@ -13,6 +13,8 @@ function UpdateCountryModal(props) {
     return `${name.substring(0, length)}...`;
   };
 
+  const countryHasMandatoryState = ['Canada', 'India', 'United States of America'].includes(props.country.name);
+
   return (
     <div>
       <Modal show={props.modalsInfo.isActive[UPDATE_COUNTRY]} onHide={() => props.closeModal(UPDATE_COUNTRY)} className="modal fade myModal">
@@ -25,12 +27,24 @@ function UpdateCountryModal(props) {
             <label htmlFor="country">Where do you live</label>
             <div className='select'>
               <select name="country" id="country" onChange={props.handleChangeCountry} value={JSON.stringify(props.country)} style={{ padding: '10px', maxWidth: '100%' }}>
-                <option value="" disabled selected>Country</option>
+                <option value="" selected>Country</option>
                 {props.countries && props.countries.map((item, i) => {
                   return <option key={i} value={JSON.stringify(item)} style={{ minWidth: '100%', maxWidth: '0' }}>{getShortName(item.name, 30)}</option>;
                 })}
               </select>
             </div>
+
+            {countryHasMandatoryState === true && <div className="countryState">
+              <label htmlFor="countryState">State</label>
+              <div className='select'>
+                <select name="countryState" id="countryState" onChange={props.onChange} value={props.countryState} style={{ padding: '10px', maxWidth: '100%' }}>
+                  <option value="">State</option>
+                  {props.states && props.states.map((item, i) => {
+                    return <option key={i} value={item.id} style={{ minWidth: '100%', maxWidth: '0' }}>{item.name}</option>;
+                  })}
+                </select>
+              </div>
+            </div>}
 
             <button type="submit" className="btn btn-primary">Save</button>
             <div className="clearfix"></div>
