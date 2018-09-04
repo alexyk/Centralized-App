@@ -7,9 +7,27 @@ export function setCurrency(currency) {
   };
 }
 
-export function setLocRate(locRate) {
+export function setLocRate(locRate, isBookingConfirmPage, page) {
   return {
     type: paymentInfo.SET_LOC_RATE,
-    locRate
+    locRate,
+    isBookingConfirmPage,
+    page
+  };
+}
+
+export function setLocRateInEur(locRateInEur, isBookingConfirmPage, page) {
+  return {
+    type: paymentInfo.SET_LOC_RATE_IN_EUR,
+    locRateInEur,
+    isBookingConfirmPage,
+    page
+  };
+}
+
+export function setBookingCofirmPage(isBookingConfirmPage) {
+  return {
+    type: paymentInfo.SET_IS_BOOKING_CONFIRM_PAGE,
+    isBookingConfirmPage
   };
 }

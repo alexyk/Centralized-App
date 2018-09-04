@@ -5,7 +5,7 @@ import '../../../styles/css/components/homes/booking/homes-booking-room-details-
 
 function HomesBookingRoomDetailsInfo(props) {
 
-  const { listing, checkInStart, checkInEnd, checkOutStart, checkOutEnd } = props;
+  // const { listing, checkInStart, checkInEnd, checkOutStart, checkOutEnd } = props;
 
   return (
     <div className="right-part">

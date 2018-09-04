@@ -8,7 +8,7 @@ import { PROFILE_SUCCESSFULLY_UPDATED } from '../../../constants/successMessages
 import ReCAPTCHA from 'react-google-recaptcha';
 import React from 'react';
 import Select from '../../common/google/GooglePlacesAutocomplete';
-import { UNCATEGORIZED_ERROR } from '../../../constants/errorMessages.js';
+import { PROFILE_UPDATE_ERROR } from '../../../constants/errorMessages.js';
 import moment from 'moment';
 import requester from '../../../initDependencies';
 
@@ -134,7 +134,7 @@ class ProfileEditForm extends React.Component {
         this.componentDidMount();
       }
       else {
-        NotificationManager.error(UNCATEGORIZED_ERROR, '', LONG);
+        NotificationManager.error(PROFILE_UPDATE_ERROR, '', LONG);
       }
     }).catch(errors => {
       for (var e in errors) {
@@ -328,7 +328,7 @@ class ProfileEditForm extends React.Component {
           </div>
 
           <div className="zip-code">
-            <label htmlFor="zip-code">Zip Code</label>
+            <label htmlFor="zip-code">Zip Code <span className="mandatory">*</span></label>
             <input id="zip-code" name="zipCode" value={this.state.zipCode} onChange={this.onChange} type="text" placeholder='Enter your zip code' />
           </div>
 

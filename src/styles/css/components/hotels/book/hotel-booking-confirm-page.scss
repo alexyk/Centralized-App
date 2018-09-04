@@ -1,95 +1,275 @@
 @import '../../../vendors/include-media';
+@import '../../../base/variables';
+
 #room-book-confirm {
-  .confirm-pay-info {
+  .booking-details-header {
     display: flex;
+    justify-content: space-between;
+    @include media("<=tablet") {
+      margin-top: 20px;
+      flex-direction: column;
+      text-align: center;
+    }
+  }
+  .header-underline {
+    margin-top: 0;
+    border-top: 1px solid #cfcfcf;
+  }
+  .confirm-pay-info {
     @include media("<=tablet") {
       flex-direction: column;
-      font-size: 18px;
     }
-    .cancelation-fees-info {
-      width: 70%;
-      @include media("<=tablet") {
-        width: 100%;
-        margin-bottom: 7%;
-      }
-      .btn {
-        min-width: 130px;
+    .tables-container {
+      display: flex;
+      flex-direction: column;
+      border: 1px solid #cfcfcf;
+      border-radius: 5px;
+      background-color: #fff;
+      margin: 20px 0;
+      padding-bottom: 40px;
+      .confirm-and-pay-table {
         padding: 10px;
+        max-width: 500px;
+        margin: 0 auto;
         @include media("<=tablet") {
           width: 100%;
         }
+        h4 {
+          margin: 20px; 
+          text-align: center;
+        }
+      }
+      .table-splitter {
+        width: 60%;
+        border-top: 1px solid #cfcfcf;
       }
     }
-    .total-prices-info {
-      width: 30%;
-      text-align: right;
-      padding-right: 20px;
+    .payment-methods {
+      display: flex;
+      justify-content: space-between;
+      flex-direction: column;
+      align-items: flex-start;
       @include media("<=tablet") {
+        // margin-top: 20px;
+      }
+      &-card, &-loc {
+        background-color: #fff;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        border: 1px solid #cfcfcf;
+        border-radius: 5px;
         width: 100%;
-        font-size: 18px;
-        padding-right: 0;
-      }
-      .order-name {
-        display: flex;
-        justify-content: flex-end;
-        margin-bottom: 5%;
+        padding: 20px;
+        margin-bottom: 20px;
         @include media("<=tablet") {
-          justify-content: center;
+          flex-direction: column;
         }
-        p:last-of-type {
-            font-weight: 400;
-        }
-      }
-      .order-total {
-        display: flex;
-        flex-direction: column;
-        padding-right: 0;
-        div:first-child {
-          margin-bottom: 10%;
-        }
-        a {
-          color: #E98B73;
-          background: none;
-          border: none;
-          outline: none;
-        }
-        .not-verify-info {
-          margin-bottom: 1em;
-          p {
-            margin-top: 2px;
-          }
-        }
-        @include media("<=tablet") {
+        .details {
+          width: 50%;
           text-align: center;
-          margin: auto;
-        }
-        p {
           @include media("<=tablet") {
+            width: 100%;
+          }
+          .price-update-timer {
+            display: inline-block;
+            padding: 10px;
+            font-weight: 400;
+            border-radius: 3px;
+            color: $white;
+            background-color: $light-cyan;
+            margin-bottom: 10px;
+          }
+        }
+        .logos {
+          width: 50%;
+          &-row {
+            // border: 1px solid black;
+            display: flex;
+            margin: 0 auto;
+            justify-content: space-around;
+            width: 30%;
+            max-height: 50px;
+            @include media("<=tablet") {
+              width: 50%;
+            }
+          }
+          .logo {
+            // border: 1px solid green;
             text-align: center;
-            padding-right: 0;
+            img {
+              max-width:100%;
+              max-height:100%;
+            }
+          }
+          .mastercard, .visa {
+            width: 50%;
+          }
+          .safecharge, .loc {
+            width: 100%;
+          }
+          .loc > img {
+            width: 20%;
+            @include media("<=tablet") {
+              width: 40%;
+            }
           }
         }
       }
+      .important {
+        font-weight: 400;
+      }
+      a {
+        color: $moderate-red;
+      }
+    }
+    // .total-prices-info {
+    //   width: 30%;
+    //   text-align: right;
+    //   padding-right: 20px;
+    //   @include media("<=tablet") {
+    //     width: 100%;
+    //     font-size: 18px;
+    //     padding-right: 0;
+    //   }
+    //   .order-name {
+    //     display: flex;
+    //     justify-content: flex-end;
+    //     margin-bottom: 5%;
+    //     @include media("<=tablet") {
+    //       justify-content: center;
+    //     }
+    //     p:last-of-type {
+    //         font-weight: 400;
+    //     }
+    //   }
+    //   .order-total {
+    //     display: flex;
+    //     flex-direction: column;
+    //     padding-right: 0;
+    //     div:first-child {
+    //       margin-bottom: 10%;
+    //     }
+    //     a {
+    //       color: #E98B73;
+    //       background: none;
+    //       border: none;
+    //       outline: none;
+    //     }
+    //     .not-verify-info {
+    //       margin-bottom: 1em;
+    //       p {
+    //         margin-top: 2px;
+    //       }
+    //     }
+    //     @include media("<=tablet") {
+    //       text-align: center;
+    //       margin: auto;
+    //     }
+    //     p {
+    //       @include media("<=tablet") {
+    //         text-align: center;
+    //         padding-right: 0;
+    //       }
+    //     }
+    //   }
       .booking-price {
         margin-bottom: 0;
       }
       .btn {
-        margin-top: 3%;
+        // margin-top: 3%;
         padding: 10px;
         @include media("<=tablet") {
           width: 100%;
-          margin-bottom: 10%;
-        }
-        &.btn-book {
-          margin-bottom: 10%;
-          @include media("<=tablet") {
-            margin-bottom: 5%;
-          }
+          margin-bottom: 10px;
         }
       }
     }
-  }
+
+    // ICON TOOLTIPS
+  // [tooltip]{
+  //   position:relative;
+  // }
+  // [tooltip]:hover::after,
+  // [tooltip]:hover::before {
+  //   opacity:1;
+  // }
+  // [tooltip]::after {
+  //     content: attr(tooltip);
+  //     position: absolute;
+  //     left: 50%;
+  //     // top: 6px;
+  //     transform: translateX(-130%) translateY(-30%);
+  //     background: rgba(88, 88, 88, 0.7);
+  //     text-align: center;
+  //     color: #fff;
+  //     padding: 4px 2px;
+  //     // font-size: 12px;
+  //     min-width: 200px;
+  //     border-radius: 2px;
+  //     pointer-events: none;
+  //     opacity:0;
+  // }
 }
+
+#room-book-confirm table {
+  margin: 0 auto;
+}
+
+// #room-book-confirm table button {
+//   background: none;
+//   color: #d87a61;
+//   border: 0;
+//   outline: none;
+// }
+
+// #room-book-confirm .cancelation-fees {
+//   text-align: center;
+// }
+
+#room-book-confirm table th,
+td {
+  padding: 10px;
+}
+
+#room-book-confirm table th {
+  text-align: center;
+  border-bottom: 1px solid #ccc;
+}
+
+#room-book-confirm table td {
+  width: 15%;
+  padding: 10px;
+  text-align: center;
+}
+
+#room-book-confirm table tr td:last-child {
+  text-align: center;
+}
+
+#room-book-confirm table tr.booking-room-canx-fee td {
+  width: 15%;
+  padding: 10px;
+  background-color: #F5F5F5;
+  color: #d87a61;
+}
+
+// /* #room-book-confirm .order-total,
+// .order-name p {
+//   text-align: right;
+//   padding-right: 20px;
+// } */
+
+// #room-book-confirm::after {
+//   content: '';
+//   display: block;
+//   clear: both;
+// }
+
+// #room-book-confirm .order {
+//   font-size: 1.2em;
+// }
 
 .sms {
   display: grid;

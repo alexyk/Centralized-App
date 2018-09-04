@@ -3,22 +3,21 @@ import '../../../styles/css/components/carousel-component.css';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 
-import { setSearchInfo } from '../../../actions/searchInfo';
-
 import { Config } from '../../../config';
 import HotelDetailsInfoSection from './HotelDetailsInfoSection';
 import HotelsSearchBar from '../search/HotelsSearchBar';
 import Lightbox from 'react-images';
 import { NotificationManager } from 'react-notifications';
 import PropTypes from 'prop-types';
-import { ROOMS_XML_CURRENCY } from '../../../constants/currencies.js';
 import React from 'react';
 import Slider from 'react-slick';
+import _ from 'lodash';
 import { connect } from 'react-redux';
 import moment from 'moment';
 import { parse } from 'query-string';
 import requester from '../../../initDependencies';
 import { setCurrency } from '../../../actions/paymentInfo';
+import { setSearchInfo } from '../../../actions/searchInfo';
 import { withRouter } from 'react-router-dom';
 
 import { CHECKING_ROOM_AVAILABILITY, ROOM_NO_LONGER_AVAILABLE } from '../../../constants/infoMessages.js';
@@ -91,7 +90,6 @@ class HotelDetailsPage extends React.Component {
       });
     });
 
-    this.getLocRate();
     requester.getCurrencyRates().then(res => {
       res.body.then(data => {
         this.setState({ rates: data });
@@ -111,7 +109,7 @@ class HotelDetailsPage extends React.Component {
       this.props.dispatch(setSearchInfo(startDate, endDate, this.props.searchInfo.region, rooms, adults, hasChildren));
 
       this.setState({
-        nights: this.props.searchInfo.nights,
+        nights: endDate.diff(startDate, 'days'),
       });
 
       this.setSearchRenewalTimeout();
@@ -178,14 +176,6 @@ class HotelDetailsPage extends React.Component {
       }
     }
     return false;
-  }
-
-  getLocRate() {
-    requester.getLocRateByCurrency(ROOMS_XML_CURRENCY).then(res => {
-      res.body.then(data => {
-        this.setState({ locRate: Number(data[0][`price_${ROOMS_XML_CURRENCY.toLowerCase()}`]) });
-      });
-    });
   }
 
   updateParamsMap(key, value) {
@@ -409,8 +399,9 @@ class HotelDetailsPage extends React.Component {
     } else {
       images = [];
       if (this.state.data.hotelPhotos) {
-        images = this.state.data.hotelPhotos.map((image, index) => {
-          return { src: Config.getValue('imgHost') + image.url, index: index };
+        let sortedImages = _.orderBy(this.state.data.hotelPhotos, ['url'], ['asc']);
+        images = sortedImages.map((image, index) => {
+          return { src: Config.getValue('imgHost') + image.url, index };
         });
       }
     }
@@ -507,7 +498,7 @@ class HotelDetailsPage extends React.Component {
               endDate={this.state.calendarEndDate}
               data={this.state.data}
               hotelRooms={this.state.hotelRooms}
-              locRate={this.state.locRate}
+              locRate={this.props.paymentInfo.locRateInEur}
               rates={this.state.rates}
               loading={this.state.loading}
               currencySign={this.props.paymentInfo.currencySign}

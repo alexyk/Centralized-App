@@ -8,7 +8,6 @@ import FilterPanel from './filter/FilterPanel';
 import HotelsSearchBar from './HotelsSearchBar';
 import MultiMarkerGoogleMap from './google-map/MultiMarkerGoogleMap';
 import PropTypes from 'prop-types';
-import { ROOMS_XML_CURRENCY } from '../../../constants/currencies.js';
 import React from 'react';
 import ResultsHolder from './ResultsHolder';
 import SockJsClient from 'react-stomp';
@@ -16,6 +15,7 @@ import { connect } from 'react-redux';
 import moment from 'moment';
 import requester from '../../../initDependencies';
 import { CurrencyConverter } from '../../../services/utilities/currencyConverter';
+import { RoomsXMLCurrency } from '../../../services/utilities/roomsXMLCurrency';
 import uuid from 'uuid';
 import { withRouter } from 'react-router-dom';
 
@@ -62,10 +62,8 @@ class HotelsSearchPage extends React.Component {
     this.handleSelectRegion = this.handleSelectRegion.bind(this);
     this.openModal = this.openModal.bind(this);
     this.closeModal = this.closeModal.bind(this);
-    this.getLocRate = this.getLocRate.bind(this);
     this.redirectToSearchPage = this.redirectToSearchPage.bind(this);
     this.handleToggleChildren = this.handleToggleChildren.bind(this);
-    this.getLocRate = this.getLocRate.bind(this);
     this.handleReceiveSingleHotel = this.handleReceiveSingleHotel.bind(this);
     this.sendInitialWebsocketRequest = this.sendInitialWebsocketRequest.bind(this);
     this.handlePriceRangeSelect = this.handlePriceRangeSelect.bind(this);
@@ -78,7 +76,6 @@ class HotelsSearchPage extends React.Component {
   }
 
   componentDidMount() {
-    this.getLocRate();
     requester.getCurrencyRates().then(res => {
       res.body.then(data => {
         this.setState({ rates: data });
@@ -160,14 +157,6 @@ class HotelsSearchPage extends React.Component {
       }
     }
     return false;
-  }
-
-  getLocRate() {
-    requester.getLocRateByCurrency(ROOMS_XML_CURRENCY).then(res => {
-      res.body.then(data => {
-        this.setState({ locRate: Number(data[0][`price_${ROOMS_XML_CURRENCY.toLowerCase()}`]) });
-      });
-    });
   }
 
   calculateNights(startDate, endDate) {
@@ -520,7 +509,7 @@ class HotelsSearchPage extends React.Component {
     const filteredListings = this.state.listings
       .slice(0)
       .filter(x => {
-        const convertedCurrency = CurrencyConverter.convert(rates, ROOMS_XML_CURRENCY, currency, x.price);
+        const convertedCurrency = CurrencyConverter.convert(rates, RoomsXMLCurrency.get(), currency, x.price);
         return (priceRange[0] <= (convertedCurrency) && (convertedCurrency) <= priceRange[1]) && stars[x.stars - 1];
       });
 
@@ -608,7 +597,7 @@ class HotelsSearchPage extends React.Component {
                         lon={this.state.lon}
                         hotels={listings}
                         isFiltered={this.state.isFiltered}
-                        locRate={this.state.locRate}
+                        locRate={this.props.paymentInfo.locRateInEur}
                         rates={this.state.rates}
                         paymentInfo={this.props.paymentInfo}
                         isLogged={this.props.userInfo.isLogged}
@@ -618,7 +607,7 @@ class HotelsSearchPage extends React.Component {
                     : <div>
                       <ResultsHolder
                         hotels={listings.slice(startElement, startElement + DEFAULT_PAGE_SIZE)}
-                        locRate={this.state.locRate} rates={this.state.rates}
+                        locRate={this.props.paymentInfo.locRateInEur} rates={this.state.rates}
                         nights={this.state.nights}
                         loading={this.state.loading}
                       />

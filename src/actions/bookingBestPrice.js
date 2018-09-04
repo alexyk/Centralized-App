@@ -1,8 +1,8 @@
 import { bookingBestPrice } from './actionTypes';
 
-export function setBestPrice(price) {
+export function setBestLocPrice(locPrice) {
   return {
-    type: bookingBestPrice.SET_BEST_PRICE,
-    price,
+    type: bookingBestPrice.SET_BEST_LOC_PRICE,
+    locPrice,
   };
 } 

@@ -8,7 +8,6 @@ import HotelsSearchBar from './HotelsSearchBar';
 import MultiMarkerGoogleMap from './google-map/MultiMarkerGoogleMap';
 import Pagination from '../../common/pagination/Pagination';
 import PropTypes from 'prop-types';
-import { ROOMS_XML_CURRENCY } from '../../../constants/currencies.js';
 import React from 'react';
 import ResultsHolder from './ResultsHolder';
 import Stomp from 'stompjs';
@@ -89,12 +88,6 @@ class StaticHotelsSearchPage extends React.Component {
   }
 
   componentDidMount() {
-    requester.getLocRateByCurrency(ROOMS_XML_CURRENCY).then(res => {
-      res.body.then(data => {
-        this.setState({ locRate: Number(data[0][`price_${ROOMS_XML_CURRENCY.toLowerCase()}`]) });
-      });
-    });
-
     requester.getCurrencyRates().then(res => {
       res.body.then(data => {
         this.setState({ rates: data });
@@ -144,7 +137,7 @@ class StaticHotelsSearchPage extends React.Component {
       this.props.dispatch(setSearchInfo(startDate, endDate, region, rooms, adults, hasChildren));
 
       this.setState({
-        nights: this.props.searchInfo.nights,
+        nights: endDate.diff(startDate, 'days'),
         page: page ? Number(page) : 0,
       });
 
@@ -646,7 +639,7 @@ class StaticHotelsSearchPage extends React.Component {
                           lon={this.state.lon}
                           hotels={hotels}
                           mapInfo={this.state.mapInfo}
-                          locRate={this.state.locRate}
+                          locRate={this.props.paymentInfo.locRateInEur}
                           rates={this.state.rates}
                           paymentInfo={this.props.paymentInfo}
                           isLogged={this.props.userInfo.isLogged}
@@ -662,7 +655,7 @@ class StaticHotelsSearchPage extends React.Component {
                           hotels={hotels}
                           priceMap={[]}
                           allElements={this.state.allElements}
-                          locRate={this.state.locRate}
+                          locRate={this.props.paymentInfo.locRateInEur}
                           rates={this.state.rates}
                           nights={this.state.nights}
                           loading={this.state.loading}
