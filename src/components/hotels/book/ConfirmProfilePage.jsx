@@ -13,6 +13,7 @@ import Select from '../../common/google/GooglePlacesAutocomplete';
 import moment from 'moment';
 import queryString from 'query-string';
 import { NotificationManager } from 'react-notifications';
+import { LONG } from '../../../constants/notificationDisplayTimes';
 
 
 class ConfirmProfilePage extends React.Component {
@@ -31,6 +32,7 @@ class ConfirmProfilePage extends React.Component {
         city: '',
         state: {},
         address: '',
+        zipCode: ''
       },
     };
 
@@ -139,12 +141,11 @@ class ConfirmProfilePage extends React.Component {
     userInfo.preferredCurrency = userInfo.preferredCurrency ? userInfo.preferredCurrency.id : 1;
     userInfo.country = userInfo.country && userInfo.country.id;
     userInfo.state = userInfo.state && userInfo.state.id;
-    console.log(userInfo);
     requester.updateUserInfo(userInfo, captchaToken).then(res => {
       if (res.success) {
         this.payWithCard();
       } else {
-        NotificationManager.error('Invalid user information.');
+        NotificationManager.error('Invalid user information.', '', LONG);
       }
     });
   }
@@ -256,7 +257,7 @@ class ConfirmProfilePage extends React.Component {
 
             <div className="zip-code">
               <label htmlFor="zip-code">Zip Code <span className="mandatory">*</span></label>
-              <input id="zip-code" name="zipCode" value={this.state.zipCode} onChange={this.onChange} type="text" placeholder='Enter your zip code' required/>
+              <input id="zip-code" name="zipCode" value={this.state.userInfo.zipCode} onChange={this.onChange} type="text" placeholder='Enter your zip code' required/>
             </div>
 
             <p className="text"><span className="mandatory">*</span> Fields mandatory for payment with Credit Card</p>
