@@ -38,6 +38,8 @@ class HomesBookingPage extends React.Component {
       });
     });
 
+    requester.getHomeBookingDetails(993).then(res => res.body).then(data => console.log(data));
+
     requester.getCurrencyRates().then(res => {
       res.body.then(data => {
         this.setState({ rates: data });
