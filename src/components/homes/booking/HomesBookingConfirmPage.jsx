@@ -22,8 +22,9 @@ class HomesBookingConfirmPage extends React.Component {
     this.state = {
       listing: null,
       sending: false,
-      firstName: props.userInfo.firstName,
-      lastName: props.userInfo.lastName,
+      firstName: '',
+      lastName: '',
+      phoneNumber: ''
     };
 
     this.handleChange = this.handleChange.bind(this);
@@ -48,7 +49,8 @@ class HomesBookingConfirmPage extends React.Component {
       .then(res => res.body)
       .then(userInfo => this.setState({
         firstName: userInfo.firstName,
-        lastName: userInfo.lastName
+        lastName: userInfo.lastName,
+        phoneNumber: userInfo.phoneNumber
       }));
   }
 
@@ -124,22 +126,24 @@ class HomesBookingConfirmPage extends React.Component {
             />
             <div className="confirm-and-pay-details">
               <h2 className="title">Confirm &amp; Pay</h2>
-              <h3 className="billing-address">Billing Address</h3>
               <hr />
-              <div className="form">
-                <div className="form-group">
-                  <label>First name</label>
+              <form>
+                <div className="customer-name">
                   <div>
+                    <label>First name</label>
                     <input type="text" name="firstName" value={this.state.firstName} onChange={this.handleChange} />
                   </div>
-                </div>
-                <div className="form-group">
-                  <label>Last name</label>
                   <div>
+                    <label>Last name</label>
                     <input type="text" name="lastName" value={this.state.lastName} onChange={this.handleChange} />
                   </div>
                 </div>
-              </div>
+                <div className="customer-phone">
+                  <label>Phone number</label>
+                  <input type="text" name="phoneNumber" value={this.state.phoneNumber} onChange={this.handleChange} />
+                </div>
+
+              </form>
               <ReCAPTCHA
                 ref={el => this.captcha = el}
                 size="invisible"
