@@ -275,7 +275,7 @@ class AirdropPage extends Component {
   }
 
   getBalanceContainer() {
-   switch (this.props.airdropInfo.finalizedStatus) {
+    switch (this.props.airdropInfo.finalizedStatus) {
      case 'VERIFIED':
        return this._getVerifiedStatus();
      case 'FAILED':
@@ -284,7 +284,7 @@ class AirdropPage extends Component {
        return this._getIncompleteStatus();
      default:
        return this._getUnverifiedStatus();
-   }
+    }
   }
 
   _getVerifiedStatus() {
