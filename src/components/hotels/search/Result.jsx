@@ -15,7 +15,7 @@ import Slider from 'react-slick';
 import StringUtils from '../../../services/utilities/stringUtilities';
 import _ from 'lodash';
 import { connect } from 'react-redux';
-import HotelItemRatingBox from '../../common/hotel/HotelItemRatingBox'; 
+import HotelItemRatingBox from '../../common/hotel/HotelItemRatingBox';
 import requester from '../../../initDependencies';
 
 const SCREEN_SIZE_SMALL = 'SMALL';

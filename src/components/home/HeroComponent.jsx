@@ -53,7 +53,6 @@ class HeroComponent extends React.Component {
 
   handleSearch(e) {
     e.preventDefault();
-
     let queryString = '?';
 
     queryString += 'countryId=' + this.state.countryId;
@@ -69,8 +68,8 @@ class HeroComponent extends React.Component {
       startDate: picker.startDate,
       endDate: picker.endDate,
     });
-  }  
-  
+  }
+
   handleDestinationPick(region) {
     this.setState({ countryId: region.countryId.toString() });
     document.getElementsByName('stay')[0].click();

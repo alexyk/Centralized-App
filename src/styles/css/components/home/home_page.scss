@@ -85,8 +85,9 @@
     .slick-slide {
       padding-left: 10px;
       padding-right: 10px;
-      .item {
+      .card {
         background-color: white;
+        padding-bottom: 5%;
         a {
           color: inherit;
         }
@@ -126,7 +127,7 @@
           }
         }
         .list-property-description {
-          padding: 5%;
+          padding: 5% 5% 0;
           text-align: left;
           .country {
             font-size: 16px;
@@ -160,11 +161,13 @@
               margin-right: 0px;
             }
           }
-          .list-property-price {
-            font-size: 18px;
-            font-weight: 400;
-            letter-spacing: -.05em;
-          }
+        }
+        .list-property-price {
+          padding: 0 5% 0;
+          text-align: left;
+          font-size: 18px;
+          font-weight: 400;
+          letter-spacing: -.05em;
         }
       }
     }
