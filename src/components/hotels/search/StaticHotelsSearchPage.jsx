@@ -655,7 +655,7 @@ class StaticHotelsSearchPage extends React.Component {
                           hotels={hotels}
                           priceMap={[]}
                           allElements={this.state.allElements}
-                          locRate={this.props.paymentInfo.locRateInEur}
+                          locRate={Number(this.props.paymentInfo.locRateInEur)}
                           rates={this.state.rates}
                           nights={this.state.nights}
                           loading={this.state.loading}
