@@ -298,7 +298,6 @@ class HomesSearchPage extends React.Component {
             handleDatePick={this.handleDatePick} />
         </div>
 
-        <Breadcrumb />
         <section id="hotel-box">
           <div className="container">
             <div className="row">

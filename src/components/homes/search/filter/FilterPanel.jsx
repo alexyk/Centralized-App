@@ -3,64 +3,58 @@ import PropTypes from 'prop-types';
 import FilterCheckbox from '../../../common/filter/FilterCheckbox';
 import ReactBootstrapSlider from 'react-bootstrap-slider';
 
+import '../../../../styles/css/components/hotels_search/filter/filter.css';
+
 const FilterPanel = (props) => (
   <div className="filter-box">
-    <div className="form-group">
-      <label>City</label>
+    <div className="checkbox-filters">
+      <h5>Cities</h5>
       <div className="filter-check-box">
-        {props.cities.map((item, i) => {
-          return (
-            <div key={i} onClick={(e) => { props.toggleFilter('cities', item.text); props.handleSearch(e); }}>
-              <FilterCheckbox
-                key={i}
-                text={item.text}
-                count={item.count}
-                checked={props.citiesToggled.has(item.text)} />
-            </div>
-          );
-        })}
+        <ul>
+          {props.cities.map((item, i) => {
+            return (
+              <li key={i} onClick={(e) => { props.toggleFilter('cities', item.text); props.handleSearch(e); }}>
+                <div className="key">
+                  <input type="checkbox" name={item.text} checked={props.citiesToggled.has(item.text)} />
+                  <label htmlFor={item.text}>{item.text}</label>
+                </div>
+              </li>
+            );
+          })}
+        </ul>
       </div>
+    </div>
+
+    <div className="range-filters">
+      <h5>Pricing</h5>
+      <ReactBootstrapSlider
+        value={props.priceValue}
+        slideStop={(e) => { props.setPriceValue(e); props.handleSearch(e); }}
+        step={5}
+        max={5000}
+        min={1}
+        orientation="horizontal"
+        range={true} />
     </div>
     <div className="clearfix" />
 
-    <div className="form-group">
-      <label>Pricing</label>
-
-      <div className="filter-price-box">
-        <ReactBootstrapSlider
-          value={props.priceValue}
-          slideStop={(e) => { props.setPriceValue(e); props.handleSearch(e); }}
-          step={5}
-          max={5000}
-          min={1}
-          orientation="horizontal"
-          range={true} />
-        <div className="clearfix" />
-      </div>
-    </div>
-    <div className="clearfix" />
-
-    <div className="form-group">
-      <label>Property Type</label>
-      <div className="filter-check-box">
+    <div className="checkbox-filters">
+      <h5>Property Type</h5>
+      <ul>
         {props.propertyTypes.map((item, i) => {
           return (
-            <div key={i} onClick={(e) => { props.toggleFilter('propertyTypes', item.text); props.handleSearch(e); }}>
-              <FilterCheckbox
-                key={i}
-                text={item.text}
-                count={item.count}
-                checked={props.propertyTypesToggled.has(item.text)} />
-            </div>
+            <li key={i} onClick={(e) => { props.toggleFilter('propertyTypes', item.text); props.handleSearch(e); }}>
+              <div className="key">
+                <input type="checkbox" name={item.text} checked={props.propertyTypesToggled.has(item.text)} />
+                <label htmlFor={item.text}>{item.text}</label>
+              </div>
+            </li>
           );
         })}
-      </div>
+      </ul>
     </div>
-    <div className="clearfix" />
 
-    <div className="form-group">
-      <button type="submit" onClick={props.clearFilters} className="btn btn">Clear Filters</button>
-    </div>
+    <button type="submit" onClick={props.clearFilters} className="btn btn">Clear Filters</button>
   </div>
 );
 

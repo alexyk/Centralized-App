@@ -19,15 +19,10 @@
     }
     .icons-container-space {
       display: flex;
-      justify-content: space-between;
+      justify-content: left;
       text-align: center;
-      @include media("<=tablet") {
-        justify-content: space-around;
-      }
       div {
-        @include media("<=tablet") {
-          width: 10%;
-        }
+        margin-right: 20px;
       }
       p {
         margin-top: 10px;
@@ -151,19 +146,14 @@
             margin-left: -7px;
           }
         }
-        #check_in_tooltip {
-          .tooltip-content:after, .tooltip-content:before {
-            left: 15%;
-          }
-        }
-        #check_out_tooltip {
+        #check_out_tooltip, #check_in_tooltip {
           .tooltip-content:after, .tooltip-content:before {
             left: 85%;
           }
         }
       }
 
-      @include media("<=phone") {
+      @include media("<=tablet") {
         .check-in-text,
         .check-out-text {
           width: 30%;

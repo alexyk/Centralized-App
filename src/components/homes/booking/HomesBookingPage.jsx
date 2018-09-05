@@ -26,19 +26,30 @@ class HomesBookingPage extends React.Component {
 
   componentDidMount() {
     requester.getListing(this.props.match.params.id).then(res => {
-      res.body.then((data) => {
-        console.log(data);
+      res.body.then((listing) => {
+        console.log(listing);
+        let checkInStart = listing.checkinStart && Number(listing.checkinStart.substring(0, 2));
+        let checkInEnd = listing.checkinEnd && Number(listing.checkinEnd.substring(0, 2));
+        checkInEnd = checkInStart < checkInEnd ? checkInEnd : 24;  
+
+        let checkOutStart = listing.checkoutStart && Number(listing.checkoutStart.substring(0, 2));
+        let checkOutEnd = listing.checkoutEnd && Number(listing.checkoutEnd.substring(0, 2));
+        checkOutStart = checkOutStart < checkOutEnd ? checkOutStart : 0;
+
         this.setState({
-          listing: data,
-          checkInStart: Number(data.checkinStart.substring(0, 2)),
-          checkInEnd: data.checkinEnd && data.checkinEnd !== '00:00:00' ? Number(data.checkinEnd.substring(0, 2)) : 24,
-          checkOutStart: data.checkOutStart ? Number(data.checkOutStart.substring(0, 2)) : 0,
-          checkOutEnd: data.checkOutEnd ? Number(data.checkOutEnd.substring(0, 2)) : 12,
-        }); //, () => this.setCheckInOutHours());
+          listing,
+          checkInStart,
+          checkInEnd,
+          checkOutStart,
+          checkOutEnd,
+        }, () => this.setCheckInOutHours());
       });
     });
 
-    requester.getHomeBookingDetails(993).then(res => res.body).then(data => console.log(data));
+    requester.getHomeBookingDetails(993).then(res => res.body).then(roomDetails => {
+      console.log(roomDetails);
+      this.setState({ roomDetails });
+    });
 
     requester.getCurrencyRates().then(res => {
       res.body.then(data => {
@@ -71,7 +82,7 @@ class HomesBookingPage extends React.Component {
       document.getElementById('check_out_line_2').style.width = `${checkOutLength}%`;
       document.getElementById('check_out_line_3').style.width = `${checkOutAfterEndWidth}%`;
 
-      document.getElementById('check_in_tooltip').style.marginLeft = `calc(${checkInBeforeStartWidth}% - 15px)`;
+      document.getElementById('check_in_tooltip').style.marginLeft = `calc(${checkInBeforeStartWidth}% - 95px)`;
       document.getElementById('check_out_tooltip').style.marginLeft = `calc(${checkOutBeforeStartWidth + checkOutLength}% - 95px)`;
     }, 100);
   }
@@ -84,7 +95,7 @@ class HomesBookingPage extends React.Component {
   }
 
   render() {
-    const { listing, checkInStart, checkInEnd, checkOutStart, checkOutEnd, rates } = this.state;
+    const { listing, roomDetails, checkInStart, checkInEnd, checkOutStart, checkOutEnd, rates } = this.state;
 
     if (!listing) {
       return <div className="loader"></div>;
@@ -102,6 +113,7 @@ class HomesBookingPage extends React.Component {
             />
             <HomesBookingRoomDetailsInfo
               listing={listing}
+              roomDetails={roomDetails}
               checkInStart={checkInStart}
               checkInEnd={checkInEnd}
               checkOutStart={checkOutStart}
