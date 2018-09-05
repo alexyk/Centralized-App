@@ -66,7 +66,7 @@ class CalendarPage extends React.Component {
   updateCalendar() {
     let now = new Date();
     let end = new Date();
-    const DAY_INTERVAL = 90;
+    const DAY_INTERVAL = 365;
     end.setUTCHours(now.getUTCHours() + 24 * DAY_INTERVAL);
     const { currencyCode, currencySign } = this.state;
 
@@ -86,7 +86,7 @@ class CalendarPage extends React.Component {
       res.body.then(data => {
         let prices = [];
         for (let dateInfo of data.content) {
-          let availableStyle = dateInfo.available ? 1 : 0.5;
+          let availableStyle = dateInfo.available ? 1 : 0;
           let price = {
             'title': <span className="calendar-price bold" style={{ opacity: availableStyle }}>{currencySign}{Math.round(dateInfo.price)}</span>,
             'start': moment(dateInfo.date, 'DD/MM/YYYY'),
@@ -226,7 +226,7 @@ class CalendarPage extends React.Component {
     return (
       <div>
         <div className="col-md-12">
-          <div className="container">
+          <div className="container" style={{clear: 'both'}}>
             <Calendar
               allEvents={allEvents}
               calendarLoading={this.state.calendarLoading}

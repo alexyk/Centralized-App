@@ -24,8 +24,7 @@ class CalendarAsideStatic extends React.Component {
                   <input type="number" className="form-control" name="defaultDailyPrice" onChange={this.props.onChange} value={this.props.defaultDailyPrice} />
                 </div>
               </div>
-
-              <div className="col-md-12 controls">
+              <div className="col-md-12 controls" style={{ margin: '10px 0' }}>
                 <button className="btn btn-primary btn-next bold" type="submit"
                   onClick={(e) => {
                     e.preventDefault();

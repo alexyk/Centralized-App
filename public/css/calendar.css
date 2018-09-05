@@ -16,6 +16,7 @@
   color: #87B0A9;
   font-weight: 700;
 }
+
 .calendar .event-popup-body .price span {
   color: #000;
   font-size: 16px;
@@ -37,7 +38,8 @@
 .calendar .form-group input[type=number] {
   border: 1px solid #D7D7D8;
   color: #79AAA1;
-  font-size: 28px;
+  font-size: 1.2em;
+  font-weight: 400;
 }
 .calendar .popover {
   border: none;
@@ -61,18 +63,20 @@
   width: 85%;
 }
 .calendar-aside .controls .btn-back {
-  border: 2px solid #000;
   margin: 10px;
   padding: 10px 25px;
+}
+.calendar-aside .controls .btn-back:hover,
+.calendar-aside .controls .btn-next:hover {
+  color: #FFF;
 }
 .calendar-aside .controls .btn-next {
-  border: 2px solid #D87A61;
   margin: 10px;
   padding: 10px 25px;
-  width: 106px;
+  /* width: 106px; */
 }
 .calendar-aside .input-group-addon {
-  padding: 10px 20px;
+  padding: 7px 20px;
 }
 .calendar-aside-body {
   background: #FFF;
@@ -121,8 +125,15 @@
   cursor: default;
 }
 .rbc-calendar .rbc-day-bg {
-  background: #FFF;
-  cursor: pointer;
+  cursor: pointer!important;
+  border: 1px solid transparent
+}
+.rbc-calendar .rbc-day-bg-unavailable {
+  background-color: gray;
+  opacity: 0.1;
+}
+.rbc-calendar .rbc-day-bg:hover {
+  border-bottom: 3px solid #d77961!important;
 }
 .rbc-calendar .rbc-event {
   text-align: right;
@@ -147,6 +158,8 @@
 }
 .rbc-calendar .rbc-month-row .rbc-row-bg {
   height: 100px;
+  z-index: 999;
+  cursor: pointer;
 }
 .rbc-calendar .rbc-month-row .rbc-row-content {
   height: 100px;

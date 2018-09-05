@@ -35,7 +35,6 @@ function Calendar(props) {
   const eventStyleGetter = (event) => {
     const now = new Date();
     now.setHours(0, 0, 0, 0);
-
     let isPastDate = new Date(event.end).getTime() < now.getTime();
 
     let styleNotSelected = {};
@@ -44,7 +43,8 @@ function Calendar(props) {
       color: '#FFFFFF',
       backgroundColor: '#a2c5bf',
       position: 'relative',
-      top: '-20px'
+      top: '-20px',
+      zIndex: '1000'
     };
 
     if (isPastDate) {
@@ -76,8 +76,10 @@ function Calendar(props) {
     let isPastDate = (new Date(value).getTime() < now.getTime()) || (new Date(value).getTime() > dateAfterDays);
     let isSelected = value.toString() === props.selectedDate.toString();
 
-    let className = isPastDate ? 'date-in-past' : 'rbc-day-bg';
-    let borderBottom = isSelected ? '3px solid #d77961' : '1px solid #DDD';
+    const isUnavailable = props.allEvents.filter(x => x.available === false).filter(x => new Date(x.start).getTime() === value.getTime()).length >= 1;
+
+    let className = isPastDate ? 'date-in-past' : isUnavailable === true ? 'rbc-day-bg-unavailable' : 'rbc-day-bg';
+    let borderBottom = isSelected ? '3px solid #d77961' : '1px solid transperant';
 
     return (
       <div
