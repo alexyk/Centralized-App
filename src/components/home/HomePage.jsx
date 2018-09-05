@@ -10,6 +10,7 @@ import { setRegion } from '../../actions/searchInfo';
 import { withRouter, Link } from 'react-router-dom';
 import HomePageContentItem from './HomePageContentItem';
 import moment from 'moment';
+import PopularHomesPrice from './PopularHomesPrice';
 
 import '../../styles/css/components/home/home_page.css';
 
@@ -49,7 +50,9 @@ class HomePage extends React.Component {
 
   getSlider(items, itemsType) {
     const settings = {
-      infinite: true,
+      infinite: false,
+      draggable: false,
+      lazyLoad: 'ondemand',
       speed: 500,
       slidesToShow: 4,
       slidesToScroll: 1,
@@ -99,12 +102,14 @@ class HomePage extends React.Component {
               itemLink = `/homes/listings/${item.id}?startDate=${moment(new Date(new Date().setHours(24)), 'DD/MM/YYYY').format('DD/MM/YYYY')}&endDate=${moment(new Date(new Date().setHours(48)), 'DD/MM/YYYY').format('DD/MM/YYYY')}&guests=2`;
             }
             return (
-              <PopularItem
-                key={i}
-                item={item}
-                itemType={itemsType}
-                itemLink={itemLink}
-              />
+              <div key={i} className="card">
+                <PopularItem
+                  item={item}
+                  itemType={itemsType}
+                  itemLink={itemLink}
+                />
+                {itemsType === 'homes' && <PopularHomesPrice item={item} />}
+              </div>
             );
           })}
         </Slider>
