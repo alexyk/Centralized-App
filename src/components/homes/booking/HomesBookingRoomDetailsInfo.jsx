@@ -6,9 +6,11 @@ import '../../../styles/css/components/homes/booking/homes-booking-room-details-
 function HomesBookingRoomDetailsInfo(props) {
 
   const { listing, roomDetails, checkInStart, checkInEnd, checkOutStart, checkOutEnd } = props;
-  const { property_type, guests, area, bathroom, bedrooms, rooms } = roomDetails;
+  const { property_type, guests, size, bathroom, bedrooms, rooms } = roomDetails;
+  const { eventsAllowed, smokingAllowed, suitableForPets, suitableForInfants, house_rules } = roomDetails;
+  const houseRules = house_rules.split('\r\n');
 
-  const hasSpaceDetails = property_type || guests || area || bathroom || bedrooms;
+  const hasSpaceDetails = property_type || guests || size || bathroom || bedrooms;
 
   const renderBedIcons = (bedCount, bedType) => {
     const bedIcons = [];
@@ -68,10 +70,10 @@ function HomesBookingRoomDetailsInfo(props) {
               </div>
             }
 
-            {area &&
+            {size &&
               <div>
                 <img src="/images/icon-review/icon-size.png" alt="icon-size" />
-                <p>{area} m2</p>
+                <p>{size} m2</p>
               </div>
             }
 
@@ -118,9 +120,14 @@ function HomesBookingRoomDetailsInfo(props) {
 
       <div className="hotel-rules-container">
         <h3>House Rules</h3>
-        <p>No smoking</p>
-        <p>Not suitable fot pets</p>
-        <p>No parties or events</p>
+        {eventsAllowed && <p>Events allowed</p>}
+        {smokingAllowed && <p>Smoking allowed</p>}
+        {suitableForInfants && <p>Suitable for infants</p>}
+        {suitableForPets && <p>Suitable for pets</p>}
+        {houseRules && houseRules.map((rule, index) => {
+          return (<p key={index}>{rule}</p>);
+        })}
+
         <div className="check-in">
           <p className="check-in-text">Check-in</p>
           <div className="check-in-line">

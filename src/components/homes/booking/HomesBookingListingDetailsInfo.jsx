@@ -13,6 +13,8 @@ import '../../../styles/css/components/homes/booking/homes-booking-listing-detai
 function HomesBookingListingDetailsInfo(props) {
 
   const { listing, searchParams, rates, paymentInfo } = props;
+  const pictures = listing.pictures;
+  console.log(pictures);
   const startDate = moment(searchParams.startDate, 'DD/MM/YYYY');
   const endDate = moment(searchParams.endDate, 'DD/MM/YYYY');
 
@@ -55,10 +57,11 @@ function HomesBookingListingDetailsInfo(props) {
     <div className="left-part">
       <Slider ref={s => slider = s}
         {...settings}>
-        {listing.pictures.map((picture, i) => {
+        {pictures.map((picture, i) => {
+          console.log(i, Config.getValue('imgHost') + picture.thumbnail);
           return (
             <div key={i}>
-              <div style={{ backgroundImage: 'url(' + Config.getValue('imgHost') + picture.thumbnail + ')' }} />
+              <div style={{ 'backgroundImage': `url(${Config.getValue('imgHost')}${picture.thumbnail}` }} />
             </div>
           );
         })}
