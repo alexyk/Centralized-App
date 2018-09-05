@@ -8,6 +8,7 @@ $breakpoints: ( 'xs-phone': 320px, 'phone': 480px, 'tablet': 768px, 'desktop': 1
     width: 100%;
     padding: 70px 0;
     margin: 0;
+    cursor: pointer;
     @include media('>=tablet') {
       width: 30%;
     }

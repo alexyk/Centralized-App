@@ -35,17 +35,14 @@ class NavLocalization extends Component {
   }
 
   componentDidMount() {
-    const { currency, locRate } = this.props.paymentInfo;
+    const { currency } = this.props.paymentInfo;
     if (localStorage['currency']) setCurrency(localStorage['currency']);
     else localStorage['currency'] = currency;
-
-    if (!locRate) this.initializeSocket();
 
     requester.getCurrencyRates().then(res => {
       res.body.then(data => {
         this.setState({ rates: data }, () => {
-          this.props.dispatch(setLocRateInEur(DEFAULT_EUR_AMOUNT / this.state.locAmount, false, 'Nav'));
-          this.props.dispatch(setLocRate(this.calculateLocRate(this.state.locAmount, currency), false, 'Nav'));
+          this.getLocRateByEUR();
         });
       });
     });
@@ -56,13 +53,31 @@ class NavLocalization extends Component {
     if (currency !== this.props.paymentInfo.currency) {
       localStorage['currency'] = currency;
 
-      this.props.dispatch(setLocRateInEur(DEFAULT_EUR_AMOUNT / this.state.locAmount, false, 'Nav'));
-      this.props.dispatch(setLocRate(this.calculateLocRate(this.state.locAmount, currency), false, 'Nav'));
+      if (this.state.locAmount) {
+        this.props.dispatch(setLocRateInEur(DEFAULT_EUR_AMOUNT / this.state.locAmount, false, 'Nav'));
+        this.props.dispatch(setLocRate(this.calculateLocRate(this.state.locAmount, currency), false, 'Nav'));
+      } else {
+        this.getLocRateByEUR();
+      }
     }
   }
 
   componentWillUnmount() {
     this.disconnectSocket();
+  }
+
+  getLocRateByEUR() {
+    const { currency } = this.props.paymentInfo;
+
+    requester.getLocRateByCurrency(DEFAULT_CRYPTO_CURRENCY).then(res => {
+      res.body.then(data => {
+        this.setState({ locAmount: DEFAULT_EUR_AMOUNT / data[0]['price_eur'] }, () => {
+          this.props.dispatch(setLocRateInEur(data[0]['price_eur'], false, 'Nav'));
+          this.props.dispatch(setLocRate(this.calculateLocRate(this.state.locAmount, currency), false, 'Nav'));
+          this.initializeSocket();
+        });
+      });
+    });
   }
 
   calculateLocRate(locAmount, currency) {
@@ -82,12 +97,16 @@ class NavLocalization extends Component {
 
   handleReceiveMessage(event) {
     const locAmount = (JSON.parse(event.data)).locAmount;
-    this.setState({ locAmount });
-    const locRateInEUR = this.calculateLocRate(locAmount, DEFAULT_CRYPTO_CURRENCY);
-    const locRateInCurrentCurrency = this.calculateLocRate(locAmount, this.props.paymentInfo.currency);
+    
+    if (locAmount && locAmount !== 0) {
+      this.setState({ locAmount });
 
-    this.props.dispatch(setLocRate(locRateInCurrentCurrency, false, 'Nav'));
-    this.props.dispatch(setLocRateInEur(locRateInEUR, false, 'Nav'));
+      const locRateInEUR = this.calculateLocRate(locAmount, DEFAULT_CRYPTO_CURRENCY);
+      const locRateInCurrentCurrency = this.calculateLocRate(locAmount, this.props.paymentInfo.currency);
+
+      this.props.dispatch(setLocRate(locRateInCurrentCurrency, false, 'Nav'));
+      this.props.dispatch(setLocRateInEur(locRateInEUR, false, 'Nav'));
+    }
   }
 
   disconnectSocket() {
