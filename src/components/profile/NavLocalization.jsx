@@ -141,7 +141,8 @@ class NavLocalization extends Component {
               <p className="loc-rate">
                 {locRate ?
                   <Fragment>
-                    <span className="cross-rate">LOC/{currency} </span><span className="rate">{Number(locRate).toFixed(4)} {currency}</span>
+                    <span className="cross-rate">LOC/{currency} </span>
+                    <span className="rate">{Number(locRate).toFixed(4)} {currency}</span>
                   </Fragment> : <div className="loader sm-none" style={{ width: '100px' }} ></div>
                 }
               </p>
