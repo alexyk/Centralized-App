@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import FilterCheckbox from '../../../common/filter/FilterCheckbox';
 import ReactBootstrapSlider from 'react-bootstrap-slider';
 
 import '../../../../styles/css/components/hotels_search/filter/filter.css';

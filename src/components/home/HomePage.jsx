@@ -108,7 +108,7 @@ class HomePage extends React.Component {
                   itemType={itemsType}
                   itemLink={itemLink}
                 />
-                {itemsType === 'homes' && <PopularHomesPrice item={item} />}
+                {itemsType === 'homes' && this.props.paymentInfo.locRate && <PopularHomesPrice item={item} />}
               </div>
             );
           })}
@@ -169,8 +169,8 @@ class HomePage extends React.Component {
             <PopularDestinationsCarousel handleDestinationPick={this.handleDestinationPick} />
           </HomePageContentItem>
           <section className="get-started">
-            <h2>Host on LocKchain</h2>
-            <div className="get-started-content">Easily list your home or hotel on LockChain and start earning money</div>
+            <h2>Host on LocKtrip</h2>
+            <div className="get-started-content">Easily list your home or hotel on Locktrip and start earning money</div>
             <Link to="/profile/listings/create/landing" className="btn">Get started</Link>
             <div className="get-started-graphic" />
           </section>

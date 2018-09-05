@@ -1,4 +1,3 @@
-import Breadcrumb from '../../Breadcrumb';
 import FilterPanel from './filter/FilterPanel';
 import HomeItem from './HomeItem';
 import HomesSearchBar from './HomesSearchBar';
@@ -115,7 +114,7 @@ class HomesSearchPage extends React.Component {
         });
       });
     });
-    const url = `/homes/listings/?${searchTerms}`;
+    const url = `/homes/listings/?${searchTerms.join('&')}`;
     this.props.history.push(url);
   }
 
@@ -140,7 +139,7 @@ class HomesSearchPage extends React.Component {
         });
       });
     });
-    let url = `/homes/listings/?${searchTerms}`;
+    let url = `/homes/listings/?${searchTerms.join('&')}`;
     this.props.history.push(url);
   }
 

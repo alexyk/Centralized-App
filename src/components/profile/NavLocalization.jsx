@@ -2,7 +2,7 @@ import '../../styles/css/components/tabs-component.css';
 import '../../styles/css/components/tabs-component.css';
 
 import { NavLink, withRouter } from 'react-router-dom';
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import { setCurrency, setLocRate, setLocRateInEur } from '../../actions/paymentInfo';
 
 import { Config } from '../../config.js';
@@ -97,7 +97,7 @@ class NavLocalization extends Component {
 
   handleReceiveMessage(event) {
     const locAmount = (JSON.parse(event.data)).locAmount;
-    
+
     if (locAmount && locAmount !== 0) {
       this.setState({ locAmount });
 
@@ -118,9 +118,6 @@ class NavLocalization extends Component {
   render() {
     const { currency, locRate } = this.props.paymentInfo;
     const { locBalance, ethBalance, isLogged } = this.props.userInfo;
-    if (!locRate) {
-      return <div className="loader sm-none"></div>;
-    }
 
     return (
       <div className="container">
@@ -129,7 +126,7 @@ class NavLocalization extends Component {
             {this.props.location.pathname !== '/hotels'
               && this.props.location.pathname !== '/homes'
               && (this.props.location.pathname.indexOf('/hotels/listings/book') === -1
-              && this.props.location.pathname.indexOf('/homes/listings/book') === -1
+                && this.props.location.pathname.indexOf('/homes/listings/book') === -1
                 && this.props.location.pathname.indexOf('/profile') === -1)
               && this.props.location.pathname.indexOf('/airdrop') === -1
               ? <ul className="tabset">
@@ -142,8 +139,11 @@ class NavLocalization extends Component {
 
             <div className="info-details">
               <p className="loc-rate">
-                <span className="cross-rate">LOC/{currency} </span>
-                <span className="rate">{Number(locRate).toFixed(4)} {currency}</span>
+                {locRate ?
+                  <Fragment>
+                    <span className="cross-rate">LOC/{currency} </span><span className="rate">{Number(locRate).toFixed(4)} {currency}</span>
+                  </Fragment> : <div className="loader sm-none" style={{ width: '100px' }} ></div>
+                }
               </p>
 
               {isLogged &&
