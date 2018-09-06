@@ -218,7 +218,7 @@ class MyGuestsPage extends React.Component {
               reservations={this.state.reservations}
               onReservationAccept={() => this.executeReCaptcha('accept')}
               onReservationCancel={() => this.executeReCaptcha('cancel')}
-              onReservationSelect={() => this.onReservationSelect}
+              onReservationSelect={this.onReservationSelect}
               onReservationReject={() => { this.openModal('showRejectReservationModal'); }} />
 
             <Pagination
