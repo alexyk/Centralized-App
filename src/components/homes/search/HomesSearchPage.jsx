@@ -41,6 +41,25 @@ class HomesSearchPage extends React.Component {
     this.getPriceValue = this.getPriceValue.bind(this);
   }
 
+  componentWillMount() {
+    if (this.props.location.search) {
+      const searchParams = this.getSearchParams(this.props.location.search);
+      const priceValue = this.getPriceValue(searchParams);
+      const cities = this.getCities(searchParams);
+      const propertyTypes = this.getPropertyTypes(searchParams);
+      this.setState({
+        searchParams: searchParams,
+        countryId: searchParams.get('countryId'),
+        startDate: moment(searchParams.get('startDate'), 'DD/MM/YYYY'),
+        endDate: moment(searchParams.get('endDate'), 'DD/MM/YYYY'),
+        guests: searchParams.get('guests'),
+        citiesToggled: cities,
+        propertyTypesToggled: propertyTypes,
+        priceValue: priceValue,
+      });
+    }
+  }
+
   componentDidMount() {
     let searchTerms = this.getSearchTerms(this.state.searchParams);
     searchTerms.push(`page=${this.state.currentPage - 1}`);
@@ -55,23 +74,6 @@ class HomesSearchPage extends React.Component {
         });
       });
     });
-  }
-
-  componentWillMount() {
-    if (this.props.location.search) {
-      const searchParams = this.getSearchParams(this.props.location.search);
-      const priceValue = this.getPriceValue(searchParams);
-      this.setState({
-        searchParams: searchParams,
-        countryId: searchParams.get('countryId'),
-        startDate: moment(searchParams.get('startDate'), 'DD/MM/YYYY'),
-        endDate: moment(searchParams.get('endDate'), 'DD/MM/YYYY'),
-        guests: searchParams.get('guests'),
-        selectedCities: new Set(),
-        selectedPropertyTypes: new Set(),
-        priceValue: priceValue,
-      });
-    }
   }
 
   componentWillUnmount() {
@@ -263,6 +265,28 @@ class HomesSearchPage extends React.Component {
     let min = Number(searchParams.get('priceMin')) > 1 ? Number(searchParams.get('priceMin')) : 1;
     let max = Number(searchParams.get('priceMax')) < 5000 ? Number(searchParams.get('priceMax')) : 5000;
     return [min, max];
+  }
+
+  getCities(searchParams) {
+    const cities = new Set();
+    if (searchParams.get('cities')) {
+      searchParams.get('cities').split(',').forEach(city => {
+        cities.add(city);
+      });
+    }
+
+    return cities;
+  }
+
+  getPropertyTypes(searchParams) {
+    const propertyTypes = new Set();
+    if (searchParams.get('propertyTypes')) {
+      searchParams.get('propertyTypes').split(',').forEach(propertyType => {
+        propertyTypes.add(propertyType);
+      });
+    }
+
+    return propertyTypes;
   }
 
   render() {

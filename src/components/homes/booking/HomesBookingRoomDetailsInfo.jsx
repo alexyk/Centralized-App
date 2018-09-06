@@ -5,13 +5,6 @@ import '../../../styles/css/components/homes/booking/homes-booking-room-details-
 
 function HomesBookingRoomDetailsInfo(props) {
 
-  const { roomDetails, checkInStart, checkInEnd, checkOutStart, checkOutEnd } = props;
-  const { property_type, guests, size, bathroom, bedrooms, rooms } = roomDetails;
-  const { eventsAllowed, smokingAllowed, suitableForPets, suitableForInfants, house_rules } = roomDetails;
-  const houseRules = house_rules.split('\r\n');
-
-  const hasSpaceDetails = property_type || guests || size || bathroom || bedrooms;
-
   const renderBedIcons = (bedCount, bedType) => {
     const bedIcons = [];
     let icon = null;
@@ -50,7 +43,13 @@ function HomesBookingRoomDetailsInfo(props) {
     return false;
   };
 
-  console.log(checkInStart);
+  const { roomDetails, checkInStart, checkInEnd, checkOutStart, checkOutEnd } = props;
+  const { property_type, guests, size, bathroom, bedrooms, rooms } = roomDetails;
+  const { eventsAllowed, smokingAllowed, suitableForPets, suitableForInfants, house_rules } = roomDetails;
+  const houseRules = house_rules.split('\r\n');
+
+  const hasSpaceDetails = property_type || guests || size || bathroom || bedrooms;
+  const hasHouseRules = eventsAllowed || smokingAllowed || suitableForPets || suitableForInfants || house_rules;
 
   return (
     <div className="right-part">
@@ -121,16 +120,21 @@ function HomesBookingRoomDetailsInfo(props) {
         </div>
       }
 
-      <div className="hotel-rules-container">
-        <h3>House Rules</h3>
-        {eventsAllowed && <p>Events allowed</p>}
-        {smokingAllowed && <p>Smoking allowed</p>}
-        {suitableForInfants && <p>Suitable for infants</p>}
-        {suitableForPets && <p>Suitable for pets</p>}
-        {houseRules && houseRules.map((rule, index) => {
-          return (<p key={index}>{rule}</p>);
-        })}
+      {hasHouseRules &&
+        <div className="hotel-rules-container">
+          <h3>House Rules</h3>
+          {eventsAllowed && <p>Events allowed</p>}
+          {smokingAllowed && <p>Smoking allowed</p>}
+          {suitableForInfants && <p>Suitable for infants</p>}
+          {suitableForPets && <p>Suitable for pets</p>}
+          {houseRules && houseRules.map((rule, index) => {
+            return (<p key={index}>{rule}</p>);
+          })}
+        </div>
+      }
 
+      <div className="accommodation-container">
+        <h3>Accommodation</h3>
         <div className="check-in">
           <p className="check-in-text">Check-in</p>
           <div className="check-in-line">
@@ -168,12 +172,6 @@ function HomesBookingRoomDetailsInfo(props) {
           </div>
         </div>
       </div>
-      {/* <div className="children-and-extra-beds">
-        <h3>Children & Extra Beds</h3>
-        <p>All children are welcome.</p>
-        <p>FREE! One child under 2 years stays free of charge in a crib.</p>
-        <p>There is no capacity for extra beds in the room.</p>
-      </div> */}
       <button className="btn" onClick={() => props.handleSubmit()}>Agree &amp; Continue</button>
     </div>
   );
