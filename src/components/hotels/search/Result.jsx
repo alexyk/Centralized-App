@@ -213,7 +213,8 @@ class Result extends React.Component {
             ? (!this.props.allElements ? <div className="loader" style={{ width: '100%' }}></div> : <span style={{ padding: '20px 10px 10px 10px' }}>Unavailable</span>)
             : <span className="price">{this.props.userInfo.isLogged && `${currencySign} ${priceInSelectedCurrency}`}</span>
           }
-          {isPriceLoaded && <span>(LOC {locPrice})</span>}
+          {locPrice ? <span>(LOC {locPrice})</span> : <div className="loader" style={{ width: '100%' }}></div>}
+          {/* {isPriceLoaded && <span>(LOC {locPrice})</span>}           */}
           {!isPriceLoaded && this.props.allElements
             ? <button disabled className="btn">Unavailable</button>
             : <Link target={isMobile === false ? '_blank' : '_self'} className="btn" to={`${redirectURL}/${id}${search.substr(0, endOfSearch)}`}>Book now</Link>

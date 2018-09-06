@@ -45,7 +45,10 @@ $media-expressions: (
 			display: flex;
     }
     .loc-rate {
-      margin: 0;
+	  margin: 0;
+	  display: flex;
+	  flex-direction: row;
+	  align-items: center;
       @include media("<tablet") {
         text-align: left;
         padding: 10px 0;
