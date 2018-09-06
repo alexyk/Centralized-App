@@ -132,8 +132,6 @@ class Result extends React.Component {
       <button {...props} />
     );
 
-
-
     const settings = {
       infinite: true,
       speed: 300,
@@ -214,7 +212,6 @@ class Result extends React.Component {
             : <span className="price">{this.props.userInfo.isLogged && `${currencySign} ${priceInSelectedCurrency}`}</span>
           }
           {<span>(LOC {locPrice})</span>}
-          {/* {isPriceLoaded && <span>(LOC {locPrice})</span>}           */}
           {!isPriceLoaded && this.props.allElements
             ? <button disabled className="btn">Unavailable</button>
             : <Link target={isMobile === false ? '_blank' : '_self'} className="btn" to={`${redirectURL}/${id}${search.substr(0, endOfSearch)}`}>Book now</Link>

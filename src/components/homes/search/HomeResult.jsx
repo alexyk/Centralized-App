@@ -19,7 +19,7 @@ function HomeItem(props) {
   return (
     <div className="list-hotel">
       <div className="list-image">
-        <ListingItemPictureCarousel listingsType={'homes'} pictures={pictures} id={id} />
+        <ListingItemPictureCarousel pictures={pictures} id={id} />
       </div>
       <div className="list-content">
         <h2><Link to={`/homes/listings/${id}${props.location.search}`}>{name}</Link></h2>
@@ -28,12 +28,6 @@ function HomeItem(props) {
         <p>{cityName}, {countryName}</p>
         <div className="list-hotel-text">
           {description.substr(0, 190)}...
-        </div>
-        <div className="list-hotel-comfort">
-          <div className="icon-hotel-4"></div>
-          <div className="icon-hotel-3"></div>
-          <div className="icon-hotel-2"></div>
-          <div className="icon-hotel-1"></div>
         </div>
       </div>
       <div className="list-price">

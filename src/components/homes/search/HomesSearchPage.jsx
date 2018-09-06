@@ -1,5 +1,5 @@
 import FilterPanel from './filter/FilterPanel';
-import HomeItem from './HomeItem';
+import HomeResult from './HomeResult';
 import HomesSearchBar from './HomesSearchBar';
 import Pagination from '../../common/pagination/Pagination';
 import PropTypes from 'prop-types';
@@ -302,13 +302,12 @@ class HomesSearchPage extends React.Component {
       renderListings = <div className="text-center"><h3>No results</h3></div>;
     } else {
       renderListings = listings.map((item, i) => {
-        return <HomeItem key={i} listing={item} />;
+        return <HomeResult key={i} listing={item} />;
       });
     }
 
     return (
-      <div>
-        {/* <ListingTypeNav /> */}
+      <React.Fragment>
         <div className="container">
           <HomesSearchBar
             countryId={this.state.countryId}
@@ -352,7 +351,7 @@ class HomesSearchPage extends React.Component {
             </div>
           </div>
         </section>
-      </div>
+      </React.Fragment>
     );
   }
 }

@@ -5,7 +5,6 @@ import React from 'react';
 import { React_Bootstrap_Carousel as ReactBootstrapCarousel } from 'react-bootstrap-carousel';
 
 function ListingItemPictureCarousel(props) {
-  const listingsType = props.listingsType;
   const leftIcon = <span className="left-carousel"> </span>;
   const rightIcon = <span className="right-carousel"> </span>;
   let { pictures } = props;
@@ -13,25 +12,8 @@ function ListingItemPictureCarousel(props) {
     return <div className="loader"></div>;
   }
 
-  const getCarouselItem = (item, i) => {
-    if (listingsType === 'homes') {
-      return (
-        <div className={listingsType + '-item'} key={i}>
-          <Link to={`/${listingsType}/listings/${props.id}${props.location.search}`}><img src={item.thumbnail} alt="" /></Link>
-        </div>
-      );
-    } else {
-      return (
-        <Link to={`/${listingsType}/listings/${props.id}${props.location.search}`} key={i}>
-          <div className={listingsType + '-item'} style={{ backgroundImage: 'url(' + item.thumbnail + ')' }}>
-          </div>
-        </Link>
-      );
-    }
-  };
-
   return (
-    <div>
+    <React.Fragment>
       {pictures &&
         <ReactBootstrapCarousel
           animation={true}
@@ -40,14 +22,17 @@ function ListingItemPictureCarousel(props) {
           rightIcon={rightIcon}
           indicators={false}
           className="carousel-fade"
-        // onSelect={() => console.log('click')}
         >
           {pictures.map((item, i) => {
-            return getCarouselItem(item, i);
+            return (
+              <div className="homes-item" key={i}>
+                <Link to={`/homes/listings/${props.id}${props.location.search}`}><img src={item.thumbnail} alt="" /></Link>
+              </div>
+            );
           })}
         </ReactBootstrapCarousel>
       }
-    </div>
+    </React.Fragment>
   );
 }
 
