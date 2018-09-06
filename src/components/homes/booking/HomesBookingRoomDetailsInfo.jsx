@@ -5,7 +5,7 @@ import '../../../styles/css/components/homes/booking/homes-booking-room-details-
 
 function HomesBookingRoomDetailsInfo(props) {
 
-  const { listing, roomDetails, checkInStart, checkInEnd, checkOutStart, checkOutEnd } = props;
+  const { roomDetails, checkInStart, checkInEnd, checkOutStart, checkOutEnd } = props;
   const { property_type, guests, size, bathroom, bedrooms, rooms } = roomDetails;
   const { eventsAllowed, smokingAllowed, suitableForPets, suitableForInfants, house_rules } = roomDetails;
   const houseRules = house_rules.split('\r\n');
@@ -23,7 +23,10 @@ function HomesBookingRoomDetailsInfo(props) {
         icon = <img src="/images/icon-review/icon-bed-room.png" alt="icon-bedroom" title="Double Bed" />;
         break;
       case 'king':
-        icon = <img src="/images/icon-review/icon-bed-room.png" alt="icon-bedroom" title="King Bed" />;
+        icon = <img src="/images/icon-review/icon-kingbed.jpg" alt="icon-kingbed" title="King Bed" />;
+        break;
+      default:
+        icon = <img src="" alt="" title="" />;
         break;
     }
 
