@@ -251,14 +251,14 @@ class ProfileVerificationPage extends React.Component {
                     onDrop={(files) => this.onImageDrop(files, 'governmentIdPhoto')}
                     onDropRejected={this.onDropRejected}
                   >
-                    <span><i className="fa fa-upload"></i>Provide ID</span>
+                    <span><i className="fa fa-upload"></i>Upload ID</span>
                   </Dropzone>
                   <p>or</p>
                   <button
                     style={this.state.uploadedFilegovernmentIdPhoto === null ? null : { backgroundColor: '#a2c5bf' }}
                     onClick={() => this.openModal(CAPTURE_IMAGE)}
                     className="button">
-                    <i className="fa fa-camera"></i>Provide ID</button>
+                    <i className="fa fa-camera"></i>Make a photo of ID</button>
                   <CaptureImageModal isActive={this.props.modalsInfo.isActive[CAPTURE_IMAGE]} openModal={this.openModal} closeModal={this.closeModal}>
                     <form onSubmit={(e) => { e.preventDefault(); this.closeModal(CAPTURE_IMAGE); this.onCaptureDrop('governmentIdPhoto'); }}>
                       <Webcam
@@ -283,14 +283,14 @@ class ProfileVerificationPage extends React.Component {
                       onDrop={(files) => this.onImageDrop(files, 'governmentIdHolderPhoto')}
                       onDropRejected={this.onDropRejected}
                     >
-                      <span><i className="fa fa-upload"></i>Provide Holder + ID</span>
+                      <span><i className="fa fa-upload"></i>Upload Holder + ID</span>
                     </Dropzone>
                     <p>or</p>
                     <button
                       style={this.state.uploadedFilegovernmentIdHolderPhoto === null ? null : { backgroundColor: '#a2c5bf' }}
                       onClick={() => this.openModal(CAPTURE_IMAGE)}
                       className="button">
-                      <i className="fa fa-camera"></i>Provide Holder ID</button>
+                      <i className="fa fa-camera"></i>Make a photo of Holder + ID</button>
                     <CaptureImageModal isActive={this.props.modalsInfo.isActive[CAPTURE_IMAGE]} openModal={this.openModal} closeModal={this.closeModal}>
                       <form onSubmit={(e) => { e.preventDefault(); this.closeModal(CAPTURE_IMAGE); this.onCaptureDrop('governmentIdHolderPhoto'); }}>
                         <Webcam
