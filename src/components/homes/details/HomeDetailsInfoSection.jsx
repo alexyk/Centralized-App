@@ -3,8 +3,11 @@ import PropTypes from 'prop-types';
 import HomeDetailsCalendar from './HomeDetailsCalendar';
 import HomeDetailsReviewBox from './HomeDetailsReviewBox';
 import React from 'react';
+import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import { Link } from 'react-router-dom';
+import { openModal } from '../../../actions/modalsInfo.js';
+import { LOGIN } from '../../../constants/modals.js';
 
 import '../../../styles/css/components/home/details/home-details-info-section.css';
 import '../../../styles/css/components/homes/property/calendar.css';
@@ -50,7 +53,9 @@ function HomeDetailsInfoSection(props) {
           <p>{street}, {city.name}, {country.name}</p>
           <div className="btn-home-details-info-section-container">
             <button className="btn btn-primary" onClick={props.openModal}>Contact Host</button>
-            <Link to={`/homes/listings/book/${props.match.params.id}${props.location.search}`} className="btn btn-primary btn-home-details-info-section-container">Book Now</Link>
+            {props.userInfo.isLogged ?
+              <Link to={`/homes/listings/book/${props.match.params.id}${props.location.search}`} className="btn btn-primary btn-home-details-info-section-container">Book Now</Link> :
+              <button className="btn btn-primary" onClick={(e) => props.dispatch(openModal(LOGIN, e))}>Login</button>}
           </div>
 
           <HomeDetailsCalendar
@@ -128,7 +133,6 @@ HomeDetailsInfoSection.propTypes = {
   locRate: PropTypes.string,
   showLoginModal: PropTypes.bool,
   isLogged: PropTypes.bool,
-  userInfo: PropTypes.object,
   nights: PropTypes.number,
   onApply: PropTypes.func,
   startDate: PropTypes.object,
@@ -147,6 +151,17 @@ HomeDetailsInfoSection.propTypes = {
 
   // start Router props
   location: PropTypes.object,
+
+  // Redux props
+  dispatch: PropTypes.func,
+  userInfo: PropTypes.object
 };
 
-export default withRouter(HomeDetailsInfoSection);
+function mapStateToProps(state) {
+  const { userInfo } = state;
+  return {
+    userInfo
+  };
+}
+
+export default withRouter(connect(mapStateToProps)(HomeDetailsInfoSection));

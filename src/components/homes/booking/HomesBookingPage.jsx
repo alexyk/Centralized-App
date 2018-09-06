@@ -27,14 +27,13 @@ class HomesBookingPage extends React.Component {
   componentDidMount() {
     requester.getListing(this.props.match.params.id).then(res => {
       res.body.then((listing) => {
-        console.log(listing);
         let checkInStart = listing.checkinStart && Number(listing.checkinStart.substring(0, 2));
         let checkInEnd = listing.checkinEnd && Number(listing.checkinEnd.substring(0, 2));
-        checkInEnd = checkInStart < checkInEnd ? checkInEnd : 24;  
+        checkInEnd = checkInEnd && checkInStart < checkInEnd ? checkInEnd : 24;  
 
         let checkOutStart = listing.checkoutStart && Number(listing.checkoutStart.substring(0, 2));
         let checkOutEnd = listing.checkoutEnd && Number(listing.checkoutEnd.substring(0, 2));
-        checkOutStart = checkOutStart < checkOutEnd ? checkOutStart : 0;
+        checkOutStart = checkOutStart && checkOutStart < checkOutEnd ? checkOutStart : 0;
 
         this.setState({
           listing,
@@ -47,7 +46,6 @@ class HomesBookingPage extends React.Component {
     });
 
     requester.getHomeBookingDetails(993).then(res => res.body).then(roomDetails => {
-      console.log(roomDetails);
       this.setState({ roomDetails });
     });
 

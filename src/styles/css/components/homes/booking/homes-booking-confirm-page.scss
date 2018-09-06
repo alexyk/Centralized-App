@@ -26,26 +26,12 @@
         margin: 30px 0;
       }
       form {
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
         margin-bottom: 30px;
-
-        .customer-name {
-          display: flex;
+        .customer-first-name,
+        .customer-last-name,
+        .customer-phone,
+        .customer-email {
           margin-bottom: 20px;
-          @include media('<tablet') {
-            flex-direction: column;
-          }
-          div {
-            width: 50%;
-            @include media('<tablet') {
-              width: 100%;
-            }
-            &:first-child {
-              margin-right: 10px; 
-            }
-          }
         }
 
         input {
@@ -55,13 +41,13 @@
           padding: 15px;
           width: 100%;
         }
-      }
-      .btn {
-        margin: 30px 0;
-        width: 60%;
-        float: right;
-        @include media("<=tablet") {
-          width: 100%;
+        .btn {
+          margin: 30px 0;
+          width: 60%;
+          float: right;
+          @include media("<=tablet") {
+            width: 100%;
+          }
         }
       }
     }

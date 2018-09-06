@@ -103,7 +103,7 @@ class Result extends React.Component {
     const { currencySign } = this.props.paymentInfo;
     const isPriceLoaded = !!price;
     const priceInEUR = rates && ((CurrencyConverter.convert(rates, RoomsXMLCurrency.get(), DEFAULT_CRYPTO_CURRENCY, price)) / this.props.nights).toFixed(2);
-    let locPrice = locRate !== 0 && (priceInEUR / locRate).toFixed(2);
+    let locPrice = locRate !== 0 && !isNaN(priceInEUR) && (priceInEUR / locRate).toFixed(2);
     const priceInSelectedCurrency = rates && ((CurrencyConverter.convert(rates, RoomsXMLCurrency.get(), this.props.paymentInfo.currency, price)) / this.props.nights).toFixed(2);
 
     name = name && StringUtils.shorten(name, this.state.titleLength);
@@ -213,7 +213,7 @@ class Result extends React.Component {
             ? (!this.props.allElements ? <div className="loader" style={{ width: '100%' }}></div> : <span style={{ padding: '20px 10px 10px 10px' }}>Unavailable</span>)
             : <span className="price">{this.props.userInfo.isLogged && `${currencySign} ${priceInSelectedCurrency}`}</span>
           }
-          {locPrice ? <span>(LOC {locPrice})</span> : <div className="loader" style={{ width: '100%' }}></div>}
+          {<span>(LOC {locPrice})</span>}
           {/* {isPriceLoaded && <span>(LOC {locPrice})</span>}           */}
           {!isPriceLoaded && this.props.allElements
             ? <button disabled className="btn">Unavailable</button>
