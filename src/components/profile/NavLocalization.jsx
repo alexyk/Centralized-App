@@ -138,14 +138,14 @@ class NavLocalization extends Component {
             }
 
             <div className="info-details">
-              <p className="loc-rate">
+              <div className="loc-rate">
                 {locRate ?
                   <Fragment>
                     <span className="cross-rate">LOC/{currency} </span>
                     <span className="rate">{Number(locRate).toFixed(4)} {currency}</span>
                   </Fragment> : <div className="loader sm-none" style={{ width: '100px' }} ></div>
                 }
-              </p>
+              </div>
 
               {isLogged &&
                 <div className="balance-info">

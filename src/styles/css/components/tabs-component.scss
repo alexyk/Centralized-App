@@ -104,9 +104,12 @@ $media-expressions: (
 			// border-right: none;
 			border-radius: 3px 0 0 3px;
 			display: flex;
-			align-items: center;
-			padding: 12px 10px;
-			font-size: 14px;
+      align-items: center;
+      padding: 8px 10px;
+      font-size: 14px;
+      @include media("<=tablet") {
+        padding: 12px 10px;
+      }
 			@include media(">=desktop") {
 				min-width: 211px;
       }

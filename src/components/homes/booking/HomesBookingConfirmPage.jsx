@@ -24,7 +24,8 @@ class HomesBookingConfirmPage extends React.Component {
       sending: false,
       firstName: '',
       lastName: '',
-      phoneNumber: ''
+      phoneNumber: '',
+      email: '',
     };
 
     this.handleChange = this.handleChange.bind(this);
@@ -50,7 +51,8 @@ class HomesBookingConfirmPage extends React.Component {
       .then(userInfo => this.setState({
         firstName: userInfo.firstName,
         lastName: userInfo.lastName,
-        phoneNumber: userInfo.phoneNumber
+        phoneNumber: userInfo.phoneNumber,
+        email: userInfo.email
       }));
   }
 
@@ -66,7 +68,7 @@ class HomesBookingConfirmPage extends React.Component {
   handleSubmit(captchaToken) {
     this.setState({ sending: true });
 
-    const { listing, firstName, lastName } = this.state;
+    const { listing, firstName, lastName, phoneNumber, email } = this.state;
 
     const queryParams = parse(this.props.location.search);
 
@@ -76,8 +78,8 @@ class HomesBookingConfirmPage extends React.Component {
       checkout: queryParams.endDate,
       guests: parseInt(queryParams.guests, 10),
       name: firstName + ' ' + lastName,
-      email: this.props.userInfo.email,
-      phone: this.props.userInfo.phoneNumber,
+      email: email,
+      phone: phoneNumber,
     };
 
     requester.requestBooking(requestInfo, captchaToken).then(res => {
@@ -127,22 +129,30 @@ class HomesBookingConfirmPage extends React.Component {
             <div className="confirm-and-pay-details">
               <h2 className="title">Confirm &amp; Pay</h2>
               <hr />
-              <form>
-                <div className="customer-name">
-                  <div>
-                    <label>First name</label>
-                    <input type="text" name="firstName" value={this.state.firstName} onChange={this.handleChange} />
-                  </div>
-                  <div>
-                    <label>Last name</label>
-                    <input type="text" name="lastName" value={this.state.lastName} onChange={this.handleChange} />
-                  </div>
+              <form onSubmit={(e) => {
+                e.preventDefault();
+                if (this.isValidNames()) {
+                  this.captcha.execute();
+                }
+              }}
+              >
+                <div className="customer-first-name">
+                  <label>First name</label>
+                  <input type="text" name="firstName" value={this.state.firstName} onChange={this.handleChange} required />
+                </div>
+                <div className="customer-last-name">
+                  <label>Last name</label>
+                  <input type="text" name="lastName" value={this.state.lastName} onChange={this.handleChange} required />
                 </div>
                 <div className="customer-phone">
                   <label>Phone number</label>
-                  <input type="text" name="phoneNumber" value={this.state.phoneNumber} onChange={this.handleChange} />
+                  <input type="text" name="phoneNumber" value={this.state.phoneNumber} onChange={this.handleChange} required />
                 </div>
-
+                <div className="customer-email">
+                  <label>Email</label>
+                  <input type="email" name="email" value={this.state.email} onChange={this.handleChange} required />
+                </div>
+                <button className="btn">Confirm &amp; Pay</button>
               </form>
               <ReCAPTCHA
                 ref={el => this.captcha = el}
@@ -150,14 +160,6 @@ class HomesBookingConfirmPage extends React.Component {
                 sitekey={Config.getValue('recaptchaKey')}
                 onChange={token => { this.handleSubmit(token); this.captcha.reset(); }}
               />
-              <button
-                className="btn"
-                onClick={(e) => {
-                  e.preventDefault();
-                  if (this.isValidNames()) {
-                    this.captcha.execute();
-                  }
-                }}>Confirm &amp; Pay</button>
             </div>
           </div>
         </div>
