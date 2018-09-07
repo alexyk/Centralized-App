@@ -319,9 +319,11 @@ class AirdropPage extends Component {
   _getIncompleteStatus() {
     return [
       <div className="balance-row__label">
-        <span className="step-check unchecked" style={{"margin-top": "1.5em"}}></span>
+        <span className="step-check unchecked" style={{"margin-top": "3.5em"}}></span>
         <span className="mandatory">
-          Our checks indicate that you have not completed all social joins. Please make sure you have joined our telegram, followed us on Twitter and Facebook.
+          Our checks indicate that you have not completed all social joins.
+          Please make sure you have joined our telegram, followed us on Twitter and Facebook.<br/>
+          For more info, please <a href="https://medium.com/@LockChainCo/how-to-fix-social-joins-requirement-ea31b6e31801" target="_blank" rel='noreferrer noopener' className="referral-url"><u>read this post</u></a>.
         </span>
       </div>,
       <div className="balance-row__content centered-balance">$0</div>
