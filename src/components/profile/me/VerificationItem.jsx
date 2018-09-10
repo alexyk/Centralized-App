@@ -10,14 +10,14 @@ function VerificationItem(props) {
   const { item, verified } = props;
   const sufix = verified === true ? '_VERIFIED' : '_UNVERIFIED';
   return (
-    <div className="box">
-      <div className="left-part">
+    <div className="verification-item">
+      <div>
         <h2>{_.startCase(_.camelCase(item))}</h2>
         <h5>{ProfileVerification[item.toUpperCase() + sufix]}</h5>
       </div>
-      <div className="right-part">
+      {/* <div className="right-part">
         {verified === true ? null : <Link to="/profile/me/edit" className="button">Provide</Link>}
-      </div>
+      </div> */}
     </div>
   );
 }

@@ -317,3 +317,6 @@ src/**/*.css
 
 # Mac OS X files
 .DS_Store
+
+# Shell scripts
+*.sh
