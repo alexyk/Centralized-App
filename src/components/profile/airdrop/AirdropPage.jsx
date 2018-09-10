@@ -53,6 +53,7 @@ class AirdropPage extends Component {
     this.getBalanceContainer = this.getBalanceContainer.bind(this);
     this._getVerifiedStatus = this._getVerifiedStatus.bind(this);
     this._getVerifiedWithIncompleteReferrals = this._getVerifiedWithIncompleteReferrals.bind(this);
+    this._getTooLateVerifiedStatus = this._getTooLateVerifiedStatus.bind(this);
     this._getUnverifiedStatus = this._getUnverifiedStatus.bind(this);
     this._getFailedStatus = this._getFailedStatus.bind(this);
     this._getIncompleteStatus = this._getIncompleteStatus.bind(this);
@@ -281,6 +282,8 @@ class AirdropPage extends Component {
        return this._getVerifiedStatus();
      case 'VERIFIED_REFERRALS_INCOMPLETE':
        return this._getVerifiedWithIncompleteReferrals();
+     case 'LATE_VERIFIED':
+       return this._getTooLateVerifiedStatus();
      case 'FAILED':
        return this._getFailedStatus();
      case 'INCOMPLETE':
@@ -293,7 +296,7 @@ class AirdropPage extends Component {
   _getVerifiedStatus() {
     return [
       <div className="balance-row__label">
-        <span className="step-check checked"  style={{"margin-top": "-0.4em"}}></span>
+        <span className="step-check checked" style={{"margin-top": "-0.4em"}}></span>
         <span className="emphasized-text">Verified Balance</span>
       </div>,
       <div className="balance-row__content">${Math.max(10, this.props.airdropInfo.referralCount * 5 + 10)}</div>
@@ -303,10 +306,20 @@ class AirdropPage extends Component {
   _getVerifiedWithIncompleteReferrals() {
     return [
       <div className="balance-row__label">
-        <span className="step-check checked"  style={{"margin-top": "3.5em"}}></span>
+        <span className="step-check checked" style={{"margin-top": "3.5em"}}></span>
         <span className="emphasized-text">Your status has been verified, however your referrals might be subjected to additional verification checks which might affect your final balance.</span>
       </div>,
-      <div className="balance-row__content">${Math.max(10, this.props.airdropInfo.referralCount * 5 + 10)}</div>
+      <div className="balance-row__content centered-balance">${Math.max(10, this.props.airdropInfo.referralCount * 5 + 10)}</div>
+    ];
+  }
+
+  _getTooLateVerifiedStatus() {
+    return [
+      <div className="balance-row__label">
+        <span className="step-check checked" style={{"margin-top": "3.5em"}}></span>
+        <span className="emphasized-text">Your balance is verified as $0, because the airdrop has been finalized in your country prior to the moment you had joined and  because you have not referred any other people. For more info, <a href="https://medium.com/@LockChainCo/participating-in-the-loc-airdrop-from-a-country-where-the-airdrop-has-been-finalized-621fd7f7a78b" target="_blank" rel='noreferrer noopener' className="referral-url"><u>read this post</u></a>. </span>
+      </div>,
+      <div className="balance-row__content centered-balance">$0</div>
     ];
   }
 
