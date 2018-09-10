@@ -56,6 +56,7 @@ class ConfirmProfilePage extends React.Component {
     requester.getUserInfo()
       .then(res => res.body)
       .then(userInfo => {
+        console.log(userInfo);
         if (userInfo.birthday !== null) {
           let birthday = moment.utc(userInfo.birthday);
           const day = birthday.add(1, 'days').format('D');
@@ -66,6 +67,10 @@ class ConfirmProfilePage extends React.Component {
 
         if (['Canada', 'India', 'United States of America'].includes(userInfo.country.name)) {
           this.requestStates(userInfo.country.id);
+        }
+
+        if (userInfo.countryState) {
+          userInfo.countryState = userInfo.countryState.id;
         }
 
         this.setState({ userInfo, loading: false });
@@ -140,11 +145,12 @@ class ConfirmProfilePage extends React.Component {
     const userInfo = { ...this.state.userInfo };
     userInfo.preferredCurrency = userInfo.preferredCurrency ? userInfo.preferredCurrency.id : 1;
     userInfo.country = userInfo.country && userInfo.country.id;
-    userInfo.state = userInfo.state && userInfo.state.id;
+    userInfo.countryState = userInfo.countryState && parseInt(userInfo.countryState, 10);
     requester.updateUserInfo(userInfo, captchaToken).then(res => {
       if (res.success) {
         this.payWithCard();
       } else {
+        res.errors.then(e => console.log(e));
         NotificationManager.error('Invalid user information.', '', LONG);
       }
     });
