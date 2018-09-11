@@ -76,7 +76,7 @@ class HomesBookingConfirmPage extends React.Component {
       listingId: listing.id,
       checkin: queryParams.startDate,
       checkout: queryParams.endDate,
-      guests: parseInt(queryParams.guests, 10),
+      guests: queryParams.guests,
       name: firstName + ' ' + lastName,
       email: email,
       phone: phoneNumber,
@@ -85,7 +85,9 @@ class HomesBookingConfirmPage extends React.Component {
     requester.requestBooking(requestInfo, captchaToken).then(res => {
       this.setState({ sending: false });
       if (!res.success) {
-        NotificationManager.warning(UNCATEGORIZED_ERROR, '', LONG);
+        res.errors.then(e => {
+          NotificationManager.warning(e.message, '', LONG);
+        });
       } else {
         res.body.then(data => {
           if (data.success) {
@@ -127,7 +129,7 @@ class HomesBookingConfirmPage extends React.Component {
               rates={rates}
             />
             <div className="confirm-and-pay-details">
-              <h2 className="title">Confirm &amp; Pay</h2>
+              <h2 className="title">Request Booking</h2>
               <hr />
               <form onSubmit={(e) => {
                 e.preventDefault();
@@ -152,7 +154,7 @@ class HomesBookingConfirmPage extends React.Component {
                   <label>Email</label>
                   <input type="email" name="email" value={this.state.email} onChange={this.handleChange} required />
                 </div>
-                <button className="btn">Confirm &amp; Pay</button>
+                <button className="btn">Request Booking</button>
               </form>
               <ReCAPTCHA
                 ref={el => this.captcha = el}
