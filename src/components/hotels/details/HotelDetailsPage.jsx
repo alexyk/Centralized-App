@@ -20,8 +20,8 @@ import { setCurrency } from '../../../actions/paymentInfo';
 import { setSearchInfo } from '../../../actions/searchInfo';
 import { withRouter } from 'react-router-dom';
 
-import { CHECKING_ROOM_AVAILABILITY, ROOM_NO_LONGER_AVAILABLE } from '../../../constants/infoMessages.js';
-import { UNCATEGORIZED_ERROR } from '../../../constants/errorMessages.js';
+import { CHECKING_ROOM_AVAILABILITY, SIMILAR_ROOM_GIVEN } from '../../../constants/infoMessages.js';
+import { ROOM_IS_NO_LONGER_AVAILABLE } from '../../../constants/errorMessages.js';
 import { INVALID_SEARCH_DATE, ALL_ROOMS_TAKEN } from '../../../constants/warningMessages.js';
 import { LONG } from '../../../constants/notificationDisplayTimes.js';
 
@@ -350,7 +350,7 @@ class HotelDetailsPage extends React.Component {
     try {
       this.checkNextRoom(allRooms, 0, booking);
     } catch (e) {
-      NotificationManager.error(UNCATEGORIZED_ERROR, '', LONG);
+      NotificationManager.error(ROOM_IS_NO_LONGER_AVAILABLE, '', LONG);
     }
   }
 
@@ -369,7 +369,7 @@ class HotelDetailsPage extends React.Component {
     requester.createReservation(booking).then(res => {
       if (res.success) {
         if (index !== 0) {
-          NotificationManager.info(ROOM_NO_LONGER_AVAILABLE, '', LONG);
+          NotificationManager.info(ROOM_IS_NO_LONGER_AVAILABLE, '', LONG);
         }
 
         const id = this.props.match.params.id;
@@ -381,7 +381,7 @@ class HotelDetailsPage extends React.Component {
         this.checkNextRoom(allRooms, index + 1, booking);
       }
     }).catch(() => {
-      NotificationManager.error(UNCATEGORIZED_ERROR, '', LONG);
+      NotificationManager.error(SIMILAR_ROOM_GIVEN, '', LONG);
     });
   }
 

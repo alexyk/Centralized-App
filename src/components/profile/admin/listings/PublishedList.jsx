@@ -17,7 +17,6 @@ import Pagination from '../../../common/pagination/Pagination';
 import PropTypes from 'prop-types';
 import ReCAPTCHA from 'react-google-recaptcha';
 import React from 'react';
-import { UNCATEGORIZED_ERROR } from '../../../../constants/errorMessages.js';
 import queryString from 'query-string';
 import requester from '../../../../initDependencies';
 
@@ -212,7 +211,9 @@ class PublishedList extends React.Component {
         }
       }
       else {
-        NotificationManager.error(UNCATEGORIZED_ERROR, 'Listings Operations', LONG);
+        res.errors.then(e => {
+          NotificationManager.warning(e.message, '', LONG);
+        });
       }
     });
   }

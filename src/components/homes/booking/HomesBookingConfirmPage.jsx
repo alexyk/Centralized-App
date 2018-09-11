@@ -11,7 +11,6 @@ import requester from '../../../initDependencies';
 import { Config } from '../../../config';
 import { LONG } from '../../../constants/notificationDisplayTimes.js';
 import { MISSING_NAMES } from '../../../constants/warningMessages.js';
-import { UNCATEGORIZED_ERROR } from '../../../constants/errorMessages.js';
 
 import '../../../styles/css/components/homes/booking/homes-booking-confirm-page.css';
 

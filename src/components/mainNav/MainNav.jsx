@@ -29,7 +29,7 @@ import {
 } from '../../constants/successMessages.js';
 import { Link, withRouter } from 'react-router-dom';
 import { MenuItem, Nav, NavDropdown, NavItem, Navbar } from 'react-bootstrap/lib';
-import { NOT_FOUND, UNCATEGORIZED_ERROR } from '../../constants/errorMessages';
+import { NOT_FOUND } from '../../constants/errorMessages';
 import { closeModal, openModal } from '../../actions/modalsInfo';
 import { setIsLogged, setUserInfo } from '../../actions/userInfo';
 
@@ -631,7 +631,7 @@ class MainNav extends React.Component {
         if (data.isVerificationEmailSent) {
           NotificationManager.success(VERIFICATION_EMAIL_SENT, '', LONG);
         } else {
-          NotificationManager.error(UNCATEGORIZED_ERROR, '', LONG);
+          NotificationManager.error(INVALID_SECURITY_CODE, '', LONG);
         }
       });
 
