@@ -9,6 +9,10 @@ import {
   EtherValidators
 } from './validators/etherValidators'
 import {
+  getNonceNumber,
+  createSignedTransaction
+} from './utils/ethFuncs'
+import {
   LOCTokenContract,
   LOCTokenContractWithWallet,
   getNodeProvider
@@ -29,13 +33,18 @@ export class TokenTransactions {
 
     await TokenValidators.validateLocBalance(wallet.address, amount, wallet, gasConfig.transferTokens);
     await EtherValidators.validateEthBalance(wallet, gasConfig.transferTokens);
+    let nonce = await getNonceNumber(wallet.address);
 
     const LOCTokenContractWallet = LOCTokenContractWithWallet(wallet);
     var overrideOptions = {
       gasLimit: gasConfig.transferTokens,
-      gasPrice: gasPrice
+      gasPrice: gasPrice,
+      nonce: nonce
     };
-    return await LOCTokenContractWallet.transfer(recipient, amount, overrideOptions);
+
+    let transferTokensTx = await createSignedTransaction(LOCTokenContractWallet, 'transfer', wallet, overrideOptions, LOCTokenContractWallet.address, recipient, amount)
+
+    return [transferTokensTx];
 
   };
 
