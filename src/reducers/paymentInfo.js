@@ -5,7 +5,8 @@ const initialState = {
   currencySign: localStorage['currencySign'] ? localStorage['currencySign'] : '$',
   locRate: null,
   locRateInEur: null,
-  isBookingConfirmPage: false
+  isBookingConfirmPage: false,
+  rates: null
 };
 
 export default function reducer(state = initialState, action) {
@@ -54,6 +55,13 @@ export default function reducer(state = initialState, action) {
         ...state,
         isBookingConfirmPage: action.isBookingConfirmPage
       };
+
+    case paymentInfo.SET_CURRENCY_RATES:
+      return {
+        ...state,
+        rates: action.rates
+      };
+
     default:
       return state;
   }

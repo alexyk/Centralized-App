@@ -31,3 +31,10 @@ export function setBookingCofirmPage(isBookingConfirmPage) {
     isBookingConfirmPage
   };
 }
+
+export function setCurrencyRates(rates) {
+  return {
+    type: paymentInfo.SET_CURRENCY_RATES,
+    rates
+  };
+}

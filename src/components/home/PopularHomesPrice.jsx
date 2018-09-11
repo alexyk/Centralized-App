@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
+import LocPrice from '../common/utility/LocPrice';
+import { CurrencyConverter } from '../../services/utilities/currencyConverter';
 
 class PopularHomesPrice extends Component {
 
@@ -13,10 +15,15 @@ class PopularHomesPrice extends Component {
 
   render() {
     const { paymentInfo, item } = this.props;
-    const price = (item.prices) && paymentInfo.currency === item.currencyCode ? parseInt(item.defaultDailyPrice, 10).toFixed(2) : parseInt(item.prices[paymentInfo.currency], 10).toFixed(2);
+    const { currency, rates } = paymentInfo;
+    const price = (item.prices) && currency === item.currencyCode ? item.defaultDailyPrice : item.prices['EUR'];
 
     return (
-      <div className="list-property-price">{this.props.userInfo.isLogged && `${paymentInfo.currencySign}${price}`} <span>(LOC {(price / paymentInfo.locRate).toFixed(2)})</span> per night</div>
+      <div className="list-property-price">
+        {this.props.userInfo.isLogged && rates &&
+          `${paymentInfo.currencySign}${rates && Number(CurrencyConverter.convert(rates, 'EUR', currency, price)).toFixed(2)} `}
+        <LocPrice fiat={price} /> per night
+      </div>
     );
   }
 }

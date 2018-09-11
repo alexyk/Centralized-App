@@ -145,10 +145,7 @@ function HotelDetailsInfoSection(props) {
                                 {props.userInfo.isLogged &&
                                   <span>{props.currencySign}{props.rates && Number((CurrencyConverter.convert(props.rates, roomsXMLCurrency, currency, room.price)) / props.nights).toFixed(2)} </span>
                                 }
-                                <LocPrice
-                                  rates={props.rates}
-                                  fiat={room.price / props.nights}
-                                />
+                                <LocPrice fiat={room.price / props.nights} />
                                 / night
                               </div>
                             );
@@ -162,10 +159,7 @@ function HotelDetailsInfoSection(props) {
                             {props.userInfo.isLogged &&
                               <span>{props.currencySign}{props.rates && Number(CurrencyConverter.convert(props.rates, roomsXMLCurrency, currency, getTotalPrice(results[0].roomsResults))).toFixed(2)} </span>
                             }
-                            <LocPrice
-                              rates={props.rates}
-                              fiat={getTotalPrice(results[0].roomsResults)}
-                            />
+                            <LocPrice fiat={getTotalPrice(results[0].roomsResults)} />
                           </span>
                         </div>
                       </div>

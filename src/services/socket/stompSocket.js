@@ -10,6 +10,8 @@ connect:
   - client.connect(login, passcode, connectCallback);
   - client.connect(login, passcode, connectCallback, errorCallback);
   - client.connect(login, passcode, connectCallback, errorCallback, host);
+  - client.connect(headers, connectCallback);
+  - client.connect(headers, connectCallback, errorCallback);
 subscibe:
   - var subscription = client.subscribe(destination(string), onmessage);
 unsubscibe:
@@ -23,12 +25,13 @@ const DEBUG_SOCKET = false;
 
 class StompSocketClass {
   constructor() {
+    this.client = null;
     this.initializeSocket();
-    this.connect = false;
   }
 
   initializeSocket() {
     console.log('initialize socket');
+    // console.log(Config.getValue('SOCKET_HOST_PRICE'));
     this.client = Stomp.client(Config.getValue('SOCKET_HOST_PRICE'));
     this.client.reconnect_delay = DEFAULT_RECONNECT_DELAY;
 
@@ -36,17 +39,22 @@ class StompSocketClass {
       this.client.debug = () => { };
     }
 
-    this.client.connect(null, null, this.subscribe, this.reload);
+    this.client.connect({
+
+    }, null, null, this.subscribe, this.reload);
   }
 
   send(destination) {
-    this.client.send(destination);
+    if (this.client.connected) {
+      this.client.send(destination);
+    }
   }
 
   subscribe(destination, callback) {
-    this.connect = true;
-    console.log('successfully connect socket');
-    return this.client.subscribe(destination, callback);
+    if (this.client.connected) {
+      console.log('successfully connect socket');
+      return this.client.subscribe(destination, callback);
+    }
   }
 
   reload(error) {
@@ -59,7 +67,9 @@ class StompSocketClass {
   }
 
   disconnect() {
-    this.client.disconnect();
+    if (this.client.connected) {
+      this.client.disconnect();
+    }
   }
 }
 

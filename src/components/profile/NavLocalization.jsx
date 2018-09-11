@@ -3,7 +3,7 @@ import '../../styles/css/components/tabs-component.css';
 
 import { NavLink, withRouter } from 'react-router-dom';
 import React, { Component, Fragment } from 'react';
-import { setCurrency, setLocRate, setLocRateInEur } from '../../actions/paymentInfo';
+import { setCurrency, setLocRate, setLocRateInEur, setCurrencyRates } from '../../actions/paymentInfo';
 
 import { Config } from '../../config.js';
 import { CurrencyConverter } from '../../services/utilities/currencyConverter';
@@ -23,7 +23,6 @@ class NavLocalization extends Component {
     this.shoudSocketReconnect = true;
 
     this.state = {
-      rates: null,
       locAmount: null
     };
 
@@ -64,8 +63,8 @@ class NavLocalization extends Component {
 
   getRates() {
     requester.getCurrencyRates().then(res => {
-      res.body.then(data => {
-        this.setState({ rates: data });
+      res.body.then(rates => {
+        this.props.dispatch(setCurrencyRates(rates));
       });
     });
   }
@@ -89,7 +88,7 @@ class NavLocalization extends Component {
     if (currency === 'EUR') {
       return DEFAULT_EUR_AMOUNT / locAmount;
     }
-    const fiatAmount = this.state.rates && CurrencyConverter.convert(this.state.rates, DEFAULT_CRYPTO_CURRENCY, currency, DEFAULT_EUR_AMOUNT);
+    const fiatAmount = this.props.paymentInfo.rates && CurrencyConverter.convert(this.props.paymentInfo.rates, DEFAULT_CRYPTO_CURRENCY, currency, DEFAULT_EUR_AMOUNT);
     return fiatAmount / locAmount;
   }
 
@@ -139,9 +138,9 @@ class NavLocalization extends Component {
   }
 
   render() {
-    const { currency } = this.props.paymentInfo;
+    const { currency, rates } = this.props.paymentInfo;
     let { locRate } = this.props.paymentInfo;
-    const { rates, locAmount } = this.state;
+    const { locAmount } = this.state;
     const { locBalance, ethBalance, isLogged } = this.props.userInfo;
 
     if (!locRate && rates && locAmount && locAmount !== 0) {

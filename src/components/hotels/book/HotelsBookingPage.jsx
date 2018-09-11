@@ -335,17 +335,11 @@ class HotelsBookingPage extends React.Component {
                     {this.props.userInfo.isLogged ?
                       <h6 className="total-price">
                         Total: {this.props.paymentInfo.currencySign}{priceInSelectedCurrency} 
-                        <LocPrice
-                          rates={rates}
-                          fiat={this.state.totalPrice}
-                        />
+                        <LocPrice fiat={this.state.totalPrice} />
                       </h6> :
                       <h6 className="total-price">
                         Total:
-                        <LocPrice
-                          rates={rates}
-                          fiat={this.state.totalPrice}
-                        />
+                        <LocPrice fiat={this.state.totalPrice} />
                       </h6>
                     }
                     <div className="clearfix"></div>
