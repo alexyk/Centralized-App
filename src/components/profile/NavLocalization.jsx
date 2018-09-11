@@ -13,7 +13,7 @@ import requester from '../../initDependencies';
 
 const DEFAULT_EUR_AMOUNT = 1000;
 const DEFAULT_CRYPTO_CURRENCY = 'EUR';
-const SOCKET_RECONNECT_TIME = 5000;
+const SOCKET_RECONNECT_DELAY = 5000;
 
 class NavLocalization extends Component {
   constructor(props) {
@@ -133,7 +133,7 @@ class NavLocalization extends Component {
       this.getLocEurRate();
       setTimeout(() => {
         this.initializeSocket();
-      }, SOCKET_RECONNECT_TIME);
+      }, SOCKET_RECONNECT_DELAY);
     }
   }
 

@@ -29,7 +29,7 @@ import {
 } from '../../constants/successMessages.js';
 import { Link, withRouter } from 'react-router-dom';
 import { MenuItem, Nav, NavDropdown, NavItem, Navbar } from 'react-bootstrap/lib';
-import { NOT_FOUND, UNCATEGORIZED_ERROR } from '../../constants/errorMessages';
+import { NOT_FOUND } from '../../constants/errorMessages';
 import { closeModal, openModal } from '../../actions/modalsInfo';
 import { setIsLogged, setUserInfo } from '../../actions/userInfo';
 
@@ -438,6 +438,7 @@ class MainNav extends React.Component {
   }
 
   setUserInfo() {
+    this.props.dispatch(setIsLogged(true));
     requester.getUserInfo().then(res => {
       res.body.then(data => {
         Wallet.getBalance(data.locAddress).then(eth => {
@@ -445,7 +446,6 @@ class MainNav extends React.Component {
           Wallet.getTokenBalance(data.locAddress).then(loc => {
             const locBalance = loc / (Math.pow(10, 18));
             const { firstName, lastName, phoneNumber, email, locAddress, gender, isEmailVerified } = data;
-            this.props.dispatch(setIsLogged(true));
             this.props.dispatch(setUserInfo(firstName, lastName, phoneNumber, email, locAddress, ethBalance, locBalance, gender, isEmailVerified));
           });
         });
@@ -631,7 +631,7 @@ class MainNav extends React.Component {
         if (data.isVerificationEmailSent) {
           NotificationManager.success(VERIFICATION_EMAIL_SENT, '', LONG);
         } else {
-          NotificationManager.error(UNCATEGORIZED_ERROR, '', LONG);
+          NotificationManager.error(INVALID_SECURITY_CODE, '', LONG);
         }
       });
 

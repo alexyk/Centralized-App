@@ -209,7 +209,7 @@ class Result extends React.Component {
           <div className="price-for">Price for 1 night</div>
           {!isPriceLoaded
             ? (!this.props.allElements ? <div className="loader" style={{ width: '100%' }}></div> : <span style={{ padding: '20px 10px 10px 10px' }}>Unavailable</span>)
-            : <span className="price">{this.props.userInfo.isLogged && `${currencySign} ${priceInSelectedCurrency}`}</span>
+            : <span className="price">{this.props.userInfo.isLogged && priceInSelectedCurrency && `${currencySign} ${priceInSelectedCurrency}`}</span>
           }
           {locPrice && <span>(LOC {locPrice})</span>}
           {!isPriceLoaded && this.props.allElements
