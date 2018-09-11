@@ -9,8 +9,7 @@ import { CurrencyConverter } from '../../../services/utilities/currencyConverter
 import { RoomsXMLCurrency } from '../../../services/utilities/roomsXMLCurrency';
 import Facilities from './Facilities';
 import requester from '../../../initDependencies';
-
-const DEFAULT_CRYPTO_CURRENCY = 'EUR';
+import LocPrice from '../../common/utility/LocPrice';
 
 function HotelDetailsInfoSection(props) {
   const getTotalPrice = (room) => {
@@ -146,11 +145,11 @@ function HotelDetailsInfoSection(props) {
                                 {props.userInfo.isLogged &&
                                   <span>{props.currencySign}{props.rates && Number((CurrencyConverter.convert(props.rates, roomsXMLCurrency, currency, room.price)) / props.nights).toFixed(2)} </span>
                                 }
-                                <span>
-                                  {props.userInfo.isLogged && '('}
-                                  {props.rates && Number((CurrencyConverter.convert(props.rates, roomsXMLCurrency, DEFAULT_CRYPTO_CURRENCY, room.price) / props.nights) / props.locRate).toFixed(2)} LOC
-                              {props.userInfo.isLogged && ')'} / night
-                            </span>
+                                <LocPrice
+                                  rates={props.rates}
+                                  fiat={room.price / props.nights}
+                                />
+                                / night
                               </div>
                             );
                           })}
@@ -161,9 +160,12 @@ function HotelDetailsInfoSection(props) {
                           <span className="price-details">
                             <span>{props.nights} {props.nights === 1 ? 'night: ' : 'nights: '}</span>
                             {props.userInfo.isLogged &&
-                              <span>{props.currencySign}{props.rates && Number(CurrencyConverter.convert(props.rates, roomsXMLCurrency, currency, getTotalPrice(results[0].roomsResults))).toFixed(2)} (</span>
+                              <span>{props.currencySign}{props.rates && Number(CurrencyConverter.convert(props.rates, roomsXMLCurrency, currency, getTotalPrice(results[0].roomsResults))).toFixed(2)} </span>
                             }
-                            <span>{props.rates && Number(CurrencyConverter.convert(props.rates, roomsXMLCurrency, DEFAULT_CRYPTO_CURRENCY, getTotalPrice(results[0].roomsResults)) / props.locRate).toFixed(2)} LOC{props.userInfo.isLogged ? ')' : ''}</span>
+                            <LocPrice
+                              rates={props.rates}
+                              fiat={getTotalPrice(results[0].roomsResults)}
+                            />
                           </span>
                         </div>
                       </div>

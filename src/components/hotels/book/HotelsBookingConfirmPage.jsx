@@ -776,10 +776,10 @@ class HotelBookingConfirmPage extends React.Component {
                       <div className="details">
                         {(env === 'development' || env === 'staging') &&
                           <p style={{ color: 'red' }}>
-                            <strong>Pay with Credit Card: TEST Price: {currencySign} {(CurrencyConverter.convert(rates, DEFAULT_CRYPTO_CURRENCY, currency, 15)).toFixed(2)}</strong>
+                            <strong>Pay with Credit Card: TEST Price: {currencySign} {rates && (CurrencyConverter.convert(rates, DEFAULT_CRYPTO_CURRENCY, currency, 15)).toFixed(2)}</strong>
                           </p>}
                         <p className="booking-card-price">
-                          Pay with Credit Card: Current Market Price: <span className="important">{currencySign}{fiatPriceRoomsXML && (CurrencyConverter.convert(rates, RoomsXMLCurrency.get(), currency, fiatPriceRoomsXML)).toFixed(2)}</span>
+                          Pay with Credit Card: Current Market Price: <span className="important">{currencySign}{fiatPriceRoomsXML && rates && (CurrencyConverter.convert(rates, RoomsXMLCurrency.get(), currency, fiatPriceRoomsXML)).toFixed(2)}</span>
                         </p>
                         {this.getButtonIfUserHasFullInfo(isUserInfoIsComplete)}
                       </div>
@@ -803,9 +803,9 @@ class HotelBookingConfirmPage extends React.Component {
                       <div className="details">
                         {(env === 'development' || env === 'staging') &&
                           <p style={{ color: 'red' }}>
-                            <strong>Pay Directly With LOC: TEST Price: {currencySign} {(CurrencyConverter.convert(rates, DEFAULT_CRYPTO_CURRENCY, currency, 15)).toFixed(2)}</strong>
+                            <strong>Pay Directly With LOC: TEST Price: {currencySign} {rates && (CurrencyConverter.convert(rates, DEFAULT_CRYPTO_CURRENCY, currency, 15)).toFixed(2)}</strong>
                           </p>}
-                        <p>Pay Directly With LOC: <span className="important">{currencySign}{fiatPriceRoomsXML && (CurrencyConverter.convert(rates, RoomsXMLCurrency.get(), currency, fiatPriceRoomsXML)).toFixed(2)}</span></p>
+                        <p>Pay Directly With LOC: <span className="important">{currencySign}{fiatPriceRoomsXML && rates && (CurrencyConverter.convert(rates, RoomsXMLCurrency.get(), currency, fiatPriceRoomsXML)).toFixed(2)}</span></p>
                         {(env === 'development' || env === 'staging') &&
                           <p style={{ color: 'red' }}>
                             <strong>Order LOC Total: TEST Price: {testLockPrice && `LOC ${(testLockPrice).toFixed(4)}`}</strong>

@@ -15,6 +15,8 @@ import validator from 'validator';
 import { withRouter } from 'react-router-dom';
 import BookingSteps from '../../common/utility/BookingSteps';
 import { RoomsXMLCurrency } from '../../../services/utilities/roomsXMLCurrency';
+import LocPrice from '../../common/utility/LocPrice';
+
 const DEFAULT_CRYPTO_CURRENCY = 'EUR';
 
 class HotelsBookingPage extends React.Component {
@@ -331,8 +333,20 @@ class HotelsBookingPage extends React.Component {
                     })}
                     <hr />
                     {this.props.userInfo.isLogged ?
-                      <h6 className="total-price">Total: {this.props.paymentInfo.currencySign}{priceInSelectedCurrency} (LOC {rates && Number(CurrencyConverter.convert(this.state.rates, RoomsXMLCurrency.get(), DEFAULT_CRYPTO_CURRENCY, this.state.totalPrice) / this.props.paymentInfo.locRateInEur).toFixed(2)})</h6> :
-                      <h6 className="total-price">Total: LOC {rates && Number(CurrencyConverter.convert(rates, RoomsXMLCurrency.get(), currency, this.state.totalPrice) / this.props.paymentInfo.locRateInEur).toFixed(2)}</h6>
+                      <h6 className="total-price">
+                        Total: {this.props.paymentInfo.currencySign}{priceInSelectedCurrency} 
+                        <LocPrice
+                          rates={rates}
+                          fiat={this.state.totalPrice}
+                        />
+                      </h6> :
+                      <h6 className="total-price">
+                        Total:
+                        <LocPrice
+                          rates={rates}
+                          fiat={this.state.totalPrice}
+                        />
+                      </h6>
                     }
                     <div className="clearfix"></div>
                   </div>
@@ -361,14 +375,14 @@ class HotelsBookingPage extends React.Component {
                                 type="text"
                                 placeholder="First Name"
                                 name="firstName"
-                                value={this.state.rooms[roomIndex].adults[adultIndex].firstName}
+                                value={this.state.rooms[roomIndex].adults[adultIndex].firstName || ''}
                                 onChange={(e) => { this.handleAdultChange(e, roomIndex, adultIndex); }}
                               />
                               <input
                                 className="guest-name"
                                 type="text"
                                 placeholder="Last Name"
-                                value={this.state.rooms[roomIndex].adults[adultIndex].lastName}
+                                value={this.state.rooms[roomIndex].adults[adultIndex].lastName || ''}
                                 name="lastName" onChange={(e) => { this.handleAdultChange(e, roomIndex, adultIndex); }}
                               />
                             </div>

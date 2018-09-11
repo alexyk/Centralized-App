@@ -108,7 +108,7 @@ class HomePage extends React.Component {
                   itemType={itemsType}
                   itemLink={itemLink}
                 />
-                {itemsType === 'homes' && this.props.paymentInfo.locRate && <PopularHomesPrice item={item} />}
+                {itemsType === 'homes' && this.props.paymentInfo.locRate ? <PopularHomesPrice item={item} /> : null}
               </div>
             );
           })}
