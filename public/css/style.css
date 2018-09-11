@@ -2573,7 +2573,7 @@ input[type="checkbox"].tick:checked+label:after {
     min-height: auto;
 }
 
-.owl-nav {
+/* .owl-nav {
     display: inline-block;
 }
 
@@ -2585,26 +2585,26 @@ input[type="checkbox"].tick:checked+label:after {
 
 .owl-item>.item a img {
     width: 100%;
-}
+} */
 
 .list-property-pictures {
     height: 100%;
 }
 
-#ba.owl-theme .owl-dots .owl-dot:last-child {
+/* #ba.owl-theme .owl-dots .owl-dot:last-child {
     display: none;
-}
+} */
 
 /* Temp solution */
 
-.owl-theme .owl-nav [class*=owl-] {
+/* .owl-theme .owl-nav [class*=owl-] {
     background: transparent !important;
 }
 
 .owl-carousel .owl-stage::after {
     content: '';
     display: none;
-}
+} */
 
 .carousel .item img {
     width: 100%;
