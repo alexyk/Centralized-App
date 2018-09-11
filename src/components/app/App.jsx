@@ -46,7 +46,7 @@ class App extends React.Component {
     );
   }
 
-  componentWillMount() {
+  componentDidMount() {
     this.handleInternalAuthorization();
     this.handleExternalAuthorization();
   }
@@ -60,6 +60,7 @@ class App extends React.Component {
   }
 
   setUserInfo() {
+    this.props.dispatch(setIsLogged(true));
     requester.getUserInfo().then(res => {
       res.body.then(data => {
         Wallet.getBalance(data.locAddress).then(eth => {
@@ -67,7 +68,6 @@ class App extends React.Component {
           Wallet.getTokenBalance(data.locAddress).then(loc => {
             const locBalance = loc / (Math.pow(10, 18));
             const { firstName, lastName, phoneNumber, email, locAddress, gender, isEmailVerified } = data;
-            this.props.dispatch(setIsLogged(true));
             this.props.dispatch(setUserInfo(firstName, lastName, phoneNumber, email, locAddress, ethBalance, locBalance, gender, isEmailVerified));
           });
         });
