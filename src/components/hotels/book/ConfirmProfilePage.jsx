@@ -14,7 +14,7 @@ import moment from 'moment';
 import queryString from 'query-string';
 import { NotificationManager } from 'react-notifications';
 import { LONG } from '../../../constants/notificationDisplayTimes';
-
+import BookingSteps from '../../common/utility/BookingSteps';
 
 class ConfirmProfilePage extends React.Component {
   constructor(props) {
@@ -184,12 +184,8 @@ class ConfirmProfilePage extends React.Component {
 
     return (
       <React.Fragment>
-        <div className="booking-steps sm-none">
-          <div className="container">
-            <p>1. Provide Guest Information</p>
-            <p>2. Review Room Details</p>
-            <p>3. Confirm and Pay</p>
-          </div>
+        <div className="sm-none">
+          <BookingSteps steps={['Provide Guest Information', 'Review Room Details', 'Confirm and Pay']} currentStepIndex={2} />
         </div>
 
 
