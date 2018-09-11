@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 
 class BancorConvertWidget extends Component {
   componentDidMount() {
-    if (window.BancorConvertWidget && !window.BancorConvertWidget.isInitialized) {
+    if (window.BancorConvertWidget) {
       window.BancorConvertWidget.init({
         'type': '1',
         'baseCurrencyId': '5b27eb823751b7bb8dad17bb',
