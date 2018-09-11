@@ -43,6 +43,12 @@ $padding-sm: 15px 10px;
   .balance-info {
     margin-bottom: 30px;
 
+    .centered-balance {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
     .balance-row {
       display: flex;
       flex-direction: column;
