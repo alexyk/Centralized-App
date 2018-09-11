@@ -26,16 +26,11 @@ import { setBestLocPrice } from '../../../actions/bookingBestPrice';
 
 // import SMSCodeModal from '../modals/SMSCodeModal';
 
-
-
-
-
-
-
 const ERROR_MESSAGE_TIME = 20000;
 const SEARCH_EXPIRE_TIME = 900000;
 const DEFAULT_CRYPTO_CURRENCY = 'EUR';
 const TEST_FIAT_AMOUNT_IN_EUR = 15;
+const SOCKET_RECONNECT_DELAY = 5000;
 
 class HotelBookingConfirmPage extends React.Component {
   constructor(props) {
@@ -45,6 +40,7 @@ class HotelBookingConfirmPage extends React.Component {
     this.timer = null;
     this.socket = null;
     this.testLockPrice = null;
+    this.shoudSocketReconnect = true;
 
     this.state = {
       data: null,
@@ -78,6 +74,7 @@ class HotelBookingConfirmPage extends React.Component {
     this.connectSocket = this.connectSocket.bind(this);
     this.handleReceiveMessage = this.handleReceiveMessage.bind(this);
     this.disconnectSocket = this.disconnectSocket.bind(this);
+    this.socketClose = this.socketClose.bind(this);
   }
 
   componentDidMount() {
@@ -219,6 +216,7 @@ class HotelBookingConfirmPage extends React.Component {
     this.socket = new WebSocket(Config.getValue('SOCKET_HOST_PRICE'));
     this.socket.onmessage = this.handleReceiveMessage;
     this.socket.onopen = this.connectSocket;
+    this.socket.onclose = this.socketClose;
   }
 
   connectSocket() {
@@ -246,8 +244,17 @@ class HotelBookingConfirmPage extends React.Component {
   }
 
   disconnectSocket() {
+    this.shoudSocketReconnect = false;
     if (this.socket) {
       this.socket.close();
+    }
+  }
+
+  socketClose() {
+    if (this.shoudSocketReconnect) {
+      setTimeout(() => {
+        this.initializeSocket();
+      }, SOCKET_RECONNECT_DELAY);
     }
   }
 
@@ -710,7 +717,7 @@ class HotelBookingConfirmPage extends React.Component {
 
   getButtonIfUserHasFullInfo(isUserInfoIsComplete) {
     return isUserInfoIsComplete
-      ? (<button className="btn btn-primary" onClick={() => this.payWithCard()}>Pay with Credit Card</button>)
+      ? (<button className="btn btn-primary" disabled={!this.state.locPrice} onClick={() => this.payWithCard()}>Pay with Credit Card</button>)
       : (<div>Your profile isn't complete to pay with credit card. Please go to <Link to="/profile/me/edit">Edit Profile</Link> and provide mandatory information</div>);
   }
 
