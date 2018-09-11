@@ -56,7 +56,6 @@ class ConfirmProfilePage extends React.Component {
     requester.getUserInfo()
       .then(res => res.body)
       .then(userInfo => {
-        console.log(userInfo);
         if (userInfo.birthday !== null) {
           let birthday = moment.utc(userInfo.birthday);
           const day = birthday.add(1, 'days').format('D');
