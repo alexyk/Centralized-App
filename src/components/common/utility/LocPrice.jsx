@@ -1,49 +1,70 @@
-import React from 'react';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { CurrencyConverter } from '../../../services/utilities/currencyConverter';
 import { RoomsXMLCurrency } from '../../../services/utilities/roomsXMLCurrency';
-import StompSocket from '../../../services/socket/stompSocket';
+import Websocket from '../../../services/socket/websocket';
+import { updateLocAmounts } from '../../../actions/paymentInfo';
 
 const DEFAULT_CRYPTO_CURRENCY = 'EUR';
 
-function LocPrice(props) {
-  const { fiat } = props;
-  const rates = props.paymentInfo.rates;
-  const locRate = props.paymentInfo.locRateInEur;
-  const isLogged = props.userInfo.isLogged;
+class LocPrice extends Component {
+  constructor(props) {
+    super(props);
 
-  if (!rates || !fiat || !locRate || isLogged === undefined) {
-    return null;
+    this.fiatInEur = this.props.paymentInfo.rates && CurrencyConverter.convert(this.props.paymentInfo.rates, RoomsXMLCurrency.get(), DEFAULT_CRYPTO_CURRENCY, this.props.fiat);
+
+    // SOCKET BINDINGS
+    this.handleReceiveMessage = this.handleReceiveMessage.bind(this);
+
+    // this.disconnectSocket = this.disconnectSocket.bind(this);
+    // this.socketClose = this.socketClose.bind(this);
   }
 
-  const callback = (event) => {
-    console.log(event);
-  };
+  componentDidMount() {
+    Websocket.onMessage(this.handleReceiveMessage);
+    Websocket.sendMessage(JSON.stringify({ id: this.fiatInEur, fiatAmount: this.fiatInEur }));
+  }
 
-  // console.log(StompSocket.send);
-  // console.log(StompSocket.subscribe);
-  StompSocket.send('websocket');
-  const subscription = StompSocket.subscribe(`websocket/${fiat}`, callback);
+  // shouldComponentUpdate(nextProps) {
+  //   if (nextProps.paymentInfo.locAmounts !== this.props.paymentInfo.locAmounts) {
+  //     console.log('update');
+  //     return true;
+  //   }
+  //   return false;
+  // }
 
-  // StompSocket.send(sendDestination, headers, msg);
+  handleReceiveMessage(event) {
+    const data = JSON.parse(event.data);
+    console.log(data);
+    this.props.dispatch(updateLocAmounts(Number(data.id), data.locAmount));
+  }
 
-  console.log(subscription);
+  render() {
+    const { fiat } = this.props;
+    const rates = this.props.paymentInfo.rates;
+    const locRate = this.props.paymentInfo.locRateInEur;
+    const isLogged = this.props.userInfo.isLogged;
 
+    if (!rates || !fiat || !locRate || isLogged === undefined) {
+      return null;
+    }
 
-  return (
-    <span>
-      {isLogged ? '(' : ''}
-      LOC {rates &&
-        Number(CurrencyConverter.convert(rates, RoomsXMLCurrency.get(), DEFAULT_CRYPTO_CURRENCY, fiat) / locRate).toFixed(2)}{isLogged ? ')' : ''}
-    </span>
-  );
+    return (
+      <span>
+        {isLogged ? '(' : ''}
+        LOC {this.props.paymentInfo.locAmounts[this.fiatInEur] &&
+          Number(this.props.paymentInfo.locAmounts[this.fiatInEur]).toFixed(2)}{isLogged ? ')' : ''}
+      </span>
+    );
+  }
 }
 
 LocPrice.propTypes = {
   fiat: PropTypes.number,
 
   // Redux props
+  dispatch: PropTypes.func,
   paymentInfo: PropTypes.object,
   userInfo: PropTypes.object
 };

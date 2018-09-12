@@ -6,7 +6,8 @@ const initialState = {
   locRate: null,
   locRateInEur: null,
   isBookingConfirmPage: false,
-  rates: null
+  rates: null,
+  locAmounts: {}
 };
 
 export default function reducer(state = initialState, action) {
@@ -60,6 +61,15 @@ export default function reducer(state = initialState, action) {
       return {
         ...state,
         rates: action.rates
+      };
+
+    case paymentInfo.UPDATE_LOC_AMOUNTS:
+      return {
+        ...state,
+        locAmounts: {
+          ...state.locAmounts,
+          [action.fiatAmount]: action.locAmount
+        }
       };
 
     default:

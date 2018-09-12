@@ -38,3 +38,11 @@ export function setCurrencyRates(rates) {
     rates
   };
 }
+
+export function updateLocAmounts(fiatAmount, locAmount) {
+  return {
+    type: paymentInfo.UPDATE_LOC_AMOUNTS,
+    fiatAmount,
+    locAmount
+  };
+}
