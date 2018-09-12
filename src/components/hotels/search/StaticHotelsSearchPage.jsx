@@ -19,6 +19,7 @@ import requester from '../../../initDependencies';
 import { setCurrency } from '../../../actions/paymentInfo';
 import uuid from 'uuid';
 import { withRouter } from 'react-router-dom';
+import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 
 const DEBUG_SOCKET = false;
 const DELAY_INTERVAL = 100;
@@ -41,11 +42,11 @@ class StaticHotelsSearchPage extends React.Component {
       allElements: false,
       hotelName: '',
       showUnavailable: false,
-      orderBy: 'priceForSort,asc',
+      orderBy: 'rank,desc',
       stars: [false, false, false, false, false],
       priceRange: [0, 5000],
       city: '',
-      hotels: {},
+      hotels: [],
       mapInfo: [],
       searchParams: null,
       loading: true,
@@ -75,6 +76,7 @@ class StaticHotelsSearchPage extends React.Component {
     this.handleShowFilters = this.handleShowFilters.bind(this);
     this.getSearchString = this.getSearchString.bind(this);
     this.getFilterString = this.getFilterString.bind(this);
+    this.removeAll = this.removeAll.bind(this);
 
     // SOCKET BINDINGS
     this.handleReceiveMessage = this.handleReceiveMessage.bind(this);
@@ -111,7 +113,7 @@ class StaticHotelsSearchPage extends React.Component {
           }
         });
 
-        const hotels = _.mapKeys(content, 'id');
+        const hotels = content;
         this.setState({ hotels, totalElements: data.totalElements, loading: false }, () => {
           this.connectSocket();
         });
@@ -168,10 +170,12 @@ class StaticHotelsSearchPage extends React.Component {
       this.hotelInfoById[id] = messageBody;
       this.hotelInfo.push(messageBody);
       this.updateMapInfo(messageBody);
-      const listing = this.state && this.state.hotels ? this.state.hotels[id] : null;
-      if (listing) {
-        listing.price = this.hotelInfoById[id].price;
-        const hotels = { ...this.state.hotels, [id]: listing };
+      // const listing = this.state && this.state.hotels ? this.state.hotels.filter(h => h.id === id)[0] : null;
+      const index = this.state && this.state.hotels ? this.state.hotels.findIndex(h => h.id === id) : null;
+      if (index !== -1) {
+        const hotels = this.state.hotels.slice(0);
+        hotels[index].price = this.hotelInfoById[id].price;
+        // const hotels = { ...this.state.hotels, [id]: listing };
         this.setState({ hotels });
       }
     }
@@ -279,7 +283,7 @@ class StaticHotelsSearchPage extends React.Component {
       loading: true,
       childrenModal: false,
       page: 0,
-      hotels: {},
+      hotels: [],
       mapInfo: [],
       allElements: false,
       nights: nights,
@@ -287,7 +291,7 @@ class StaticHotelsSearchPage extends React.Component {
     }, () => {
       requester.getStaticHotels(region).then(res => {
         res.body.then(data => {
-          const hotels = _.mapKeys(data.content, 'id');
+          const hotels = data.content;
           this.setState({ hotels, totalElements: data.totalElements, loading: false }, () => {
             this.connectSocket();
           });
@@ -313,7 +317,7 @@ class StaticHotelsSearchPage extends React.Component {
   }
 
   handleFilterByName(event) {
-    this.setState({ loading: true, });
+    // this.setState({ loading: true, });
     const hotelName = event.target.value;
     this.setState({ hotelName, showMap: false, page: 0 }, () => {
       this.applyFilters();
@@ -397,12 +401,13 @@ class StaticHotelsSearchPage extends React.Component {
       if (res.success) {
         res.body.then(data => {
           this.setState({ loading: false, hotels: data.content, page, totalElements: data.totalElements }, () => {
-            this.props.history.push(baseUrl + search + filters);
+            this.props.history.replace(baseUrl + search + filters);
           });
         });
       } else {
         // console.log('Search expired');
       }
+
     });
   }
 
@@ -437,7 +442,7 @@ class StaticHotelsSearchPage extends React.Component {
     this.setState({
       hotelName: '',
       showUnavailable: false,
-      orderBy: 'asc',
+      orderBy: 'rank,desc',
       stars: [false, false, false, false, false],
       priceRange: [0, 5000],
       showMap: false,
@@ -551,7 +556,7 @@ class StaticHotelsSearchPage extends React.Component {
               l.price = this.hotelInfoById[l.id].price;
             }
           });
-          const hotels = _.mapKeys(listings, 'id');
+          const hotels = listings;
 
           this.setState({
             hotels,
@@ -590,6 +595,10 @@ class StaticHotelsSearchPage extends React.Component {
     this.delayIntervals.forEach(interval => {
       clearInterval(interval);
     });
+  }
+
+  removeAll() {
+    this.setState({ hotels: [] });
   }
 
   render() {
@@ -653,7 +662,6 @@ class StaticHotelsSearchPage extends React.Component {
                         ? <div className="loader"></div>
                         : <ResultsHolder
                           hotels={hotels}
-                          priceMap={[]}
                           allElements={this.state.allElements}
                           locRate={Number(this.props.paymentInfo.locRateInEur)}
                           rates={this.state.rates}
@@ -661,6 +669,8 @@ class StaticHotelsSearchPage extends React.Component {
                           loading={this.state.loading}
                         />
                       }
+
+
 
                       {!this.state.loading &&
                         <Pagination
