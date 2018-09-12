@@ -13,6 +13,7 @@ import requester from '../../../initDependencies';
 import { setCurrency } from '../../../actions/paymentInfo';
 import validator from 'validator';
 import { withRouter } from 'react-router-dom';
+import xregexp from 'xregexp';
 
 class HotelsBookingPage extends React.Component {
   constructor(props) {
@@ -241,14 +242,14 @@ class HotelsBookingPage extends React.Component {
   }
 
   isValidNames() {
-    const regexp = /^([A-Za-z]{2,}([-\s][A-Za-z]{2,})?)$/;
+    const regexp = xregexp('^\\pL+([- \']?\\pL*)?([- \']?\\pL*)$');
     const rooms = this.state.rooms;
     for (let i = 0; i < rooms.length; i++) {
       const adults = rooms[i].adults;
       for (let j = 0; j < adults.length; j++) {
         const first = adults[j].firstName;
         const last = adults[j].lastName;
-        if (!(validator.matches(first, regexp) && validator.matches(last, regexp))) {
+        if (!(regexp.test(first) && regexp.test(last))) {
           return false;
         }
       }
