@@ -19,7 +19,9 @@ import requester from '../../../initDependencies';
 import { setCurrency } from '../../../actions/paymentInfo';
 import uuid from 'uuid';
 import { withRouter } from 'react-router-dom';
-import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
+import { NotificationManager } from 'react-notifications';
+import { LONG } from '../../../constants/notificationDisplayTimes';
+import { FILTERED_UNAVAILABLE_HOTELS } from '../../../constants/infoMessages';
 
 const DEBUG_SOCKET = false;
 const DELAY_INTERVAL = 100;
@@ -164,7 +166,9 @@ class StaticHotelsSearchPage extends React.Component {
     if (messageBody.allElements) {
       this.setState({ allElements: true });
       this.unsubscribe();
-      this.applyFilters();
+      this.applyFilters(() => {
+        NotificationManager.info(FILTERED_UNAVAILABLE_HOTELS, '', LONG);
+      });
     } else {
       const { id } = messageBody;
       this.hotelInfoById[id] = messageBody;
@@ -392,7 +396,7 @@ class StaticHotelsSearchPage extends React.Component {
     });
   }
 
-  applyFilters() {
+  applyFilters(onSuccess) {
     const baseUrl = this.props.location.pathname.indexOf('/mobile') !== -1 ? '/mobile/search' : '/hotels/listings';
     const search = this.getSearchString();
     const filters = this.getFilterString();
@@ -402,6 +406,9 @@ class StaticHotelsSearchPage extends React.Component {
         res.body.then(data => {
           this.setState({ loading: false, hotels: data.content, page, totalElements: data.totalElements }, () => {
             this.props.history.replace(baseUrl + search + filters);
+            if (onSuccess) {
+              onSuccess();
+            }
           });
         });
       } else {
