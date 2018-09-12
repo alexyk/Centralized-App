@@ -129,8 +129,8 @@ class HotelsBookingPage extends React.Component {
       .then(res => res.body)
       .then(userInfo => this.setState({ userInfo }, () => {
         const rooms = [...this.state.rooms];
-        rooms[0].adults[0].firstName = userInfo.firstName;
-        rooms[0].adults[0].lastName = userInfo.lastName;
+        rooms[0].adults[0].firstName = userInfo.firstName.trim();
+        rooms[0].adults[0].lastName = userInfo.lastName.trim();
         rooms[0].adults[0].title = userInfo.gender === 'female' ? 'Mrs' : 'Mr';
         this.setState({ rooms });
       }));
@@ -215,9 +215,12 @@ class HotelsBookingPage extends React.Component {
   handleAdultChange(event, roomIndex, adultIndex) {
     const name = event.target.name;
     const value = event.target.value;
-    const rooms = this.state.rooms.slice();
-    rooms[roomIndex].adults[adultIndex][name] = value;
-    this.setState({ rooms: rooms });
+    const regexp = /^[a-zA-Z]+(-[a-zA-Z]*)?$/;
+    if (value === '' || validator.matches(value, regexp)) {
+      const rooms = this.state.rooms.slice();
+      rooms[roomIndex].adults[adultIndex][name] = value.trim();
+      this.setState({ rooms: rooms });
+    }
   }
 
   handleChildAgeChange(event, roomIndex, childIndex) {
