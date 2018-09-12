@@ -334,7 +334,7 @@ class StaticHotelsSearchPage extends React.Component {
   }
 
   handleShowUnavailable() {
-    this.setState({ loading: true, });
+    // this.setState({ loading: true, });
     const showUnavailable = !this.state.showUnavailable;
     this.setState({ showUnavailable, showMap: false, page: 0 }, () => {
       this.applyFilters();
