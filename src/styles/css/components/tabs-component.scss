@@ -107,7 +107,7 @@ $media-expressions: (
       align-items: center;
       padding: 8px 10px;
       font-size: 14px;
-      @include media("<=tablet") {
+      @include media("<=desktop") {
         padding: 12px 10px;
       }
 			@include media(">=desktop") {
@@ -211,11 +211,7 @@ $media-expressions: (
 
 .source-data {
 	width: 100%;
-	max-width: 400px;
 	margin: 0 auto;
-	@include media(">=desktop") {
-		max-width: none;
-	}
 }
 
 .source-panel {
