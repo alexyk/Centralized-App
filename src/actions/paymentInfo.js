@@ -46,3 +46,9 @@ export function updateLocAmounts(fiatAmount, locAmount) {
     locAmount
   };
 }
+
+export function clearLocAmounts() {
+  return {
+    type: paymentInfo.CLEAR_LOC_AMOUNTS
+  };
+}

@@ -11,7 +11,8 @@ export const paymentInfo = {
   SET_LOC_RATE_IN_EUR: 'SET_LOC_RATE_IN_EUR',
   SET_IS_BOOKING_CONFIRM_PAGE: 'SET_IS_BOOKING_CONFIRM_PAGE',
   SET_CURRENCY_RATES: 'SET_CURRENCY_RATES',
-  UPDATE_LOC_AMOUNTS: 'UPDATE_LOC_AMOUNTS'
+  UPDATE_LOC_AMOUNTS: 'UPDATE_LOC_AMOUNTS',
+  CLEAR_LOC_AMOUNTS: 'CLEAR_LOC_AMOUNTS'
 };
 
 // paymentInfo actions
@@ -39,4 +40,9 @@ export const searchInfo = {
 // bestPrice actions
 export const bookingBestPrice = {
   SET_BEST_LOC_PRICE: 'SET_BEST_LOC_PRICE',
+};
+
+// socket actions
+export const socketInfo = {
+  SET_LOC_PRICE_WEBSOCKET_CONNECTION: 'SET_LOC_PRICE_WEBSOCKET_CONNECTION',
 };

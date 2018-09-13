@@ -5,6 +5,7 @@ import modalsInfo from './modalsInfo';
 import airdropInfo from './airdropInfo';
 import searchInfo from './searchInfo';
 import bookingBestPrice from './bookingBestPrice';
+import socketInfo from './socketInfo';
 
 const rootReducer = combineReducers({
   userInfo,
@@ -13,6 +14,7 @@ const rootReducer = combineReducers({
   airdropInfo,
   searchInfo,
   bookingBestPrice,
+  socketInfo,
 });
 
 export default rootReducer;

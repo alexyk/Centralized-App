@@ -3,8 +3,7 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { CurrencyConverter } from '../../../services/utilities/currencyConverter';
 import { RoomsXMLCurrency } from '../../../services/utilities/roomsXMLCurrency';
-import Websocket from '../../../services/socket/websocket';
-import { updateLocAmounts } from '../../../actions/paymentInfo';
+import { LocPriceWebSocket } from '../../../services/socket/locPriceWebSocket';
 
 const DEFAULT_CRYPTO_CURRENCY = 'EUR';
 
@@ -12,49 +11,55 @@ class LocPrice extends Component {
   constructor(props) {
     super(props);
 
-    this.fiatInEur = this.props.paymentInfo.rates && CurrencyConverter.convert(this.props.paymentInfo.rates, RoomsXMLCurrency.get(), DEFAULT_CRYPTO_CURRENCY, this.props.fiat);
+    this.fiatInEur = null;
 
-    // SOCKET BINDINGS
-    this.handleReceiveMessage = this.handleReceiveMessage.bind(this);
-
-    // this.disconnectSocket = this.disconnectSocket.bind(this);
-    // this.socketClose = this.socketClose.bind(this);
+    setTimeout(() => {
+      this.fiatInEur = this.props.paymentInfo.rates && CurrencyConverter.convert(this.props.paymentInfo.rates, RoomsXMLCurrency.get(), DEFAULT_CRYPTO_CURRENCY, this.props.fiat);
+      LocPriceWebSocket.sendMessage(JSON.stringify({ id: this.fiatInEur, fiatAmount: this.fiatInEur }));
+    }, 10);
   }
 
-  componentDidMount() {
-    Websocket.onMessage(this.handleReceiveMessage);
-    Websocket.sendMessage(JSON.stringify({ id: this.fiatInEur, fiatAmount: this.fiatInEur }));
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.socketInfo.isLocPriceWebsocketConnected !== this.props.socketInfo.isLocPriceWebsocketConnected) {
+      LocPriceWebSocket.sendMessage(JSON.stringify({ id: this.fiatInEur, fiatAmount: this.fiatInEur }));
+    }
   }
 
-  // shouldComponentUpdate(nextProps) {
-  //   if (nextProps.paymentInfo.locAmounts !== this.props.paymentInfo.locAmounts) {
-  //     console.log('update');
-  //     return true;
-  //   }
-  //   return false;
-  // }
+  shouldComponentUpdate(nextProps) {
+    if (this.fiatInEur && !this.props.socketInfo.isLocPriceWebsocketConnected) {
+      return true;
+    }
+    if (this.fiatInEur && Object.keys(nextProps.paymentInfo.locAmounts).includes((this.fiatInEur).toString())) {
+      return true;
+    }
+    return false;
+  }
 
-  handleReceiveMessage(event) {
-    const data = JSON.parse(event.data);
-    console.log(data);
-    this.props.dispatch(updateLocAmounts(Number(data.id), data.locAmount));
+  componentWillUnmount() {
+    LocPriceWebSocket.sendMessage(JSON.stringify({ id: this.fiatInEur, unsubscribe: true }));
   }
 
   render() {
-    const { fiat } = this.props;
-    const rates = this.props.paymentInfo.rates;
-    const locRate = this.props.paymentInfo.locRateInEur;
     const isLogged = this.props.userInfo.isLogged;
+    const { locRateInEur, locAmounts } = this.props.paymentInfo;
 
-    if (!rates || !fiat || !locRate || isLogged === undefined) {
+    if (isLogged === undefined || !locRateInEur || !this.fiatInEur) {
+      return null;
+    }
+
+    const locPrice = this.props.socketInfo.isLocPriceWebsocketConnected ?
+      Number(locAmounts[this.fiatInEur]) :
+      this.fiatInEur / locRateInEur;
+
+    if (!locPrice || locPrice === 0) {
       return null;
     }
 
     return (
       <span>
         {isLogged ? '(' : ''}
-        LOC {this.props.paymentInfo.locAmounts[this.fiatInEur] &&
-          Number(this.props.paymentInfo.locAmounts[this.fiatInEur]).toFixed(2)}{isLogged ? ')' : ''}
+        LOC {locPrice && (locPrice).toFixed(2)}
+        {isLogged ? ')' : ''}
       </span>
     );
   }
@@ -66,17 +71,17 @@ LocPrice.propTypes = {
   // Redux props
   dispatch: PropTypes.func,
   paymentInfo: PropTypes.object,
-  userInfo: PropTypes.object
+  userInfo: PropTypes.object,
+  socketInfo: PropTypes.object
 };
 
-
 function mapStateToProps(state) {
-  const { userInfo, paymentInfo } = state;
+  const { userInfo, paymentInfo, socketInfo } = state;
   return {
     userInfo,
-    paymentInfo
+    paymentInfo,
+    socketInfo
   };
 }
-
 
 export default connect(mapStateToProps)(LocPrice);

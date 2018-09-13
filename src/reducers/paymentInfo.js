@@ -72,6 +72,12 @@ export default function reducer(state = initialState, action) {
         }
       };
 
+    case paymentInfo.CLEAR_LOC_AMOUNTS:
+      return {
+        ...state,
+        locAmounts: {}
+      };
+
     default:
       return state;
   }

@@ -17,8 +17,6 @@ import BookingSteps from '../../common/utility/BookingSteps';
 import { RoomsXMLCurrency } from '../../../services/utilities/roomsXMLCurrency';
 import LocPrice from '../../common/utility/LocPrice';
 
-const DEFAULT_CRYPTO_CURRENCY = 'EUR';
-
 class HotelsBookingPage extends React.Component {
   constructor(props) {
     super(props);
@@ -320,13 +318,13 @@ class HotelsBookingPage extends React.Component {
                       if (!this.props.userInfo.isLogged) {
                         return (
                           <h6 key={index}>
-                            {room.name}, {this.state.nights} nights: LOC {rates && Number(CurrencyConverter.convert(this.state.rates, RoomsXMLCurrency.get(), DEFAULT_CRYPTO_CURRENCY, room.price) / this.props.paymentInfo.locRateInEur).toFixed(2)}
+                            {room.name}, {this.state.nights} nights: <LocPrice fiat={room.price} />
                           </h6>
                         );
                       } else {
                         return (
                           <h6 key={index}>
-                            {room.name}, {this.state.nights} nights: {this.props.paymentInfo.currencySign}{rates && (CurrencyConverter.convert(this.state.rates, RoomsXMLCurrency.get(), currency, room.price)).toFixed(2)} (LOC {rates && Number(CurrencyConverter.convert(this.state.rates, RoomsXMLCurrency.get(), DEFAULT_CRYPTO_CURRENCY, room.price) / this.props.paymentInfo.locRateInEur).toFixed(2)})
+                            {room.name}, {this.state.nights} nights: {this.props.paymentInfo.currencySign}{rates && (CurrencyConverter.convert(this.state.rates, RoomsXMLCurrency.get(), currency, room.price)).toFixed(2)} <LocPrice fiat={room.price} />
                           </h6>
                         );
                       }
@@ -334,12 +332,10 @@ class HotelsBookingPage extends React.Component {
                     <hr />
                     {this.props.userInfo.isLogged ?
                       <h6 className="total-price">
-                        Total: {this.props.paymentInfo.currencySign}{priceInSelectedCurrency} 
-                        <LocPrice fiat={this.state.totalPrice} />
+                        Total: {this.props.paymentInfo.currencySign}{priceInSelectedCurrency} {this.state.totalPrice && <LocPrice fiat={this.state.totalPrice} />}
                       </h6> :
                       <h6 className="total-price">
-                        Total:
-                        <LocPrice fiat={this.state.totalPrice} />
+                        Total: {this.state.totalPrice && <LocPrice fiat={this.state.totalPrice} />}
                       </h6>
                     }
                     <div className="clearfix"></div>

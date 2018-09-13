@@ -109,7 +109,6 @@ class NavLocalization extends Component {
   }
 
   handleReceiveMessage(event) {
-    console.log(event);
     const locAmount = (JSON.parse(event.data)).locAmount;
 
     if (locAmount && locAmount > 0) {

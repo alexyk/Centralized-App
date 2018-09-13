@@ -17,11 +17,11 @@ import _ from 'lodash';
 import { connect } from 'react-redux';
 import HotelItemRatingBox from '../../common/hotel/HotelItemRatingBox';
 import requester from '../../../initDependencies';
+import LocPrice from '../../common/utility/LocPrice';
 
 const SCREEN_SIZE_SMALL = 'SMALL';
 const SCREEN_SIZE_MEDIUM = 'MEDIUM';
 const SCREEN_SIZE_LARGE = 'LARGE';
-const DEFAULT_CRYPTO_CURRENCY = 'EUR';
 
 const BREAKPOINTS = {
   SMALL: 370,
@@ -99,11 +99,9 @@ class Result extends React.Component {
     let { id, name, generalDescription, star } = this.props.hotel;
     let { price } = this.props;
 
-    const { locRate, rates } = this.props;
+    const { rates } = this.props;
     const { currencySign } = this.props.paymentInfo;
     const isPriceLoaded = !!price;
-    const priceInEUR = rates && ((CurrencyConverter.convert(rates, RoomsXMLCurrency.get(), DEFAULT_CRYPTO_CURRENCY, price)) / this.props.nights).toFixed(2);
-    let locPrice = locRate !== 0 && !isNaN(priceInEUR) && (priceInEUR / locRate).toFixed(2);
     const priceInSelectedCurrency = rates && ((CurrencyConverter.convert(rates, RoomsXMLCurrency.get(), this.props.paymentInfo.currency, price)) / this.props.nights).toFixed(2);
 
     name = name && StringUtils.shorten(name, this.state.titleLength);
@@ -195,7 +193,7 @@ class Result extends React.Component {
               ? (!this.props.allElements ? <div className="price">Loading price...</div> : <div></div>)
               : <div className="price">{this.props.userInfo.isLogged && `${currencySign} ${priceInSelectedCurrency}`}</div>
             }
-            {isPriceLoaded && <div className="price">1 night: LOC {locPrice}</div>}
+            {isPriceLoaded && <div className="price">1 night: <LocPrice fiat={price} /></div>}
             <div>
               {!isPriceLoaded && this.props.allElements
                 ? <button disabled className="mobile-pricing-button">Unavailable</button>
@@ -211,7 +209,7 @@ class Result extends React.Component {
             ? (!this.props.allElements ? <div className="loader" style={{ width: '100%' }}></div> : <span style={{ padding: '20px 10px 10px 10px' }}>Unavailable</span>)
             : <span className="price">{this.props.userInfo.isLogged && priceInSelectedCurrency && `${currencySign} ${priceInSelectedCurrency}`}</span>
           }
-          {locPrice && <span>(LOC {locPrice})</span>}
+          {isPriceLoaded && <LocPrice fiat={price} />}
           {!isPriceLoaded && this.props.allElements
             ? <button disabled className="btn">Unavailable</button>
             : <Link target={isMobile === false ? '_blank' : '_self'} className="btn" to={`${redirectURL}/${id}${search.substr(0, endOfSearch)}`}>Book now</Link>
