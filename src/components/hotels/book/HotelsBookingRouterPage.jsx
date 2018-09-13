@@ -6,43 +6,66 @@ import HotelsBookingPage from './HotelsBookingPage';
 import HotelsBookingConfirmPage from './HotelsBookingConfirmPage';
 import ConfirmProfilePage from './ConfirmProfilePage';
 
-const SEARCH_EXPIRATION_TIME = 10000;
+const QUOTE_ID_POLLING_INTERVAL_TIME = 1000;
+// const SEARCH_EXPIRATION_TIME = 10000;
 
 class HotelsBookingRouterPage extends React.Component {
   constructor(props) {
     super(props);
 
-    this.searchRenewalTimeout = null;
-    this.setSearchRenewalTimeout();
+    this.quoteIdPollingInterval = null;
+    this.setQuoteIdPollingInterval();
+
+    // this.searchRenewalTimeout = null;
+    // this.setSearchRenewalTimeout();
 
     this.state = {};
 
-    this.setSearchRenewalTimeout = this.setSearchRenewalTimeout.bind(this);
-    this.clearSearchRenewalTimeout = this.clearSearchRenewalTimeout.bind(this);
+    this.setQuoteIdPollingInterval = this.setQuoteIdPollingInterval.bind(this);
+    this.clearQuoteIdPollingInterval = this.clearQuoteIdPollingInterval.bind(this);
+
+    // this.setSearchRenewalTimeout = this.setSearchRenewalTimeout.bind(this);
+    // this.clearSearchRenewalTimeout = this.clearSearchRenewalTimeout.bind(this);
   }
 
   componentWillUnmount() {
-    this.clearSearchRenewalTimeout();
+    this.clearQuoteIdPollingInterval();
+    // this.clearSearchRenewalTimeout();
   }
 
-  setSearchRenewalTimeout() {
-    const isTimeoutSet = !!this.searchRenewalTimeout;
-    if (!isTimeoutSet) {
-      this.searchRenewalTimeout = setTimeout(() => {
-        console.log('modal opened');
-      }, SEARCH_EXPIRATION_TIME);
-      console.log('timeout set');
+  setQuoteIdPollingInterval() {
+    const isQuoteIdPollingIntervalSet = !!this.quoteIdPollingInterval;
+    if (!isQuoteIdPollingIntervalSet) {
+      console.log('started checking for quote id expiration');
+      this.quoteIdPollingInterval = setInterval(() => {
+        console.log('check quote id');
+      }, QUOTE_ID_POLLING_INTERVAL_TIME);
     }
   }
 
-  clearSearchRenewalTimeout() {
-    clearTimeout(this.searchRenewalTimeout);
-    console.log('timeout cleared');
+  clearQuoteIdPollingInterval() {
+    clearInterval(this.quoteIdPollingInterval);
+    console.log('stopped checking for quote id expiration');
   }
 
-  setRedirectSearchString(search) {
-    this.setState({ search });
-  }
+  // setSearchRenewalTimeout() {
+  //   const isTimeoutSet = !!this.searchRenewalTimeout;
+  //   if (!isTimeoutSet) {
+  //     this.searchRenewalTimeout = setTimeout(() => {
+  //       console.log('modal opened');
+  //     }, SEARCH_EXPIRATION_TIME);
+  //     console.log('timeout set');
+  //   }
+  // }
+
+  // clearSearchRenewalTimeout() {
+  //   clearTimeout(this.searchRenewalTimeout);
+  //   console.log('timeout cleared');
+  // }
+
+  // setRedirectSearchString(search) {
+  //   this.setState({ search });
+  // }
 
   render() {
     return (
