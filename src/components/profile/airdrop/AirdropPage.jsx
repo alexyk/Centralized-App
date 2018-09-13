@@ -15,7 +15,7 @@ import { Config } from '../../../config';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { INVALID_SECURITY_CODE } from '../../../constants/warningMessages.js';
 import { LONG } from '../../../constants/notificationDisplayTimes.js';
-import NavProfile from '../NavProfile';
+import ProfileNav from '../ProfileNav';
 import NoEntriesMessage from '../../common/messages/NoEntriesMessage';
 import { NotificationManager } from 'react-notifications';
 import PropTypes from 'prop-types';
@@ -375,7 +375,7 @@ class AirdropPage extends Component {
     if (!this.props.airdropInfo.participates) {
       return (
         <div>
-          <NavProfile />
+          <ProfileNav />
           <div className="container">
             <NoEntriesMessage text='Participate in our airdrop campaign.'>
               <a href={'https://locktrip.com/airdrop/' + this.props.location.search} className="btn">Participate</a>
@@ -387,10 +387,11 @@ class AirdropPage extends Component {
 
     return (
       <div>
-        <NavProfile />
+        <ProfileNav />
         <div className="container">
           <div id="airdrop-main">
-            <h4>Personal Dashboard</h4>
+            <h2>Personal Dashboard</h2>
+            <hr/>
             <p>You can view your current balance, as well as your unique Referral Link.</p>
             <p>Every Person who completes our airdrop via your unique referral link, will generate $5 for you! <span className="emphasized-text">Make sure you refer as much friends and family as you can!</span></p>
 

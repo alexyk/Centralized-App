@@ -92,45 +92,40 @@ class MessagesChatPage extends React.Component {
     let lastRenderedUser = '';
     let lastRenderedDay = '';
     return (
-      <div>
-        <section id="profile-messages-chat-head">
-          <div className="container">
-            <h2>Conversation with {this.state.recipient}</h2>
-            <hr className="profile-line" />
-          </div>
-        </section>
-        <section id="profile-messages-chat-columns">
-          <div className="container">
-            <div className="row">
-              <div className="col-md-4">
-                <MessagesChatUser userInfo={{ image: this.state.recipientImage, fullName: this.state.recipient }} />
-              </div>
-              <div className="col-md-7">
-                <div id="chat">
-                  <form onSubmit={this.sendMessage}>
-                    <textarea name="message" value={this.state.message} onChange={this.onChange} required="required" placeholder="Type your message here..."></textarea>
-                    <input type="submit" className="button" disabled={this.state.sending} value={this.state.sending ? 'Sending...' : 'Send Message'} />
-                  </form>
+      <div className="container">
+        <h2>Conversation with {this.state.recipient}</h2>
+        <hr />
+        <div className="container">
+          <div className="row">
+            <div className="col-md-4">
+              <MessagesChatUser userInfo={{ image: this.state.recipientImage, fullName: this.state.recipient }} />
+            </div>
+            <div className="col-md-7">
+              <div id="chat">
+                <form onSubmit={this.sendMessage}>
+                  <textarea name="message" value={this.state.message} onChange={this.onChange} required="required" placeholder="Type your message here..."></textarea>
+                  <input type="submit" className="button" disabled={this.state.sending} value={this.state.sending ? 'Sending...' : 'Send Message'} />
+                </form>
 
-                  {this.state.messages && this.state.messages.map((message, i) => {
-                    let isQueueMessage = lastRenderedUser === message.sender.email;
-                    lastRenderedUser = message.sender.email;
+                {this.state.messages && this.state.messages.map((message, i) => {
+                  let isQueueMessage = lastRenderedUser === message.sender.email;
+                  lastRenderedUser = message.sender.email;
 
-                    let messageDate = moment(message.createdAt, 'DD/MM/YYYY HH:mm:ss').format('DD/MM/YYYY');
-                    let isNewDay = lastRenderedDay !== messageDate;
-                    lastRenderedDay = messageDate;
-                    return (<div key={i}>
-                      {isNewDay ? <MessagesChatDay date={messageDate} /> : null}
-                      <MessagesChat
-                        queueMessage={isQueueMessage}
-                        sender={message.sender.email === localStorage[Config.getValue('domainPrefix') + '.auth.username']}
-                        message={message}>
-                        <Message message={message} />
-                      </MessagesChat>
-                    </div>);
-                  })}
+                  let messageDate = moment(message.createdAt, 'DD/MM/YYYY HH:mm:ss').format('DD/MM/YYYY');
+                  let isNewDay = lastRenderedDay !== messageDate;
+                  lastRenderedDay = messageDate;
+                  return (<div key={i}>
+                    {isNewDay ? <MessagesChatDay date={messageDate} /> : null}
+                    <MessagesChat
+                      queueMessage={isQueueMessage}
+                      sender={message.sender.email === localStorage[Config.getValue('domainPrefix') + '.auth.username']}
+                      message={message}>
+                      <Message message={message} />
+                    </MessagesChat>
+                  </div>);
+                })}
 
-                  {/* <InfiniteList
+                {/* <InfiniteList
                                         root="viewport"
                                         isLoading={this.state.infinityLoading}
                                         isEndReached={this.state.currentPage === this.state.totalPages - 1}
@@ -157,13 +152,12 @@ class MessagesChatPage extends React.Component {
                                             </div>);
                                         })}
                                     </InfiniteList> */}
-                  {this.state.infinityLoading ? <div className="loader"></div> : null}
-                </div>
+                {this.state.infinityLoading ? <div className="loader"></div> : null}
               </div>
-              <div className="clear-both before-footer" />
             </div>
+            <div className="clear-both before-footer" />
           </div>
-        </section>
+        </div>
       </div>
     );
   }

@@ -148,7 +148,7 @@ class MyListingsPage extends React.Component {
         <section id="profile-mylistings">
           <div className="container">
             <h2>Active ({this.state.activeListings.length})</h2>
-            <hr className="profile-line" />
+            <hr />
             {this.state.activeListings.map((item, i) => {
               return (
                 <MyListingsItemRow
@@ -165,7 +165,7 @@ class MyListingsPage extends React.Component {
 
           <div className="container">
             <h2>Inactive ({this.state.inactiveListings.length})</h2>
-            <hr className="profile-line" />
+            <hr/>
             {this.state.deniedListings && this.state.inactiveListings.map((item, i) => {
               return (
                 <MyListingsItemRow
@@ -182,7 +182,7 @@ class MyListingsPage extends React.Component {
 
           <div className="container">
             <h2>Denied ({this.state.deniedListings.length})</h2>
-            <hr className="profile-line" />
+            <hr/>
             {this.state.deniedListings && this.state.deniedListings.map((item, i) => {
               return (
                 <MyListingsItemRow
@@ -199,7 +199,7 @@ class MyListingsPage extends React.Component {
 
           <div className="container">
             <h2>In Progress ({this.state.totalListingsInProgress})</h2>
-            <hr className="profile-line" />
+            <hr/>
             {this.state.listingsInProgress && this.state.listingsInProgress.map((item, i) => {
               return (
                 <MyListingsInProgressItem

@@ -1,13 +1,13 @@
 import React from 'react';
 
-import NavLocalization from './NavLocalization';
-import NavProfile from './NavProfile';
+import LocalizationNav from './LocalizationNav';
+import ProfileNav from './ProfileNav';
 
 function ProfileHeader() {
   return (
     <div>
-      <NavLocalization />
-      <NavProfile />
+      <LocalizationNav />
+      <ProfileNav />
     </div>
   );
 }

@@ -1,9 +1,9 @@
-import '../../../styles/css/components/profile/me/profile-nav.css';
+import '../../../styles/css/components/profile/me/profile-edit-nav.css';
 
 import { NavLink } from 'react-router-dom';
 import React from 'react';
 
-function ProfileNav() {
+function ProfileEditNav() {
   return (
     <div>
       <div className="host-step"><NavLink exact activeClassName="active" to="/profile/me/edit">Edit Profile</NavLink></div>
@@ -15,4 +15,4 @@ function ProfileNav() {
   );
 }
 
-export default ProfileNav;
+export default ProfileEditNav;

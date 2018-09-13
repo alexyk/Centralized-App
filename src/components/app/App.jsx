@@ -18,7 +18,7 @@ import HotelsBookingConfirmPage from '../hotels/book/HotelsBookingConfirmPage';
 import HotelsBookingPage from '../hotels/book/HotelsBookingPage';
 import HotelDetailsPage from '../hotels/details/HotelDetailsPage';
 import MainNav from '../mainNav/MainNav';
-import NavLocalization from '../profile/NavLocalization';
+import LocalizationNav from '../profile/LocalizationNav';
 import { NotificationContainer } from 'react-notifications';
 import ProfilePage from '../profile/ProfilePage';
 import PropTypes from 'prop-types';
@@ -116,7 +116,7 @@ class App extends React.Component {
         }
 
         {!isWebView &&
-          <NavLocalization />
+          <LocalizationNav />
         }
 
         <NotificationContainer />

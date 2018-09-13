@@ -15,7 +15,7 @@ const DEFAULT_EUR_AMOUNT = 1000;
 const DEFAULT_CRYPTO_CURRENCY = 'EUR';
 const SOCKET_RECONNECT_DELAY = 5000;
 
-class NavLocalization extends Component {
+class LocalizationNav extends Component {
   constructor(props) {
     super(props);
 
@@ -220,7 +220,7 @@ class NavLocalization extends Component {
   }
 }
 
-NavLocalization.propTypes = {
+LocalizationNav.propTypes = {
   // Router props
   location: PropTypes.object,
 
@@ -238,5 +238,5 @@ function mapStateToProps(state) {
   };
 }
 
-export default withRouter(connect(mapStateToProps)(NavLocalization));
+export default withRouter(connect(mapStateToProps)(LocalizationNav));
 
