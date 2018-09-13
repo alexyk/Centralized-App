@@ -999,10 +999,10 @@ ul.navbar-profile>li {
 
 ul.navbar-profile>li>a {
     color: #f0f1f3;
-    font-size: 17px;
+    /* font-size: 17px; */
     letter-spacing: 1px;
     text-decoration: none;
-    margin: 20px 20px 10px 20px;
+    margin: 15px 20px 10px 20px;
     display: block;
 }
 
@@ -2175,7 +2175,7 @@ li.dropdown {
 
 .my-reservations .table-header {
     border: 1px solid #CCCCCC;
-    margin-top: 20px;
+    margin-bottom: 10px;
     border-radius: 3px;
     padding: 10px 0;
     display: flex;

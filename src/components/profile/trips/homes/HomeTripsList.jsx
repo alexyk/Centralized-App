@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment';
 
-import NoEntriesMessage from '../../common/NoEntriesMessage';
+import NoEntriesMessage from '../../../common/messages/NoEntriesMessage';
 import ProfileFlexContainer from '../../flexContainer/ProfileFlexContainer';
 import HomeTrip from './HomeTrip';
 

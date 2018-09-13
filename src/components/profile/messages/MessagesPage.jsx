@@ -1,5 +1,5 @@
 import MessagesItem from './MessagesItem';
-import NoEntriesMessage from '../common/NoEntriesMessage';
+import NoEntriesMessage from '../../common/messages/NoEntriesMessage';
 import Pagination from '../../common/pagination/Pagination';
 import React from 'react';
 import requester from '../../../initDependencies';

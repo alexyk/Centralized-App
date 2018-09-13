@@ -13,7 +13,7 @@ import { LONG } from '../../../../constants/notificationDisplayTimes.js';
 import Lightbox from 'react-images';
 import ListItem from './ListItem';
 import { MESSAGE_SENT } from '../../../../constants/infoMessages.js';
-import NoEntriesMessage from '../../common/NoEntriesMessage';
+import NoEntriesMessage from '../../../common/messages/NoEntriesMessage';
 import { NotificationManager } from 'react-notifications';
 import Pagination from '../../../common/pagination/Pagination';
 import PropTypes from 'prop-types';

@@ -25,8 +25,6 @@ import { ROOM_IS_NO_LONGER_AVAILABLE } from '../../../constants/errorMessages.js
 import { INVALID_SEARCH_DATE, ALL_ROOMS_TAKEN } from '../../../constants/warningMessages.js';
 import { LONG } from '../../../constants/notificationDisplayTimes.js';
 
-const SEARCH_EXPIRATION_TIME = 30000;
-
 class HotelDetailsPage extends React.Component {
   constructor(props) {
     super(props);
