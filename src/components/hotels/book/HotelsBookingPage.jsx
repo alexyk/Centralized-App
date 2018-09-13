@@ -21,8 +21,10 @@ class HotelsBookingPage extends React.Component {
   constructor(props) {
     super(props);
 
+    const searchString = this.getSearchParams();
+
     this.state = {
-      // rooms: [{ adults: [{ title: '', firstName: '', lastName: '' }], children: [] }],
+      rooms: this.getRoomsFromURL(searchString),
       data: null,
       loading: true,
       userInfo: {}
@@ -144,9 +146,9 @@ class HotelsBookingPage extends React.Component {
       const adults = [];
       for (let guestIndex = 0; guestIndex < searchRoom.adults; guestIndex++) {
         const adult = {
-          title: roomIndex === 0 && guestIndex === 0 && this.state.userInfo.gender === 'women' ? 'Mrs' : 'Mr',
-          firstName: roomIndex === 0 && guestIndex === 0 ? this.state.userInfo.firstName : guestIndex > 0 ? 'Optional' : '',
-          lastName: roomIndex === 0 && guestIndex === 0 ? this.state.userInfo.lastName : guestIndex > 0 ? 'Optional' : '',
+          title: 'Mr',
+          firstName: guestIndex > 0 ? 'Optional' : '',
+          lastName: guestIndex > 0 ? 'Optional' : '',
         };
 
         adults.push(adult);

@@ -49,7 +49,7 @@ $media-expressions: (
 	  display: flex;
 	  flex-direction: row;
 	  align-items: center;
-      @include media("<tablet") {
+      @include media("<=desktop") {
         text-align: left;
         padding: 10px 0;
       }
@@ -58,13 +58,10 @@ $media-expressions: (
 			font-weight: 400;
 			font-size: 14px;
 			text-transform: uppercase;
-			margin-bottom: 15px;
+			// margin-bottom: 15px;
 			@include media(">=desktop") {
 				margin-right: 19px;
 				margin-bottom: 0;
-      }
-      @include media("<tablet") {
-        font-size: 1em;
       }
 		}
 	}
@@ -72,19 +69,15 @@ $media-expressions: (
     font-size: 14px;
 		text-transform: uppercase;
 		color: $moderate-red;
+    margin-right: 10px;
 		@include media(">=desktop") {
-      margin-right: 11px;
       padding-top: 10px;
       padding-bottom: 10px;
-    }
-    @include media("<tablet") {
-      font-size: 1em;
-      margin-right: 2%;
     }
   }
   .balance-info {
     display: flex;
-    @include media("<tablet") {
+    @include media("<=desktop") {
       display: block;
     }
   }
@@ -107,13 +100,13 @@ $media-expressions: (
       align-items: center;
       padding: 8px 10px;
       font-size: 14px;
-      @include media("<=tablet") {
-        padding: 12px 10px;
-      }
+      // @include media("<=desktop") {
+      //   padding: 12px 10px;
+      // }
 			@include media(">=desktop") {
 				min-width: 211px;
       }
-      @include media("<tablet") {
+      @include media("<=desktop") {
         background-color: #fff;
       }
 			span {
@@ -144,7 +137,7 @@ $media-expressions: (
 		@include media(">=tablet") {
       margin-bottom: 0;
     }
-    @include media("<tablet") {
+    @include media("<=desktop") {
       display: none;
     }
 		select {
@@ -211,11 +204,7 @@ $media-expressions: (
 
 .source-data {
 	width: 100%;
-	max-width: 400px;
 	margin: 0 auto;
-	@include media(">=desktop") {
-		max-width: none;
-	}
 }
 
 .source-panel {
@@ -264,9 +253,9 @@ $media-expressions: (
     }
     select {
       border: 0;
-	  padding: 10px;
-	  width: 100%;
-	  min-width: 85px;
+      padding: 10px;
+      width: 100%;
+      min-width: 85px;
     }
     .select-children {
       display: flex;

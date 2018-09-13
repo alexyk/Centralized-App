@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import NoEntriesMessage from '../common/NoEntriesMessage';
+import NoEntriesMessage from '../../common/messages/NoEntriesMessage';
 import ProfileFlexContainer from '../flexContainer/ProfileFlexContainer';
 import DashboardTripRow from './DashboardTripRow';
 import DashboardReservationRow from './DashboardReservationRow';
