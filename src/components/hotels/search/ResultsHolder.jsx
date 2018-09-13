@@ -12,23 +12,32 @@ function ResultsHolder(props) {
     return;
   }
 
-  if (props.hotels && props.hotels.length === 0 && props.loading) {
-    return <div className="text-center"><h2 style={{ margin: '80px 0' }}>Looking for the best rates for your trip...</h2></div>;
-  }
+  // if (props.hotels && props.hotels.length === 0 && props.loading) {
+  //   return <div className="text-center"><h2 style={{ margin: '80px 0' }}>Looking for the best rates for your trip...</h2></div>;
+  // }
 
-  if (props.hotels && props.hotels.length === 0 && !props.loading) {
-    return <div className="text-center"><h2 style={{ margin: '80px 0' }}>No Results</h2></div>;
-  }
+  // if (props.hotels && props.hotels.length === 0 && !props.loading) {
+  //   return <div className="text-center"><h2 style={{ margin: '80px 0' }}>No Results</h2></div>;
+  // }
+
+  const hotels = props.hotels && props.hotels.map((hotel) => {
+    return <Result
+      key={hotel.id}
+      hotel={hotel}
+      locRate={props.locRate}
+      rates={props.rates}
+      nights={props.nights}
+      allElements={props.allElements}
+      price={hotel.price} />;
+  });
 
   return (
     <div className="results-holder">
       <ReactCSSTransitionGroup
         transitionName="example"
         transitionEnterTimeout={500}
-        transitionLeaveTimeout={300}>
-        {_.map(props.hotels, (hotel, index) => {
-          return (<Result key={index} hotel={hotel} locRate={props.locRate} rates={props.rates} nights={props.nights} allElements={props.allElements} price={hotel.price} />);
-        })}
+        transitionLeaveTimeout={500}>
+        {hotels}
       </ReactCSSTransitionGroup>
     </div>
   );
@@ -36,6 +45,7 @@ function ResultsHolder(props) {
 
 ResultsHolder.propTypes = {
   hotels: PropTypes.any,
+  allElements: PropTypes.bool,
   locRate: PropTypes.number,
   rates: PropTypes.object,
   nights: PropTypes.number

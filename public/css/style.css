@@ -3051,6 +3051,15 @@ h3 {
     display: none;
 }
 
+.example-appear {
+  opacity: 0.01;
+}
+
+.example-appear.example-appear-active {
+  opacity: 1;
+  transition: opacity .5s ease-in;
+}
+
 .example-enter {
   opacity: 0.01;
 }
@@ -3066,7 +3075,7 @@ h3 {
 
 .example-leave.example-leave-active {
   opacity: 0.01;
-  transition: opacity 0ms ease-in;
+  transition: opacity 500ms ease-in;
 }
 
 .filter-box .filter-select {
