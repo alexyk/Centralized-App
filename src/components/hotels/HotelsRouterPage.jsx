@@ -14,7 +14,7 @@ function HotelsRouterPage(props) {
         <Route exact path="/hotels" render={() => <HomePage homePage="hotels" listings={props.listings} hotels={props.hotels} />} />
         <Route exact path="/hotels/listings" render={() => <StaticHotelsSearchPage />} />
         <Route exact path="/hotels/listings/:id" render={() => <HotelDetailsPage />} />
-        <Route path="/hotels/listings/book" render={() => <HotelsBookingRouterPage />} />
+        <Route path="/hotels/listings/book/:id" render={() => <HotelsBookingRouterPage />} />
       </Switch>
     </Fragment>
   );
