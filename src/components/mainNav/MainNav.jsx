@@ -22,10 +22,14 @@ import {
   PASSWORDS_DONT_MATCH,
   PROFILE_PASSWORD_REQUIREMENTS
 } from '../../constants/warningMessages';
+import { 
+  PASSWORD_SUCCESSFULLY_CHANGED, 
+  PROFILE_SUCCESSFULLY_CREATED, 
+  EMAIL_VERIFIED 
+} from '../../constants/successMessages.js';
 import { Link, withRouter } from 'react-router-dom';
 import { MenuItem, Nav, NavDropdown, NavItem, Navbar } from 'react-bootstrap/lib';
-import { NOT_FOUND, UNCATEGORIZED_ERROR } from '../../constants/errorMessages';
-import { PASSWORD_SUCCESSFULLY_CHANGED, PROFILE_SUCCESSFULLY_CREATED } from '../../constants/successMessages.js';
+import { NOT_FOUND } from '../../constants/errorMessages';
 import { closeModal, openModal } from '../../actions/modalsInfo';
 import { setIsLogged, setUserInfo } from '../../actions/userInfo';
 
@@ -128,27 +132,27 @@ class MainNav extends React.Component {
       this.openModal(ENTER_RECOVERY_TOKEN);
     }
 
-    if (queryParams.emailVerificationToken) {
-      this.setState({
-        emailVerificationToken: queryParams.emailVerificationToken,
-        isVerifyingEmail: true,
-      });
-      this.openModal(LOGIN);
-    }
-
-    // if (queryParams.emailVerificationSecurityCode) {
-    //   const { emailVerificationSecurityCode } = queryParams;
-    //   requester.verifyEmailSecurityCode({ emailVerificationSecurityCode })
-    //     .then(res => res.body)
-    //     .then(data => {
-    //       if (data.isEmailVerified) {
-    //         NotificationManager.success(EMAIL_VERIFIED, '', LONG);
-    //         this.setUserInfo();
-    //       }
-    //     });
-
-    //   this.removeVerificationCodeFromURL();
+    // if (queryParams.emailVerificationToken) {
+    //   this.setState({
+    //     emailVerificationToken: queryParams.emailVerificationToken,
+    //     isVerifyingEmail: true,
+    //   });
+    //   this.openModal(LOGIN);
     // }
+
+    if (queryParams.emailVerificationSecurityCode) {
+      const { emailVerificationSecurityCode } = queryParams;
+      requester.verifyEmailSecurityCode({ emailVerificationSecurityCode })
+        .then(res => res.body)
+        .then(data => {
+          if (data.isEmailVerified) {
+            NotificationManager.success(EMAIL_VERIFIED, '', LONG);
+            this.setUserInfo();
+          }
+        });
+
+      this.removeVerificationCodeFromURL();
+    }
 
     this.messageListener();
   }
@@ -434,6 +438,7 @@ class MainNav extends React.Component {
   }
 
   setUserInfo() {
+    this.props.dispatch(setIsLogged(true));
     requester.getUserInfo().then(res => {
       res.body.then(data => {
         Wallet.getBalance(data.locAddress).then(eth => {
@@ -441,7 +446,6 @@ class MainNav extends React.Component {
           Wallet.getTokenBalance(data.locAddress).then(loc => {
             const locBalance = loc / (Math.pow(10, 18));
             const { firstName, lastName, phoneNumber, email, locAddress, gender, isEmailVerified } = data;
-            this.props.dispatch(setIsLogged(true));
             this.props.dispatch(setUserInfo(firstName, lastName, phoneNumber, email, locAddress, ethBalance, locBalance, gender, isEmailVerified));
           });
         });
@@ -627,7 +631,7 @@ class MainNav extends React.Component {
         if (data.isVerificationEmailSent) {
           NotificationManager.success(VERIFICATION_EMAIL_SENT, '', LONG);
         } else {
-          NotificationManager.error(UNCATEGORIZED_ERROR, '', LONG);
+          NotificationManager.error(INVALID_SECURITY_CODE, '', LONG);
         }
       });
 

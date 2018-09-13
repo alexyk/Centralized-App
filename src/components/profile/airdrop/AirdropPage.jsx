@@ -16,7 +16,7 @@ import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { INVALID_SECURITY_CODE } from '../../../constants/warningMessages.js';
 import { LONG } from '../../../constants/notificationDisplayTimes.js';
 import NavProfile from '../NavProfile';
-import NoEntriesMessage from '../common/NoEntriesMessage';
+import NoEntriesMessage from '../../common/messages/NoEntriesMessage';
 import { NotificationManager } from 'react-notifications';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -50,6 +50,13 @@ class AirdropPage extends Component {
     this.handleEditSubmit = this.handleEditSubmit.bind(this);
     this.handleSaveVoteUrl = this.handleSaveVoteUrl.bind(this);
     this.onChange = this.onChange.bind(this);
+    this.getBalanceContainer = this.getBalanceContainer.bind(this);
+    this._getVerifiedStatus = this._getVerifiedStatus.bind(this);
+    this._getVerifiedWithIncompleteReferrals = this._getVerifiedWithIncompleteReferrals.bind(this);
+    this._getTooLateVerifiedStatus = this._getTooLateVerifiedStatus.bind(this);
+    this._getUnverifiedStatus = this._getUnverifiedStatus.bind(this);
+    this._getFailedStatus = this._getFailedStatus.bind(this);
+    this._getIncompleteStatus = this._getIncompleteStatus.bind(this);
   }
 
   componentWillMount() {
@@ -206,7 +213,8 @@ class AirdropPage extends Component {
     const referralCount = info.referralCount;
     const isCampaignSuccessfullyCompleted = info.isCampaignSuccessfullyCompleted;
     const voteUrl = info.voteUrl ? info.voteUrl : '';
-    this.props.dispatch(setAirdropInfo(email, facebookProfile, telegramProfile, twitterProfile, redditProfile, refLink, participates, isVerifyEmail, referralCount, isCampaignSuccessfullyCompleted, voteUrl));
+    const finalizedStatus = info.finalizedStatus;
+    this.props.dispatch(setAirdropInfo(email, facebookProfile, telegramProfile, twitterProfile, redditProfile, refLink, participates, isVerifyEmail, referralCount, isCampaignSuccessfullyCompleted, voteUrl, finalizedStatus));
     this.props.airdropInfo.referralCount = referralCount;
     this.props.airdropInfo.isCampaignSuccessfullyCompleted = isCampaignSuccessfullyCompleted;
     this.setState({ voteUrl: voteUrl, loading: false });
@@ -268,6 +276,86 @@ class AirdropPage extends Component {
     this.setState({ [e.target.name]: e.target.value });
   }
 
+  getBalanceContainer() {
+    switch (this.props.airdropInfo.finalizedStatus) {
+     case 'VERIFIED':
+       return this._getVerifiedStatus();
+     case 'VERIFIED_REFERRALS_INCOMPLETE':
+       return this._getVerifiedWithIncompleteReferrals();
+     case 'LATE_VERIFIED':
+       return this._getTooLateVerifiedStatus();
+     case 'FAILED':
+       return this._getFailedStatus();
+     case 'INCOMPLETE':
+       return this._getIncompleteStatus();
+     default:
+       return this._getUnverifiedStatus();
+    }
+  }
+
+  _getVerifiedStatus() {
+    return [
+      <div className="balance-row__label">
+        <span className="step-check checked" style={{"margin-top": "-0.4em"}}></span>
+        <span className="emphasized-text">Verified Balance</span>
+      </div>,
+      <div className="balance-row__content">${Math.max(10, this.props.airdropInfo.referralCount * 5 + 10)}</div>
+    ];
+  }
+
+  _getVerifiedWithIncompleteReferrals() {
+    return [
+      <div className="balance-row__label">
+        <span className="step-check checked" style={{"margin-top": "3.5em"}}></span>
+        <span className="emphasized-text">Your status has been verified, however your referrals might be subjected to additional verification checks which might affect your final balance.</span>
+      </div>,
+      <div className="balance-row__content centered-balance">${Math.max(10, this.props.airdropInfo.referralCount * 5 + 10)}</div>
+    ];
+  }
+
+  _getTooLateVerifiedStatus() {
+    return [
+      <div className="balance-row__label">
+        <span className="step-check checked" style={{"margin-top": "3.5em"}}></span>
+        <span className="emphasized-text">Your balance is verified as $0, because the airdrop has been finalized in your country prior to the moment you had joined and  because you have not referred any other people. For more info, <a href="https://medium.com/@LockChainCo/participating-in-the-loc-airdrop-from-a-country-where-the-airdrop-has-been-finalized-621fd7f7a78b" target="_blank" rel='noreferrer noopener' className="referral-url"><u>read this post</u></a>. </span>
+      </div>,
+      <div className="balance-row__content centered-balance">$0</div>
+    ];
+  }
+
+  _getUnverifiedStatus() {
+    return [
+      <div className="balance-row__label"><span className="emphasized-text">Unverified Balance</span></div>,
+      <div className="balance-row__content">${this.props.airdropInfo.isCampaignSuccessfullyCompleted ? this.props.airdropInfo.referralCount * 5 + 10 : this.props.airdropInfo.referralCount * 5}</div>
+    ];
+  }
+
+  _getFailedStatus() {
+    return [
+      <div className="balance-row__label">
+        <span className="step-check unchecked" style={{"margin-top": "1.5em"}}></span>
+        <span className="mandatory">
+          Duplicate accounting/multi accounting has been detected. As a result your balance has been voided.
+        </span>
+      </div>,
+      <div className="balance-row__content centered-balance">$0</div>
+    ];
+  }
+
+  _getIncompleteStatus() {
+    return [
+      <div className="balance-row__label">
+        <span className="step-check unchecked" style={{"margin-top": "3.5em"}}></span>
+        <span className="mandatory">
+          Our checks indicate that you have not completed all social joins.
+          Please make sure you have joined our telegram, followed us on Twitter and Facebook.<br/>
+          For more info, please <a href="https://medium.com/@LockChainCo/how-to-fix-social-joins-requirement-ea31b6e31801" target="_blank" rel='noreferrer noopener' className="referral-url"><u>read this post</u></a>.
+        </span>
+      </div>,
+      <div className="balance-row__content centered-balance">$0</div>
+    ];
+  }
+
   render() {
     // if (this.state.loading) {
     //   return <div className="loader"></div>;
@@ -308,8 +396,7 @@ class AirdropPage extends Component {
 
             <div className="balance-info">
               <div className="balance-row">
-                <div className="balance-row__label"><span className="emphasized-text">Unverified Balance</span></div>
-                <div className="balance-row__content">${this.props.airdropInfo.isCampaignSuccessfullyCompleted ? this.props.airdropInfo.referralCount * 5 + 10 : this.props.airdropInfo.referralCount * 5}</div>
+                {this.getBalanceContainer()}
               </div>
 
               <div className="balance-row">

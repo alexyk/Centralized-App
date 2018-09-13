@@ -148,7 +148,7 @@ function HotelDetailsInfoSection(props) {
                                 }
                                 <span>
                                   {props.userInfo.isLogged && '('}
-                                  {Number((CurrencyConverter.convert(props.rates, roomsXMLCurrency, DEFAULT_CRYPTO_CURRENCY, room.price) / props.nights) / props.locRate).toFixed(2)} LOC
+                                  {props.rates && Number((CurrencyConverter.convert(props.rates, roomsXMLCurrency, DEFAULT_CRYPTO_CURRENCY, room.price) / props.nights) / props.locRate).toFixed(2)} LOC
                               {props.userInfo.isLogged && ')'} / night
                             </span>
                               </div>

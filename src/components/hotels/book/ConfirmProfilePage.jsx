@@ -14,7 +14,7 @@ import moment from 'moment';
 import queryString from 'query-string';
 import { NotificationManager } from 'react-notifications';
 import { LONG } from '../../../constants/notificationDisplayTimes';
-
+import BookingSteps from '../../common/utility/BookingSteps';
 
 class ConfirmProfilePage extends React.Component {
   constructor(props) {
@@ -66,6 +66,10 @@ class ConfirmProfilePage extends React.Component {
 
         if (['Canada', 'India', 'United States of America'].includes(userInfo.country.name)) {
           this.requestStates(userInfo.country.id);
+        }
+
+        if (userInfo.countryState) {
+          userInfo.countryState = userInfo.countryState.id;
         }
 
         this.setState({ userInfo, loading: false });
@@ -140,11 +144,12 @@ class ConfirmProfilePage extends React.Component {
     const userInfo = { ...this.state.userInfo };
     userInfo.preferredCurrency = userInfo.preferredCurrency ? userInfo.preferredCurrency.id : 1;
     userInfo.country = userInfo.country && userInfo.country.id;
-    userInfo.state = userInfo.state && userInfo.state.id;
+    userInfo.countryState = userInfo.countryState && parseInt(userInfo.countryState, 10);
     requester.updateUserInfo(userInfo, captchaToken).then(res => {
       if (res.success) {
         this.payWithCard();
       } else {
+        res.errors.then(e => console.log(e));
         NotificationManager.error('Invalid user information.', '', LONG);
       }
     });
@@ -179,12 +184,8 @@ class ConfirmProfilePage extends React.Component {
 
     return (
       <React.Fragment>
-        <div className="booking-steps sm-none">
-          <div className="container">
-            <p>1. Provide Guest Information</p>
-            <p>2. Review Room Details</p>
-            <p>3. Confirm and Pay</p>
-          </div>
+        <div className="sm-none">
+          <BookingSteps steps={['Provide Guest Information', 'Review Room Details', 'Confirm and Pay']} currentStepIndex={2} />
         </div>
 
 

@@ -1,0 +1,122 @@
+.calendar {
+  #popover-trigger-click-root-close {
+    width: 240px;
+  }
+  .event-popup {
+    font-family: FuturaStd-Light;
+    img {
+      border-radius: 50%;
+      width: 40px;
+    }
+  }
+  .event-popup-body {
+    padding: 10px 20px;
+    text-align: center;
+    .price {
+      color: #87B0A9;
+      font-weight: 700;
+      span {
+        color: #000;
+        font-size: 16px;
+        font-weight: 400;
+      }
+    }
+  }
+  .event-popup-header {
+    align-items: center;
+    background: #223843;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    color: #FFF;
+    display: flex;
+    padding: 10px 0;
+  }
+  .form-group {
+    display: inline-block;
+    width: 75%;
+    input[type=number] {
+      border: 1px solid #D7D7D8;
+      color: #79AAA1;
+      font-size: 28px;
+    }
+  }
+  .popover {
+    border: none;
+    padding: 0;
+  }
+  .popover-content {
+    padding: 0;
+  }
+  .radio-label {
+    border: 1px solid #D7D7D8;
+    border-radius: 3px;
+    cursor: pointer;
+    padding: 10px 25px;
+    user-select: none;
+  }
+  input[type=radio] {
+    display: none;
+  }
+}
+
+.calendar-aside {
+  margin: 0 auto;
+  width: 85%;
+  .controls {
+    .btn-back {
+      border: 2px solid #000;
+      margin: 10px;
+      padding: 10px 25px;
+    }
+    .btn-next {
+      border: 2px solid #D87A61;
+      margin: 10px;
+      padding: 10px 25px;
+      min-width: 200px;
+      margin-top: 30px;
+    }
+  }
+  .input-group-addon {
+    padding: 10px 20px;
+  }
+}
+
+.calendar-aside-body {
+  background: #FFF;
+  border: 1px solid #D7D7D8;
+  border-top: none;
+  padding: 25px 0;
+  text-align: center;
+}
+
+.calendar-aside-header {
+  align-items: center;
+  border: 1px solid #D7D7D8;
+  border-radius: 3px 3px 0 0;
+  display: flex;
+  padding: 10px 0;
+  button.close {
+    border-width: 2px;
+    height: 25px;
+    margin: 0;
+    width: 25px;
+  }
+  h3 {
+    margin: 0;
+  }
+}
+
+.calendar-aside-static {
+  border: 1px solid #D7D7D8;
+  padding: 40px 0;
+  text-align: center;
+  img {
+    padding: 30px 15px;
+    width: 100%;
+  }
+  p {
+    font-weight: lighter;
+    padding: 0 35px;
+    text-align: left;
+  }
+}

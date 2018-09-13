@@ -33,6 +33,7 @@ EmailVerificationModal.propTypes = {
   openModal: PropTypes.func,
   closeModal: PropTypes.func,
   handleLogin: PropTypes.func,
+  requestVerificationEmail: PropTypes.func,
   isActive: PropTypes.bool
 };
 

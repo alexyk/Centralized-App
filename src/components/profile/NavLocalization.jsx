@@ -2,7 +2,7 @@ import '../../styles/css/components/tabs-component.css';
 import '../../styles/css/components/tabs-component.css';
 
 import { NavLink, withRouter } from 'react-router-dom';
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import { setCurrency, setLocRate, setLocRateInEur } from '../../actions/paymentInfo';
 
 import { Config } from '../../config.js';
@@ -13,12 +13,14 @@ import requester from '../../initDependencies';
 
 const DEFAULT_EUR_AMOUNT = 1000;
 const DEFAULT_CRYPTO_CURRENCY = 'EUR';
+const SOCKET_RECONNECT_DELAY = 5000;
 
 class NavLocalization extends Component {
   constructor(props) {
     super(props);
 
     this.socket = null;
+    this.shoudSocketReconnect = true;
 
     this.state = {
       rates: null,
@@ -32,23 +34,16 @@ class NavLocalization extends Component {
     this.connectSocket = this.connectSocket.bind(this);
     this.handleReceiveMessage = this.handleReceiveMessage.bind(this);
     this.disconnectSocket = this.disconnectSocket.bind(this);
+    this.socketClose = this.socketClose.bind(this);
   }
 
   componentDidMount() {
-    const { currency, locRate } = this.props.paymentInfo;
+    const { currency } = this.props.paymentInfo;
     if (localStorage['currency']) setCurrency(localStorage['currency']);
     else localStorage['currency'] = currency;
 
-    if (!locRate) this.initializeSocket();
-
-    requester.getCurrencyRates().then(res => {
-      res.body.then(data => {
-        this.setState({ rates: data }, () => {
-          this.props.dispatch(setLocRateInEur(DEFAULT_EUR_AMOUNT / this.state.locAmount, false, 'Nav'));
-          this.props.dispatch(setLocRate(this.calculateLocRate(this.state.locAmount, currency), false, 'Nav'));
-        });
-      });
-    });
+    this.getRates();
+    this.initializeSocket();
   }
 
   componentWillReceiveProps(nextProps) {
@@ -56,8 +51,10 @@ class NavLocalization extends Component {
     if (currency !== this.props.paymentInfo.currency) {
       localStorage['currency'] = currency;
 
-      this.props.dispatch(setLocRateInEur(DEFAULT_EUR_AMOUNT / this.state.locAmount, false, 'Nav'));
-      this.props.dispatch(setLocRate(this.calculateLocRate(this.state.locAmount, currency), false, 'Nav'));
+      const { locAmount } = this.state;
+      if (locAmount && locAmount > 0) {
+        this.setLocRateInRedux(DEFAULT_EUR_AMOUNT / locAmount, this.calculateLocRate(this.state.locAmount, currency));
+      }
     }
   }
 
@@ -65,42 +62,90 @@ class NavLocalization extends Component {
     this.disconnectSocket();
   }
 
+  getRates() {
+    requester.getCurrencyRates().then(res => {
+      res.body.then(data => {
+        this.setState({ rates: data });
+      });
+    });
+  }
+
+  getLocEurRate() {
+    const { currency } = this.props.paymentInfo;
+
+    requester.getLocRateByCurrency(DEFAULT_CRYPTO_CURRENCY).then(res => {
+      res.body.then(data => {
+        const locEurRate = data[0]['price_eur'];
+        if (locEurRate && locEurRate !== 0) {
+          this.setState({ locAmount: DEFAULT_EUR_AMOUNT / locEurRate }, () => {
+            this.setLocRateInRedux(locEurRate, this.calculateLocRate(this.state.locAmount, currency));
+          });
+        }
+      });
+    });
+  }
+
   calculateLocRate(locAmount, currency) {
+    if (currency === 'EUR') {
+      return DEFAULT_EUR_AMOUNT / locAmount;
+    }
     const fiatAmount = this.state.rates && CurrencyConverter.convert(this.state.rates, DEFAULT_CRYPTO_CURRENCY, currency, DEFAULT_EUR_AMOUNT);
     return fiatAmount / locAmount;
+  }
+
+  setLocRateInRedux(locEurRate, locCurrentCurrencyRate) {
+    this.props.dispatch(setLocRateInEur(locEurRate, false, 'Nav'));
+    this.props.dispatch(setLocRate(locCurrentCurrencyRate, false, 'Nav'));
   }
 
   initializeSocket() {
     this.socket = new WebSocket(Config.getValue('SOCKET_HOST_PRICE'));
     this.socket.onmessage = this.handleReceiveMessage;
     this.socket.onopen = this.connectSocket;
+    this.socket.onclose = this.socketClose;
   }
 
   connectSocket() {
-    this.socket.send(JSON.stringify({ fiatAmount: DEFAULT_EUR_AMOUNT }));
+    this.socket.send(JSON.stringify({ id: 'loc-rate', fiatAmount: DEFAULT_EUR_AMOUNT }));
   }
 
   handleReceiveMessage(event) {
     const locAmount = (JSON.parse(event.data)).locAmount;
-    this.setState({ locAmount });
-    const locRateInEUR = this.calculateLocRate(locAmount, DEFAULT_CRYPTO_CURRENCY);
-    const locRateInCurrentCurrency = this.calculateLocRate(locAmount, this.props.paymentInfo.currency);
 
-    this.props.dispatch(setLocRate(locRateInCurrentCurrency, false, 'Nav'));
-    this.props.dispatch(setLocRateInEur(locRateInEUR, false, 'Nav'));
+    if (locAmount && locAmount > 0) {
+      this.setState({ locAmount });
+
+      const locRateInEUR = this.calculateLocRate(locAmount, DEFAULT_CRYPTO_CURRENCY);
+      const locCurrentCurrencyRate = this.calculateLocRate(locAmount, this.props.paymentInfo.currency);
+
+      this.setLocRateInRedux(locRateInEUR, locCurrentCurrencyRate);
+    }
   }
 
   disconnectSocket() {
+    this.shoudSocketReconnect = false;
     if (this.socket) {
       this.socket.close();
     }
   }
 
+  socketClose() {
+    if (this.shoudSocketReconnect) {
+      this.getLocEurRate();
+      setTimeout(() => {
+        this.initializeSocket();
+      }, SOCKET_RECONNECT_DELAY);
+    }
+  }
+
   render() {
-    const { currency, locRate } = this.props.paymentInfo;
+    const { currency } = this.props.paymentInfo;
+    let { locRate } = this.props.paymentInfo;
+    const { rates, locAmount } = this.state;
     const { locBalance, ethBalance, isLogged } = this.props.userInfo;
-    if (!locRate) {
-      return <div className="loader sm-none"></div>;
+
+    if (!locRate && rates && locAmount && locAmount !== 0) {
+      locRate = this.calculateLocRate(locAmount, currency);
     }
 
     return (
@@ -110,6 +155,7 @@ class NavLocalization extends Component {
             {this.props.location.pathname !== '/hotels'
               && this.props.location.pathname !== '/homes'
               && (this.props.location.pathname.indexOf('/hotels/listings/book') === -1
+                && this.props.location.pathname.indexOf('/homes/listings/book') === -1
                 && this.props.location.pathname.indexOf('/profile') === -1)
               && this.props.location.pathname.indexOf('/airdrop') === -1
               ? <ul className="tabset">
@@ -121,10 +167,14 @@ class NavLocalization extends Component {
             }
 
             <div className="info-details">
-              <p className="loc-rate">
-                <span className="cross-rate">LOC/{currency} </span>
-                <span className="rate">{Number(locRate).toFixed(4)} {currency}</span>
-              </p>
+              <div className="loc-rate">
+                {locRate ?
+                  <Fragment>
+                    <span className="cross-rate">LOC/{currency} </span>
+                    <span className="rate">{Number(locRate).toFixed(4)} {currency}</span>
+                  </Fragment> : <div className="loader sm-none" style={{ width: '100px' }} ></div>
+                }
+              </div>
 
               {isLogged &&
                 <div className="balance-info">
@@ -155,10 +205,7 @@ class NavLocalization extends Component {
                 <select
                   className="currency"
                   value={this.props.paymentInfo.currency}
-                  onChange={(e) => {
-                    this.props.dispatch(setCurrency(e.target.value));
-                    this.props.dispatch(setLocRate(this.calculateLocRate(this.state.locAmount, e.target.value), false, 'Nav'));
-                  }}
+                  onChange={(e) => this.props.dispatch(setCurrency(e.target.value))}
                 >
                   <option value="EUR">EUR</option>
                   <option value="USD">USD</option>

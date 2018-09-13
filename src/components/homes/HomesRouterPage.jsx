@@ -2,11 +2,11 @@ import { Route, Switch } from 'react-router-dom';
 
 import PropTypes from 'prop-types';
 import React from 'react';
-import HomesHomePage from './HomesHomePage';
+import HomePage from '../home/HomePage';
 import HomesSearchPage from './search/HomesSearchPage';
 import HomeDetailsPage from './details/HomeDetailsPage';
-import HomesBookingPage from './booking/HomesBookingPage';
 import requester from '../../initDependencies';
+import HomesBookingRouterPage from './booking/HomesBookingRouterPage';
 
 class HomesRouterPage extends React.Component {
   constructor(props) {
@@ -29,10 +29,10 @@ class HomesRouterPage extends React.Component {
     return (
       <div>
         <Switch>
-          <Route exact path="/homes" render={() => <HomesHomePage countries={this.state.countries} />} />
+          <Route exact path="/homes" render={() => <HomePage homePage="homes" listings={this.props.listings} hotels={this.props.hotels} />} />
           <Route exact path="/homes/listings" render={() => <HomesSearchPage countries={this.state.countries} />} />
-          <Route exact path="/homes/listings/booking" render={() => <HomesBookingPage countries={this.state.countries} />} />
           <Route exact path="/homes/listings/:id" render={() => <HomeDetailsPage countries={this.state.countries} />} />
+          <Route path="/homes/listings/book" render={() => <HomesBookingRouterPage />} />
         </Switch>
       </div>
     );
@@ -40,6 +40,9 @@ class HomesRouterPage extends React.Component {
 }
 
 HomesRouterPage.propTypes = {
+  listings: PropTypes.array,
+  hotels: PropTypes.array,
+
   location: PropTypes.object,
   history: PropTypes.object,
 };

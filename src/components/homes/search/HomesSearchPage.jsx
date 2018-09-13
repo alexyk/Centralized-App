@@ -1,6 +1,5 @@
-import Breadcrumb from '../../Breadcrumb';
 import FilterPanel from './filter/FilterPanel';
-import HomeItem from './HomeItem';
+import HomeResult from './HomeResult';
 import HomesSearchBar from './HomesSearchBar';
 import Pagination from '../../common/pagination/Pagination';
 import PropTypes from 'prop-types';
@@ -42,6 +41,25 @@ class HomesSearchPage extends React.Component {
     this.getPriceValue = this.getPriceValue.bind(this);
   }
 
+  componentWillMount() {
+    if (this.props.location.search) {
+      const searchParams = this.getSearchParams(this.props.location.search);
+      const priceValue = this.getPriceValue(searchParams);
+      const cities = this.getCities(searchParams);
+      const propertyTypes = this.getPropertyTypes(searchParams);
+      this.setState({
+        searchParams: searchParams,
+        countryId: searchParams.get('countryId'),
+        startDate: moment(searchParams.get('startDate'), 'DD/MM/YYYY'),
+        endDate: moment(searchParams.get('endDate'), 'DD/MM/YYYY'),
+        guests: searchParams.get('guests'),
+        citiesToggled: cities,
+        propertyTypesToggled: propertyTypes,
+        priceValue: priceValue,
+      });
+    }
+  }
+
   componentDidMount() {
     let searchTerms = this.getSearchTerms(this.state.searchParams);
     searchTerms.push(`page=${this.state.currentPage - 1}`);
@@ -56,23 +74,6 @@ class HomesSearchPage extends React.Component {
         });
       });
     });
-  }
-
-  componentWillMount() {
-    if (this.props.location.search) {
-      const searchParams = this.getSearchParams(this.props.location.search);
-      const priceValue = this.getPriceValue(searchParams);
-      this.setState({
-        searchParams: searchParams,
-        countryId: searchParams.get('countryId'),
-        startDate: moment(searchParams.get('startDate'), 'DD/MM/YYYY'),
-        endDate: moment(searchParams.get('endDate'), 'DD/MM/YYYY'),
-        guests: searchParams.get('guests'),
-        selectedCities: new Set(),
-        selectedPropertyTypes: new Set(),
-        priceValue: priceValue,
-      });
-    }
   }
 
   componentWillUnmount() {
@@ -115,7 +116,7 @@ class HomesSearchPage extends React.Component {
         });
       });
     });
-    const url = `/homes/listings/?${searchTerms}`;
+    const url = `/homes/listings/?${searchTerms.join('&')}`;
     this.props.history.push(url);
   }
 
@@ -140,7 +141,7 @@ class HomesSearchPage extends React.Component {
         });
       });
     });
-    let url = `/homes/listings/?${searchTerms}`;
+    let url = `/homes/listings/?${searchTerms.join('&')}`;
     this.props.history.push(url);
   }
 
@@ -266,6 +267,28 @@ class HomesSearchPage extends React.Component {
     return [min, max];
   }
 
+  getCities(searchParams) {
+    const cities = new Set();
+    if (searchParams.get('cities')) {
+      searchParams.get('cities').split(',').forEach(city => {
+        cities.add(city);
+      });
+    }
+
+    return cities;
+  }
+
+  getPropertyTypes(searchParams) {
+    const propertyTypes = new Set();
+    if (searchParams.get('propertyTypes')) {
+      searchParams.get('propertyTypes').split(',').forEach(propertyType => {
+        propertyTypes.add(propertyType);
+      });
+    }
+
+    return propertyTypes;
+  }
+
   render() {
     const listings = this.state.listings;
     const hasLoadedListings = listings ? true : false;
@@ -279,13 +302,12 @@ class HomesSearchPage extends React.Component {
       renderListings = <div className="text-center"><h3>No results</h3></div>;
     } else {
       renderListings = listings.map((item, i) => {
-        return <HomeItem key={i} listing={item} />;
+        return <HomeResult key={i} listing={item} />;
       });
     }
 
     return (
-      <div>
-        {/* <ListingTypeNav /> */}
+      <React.Fragment>
         <div className="container">
           <HomesSearchBar
             countryId={this.state.countryId}
@@ -298,7 +320,6 @@ class HomesSearchPage extends React.Component {
             handleDatePick={this.handleDatePick} />
         </div>
 
-        <Breadcrumb />
         <section id="hotel-box">
           <div className="container">
             <div className="row">
@@ -330,7 +351,7 @@ class HomesSearchPage extends React.Component {
             </div>
           </div>
         </section>
-      </div>
+      </React.Fragment>
     );
   }
 }

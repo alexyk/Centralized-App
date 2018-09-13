@@ -275,10 +275,26 @@ class HomeDetailsPage extends React.Component {
 
   render() {
     let loading, allEvents, images;
-    if (this.state.data === null ||
-      this.state.prices === null ||
-      this.state.reservations === null ||
-      this.state.loaded === false) {
+    // if (this.state.data === null ||
+    //   this.state.prices === null ||
+    //   this.state.reservations === null ||
+    //   this.state.loaded === false) {
+    //   loading = true;
+    // } else {
+    //   allEvents = this.state.prices;
+    //   images = null;
+    //   if (this.state.data.pictures !== undefined) {
+    //     images = this.state.data.pictures.map(x => {
+    //       return { src: Config.getValue('imgHost') + x.original };
+    //     });
+    //   }
+
+    //   if (this.state.oldCurrency !== this.props.paymentInfo.currency) {
+    //     this.initializeCalendar();
+    //   }
+    // }
+
+    if (this.state.data === null) {
       loading = true;
     } else {
       allEvents = this.state.prices;

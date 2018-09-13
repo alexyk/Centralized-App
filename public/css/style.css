@@ -575,7 +575,7 @@ button.disabled:hover {
 
 #hotel-info .hotel-content {
     float: left;
-    width: 55%;
+    width: 100%;
 }
 
 #hotel-info #hotel-section {
@@ -831,12 +831,6 @@ footer .currency-switcher {
     min-height: 500px;
 }
 
-#get-started .get-started-graphic {
-    background: transparent url(../images/get-started.svg) no-repeat top center;
-    background-size: contain;
-    width: 100%;
-    height: 200px;
-}
 
 #main-nav #second-nav {
     background-color: transparent;
@@ -1005,10 +999,10 @@ ul.navbar-profile>li {
 
 ul.navbar-profile>li>a {
     color: #f0f1f3;
-    font-size: 17px;
+    /* font-size: 17px; */
     letter-spacing: 1px;
     text-decoration: none;
-    margin: 20px 20px 10px 20px;
+    margin: 15px 20px 10px 20px;
     display: block;
 }
 
@@ -2096,7 +2090,7 @@ li.dropdown {
 
 #profile-my-reservations .reservation-box-pending {
     text-align: center;
-    margin-top: 5px;
+    margin-top: 0px;
     background-color: white;
     padding: 1%;
     border: 1px solid #CCCCCC;
@@ -2181,7 +2175,7 @@ li.dropdown {
 
 .my-reservations .table-header {
     border: 1px solid #CCCCCC;
-    margin-top: 20px;
+    margin-bottom: 10px;
     border-radius: 3px;
     padding: 10px 0;
     display: flex;
@@ -2401,6 +2395,7 @@ li.dropdown {
 }
 
 .left_carusel {
+    left: 0;
     bottom: 40%;
     margin-left: -80px;
     position: absolute;
@@ -2578,7 +2573,7 @@ input[type="checkbox"].tick:checked+label:after {
     min-height: auto;
 }
 
-.owl-nav {
+/* .owl-nav {
     display: inline-block;
 }
 
@@ -2590,26 +2585,26 @@ input[type="checkbox"].tick:checked+label:after {
 
 .owl-item>.item a img {
     width: 100%;
-}
+} */
 
 .list-property-pictures {
     height: 100%;
 }
 
-#ba.owl-theme .owl-dots .owl-dot:last-child {
+/* #ba.owl-theme .owl-dots .owl-dot:last-child {
     display: none;
-}
+} */
 
 /* Temp solution */
 
-.owl-theme .owl-nav [class*=owl-] {
+/* .owl-theme .owl-nav [class*=owl-] {
     background: transparent !important;
 }
 
 .owl-carousel .owl-stage::after {
     content: '';
     display: none;
-}
+} */
 
 .carousel .item img {
     width: 100%;
@@ -2870,19 +2865,6 @@ h3 {
     float: right
 }
 
-.booking-steps {
-    background-color: rgb(34, 56, 67);
-    margin-bottom: 20px;
-}
-
-.booking-steps p {
-    float: none;
-    display: inline-block;
-    color: #fff;
-    font-size: 18px;
-    margin: 15px 30px 15px 0;
-}
-
 /* Hotel Details Rooms */
 
 .hotel-content .room-group {
@@ -3069,6 +3051,15 @@ h3 {
     display: none;
 }
 
+.example-appear {
+  opacity: 0.01;
+}
+
+.example-appear.example-appear-active {
+  opacity: 1;
+  transition: opacity .5s ease-in;
+}
+
 .example-enter {
   opacity: 0.01;
 }
@@ -3084,7 +3075,7 @@ h3 {
 
 .example-leave.example-leave-active {
   opacity: 0.01;
-  transition: opacity 0ms ease-in;
+  transition: opacity 500ms ease-in;
 }
 
 .filter-box .filter-select {

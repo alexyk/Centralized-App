@@ -2,7 +2,7 @@ import '../../../../styles/css/components/captcha/captcha-container.css';
 
 import { LISTING_APPROVED, LISTING_DELETED, LISTING_DENIED } from '../../../../constants/successMessages.js';
 import { NavLink, withRouter } from 'react-router-dom';
-import { PROPERTY_CANNOT_BE_DELETED, UNCATEGORIZED_ERROR } from '../../../../constants/errorMessages.js';
+import { PROPERTY_CANNOT_BE_DELETED } from '../../../../constants/errorMessages.js';
 
 import AdminNav from '../AdminNav';
 import { Config } from '../../../../config';
@@ -13,7 +13,7 @@ import { LONG } from '../../../../constants/notificationDisplayTimes.js';
 import Lightbox from 'react-images';
 import ListItem from './ListItem';
 import { MESSAGE_SENT } from '../../../../constants/infoMessages.js';
-import NoEntriesMessage from '../../common/NoEntriesMessage';
+import NoEntriesMessage from '../../../common/messages/NoEntriesMessage';
 import { NotificationManager } from 'react-notifications';
 import Pagination from '../../../common/pagination/Pagination';
 import PropTypes from 'prop-types';
@@ -235,7 +235,9 @@ class UnpublishedList extends React.Component {
         }
       }
       else {
-        NotificationManager.error(UNCATEGORIZED_ERROR, '', LONG);
+        res.errors.then(e => {
+          NotificationManager.warning(e.message, '', LONG);
+        });
       }
     });
   }

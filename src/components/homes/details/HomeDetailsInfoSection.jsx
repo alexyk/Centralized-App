@@ -1,10 +1,17 @@
 import ContactHostModal from '../../common/modals/ContactHostModal';
 import PropTypes from 'prop-types';
 import HomeDetailsCalendar from './HomeDetailsCalendar';
-import HomeReservationPanel from './HomeReservationPanel';
 import HomeDetailsReviewBox from './HomeDetailsReviewBox';
 import React from 'react';
+import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
+import { Link } from 'react-router-dom';
+import { openModal } from '../../../actions/modalsInfo.js';
+import { LOGIN } from '../../../constants/modals.js';
+
+import '../../../styles/css/components/home/details/home-details-info-section.css';
+import '../../../styles/css/components/homes/property/calendar.css';
+
 import Facilities from '../../hotels/details/Facilities';
 
 function HomeDetailsInfoSection(props) {
@@ -44,14 +51,19 @@ function HomeDetailsInfoSection(props) {
           <h1> {props.data.name} </h1>
           <div className="clearfix" />
           <p>{street}, {city.name}, {country.name}</p>
-          <button className="btn btn-primary" onClick={props.openModal}>Contact Host</button>
+          <div className="btn-home-details-info-section-container">
+            <button className="btn btn-primary" onClick={props.openModal}>Contact Host</button>
+            {props.userInfo.isLogged ?
+              <Link to={`/homes/listings/book/${props.match.params.id}${props.location.search}`} className="btn btn-primary btn-home-details-info-section-container">Book Now</Link> :
+              <button className="btn btn-primary" onClick={(e) => props.dispatch(openModal(LOGIN, e))}>Login</button>}
+          </div>
 
-          <HomeDetailsCalendar
+          {props.allEvents && <HomeDetailsCalendar
             onApply={props.onApply}
             startDate={props.startDate}
             endDate={props.endDate}
             allEvents={props.allEvents}
-            prices={props.prices} />
+            prices={props.prices} />}
 
           <div className="list-hotel-description">
             <h2>Description</h2>
@@ -98,7 +110,7 @@ function HomeDetailsInfoSection(props) {
             <div className="clearfix" />
           </div>
         </div>
-        <HomeReservationPanel
+        {/* <HomeReservationPanel
           locRate={props.locRate}
           showLoginModal={props.showLoginModal}
           isLogged={props.isLogged}
@@ -109,7 +121,7 @@ function HomeDetailsInfoSection(props) {
           endDate={props.endDate}
           listing={props.data}
           loading={props.loading}
-        />
+        /> */}
         <div className="clearfix"></div>
       </div>
     </section>
@@ -121,7 +133,6 @@ HomeDetailsInfoSection.propTypes = {
   locRate: PropTypes.string,
   showLoginModal: PropTypes.bool,
   isLogged: PropTypes.bool,
-  userInfo: PropTypes.object,
   nights: PropTypes.number,
   onApply: PropTypes.func,
   startDate: PropTypes.object,
@@ -136,7 +147,21 @@ HomeDetailsInfoSection.propTypes = {
   prices: PropTypes.array,
   openModal: PropTypes.func,
   calendar: PropTypes.array,
-  descriptionText: PropTypes.string
+  descriptionText: PropTypes.string,
+
+  // start Router props
+  location: PropTypes.object,
+
+  // Redux props
+  dispatch: PropTypes.func,
+  userInfo: PropTypes.object
 };
 
-export default withRouter(HomeDetailsInfoSection);
+function mapStateToProps(state) {
+  const { userInfo } = state;
+  return {
+    userInfo
+  };
+}
+
+export default withRouter(connect(mapStateToProps)(HomeDetailsInfoSection));

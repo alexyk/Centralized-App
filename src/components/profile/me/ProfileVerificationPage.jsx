@@ -81,11 +81,13 @@ class ProfileVerificationPage extends React.Component {
 
     for (let i = 0; i < this.state.verificationFields.length; i++) {
       let key = this.state.verificationFields[i];
-      if (data[key] !== null) {
-        verifiedFields.push(key);
-      }
-      else {
-        unverifiedFields.push(key);
+      if (key !== 'email') {
+        if (data[key] !== null) {
+          verifiedFields.push(key);
+        }
+        else {
+          unverifiedFields.push(key);
+        }
       }
     }
 
@@ -313,6 +315,7 @@ class ProfileVerificationPage extends React.Component {
         <br />
         <h2>Your verified info</h2>
         <hr />
+        <VerificationItem item={'Email'} verified={this.props.userInfo.isEmailVerified} />
         {this.state.verifiedFields.map((item, i) => {
           return <VerificationItem key={i} item={item} verified={true} />;
         })}
@@ -339,9 +342,10 @@ ProfileVerificationPage.propTypes = {
 };
 
 function mapStateToProps(state) {
-  const { modalsInfo } = state;
+  const { modalsInfo, userInfo } = state;
   return {
-    modalsInfo
+    modalsInfo,
+    userInfo
   };
 }
 

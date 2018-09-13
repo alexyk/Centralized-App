@@ -1,11 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import HomesSearchBarDatePicker from './HomesSearchBarDatePicker';
+import SearchBarDatePicker from '../../common/search/SearchBarDatePicker';
 import moment from 'moment';
 import StringUtils from '../../../services/utilities/stringUtilities.js';
 
 const HomesSearchBar = (props) => (
-  <div className="source-panel">
+  <form className="source-panel" onSubmit={props.handleSearch}>
     <div className="source-panel-select source-panel-item">
       {/* <i className="icon icon-map form-control-feedback"></i> */}
       {props.countries &&
@@ -25,7 +25,7 @@ const HomesSearchBar = (props) => (
 
     <div className="check-wrap source-panel-item">
       <div className="check">
-        <HomesSearchBarDatePicker
+        <SearchBarDatePicker
           startDate={props.startDate}
           endDate={props.endDate}
           onApply={props.handleDatePick}
@@ -68,8 +68,8 @@ const HomesSearchBar = (props) => (
         placeholder="Guests"
         value={props.guests} />
     </div> */}
-    <button className="btn btn-primary" onClick={props.handleSearch}>Search</button>
-  </div>
+    <button type="submit" className="btn btn-primary">Search</button>
+  </form>
 );
 
 const calculateNights = (startDate, endDate) => {

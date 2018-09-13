@@ -21,19 +21,16 @@ import { connect } from 'react-redux';
 import moment from 'moment';
 import queryString from 'query-string';
 import requester from '../../../initDependencies';
+import BookingSteps from '../../common/utility/BookingSteps';
 import { setBestLocPrice } from '../../../actions/bookingBestPrice';
 
 // import SMSCodeModal from '../modals/SMSCodeModal';
 
-
-
-
-
-
-
 const ERROR_MESSAGE_TIME = 20000;
 const SEARCH_EXPIRE_TIME = 900000;
 const DEFAULT_CRYPTO_CURRENCY = 'EUR';
+const TEST_FIAT_AMOUNT_IN_EUR = 15;
+const SOCKET_RECONNECT_DELAY = 5000;
 
 class HotelBookingConfirmPage extends React.Component {
   constructor(props) {
@@ -43,6 +40,16 @@ class HotelBookingConfirmPage extends React.Component {
     this.timer = null;
     this.socket = null;
 
+    this.quotedPair = null;
+
+    this.lockPrice = null;
+    this.quotedLocPrice = null;
+
+    this.testLocPrice = null;
+    this.testQuotedLocPrice = null;
+    
+    this.shoudSocketReconnect = true;
+
     this.state = {
       data: null,
       showRoomsCanxDetails: false,
@@ -50,9 +57,12 @@ class HotelBookingConfirmPage extends React.Component {
       password: '',
       confirmed: false,
       fiatPriceRoomsXML: null,
-      locPrice: null,
+      seconds: 10,
       locRate: null,
-      seconds: 30
+      locPrice: null,
+      quotedLocPrice: null,
+      testLocPrice: null,
+      testQuotedLocPrice: null
     };
 
     this.timeout = null;
@@ -74,6 +84,7 @@ class HotelBookingConfirmPage extends React.Component {
     this.connectSocket = this.connectSocket.bind(this);
     this.handleReceiveMessage = this.handleReceiveMessage.bind(this);
     this.disconnectSocket = this.disconnectSocket.bind(this);
+    this.socketClose = this.socketClose.bind(this);
   }
 
   componentDidMount() {
@@ -91,8 +102,7 @@ class HotelBookingConfirmPage extends React.Component {
       localStorage['currency'] = currency;
       const { fiatPriceRoomsXML, rates } = this.state;
       const fiatAmount = fiatPriceRoomsXML && CurrencyConverter.convert(rates, RoomsXMLCurrency.get(), DEFAULT_CRYPTO_CURRENCY, fiatPriceRoomsXML);
-      this.props.dispatch(setLocRate(this.calculateLocRate(this.state.locPrice, currency, fiatAmount), true, 'ConfirmPage'));
-      this.props.dispatch(setLocRateInEur(fiatAmount / this.state.locPrice, true, 'ConfirmPage'));
+      this.setLocRateInRedux(fiatAmount / this.state.locPrice, this.calculateLocRate(this.state.locPrice, currency, fiatAmount));
     }
   }
 
@@ -138,8 +148,6 @@ class HotelBookingConfirmPage extends React.Component {
     });
   }
 
-
-
   getQueryString(queryStringParameters) {
     let queryString = '?';
     queryString += 'region=' + encodeURI(queryStringParameters.region);
@@ -154,6 +162,25 @@ class HotelBookingConfirmPage extends React.Component {
     requester.getCurrencyRates().then(res => {
       res.body.then(data => {
         this.setState({ rates: data });
+      });
+    });
+  }
+
+  getLocEurRate() {
+    requester.getLocRateByCurrency(DEFAULT_CRYPTO_CURRENCY).then(res => {
+      res.body.then(data => {
+        const locEurRate = data[0]['price_eur'];
+        if (locEurRate && locEurRate !== 0) {
+          const testLocPrice = TEST_FIAT_AMOUNT_IN_EUR / locEurRate;
+          const locPrice = CurrencyConverter.convert(this.state.rates, RoomsXMLCurrency.get(), DEFAULT_CRYPTO_CURRENCY, this.state.fiatPriceRoomsXML) / locEurRate;
+          this.setState({
+            locPrice,
+            locRate: locEurRate,
+            testLocPrice
+          }, () => {
+            this.setLocRateInRedux(locEurRate, this.calculateLocRate(this.state.locPrice, RoomsXMLCurrency.get(), this.state.fiatPriceRoomsXML));
+          });
+        }
       });
     });
   }
@@ -174,30 +201,55 @@ class HotelBookingConfirmPage extends React.Component {
 
   tick() {
     const { seconds } = this.state;
-    let { locPrice, locRate } = this.state;
+    let { locPrice, quotedLocPrice, locRate, testLocPrice, testQuotedLocPrice } = this.state;
     if (seconds === 1) {
       const bestLocPrice = this.props.bookingBestPrice.locPrice;
-      const locRate = this.props.paymentInfo.locRateInEur;
+
+      testLocPrice = this.testLocPrice;
+      testQuotedLocPrice = this.testQuotedLocPrice;
+      locPrice = this.locPrice;
+
+      locRate = this.props.paymentInfo.locRateInEur;
       this.setState({
-        locPrice: bestLocPrice,
-        seconds: 30,
-        locRate
+        locPrice,
+        quotedLocPrice: bestLocPrice,
+        seconds: 10,
+        locRate,
+        testLocPrice,
+        testQuotedLocPrice
       });
     } else {
-      if (locPrice === null) {
-        locPrice = this.props.bookingBestPrice.locPrice;
+      if (!locPrice) {
+        locPrice = this.locPrice;
+      }
+      if (!testLocPrice) {
+        testLocPrice = this.testLocPrice;
+      }
+      if (!testQuotedLocPrice) {
+        testQuotedLocPrice = this.testQuotedLocPrice;
       }
       if (!locRate) {
         locRate = this.props.paymentInfo.locRateInEur;
+      }
+      if (!quotedLocPrice) {
+        quotedLocPrice = this.props.bookingBestPrice.locPrice;
       }
       this.setState((prevState) => {
         return {
           seconds: prevState.seconds - 1,
           locPrice,
-          locRate
+          quotedLocPrice,
+          locRate,
+          testLocPrice,
+          testQuotedLocPrice
         };
       });
     }
+  }
+
+  setLocRateInRedux(locEurRate, locCurrentCurrencyRate) {
+    this.props.dispatch(setLocRateInEur(locEurRate, true, 'ConfirmPage'));
+    this.props.dispatch(setLocRate(locCurrentCurrencyRate, true, 'ConfirmPage'));
   }
 
   calculateLocRate(locAmount, currency, fiatAmount) {
@@ -209,28 +261,62 @@ class HotelBookingConfirmPage extends React.Component {
     this.socket = new WebSocket(Config.getValue('SOCKET_HOST_PRICE'));
     this.socket.onmessage = this.handleReceiveMessage;
     this.socket.onopen = this.connectSocket;
+    this.socket.onclose = this.socketClose;
   }
 
   connectSocket() {
-    const { fiatPriceRoomsXML, rates } = this.state;
-    const fiatAmount = fiatPriceRoomsXML && CurrencyConverter.convert(rates, RoomsXMLCurrency.get(), DEFAULT_CRYPTO_CURRENCY, fiatPriceRoomsXML);
-    this.socket.send(JSON.stringify({ fiatAmount }));
-    this.timer = setInterval(this.tick, 1000);
+    setTimeout(() => {
+      const { fiatPriceRoomsXML, rates } = this.state;
+
+      const fiatAmount = fiatPriceRoomsXML && rates && CurrencyConverter.convert(rates, RoomsXMLCurrency.get(), DEFAULT_CRYPTO_CURRENCY, fiatPriceRoomsXML);
+      this.socket.send(JSON.stringify({ id: 'real', fiatAmount }));
+      this.socket.send(JSON.stringify({ id: 'test', fiatAmount: TEST_FIAT_AMOUNT_IN_EUR }));
+      this.timer = setInterval(this.tick, 1000);
+    }, 10);
   }
 
   handleReceiveMessage(event) {
-    const locPrice = (JSON.parse(event.data)).locAmount;
-    const { fiatPriceRoomsXML, rates } = this.state;
-    const fiatAmount = fiatPriceRoomsXML && CurrencyConverter.convert(rates, RoomsXMLCurrency.get(), DEFAULT_CRYPTO_CURRENCY, fiatPriceRoomsXML);
-    this.props.dispatch(setLocRateInEur(fiatAmount / locPrice, true, 'ConfirmPage'));
-    this.props.dispatch(setLocRate(this.calculateLocRate(locPrice, this.props.paymentInfo.currency, fiatAmount), true, 'ConfirmPage'));
-    this.props.dispatch(setBestLocPrice(locPrice));
+    const data = JSON.parse(event.data);
+    this.quotedPair = data.quotedPair;
+    if (data.id === 'real') {
+      this.quotedLocPrice = data.quotedLoc;
+      this.locPrice = data.locAmount;
+
+      const { fiatPriceRoomsXML, rates } = this.state;
+      const fiatAmount = fiatPriceRoomsXML && CurrencyConverter.convert(rates, RoomsXMLCurrency.get(), DEFAULT_CRYPTO_CURRENCY, fiatPriceRoomsXML);
+      this.setLocRateInRedux(fiatAmount / data.quotedLoc, this.calculateLocRate(data.quotedLoc, this.props.paymentInfo.currency, fiatAmount));
+      this.props.dispatch(setBestLocPrice(data.quotedLoc));
+    } else if (data.id === 'test') {
+      this.testLocPrice = data.locAmount;
+      this.testQuotedLocPrice = data.quotedLoc;
+    }
   }
 
   disconnectSocket() {
+    this.shoudSocketReconnect = false;
     if (this.socket) {
       this.socket.close();
     }
+  }
+
+  socketClose() {
+    if (this.shoudSocketReconnect) {
+      if (this.timer) {
+        clearInterval(this.timer);
+        this.timer = null;
+        this.setState({
+          seconds: 10
+        });
+      }
+      this.getLocEurRate();
+      setTimeout(() => {
+        this.initializeSocket();
+      }, SOCKET_RECONNECT_DELAY);
+    }
+  }
+
+  getEnvironment() {
+    return Config.getValue('env');
   }
 
   payWithCreditCard(path) {
@@ -259,11 +345,25 @@ class HotelBookingConfirmPage extends React.Component {
   }
 
   payWithCard() {
-    const { data, locPrice, fiatPriceRoomsXML, rates } = this.state;
+    const { data, locPrice, quotedLocPrice, fiatPriceRoomsXML, rates, testLocPrice, testQuotedLocPrice } = this.state;
     const currency = this.props.paymentInfo.currency;
+    let fiatAmount;
+    let locAmount;
+    let quotedLoc;
+    if (this.getEnvironment() === 'production') {
+      fiatAmount = CurrencyConverter.convert(rates, RoomsXMLCurrency.get(), currency, fiatPriceRoomsXML);
+      locAmount = locPrice;
+      quotedLoc = quotedLocPrice;
+    } else {
+      fiatAmount = CurrencyConverter.convert(rates, DEFAULT_CRYPTO_CURRENCY, currency, TEST_FIAT_AMOUNT_IN_EUR);
+      locAmount = testLocPrice;
+      quotedLoc = testQuotedLocPrice;
+    }
     const paymentInfo = {
-      fiatAmount: CurrencyConverter.convert(rates, RoomsXMLCurrency.get(), currency, fiatPriceRoomsXML),
-      locAmount: locPrice,
+      fiatAmount,
+      locAmount,
+      quotedLoc,
+      quotedPair: this.quotedPair,
       currency,
       bookingId: data.preparedBookingId,
       backUrl: this.createBackUrl(),
@@ -566,11 +666,14 @@ class HotelBookingConfirmPage extends React.Component {
     if (booking) {
       const { paymentInfo } = this.props;
       booking.forEach((bookingRoom, index) => {
+        const fiatPrice = this.state.rates && (CurrencyConverter.convert(this.state.rates, RoomsXMLCurrency.get(), paymentInfo.currency, bookingRoom.room.totalSellingPrice.amt)).toFixed(2);
+        const locPrice = this.state.rates && this.state.locRate && (CurrencyConverter.convert(this.state.rates, RoomsXMLCurrency.get(), DEFAULT_CRYPTO_CURRENCY, bookingRoom.room.totalSellingPrice.amt) / this.state.locRate).toFixed(4);
         rows.push(
           <tr key={(1 + index) * 1000} className="booking-room">
             <td>{bookingRoom.room.roomType.text}</td>
-            <td><span
-              className="booking-price">{paymentInfo.currency} {this.state.rates && (CurrencyConverter.convert(this.state.rates, RoomsXMLCurrency.get(), paymentInfo.currency, bookingRoom.room.totalSellingPrice.amt)).toFixed(2)} ({this.state.rates && this.state.locRate && (CurrencyConverter.convert(this.state.rates, RoomsXMLCurrency.get(), DEFAULT_CRYPTO_CURRENCY, bookingRoom.room.totalSellingPrice.amt) / this.state.locRate).toFixed(4)} LOC)</span>
+            <td>
+              <span className="booking-price">{paymentInfo.currency} {fiatPrice} ({locPrice} LOC)
+              </span>
             </td>
           </tr>
         );
@@ -679,12 +782,12 @@ class HotelBookingConfirmPage extends React.Component {
 
   getButtonIfUserHasFullInfo(isUserInfoIsComplete) {
     return isUserInfoIsComplete
-      ? (<button className="btn btn-primary" onClick={() => this.payWithCard()}>Pay with Credit Card</button>)
+      ? (<button className="btn btn-primary" disabled={!this.state.locPrice} onClick={() => this.payWithCard()}>Pay with Credit Card</button>)
       : (<div>Your profile isn't complete to pay with credit card. Please go to <Link to="/profile/me/edit">Edit Profile</Link> and provide mandatory information</div>);
   }
 
   render() {
-    const { data, userInfo, seconds, confirmed, password, fiatPriceRoomsXML, locPrice, rates } = this.state;
+    const { data, userInfo, seconds, confirmed, password, fiatPriceRoomsXML, quotedLocPrice, rates, testQuotedLocPrice } = this.state;
     if (userInfo == null) {
       return <div className="loader"></div>;
     }
@@ -694,15 +797,12 @@ class HotelBookingConfirmPage extends React.Component {
     const isUserInfoIsComplete = this.isUserInfoIsComplete(userInfo);
     const currency = this.props.paymentInfo.currency;
     const currencySign = this.props.paymentInfo.currencySign;
+    const env = this.getEnvironment();
 
     return (
       <React.Fragment>
-        <div className="booking-steps sm-none">
-          <div className="container">
-            <p>1. Provide Guest Information</p>
-            <p>2. Review Room Details</p>
-            <p>3. Confirm and Pay</p>
-          </div>
+        <div className="sm-none">
+          <BookingSteps steps={['Provide Guest Information', 'Review Room Details', 'Confirm and Pay']} currentStepIndex={2} />
         </div>
 
         {!data ?
@@ -746,8 +846,12 @@ class HotelBookingConfirmPage extends React.Component {
                   <div className="payment-methods">
                     <div className="payment-methods-card">
                       <div className="details">
+                        {(env === 'development' || env === 'staging') &&
+                          <p style={{ color: 'red' }}>
+                            <strong>Pay with Credit Card: TEST Price: {currencySign} {rates && (CurrencyConverter.convert(rates, DEFAULT_CRYPTO_CURRENCY, currency, 15)).toFixed(2)}</strong>
+                          </p>}
                         <p className="booking-card-price">
-                          Pay with Credit Card: Current Market Price: <span className="important">{currencySign}{fiatPriceRoomsXML && (CurrencyConverter.convert(rates, RoomsXMLCurrency.get(), currency, fiatPriceRoomsXML)).toFixed(2)}</span>
+                          Pay with Credit Card: Current Market Price: <span className="important">{currencySign}{fiatPriceRoomsXML && rates && (CurrencyConverter.convert(rates, RoomsXMLCurrency.get(), currency, fiatPriceRoomsXML)).toFixed(2)}</span>
                         </p>
                         {this.getButtonIfUserHasFullInfo(isUserInfoIsComplete)}
                       </div>
@@ -769,8 +873,16 @@ class HotelBookingConfirmPage extends React.Component {
                     </div>
                     <div className="payment-methods-loc">
                       <div className="details">
-                        <p>Pay Directly With LOC: <span className="important">{currencySign}{fiatPriceRoomsXML && (CurrencyConverter.convert(rates, RoomsXMLCurrency.get(), currency, fiatPriceRoomsXML)).toFixed(2)}</span></p>
-                        <p>Order LOC Total: <span className="important">LOC {locPrice && (locPrice).toFixed(4)}</span></p>
+                        {(env === 'development' || env === 'staging') &&
+                          <p style={{ color: 'red' }}>
+                            <strong>Pay Directly With LOC: TEST Price: {currencySign} {rates && (CurrencyConverter.convert(rates, DEFAULT_CRYPTO_CURRENCY, currency, 15)).toFixed(2)}</strong>
+                          </p>}
+                        <p>Pay Directly With LOC: <span className="important">{currencySign}{rates && fiatPriceRoomsXML && (CurrencyConverter.convert(rates, RoomsXMLCurrency.get(), currency, fiatPriceRoomsXML)).toFixed(2)}</span></p>
+                        {(env === 'development' || env === 'staging') &&
+                          <p style={{ color: 'red' }}>
+                            <strong>Order LOC Total: TEST Price: {testQuotedLocPrice && `LOC ${(testQuotedLocPrice).toFixed(4)}`}</strong>
+                          </p>}
+                        <p>Order LOC Total: <span className="important">LOC {quotedLocPrice && (quotedLocPrice).toFixed(4)}</span></p>
                         <div className="price-update-timer" tooltip="Seconds until we update your quoted price">
                           LOC price will update in <i className="fa fa-clock-o" aria-hidden="true"></i>&nbsp;{seconds} sec &nbsp;
                         </div>

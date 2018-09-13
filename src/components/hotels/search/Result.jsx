@@ -15,6 +15,7 @@ import Slider from 'react-slick';
 import StringUtils from '../../../services/utilities/stringUtilities';
 import _ from 'lodash';
 import { connect } from 'react-redux';
+import HotelItemRatingBox from '../../common/hotel/HotelItemRatingBox';
 import requester from '../../../initDependencies';
 
 const SCREEN_SIZE_SMALL = 'SMALL';
@@ -94,16 +95,6 @@ class Result extends React.Component {
     return TITLE_LENGTH[screenSize];
   }
 
-  calculateStars(ratingNumber) {
-    let starsElements = [];
-    let rating = Math.round(ratingNumber);
-    for (let i = 0; i < rating; i++) {
-      starsElements.push(<span key={i} className="full-star"></span>);
-    }
-
-    return starsElements;
-  }
-
   render() {
     let { id, name, generalDescription, star } = this.props.hotel;
     let { price } = this.props;
@@ -112,7 +103,7 @@ class Result extends React.Component {
     const { currencySign } = this.props.paymentInfo;
     const isPriceLoaded = !!price;
     const priceInEUR = rates && ((CurrencyConverter.convert(rates, RoomsXMLCurrency.get(), DEFAULT_CRYPTO_CURRENCY, price)) / this.props.nights).toFixed(2);
-    let locPrice = locRate !== 0 && (priceInEUR / locRate).toFixed(2);
+    let locPrice = locRate !== 0 && !isNaN(priceInEUR) && (priceInEUR / locRate).toFixed(2);
     const priceInSelectedCurrency = rates && ((CurrencyConverter.convert(rates, RoomsXMLCurrency.get(), this.props.paymentInfo.currency, price)) / this.props.nights).toFixed(2);
 
     name = name && StringUtils.shorten(name, this.state.titleLength);
@@ -140,8 +131,6 @@ class Result extends React.Component {
     const SlickButton = ({ currentSlide, slideCount, ...props }) => (
       <button {...props} />
     );
-
-
 
     const settings = {
       infinite: true,
@@ -198,12 +187,7 @@ class Result extends React.Component {
         <div className="result-content">
           <div>
             <h4><Link target={isMobile === false ? '_blank' : '_self'} to={`${redirectURL}/${id}${search.substr(0, endOfSearch)}`}>{name}</Link></h4>
-            <div className="rating">
-              <span>Rating: </span>
-              <div className="rating-holder">
-                {this.calculateStars(star)}
-              </div>
-            </div>
+            <HotelItemRatingBox rating={star} />
           </div>
           <div className="result-description">{generalDescription && ReactHtmlParser(generalDescription)}</div>
           <div className="result-mobile-pricing">
@@ -225,9 +209,9 @@ class Result extends React.Component {
           <div className="price-for">Price for 1 night</div>
           {!isPriceLoaded
             ? (!this.props.allElements ? <div className="loader" style={{ width: '100%' }}></div> : <span style={{ padding: '20px 10px 10px 10px' }}>Unavailable</span>)
-            : <span className="price">{this.props.userInfo.isLogged && `${currencySign} ${priceInSelectedCurrency}`}</span>
+            : <span className="price">{this.props.userInfo.isLogged && priceInSelectedCurrency && `${currencySign} ${priceInSelectedCurrency}`}</span>
           }
-          {isPriceLoaded && <span>(LOC {locPrice})</span>}
+          {locPrice && locPrice !== 0 && <span>(LOC {locPrice})</span>}
           {!isPriceLoaded && this.props.allElements
             ? <button disabled className="btn">Unavailable</button>
             : <Link target={isMobile === false ? '_blank' : '_self'} className="btn" to={`${redirectURL}/${id}${search.substr(0, endOfSearch)}`}>Book now</Link>
@@ -244,6 +228,7 @@ Result.propTypes = {
   locRate: PropTypes.number,
   rates: PropTypes.any,
   price: PropTypes.any,
+  allElements: PropTypes.bool,
 
   // Router props
   location: PropTypes.object,

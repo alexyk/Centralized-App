@@ -13,16 +13,18 @@ import requester from '../../../initDependencies';
 import { setCurrency } from '../../../actions/paymentInfo';
 import validator from 'validator';
 import { withRouter } from 'react-router-dom';
+import BookingSteps from '../../common/utility/BookingSteps';
 import { RoomsXMLCurrency } from '../../../services/utilities/roomsXMLCurrency';
-
 const DEFAULT_CRYPTO_CURRENCY = 'EUR';
 
 class HotelsBookingPage extends React.Component {
   constructor(props) {
     super(props);
 
+    const searchString = this.getSearchParams();
+
     this.state = {
-      // rooms: [{ adults: [{ title: '', firstName: '', lastName: '' }], children: [] }],
+      rooms: this.getRoomsFromURL(searchString),
       data: null,
       loading: true,
       userInfo: {}
@@ -129,8 +131,8 @@ class HotelsBookingPage extends React.Component {
       .then(res => res.body)
       .then(userInfo => this.setState({ userInfo }, () => {
         const rooms = [...this.state.rooms];
-        rooms[0].adults[0].firstName = userInfo.firstName;
-        rooms[0].adults[0].lastName = userInfo.lastName;
+        rooms[0].adults[0].firstName = userInfo.firstName.trim();
+        rooms[0].adults[0].lastName = userInfo.lastName.trim();
         rooms[0].adults[0].title = userInfo.gender === 'female' ? 'Mrs' : 'Mr';
         this.setState({ rooms });
       }));
@@ -144,9 +146,9 @@ class HotelsBookingPage extends React.Component {
       const adults = [];
       for (let guestIndex = 0; guestIndex < searchRoom.adults; guestIndex++) {
         const adult = {
-          title: roomIndex === 0 && guestIndex === 0 && this.state.userInfo.gender === 'women' ? 'Mrs' : 'Mr',
-          firstName: roomIndex === 0 && guestIndex === 0 ? this.state.userInfo.firstName : guestIndex > 0 ? 'Optional' : '',
-          lastName: roomIndex === 0 && guestIndex === 0 ? this.state.userInfo.lastName : guestIndex > 0 ? 'Optional' : '',
+          title: 'Mr',
+          firstName: guestIndex > 0 ? 'Optional' : '',
+          lastName: guestIndex > 0 ? 'Optional' : '',
         };
 
         adults.push(adult);
@@ -215,9 +217,12 @@ class HotelsBookingPage extends React.Component {
   handleAdultChange(event, roomIndex, adultIndex) {
     const name = event.target.name;
     const value = event.target.value;
-    const rooms = this.state.rooms.slice();
-    rooms[roomIndex].adults[adultIndex][name] = value;
-    this.setState({ rooms: rooms });
+    const regexp = /^[a-zA-Z]+(-[a-zA-Z]*)?$/;
+    if (value === '' || validator.matches(value, regexp)) {
+      const rooms = this.state.rooms.slice();
+      rooms[roomIndex].adults[adultIndex][name] = value.trim();
+      this.setState({ rooms: rooms });
+    }
   }
 
   handleChildAgeChange(event, roomIndex, childIndex) {
@@ -299,13 +304,7 @@ class HotelsBookingPage extends React.Component {
 
     return (
       <div>
-        <div className="booking-steps">
-          <div className="container">
-            <p>1. Provide Guest Information</p>
-            <p>2. Review Room Details</p>
-            <p>3. Confirm and Pay</p>
-          </div>
-        </div>
+        <BookingSteps steps={['Provide Guest Information', 'Review Room Details', 'Confirm and Pay']} currentStepIndex={1} />
 
         {!this.state.hotel ?
           <div className="loader"></div> :

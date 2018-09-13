@@ -1,14 +1,16 @@
-import BancorConvertWidget from '../external/BancorConvertWidget';
-import HomesHeroComponent from './HomesHeroComponent';
-// import PopularListingsCarousel from '../common/listing/PopularListingsCarousel';
 import PropTypes from 'prop-types';
 import React from 'react';
 import moment from 'moment';
-import requester from '../../initDependencies';
 import { withRouter } from 'react-router-dom';
-import PopularDestinationsCarousel from '../hotels/carousel/PopularDestinationsCarousel';
+import requester from '../../initDependencies';
+import HomesSearchBar from '../homes/search/HomesSearchBar';
+import HotelsSearchBar from '../hotels/search/HotelsSearchBar';
+import ListingTypeNav from '../common/listingTypeNav/ListingTypeNav';
 
-class HomesHomePage extends React.Component {
+import '../../styles/css/components/hero-component.css';
+import '../../styles/css/components/tabs-component.css';
+
+class HeroComponent extends React.Component {
   constructor(props) {
     super(props);
 
@@ -27,6 +29,7 @@ class HomesHomePage extends React.Component {
     this.onChange = this.onChange.bind(this);
     this.handleSearch = this.handleSearch.bind(this);
     this.handleDatePick = this.handleDatePick.bind(this);
+    this.redirectToSearchPage = this.redirectToSearchPage.bind(this);
     this.handleDestinationPick = this.handleDestinationPick.bind(this);
   }
 
@@ -50,7 +53,6 @@ class HomesHomePage extends React.Component {
 
   handleSearch(e) {
     e.preventDefault();
-
     let queryString = '?';
 
     queryString += 'countryId=' + this.state.countryId;
@@ -66,49 +68,51 @@ class HomesHomePage extends React.Component {
       startDate: picker.startDate,
       endDate: picker.endDate,
     });
-  }  
-  
+  }
+
   handleDestinationPick(region) {
     this.setState({ countryId: region.countryId.toString() });
     document.getElementsByName('stay')[0].click();
   }
 
+  redirectToSearchPage(queryString) {
+    this.props.history.push('/hotels/listings' + queryString);
+  }
+
   render() {
     return (
-      <div>
-        <HomesHeroComponent
-          countryId={this.state.countryId}
-          countries={this.state.countries}
-          startDate={this.state.startDate}
-          endDate={this.state.endDate}
-          guests={this.state.guests}
-          onChange={this.onChange}
-          handleSearch={this.handleSearch}
-          handleDatePick={this.handleDatePick}
-        />
-
-        <BancorConvertWidget />
-
-        <section id="popular-hotels-box">
-          <h2>Popular Destinations</h2>
-          <PopularDestinationsCarousel handleDestinationPick={this.handleDestinationPick} />
-          <div className="clearfix"></div>
-        </section>
-        <section id="get-started">
-          <div className="container">
-            <div className="get-started-graphic">
-              <div className="clearfix"></div>
+      <div className="hero">
+        <div className="container">
+          <div className="hero-content">
+            <h1>Discover your next experience</h1>
+            <h2>Browse for homes &amp; hotels worldwide</h2>
+            <div className="source-data">
+              <ListingTypeNav />
+              {this.props.homePage === 'hotels' ?
+                <HotelsSearchBar redirectToSearchPage={this.redirectToSearchPage} /> :
+                <HomesSearchBar
+                  countryId={this.state.countryId}
+                  countries={this.state.countries}
+                  startDate={this.state.startDate}
+                  endDate={this.state.endDate}
+                  guests={this.state.guests}
+                  onChange={this.onChange}
+                  handleSearch={this.handleSearch}
+                  handleDatePick={this.handleDatePick}
+                />}
             </div>
           </div>
-        </section>
+        </div>
       </div>
     );
   }
 }
 
-HomesHomePage.propTypes = {
-  // router props
+HeroComponent.propTypes = {
+  homePage: PropTypes.string,
+
+  // Router props
   history: PropTypes.object
 };
 
-export default withRouter(HomesHomePage);
+export default withRouter(HeroComponent);

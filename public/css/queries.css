@@ -17,7 +17,7 @@
     }
 
     #room-book-confirm .btn-book{
-      width: 100%; 
+      width: 100%;
     }
 
     .modal-body {
@@ -95,7 +95,7 @@
     #attached-footer {
         display: none;
     }
-    
+
     .list-hotel-box,
     .filter-box {
         margin: 0 auto;
@@ -118,22 +118,22 @@
     height: 30px;
     margin-top: 50px;
   }
-  
+
   #second-nav ul {
     display: flex;
   }
-  
+
   #second-nav a {
       font-size: 14px;
       color: #000;
   }
-  
+
   #second-nav a:hover,
   #second-nav li a.active {
       font-size: 14px;
       border-bottom: 1px solid #d87a61;
   }
-  
+
   #second-nav li>a {
       padding-top: 20px;
       padding-bottom: 10px;
@@ -162,6 +162,9 @@
     .navbar-brand img {
       height: 40px;
     }
+    #second-nav a {
+      color: #000;
+    }
 }
 
 @media (max-width: 992px) {
@@ -173,7 +176,7 @@
         width: 20%;
         float: left;
     }
-}
+  }
 
 @media (min-width: 1200px) {
     .col-lg-15 {

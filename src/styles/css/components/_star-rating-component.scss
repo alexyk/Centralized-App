@@ -43,15 +43,15 @@ $media-expressions: (
 // rating
 .rating {
 	font-size: 16px;
-	display: inline-block;
+	// display: inline-block;
 	box-sizing: content-box;
 	&[data-state="disabled"]{
 		pointer-events: none;
 	}
 	.rating-holder {
-		display: flex;
+		// display: flex;
 		flex-flow: row-reverse;
-		margin: 0 -0.1em; 
+		// margin: 0 -0.1em; 
 	}
 	&:hover {
 		input {

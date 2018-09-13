@@ -45,8 +45,11 @@ $media-expressions: (
 			display: flex;
     }
     .loc-rate {
-      margin: 0;
-      @include media("<tablet") {
+	  margin: 0;
+	  display: flex;
+	  flex-direction: row;
+	  align-items: center;
+      @include media("<=desktop") {
         text-align: left;
         padding: 10px 0;
       }
@@ -55,13 +58,10 @@ $media-expressions: (
 			font-weight: 400;
 			font-size: 14px;
 			text-transform: uppercase;
-			margin-bottom: 15px;
+			// margin-bottom: 15px;
 			@include media(">=desktop") {
 				margin-right: 19px;
 				margin-bottom: 0;
-      }
-      @include media("<tablet") {
-        font-size: 1em;
       }
 		}
 	}
@@ -69,19 +69,15 @@ $media-expressions: (
     font-size: 14px;
 		text-transform: uppercase;
 		color: $moderate-red;
+    margin-right: 10px;
 		@include media(">=desktop") {
-      margin-right: 11px;
       padding-top: 10px;
       padding-bottom: 10px;
-    }
-    @include media("<tablet") {
-      font-size: 1em;
-      margin-right: 2%;
     }
   }
   .balance-info {
     display: flex;
-    @include media("<tablet") {
+    @include media("<=desktop") {
       display: block;
     }
   }
@@ -101,13 +97,16 @@ $media-expressions: (
 			// border-right: none;
 			border-radius: 3px 0 0 3px;
 			display: flex;
-			align-items: center;
-			padding: 12px 10px;
-			font-size: 14px;
+      align-items: center;
+      padding: 8px 10px;
+      font-size: 14px;
+      // @include media("<=desktop") {
+      //   padding: 12px 10px;
+      // }
 			@include media(">=desktop") {
 				min-width: 211px;
       }
-      @include media("<tablet") {
+      @include media("<=desktop") {
         background-color: #fff;
       }
 			span {
@@ -138,7 +137,7 @@ $media-expressions: (
 		@include media(">=tablet") {
       margin-bottom: 0;
     }
-    @include media("<tablet") {
+    @include media("<=desktop") {
       display: none;
     }
 		select {
@@ -205,11 +204,7 @@ $media-expressions: (
 
 .source-data {
 	width: 100%;
-	max-width: 400px;
 	margin: 0 auto;
-	@include media(">=desktop") {
-		max-width: none;
-	}
 }
 
 .source-panel {
@@ -236,7 +231,9 @@ $media-expressions: (
 		background: $white;
     padding: 7px 0;
     // height: 50px;
-		// width: 100%;
+    @include media(">=tablet") {
+      width: 100%;
+		}
 	}
 	.check-wrap{
 		display: flex;
@@ -256,7 +253,9 @@ $media-expressions: (
     }
     select {
       border: 0;
-      padding: 20px;
+      padding: 10px;
+      width: 100%;
+      min-width: 85px;
     }
     .select-children {
       display: flex;
@@ -273,13 +272,16 @@ $media-expressions: (
 		display: flex;
     align-items: center;
     text-align: center;
-		justify-content: space-between;
+		justify-content: center;
 		padding: 0 10px;
 		width: 70%;
 		@include media(">=desktop") {
 			width: auto;
 			padding: 0 6px 0 26px;
 			border-right: 1px solid $gray;
+		}
+		@include media("<=phone") {
+			width: 85%;
 		}
 	}
 	.checkin {
@@ -496,12 +498,12 @@ $media-expressions: (
 		border-left: 1px solid #cccccc;
 		@include media(">=desktop") {
 			border-right: 1px solid $gray;
-			min-width: 100px;
-			padding: 0 25px;
+			min-width: 90px;
+			padding: 0 4%;
 			border-left: none;
 		}
 		span {
-			font-size: 12px;
+			font-size: 14px;
 		}
 		.icon-moon {
 			font-size: 18px;
@@ -512,7 +514,7 @@ $media-expressions: (
 		width: 100%;
 		@include media(">=desktop") {
 			width: auto;
-			min-width: 169px;
+			min-width: 110px;
 		}
 	}
 }
