@@ -409,7 +409,7 @@ class StaticHotelsSearchPage extends React.Component {
     const search = this.getSearchString();
     const filters = this.getFilterString();
     const page = this.state.page ? this.state.page : 0;
-    requester.getStaticHotelsByFilter(search, filters).then(res => {
+    requester.getLastSearchHotelResultsByFilter(search, filters).then(res => {
       if (res.success) {
         res.body.then(data => {
           this.setState({ loading: false, hotels: data.content, page, totalElements: data.totalElements }, () => {
@@ -511,7 +511,7 @@ class StaticHotelsSearchPage extends React.Component {
           const filters = this.getFilterString();
           const page = this.state.page ? this.state.page : 0;
           this.setState({ loading: true });
-          requester.getStaticHotelsByFilter(search, filters).then(res => {
+          requester.getLastSearchHotelResultsByFilter(search, filters).then(res => {
             if (res.success) {
               res.body.then(data => {
                 this.setState({ loading: false, hotels: data.content, page, totalElements: data.totalElements });
