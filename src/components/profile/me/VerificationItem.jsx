@@ -1,6 +1,6 @@
 import '../../../styles/css/components/profile/me/profile-verification.css';
 
-import { Link } from 'react-router-dom';
+// import { Link } from 'react-router-dom';
 import { ProfileVerification } from '../../../constants/profileVerification';
 import PropTypes from 'prop-types';
 import React from 'react';

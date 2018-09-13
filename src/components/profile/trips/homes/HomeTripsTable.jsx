@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import moment from 'moment';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 
-import NoEntriesMessage from '../../common/NoEntriesMessage';
+import NoEntriesMessage from '../../../common/messages/NoEntriesMessage';
 import { Config } from '../../../../config';
 
 function HomeTripsTable(props) {
