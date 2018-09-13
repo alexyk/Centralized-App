@@ -2,8 +2,6 @@ import { Config } from '../../../config';
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import '../../../styles/css/components/profile/listings/calendar-aside-static/calendar-aside-static.css';
-
 class CalendarAsideStatic extends React.Component {
   render() {
     return (

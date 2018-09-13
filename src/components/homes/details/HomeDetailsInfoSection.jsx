@@ -10,7 +10,6 @@ import { openModal } from '../../../actions/modalsInfo.js';
 import { LOGIN } from '../../../constants/modals.js';
 
 import '../../../styles/css/components/home/details/home-details-info-section.css';
-import '../../../styles/css/components/homes/property/calendar.css';
 
 import Facilities from '../../hotels/details/Facilities';
 
