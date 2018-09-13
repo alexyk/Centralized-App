@@ -39,7 +39,15 @@ class HotelBookingConfirmPage extends React.Component {
     this.captcha = null;
     this.timer = null;
     this.socket = null;
+
+    this.quotedPair = null;
+
+    this.lockPrice = null;
+    this.quotedLocPrice = null;
+
     this.testLocPrice = null;
+    this.testQuotedLocPrice = null;
+    
     this.shoudSocketReconnect = true;
 
     this.state = {
@@ -49,10 +57,12 @@ class HotelBookingConfirmPage extends React.Component {
       password: '',
       confirmed: false,
       fiatPriceRoomsXML: null,
-      locPrice: null,
+      seconds: 10,
       locRate: null,
-      seconds: 30,
-      testLocPrice: null
+      locPrice: null,
+      quotedLocPrice: null,
+      testLocPrice: null,
+      testQuotedLocPrice: null
     };
 
     this.timeout = null;
@@ -191,33 +201,47 @@ class HotelBookingConfirmPage extends React.Component {
 
   tick() {
     const { seconds } = this.state;
-    let { locPrice, locRate, testLocPrice } = this.state;
+    let { locPrice, quotedLocPrice, locRate, testLocPrice, testQuotedLocPrice } = this.state;
     if (seconds === 1) {
       const bestLocPrice = this.props.bookingBestPrice.locPrice;
-      const testLocPrice = this.testLocPrice;
-      const locRate = this.props.paymentInfo.locRateInEur;
+
+      testLocPrice = this.testLocPrice;
+      testQuotedLocPrice = this.testQuotedLocPrice;
+      locPrice = this.locPrice;
+
+      locRate = this.props.paymentInfo.locRateInEur;
       this.setState({
-        locPrice: bestLocPrice,
-        seconds: 30,
+        locPrice,
+        quotedLocPrice: bestLocPrice,
+        seconds: 10,
         locRate,
-        testLocPrice
+        testLocPrice,
+        testQuotedLocPrice
       });
     } else {
-      if (locPrice === null) {
-        locPrice = this.props.bookingBestPrice.locPrice;
+      if (!locPrice) {
+        locPrice = this.locPrice;
       }
-      if (testLocPrice === null) {
+      if (!testLocPrice) {
         testLocPrice = this.testLocPrice;
+      }
+      if (!testQuotedLocPrice) {
+        testQuotedLocPrice = this.testQuotedLocPrice;
       }
       if (!locRate) {
         locRate = this.props.paymentInfo.locRateInEur;
+      }
+      if (!quotedLocPrice) {
+        quotedLocPrice = this.props.bookingBestPrice.locPrice;
       }
       this.setState((prevState) => {
         return {
           seconds: prevState.seconds - 1,
           locPrice,
+          quotedLocPrice,
           locRate,
-          testLocPrice
+          testLocPrice,
+          testQuotedLocPrice
         };
       });
     }
@@ -241,25 +265,30 @@ class HotelBookingConfirmPage extends React.Component {
   }
 
   connectSocket() {
-    const { fiatPriceRoomsXML, rates } = this.state;
-    const fiatAmount = fiatPriceRoomsXML && CurrencyConverter.convert(rates, RoomsXMLCurrency.get(), DEFAULT_CRYPTO_CURRENCY, fiatPriceRoomsXML);
-    this.socket.send(JSON.stringify({ id: 'real', fiatAmount }));
-    this.socket.send(JSON.stringify({ id: 'test', fiatAmount: TEST_FIAT_AMOUNT_IN_EUR }));
-    this.timer = setInterval(this.tick, 1000);
+    setTimeout(() => {
+      const { fiatPriceRoomsXML, rates } = this.state;
+
+      const fiatAmount = fiatPriceRoomsXML && rates && CurrencyConverter.convert(rates, RoomsXMLCurrency.get(), DEFAULT_CRYPTO_CURRENCY, fiatPriceRoomsXML);
+      this.socket.send(JSON.stringify({ id: 'real', fiatAmount }));
+      this.socket.send(JSON.stringify({ id: 'test', fiatAmount: TEST_FIAT_AMOUNT_IN_EUR }));
+      this.timer = setInterval(this.tick, 1000);
+    }, 10);
   }
 
   handleReceiveMessage(event) {
-    let locPrice;
     const data = JSON.parse(event.data);
+    this.quotedPair = data.quotedPair;
     if (data.id === 'real') {
-      locPrice = data.locAmount;
+      this.quotedLocPrice = data.quotedLoc;
+      this.locPrice = data.locAmount;
 
       const { fiatPriceRoomsXML, rates } = this.state;
       const fiatAmount = fiatPriceRoomsXML && CurrencyConverter.convert(rates, RoomsXMLCurrency.get(), DEFAULT_CRYPTO_CURRENCY, fiatPriceRoomsXML);
-      this.setLocRateInRedux(fiatAmount / locPrice, this.calculateLocRate(locPrice, this.props.paymentInfo.currency, fiatAmount));
-      this.props.dispatch(setBestLocPrice(locPrice));
+      this.setLocRateInRedux(fiatAmount / data.quotedLoc, this.calculateLocRate(data.quotedLoc, this.props.paymentInfo.currency, fiatAmount));
+      this.props.dispatch(setBestLocPrice(data.quotedLoc));
     } else if (data.id === 'test') {
       this.testLocPrice = data.locAmount;
+      this.testQuotedLocPrice = data.quotedLoc;
     }
   }
 
@@ -276,7 +305,7 @@ class HotelBookingConfirmPage extends React.Component {
         clearInterval(this.timer);
         this.timer = null;
         this.setState({
-          seconds: 30
+          seconds: 10
         });
       }
       this.getLocEurRate();
@@ -316,20 +345,25 @@ class HotelBookingConfirmPage extends React.Component {
   }
 
   payWithCard() {
-    const { data, locPrice, fiatPriceRoomsXML, rates, testLocPrice } = this.state;
+    const { data, locPrice, quotedLocPrice, fiatPriceRoomsXML, rates, testLocPrice, testQuotedLocPrice } = this.state;
     const currency = this.props.paymentInfo.currency;
     let fiatAmount;
     let locAmount;
+    let quotedLoc;
     if (this.getEnvironment() === 'production') {
       fiatAmount = CurrencyConverter.convert(rates, RoomsXMLCurrency.get(), currency, fiatPriceRoomsXML);
       locAmount = locPrice;
+      quotedLoc = quotedLocPrice;
     } else {
       fiatAmount = CurrencyConverter.convert(rates, DEFAULT_CRYPTO_CURRENCY, currency, TEST_FIAT_AMOUNT_IN_EUR);
       locAmount = testLocPrice;
+      quotedLoc = testQuotedLocPrice;
     }
     const paymentInfo = {
       fiatAmount,
       locAmount,
+      quotedLoc,
+      quotedPair: this.quotedPair,
       currency,
       bookingId: data.preparedBookingId,
       backUrl: this.createBackUrl(),
@@ -753,7 +787,7 @@ class HotelBookingConfirmPage extends React.Component {
   }
 
   render() {
-    const { data, userInfo, seconds, confirmed, password, fiatPriceRoomsXML, locPrice, rates, testLocPrice } = this.state;
+    const { data, userInfo, seconds, confirmed, password, fiatPriceRoomsXML, quotedLocPrice, rates, testQuotedLocPrice } = this.state;
     if (userInfo == null) {
       return <div className="loader"></div>;
     }
@@ -814,10 +848,10 @@ class HotelBookingConfirmPage extends React.Component {
                       <div className="details">
                         {(env === 'development' || env === 'staging') &&
                           <p style={{ color: 'red' }}>
-                            <strong>Pay with Credit Card: TEST Price: {currencySign} {(CurrencyConverter.convert(rates, DEFAULT_CRYPTO_CURRENCY, currency, 15)).toFixed(2)}</strong>
+                            <strong>Pay with Credit Card: TEST Price: {currencySign} {rates && (CurrencyConverter.convert(rates, DEFAULT_CRYPTO_CURRENCY, currency, 15)).toFixed(2)}</strong>
                           </p>}
                         <p className="booking-card-price">
-                          Pay with Credit Card: Current Market Price: <span className="important">{currencySign}{fiatPriceRoomsXML && (CurrencyConverter.convert(rates, RoomsXMLCurrency.get(), currency, fiatPriceRoomsXML)).toFixed(2)}</span>
+                          Pay with Credit Card: Current Market Price: <span className="important">{currencySign}{fiatPriceRoomsXML && rates && (CurrencyConverter.convert(rates, RoomsXMLCurrency.get(), currency, fiatPriceRoomsXML)).toFixed(2)}</span>
                         </p>
                         {this.getButtonIfUserHasFullInfo(isUserInfoIsComplete)}
                       </div>
@@ -841,14 +875,14 @@ class HotelBookingConfirmPage extends React.Component {
                       <div className="details">
                         {(env === 'development' || env === 'staging') &&
                           <p style={{ color: 'red' }}>
-                            <strong>Pay Directly With LOC: TEST Price: {currencySign} {(CurrencyConverter.convert(rates, DEFAULT_CRYPTO_CURRENCY, currency, 15)).toFixed(2)}</strong>
+                            <strong>Pay Directly With LOC: TEST Price: {currencySign} {rates && (CurrencyConverter.convert(rates, DEFAULT_CRYPTO_CURRENCY, currency, 15)).toFixed(2)}</strong>
                           </p>}
-                        <p>Pay Directly With LOC: <span className="important">{currencySign}{fiatPriceRoomsXML && (CurrencyConverter.convert(rates, RoomsXMLCurrency.get(), currency, fiatPriceRoomsXML)).toFixed(2)}</span></p>
+                        <p>Pay Directly With LOC: <span className="important">{currencySign}{rates && fiatPriceRoomsXML && (CurrencyConverter.convert(rates, RoomsXMLCurrency.get(), currency, fiatPriceRoomsXML)).toFixed(2)}</span></p>
                         {(env === 'development' || env === 'staging') &&
                           <p style={{ color: 'red' }}>
-                            <strong>Order LOC Total: TEST Price: {testLocPrice && `LOC ${(testLocPrice).toFixed(4)}`}</strong>
+                            <strong>Order LOC Total: TEST Price: {testQuotedLocPrice && `LOC ${(testQuotedLocPrice).toFixed(4)}`}</strong>
                           </p>}
-                        <p>Order LOC Total: <span className="important">LOC {locPrice && (locPrice).toFixed(4)}</span></p>
+                        <p>Order LOC Total: <span className="important">LOC {quotedLocPrice && (quotedLocPrice).toFixed(4)}</span></p>
                         <div className="price-update-timer" tooltip="Seconds until we update your quoted price">
                           LOC price will update in <i className="fa fa-clock-o" aria-hidden="true"></i>&nbsp;{seconds} sec &nbsp;
                         </div>
