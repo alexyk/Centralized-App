@@ -1,13 +1,26 @@
 @import "../../../vendors/include-media";
 
 .calendar {
-  display: grid;
-  grid-template-columns: 67% 27%;
-  grid-gap: 6%;
+  display: flex;
   margin: 30px;
   align-items: flex-end;
   @include media("<=tablet") {
-    grid-template-columns: auto;
+    flex-direction: column;
+    align-items: initial;
+    margin: 25px;
+  }
+  .calendar-box {
+    flex: 2;
+    margin: 0 25px;
+    @include media("<=tablet") {
+      margin: 0;
+    }
+  }
+  .calendar-aside-box {
+    flex: 1;
+    @include media("<=tablet") {
+      margin-top: 20px;
+    }
   }
   .calendar-aside-header {
     display: grid;
@@ -80,7 +93,7 @@
       }
       .save-control {
         background-color: #d87a61;
-        padding: 10px 30px;
+        padding: 10px 0;
         border-radius: 3px;
         color: #ffffff;
         &:hover {
@@ -185,6 +198,11 @@
     background: none;
     &.rbc-selected {
       background: none;
+    }
+    .calendar-price {
+      @include media("<=tablet") {
+        font-size: 0.8em;
+      }
     }
   }
   .rbc-month-header {

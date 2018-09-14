@@ -15,8 +15,8 @@ class CalendarPage extends React.Component {
     super(props);
     this.state = {
       listing: null,
-      prices: [],
-      reservations: [],
+      prices: null,
+      reservations: null,
       loading: false,
       allEvents: [],
 
@@ -179,7 +179,7 @@ class CalendarPage extends React.Component {
         let availableText = slotInfo.available === 'true' ? this.state.currencySign + Math.round(slotInfo.price, 2) : 'Blocked';
 
         calendarSlotToChange.title = <span className="calendar-price bold">{availableText}</span>;
-        calendarSlotToChange.available = Boolean(slotInfo.available);
+        calendarSlotToChange.available = slotInfo.available;
         calendarSlotToChange.price = Number(slotInfo.price);
 
         prices[indexOfSlot] = calendarSlotToChange;
@@ -221,38 +221,30 @@ class CalendarPage extends React.Component {
   }
 
   render() {
-    if (this.state.listing === null) {
+    if (this.state.listing === null && this.state.prices === null || this.state.reservations === null || this.state.loading) {
       return <div className="loader"></div>;
     }
 
     return (
       <div className="container">
         <div className="calendar">
-          <div>
+          <div className="calendar-box">
             <Calendar
               allEvents={this.state.allEvents}
-              loading={this.state.loading}
               onCancel={this.onCancel}
               onSelectSlot={this.onSelectSlot}
-              selectedDay={this.state.selectedDay}
-              selectedDate={this.state.selectedDate}
-              price={this.state.price}
-              defaultDailyPrice={this.state.defaultDailyPrice}
-              available={this.state.available}
-              onSubmit={this.onSubmit}
-              onChange={this.onChange}
-              updateDailyPrice={this.updateDailyPrice}
-              currencySign={this.state.currencySign} />
+              selectedDate={this.state.selectedDate} />
           </div>
-          <div>
-            {this.state.selectedDay !== null && this.state.selectedDay !== '' ? <CalendarAside onCancel={this.onCancel}
-              day={this.state.selectedDay}
-              date={this.state.selectedDate}
-              price={this.state.price}
-              available={this.state.available}
-              onSubmit={this.onSubmit}
-              onChange={this.onChange}
-              currencySign={this.state.currencySign} /> :
+          <div className="calendar-aside-box">
+            {this.state.selectedDay !== null && this.state.selectedDay !== '' ?
+              <CalendarAside
+                onCancel={this.onCancel}
+                date={this.state.selectedDate}
+                price={this.state.price}
+                available={this.state.available}
+                onSubmit={this.onSubmit}
+                onChange={this.onChange}
+                currencySign={this.state.currencySign} /> :
               <CalendarAsideStatic
                 currencySign={this.state.currencySign}
                 defaultDailyPrice={this.state.defaultDailyPrice}
