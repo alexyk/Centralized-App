@@ -100,6 +100,7 @@ class ConfirmProfilePage extends React.Component {
   }
 
   payWithCard() {
+    requester.mark
     const { paymentInfo } = this.props.location.state;
     requester.verifyCreditCardPayment(paymentInfo)
       .then(res => {

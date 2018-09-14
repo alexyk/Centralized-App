@@ -276,7 +276,6 @@ class HotelsBookingPage extends React.Component {
     const hotelCityName = this.state.hotel && this.state.hotel.city;
     const rooms = this.state.rooms;
     const rates = this.state.rates;
-    // console.log(this.state.pictures);
     const currency = this.props.paymentInfo.currency;
     const hotelPicUrl = this.state.pictures && this.state.pictures.length > 0 ? this.state.pictures[0].url : '/listings/images/default.png';
     const priceInSelectedCurrency = this.state.rates && Number(CurrencyConverter.convert(this.state.rates, RoomsXMLCurrency.get(), currency, this.state.totalPrice)).toFixed(2);

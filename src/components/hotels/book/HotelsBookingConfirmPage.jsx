@@ -1,6 +1,6 @@
 import '../../../styles/css/components/hotels/book/hotel-booking-confirm-page.css';
 
-import { EXTRA_LONG, LONG } from '../../../constants/notificationDisplayTimes.js';
+import { LONG } from '../../../constants/notificationDisplayTimes.js';
 import { Link, withRouter } from 'react-router-dom';
 import { closeModal, openModal } from '../../../actions/modalsInfo.js';
 import { setBookingCofirmPage, setCurrency, setLocRate, setLocRateInEur } from '../../../actions/paymentInfo';
@@ -672,10 +672,8 @@ class HotelBookingConfirmPage extends React.Component {
 
   isUserInfoIsComplete(userInfo) {
     let infoFieldsToCheck = ['firstName', 'lastName', 'phoneNumber', 'city', 'country', 'address', 'zipCode'];
-
     for (let i = 0; i < infoFieldsToCheck.length; i++) {
       let item = infoFieldsToCheck[i];
-
       for (let key in userInfo) {
         if (userInfo.hasOwnProperty(key)) {
           if (key === item && userInfo[key] === null) {
@@ -686,7 +684,6 @@ class HotelBookingConfirmPage extends React.Component {
     }
 
     return true;
-
   }
 
   getButtonIfUserHasFullInfo(isUserInfoIsComplete) {
@@ -844,11 +841,12 @@ class HotelBookingConfirmPage extends React.Component {
 
 HotelBookingConfirmPage.propTypes = {
   countries: PropTypes.array,
-  match: PropTypes.object,
-
+  requestLockOnQuoteId: PropTypes.func,
+  
   // start Router props
   history: PropTypes.object,
   location: PropTypes.object,
+  match: PropTypes.object,
 
   // start Redux props
   dispatch: PropTypes.func,

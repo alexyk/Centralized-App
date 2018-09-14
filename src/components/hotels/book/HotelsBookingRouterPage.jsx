@@ -29,6 +29,7 @@ class HotelsBookingRouterPage extends React.Component {
     this.clearQuoteIdPollingInterval = this.clearQuoteIdPollingInterval.bind(this);
     this.requestUpdateOnQuoteId = this.requestUpdateOnQuoteId.bind(this);
     this.requestLockOnQuoteId = this.requestLockOnQuoteId.bind(this);
+    this.redirectToHotelDetailsPage = this.redirectToHotelDetailsPage.bind(this);
   }
 
   componentDidMount() {
@@ -57,11 +58,7 @@ class HotelsBookingRouterPage extends React.Component {
     if (this.state) {
       requester.getQuoteIdExpirationFlag(this.state.quoteId).then(res => res.body).then(data => {
         if (!data.is_quote_valid) {
-          NotificationManager.warning(ROOM_NO_LONGER_AVAILABLE, '', LONG);
-          const pathname = this.props.location.pathname.indexOf('/mobile') !== -1 ? '/mobile/details' : '/hotels/listings';
-          const id = this.props.match.params.id;
-          const search = this.getQueryString(queryString.parse(this.state.queryString));
-          this.props.history.push(`${pathname}/${id}${search}`);
+          this.redirectToHotelDetailsPage();
         }
       });
     }
@@ -73,22 +70,23 @@ class HotelsBookingRouterPage extends React.Component {
       const body = { quoteId: quoteId };
       return requester.markQuoteIdAsLocked(quoteId, body).then(res => res.body).then(res => {
         return new Promise((resolve, reject) => {
-          console.log(res.success);
           if (res.success) {
             resolve(true);
           } else {
+            this.redirectToHotelDetailsPage();
             reject(false);
           }
         });
       });
-
-      // NotificationManager.warning('Room is no longer available.', '', LONG);
-      // const pathname = this.props.location.pathname.indexOf('/mobile') !== -1 ? '/mobile/details' : '/hotels/listings';
-      // const id = this.props.match.params.id;
-      // const search = this.getQueryString(queryString.parse(this.props.location.search));
-      // this.props.history.push(`${pathname}/${id}${search}`);
-      // console.log(this.state.hotelId, this.state.quoteId);
     }
+  }
+
+  redirectToHotelDetailsPage() {
+    NotificationManager.warning(ROOM_NO_LONGER_AVAILABLE, '', LONG);
+    const id = this.props.match.params.id;
+    const pathname = this.props.location.pathname.indexOf('/mobile') !== -1 ? '/mobile/details' : '/hotels/listings';
+    const search = this.getQueryString(queryString.parse(this.state.queryString));
+    this.props.history.push(`${pathname}/${id}${search}`);
   }
 
   getQueryString(queryStringParameters) {
@@ -126,6 +124,7 @@ class HotelsBookingRouterPage extends React.Component {
 HotelsBookingRouterPage.propTypes = {
   location: PropTypes.object,
   history: PropTypes.object,
+  match: PropTypes.object
 };
 
 export default withRouter(HotelsBookingRouterPage);
