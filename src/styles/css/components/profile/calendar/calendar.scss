@@ -1,0 +1,260 @@
+@import "../../../vendors/include-media";
+
+.calendar {
+  display: flex;
+  margin: 30px;
+  align-items: flex-end;
+  @include media("<=tablet") {
+    flex-direction: column;
+    align-items: initial;
+    margin: 25px;
+  }
+  .calendar-box {
+    flex: 2;
+    margin: 0 25px;
+    @include media("<=tablet") {
+      margin: 0;
+    }
+  }
+  .calendar-aside-box {
+    flex: 1;
+    @include media("<=tablet") {
+      margin-top: 20px;
+    }
+  }
+  .calendar-aside-header {
+    display: grid;
+    grid-template-columns: 90% 10%;
+    align-items: center;
+    border: 1px solid #d7d7d8;
+    border-radius: 3px 3px 0 0;
+    padding: 10px 20px;
+    button {
+      border-radius: 50%;
+      height: 30px;
+      width: 30px;
+      background-color: inherit;
+      border: 2px solid gray;
+      padding: 6px 8px;
+      font-size: 13px;
+      &:hover {
+        background-color: lightgray;
+      }
+    }
+    h3 {
+      margin: 0;
+      font-size: 20px;
+      font-weight: normal;
+    }
+  }
+  .calendar-aside-body {
+    background: #fff;
+    border: 1px solid #d7d7d8;
+    border-top: none;
+    padding: 25px 0;
+    text-align: center;
+    .radio-label {
+      border: 1px solid #d7d7d8;
+      border-radius: 3px;
+      cursor: pointer;
+      padding: 10px 20px;
+      font-size: 14px;
+      user-select: none;
+      font-weight: 300;
+      &.left {
+        border-right: none;
+        border-top-right-radius: 0;
+        border-bottom-right-radius: 0;
+      }
+      &.right {
+        border-left: none;
+        border-top-left-radius: 0;
+        border-bottom-left-radius: 0;
+      }
+    }
+    input[type="radio"] {
+      display: none;
+    }
+    .controls {
+      display: grid;
+      grid-template-columns: 47% 47%;
+      grid-gap: 6%;
+      padding: 0 40px;
+      font-size: 18px;
+      font-weight: normal;
+      margin-top: 40px;
+      .cancel-control {
+        border: 2px solid #202427;
+        border-radius: 3px;
+        background-color: #ffffff;
+        &:hover {
+          background-color: lightgray;
+        }
+      }
+      .save-control {
+        background-color: #d87a61;
+        padding: 10px 0;
+        border-radius: 3px;
+        color: #ffffff;
+        &:hover {
+          background-color: #a2c5bf;
+        }
+      }
+    }
+  }
+  .calendar-aside-static {
+    border: 1px solid #d7d7d8;
+    padding: 40px 0;
+    text-align: center;
+    img {
+      padding: 30px 15px;
+      width: 100%;
+    }
+    p {
+      font-weight: lighter;
+      padding: 0 15px;
+      text-align: left;
+    }
+    .controls {
+      margin-top: 20px;
+      font-size: 18px;
+      font-weight: normal;
+      .save-control {
+        background-color: #d87a61;
+        padding: 10px 30px;
+        border-radius: 3px;
+        color: #ffffff;
+        &:hover {
+          background-color: #a2c5bf;
+        }
+      }
+    }
+  }
+  .slot-title,
+  .slot-subtitle {
+    font-size: 16px;
+    font-weight: normal;
+  }
+  .slot-subtitle {
+    margin-top: 25px;
+  }
+  .slot-sub-subtitle {
+    margin: 10px 0;
+    font-size: 15px;
+    color: #9c9e9d;
+  }
+  .price-setting {
+    display: grid;
+    grid-template-columns: 23% 77%;
+    padding: 0px 50px;
+    div {
+      font-size: 20px;
+      padding: 15px 0;
+      background-color: #f0f1f3;
+      border: 1px solid #cccccc;
+      border-radius: 3px;
+      border-top-right-radius: 0;
+      border-bottom-right-radius: 0;
+    }
+    input {
+      outline: none;
+      font-size: 33px;
+      padding: 5px 15px;
+      color: #7baaa2;
+      border: 1px solid #cccccc;
+      border-left: none;
+      border-radius: 3px;
+      border-top-left-radius: 0;
+      border-bottom-left-radius: 0;
+    }
+  }
+}
+
+.rbc-calendar {
+  .rbc-date-cell {
+    margin-left: 5px;
+    margin-top: 5px;
+    padding: 5px;
+    text-align: left;
+    a {
+      cursor: default;
+    }
+  }
+  .rbc-off-range-bg {
+    background: none;
+  }
+  .rbc-day-bg {
+    cursor: pointer !important;
+    &:hover {
+      border-bottom: 3px solid #d77961 !important;
+    }
+    // &.unavailable {
+    //   background-color: #8080802b;
+    //   opacity: 0.8;
+    // }
+  }
+  .rbc-event {
+    text-align: right;
+    background: none;
+    &.rbc-selected {
+      background: none;
+    }
+    .calendar-price {
+      @include media("<=tablet") {
+        font-size: 0.8em;
+      }
+    }
+  }
+  .rbc-month-header {
+    border-bottom: 1px solid #ddd;
+    padding: 10px 0;
+    .rbc-header {
+      border: none;
+      font-family: FuturaStd-Medium, sans-serif;
+    }
+  }
+  .rbc-month-row {
+    height: 100px;
+    overflow: visible;
+    .rbc-row-bg {
+      height: 100px;
+      z-index: 999;
+      cursor: pointer;
+    }
+    .rbc-row-content {
+      height: 100px;
+    }
+  }
+  .rbc-now a {
+    background: #d87a61;
+    border-radius: 50%;
+    color: #fff;
+    font-size: 12px;
+    padding: 5px;
+    &:focus {
+      color: #fff;
+    }
+  }
+  .rbc-row-segment {
+    bottom: -35px;
+    position: relative;
+  }
+  .rbc-toolbar {
+    .rbc-toolbar-label {
+      font-size: 35px;
+      text-align: left;
+    }
+    button {
+      color: #c4c4c6;
+      font-size: 32px;
+      outline: none;
+      padding: 0px 18px 5px;
+      &:hover {
+        color: #c4c4c6;
+      }
+    }
+  }
+  .slot-selected {
+    border-bottom: 2px solid #d87a61;
+  }
+}
