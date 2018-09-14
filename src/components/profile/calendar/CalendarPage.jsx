@@ -6,7 +6,7 @@ import CalendarAside from './CalendarAside';
 import CalendarAsideStatic from './CalendarAsideStatic';
 import PropTypes from 'prop-types';
 import React from 'react';
-import moment from 'moment-timezone';
+import moment from 'moment';
 import requester from '../../../initDependencies';
 import { withRouter } from 'react-router-dom';
 
