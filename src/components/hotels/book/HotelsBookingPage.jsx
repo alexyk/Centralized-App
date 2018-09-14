@@ -1,5 +1,5 @@
 import { LONG } from '../../../constants/notificationDisplayTimes.js';
-import { INVALID_CHILD_AGE, INVALID_GUEST_NAME } from '../../../constants/warningMessages.js';
+import { INVALID_CHILD_AGE, INVALID_GUEST_NAME, ROOM_NO_LONGER_AVAILABLE } from '../../../constants/warningMessages.js';
 
 import { Config } from '../../../config';
 import { CurrencyConverter } from '../../../services/utilities/currencyConverter';
@@ -81,9 +81,7 @@ class HotelsBookingPage extends React.Component {
   requestHotelRooms() {
     const id = this.props.match.params.id;
     const searchParams = this.getNewSearchParams();
-    console.log(searchParams);
     const quoteId = searchParams.pop().split('=')[1];
-    console.log(searchParams);
 
     requester.getHotelRooms(id, searchParams).then(res => {
       res.body.then(data => {
@@ -97,7 +95,7 @@ class HotelsBookingPage extends React.Component {
             loading: false,
           });
         } else {
-          NotificationManager.warning('Room is no longer available', '', LONG);
+          NotificationManager.warning(ROOM_NO_LONGER_AVAILABLE, '', LONG);
           const pathname = this.props.location.pathname.indexOf('/mobile') !== -1 ? '/mobile/details' : '/hotels/listings';
           const id = this.props.match.params.id;
           const search = this.getQueryString(queryString.parse(this.props.location.search));
@@ -220,18 +218,7 @@ class HotelsBookingPage extends React.Component {
     } else if (!this.isValidAges()) {
       NotificationManager.warning(INVALID_CHILD_AGE, '', LONG);
     } else {
-      const quoteId = this.state.quoteId;
-      const rooms = this.state.rooms;
-      const currency = this.props.paymentInfo.currency;
-      const booking = {
-        currency: currency,
-        rooms: rooms,
-        quoteId: quoteId,
-      };
-
       const queryParams = queryString.parse(this.props.location.search);
-
-      const encodedBooking = encodeURI(JSON.stringify(booking));
       const id = this.props.match.params.id;
       const query = this.getQueryString(queryParams);
       const isWebView = this.props.location.pathname.indexOf('/mobile') !== -1;

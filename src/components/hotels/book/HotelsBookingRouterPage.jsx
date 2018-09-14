@@ -8,7 +8,9 @@ import ConfirmProfilePage from './ConfirmProfilePage';
 import queryString from 'query-string';
 import { NotificationManager } from 'react-notifications';
 import { Config } from '../../../config';
+import { ROOM_NO_LONGER_AVAILABLE } from '../../../constants/warningMessages';
 import { LONG } from '../../../constants/notificationDisplayTimes.js';
+import requester from '../../../initDependencies';
 
 const QUOTE_ID_POLLING_INTERVAL_TIME = 10000;
 
@@ -42,7 +44,6 @@ class HotelsBookingRouterPage extends React.Component {
   setQuoteIdPollingInterval() {
     const isQuoteIdPollingIntervalSet = !!this.quoteIdPollingInterval;
     if (!isQuoteIdPollingIntervalSet) {
-      console.log('started checking for quote id expiration');
       this.quoteIdPollingInterval = setInterval(() => {
         this.requestUpdateOnQuoteId();
       }, QUOTE_ID_POLLING_INTERVAL_TIME);
@@ -51,27 +52,17 @@ class HotelsBookingRouterPage extends React.Component {
 
   clearQuoteIdPollingInterval() {
     clearInterval(this.quoteIdPollingInterval);
-    console.log('stopped checking for quote id expiration');
   }
 
   requestUpdateOnQuoteId() {
     if (this.state) {
-      console.log('checking quote id');
-      const token = localStorage[Config.getValue('domainPrefix') + '.auth.locktrip'];
-      fetch(`${Config.getValue('apiHost')}api/hotels/rooms/${this.state.quoteId}/valid`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': token
-        }
-      }).then(res => res.json()).then(data => {
+      requester.getQuoteIdExpirationFlag(this.state.quoteId).then(res => res.body).then(data => {
         if (!data.is_quote_valid) {
-          NotificationManager.warning('Room is no longer available.', '', LONG);
+          NotificationManager.warning(ROOM_NO_LONGER_AVAILABLE, '', LONG);
           const pathname = this.props.location.pathname.indexOf('/mobile') !== -1 ? '/mobile/details' : '/hotels/listings';
           const id = this.props.match.params.id;
           const search = this.getQueryString(queryString.parse(this.state.queryString));
           this.props.history.push(`${pathname}/${id}${search}`);
-          console.log(this.state.hotelId, this.state.quoteId);
         }
       });
     }
@@ -79,17 +70,9 @@ class HotelsBookingRouterPage extends React.Component {
 
   requestLockOnQuoteId() {
     if (this.state) {
-      console.log('locking quote id');
-      const body = { quoteId: this.state.quoteId };
-      const token = localStorage[Config.getValue('domainPrefix') + '.auth.locktrip'];
-      return fetch(`${Config.getValue('apiHost')}api/hotels/rooms/${this.state.quoteId}/mark`, {
-        method: 'POST',
-        body: JSON.stringify(body),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': token
-        }
-      }).then(res => res.json()).then(res => {
+      const quoteId = this.state.quoteId;
+      const body = { quoteId: quoteId };
+      return requester.markQuoteIdAsLocked(quoteId, body).then(res => res.body).then(res => {
         return new Promise((resolve, reject) => {
           console.log(res.success);
           if (res.success) {
