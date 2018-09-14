@@ -404,7 +404,7 @@ class StaticHotelsSearchPage extends React.Component {
     requester.getLastSearchHotelResultsByFilter(search, filters).then(res => {
       if (res.success) {
         res.body.then(data => {
-          console.log(data);
+          // console.log(data);
           this.setState({ loading: false, hotels: data.content, page, totalElements: data.totalElements }, () => {
             this.props.history.replace(baseUrl + search + filters);
             if (onSuccess) {

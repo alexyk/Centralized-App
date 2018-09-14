@@ -1,6 +1,6 @@
 import { Config } from '../../config';
 import { store } from '../../initDependencies';
-import { updateLocAmounts, clearLocAmounts } from '../../actions/paymentInfo';
+import { updateLocAmounts, clearLocAmounts } from '../../actions/locAmountsInfo';
 import { setLocPriceWebsocketConnection } from '../../actions/socketInfo';
 
 const WEBSOCKET_RECONNECT_DELAY = 5000;

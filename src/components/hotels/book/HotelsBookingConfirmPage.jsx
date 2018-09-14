@@ -3,7 +3,8 @@ import '../../../styles/css/components/hotels/book/hotel-booking-confirm-page.cs
 import { EXTRA_LONG, LONG } from '../../../constants/notificationDisplayTimes.js';
 import { Link, withRouter } from 'react-router-dom';
 import { closeModal, openModal } from '../../../actions/modalsInfo.js';
-import { setBookingCofirmPage, setCurrency, setLocRate, setLocRateInEur } from '../../../actions/paymentInfo';
+import { setCurrency } from '../../../actions/paymentInfo';
+import { setLocRate, setLocRateInEur, setBookingCofirmPage } from '../../../actions/dynamicLocRates';
 
 import { Config } from '../../../config.js';
 import { CurrencyConverter } from '../../../services/utilities/currencyConverter';

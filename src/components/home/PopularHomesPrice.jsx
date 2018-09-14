@@ -15,8 +15,9 @@ class PopularHomesPrice extends Component {
   }
 
   render() {
-    const { paymentInfo, item } = this.props;
-    const { currency, rates } = paymentInfo;
+    const { paymentInfo, currenciesRatesInfo, item } = this.props;
+    const { currency } = paymentInfo;
+    const { rates } = currenciesRatesInfo;
     const price = (item.prices) && currency === item.currencyCode ? item.defaultDailyPrice : item.prices[RoomsXMLCurrency.get()];
 
     return (
@@ -34,14 +35,16 @@ PopularHomesPrice.propTypes = {
 
   // start Redux props
   paymentInfo: PropTypes.object,
-  userInfo: PropTypes.object
+  userInfo: PropTypes.object,
+  currenciesRatesInfo: PropTypes.object,
 };
 
 function mapStateToProps(state) {
-  const { paymentInfo, userInfo } = state;
+  const { paymentInfo, userInfo, currenciesRatesInfo } = state;
   return {
     paymentInfo,
-    userInfo
+    userInfo,
+    currenciesRatesInfo
   };
 }
 

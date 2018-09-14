@@ -7,12 +7,6 @@ export const userInfo = {
 // paymentInfo actions
 export const paymentInfo = {
   SET_CURRENCY: 'SET_CURRENCY',
-  SET_LOC_RATE: 'SET_LOC_RATE',
-  SET_LOC_RATE_IN_EUR: 'SET_LOC_RATE_IN_EUR',
-  SET_IS_BOOKING_CONFIRM_PAGE: 'SET_IS_BOOKING_CONFIRM_PAGE',
-  SET_CURRENCY_RATES: 'SET_CURRENCY_RATES',
-  UPDATE_LOC_AMOUNTS: 'UPDATE_LOC_AMOUNTS',
-  CLEAR_LOC_AMOUNTS: 'CLEAR_LOC_AMOUNTS'
 };
 
 // paymentInfo actions
@@ -45,4 +39,22 @@ export const bookingBestPrice = {
 // socket actions
 export const socketInfo = {
   SET_LOC_PRICE_WEBSOCKET_CONNECTION: 'SET_LOC_PRICE_WEBSOCKET_CONNECTION',
+};
+
+// locAmounts actions
+export const locAmountsInfo = {
+  UPDATE_LOC_AMOUNTS: 'UPDATE_LOC_AMOUNTS',
+  CLEAR_LOC_AMOUNTS: 'CLEAR_LOC_AMOUNTS'
+};
+
+// currencies rates actions
+export const currenciesRatesInfo = {
+  SET_CURRENCY_RATES: 'SET_CURRENCY_RATES',
+};
+
+// dynamic loc rates
+export const dynamicLocRates = {
+  SET_LOC_RATE: 'SET_LOC_RATE',
+  SET_LOC_RATE_IN_EUR: 'SET_LOC_RATE_IN_EUR',
+  SET_IS_BOOKING_CONFIRM_PAGE: 'SET_IS_BOOKING_CONFIRM_PAGE'
 };

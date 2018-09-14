@@ -3,7 +3,9 @@ import '../../styles/css/components/tabs-component.css';
 
 import { NavLink, withRouter } from 'react-router-dom';
 import React, { Component, Fragment } from 'react';
-import { setCurrency, setLocRate, setLocRateInEur, setCurrencyRates } from '../../actions/paymentInfo';
+import { setCurrency } from '../../actions/paymentInfo';
+import { setLocRate, setLocRateInEur } from '../../actions/dynamicLocRates';
+import { setCurrencyRates } from '../../actions/currenciesRatesInfo';
 
 import { Config } from '../../config.js';
 import { CurrencyConverter } from '../../services/utilities/currencyConverter';
@@ -88,7 +90,7 @@ class NavLocalization extends Component {
     if (currency === 'EUR') {
       return DEFAULT_EUR_AMOUNT / locAmount;
     }
-    const fiatAmount = this.props.paymentInfo.rates && CurrencyConverter.convert(this.props.paymentInfo.rates, DEFAULT_CRYPTO_CURRENCY, currency, DEFAULT_EUR_AMOUNT);
+    const fiatAmount = this.props.currenciesRatesInfo.rates && CurrencyConverter.convert(this.props.currenciesRatesInfo.rates, DEFAULT_CRYPTO_CURRENCY, currency, DEFAULT_EUR_AMOUNT);
     return fiatAmount / locAmount;
   }
 
@@ -138,8 +140,9 @@ class NavLocalization extends Component {
   }
 
   render() {
-    const { currency, rates } = this.props.paymentInfo;
-    let { locRate } = this.props.paymentInfo;
+    const { currency } = this.props.paymentInfo;
+    const { rates } = this.props.currenciesRatesInfo;
+    let { locRate } = this.props.dynamicLocRates;
     const { locAmount } = this.state;
     const { locBalance, ethBalance, isLogged } = this.props.userInfo;
 
@@ -226,14 +229,18 @@ NavLocalization.propTypes = {
   // Redux props
   dispatch: PropTypes.func,
   paymentInfo: PropTypes.object,
-  userInfo: PropTypes.object
+  userInfo: PropTypes.object,
+  currenciesRatesInfo: PropTypes.object,
+  dynamicLocRates: PropTypes.object,
 };
 
 function mapStateToProps(state) {
-  const { paymentInfo, userInfo } = state;
+  const { paymentInfo, userInfo, currenciesRatesInfo, dynamicLocRates } = state;
   return {
     paymentInfo,
-    userInfo
+    userInfo,
+    currenciesRatesInfo,
+    dynamicLocRates,
   };
 }
 
