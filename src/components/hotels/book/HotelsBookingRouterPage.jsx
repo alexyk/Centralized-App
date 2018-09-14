@@ -7,7 +7,6 @@ import HotelsBookingConfirmPage from './HotelsBookingConfirmPage';
 import ConfirmProfilePage from './ConfirmProfilePage';
 import queryString from 'query-string';
 import { NotificationManager } from 'react-notifications';
-import { Config } from '../../../config';
 import { ROOM_NO_LONGER_AVAILABLE } from '../../../constants/warningMessages';
 import { LONG } from '../../../constants/notificationDisplayTimes.js';
 import requester from '../../../initDependencies';

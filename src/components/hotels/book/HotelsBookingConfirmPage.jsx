@@ -17,7 +17,6 @@ import PasswordModal from '../../common/modals/PasswordModal';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { RoomsXMLCurrency } from '../../../services/utilities/roomsXMLCurrency';
-import { SEARCH_EXPIRED } from '../../../constants/infoMessages.js';
 import { connect } from 'react-redux';
 import moment from 'moment';
 import queryString from 'query-string';
@@ -28,7 +27,6 @@ import { setBestLocPrice } from '../../../actions/bookingBestPrice';
 // import SMSCodeModal from '../modals/SMSCodeModal';
 
 const ERROR_MESSAGE_TIME = 20000;
-const SEARCH_EXPIRE_TIME = 900000;
 const DEFAULT_CRYPTO_CURRENCY = 'EUR';
 const TEST_FIAT_AMOUNT_IN_EUR = 15;
 const SOCKET_RECONNECT_DELAY = 5000;
@@ -77,7 +75,6 @@ class HotelBookingConfirmPage extends React.Component {
     this.requestBookingInfo = this.requestBookingInfo.bind(this);
     this.requestCurrencyRates = this.requestCurrencyRates.bind(this);
     this.createBackUrl = this.createBackUrl.bind(this);
-    this.setSearchExpirationTimeout = this.setSearchExpirationTimeout.bind(this);
     this.tick = this.tick.bind(this);
 
     // SOCKET BINDINGS
@@ -92,7 +89,6 @@ class HotelBookingConfirmPage extends React.Component {
     this.requestUserInfo();
     this.requestBookingInfo();
     this.requestCurrencyRates();
-    this.setSearchExpirationTimeout();
 
     this.props.dispatch(setBookingCofirmPage(true));
   }
@@ -190,13 +186,6 @@ class HotelBookingConfirmPage extends React.Component {
         }
       });
     });
-  }
-
-  setSearchExpirationTimeout() {
-    this.timeout = setTimeout(() => {
-      NotificationManager.info(SEARCH_EXPIRED, '', EXTRA_LONG);
-      this.props.history.push('/hotels');
-    }, SEARCH_EXPIRE_TIME);
   }
 
   componentWillUnmount() {
