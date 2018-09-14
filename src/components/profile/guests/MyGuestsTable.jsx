@@ -56,7 +56,7 @@ function MyGuestsTable(props) {
   };
 
   return (
-    <div className="container">
+    <React.Fragment>
       <div className="table-header bold">
         <div className="col-md-1">
         </div>
@@ -77,7 +77,7 @@ function MyGuestsTable(props) {
         </div>
       </div>
       {renderReservations()}
-    </div>
+    </React.Fragment>
   );
 }
 

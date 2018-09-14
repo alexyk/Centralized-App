@@ -146,77 +146,68 @@ class MyListingsPage extends React.Component {
     return (
       <div className="container">
         <section id="profile-mylistings">
-          <div className="container">
-            <h2>Active ({this.state.activeListings.length})</h2>
-            <hr className="profile-line" />
-            {this.state.activeListings.map((item, i) => {
-              return (
-                <MyListingsItemRow
-                  key={i}
-                  styleClass="my-listings-flex-container"
-                  handleOpenDeleteListingModal={this.handleOpenDeleteListingModal}
-                  state={item.state}
-                  filterListings={this.filterListings}
-                  listing={item}
-                />
-              );
-            })}
-          </div>
+          <h2>Active ({this.state.activeListings.length})</h2>
+          <hr />
+          {this.state.activeListings.map((item, i) => {
+            return (
+              <MyListingsItemRow
+                key={i}
+                styleClass="my-listings-flex-container"
+                handleOpenDeleteListingModal={this.handleOpenDeleteListingModal}
+                state={item.state}
+                filterListings={this.filterListings}
+                listing={item}
+              />
+            );
+          })}
 
-          <div className="container">
-            <h2>Inactive ({this.state.inactiveListings.length})</h2>
-            <hr className="profile-line" />
-            {this.state.deniedListings && this.state.inactiveListings.map((item, i) => {
-              return (
-                <MyListingsItemRow
-                  key={i}
-                  styleClass="my-listings-flex-container"
-                  handleOpenDeleteListingModal={this.handleOpenDeleteListingModal}
-                  state={item.state}
-                  filterListings={this.filterListings}
-                  listing={item}
-                />
-              );
-            })}
-          </div>
+          <h2>Inactive ({this.state.inactiveListings.length})</h2>
+          <hr />
+          {this.state.deniedListings && this.state.inactiveListings.map((item, i) => {
+            return (
+              <MyListingsItemRow
+                key={i}
+                styleClass="my-listings-flex-container"
+                handleOpenDeleteListingModal={this.handleOpenDeleteListingModal}
+                state={item.state}
+                filterListings={this.filterListings}
+                listing={item}
+              />
+            );
+          })}
 
-          <div className="container">
-            <h2>Denied ({this.state.deniedListings.length})</h2>
-            <hr className="profile-line" />
-            {this.state.deniedListings && this.state.deniedListings.map((item, i) => {
-              return (
-                <MyListingsItemRow
-                  key={i}
-                  styleClass="my-listings-flex-container"
-                  handleOpenDeleteListingModal={this.handleOpenDeleteListingModal}
-                  state={item.state}
-                  filterListings={this.filterListings}
-                  listing={item}
-                />
-              );
-            })}
-          </div>
+          <h2>Denied ({this.state.deniedListings.length})</h2>
+          <hr />
+          {this.state.deniedListings && this.state.deniedListings.map((item, i) => {
+            return (
+              <MyListingsItemRow
+                key={i}
+                styleClass="my-listings-flex-container"
+                handleOpenDeleteListingModal={this.handleOpenDeleteListingModal}
+                state={item.state}
+                filterListings={this.filterListings}
+                listing={item}
+              />
+            );
+          })}
 
-          <div className="container">
-            <h2>In Progress ({this.state.totalListingsInProgress})</h2>
-            <hr className="profile-line" />
-            {this.state.listingsInProgress && this.state.listingsInProgress.map((item, i) => {
-              return (
-                <MyListingsInProgressItem
-                  key={i}
-                  id={item.id}
-                  step={item.step}
-                  deleteInProgressListing={this.deleteInProgressListing}
-                  filterListings={this.filterListings}
-                  listing={JSON.parse(item.data)}
-                />
-              );
-            })}
+          <h2>In Progress ({this.state.totalListingsInProgress})</h2>
+          <hr />
+          {this.state.listingsInProgress && this.state.listingsInProgress.map((item, i) => {
+            return (
+              <MyListingsInProgressItem
+                key={i}
+                id={item.id}
+                step={item.step}
+                deleteInProgressListing={this.deleteInProgressListing}
+                filterListings={this.filterListings}
+                listing={JSON.parse(item.data)}
+              />
+            );
+          })}
 
-
-            <div className="my-listings">
-              <Link className="btn btn-primary create-listing" to="/profile/listings/create/landing">Add new listing</Link>
-            </div>
+          <div className="my-listings">
+            <Link className="btn btn-primary create-listing" to="/profile/listings/create/landing">Add new listing</Link>
           </div>
         </section>
 

@@ -70,7 +70,7 @@ class HotelDetailsPage extends React.Component {
 
   componentDidMount() {
     const id = this.props.match.params.id;
-    const searchParams = this.getNewSearchParams();
+    const searchParams = this.getRequestSearchParams();
     requester.getHotelById(id, searchParams).then(res => {
       res.body.then(data => {
         this.setState({ data: data, loading: false });
@@ -122,7 +122,7 @@ class HotelDetailsPage extends React.Component {
     return map;
   }
 
-  getNewSearchParams() {
+  getRequestSearchParams() {
     const array = [];
     const pairs = this.props.location.search.substr(1).split('&');
     for (let i = 0; i < pairs.length; i++) {

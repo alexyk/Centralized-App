@@ -65,7 +65,6 @@ function DashboardPending(props) {
     <section id="profile-dashboard-pending">
       <div className="container">
         <h2>Latest Reservation Requests</h2>
-        <hr className="profile-line" />
         <ProfileFlexContainer styleClass="flex-container-header dashboard-flex-reservations-container">
           <div className="tablet-col-1">
             <div className="dashboard-image" />
@@ -83,7 +82,6 @@ function DashboardPending(props) {
 
       <div className="container">
         <h2>Latest Trips</h2>
-        <hr className="profile-line" />
         <ProfileFlexContainer styleClass="flex-container-header dashboard-flex-trips-container">
           <div className="dashboard-image" />
           <div className="dashboard-host">Host</div>

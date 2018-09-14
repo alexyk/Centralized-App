@@ -1,6 +1,6 @@
 import '../../../styles/css/components/hotels/book/hotel-booking-confirm-page.css';
 
-import { EXTRA_LONG, LONG } from '../../../constants/notificationDisplayTimes.js';
+import { LONG } from '../../../constants/notificationDisplayTimes.js';
 import { Link, withRouter } from 'react-router-dom';
 import { closeModal, openModal } from '../../../actions/modalsInfo.js';
 import { setCurrency } from '../../../actions/paymentInfo';
@@ -13,11 +13,11 @@ import { LOC_PAYMENT_INITIATED } from '../../../constants/successMessages.js';
 import { NotificationManager } from 'react-notifications';
 import { PASSWORD_PROMPT } from '../../../constants/modals.js';
 import { PROCESSING_TRANSACTION } from '../../../constants/infoMessages.js';
+import { ROOM_NO_LONGER_AVAILABLE } from '../../../constants/warningMessages';
 import PasswordModal from '../../common/modals/PasswordModal';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { RoomsXMLCurrency } from '../../../services/utilities/roomsXMLCurrency';
-import { SEARCH_EXPIRED } from '../../../constants/infoMessages.js';
 import { connect } from 'react-redux';
 import moment from 'moment';
 import queryString from 'query-string';
@@ -28,7 +28,6 @@ import { setBestLocPrice } from '../../../actions/bookingBestPrice';
 // import SMSCodeModal from '../modals/SMSCodeModal';
 
 const ERROR_MESSAGE_TIME = 20000;
-const SEARCH_EXPIRE_TIME = 900000;
 const DEFAULT_CRYPTO_CURRENCY = 'EUR';
 const TEST_FIAT_AMOUNT_IN_EUR = 15;
 const SOCKET_RECONNECT_DELAY = 5000;
@@ -70,14 +69,13 @@ class HotelBookingConfirmPage extends React.Component {
 
     this.openModal = this.openModal.bind(this);
     this.closeModal = this.closeModal.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
     this.onChange = this.onChange.bind(this);
     this.toggleCanxDetails = this.toggleCanxDetails.bind(this);
-    this.handleSubmitSingleWithdrawer = this.handleSubmitSingleWithdrawer.bind(this);
+    this.payWithLocSingleWithdrawer = this.payWithLocSingleWithdrawer.bind(this);
     this.requestUserInfo = this.requestUserInfo.bind(this);
     this.requestBookingInfo = this.requestBookingInfo.bind(this);
     this.requestCurrencyRates = this.requestCurrencyRates.bind(this);
-    this.setSearchExpirationTimeout = this.setSearchExpirationTimeout.bind(this);
+    this.createBackUrl = this.createBackUrl.bind(this);
     this.tick = this.tick.bind(this);
 
     // SOCKET BINDINGS
@@ -92,7 +90,6 @@ class HotelBookingConfirmPage extends React.Component {
     this.requestUserInfo();
     this.requestBookingInfo();
     this.requestCurrencyRates();
-    this.setSearchExpirationTimeout();
 
     this.props.dispatch(setBookingCofirmPage(true));
   }
@@ -116,9 +113,7 @@ class HotelBookingConfirmPage extends React.Component {
   }
 
   requestBookingInfo() {
-    const search = this.props.location.search;
-    const searchParams = this.getSearchParams(search);
-    const booking = JSON.parse(decodeURI(searchParams.get('booking')));
+    const booking = this.getBooking(queryString.parse(this.props.location.search));
     requester.createReservation(booking).then(res => {
       if (res.success) {
         res.body.then(data => {
@@ -131,7 +126,7 @@ class HotelBookingConfirmPage extends React.Component {
           console.log(errors);
           if (errors.hasOwnProperty('RoomsXmlResponse')) {
             if (errors['RoomsXmlResponse'].message.indexOf('QuoteNotAvailable:') !== -1) {
-              NotificationManager.warning('Room is no longer available', '', LONG);
+              NotificationManager.warning(ROOM_NO_LONGER_AVAILABLE, '', LONG);
               const pathname = this.props.location.pathname.indexOf('/mobile') !== -1 ? '/mobile/details' : '/hotels/listings';
               const id = this.props.match.params.id;
               const search = this.getQueryString(queryString.parse(this.props.location.search));
@@ -147,6 +142,14 @@ class HotelBookingConfirmPage extends React.Component {
         });
       }
     });
+  }
+
+  getBooking(queryParams) {
+    return {
+      currency: queryParams.currency,
+      rooms: JSON.parse(queryParams.rooms),
+      quoteId: queryParams.quoteId
+    };
   }
 
   getQueryString(queryStringParameters) {
@@ -184,13 +187,6 @@ class HotelBookingConfirmPage extends React.Component {
         }
       });
     });
-  }
-
-  setSearchExpirationTimeout() {
-    this.timeout = setTimeout(() => {
-      NotificationManager.info(SEARCH_EXPIRED, '', EXTRA_LONG);
-      this.props.history.push('/hotels');
-    }, SEARCH_EXPIRE_TIME);
   }
 
   componentWillUnmount() {
@@ -320,21 +316,10 @@ class HotelBookingConfirmPage extends React.Component {
     return Config.getValue('env');
   }
 
-  payWithCreditCard(path) {
-    const form = document.createElement('form');
-    form.method = 'post';
-    form.action = path;
-    form.style = 'display: none';
-
-    document.body.appendChild(form);
-    form.submit();
-  }
-
   createBackUrl() {
     const currency = this.props.paymentInfo.currency;
     const queryParams = queryString.parse(this.props.location.search);
-    const decodeBooking = JSON.parse(decodeURI(queryParams.booking));
-    let rooms = decodeBooking.rooms;
+    let rooms = JSON.parse(queryParams.rooms);
     rooms.forEach((room) => {
       room.adults = room.adults.length;
     });
@@ -370,10 +355,12 @@ class HotelBookingConfirmPage extends React.Component {
       backUrl: this.createBackUrl(),
     };
 
-    const search = this.props.location.search;
     const id = this.props.match.params.id;
+    const isWebView = this.props.location.pathname.indexOf('/mobile') !== -1;
+    const rootURL = !isWebView ? `/hotels/listings/book/${id}/profile` : `/mobile/book/${id}/profile`;
+    const search = this.props.location.search;
     this.props.history.push({
-      pathname: `/hotels/listings/book/profile/${id}`,
+      pathname: rootURL,
       search: search,
       state: { paymentInfo: paymentInfo }
     });
@@ -490,148 +477,70 @@ class HotelBookingConfirmPage extends React.Component {
     return wei;
   }
 
-  handleSubmit() {
-    requester.getCancellationFees(this.state.data.preparedBookingId).then(res => {
-      res.body.then(data => {
-        const password = this.state.password;
-        const preparedBookingId = this.state.data.preparedBookingId;
-        // console.log(preparedBookingId);
-        const wei = (this.tokensToWei(this.state.data.locPrice.toString()));
-        // console.log(wei);
-        const booking = this.state.data.booking.hotelBooking;
-        const startDate = moment.utc(booking[0].arrivalDate, 'YYYY-MM-DD');
-        const endDate = moment.utc(booking[0].arrivalDate, 'YYYY-MM-DD').add(booking[0].nights, 'days');
-        // const daysBeforeStartOfRefund = ['0'];
-        // const refundPercentages = ['100'];
-        const hotelId = this.props.match.params.id;
-        const roomId = this.state.booking.quoteId;
-        const numberOfTravelers = this.getNumberOfTravelers();
-        const cancellationFees = data;
-        const daysBeforeStartOfRefund = [];
-        const refundPercentages = [];
-        for (let key in cancellationFees) {
-          daysBeforeStartOfRefund.unshift(key.toString());
-          refundPercentages.unshift(cancellationFees[key].toString());
-        }
-
-        NotificationManager.info(PROCESSING_TRANSACTION, 'Transactions', 0);
-        this.setState({ confirmed: true });
-        this.closeModal(PASSWORD_PROMPT);
-
-        const queryString = this.props.location.search;
-
-        requester.getMyJsonFile().then(res => {
-          res.body.then(data => {
-            setTimeout(() => {
-              HotelReservation.createReservation(
-                data.jsonFile,
-                password,
-                preparedBookingId.toString(),
-                wei,
-                startDate.unix().toString(),
-                endDate.unix().toString(),
-                daysBeforeStartOfRefund,
-                refundPercentages,
-                hotelId,
-                roomId,
-                numberOfTravelers.toString()
-              ).then(transaction => {
-                const bookingConfirmObj = {
-                  bookingId: preparedBookingId,
-                  transactionHash: transaction.hash,
-                  queryString: queryString
-                };
-
-                // console.log(bookingConfirmObj);
-                requester.confirmBooking(bookingConfirmObj).then(() => {
-                  NotificationManager.success(LOC_PAYMENT_INITIATED, '', LONG);
-                  setTimeout(() => {
-                    this.props.history.push('/profile/trips/hotels');
-                  }, 2000);
-                });
+  payWithLocSingleWithdrawer() {
+    this.props.requestLockOnQuoteId().then(() => {
+      const password = this.state.password;
+      const preparedBookingId = this.state.data.preparedBookingId;
+      const wei = (this.tokensToWei(this.state.data.locPrice.toString()));
+      console.log(wei);
+      const booking = this.state.data.booking.hotelBooking;
+      const endDate = moment.utc(booking[0].arrivalDate, 'YYYY-MM-DD').add(booking[0].nights, 'days');
+  
+      NotificationManager.info(PROCESSING_TRANSACTION, 'Transactions', 60000);
+      this.setState({ confirmed: true });
+      this.closeModal(PASSWORD_PROMPT);
+  
+      const queryString = this.props.location.search;
+  
+      requester.getMyJsonFile().then(res => {
+        res.body.then(data => {
+          setTimeout(() => {
+            console.log('HotelBookingConfirmPage.jsx, wei:', wei.toString());
+            console.log('HotelBookingConfirmPage.jsx, end date:', endDate.unix().toString());
+  
+            HotelReservation.createSimpleReservationSingleWithdrawer(
+              data.jsonFile,
+              password,
+              wei.toString(),
+              endDate.unix().toString(),
+            ).then(transaction => {
+              console.log('transaction', transaction);
+              const bookingConfirmObj = {
+                bookingId: preparedBookingId,
+                transactionHash: transaction.hash,
+                queryString: queryString,
+                locAmount: this.state.locPrice
+              };
+  
+              requester.confirmBooking(bookingConfirmObj).then(() => {
+                NotificationManager.success('LOC Payment has been initiated. We will send you a confirmation message once it has been processed by the Blockchain.', '', LONG);
+                setTimeout(() => {
+                  this.props.history.push('/profile/trips/hotels');
+                }, 2000);
               }).catch(error => {
-                if (error.hasOwnProperty('message')) {
-                  NotificationManager.warning(error.message, 'Transactions', LONG);
-                } else if (error.hasOwnProperty('err') && error.err.hasOwnProperty('message')) {
-                  NotificationManager.warning(error.err.message, 'Transactions', LONG);
-                } else if (typeof x === 'string') {
-                  NotificationManager.warning(error, 'Transactions', LONG);
-                } else {
-                  NotificationManager.warning(error, '', LONG);
-                }
-
-                this.closeModal(PASSWORD_PROMPT);
-                this.setState({ confirmed: false });
+                NotificationManager.success('Something with your transaction went wrong...', '', LONG);
+                console.log(error);
               });
-            }, 1000);
-          });
-        });
-      });
-    });
-  }
-
-  handleSubmitSingleWithdrawer() {
-    const password = this.state.password;
-    const preparedBookingId = this.state.data.preparedBookingId;
-    const wei = (this.tokensToWei(this.state.data.locPrice.toString()));
-    console.log(wei);
-    const booking = this.state.data.booking.hotelBooking;
-    const endDate = moment.utc(booking[0].arrivalDate, 'YYYY-MM-DD').add(booking[0].nights, 'days');
-
-    NotificationManager.info(PROCESSING_TRANSACTION, 'Transactions', 60000);
-    this.setState({ confirmed: true });
-    this.closeModal(PASSWORD_PROMPT);
-
-    const queryString = this.props.location.search;
-
-    requester.getMyJsonFile().then(res => {
-      res.body.then(data => {
-        setTimeout(() => {
-          console.log('HotelBookingConfirmPage.jsx, wei:', wei.toString());
-          console.log('HotelBookingConfirmPage.jsx, end date:', endDate.unix().toString());
-
-          HotelReservation.createSimpleReservationSingleWithdrawer(
-            data.jsonFile,
-            password,
-            wei.toString(),
-            endDate.unix().toString(),
-          ).then(transaction => {
-            console.log('transaction', transaction);
-            const bookingConfirmObj = {
-              bookingId: preparedBookingId,
-              transactionHash: transaction.hash,
-              queryString: queryString,
-              locAmount: this.state.locPrice
-            };
-
-            requester.confirmBooking(bookingConfirmObj).then(() => {
-              NotificationManager.success('LOC Payment has been initiated. We will send you a confirmation message once it has been processed by the Blockchain.', '', LONG);
-              setTimeout(() => {
-                this.props.history.push('/profile/trips/hotels');
-              }, 2000);
             }).catch(error => {
-              NotificationManager.success('Something with your transaction went wrong...', '', LONG);
-              console.log(error);
-            });
-          }).catch(error => {
-            if (error.hasOwnProperty('message')) {
-              if (error.message === 'nonce too low') {
-                NotificationManager.warning('You have a pending transaction. Please try again later.', 'Transactions', ERROR_MESSAGE_TIME);
+              if (error.hasOwnProperty('message')) {
+                if (error.message === 'nonce too low') {
+                  NotificationManager.warning('You have a pending transaction. Please try again later.', 'Transactions', ERROR_MESSAGE_TIME);
+                } else {
+                  NotificationManager.warning(error.message, 'Transactions', ERROR_MESSAGE_TIME);
+                }
+              } else if (error.hasOwnProperty('err') && error.err.hasOwnProperty('message')) {
+                NotificationManager.warning(error.err.message, 'Transactions', ERROR_MESSAGE_TIME);
+              } else if (typeof x === 'string') {
+                NotificationManager.warning(error, 'Transactions', ERROR_MESSAGE_TIME);
               } else {
-                NotificationManager.warning(error.message, 'Transactions', ERROR_MESSAGE_TIME);
+                NotificationManager.warning(error, 'Transactions', ERROR_MESSAGE_TIME);
               }
-            } else if (error.hasOwnProperty('err') && error.err.hasOwnProperty('message')) {
-              NotificationManager.warning(error.err.message, 'Transactions', ERROR_MESSAGE_TIME);
-            } else if (typeof x === 'string') {
-              NotificationManager.warning(error, 'Transactions', ERROR_MESSAGE_TIME);
-            } else {
-              NotificationManager.warning(error, 'Transactions', ERROR_MESSAGE_TIME);
-            }
-
-            this.closeModal(PASSWORD_PROMPT);
-            this.setState({ confirmed: false });
-          });
-        }, 1000);
+  
+              this.closeModal(PASSWORD_PROMPT);
+              this.setState({ confirmed: false });
+            });
+          }, 1000);
+        });
       });
     });
   }
@@ -764,10 +673,8 @@ class HotelBookingConfirmPage extends React.Component {
 
   isUserInfoIsComplete(userInfo) {
     let infoFieldsToCheck = ['firstName', 'lastName', 'phoneNumber', 'city', 'country', 'address', 'zipCode'];
-
     for (let i = 0; i < infoFieldsToCheck.length; i++) {
       let item = infoFieldsToCheck[i];
-
       for (let key in userInfo) {
         if (userInfo.hasOwnProperty(key)) {
           if (key === item && userInfo[key] === null) {
@@ -778,7 +685,6 @@ class HotelBookingConfirmPage extends React.Component {
     }
 
     return true;
-
   }
 
   getButtonIfUserHasFullInfo(isUserInfoIsComplete) {
@@ -922,7 +828,7 @@ class HotelBookingConfirmPage extends React.Component {
               isActive={this.props.modalsInfo.isActive[PASSWORD_PROMPT]}
               text={'Enter your wallet password'}
               placeholder={'Wallet password'}
-              handleSubmit={() => this.handleSubmitSingleWithdrawer()}
+              handleSubmit={() => this.payWithLocSingleWithdrawer()}
               closeModal={this.closeModal}
               password={password}
               onChange={this.onChange}
@@ -936,11 +842,12 @@ class HotelBookingConfirmPage extends React.Component {
 
 HotelBookingConfirmPage.propTypes = {
   countries: PropTypes.array,
-  match: PropTypes.object,
-
+  requestLockOnQuoteId: PropTypes.func,
+  
   // start Router props
   history: PropTypes.object,
   location: PropTypes.object,
+  match: PropTypes.object,
 
   // start Redux props
   dispatch: PropTypes.func,

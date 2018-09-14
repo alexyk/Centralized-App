@@ -11,7 +11,6 @@ import StringUtils from '../../../services/utilities/stringUtilities';
 import ReCAPTCHA from 'react-google-recaptcha';
 import Select from '../../common/google/GooglePlacesAutocomplete';
 import moment from 'moment';
-import queryString from 'query-string';
 import { NotificationManager } from 'react-notifications';
 import { LONG } from '../../../constants/notificationDisplayTimes';
 import BookingSteps from '../../common/utility/BookingSteps';
@@ -100,22 +99,8 @@ class ConfirmProfilePage extends React.Component {
     form.submit();
   }
 
-  createBackUrl() {
-    const currency = this.props.paymentInfo.currency;
-    const queryParams = queryString.parse(this.props.location.search);
-    const decodeBooking = JSON.parse(decodeURI(queryParams.booking));
-    let rooms = decodeBooking.rooms;
-    rooms.forEach((room) => {
-      room.adults = room.adults.length;
-    });
-
-    const id = this.props.match.params.id;
-    rooms = encodeURI(JSON.stringify(rooms));
-
-    return `hotels/listings/${id}?region=${queryParams.region}&currency=${currency}&startDate=${queryParams.startDate}&endDate=${queryParams.endDate}&rooms=${rooms}`;
-  }
-
   payWithCard() {
+    requester.mark
     const { paymentInfo } = this.props.location.state;
     requester.verifyCreditCardPayment(paymentInfo)
       .then(res => {

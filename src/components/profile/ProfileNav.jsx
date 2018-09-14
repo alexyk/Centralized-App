@@ -1,9 +1,11 @@
+import '../../styles/css/components/profile/me/profile-nav.css';
+
 import { NavDropdown } from 'react-bootstrap/lib';
 import { NavLink } from 'react-router-dom';
 import React from 'react';
 import requester from '../../initDependencies';
 
-class NavProfile extends React.Component {
+class ProfileNav extends React.Component {
   constructor(props) {
     super(props);
 
@@ -55,4 +57,4 @@ class NavProfile extends React.Component {
   }
 }
 
-export default NavProfile;
+export default ProfileNav;

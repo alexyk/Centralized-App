@@ -2,20 +2,19 @@ import { Route, Switch } from 'react-router-dom';
 
 import ProfileAdditionalInfo from './ProfileAdditionalInfo';
 import ProfileEditForm from './ProfileEditForm';
-import ProfileNav from './ProfileNav';
+import ProfileEditNav from './ProfileEditNav';
 import ProfilePhotosPage from './ProfilePhotosPage';
 import ProfileVerificationPage from './ProfileVerificationPage';
 import React from 'react';
 
-function ProfileMePage() {
+function ProfileEditPage() {
   return (
     <div>
       <section id="profile-edit">
         <div className="container">
           <div className="row">
-            <div className="after-header" />
             <div className="col-md-3">
-              <ProfileNav />
+              <ProfileEditNav />
             </div>
             <div className="col-md-8">
               <Switch>
@@ -33,4 +32,4 @@ function ProfileMePage() {
   );
 }
 
-export default ProfileMePage;
+export default ProfileEditPage;

@@ -8,7 +8,6 @@ import AirdropPage from '../profile/airdrop/AirdropPage';
 import Balance from '../external/Balance';
 import BigCalendar from 'react-big-calendar';
 import BuyLocPage from '../profile/buyloc/BuyLocPage';
-import CalendarPage from '../profile/calendar/CalendarPage';
 import { Config } from '../../config';
 import CreateListingPage from '../listingCRUD/CreateListingPage';
 import EditListingPage from '../listingCRUD/EditListingPage';
@@ -18,7 +17,7 @@ import HotelsBookingConfirmPage from '../hotels/book/HotelsBookingConfirmPage';
 import HotelsBookingPage from '../hotels/book/HotelsBookingPage';
 import HotelDetailsPage from '../hotels/details/HotelDetailsPage';
 import MainNav from '../mainNav/MainNav';
-import NavLocalization from '../profile/NavLocalization';
+import LocalizationNav from '../profile/LocalizationNav';
 import { NotificationContainer } from 'react-notifications';
 import ProfilePage from '../profile/ProfilePage';
 import PropTypes from 'prop-types';
@@ -116,7 +115,7 @@ class App extends React.Component {
         }
 
         {!isWebView &&
-          <NavLocalization />
+          <LocalizationNav />
         }
 
         <NotificationContainer />
@@ -124,7 +123,7 @@ class App extends React.Component {
         <Switch>
           <Route exact path="/" render={() => <HomeRouterPage />} />
           <Route exact path="/profile/listings/edit/:step/:id" render={() => !this.isAuthenticated() ? <Redirect to="/" /> : <EditListingPage />} />
-          <Route exact path="/profile/listings/calendar/:id" render={() => !this.isAuthenticated() ? <Redirect to="/" /> : <CalendarPage />} />
+          {/* <Route exact path="/profile/listings/calendar/:id" render={() => !this.isAuthenticated() ? <Redirect to="/" /> : <CalendarPage />} /> */}
           <Route exact path="/profile/account/notifications" render={() => !this.isAuthenticated() ? <Redirect to="/" /> : <AccountNotificationsPage />} />
           <Route exact path="/users/resetPassword/:confirm" render={() => <HomeRouterPage />} />
           <Route path="/homes" render={() => <HomeRouterPage />} />

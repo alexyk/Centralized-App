@@ -1,4 +1,4 @@
-import MessagesItem from './MessagesItem';
+import MessagesBox from './MessagesBox';
 import NoEntriesMessage from '../../common/messages/NoEntriesMessage';
 import Pagination from '../../common/pagination/Pagination';
 import React from 'react';
@@ -81,7 +81,7 @@ class MessagesPage extends React.Component {
     return (
       <div>
         {this.state.messages.map((message, i) => {
-          return <MessagesItem message={message} changeMessageFlag={this.changeMessageFlag} key={i} />;
+          return <MessagesBox message={message} changeMessageFlag={this.changeMessageFlag} key={i} />;
         })}
         <Pagination
           loading={this.state.totalElements === 0}
@@ -99,12 +99,10 @@ class MessagesPage extends React.Component {
     }
 
     return (
-      <div>
-        {/* <section id="profile-messages-hosting"> */}
-        <div className="container">
-          {this.renderMessages()}
-        </div>
-        {/* </section> */}
+      <div className="container">
+        <h2>Messages</h2>
+        <hr />
+        {this.renderMessages()}
       </div>
     );
   }
