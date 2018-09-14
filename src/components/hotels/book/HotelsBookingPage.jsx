@@ -37,8 +37,7 @@ class HotelsBookingPage extends React.Component {
     this.requestHotelRooms = this.requestHotelRooms.bind(this);
     this.requestCurrencyRates = this.requestCurrencyRates.bind(this);
     this.requestUserInfo = this.requestUserInfo.bind(this);
-
-    // this.requestNewQuoteID = this.requestNewQuoteID.bind(this);
+    this.getQueryString = this.getQueryString.bind(this);
   }
 
   componentDidMount() {
@@ -46,17 +45,6 @@ class HotelsBookingPage extends React.Component {
     this.requestHotelRooms();
     this.requestCurrencyRates();
   }
-
-  // requestNewQuoteID() {
-  //   const id = this.props.match.params.id;
-  //   const searchParams = this.getNewSearchParams();
-  //   const quoteId = searchParams.pop().split('=')[1];
-  //   requester.getHotelRooms(id, searchParams).then(res => {
-  //     res.body.then(data => {
-  //       console.log(data);
-  //     });
-  //   });
-  // }
 
   requestHotel() {
     const id = this.props.match.params.id;
@@ -93,7 +81,10 @@ class HotelsBookingPage extends React.Component {
   requestHotelRooms() {
     const id = this.props.match.params.id;
     const searchParams = this.getNewSearchParams();
+    console.log(searchParams);
     const quoteId = searchParams.pop().split('=')[1];
+    console.log(searchParams);
+
     requester.getHotelRooms(id, searchParams).then(res => {
       res.body.then(data => {
         const roomResults = data.filter(x => x.quoteId === quoteId)[0];
@@ -114,16 +105,6 @@ class HotelsBookingPage extends React.Component {
         }
       });
     });
-  }
-
-  getQueryString(queryStringParameters) {
-    let queryString = '?';
-    queryString += 'region=' + encodeURI(queryStringParameters.region);
-    queryString += '&currency=' + encodeURI(queryStringParameters.currency);
-    queryString += '&startDate=' + encodeURI(queryStringParameters.startDate);
-    queryString += '&endDate=' + encodeURI(queryStringParameters.endDate);
-    queryString += '&rooms=' + encodeURI(queryStringParameters.rooms);
-    return queryString;
   }
 
   requestUserInfo() {
@@ -243,20 +224,31 @@ class HotelsBookingPage extends React.Component {
       const rooms = this.state.rooms;
       const currency = this.props.paymentInfo.currency;
       const booking = {
-        quoteId: quoteId,
+        currency: currency,
         rooms: rooms,
-        currency: currency
+        quoteId: quoteId,
       };
 
       const queryParams = queryString.parse(this.props.location.search);
 
       const encodedBooking = encodeURI(JSON.stringify(booking));
       const id = this.props.match.params.id;
-      const query = `?region=${queryParams.region}&startDate=${queryParams.startDate}&endDate=${queryParams.endDate}&booking=${encodedBooking}`;
+      const query = this.getQueryString(queryParams);
       const isWebView = this.props.location.pathname.indexOf('/mobile') !== -1;
-      const rootURL = !isWebView ? '/hotels/listings/book/confirm' : '/mobile/book/confirm';
-      this.props.history.push(`${rootURL}/${id}${query}`);
+      const rootURL = !isWebView ? `/hotels/listings/book/${id}/confirm` : '/mobile/book/confirm';
+      this.props.history.push(`${rootURL}${query}`);
     }
+  }
+
+  getQueryString(queryStringParameters) {
+    let queryString = '?';
+    queryString += 'region=' + encodeURI(queryStringParameters.region);
+    queryString += '&currency=' + encodeURI(queryStringParameters.currency);
+    queryString += '&startDate=' + encodeURI(queryStringParameters.startDate);
+    queryString += '&endDate=' + encodeURI(queryStringParameters.endDate);
+    queryString += '&rooms=' + encodeURI(JSON.stringify(this.state.rooms));
+    queryString += '&quoteId=' + encodeURI(queryStringParameters.quoteId);
+    return queryString;
   }
 
   isValidNames() {

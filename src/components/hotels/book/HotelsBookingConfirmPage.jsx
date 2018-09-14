@@ -76,6 +76,7 @@ class HotelBookingConfirmPage extends React.Component {
     this.requestUserInfo = this.requestUserInfo.bind(this);
     this.requestBookingInfo = this.requestBookingInfo.bind(this);
     this.requestCurrencyRates = this.requestCurrencyRates.bind(this);
+    this.createBackUrl = this.createBackUrl.bind(this);
     this.setSearchExpirationTimeout = this.setSearchExpirationTimeout.bind(this);
     this.tick = this.tick.bind(this);
 
@@ -117,7 +118,8 @@ class HotelBookingConfirmPage extends React.Component {
   requestBookingInfo() {
     const search = this.props.location.search;
     const searchParams = this.getSearchParams(search);
-    const booking = JSON.parse(decodeURI(searchParams.get('booking')));
+    const booking = this.getBooking(queryString.parse(this.props.location.search));
+    console.log(booking);
     requester.createReservation(booking).then(res => {
       if (res.success) {
         res.body.then(data => {
@@ -146,6 +148,16 @@ class HotelBookingConfirmPage extends React.Component {
         });
       }
     });
+  }
+
+  getBooking(queryParams) {
+    console.log(queryParams.rooms);
+    console.log(JSON.parse(queryParams.rooms));
+    return {
+      currency: queryParams.currency,
+      rooms: JSON.parse(queryParams.rooms),
+      quoteId: queryParams.quoteId
+    };
   }
 
   getQueryString(queryStringParameters) {
@@ -332,8 +344,7 @@ class HotelBookingConfirmPage extends React.Component {
   createBackUrl() {
     const currency = this.props.paymentInfo.currency;
     const queryParams = queryString.parse(this.props.location.search);
-    const decodeBooking = JSON.parse(decodeURI(queryParams.booking));
-    let rooms = decodeBooking.rooms;
+    let rooms = JSON.parse(queryParams.rooms);
     rooms.forEach((room) => {
       room.adults = room.adults.length;
     });
@@ -369,10 +380,12 @@ class HotelBookingConfirmPage extends React.Component {
       backUrl: this.createBackUrl(),
     };
 
-    const search = this.props.location.search;
     const id = this.props.match.params.id;
+    const isWebView = this.props.location.pathname.indexOf('/mobile') !== -1;
+    const rootURL = !isWebView ? `/hotels/listings/book/${id}/profile` : `/mobile/book/${id}/profile`;
+    const search = this.props.location.search;
     this.props.history.push({
-      pathname: `/hotels/listings/book/profile/${id}`,
+      pathname: rootURL,
       search: search,
       state: { paymentInfo: paymentInfo }
     });
@@ -570,67 +583,70 @@ class HotelBookingConfirmPage extends React.Component {
   }
 
   handleSubmitSingleWithdrawer() {
-    const password = this.state.password;
-    const preparedBookingId = this.state.data.preparedBookingId;
-    const wei = (this.tokensToWei(this.state.data.locPrice.toString()));
-    console.log(wei);
-    const booking = this.state.data.booking.hotelBooking;
-    const endDate = moment.utc(booking[0].arrivalDate, 'YYYY-MM-DD').add(booking[0].nights, 'days');
-
-    NotificationManager.info(PROCESSING_TRANSACTION, 'Transactions', 60000);
-    this.setState({ confirmed: true });
-    this.closeModal(PASSWORD_PROMPT);
-
-    const queryString = this.props.location.search;
-
-    requester.getMyJsonFile().then(res => {
-      res.body.then(data => {
-        setTimeout(() => {
-          console.log('HotelBookingConfirmPage.jsx, wei:', wei.toString());
-          console.log('HotelBookingConfirmPage.jsx, end date:', endDate.unix().toString());
-
-          HotelReservation.createSimpleReservationSingleWithdrawer(
-            data.jsonFile,
-            password,
-            wei.toString(),
-            endDate.unix().toString(),
-          ).then(transaction => {
-            console.log('transaction', transaction);
-            const bookingConfirmObj = {
-              bookingId: preparedBookingId,
-              transactionHash: transaction.hash,
-              queryString: queryString,
-              locAmount: this.state.locPrice
-            };
-
-            requester.confirmBooking(bookingConfirmObj).then(() => {
-              NotificationManager.success('LOC Payment has been initiated. We will send you a confirmation message once it has been processed by the Blockchain.', '', LONG);
-              setTimeout(() => {
-                this.props.history.push('/profile/trips/hotels');
-              }, 2000);
+    this.props.requestLockOnQuoteId().then(() => {
+      const password = this.state.password;
+      const preparedBookingId = this.state.data.preparedBookingId;
+      const wei = (this.tokensToWei(this.state.data.locPrice.toString()));
+      console.log(wei);
+      const booking = this.state.data.booking.hotelBooking;
+      const endDate = moment.utc(booking[0].arrivalDate, 'YYYY-MM-DD').add(booking[0].nights, 'days');
+  
+      NotificationManager.info(PROCESSING_TRANSACTION, 'Transactions', 60000);
+      this.setState({ confirmed: true });
+      this.closeModal(PASSWORD_PROMPT);
+  
+      const queryString = this.props.location.search;
+  
+      return;
+      requester.getMyJsonFile().then(res => {
+        res.body.then(data => {
+          setTimeout(() => {
+            console.log('HotelBookingConfirmPage.jsx, wei:', wei.toString());
+            console.log('HotelBookingConfirmPage.jsx, end date:', endDate.unix().toString());
+  
+            HotelReservation.createSimpleReservationSingleWithdrawer(
+              data.jsonFile,
+              password,
+              wei.toString(),
+              endDate.unix().toString(),
+            ).then(transaction => {
+              console.log('transaction', transaction);
+              const bookingConfirmObj = {
+                bookingId: preparedBookingId,
+                transactionHash: transaction.hash,
+                queryString: queryString,
+                locAmount: this.state.locPrice
+              };
+  
+              requester.confirmBooking(bookingConfirmObj).then(() => {
+                NotificationManager.success('LOC Payment has been initiated. We will send you a confirmation message once it has been processed by the Blockchain.', '', LONG);
+                setTimeout(() => {
+                  this.props.history.push('/profile/trips/hotels');
+                }, 2000);
+              }).catch(error => {
+                NotificationManager.success('Something with your transaction went wrong...', '', LONG);
+                console.log(error);
+              });
             }).catch(error => {
-              NotificationManager.success('Something with your transaction went wrong...', '', LONG);
-              console.log(error);
-            });
-          }).catch(error => {
-            if (error.hasOwnProperty('message')) {
-              if (error.message === 'nonce too low') {
-                NotificationManager.warning('You have a pending transaction. Please try again later.', 'Transactions', ERROR_MESSAGE_TIME);
+              if (error.hasOwnProperty('message')) {
+                if (error.message === 'nonce too low') {
+                  NotificationManager.warning('You have a pending transaction. Please try again later.', 'Transactions', ERROR_MESSAGE_TIME);
+                } else {
+                  NotificationManager.warning(error.message, 'Transactions', ERROR_MESSAGE_TIME);
+                }
+              } else if (error.hasOwnProperty('err') && error.err.hasOwnProperty('message')) {
+                NotificationManager.warning(error.err.message, 'Transactions', ERROR_MESSAGE_TIME);
+              } else if (typeof x === 'string') {
+                NotificationManager.warning(error, 'Transactions', ERROR_MESSAGE_TIME);
               } else {
-                NotificationManager.warning(error.message, 'Transactions', ERROR_MESSAGE_TIME);
+                NotificationManager.warning(error, 'Transactions', ERROR_MESSAGE_TIME);
               }
-            } else if (error.hasOwnProperty('err') && error.err.hasOwnProperty('message')) {
-              NotificationManager.warning(error.err.message, 'Transactions', ERROR_MESSAGE_TIME);
-            } else if (typeof x === 'string') {
-              NotificationManager.warning(error, 'Transactions', ERROR_MESSAGE_TIME);
-            } else {
-              NotificationManager.warning(error, 'Transactions', ERROR_MESSAGE_TIME);
-            }
-
-            this.closeModal(PASSWORD_PROMPT);
-            this.setState({ confirmed: false });
-          });
-        }, 1000);
+  
+              this.closeModal(PASSWORD_PROMPT);
+              this.setState({ confirmed: false });
+            });
+          }, 1000);
+        });
       });
     });
   }
@@ -804,6 +820,8 @@ class HotelBookingConfirmPage extends React.Component {
         <div className="sm-none">
           <BookingSteps steps={['Provide Guest Information', 'Review Room Details', 'Confirm and Pay']} currentStepIndex={2} />
         </div>
+
+        <button onClick={this.createBackUrl}>GetUrl</button>
 
         {!data ?
           <div className="loader"></div> :

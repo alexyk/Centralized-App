@@ -25,7 +25,6 @@ class HomeRouterPage extends Component {
 
     requester.getTopHotels().then(res => {
       res.body.then(data => {
-        console.log(data);
         this.setState({ hotels: data.content });
       });
     });
