@@ -231,8 +231,8 @@ class EditListingPage extends React.Component {
 
     requester.getCurrencies().then(res => {
       res.body.then(data => {
-        this.setState({ currencies: data.content });
-      })
+        this.setState({ currencies: data });
+      });
     });
   }
 
