@@ -41,27 +41,19 @@ class CalendarPage extends React.Component {
 
   componentDidMount() {
     requester.getListing(this.props.match.params.id).then(res => {
-      res.body.then(data => {
-        let currencyCode = data.currencyCode;
-        let currencySign = '';
-
-        switch (currencyCode) {
-          case 'USD': currencySign = '$';
-            break;
-          case 'GBP': currencySign = '£';
-            break;
-          case 'EUR': currencySign = '€';
-            break;
-          default: currencySign = 'null';
-        }
-
-        this.setState({
-          currencySign: currencySign,
-          currencyCode: currencyCode,
-          listing: data.content,
-          defaultDailyPrice: data.defaultDailyPrice
-        }, () => {
-          this.updateCalendar();
+      res.body.then(listing => {
+        requester.getCurrencies().then((res) => res.body).then(currencies => {
+          this.setState({ currencies: currencies }, () => {
+            const currency = currencies.filter(c => c.code === listing.currencyCode)[0];
+            this.setState({
+              currencySign: currency.unicode ? currency.unicode : currency.code,
+              currencyCode: currency.code,
+              listing: listing.content,
+              defaultDailyPrice: listing.defaultDailyPrice
+            }, () => {
+              this.updateCalendar();
+            });
+          });
         });
       });
     });
