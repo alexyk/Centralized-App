@@ -106,11 +106,11 @@ class LocalizationNav extends Component {
   }
 
   connectSocket() {
-    this.socket.send(JSON.stringify({ id: 'loc-rate', fiatAmount: DEFAULT_EUR_AMOUNT }));
+    this.socket.send(JSON.stringify({ id: 'loc-rate', method: 'getLocPrice', params: { fiatAmount: DEFAULT_EUR_AMOUNT }}));
   }
 
   handleReceiveMessage(event) {
-    const locAmount = (JSON.parse(event.data)).locAmount;
+    const locAmount = (JSON.parse(event.data)).params.locAmount;
 
     if (locAmount && locAmount > 0) {
       this.setState({ locAmount });
