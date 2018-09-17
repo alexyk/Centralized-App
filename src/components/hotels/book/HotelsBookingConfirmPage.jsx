@@ -264,7 +264,7 @@ class HotelBookingConfirmPage extends React.Component {
       const { fiatPriceRoomsXML, rates, data } = this.state;
 
       const fiatAmount = fiatPriceRoomsXML && rates && CurrencyConverter.convert(rates, RoomsXMLCurrency.get(), DEFAULT_CRYPTO_CURRENCY, fiatPriceRoomsXML);
-      if (this.getEnvironment() !== 'production') {
+      if (this.getEnvironment() === 'production') {
         this.socket.send(JSON.stringify({ id: 'real', method: 'quoteLoc', params: { fiatAmount, bookingId: data.preparedBookingId } }));
         this.socket.send(JSON.stringify({ id: 'test', method: 'quoteLoc', params: { fiatAmount: TEST_FIAT_AMOUNT_IN_EUR } }));
       } else {
@@ -340,7 +340,7 @@ class HotelBookingConfirmPage extends React.Component {
     let fiatAmount;
     let locAmount;
     let socketMessageId;
-    if (this.getEnvironment() !== 'production') {
+    if (this.getEnvironment() === 'production') {
       fiatAmount = CurrencyConverter.convert(rates, RoomsXMLCurrency.get(), currency, fiatPriceRoomsXML);
       locAmount = locPrice;
       socketMessageId = 'real';
