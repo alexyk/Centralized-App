@@ -2,6 +2,7 @@ import '../../styles/css/main.css';
 
 import { Redirect, Route, Switch, withRouter } from 'react-router-dom';
 import { setIsLogged, setUserInfo } from '../../actions/userInfo';
+import { setCurrencyRates } from '../../actions/currenciesRatesInfo';
 
 import AccountNotificationsPage from '../profile/account/AccountNotificationsPage';
 import AirdropPage from '../profile/airdrop/AirdropPage';
@@ -48,6 +49,8 @@ class App extends React.Component {
   componentDidMount() {
     this.handleInternalAuthorization();
     this.handleExternalAuthorization();
+
+    this.getRates();
   }
 
   isAuthenticated() {
@@ -92,6 +95,14 @@ class App extends React.Component {
       const search = this.getQueryString(queryStringParameters);
       this.props.history.push(url + search);
     }
+  }
+
+  getRates() {
+    requester.getCurrencyRates().then(res => {
+      res.body.then(rates => {
+        this.props.dispatch(setCurrencyRates(rates));
+      });
+    });
   }
 
   getQueryString(queryStringParameters) {
@@ -158,6 +169,7 @@ class App extends React.Component {
 App.propTypes = {
   // start Router props
   location: PropTypes.object,
+  history: PropTypes.object,
 
   // start Redux props
   dispatch: PropTypes.func,

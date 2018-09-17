@@ -1,154 +1,52 @@
-import '../../styles/css/components/tabs-component.css';
-import '../../styles/css/components/tabs-component.css';
-
+import React, { PureComponent, Fragment } from 'react';
 import { NavLink, withRouter } from 'react-router-dom';
-import React, { Component, Fragment } from 'react';
-import { setCurrency } from '../../actions/paymentInfo';
-import { setLocRate, setLocRateInEur } from '../../actions/dynamicLocRates';
-import { setCurrencyRates } from '../../actions/currenciesRatesInfo';
-
-import { Config } from '../../config.js';
-import { CurrencyConverter } from '../../services/utilities/currencyConverter';
-import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import requester from '../../initDependencies';
+import PropTypes from 'prop-types';
+import { setCurrency } from '../../actions/paymentInfo';
+import { CurrencyConverter } from '../../services/utilities/currencyConverter';
+import { LocRateWebSocket } from '../../services/socket/locRateWebSocket';
 
-const DEFAULT_EUR_AMOUNT = 1000;
+import '../../styles/css/components/tabs-component.css';
+
 const DEFAULT_CRYPTO_CURRENCY = 'EUR';
-const SOCKET_RECONNECT_DELAY = 5000;
 
-class LocalizationNav extends Component {
+class LocalizationNav extends PureComponent {
   constructor(props) {
     super(props);
 
-    this.socket = null;
-    this.shoudSocketReconnect = true;
-
-    this.state = {
-      locAmount: null
-    };
-
-    this.calculateLocRate = this.calculateLocRate.bind(this);
-
-    // SOCKET BINDINGS
-    this.initializeSocket = this.initializeSocket.bind(this);
-    this.connectSocket = this.connectSocket.bind(this);
-    this.handleReceiveMessage = this.handleReceiveMessage.bind(this);
-    this.disconnectSocket = this.disconnectSocket.bind(this);
-    this.socketClose = this.socketClose.bind(this);
+    this.isSendMessage = false;
   }
 
   componentDidMount() {
-    const { currency } = this.props.paymentInfo;
-    if (localStorage['currency']) setCurrency(localStorage['currency']);
-    else localStorage['currency'] = currency;
-
-    this.getRates();
-    this.initializeSocket();
+    if (localStorage['currency']) {
+      this.props.dispatch(setCurrency(localStorage['currency']));
+    } else {
+      localStorage['currency'] = this.props.paymentInfo.currency;
+    }
   }
 
   componentWillReceiveProps(nextProps) {
-    const { currency } = nextProps.paymentInfo;
-    if (currency !== this.props.paymentInfo.currency) {
-      localStorage['currency'] = currency;
-
-      const { locAmount } = this.state;
-      if (locAmount && locAmount > 0) {
-        this.setLocRateInRedux(DEFAULT_EUR_AMOUNT / locAmount, this.calculateLocRate(this.state.locAmount, currency));
-      }
+    if (nextProps.socketInfo.isLocRateWebsocketConnected && !this.isSendMessage) {
+      this.isSendMessage = true;
+      LocRateWebSocket.sendMessage(JSON.stringify({ id: nextProps.locRateFiatAmount, fiatAmount: nextProps.locRateFiatAmount }));
+    }
+    if (nextProps.isBookingConfirmPage && this.isSendMessage) {
+      this.isSendMessage = false;
+      LocRateWebSocket.sendMessage(JSON.stringify({ id: this.props.locRateFiatAmount, unsubscribe: true }));
+    }
+    if (nextProps.paymentInfo.currency !== this.props.paymentInfo.currency) {
+      localStorage['currency'] = nextProps.paymentInfo.currency;
     }
   }
 
   componentWillUnmount() {
-    this.disconnectSocket();
-  }
-
-  getRates() {
-    requester.getCurrencyRates().then(res => {
-      res.body.then(rates => {
-        this.props.dispatch(setCurrencyRates(rates));
-      });
-    });
-  }
-
-  getLocEurRate() {
-    const { currency } = this.props.paymentInfo;
-
-    requester.getLocRateByCurrency(DEFAULT_CRYPTO_CURRENCY).then(res => {
-      res.body.then(data => {
-        const locEurRate = data[0]['price_eur'];
-        if (locEurRate && locEurRate !== 0) {
-          this.setState({ locAmount: DEFAULT_EUR_AMOUNT / locEurRate }, () => {
-            this.setLocRateInRedux(locEurRate, this.calculateLocRate(this.state.locAmount, currency));
-          });
-        }
-      });
-    });
-  }
-
-  calculateLocRate(locAmount, currency) {
-    if (currency === 'EUR') {
-      return DEFAULT_EUR_AMOUNT / locAmount;
-    }
-    const fiatAmount = this.props.currenciesRatesInfo.rates && CurrencyConverter.convert(this.props.currenciesRatesInfo.rates, DEFAULT_CRYPTO_CURRENCY, currency, DEFAULT_EUR_AMOUNT);
-    return fiatAmount / locAmount;
-  }
-
-  setLocRateInRedux(locEurRate, locCurrentCurrencyRate) {
-    this.props.dispatch(setLocRateInEur(locEurRate, false, 'Nav'));
-    this.props.dispatch(setLocRate(locCurrentCurrencyRate, false, 'Nav'));
-  }
-
-  initializeSocket() {
-    this.socket = new WebSocket(Config.getValue('SOCKET_HOST_PRICE'));
-    this.socket.onmessage = this.handleReceiveMessage;
-    this.socket.onopen = this.connectSocket;
-    this.socket.onclose = this.socketClose;
-  }
-
-  connectSocket() {
-    this.socket.send(JSON.stringify({ id: 'loc-rate', fiatAmount: DEFAULT_EUR_AMOUNT }));
-  }
-
-  handleReceiveMessage(event) {
-    const locAmount = (JSON.parse(event.data)).locAmount;
-
-    if (locAmount && locAmount > 0) {
-      this.setState({ locAmount });
-
-      const locRateInEUR = this.calculateLocRate(locAmount, DEFAULT_CRYPTO_CURRENCY);
-      const locCurrentCurrencyRate = this.calculateLocRate(locAmount, this.props.paymentInfo.currency);
-
-      this.setLocRateInRedux(locRateInEUR, locCurrentCurrencyRate);
-    }
-  }
-
-  disconnectSocket() {
-    this.shoudSocketReconnect = false;
-    if (this.socket) {
-      this.socket.close();
-    }
-  }
-
-  socketClose() {
-    if (this.shoudSocketReconnect) {
-      this.getLocEurRate();
-      setTimeout(() => {
-        this.initializeSocket();
-      }, SOCKET_RECONNECT_DELAY);
-    }
+    LocRateWebSocket.sendMessage(JSON.stringify({ id: this.props.locRateFiatAmount, unsubscribe: true }));
   }
 
   render() {
     const { currency } = this.props.paymentInfo;
-    const { rates } = this.props.currenciesRatesInfo;
-    let { locRate } = this.props.dynamicLocRates;
-    const { locAmount } = this.state;
+    let { locRate } = this.props;
     const { locBalance, ethBalance, isLogged } = this.props.userInfo;
-
-    if (!locRate && rates && locAmount && locAmount !== 0) {
-      locRate = this.calculateLocRate(locAmount, currency);
-    }
 
     return (
       <div className="container">
@@ -230,17 +128,46 @@ LocalizationNav.propTypes = {
   dispatch: PropTypes.func,
   paymentInfo: PropTypes.object,
   userInfo: PropTypes.object,
-  currenciesRatesInfo: PropTypes.object,
-  dynamicLocRates: PropTypes.object,
+  socketInfo: PropTypes.object,
+  locRate: PropTypes.string,
+  isBookingConfirmPage: PropTypes.bool,
+  locRateFiatAmount: PropTypes.number,
 };
 
 function mapStateToProps(state) {
-  const { paymentInfo, userInfo, currenciesRatesInfo, dynamicLocRates } = state;
+  const { paymentInfo, userInfo, currenciesRatesInfo, dynamicLocRatesInfo, socketInfo, locAmountsInfo } = state;
+
+  let locRate = dynamicLocRatesInfo.locRate && (dynamicLocRatesInfo.locRate).toFixed(4);
+  const locRateFiatAmount = dynamicLocRatesInfo.fiatAmount;
+  let locAmount;
+  let fiat;
+
+  if (socketInfo.isLocRateWebsocketConnected) {
+    locAmount = locAmountsInfo.locAmounts[locRateFiatAmount];
+  } else {
+    if (dynamicLocRatesInfo.locEurRate) {
+      locAmount = locRateFiatAmount / dynamicLocRatesInfo.locEurRate;
+    }
+  }
+
+  if (!dynamicLocRatesInfo.locRate || paymentInfo.currency !== localStorage['currency']) {
+    fiat = currenciesRatesInfo.rates && CurrencyConverter.convert(currenciesRatesInfo.rates, DEFAULT_CRYPTO_CURRENCY, paymentInfo.currency, locRateFiatAmount);
+  }
+
+  if (fiat && locAmount) {
+    dynamicLocRatesInfo.locRate = fiat / locAmount;
+    locRate = (dynamicLocRatesInfo.locRate).toFixed(4);
+  }
+
+  const isBookingConfirmPage = dynamicLocRatesInfo.isBookingConfirmPage;
+
   return {
     paymentInfo,
     userInfo,
-    currenciesRatesInfo,
-    dynamicLocRates,
+    socketInfo,
+    locRate,
+    isBookingConfirmPage,
+    locRateFiatAmount
   };
 }
 

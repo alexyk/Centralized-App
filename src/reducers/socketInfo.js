@@ -1,7 +1,8 @@
 import { socketInfo } from '../actions/actionTypes';
 
 const initialState = {
-  isLocPriceWebsocketConnected: false
+  isLocPriceWebsocketConnected: false,
+  isLocRateWebsocketConnected: false,
 };
 
 export default function reducer(state = initialState, action) {
@@ -10,6 +11,12 @@ export default function reducer(state = initialState, action) {
       return {
         ...state,
         isLocPriceWebsocketConnected: action.isLocPriceWebsocketConnected
+      };
+
+    case socketInfo.SET_LOC_RATE_WEBSOCKET_CONNECTION:
+      return {
+        ...state,
+        isLocRateWebsocketConnected: action.isLocRateWebsocketConnected
       };
 
     default:

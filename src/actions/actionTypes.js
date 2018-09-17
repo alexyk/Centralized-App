@@ -39,6 +39,7 @@ export const bookingBestPrice = {
 // socket actions
 export const socketInfo = {
   SET_LOC_PRICE_WEBSOCKET_CONNECTION: 'SET_LOC_PRICE_WEBSOCKET_CONNECTION',
+  SET_LOC_RATE_WEBSOCKET_CONNECTION: 'SET_LOC_RATE_WEBSOCKET_CONNECTION',
 };
 
 // locAmounts actions
@@ -53,8 +54,9 @@ export const currenciesRatesInfo = {
 };
 
 // dynamic loc rates
-export const dynamicLocRates = {
+export const dynamicLocRatesInfo = {
   SET_LOC_RATE: 'SET_LOC_RATE',
-  SET_LOC_RATE_IN_EUR: 'SET_LOC_RATE_IN_EUR',
-  SET_IS_BOOKING_CONFIRM_PAGE: 'SET_IS_BOOKING_CONFIRM_PAGE'
+  SET_LOC_EUR_RATE: 'SET_LOC_EUR_RATE',
+  SET_IS_BOOKING_CONFIRM_PAGE: 'SET_IS_BOOKING_CONFIRM_PAGE',
+  SET_FIAT_AMOUNT: 'SET_FIAT_AMOUNT',
 };

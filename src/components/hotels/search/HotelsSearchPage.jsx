@@ -597,7 +597,7 @@ class HotelsSearchPage extends React.Component {
                         lon={this.state.lon}
                         hotels={listings}
                         isFiltered={this.state.isFiltered}
-                        locRate={this.props.paymentInfo.locRateInEur}
+                        locRate={this.props.paymentInfo.locEurRate}
                         rates={this.state.rates}
                         paymentInfo={this.props.paymentInfo}
                         isLogged={this.props.userInfo.isLogged}
@@ -607,7 +607,7 @@ class HotelsSearchPage extends React.Component {
                     : <div>
                       <ResultsHolder
                         hotels={listings.slice(startElement, startElement + DEFAULT_PAGE_SIZE)}
-                        locRate={this.props.paymentInfo.locRateInEur} rates={this.state.rates}
+                        locRate={this.props.paymentInfo.locEurRate} rates={this.state.rates}
                         nights={this.state.nights}
                         loading={this.state.loading}
                       />

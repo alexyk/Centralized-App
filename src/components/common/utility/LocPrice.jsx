@@ -79,7 +79,7 @@ LocPrice.propTypes = {
 function mapStateToProps(state, ownProps) {
   const fiat = ownProps.fiat;
 
-  const { userInfo, dynamicLocRates, socketInfo, locAmountsInfo, currenciesRatesInfo } = state;
+  const { userInfo, dynamicLocRatesInfo, socketInfo, locAmountsInfo, currenciesRatesInfo } = state;
 
   const fiatInEur = currenciesRatesInfo.rates && CurrencyConverter.convert(currenciesRatesInfo.rates, RoomsXMLCurrency.get(), DEFAULT_CRYPTO_CURRENCY, fiat);
 
@@ -90,7 +90,7 @@ function mapStateToProps(state, ownProps) {
   }
 
   if (!socketInfo.isLocPriceWebsocketConnected) {
-    locAmount = (fiatInEur / dynamicLocRates.locRateInEur).toFixed(2);
+    locAmount = (fiatInEur / dynamicLocRatesInfo.locEurRate).toFixed(2);
   }
 
   return {

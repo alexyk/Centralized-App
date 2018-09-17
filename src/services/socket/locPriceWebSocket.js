@@ -1,32 +1,22 @@
-import { Config } from '../../config';
 import { store } from '../../initDependencies';
 import { updateLocAmounts, clearLocAmounts } from '../../actions/locAmountsInfo';
 import { setLocPriceWebsocketConnection } from '../../actions/socketInfo';
+import WS from './websocket';
 
-const WEBSOCKET_RECONNECT_DELAY = 5000;
-
-class LocPriceWS {
+class LocPriceWS extends WS {
   constructor() {
-    this.ws = null;
-    this.shoudSocketReconnect = true;
-    this.initSocket();
+    super();
   }
 
   initSocket() {
-    this.ws = new WebSocket(Config.getValue('SOCKET_HOST_PRICE'));
-    this.ws.onmessage = this.handleRecieveMessage;
-    this.ws.onopen = this.connect;
-    this.ws.onclose = () => { this.close(this); };
+    super.initSocket();
+    super.getWS().onmessage = this.handleRecieveMessage;
+    super.getWS().onopen = this.connect;
+    super.getWS().onclose = () => { this.close(this); };
   }
 
   connect() {
     store.dispatch(setLocPriceWebsocketConnection(true));
-  }
-
-  sendMessage(message) {
-    if (this.ws.readyState === 1) {
-      this.ws.send(message);
-    }
   }
 
   handleRecieveMessage(event) {
@@ -37,21 +27,13 @@ class LocPriceWS {
     }
   }
 
-  close(args) {
-    store.dispatch(clearLocAmounts());
-    store.dispatch(setLocPriceWebsocketConnection(false));
-    if (args.shoudSocketReconnect) {
-      setTimeout(() => {
-        args.initSocket();
-      }, WEBSOCKET_RECONNECT_DELAY);
-    }
-  }
-
-  disconnect() {
-    this.shoudSocketReconnect = false;
-    if (this.ws) {
-      this.ws.close();
-    }
+  close() {
+    super.close(() => {
+      if (store.getState().socketInfo.isLocPriceWebsocketConnected) {
+        store.dispatch(clearLocAmounts());
+        store.dispatch(setLocPriceWebsocketConnection(false));
+      }
+    });
   }
 }
 

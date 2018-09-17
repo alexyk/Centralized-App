@@ -8,7 +8,7 @@ import bookingBestPrice from './bookingBestPrice';
 import socketInfo from './socketInfo';
 import locAmountsInfo from './locAmountsInfo';
 import currenciesRatesInfo from './currenciesRatesInfo';
-import dynamicLocRates from './dynamicLocRates';
+import dynamicLocRatesInfo from './dynamicLocRatesInfo';
 
 const rootReducer = combineReducers({
   userInfo,
@@ -20,7 +20,7 @@ const rootReducer = combineReducers({
   socketInfo,
   locAmountsInfo,
   currenciesRatesInfo,
-  dynamicLocRates,
+  dynamicLocRatesInfo,
 });
 
 export default rootReducer;

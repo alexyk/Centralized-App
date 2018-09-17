@@ -8,7 +8,6 @@ const initialState = {
 export default function reducer(state = initialState, action) {
   switch (action.type) {
     case paymentInfo.SET_CURRENCY:
-      localStorage['currency'] = action.currency;
       localStorage['currencySign'] = getCurrencySign(action.currency);
       return {
         ...state,
