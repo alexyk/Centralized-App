@@ -85,7 +85,7 @@ function HotelTrip(props) {
           </div>
           <div className="flex-row-child trips-status">
             <span className="status">{tripStatus}</span>
-            <span className="icon-question" title={statusMessage}></span>
+            <span className="icon-question" tooltip={statusMessage}></span>
             {tripStatus === 'ACCEPTED' && booking_id &&
               <div>Reference No.: {booking_id}</div>
             }
