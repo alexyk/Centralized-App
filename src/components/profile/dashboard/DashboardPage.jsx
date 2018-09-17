@@ -19,7 +19,6 @@ class DashboardPage extends React.Component {
     requester.getMyReservations(['page=0']).then((resReservations) => {
       resReservations.body.then(dataReservations => {
         requester.getMyTrips(['page=0']).then((resHomeTrips) => {
-          console.log(resHomeTrips);
           resHomeTrips.body.then(dataHomeTrips => {
             requester.getMyHotelBookings().then((resHotelTrips) => {
               resHotelTrips.body.then(dataHotelTrips => {
@@ -36,9 +35,9 @@ class DashboardPage extends React.Component {
                 const hotelTrips = dataHotelTrips.content.map(trip => {
                   return {
                     ...trip,
-                    sortDate: moment(trip.arrival_date, 'YYYY-MM-DD').utc().valueOf(),
-                    displayStartDate: moment(trip.arrival_date, 'YYYY-MM-DD').format('DD MMM, YYYY'),
-                    displayEndDate: moment(trip.arrival_date, 'YYYY-MM-DD').add(trip.nights, 'days').format('DD MMM, YYYY'),
+                    sortDate: moment(trip.arrival_date).utc().valueOf(),
+                    displayStartDate: moment(trip.arrival_date).format('DD MMM, YYYY'),
+                    displayEndDate: moment(trip.arrival_date).add(trip.nights, 'days').format('DD MMM, YYYY'),
                     userImage: trip.hotel_photo ? JSON.parse(trip.hotel_photo).original : Config.getValue('imgHost') + 'users/images/default.png',
                     hostName: trip.hotel_name
                   };

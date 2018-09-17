@@ -34,6 +34,8 @@ function DashboardReservationRow(props) {
 
   const dates = extractDatesData(props.reservation);
 
+  console.log(props.reservation);
+
   return (
     <ProfileFlexContainer styleClass={`flex-container-row ${props.styleClass}`}>
       <div className="tablet-col-1">
