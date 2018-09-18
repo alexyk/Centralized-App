@@ -225,6 +225,8 @@ class HotelBookingConfirmPage extends React.Component {
       backUrl: this.createBackUrl(),
     };
 
+    // send approve message
+
     // const id = this.props.match.params.id;
     // const isWebView = this.props.location.pathname.indexOf('/mobile') !== -1;
     // const rootURL = !isWebView ? `/hotels/listings/book/${id}/profile` : `/mobile/book/${id}/profile`;
