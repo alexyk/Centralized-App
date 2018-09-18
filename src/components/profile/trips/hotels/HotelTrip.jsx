@@ -67,7 +67,6 @@ class HotelTrip extends React.Component {
   }
 
   render() {
-
     const status = STATUS[this.props.trip.status];
     const statusMessage = STATUS_TOOLTIP[status];
 
