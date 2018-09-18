@@ -74,7 +74,6 @@ function DashboardPending(props) {
             <div className="dashboard-dates">Trip Dates</div>
             <div className="dashboard-nights">Nights</div>
             <div className="dashboard-status">Status</div>
-            <div className="dashboard-date">Date</div>
           </div>
         </ProfileFlexContainer>
         {renderReservations()}

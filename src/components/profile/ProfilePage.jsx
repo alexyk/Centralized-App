@@ -1,4 +1,4 @@
-import { Route, Switch } from 'react-router-dom';
+import { Route, Switch, withRouter } from 'react-router-dom';
 
 import AdminPage from './admin/AdminPage';
 import CalendarPage from './calendar/CalendarPage';
@@ -13,11 +13,14 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import TripsRouter from './trips/TripsRouter';
 import WalletPage from './wallet/WalletIndexPage';
+import AirdropPage from './airdrop/AirdropPage';
+import BuyLocPage from './buyloc/BuyLocPage';
+import { connect } from 'react-redux';
 
 function ProfilePage(props) {
   return (
     <React.Fragment>
-      <ProfileNav />
+      {props.isLogged && <ProfileNav />}
       <Switch>
         <Route exact path="/profile/dashboard" render={() => <DashboardPage />} />
         <Route exact path="/profile/listings" render={() => <MyListingsPage />} />
@@ -28,6 +31,8 @@ function ProfilePage(props) {
         <Route path="/profile/reservations" render={() => <MyGuestsPage />} />
         <Route path="/profile/me" render={() => <ProfileEditPage />} />
         <Route path="/profile/wallet" render={() => <WalletPage />} />
+        <Route path="/airdrop" render={() => <AirdropPage />} />
+        <Route path="/buyloc" render={() => <BuyLocPage />} />
         <Route path="/profile/admin" render={() => <AdminPage />} />
       </Switch>
     </React.Fragment>
@@ -38,4 +43,8 @@ ProfilePage.propTypes = {
   location: PropTypes.object,
 };
 
-export default ProfilePage;
+const mapStateToProps = ({ userInfo }) => ({
+  isLogged: userInfo.isLogged,
+});
+
+export default withRouter(connect(mapStateToProps)(ProfilePage));

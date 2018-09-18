@@ -15,7 +15,6 @@ import { Config } from '../../../config';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { INVALID_SECURITY_CODE } from '../../../constants/warningMessages.js';
 import { LONG } from '../../../constants/notificationDisplayTimes.js';
-import ProfileNav from '../ProfileNav';
 import NoEntriesMessage from '../../common/messages/NoEntriesMessage';
 import { NotificationManager } from 'react-notifications';
 import PropTypes from 'prop-types';
@@ -278,82 +277,94 @@ class AirdropPage extends Component {
 
   getBalanceContainer() {
     switch (this.props.airdropInfo.finalizedStatus) {
-     case 'VERIFIED':
-       return this._getVerifiedStatus();
-     case 'VERIFIED_REFERRALS_INCOMPLETE':
-       return this._getVerifiedWithIncompleteReferrals();
-     case 'LATE_VERIFIED':
-       return this._getTooLateVerifiedStatus();
-     case 'FAILED':
-       return this._getFailedStatus();
-     case 'INCOMPLETE':
-       return this._getIncompleteStatus();
-     default:
-       return this._getUnverifiedStatus();
+      case 'VERIFIED':
+        return this._getVerifiedStatus();
+      case 'VERIFIED_REFERRALS_INCOMPLETE':
+        return this._getVerifiedWithIncompleteReferrals();
+      case 'LATE_VERIFIED':
+        return this._getTooLateVerifiedStatus();
+      case 'FAILED':
+        return this._getFailedStatus();
+      case 'INCOMPLETE':
+        return this._getIncompleteStatus();
+      default:
+        return this._getUnverifiedStatus();
     }
   }
 
   _getVerifiedStatus() {
-    return [
-      <div className="balance-row__label">
-        <span className="step-check checked" style={{"margin-top": "-0.4em"}}></span>
-        <span className="emphasized-text">Verified Balance</span>
-      </div>,
-      <div className="balance-row__content">${Math.max(10, this.props.airdropInfo.referralCount * 5 + 10)}</div>
-    ];
+    return (
+      <React.Fragment>
+        <div className="balance-row__label">
+          <span className="step-check checked" style={{ "margin-top": "-0.4em" }}></span>
+          <span className="emphasized-text">Verified Balance</span>
+        </div>,
+        <div className="balance-row__content">${Math.max(10, this.props.airdropInfo.referralCount * 5 + 10)}</div>
+      </React.Fragment>
+    );
   }
 
   _getVerifiedWithIncompleteReferrals() {
-    return [
-      <div className="balance-row__label">
-        <span className="step-check checked" style={{"margin-top": "3.5em"}}></span>
-        <span className="emphasized-text">Your status has been verified, however your referrals might be subjected to additional verification checks which might affect your final balance.</span>
-      </div>,
-      <div className="balance-row__content centered-balance">${Math.max(10, this.props.airdropInfo.referralCount * 5 + 10)}</div>
-    ];
+    return (
+      <React.Fragment>
+        <div className="balance-row__label">
+          <span className="step-check checked" style={{ "margin-top": "3.5em" }}></span>
+          <span className="emphasized-text">Your status has been verified, however your referrals might be subjected to additional verification checks which might affect your final balance.</span>
+        </div>,
+        <div className="balance-row__content centered-balance">${Math.max(10, this.props.airdropInfo.referralCount * 5 + 10)}</div>
+      </React.Fragment>
+    );
   }
 
   _getTooLateVerifiedStatus() {
-    return [
-      <div className="balance-row__label">
-        <span className="step-check checked" style={{"margin-top": "3.5em"}}></span>
-        <span className="emphasized-text">Your balance is verified as $0, because the airdrop has been finalized in your country prior to the moment you had joined and  because you have not referred any other people. For more info, <a href="https://medium.com/@LockChainCo/participating-in-the-loc-airdrop-from-a-country-where-the-airdrop-has-been-finalized-621fd7f7a78b" target="_blank" rel='noreferrer noopener' className="referral-url"><u>read this post</u></a>. </span>
-      </div>,
-      <div className="balance-row__content centered-balance">$0</div>
-    ];
+    return (
+      <React.Fragment>
+        <div className="balance-row__label">
+          <span className="step-check checked" style={{ "margin-top": "3.5em" }}></span>
+          <span className="emphasized-text">Your balance is verified as $0, because the airdrop has been finalized in your country prior to the moment you had joined and  because you have not referred any other people. For more info, <a href="https://medium.com/@LockChainCo/participating-in-the-loc-airdrop-from-a-country-where-the-airdrop-has-been-finalized-621fd7f7a78b" target="_blank" rel='noreferrer noopener' className="referral-url"><u>read this post</u></a>. </span>
+        </div>,
+        <div className="balance-row__content centered-balance">$0</div>
+      </React.Fragment>
+    );
   }
 
   _getUnverifiedStatus() {
-    return [
-      <div className="balance-row__label"><span className="emphasized-text">Unverified Balance</span></div>,
-      <div className="balance-row__content">${this.props.airdropInfo.isCampaignSuccessfullyCompleted ? this.props.airdropInfo.referralCount * 5 + 10 : this.props.airdropInfo.referralCount * 5}</div>
-    ];
+    return (
+      <React.Fragment>
+        <div className="balance-row__label"><span className="emphasized-text">Unverified Balance</span></div>
+        <div className="balance-row__content">${this.props.airdropInfo.isCampaignSuccessfullyCompleted ? this.props.airdropInfo.referralCount * 5 + 10 : this.props.airdropInfo.referralCount * 5}</div>
+      </React.Fragment>
+    );
   }
 
   _getFailedStatus() {
-    return [
-      <div className="balance-row__label">
-        <span className="step-check unchecked" style={{"margin-top": "1.5em"}}></span>
-        <span className="mandatory">
-          Duplicate accounting/multi accounting has been detected. As a result your balance has been voided.
-        </span>
-      </div>,
-      <div className="balance-row__content centered-balance">$0</div>
-    ];
+    return (
+      <React.Fragment>
+        <div className="balance-row__label">
+          <span className="step-check unchecked" style={{ "margin-top": "1.5em" }}></span>
+          <span className="mandatory">
+            Duplicate accounting/multi accounting has been detected. As a result your balance has been voided.
+          </span>
+        </div>,
+        <div className="balance-row__content centered-balance">$0</div>
+      </React.Fragment>
+    );
   }
 
   _getIncompleteStatus() {
-    return [
-      <div className="balance-row__label">
-        <span className="step-check unchecked" style={{"margin-top": "3.5em"}}></span>
-        <span className="mandatory">
-          Our checks indicate that you have not completed all social joins.
-          Please make sure you have joined our telegram, followed us on Twitter and Facebook.<br/>
-          For more info, please <a href="https://medium.com/@LockChainCo/how-to-fix-social-joins-requirement-ea31b6e31801" target="_blank" rel='noreferrer noopener' className="referral-url"><u>read this post</u></a>.
-        </span>
-      </div>,
-      <div className="balance-row__content centered-balance">$0</div>
-    ];
+    return (
+      <React.Fragment>
+        <div className="balance-row__label">
+          <span className="step-check unchecked" style={{ "margin-top": "3.5em" }}></span>
+          <span className="mandatory">
+            Our checks indicate that you have not completed all social joins.
+          Please make sure you have joined our telegram, followed us on Twitter and Facebook.<br />
+            For more info, please <a href="https://medium.com/@LockChainCo/how-to-fix-social-joins-requirement-ea31b6e31801" target="_blank" rel='noreferrer noopener' className="referral-url"><u>read this post</u></a>.
+          </span>
+        </div>,
+        <div className="balance-row__content centered-balance">$0</div>
+      </React.Fragment>
+    );
   }
 
   render() {
@@ -375,7 +386,6 @@ class AirdropPage extends Component {
     if (!this.props.airdropInfo.participates) {
       return (
         <div>
-          <ProfileNav />
           <div className="container">
             <NoEntriesMessage text='Participate in our airdrop campaign.'>
               <a href={'https://locktrip.com/airdrop/' + this.props.location.search} className="btn">Participate</a>
@@ -387,11 +397,10 @@ class AirdropPage extends Component {
 
     return (
       <div>
-        <ProfileNav />
         <div className="container">
           <div id="airdrop-main">
             <h2>Personal Dashboard</h2>
-            <hr/>
+            <hr />
             <p>You can view your current balance, as well as your unique Referral Link.</p>
             <p>Every Person who completes our airdrop via your unique referral link, will generate $5 for you! <span className="emphasized-text">Make sure you refer as much friends and family as you can!</span></p>
 
@@ -485,30 +494,8 @@ class AirdropPage extends Component {
                     </div>
                   }
                 </div>
-                <hr />
-                {/*<div className="airdrop-row final">*/}
-                {/*<div className="description">*/}
-                {/*<span className="step-check unchecked"></span><span className="airdrop-row__heading">Final Step</span>*/}
-                {/*</div>*/}
-                {/*</div>*/}
               </div>
             </div>
-
-            {/* <div>
-              Email: {this.props.airdropInfo.email}
-            </div>
-            <div>
-              Facebook: {this.props.airdropInfo.facebookProfile}
-            </div>
-            <div>
-              Twitter: {this.props.airdropInfo.twitterProfile}
-            </div>
-            <div>
-              Reddit: {this.props.airdropInfo.redditProfile}
-            </div>
-            <div>
-              telegram: {this.props.airdropInfo.telegramProfile}
-            </div> */}
           </div>
         </div>
       </div>

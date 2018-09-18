@@ -206,20 +206,19 @@ class HotelBookingConfirmPage extends React.Component {
     const { currency } = this.props.paymentInfo;
     let fiatAmount;
     let locAmount;
-    let quotedLoc;
+    let socketMessageId;
     if (this.getEnvironment() === 'production') {
       fiatAmount = CurrencyConverter.convert(rates, RoomsXMLCurrency.get(), currency, fiatPriceRoomsXML);
       locAmount = locPrice;
-      quotedLoc = quotedLocPrice;
+      socketMessageId = 'real';
     } else {
       fiatAmount = CurrencyConverter.convert(rates, DEFAULT_CRYPTO_CURRENCY, currency, TEST_FIAT_AMOUNT_IN_EUR);
       locAmount = testLocPrice;
-      quotedLoc = testQuotedLocPrice;
+      socketMessageId = 'test';
     }
     const paymentInfo = {
       fiatAmount,
       locAmount,
-      quotedLoc,
       quotedPair: this.quotedPair,
       currency,
       bookingId: data.preparedBookingId,

@@ -100,19 +100,20 @@ class ConfirmProfilePage extends React.Component {
   }
 
   payWithCard() {
-    requester.mark
-    const { paymentInfo } = this.props.location.state;
-    requester.verifyCreditCardPayment(paymentInfo)
-      .then(res => {
-        res.body.then((data) => {
-          const env = Config.getValue('env');
-          if (env === 'staging' || env === 'development') {
-            window.location.href = data.url;
-          } else {
-            this.payWithCreditCard(data.url);
-          }
+    this.props.requestLockOnQuoteId().then(() => {
+      const { paymentInfo } = this.props.location.state;
+      requester.verifyCreditCardPayment(paymentInfo)
+        .then(res => {
+          res.body.then((data) => {
+            const env = Config.getValue('env');
+            if (env === 'staging' || env === 'development') {
+              window.location.href = data.url;
+            } else {
+              this.payWithCreditCard(data.url);
+            }
+          });
         });
-      });
+    });
   }
 
   onChange(event) {
@@ -191,7 +192,7 @@ class ConfirmProfilePage extends React.Component {
 
             <div className="phone">
               <label htmlFor="phone">Phone number <span className="mandatory">*</span><img src={Config.getValue('basePath') + 'images/icon-lock.png'} className="lock" alt="lock-o" /></label>
-              <input id="phone" name="phoneNumber" value={this.state.userInfo.phoneNumber} onChange={this.onChange} type="text" required/>
+              <input id="phone" name="phoneNumber" value={this.state.userInfo.phoneNumber} onChange={this.onChange} type="text" required />
             </div>
 
             <div className="address-city">
@@ -238,12 +239,12 @@ class ConfirmProfilePage extends React.Component {
 
             <div className="address">
               <label htmlFor="address">Address <span className="mandatory">*</span></label>
-              <input id="address" name="address" value={this.state.userInfo.address} onChange={this.onChange} type="text" placeholder='Enter your address' required/>
+              <input id="address" name="address" value={this.state.userInfo.address} onChange={this.onChange} type="text" placeholder='Enter your address' required />
             </div>
 
             <div className="zip-code">
               <label htmlFor="zip-code">Zip Code <span className="mandatory">*</span></label>
-              <input id="zip-code" name="zipCode" value={this.state.userInfo.zipCode} onChange={this.onChange} type="text" placeholder='Enter your zip code' required/>
+              <input id="zip-code" name="zipCode" value={this.state.userInfo.zipCode} onChange={this.onChange} type="text" placeholder='Enter your zip code' required />
             </div>
 
             <p className="text"><span className="mandatory">*</span> Fields mandatory for payment with Credit Card</p>
@@ -269,7 +270,9 @@ ConfirmProfilePage.propTypes = {
 
   // Router
   location: PropTypes.object,
-  match: PropTypes.object
+  match: PropTypes.object,
+
+  requestLockOnQuoteId: PropTypes.func
 };
 
 export default withRouter(ConfirmProfilePage);

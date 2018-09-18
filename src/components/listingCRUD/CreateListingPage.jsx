@@ -124,7 +124,7 @@ class CreateListingPage extends React.Component {
 
     requester.getPropertyTypes().then(res => {
       res.body.then(data => {
-        this.setState({ propertyTypes: data.content });
+        this.setState({ propertyTypes: data });
       });
     });
 

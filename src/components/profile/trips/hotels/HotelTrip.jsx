@@ -67,7 +67,6 @@ class HotelTrip extends React.Component {
   }
 
   render() {
-
     const status = STATUS[this.props.trip.status];
     const statusMessage = STATUS_TOOLTIP[status];
 
@@ -119,7 +118,7 @@ class HotelTrip extends React.Component {
               <span className="status">{status}</span>
             }
             {this.props.trip.status &&
-              <span className="icon-question" title={this.props.trip.error ? this.props.trip.error : statusMessage}></span>
+              <span className="icon-question" tooltip={this.props.trip.error ? this.props.trip.error : statusMessage}></span>
             }
             {this.props.trip.status && this.props.trip.status.toUpperCase() === 'DONE' &&
               <div>Reference No.: {this.props.trip.booking_id}</div>

@@ -8,8 +8,8 @@ import '../../../styles/css/components/profile/dashboard/dashboard-reservations.
 
 function DashboardReservationRow(props) {
   const extractDatesData = (reservation) => {
-    const startDateMoment = moment(reservation.startDate);
-    const endDateMoment = moment(reservation.endDate);
+    const startDateMoment = moment(reservation.startDate, 'DD/MM/YYYY');
+    const endDateMoment = moment(reservation.endDate, 'DD/MM/YYYY');
     const creationDateMoment = moment(reservation.creationDate);
 
     const creationDate = {
@@ -33,6 +33,8 @@ function DashboardReservationRow(props) {
   };
 
   const dates = extractDatesData(props.reservation);
+  const nights = moment(props.reservation.endDate, 'DD/MM/YYYY').diff(moment(props.reservation.startDate, 'DD/MM/YYYY'), 'days');
+  const guests = props.reservation.guests;
 
   return (
     <ProfileFlexContainer styleClass={`flex-container-row ${props.styleClass}`}>
@@ -57,7 +59,7 @@ function DashboardReservationRow(props) {
         <div className="flex-row-child dashboard-nights">
           <span className="icon-moon icon" />
           <div className="content-row">
-            <span>{parseInt((new Date(props.reservation.endDate) - new Date(props.reservation.startDate)) / (1000 * 60 * 60 * 24), 10)} nights &bull; {props.reservation.guests} guests</span>
+            <span>{nights} {nights > 1 ? 'nights' : 'night'} &bull; {guests} {guests > 1 ? 'guests' : 'guest'}</span>
           </div>
         </div>
         <div className="flex-row-child dashboard-status">
@@ -65,9 +67,9 @@ function DashboardReservationRow(props) {
           <span> - </span>
           <span>{props.reservation.currencyCode} {props.reservation.price}</span>
         </div>
-        <div className="flex-row-child dashboard-date tablet-none">
+        {/* <div className="flex-row-child dashboard-date tablet-none">
           {props.reservation.creationDate && <p>{dates.creationDate.day} {dates.creationDate.month}</p>}
-        </div>
+        </div> */}
       </div>
     </ProfileFlexContainer>
   );
