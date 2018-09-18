@@ -16,11 +16,11 @@ class ProfileNav extends React.Component {
   }
 
   componentDidMount() {
-    requester.getUserInfo().then(res => {
-      res.body.then(data => {
+    requester.getUserInfo()
+      .then(res =>  res.body)
+      .then(data => {
         this.setState({ roles: data.roles, loading: false });
       });
-    });
   }
 
   isAdmin() {
