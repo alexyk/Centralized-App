@@ -15,7 +15,6 @@ import { Config } from '../../../config';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { INVALID_SECURITY_CODE } from '../../../constants/warningMessages.js';
 import { LONG } from '../../../constants/notificationDisplayTimes.js';
-import ProfileNav from '../ProfileNav';
 import NoEntriesMessage from '../../common/messages/NoEntriesMessage';
 import { NotificationManager } from 'react-notifications';
 import PropTypes from 'prop-types';
@@ -387,7 +386,6 @@ class AirdropPage extends Component {
     if (!this.props.airdropInfo.participates) {
       return (
         <div>
-          <ProfileNav />
           <div className="container">
             <NoEntriesMessage text='Participate in our airdrop campaign.'>
               <a href={'https://locktrip.com/airdrop/' + this.props.location.search} className="btn">Participate</a>
@@ -399,7 +397,6 @@ class AirdropPage extends Component {
 
     return (
       <div>
-        <ProfileNav />
         <div className="container">
           <div id="airdrop-main">
             <h2>Personal Dashboard</h2>

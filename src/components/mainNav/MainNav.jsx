@@ -446,7 +446,8 @@ class MainNav extends React.Component {
           Wallet.getTokenBalance(data.locAddress).then(loc => {
             const locBalance = loc / (Math.pow(10, 18));
             const { firstName, lastName, phoneNumber, email, locAddress, gender, isEmailVerified } = data;
-            this.props.dispatch(setUserInfo(firstName, lastName, phoneNumber, email, locAddress, ethBalance, locBalance, gender, isEmailVerified));
+            const isAdmin = data.roles.findIndex((r) => r.name === 'ADMIN') !== -1;
+            this.props.dispatch(setUserInfo(firstName, lastName, phoneNumber, email, locAddress, ethBalance, locBalance, gender, isEmailVerified, isAdmin));
           });
         });
       });

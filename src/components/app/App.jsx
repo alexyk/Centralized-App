@@ -3,7 +3,6 @@ import '../../styles/css/main.css';
 import { Redirect, Route, Switch, withRouter } from 'react-router-dom';
 import { setIsLogged, setUserInfo } from '../../actions/userInfo';
 
-import AccountNotificationsPage from '../profile/account/AccountNotificationsPage';
 import AirdropPage from '../profile/airdrop/AirdropPage';
 import Balance from '../external/Balance';
 import BigCalendar from 'react-big-calendar';
@@ -67,7 +66,8 @@ class App extends React.Component {
           Wallet.getTokenBalance(data.locAddress).then(loc => {
             const locBalance = loc / (Math.pow(10, 18));
             const { firstName, lastName, phoneNumber, email, locAddress, gender, isEmailVerified } = data;
-            this.props.dispatch(setUserInfo(firstName, lastName, phoneNumber, email, locAddress, ethBalance, locBalance, gender, isEmailVerified));
+            const isAdmin = data.roles.findIndex((r) => r.name === 'ADMIN') !== -1;
+            this.props.dispatch(setUserInfo(firstName, lastName, phoneNumber, email, locAddress, ethBalance, locBalance, gender, isEmailVerified, isAdmin));
           });
         });
       });
@@ -124,14 +124,13 @@ class App extends React.Component {
           <Route exact path="/" render={() => <HomeRouterPage />} />
           <Route exact path="/profile/listings/edit/:step/:id" render={() => !this.isAuthenticated() ? <Redirect to="/" /> : <EditListingPage />} />
           {/* <Route exact path="/profile/listings/calendar/:id" render={() => !this.isAuthenticated() ? <Redirect to="/" /> : <CalendarPage />} /> */}
-          <Route exact path="/profile/account/notifications" render={() => !this.isAuthenticated() ? <Redirect to="/" /> : <AccountNotificationsPage />} />
           <Route exact path="/users/resetPassword/:confirm" render={() => <HomeRouterPage />} />
           <Route path="/homes" render={() => <HomeRouterPage />} />
           <Route path="/hotels" render={() => <HomeRouterPage />} />
           <Route path="/profile/listings/create" render={() => !this.isAuthenticated() ? <Redirect to="/" /> : <CreateListingPage />} />
           <Route path="/profile/" render={() => !this.isAuthenticated() ? <Redirect to="/" /> : <ProfilePage location={this.props.location} />} />
-          <Route path="/airdrop" render={() => <AirdropPage />} />
-          <Route path="/buyloc" render={() => <BuyLocPage />} />
+          <Route path="/airdrop" render={() => <ProfilePage />} />
+          <Route path="/buyloc" render={() => <ProfilePage />} />
           <Route path="/softuni" render={() => <WorldKuCoinCampaign />} />
           <Route path="/vote" render={() => <WorldKuCoinCampaign />} />
           <Route path="/campaigns/balance/check" render={() => <Balance />} />

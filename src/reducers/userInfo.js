@@ -10,7 +10,8 @@ const initialState = {
   locBalance: '',
   ethBalance: '',
   gender: '',
-  isEmailVerified: false
+  isEmailVerified: false,
+  isAdmin: false,
 };
 
 export default function reducer(state = initialState, action) {
@@ -27,7 +28,8 @@ export default function reducer(state = initialState, action) {
         locBalance: action.isLogged ? state.locBalance : null,
         ethBalance: action.isLogged ? state.ethBalance : null,
         gender: action.isLogged ? state.gender : null,
-        isEmailVerified: action.isEmailVerified ? state.isEmailVerified : null
+        isEmailVerified: action.isEmailVerified ? state.isEmailVerified : null,
+        isAdmin: action.isAdmin ? state.isAdmin : false,
       };
     case userInfo.SET_USER_INFO:
       return {
@@ -40,7 +42,8 @@ export default function reducer(state = initialState, action) {
         locBalance: action.locBalance,
         ethBalance: action.ethBalance,
         gender: action.gender,
-        isEmailVerified: action.isEmailVerified
+        isEmailVerified: action.isEmailVerified,
+        isAdmin: action.isAdmin,
       };
     default:
       return state;
