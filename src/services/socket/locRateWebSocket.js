@@ -1,17 +1,14 @@
 import requester, { store } from '../../initDependencies';
 import { setLocRateWebsocketConnection } from '../../actions/socketInfo';
-import { updateLocAmounts } from '../../actions/locAmountsInfo';
 import { setLocRate, setLocEurRate } from '../../actions/dynamicLocRatesInfo';
-import { CurrencyConverter } from '../utilities/currencyConverter';
 
-import WS from './websocket';
+import WS from './exchangerWebsocket';
 
 const DEFAULT_CRYPTO_CURRENCY = 'EUR';
+const DEFAULT_RATE_ID = 'loc-rate';
+const DEFAULT_RATE_METHOD = 'getLocRate';
 
 class LocRateWS extends WS {
-  constructor() {
-    super();
-  }
 
   initSocket() {
     super.initSocket();
@@ -24,34 +21,29 @@ class LocRateWS extends WS {
     store.dispatch(setLocRateWebsocketConnection(true));
   }
 
+  sendMessage(id, method, params) {
+    id = id || DEFAULT_RATE_ID;
+    method = method || DEFAULT_RATE_METHOD;
+    super.sendMessage(id, method, params);
+  }
+
   handleRecieveMessage(event) {
     if (event) {
       const data = JSON.parse(event.data);
-      const fiatInEur = Number(data.id);
-      store.dispatch(updateLocAmounts(data.id, data.locAmount));
-      store.dispatch(setLocEurRate(fiatInEur / data.locAmount));
-
-      const rates = store.getState().currenciesRatesInfo.rates;
-      if (rates) {
-        const fiatAmount = rates && CurrencyConverter.convert(rates, DEFAULT_CRYPTO_CURRENCY, store.getState().paymentInfo.currency, fiatInEur);
-        const locRate = fiatAmount / data.locAmount;
-        store.dispatch(setLocRate(locRate));
-      }
+      store.dispatch(setLocRate(data.params[`${(store.getState().paymentInfo.currency).toLowerCase()}Rate`]));
+      store.dispatch(setLocEurRate(data.params.eurRate));      
     }
   }
 
-  getLocEurRate() {
+  getLocRates() {
+    requester.getLocRateByCurrency(store.getState().paymentInfo.currency).then(res => {
+      res.body.then(data => {
+        store.dispatch(setLocRate(Number(data[0][`price_${(store.getState().paymentInfo.currency).toLowerCase()}`])));
+      });
+    });
     requester.getLocRateByCurrency(DEFAULT_CRYPTO_CURRENCY).then(res => {
       res.body.then(data => {
-        const locEurRate = data[0]['price_eur'];
-        store.dispatch(setLocEurRate(locEurRate));
-
-        const rates = store.getState().currenciesRatesInfo.rates;
-        if (rates) {
-          const fiatAmount = rates && CurrencyConverter.convert(rates, DEFAULT_CRYPTO_CURRENCY, store.getState().paymentInfo.currency, store.getState().dynamicLocRatesInfo.fiatAmount);
-          const locRate = fiatAmount / (store.getState().dynamicLocRatesInfo.fiatAmount / locEurRate);
-          store.dispatch(setLocRate(locRate));
-        }
+        store.dispatch(setLocEurRate(Number(data[0]['price_eur'])));
       });
     });
   }
@@ -61,7 +53,7 @@ class LocRateWS extends WS {
       if (store.getState().socketInfo.isLocRateWebsocketConnected) {
         store.dispatch(setLocRateWebsocketConnection(false));
       }
-      this.getLocEurRate();
+      this.getLocRates();
     });
   }
 }

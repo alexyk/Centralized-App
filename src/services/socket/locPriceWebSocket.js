@@ -1,12 +1,11 @@
 import { store } from '../../initDependencies';
 import { updateLocAmounts, clearLocAmounts } from '../../actions/locAmountsInfo';
 import { setLocPriceWebsocketConnection } from '../../actions/socketInfo';
-import WS from './websocket';
+import WS from './exchangerWebsocket';
+
+const DEFAULT_SOCKET_METHOD = 'getLocPrice';
 
 class LocPriceWS extends WS {
-  constructor() {
-    super();
-  }
 
   initSocket() {
     super.initSocket();
@@ -19,11 +18,19 @@ class LocPriceWS extends WS {
     store.dispatch(setLocPriceWebsocketConnection(true));
   }
 
+  sendMessage(id, method, params) {
+    method = method ? method : DEFAULT_SOCKET_METHOD;
+    super.sendMessage(id, method, params);
+  }
+
   handleRecieveMessage(event) {
     if (event) {
       const data = JSON.parse(event.data);
-      console.log(data);
-      store.dispatch(updateLocAmounts(data.id, data.locAmount));
+      if (data.params.quotedLoc) {
+        store.dispatch(updateLocAmounts(data.id, { locAmount: data.params.locAmount, quotedLoc: data.params.quotedLoc, quotedPair: data.params.quotedPair }));
+      } else {
+        store.dispatch(updateLocAmounts(data.id, data.params.locAmount));
+      }
     }
   }
 

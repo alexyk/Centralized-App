@@ -597,17 +597,16 @@ class HotelsSearchPage extends React.Component {
                         lon={this.state.lon}
                         hotels={listings}
                         isFiltered={this.state.isFiltered}
-                        locRate={this.props.paymentInfo.locEurRate}
                         rates={this.state.rates}
-                        paymentInfo={this.props.paymentInfo}
                         isLogged={this.props.userInfo.isLogged}
                         nights={this.state.nights}
+                        loading={this.state.loading}
                       />
                     </div>
                     : <div>
                       <ResultsHolder
                         hotels={listings.slice(startElement, startElement + DEFAULT_PAGE_SIZE)}
-                        locRate={this.props.paymentInfo.locEurRate} rates={this.state.rates}
+                        rates={this.state.rates}
                         nights={this.state.nights}
                         loading={this.state.loading}
                       />
@@ -646,16 +645,6 @@ class HotelsSearchPage extends React.Component {
   }
 }
 
-export default withRouter(connect(mapStateToProps)(HotelsSearchPage));
-
-function mapStateToProps(state) {
-  const { paymentInfo, userInfo } = state;
-  return {
-    paymentInfo,
-    userInfo
-  };
-}
-
 HotelsSearchPage.propTypes = {
   countries: PropTypes.array,
 
@@ -665,5 +654,15 @@ HotelsSearchPage.propTypes = {
 
   // start Redux props
   paymentInfo: PropTypes.object,
-  userInfo: PropTypes.object
+  userInfo: PropTypes.object,
 };
+
+function mapStateToProps(state) {
+  const { paymentInfo, userInfo } = state;
+  return {
+    paymentInfo,
+    userInfo
+  };
+}
+
+export default withRouter(connect(mapStateToProps)(HotelsSearchPage));

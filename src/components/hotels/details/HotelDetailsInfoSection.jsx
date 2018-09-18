@@ -192,7 +192,6 @@ function HotelDetailsInfoSection(props) {
 HotelDetailsInfoSection.propTypes = {
   data: PropTypes.object,
   hotelRooms: PropTypes.array,
-  locRate: PropTypes.number,
   showLoginModal: PropTypes.bool,
   isLogged: PropTypes.bool,
   userInfo: PropTypes.object,

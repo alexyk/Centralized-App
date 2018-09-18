@@ -112,7 +112,7 @@ class HomeReservationPanel extends React.Component {
     };
 
     const cleaningFee = this.props.nights > 0 ? (this.props.paymentInfo.currency === this.props.listing.currencyCode ? parseInt(this.props.listing.cleaningFee, 10) : parseInt(this.props.listing.cleaningFees[this.props.paymentInfo.currency], 10)) : 0;
-    const cleaningFeeLoc = Number((cleaningFee / this.props.paymentInfo.locRate).toFixed(4));
+    const cleaningFeeLoc = Number((cleaningFee / this.props.dynamicLocRatesInfo.locEurRate).toFixed(4));
 
     let listingPriceForPeriod = 0;
     let startDate = this.props.startDate;
@@ -133,7 +133,7 @@ class HomeReservationPanel extends React.Component {
 
     const listingPrice = listingPriceForPeriod;
 
-    const listingPriceLoc = Number((listingPrice / this.props.paymentInfo.locRate).toFixed(4));
+    const listingPriceLoc = Number((listingPrice / this.props.dynamicLocRatesInfo.locEurRate).toFixed(4));
 
     const totalLoc = (listingPriceLoc + cleaningFeeLoc).toFixed(4);
     return (
@@ -240,14 +240,16 @@ HomeReservationPanel.propTypes = {
   // Redux props
   dispatch: PropTypes.func,
   userInfo: PropTypes.object,
-  paymentInfo: PropTypes.object
+  paymentInfo: PropTypes.object,
+  dynamicLocRatesInfo: PropTypes.object
 };
 
 function mapStateToProps(state) {
-  const { userInfo, paymentInfo } = state;
+  const { userInfo, paymentInfo, dynamicLocRatesInfo } = state;
   return {
     userInfo,
-    paymentInfo
+    paymentInfo,
+    dynamicLocRatesInfo
   };
 }
 

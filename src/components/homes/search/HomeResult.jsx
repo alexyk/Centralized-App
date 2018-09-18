@@ -6,13 +6,16 @@ import ListingItemRatingBox from '../../common/listing/ListingItemRatingBox';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
+import { RoomsXMLCurrency } from '../../../services/utilities/roomsXMLCurrency';
+import LocPrice from '../../common/utility/LocPrice';
 
-function HomeItem(props) {
-  const { currency, currencySign, locEurRate } = props.paymentInfo;
+function HomeResult(props) {
+  const { currency, currencySign } = props.paymentInfo;
   const { cityName, countryName, prices, currency_code, defaultDailyPrice, id, name, reviewsCount, averageRating, description } = props.listing;
   let { pictures } = props.listing;
-  const listingPrice = (prices) && currency === currency_code ? parseInt(defaultDailyPrice, 10).toFixed() : parseInt(prices[currency], 10).toFixed(2);
-  const listingPriceInEur = (prices) && currency === currency_code ? parseInt(defaultDailyPrice, 10).toFixed() : parseInt(prices['EUR'], 10).toFixed(2);
+  const listingPrice = prices && currency === currency_code ? parseInt(defaultDailyPrice, 10).toFixed() : parseInt(prices[currency], 10).toFixed(2);
+  const listingPriceInRoomsCurrency = prices && prices[RoomsXMLCurrency.get()];
+
   if (typeof pictures === 'string') {
     pictures = JSON.parse(pictures).map(img => { return { thumbnail: Config.getValue('imgHost') + img.thumbnail }; });
   }
@@ -33,7 +36,7 @@ function HomeItem(props) {
       <div className="list-price">
         <div className="list-hotel-price-bgr">Price for 1 night</div>
         <div className="list-hotel-price-curency">{currencySign}{listingPrice}</div>
-        <div className="list-hotel-price-loc">(LOC {(listingPriceInEur / locEurRate).toFixed(2)})</div>
+        <div className="list-hotel-price-loc">{listingPriceInRoomsCurrency && <LocPrice fiat={listingPriceInRoomsCurrency} />}</div>
         <Link to={`/homes/listings/${id}${props.location.search}`} className="list-hotel-price-button btn btn-primary">Book now</Link>
       </div>
       <div className="clearfix"></div>
@@ -41,7 +44,7 @@ function HomeItem(props) {
   );
 }
 
-HomeItem.propTypes = {
+HomeResult.propTypes = {
   listing: PropTypes.object,
   location: PropTypes.object,
 
@@ -57,4 +60,4 @@ function mapStateToProps(state) {
   };
 }
 
-export default withRouter(connect(mapStateToProps)(HomeItem));
+export default withRouter(connect(mapStateToProps)(HomeResult));

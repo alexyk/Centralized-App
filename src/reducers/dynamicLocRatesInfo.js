@@ -4,7 +4,6 @@ const initialState = {
   fiatAmount: 1000,
   locRate: null,
   locEurRate: null,
-  isBookingConfirmPage: false,
 };
 
 export default function reducer(state = initialState, action) {
@@ -26,13 +25,6 @@ export default function reducer(state = initialState, action) {
         ...state,
         locEurRate: action.locEurRate
       };
-
-    case dynamicLocRatesInfo.SET_IS_BOOKING_CONFIRM_PAGE:
-      return {
-        ...state,
-        isBookingConfirmPage: action.isBookingConfirmPage
-      };
-
 
     default:
       return state;

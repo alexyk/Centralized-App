@@ -17,9 +17,9 @@ class WS {
     return this.ws;
   }
 
-  sendMessage(message) {
-    if (this.ws.readyState === 1) {
-      this.ws.send(message);
+  sendMessage(id, method, params) {
+    if (this.ws.readyState === 1 && id) {
+      this.ws.send(JSON.stringify({ id, method, params }));
     }
   }
 

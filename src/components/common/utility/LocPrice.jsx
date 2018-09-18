@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import { CurrencyConverter } from '../../../services/utilities/currencyConverter';
 import { RoomsXMLCurrency } from '../../../services/utilities/roomsXMLCurrency';
 import { LocPriceWebSocket } from '../../../services/socket/locPriceWebSocket';
+import { clearLocAmounts } from '../../../actions/locAmountsInfo';
 
 const DEFAULT_CRYPTO_CURRENCY = 'EUR';
 
@@ -16,7 +17,7 @@ class LocPrice extends PureComponent {
 
     if (this.props.currenciesRatesInfo.rates) {
       fiatInEur = this.props.currenciesRatesInfo.rates && CurrencyConverter.convert(this.props.currenciesRatesInfo.rates, RoomsXMLCurrency.get(), DEFAULT_CRYPTO_CURRENCY, this.props.fiat);
-      LocPriceWebSocket.sendMessage(JSON.stringify({ id: fiatInEur, fiatAmount: fiatInEur }));
+      LocPriceWebSocket.sendMessage(fiatInEur, this.props.method, Object.assign(this.props.params, { fiatAmount: fiatInEur }));
       isLocPriceRendered = true;
     }
 
@@ -29,12 +30,12 @@ class LocPrice extends PureComponent {
   componentWillReceiveProps(nextProps) {
     if (nextProps.socketInfo.isLocPriceWebsocketConnected &&
       nextProps.socketInfo.isLocPriceWebsocketConnected !== this.props.socketInfo.isLocPriceWebsocketConnected) {
-      LocPriceWebSocket.sendMessage(JSON.stringify({ id: this.state.fiatInEur, fiatAmount: this.state.fiatInEur }));
+      LocPriceWebSocket.sendMessage(this.state.fiatInEur, this.props.method, Object.assign(this.props.params, { fiatAmount: this.state.fiatInEur }));
     }
 
     if (nextProps.currenciesRatesInfo.rates && !this.state.isLocPriceRendered) {
-      const fiatInEur = this.props.currenciesRatesInfo.rates && CurrencyConverter.convert(this.props.currenciesRatesInfo.rates, RoomsXMLCurrency.get(), DEFAULT_CRYPTO_CURRENCY, this.props.fiat);
-      LocPriceWebSocket.sendMessage(JSON.stringify({ id: fiatInEur, fiatAmount: fiatInEur }));
+      const fiatInEur = nextProps.currenciesRatesInfo.rates && CurrencyConverter.convert(nextProps.currenciesRatesInfo.rates, RoomsXMLCurrency.get(), DEFAULT_CRYPTO_CURRENCY, this.props.fiat);
+      LocPriceWebSocket.sendMessage(fiatInEur, this.props.method, Object.assign(this.props.params, { fiatAmount: fiatInEur }));
       this.setState({
         isLocPriceRendered: true,
         fiatInEur
@@ -43,12 +44,15 @@ class LocPrice extends PureComponent {
   }
 
   componentWillUnmount() {
-    LocPriceWebSocket.sendMessage(JSON.stringify({ id: this.state.fiatInEur, unsubscribe: true }));
+    LocPriceWebSocket.sendMessage(this.state.fiatInEur, 'unsubscribe');
+    this.props.dispatch(clearLocAmounts());
   }
 
   render() {
     const isLogged = this.props.userInfo.isLogged;
-    const { locAmount } = this.props;
+    const { locAmount, brackets } = this.props;
+
+    const bracket = brackets && isLogged;
 
     if (isLogged === undefined) {
       return null;
@@ -56,20 +60,27 @@ class LocPrice extends PureComponent {
 
     return (
       <span>
-        {isLogged ? '(' : ''}
+        {bracket && '('}
         LOC {locAmount && locAmount}
-        {isLogged ? ')' : ''}
+        {bracket && ')'}
       </span>
     );
   }
 }
 
+LocPrice.defaultProps = {
+  params: {},
+  brackets: true,
+};
+
 LocPrice.propTypes = {
   fiat: PropTypes.number,
+  brackets: PropTypes.bool,
+  method: PropTypes.string,
+  params: PropTypes.object,
 
   // Redux props
   dispatch: PropTypes.func,
-  paymentInfo: PropTypes.object,
   userInfo: PropTypes.object,
   socketInfo: PropTypes.object,
   locAmount: PropTypes.string,
@@ -86,7 +97,11 @@ function mapStateToProps(state, ownProps) {
   let locAmount;
 
   if (locAmountsInfo.locAmounts[fiatInEur]) {
-    locAmount = (locAmountsInfo.locAmounts[fiatInEur]).toFixed(2);
+    if (locAmountsInfo.locAmounts[fiatInEur].quotedLoc) {
+      locAmount = (locAmountsInfo.locAmounts[fiatInEur].quotedLoc).toFixed(2);
+    } else {
+      locAmount = (locAmountsInfo.locAmounts[fiatInEur]).toFixed(2);
+    }
   }
 
   if (!socketInfo.isLocPriceWebsocketConnected) {

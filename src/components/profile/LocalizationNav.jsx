@@ -26,21 +26,25 @@ class LocalizationNav extends PureComponent {
   }
 
   componentWillReceiveProps(nextProps) {
+    if (!nextProps.socketInfo.isLocRateWebsocketConnected && this.isSendMessage) {
+      this.isSendMessage = false;
+    }
     if (nextProps.socketInfo.isLocRateWebsocketConnected && !this.isSendMessage) {
       this.isSendMessage = true;
-      LocRateWebSocket.sendMessage(JSON.stringify({ id: nextProps.locRateFiatAmount, fiatAmount: nextProps.locRateFiatAmount }));
+      LocRateWebSocket.sendMessage(null, null, { currency: this.props.paymentInfo.currency, fiatAmount: this.props.locRateFiatAmount });
     }
-    if (nextProps.isBookingConfirmPage && this.isSendMessage) {
-      this.isSendMessage = false;
-      LocRateWebSocket.sendMessage(JSON.stringify({ id: this.props.locRateFiatAmount, unsubscribe: true }));
+    if (nextProps.locRateFiatAmount !== this.props.locRateFiatAmount) {
+      LocRateWebSocket.sendMessage(null, 'unsubscribe');
+      LocRateWebSocket.sendMessage(null, null, { currency: this.props.paymentInfo.currency, fiatAmount: nextProps.locRateFiatAmount });
     }
     if (nextProps.paymentInfo.currency !== this.props.paymentInfo.currency) {
       localStorage['currency'] = nextProps.paymentInfo.currency;
+      LocRateWebSocket.sendMessage(null, null, { currency: nextProps.paymentInfo.currency, fiatAmount: this.props.locRateFiatAmount });
     }
   }
 
   componentWillUnmount() {
-    LocRateWebSocket.sendMessage(JSON.stringify({ id: this.props.locRateFiatAmount, unsubscribe: true }));
+    LocRateWebSocket.sendMessage(null, 'unsubscribe');    
   }
 
   render() {
@@ -130,7 +134,6 @@ LocalizationNav.propTypes = {
   userInfo: PropTypes.object,
   socketInfo: PropTypes.object,
   locRate: PropTypes.string,
-  isBookingConfirmPage: PropTypes.bool,
   locRateFiatAmount: PropTypes.number,
 };
 
@@ -159,14 +162,11 @@ function mapStateToProps(state) {
     locRate = (dynamicLocRatesInfo.locRate).toFixed(4);
   }
 
-  const isBookingConfirmPage = dynamicLocRatesInfo.isBookingConfirmPage;
-
   return {
     paymentInfo,
     userInfo,
     socketInfo,
     locRate,
-    isBookingConfirmPage,
     locRateFiatAmount
   };
 }

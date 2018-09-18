@@ -57,6 +57,5 @@ export const currenciesRatesInfo = {
 export const dynamicLocRatesInfo = {
   SET_LOC_RATE: 'SET_LOC_RATE',
   SET_LOC_EUR_RATE: 'SET_LOC_EUR_RATE',
-  SET_IS_BOOKING_CONFIRM_PAGE: 'SET_IS_BOOKING_CONFIRM_PAGE',
   SET_FIAT_AMOUNT: 'SET_FIAT_AMOUNT',
 };

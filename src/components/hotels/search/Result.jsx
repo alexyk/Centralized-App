@@ -223,7 +223,6 @@ class Result extends React.Component {
 Result.propTypes = {
   hotel: PropTypes.object,
   nights: PropTypes.number,
-  locRate: PropTypes.number,
   rates: PropTypes.any,
   price: PropTypes.any,
   allElements: PropTypes.bool,

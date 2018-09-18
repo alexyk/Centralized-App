@@ -656,9 +656,7 @@ class StaticHotelsSearchPage extends React.Component {
                           lon={this.state.lon}
                           hotels={hotels}
                           mapInfo={this.state.mapInfo}
-                          locRate={this.props.paymentInfo.locEurRate}
                           rates={this.state.rates}
-                          paymentInfo={this.props.paymentInfo}
                           isLogged={this.props.userInfo.isLogged}
                           nights={this.state.nights}
                           loading={this.state.loading}
@@ -671,7 +669,6 @@ class StaticHotelsSearchPage extends React.Component {
                         : <ResultsHolder
                           hotels={hotels}
                           allElements={this.state.allElements}
-                          locRate={Number(this.props.paymentInfo.locEurRate)}
                           rates={this.state.rates}
                           nights={this.state.nights}
                           loading={this.state.loading}
