@@ -21,6 +21,7 @@ import requester from '../../../initDependencies';
 import validator from 'validator';
 
 function RegisterModal(props) {
+
   const openWalletInfo = () => {
     requester.getEmailFreeResponse(props.signUpEmail).then(res => {
       res.body.then(data => {
@@ -51,6 +52,8 @@ function RegisterModal(props) {
     });
   };
 
+  const countryHasMandatoryState = ['Canada', 'India', 'United States of America'].includes(props.country.name);
+
   return (
     <div>
       <Modal show={props.isActive} onHide={() => props.closeModal(REGISTER)} className="modal fade myModal">
@@ -72,14 +75,25 @@ function RegisterModal(props) {
               <img src={Config.getValue('basePath') + 'images/login-user.png'} className="user-image" alt="user" />
               <input type="text" required="required" name="signUpLastName" value={props.signUpLastName} onChange={props.onChange} className="with-icon" placeholder="Last Name" />
             </div>
-            <div className="input-container">
-              <select name="country" id="country" onChange={props.handleChangeCountry} value={JSON.stringify(props.country)} style={{ padding: '10px', maxWidth: '100%', marginBottom: '10px', minHeight: '50px', paddingLeft: '40px' }} placeholder='Enter your country'>
-                <option value="" disabled selected>Country</option>
+            <div className="input-container select">
+              <img src={Config.getValue('basePath') + 'images/login-user.png'} className="user-image" alt="user" />
+              <select name="country" id="country" onChange={props.handleChangeCountry} value={JSON.stringify(props.country)} style={{ padding: '10px', maxWidth: '100%', marginBottom: '10px', minHeight: '50px', paddingLeft: '40px' }} placeholder='Enter your country' required>
+                <option value="" defaultValue>Country</option>
                 {props.countries && props.countries.map((item, i) => {
                   return <option key={i} value={JSON.stringify(item)} style={{ minWidth: '100%', maxWidth: '0' }}>{StringUtils.shorten(item.name, 30)}</option>;
                 })}
               </select>
             </div>
+            {countryHasMandatoryState &&
+              <div className="input-container select">
+                <img src={Config.getValue('basePath') + 'images/login-user.png'} className="user-image" alt="user" />
+                <select name="countryState" id="countryState" onChange={props.onChange} value={props.countryState} style={{ padding: '10px', maxWidth: '100%', marginBottom: '10px', minHeight: '50px', paddingLeft: '40px' }} required>
+                  <option value="">State</option>
+                  {props.states && props.states.map((item, i) => {
+                    return <option key={i} value={item.id} style={{ minWidth: '100%', maxWidth: '0' }}>{item.name}</option>;
+                  })}
+                </select>
+              </div>}
             <div className="input-container">
               <img src={Config.getValue('basePath') + 'images/login-pass.png'} className="password-image" alt="pass" />
               <input type="password" required="required" name="signUpPassword" value={props.signUpPassword} onChange={props.onChange} className="with-icon" placeholder="Password" />

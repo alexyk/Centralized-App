@@ -56,13 +56,16 @@ $media-expressions: (
 	/* checked mark aspect */
 	[type="checkbox"]:not(:checked) + label:after,
 	[type="checkbox"]:checked + label:after {
-		content: '';
+    content: '\2713';
+    text-align: center;
+    color: #999;
+    font-size: 0.9em;
 		position: absolute;
 		top: 0;
 		left: 0;
 		width: 17px;
 		height: 17px;
-		background: $gray;
+		// background: $moderate-red;
 	}
 	/* checked mark aspect changes */
 	[type="checkbox"]:not(:checked) + label:after {
