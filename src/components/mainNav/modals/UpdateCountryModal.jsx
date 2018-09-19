@@ -35,7 +35,6 @@ function UpdateCountryModal(props) {
             </div>
 
             {countryHasMandatoryState === true && <div className="countryState">
-              <label htmlFor="countryState">State</label>
               <div className='select'>
                 <select name="countryState" id="countryState" onChange={props.onChange} value={props.countryState} style={{ padding: '10px', maxWidth: '100%' }}>
                   <option value="">State</option>

@@ -113,6 +113,8 @@ class MainNav extends React.Component {
     this.handleUpdateCountry = this.handleUpdateCountry.bind(this);
     this.handleChangeCountry = this.handleChangeCountry.bind(this);
     this.requestVerificationEmail = this.requestVerificationEmail.bind(this);
+    this.requestCountries = this.requestCountries.bind(this);
+    this.requestStates = this.requestStates.bind(this);
 
     this.executeReCaptcha = this.executeReCaptcha.bind(this);
     this.getReCaptchaFunction = this.getReCaptchaFunction.bind(this);
@@ -125,6 +127,8 @@ class MainNav extends React.Component {
     ) {
       this.setUserInfo();
     }
+
+    // this.requestCountries();
 
     const queryParams = queryString.parse(this.props.location.search);
     if (queryParams.token) {
@@ -174,7 +178,7 @@ class MainNav extends React.Component {
       this.setState({ country: '' });
     }
     else {
-      this.getStates(JSON.parse(e.target.value).id);
+      this.requestStates(JSON.parse(e.target.value).id);
       this.setState({ country: JSON.parse(e.target.value) });
     }
   }
@@ -195,6 +199,8 @@ class MainNav extends React.Component {
       jsonFile: localStorage.walletJson,
       image: Config.getValue('basePath') + 'images/default.png'
     };
+
+    console.log(user);
 
     this.clearLocalStorage();
 
@@ -304,7 +310,7 @@ class MainNav extends React.Component {
             });
           } else if (errors.hasOwnProperty('CountryNull')) {
             NotificationManager.warning(errors['CountryNull'].message, '', LONG);
-            this.getCountries();
+            this.requestCountries();
             this.setState({ isUpdatingCountry: true }, () => {
               this.closeModal(LOGIN);
               this.openModal(UPDATE_COUNTRY);
@@ -495,8 +501,6 @@ class MainNav extends React.Component {
     // else if (modal === EMAIL_VERIFICATION) {
     //   this.setState({ isVerifyingEmail: false, emailVerificationToken: '' });
     // }
-
-    this.setState({ country: '', countryState: '' });
   }
 
   messageListener() {
@@ -592,13 +596,13 @@ class MainNav extends React.Component {
     }
   }
 
-  getCountries() {
+  requestCountries() {
     requester.getCountries()
       .then(response => response.body)
       .then(data => this.setState({ countries: data }));
   }
 
-  getStates(id) {
+  requestStates(id) {
     requester.getStates(id)
       .then(response => response.body)
       .then(data => this.setState({ states: data }));
@@ -689,7 +693,7 @@ class MainNav extends React.Component {
           <ChangePasswordModal isActive={this.props.modalsInfo.isActive[CHANGE_PASSWORD]} openModal={this.openModal} closeModal={this.closeModal} newPassword={this.state.newPassword} confirmNewPassword={this.state.confirmNewPassword} onChange={this.onChange} handlePasswordChange={() => this.executeReCaptcha('changePassword')} />
           <LoginModal isActive={this.props.modalsInfo.isActive[LOGIN]} openModal={this.openModal} closeModal={this.closeModal} loginEmail={this.state.loginEmail} loginPassword={this.state.loginPassword} onChange={this.onChange} handleLogin={this.handleLogin} />
           <AirdropLoginModal isActive={this.props.modalsInfo.isActive[AIRDROP_LOGIN]} openModal={this.openModal} closeModal={this.closeModal} loginEmail={this.state.loginEmail} loginPassword={this.state.loginPassword} onChange={this.onChange} handleLogin={this.handleAirdropLogin} />
-          <RegisterModal isActive={this.props.modalsInfo.isActive[REGISTER]} openModal={this.openModal} closeModal={this.closeModal} signUpEmail={this.state.signUpEmail} signUpFirstName={this.state.signUpFirstName} signUpLastName={this.state.signUpLastName} signUpPassword={this.state.signUpPassword} countries={this.state.countries} onChange={this.onChange} handleChangeCountry={this.handleChangeCountry} />
+          <RegisterModal isActive={this.props.modalsInfo.isActive[REGISTER]} openModal={this.openModal} closeModal={this.closeModal} signUpEmail={this.state.signUpEmail} signUpFirstName={this.state.signUpFirstName} signUpLastName={this.state.signUpLastName} signUpPassword={this.state.signUpPassword} countries={this.state.countries} country={this.state.country} onChange={this.onChange} handleChangeCountry={this.handleChangeCountry} />
           <AirdropRegisterModal isActive={this.props.modalsInfo.isActive[AIRDROP_REGISTER]} openModal={this.openModal} closeModal={this.closeModal} signUpEmail={this.state.signUpEmail} signUpFirstName={this.state.signUpFirstName} signUpLastName={this.state.signUpLastName} signUpPassword={this.state.signUpPassword} onChange={this.onChange} />
           <UpdateCountryModal isActive={this.props.modalsInfo.isActive[UPDATE_COUNTRY]} openModal={this.openModal} closeModal={this.closeModal} onChange={this.onChange} country={this.state.country} countries={this.state.countries} states={this.state.states} countryState={this.state.countryState} handleUpdateCountry={this.handleUpdateCountry} handleChangeCountry={this.handleChangeCountry} />
           <EmailVerificationModal isActive={this.props.modalsInfo.isActive[EMAIL_VERIFICATION]} openModal={this.openModal} closeModal={this.closeModal} onChange={this.onChange} requestVerificationEmail={this.requestVerificationEmail} />
@@ -728,7 +732,7 @@ class MainNav extends React.Component {
                 </Nav>
                 : <Nav pullRight={true}>
                   <NavItem componentClass={Link} to="/login" onClick={() => this.openModal(LOGIN)}>Login</NavItem>
-                  <NavItem componentClass={Link} to="/signup" onClick={() => { this.openModal(REGISTER); this.getCountries(); }}>Register</NavItem>
+                  <NavItem componentClass={Link} to="/signup" onClick={() => { this.openModal(REGISTER); this.requestCountries(); }}>Register</NavItem>
                 </Nav>
               }
             </Navbar.Collapse>
