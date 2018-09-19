@@ -484,28 +484,6 @@ class HotelBookingConfirmPage extends React.Component {
     );
   }
 
-  isUserInfoIsComplete(userInfo) {
-    let infoFieldsToCheck = ['firstName', 'lastName', 'phoneNumber', 'city', 'country', 'address', 'zipCode'];
-    for (let i = 0; i < infoFieldsToCheck.length; i++) {
-      let item = infoFieldsToCheck[i];
-      for (let key in userInfo) {
-        if (userInfo.hasOwnProperty(key)) {
-          if (key === item && userInfo[key] === null) {
-            return false;
-          }
-        }
-      }
-    }
-
-    return true;
-  }
-
-  getButtonIfUserHasFullInfo(isUserInfoIsComplete) {
-    return isUserInfoIsComplete
-      ? (<button className="btn btn-primary" disabled={!this.props.locAmountsInfo.locAmounts[this.state.testFiatPriceRoomsXMLInEur]} onClick={() => this.payWithCard()}>Pay with Credit Card</button>)
-      : (<div>Your profile isn't complete to pay with credit card. Please go to <Link to="/profile/me/edit">Edit Profile</Link> and provide mandatory information</div>);
-  }
-
   render() {
     const { data, userInfo, confirmed, password, fiatPriceRoomsXML, testFiatPriceRoomsXML } = this.state;
     const { rates } = this.props.currenciesRatesInfo;
@@ -515,7 +493,6 @@ class HotelBookingConfirmPage extends React.Component {
     const isMobile = this.props.location.pathname.indexOf('/mobile') !== -1;
 
     const booking = data && data.booking.hotelBooking;
-    const isUserInfoIsComplete = this.isUserInfoIsComplete(userInfo);
     const { currency, currencySign } = this.props.paymentInfo;
     const env = this.getEnvironment();
 
@@ -573,7 +550,7 @@ class HotelBookingConfirmPage extends React.Component {
                         <p className="booking-card-price">
                           Pay with Credit Card: Current Market Price: <span className="important">{currencySign}{fiatPriceRoomsXML && rates && (CurrencyConverter.convert(rates, RoomsXMLCurrency.get(), currency, fiatPriceRoomsXML)).toFixed(2)}</span>
                         </p>
-                        {this.getButtonIfUserHasFullInfo(isUserInfoIsComplete)}
+                        <button className="btn btn-primary" disabled={!this.props.locAmountsInfo.locAmounts[this.state.testFiatPriceRoomsXMLInEur]} onClick={() => this.payWithCard()}>Pay with Credit Card</button>
                       </div>
                       <div className="logos">
                         <div className="logos-row">
