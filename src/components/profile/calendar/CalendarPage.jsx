@@ -213,7 +213,7 @@ class CalendarPage extends React.Component {
   }
 
   render() {
-    if (this.state.listing === null && this.state.prices === null || this.state.reservations === null || this.state.loading) {
+    if ((this.state.listing === null && this.state.prices === null) || this.state.reservations === null || this.state.loading) {
       return <div className="loader"></div>;
     }
 

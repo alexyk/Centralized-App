@@ -1,19 +1,19 @@
-import '../../../styles/css/components/hotels/book/profile-confirm-form.css';
-import '../../../styles/css/components/captcha/captcha-container.css';
-
-import PropTypes from 'prop-types';
 import React from 'react';
 import { withRouter } from 'react-router-dom';
-
+import ReCAPTCHA from 'react-google-recaptcha';
+import { NotificationManager } from 'react-notifications';
+import PropTypes from 'prop-types';
+import moment from 'moment';
 import { Config } from '../../../config.js';
 import requester from '../../../initDependencies';
-import StringUtils from '../../../services/utilities/stringUtilities';
-import ReCAPTCHA from 'react-google-recaptcha';
-import Select from '../../common/google/GooglePlacesAutocomplete';
-import moment from 'moment';
-import { NotificationManager } from 'react-notifications';
 import { LONG } from '../../../constants/notificationDisplayTimes';
 import BookingSteps from '../../common/utility/BookingSteps';
+import Select from '../../common/google/GooglePlacesAutocomplete';
+import StringUtils from '../../../services/utilities/stringUtilities';
+import { LocPriceWebSocket } from '../../../services/socket/locPriceWebSocket';
+
+import '../../../styles/css/components/hotels/book/profile-confirm-form.css';
+import '../../../styles/css/components/captcha/captcha-container.css';
 
 class ConfirmProfilePage extends React.Component {
   constructor(props) {
@@ -105,6 +105,8 @@ class ConfirmProfilePage extends React.Component {
       requester.verifyCreditCardPayment(paymentInfo)
         .then(res => {
           res.body.then((data) => {
+            const { testFiatPriceRoomsXMLInEur } = this.props.location.state;
+            LocPriceWebSocket.sendMessage(testFiatPriceRoomsXMLInEur, 'aproveQuote', { bookingId: paymentInfo.bookingId });
             const env = Config.getValue('env');
             if (env === 'staging' || env === 'development') {
               window.location.href = data.url;

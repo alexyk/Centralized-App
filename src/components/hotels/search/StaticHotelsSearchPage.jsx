@@ -404,7 +404,7 @@ class StaticHotelsSearchPage extends React.Component {
     requester.getLastSearchHotelResultsByFilter(search, filters).then(res => {
       if (res.success) {
         res.body.then(data => {
-          console.log(data);
+          // console.log(data);
           this.setState({ loading: false, hotels: data.content, page, totalElements: data.totalElements }, () => {
             this.props.history.replace(baseUrl + search + filters);
             if (onSuccess) {
@@ -656,9 +656,7 @@ class StaticHotelsSearchPage extends React.Component {
                           lon={this.state.lon}
                           hotels={hotels}
                           mapInfo={this.state.mapInfo}
-                          locRate={this.props.paymentInfo.locRateInEur}
                           rates={this.state.rates}
-                          paymentInfo={this.props.paymentInfo}
                           isLogged={this.props.userInfo.isLogged}
                           nights={this.state.nights}
                           loading={this.state.loading}
@@ -671,7 +669,6 @@ class StaticHotelsSearchPage extends React.Component {
                         : <ResultsHolder
                           hotels={hotels}
                           allElements={this.state.allElements}
-                          locRate={Number(this.props.paymentInfo.locRateInEur)}
                           rates={this.state.rates}
                           nights={this.state.nights}
                           loading={this.state.loading}

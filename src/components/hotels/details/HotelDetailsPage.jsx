@@ -470,7 +470,6 @@ class HotelDetailsPage extends React.Component {
               endDate={this.state.calendarEndDate}
               data={this.state.data}
               hotelRooms={this.state.hotelRooms}
-              locRate={this.props.paymentInfo.locRateInEur}
               rates={this.state.rates}
               loading={this.state.loading}
               currencySign={this.props.paymentInfo.currencySign}

@@ -15,7 +15,7 @@ import validator from 'validator';
 import { withRouter } from 'react-router-dom';
 import BookingSteps from '../../common/utility/BookingSteps';
 import { RoomsXMLCurrency } from '../../../services/utilities/roomsXMLCurrency';
-const DEFAULT_CRYPTO_CURRENCY = 'EUR';
+import LocPrice from '../../common/utility/LocPrice';
 
 class HotelsBookingPage extends React.Component {
   constructor(props) {
@@ -301,21 +301,25 @@ class HotelsBookingPage extends React.Component {
                       if (!this.props.userInfo.isLogged) {
                         return (
                           <h6 key={index}>
-                            {room.name}, {this.state.nights} nights: LOC {rates && Number(CurrencyConverter.convert(this.state.rates, RoomsXMLCurrency.get(), DEFAULT_CRYPTO_CURRENCY, room.price) / this.props.paymentInfo.locRateInEur).toFixed(2)}
+                            {room.name}, {this.state.nights} nights: <LocPrice fiat={room.price} />
                           </h6>
                         );
                       } else {
                         return (
                           <h6 key={index}>
-                            {room.name}, {this.state.nights} nights: {this.props.paymentInfo.currencySign}{rates && (CurrencyConverter.convert(this.state.rates, RoomsXMLCurrency.get(), currency, room.price)).toFixed(2)} (LOC {rates && Number(CurrencyConverter.convert(this.state.rates, RoomsXMLCurrency.get(), DEFAULT_CRYPTO_CURRENCY, room.price) / this.props.paymentInfo.locRateInEur).toFixed(2)})
+                            {room.name}, {this.state.nights} nights: {this.props.paymentInfo.currencySign}{rates && (CurrencyConverter.convert(this.state.rates, RoomsXMLCurrency.get(), currency, room.price)).toFixed(2)} <LocPrice fiat={room.price} />
                           </h6>
                         );
                       }
                     })}
                     <hr />
                     {this.props.userInfo.isLogged ?
-                      <h6 className="total-price">Total: {this.props.paymentInfo.currencySign}{priceInSelectedCurrency} (LOC {rates && Number(CurrencyConverter.convert(this.state.rates, RoomsXMLCurrency.get(), DEFAULT_CRYPTO_CURRENCY, this.state.totalPrice) / this.props.paymentInfo.locRateInEur).toFixed(2)})</h6> :
-                      <h6 className="total-price">Total: LOC {rates && Number(CurrencyConverter.convert(rates, RoomsXMLCurrency.get(), currency, this.state.totalPrice) / this.props.paymentInfo.locRateInEur).toFixed(2)}</h6>
+                      <h6 className="total-price">
+                        Total: {this.props.paymentInfo.currencySign}{priceInSelectedCurrency} {this.state.totalPrice && <LocPrice fiat={this.state.totalPrice} />}
+                      </h6> :
+                      <h6 className="total-price">
+                        Total: {this.state.totalPrice && <LocPrice fiat={this.state.totalPrice} />}
+                      </h6>
                     }
                     <div className="clearfix"></div>
                   </div>
@@ -344,14 +348,14 @@ class HotelsBookingPage extends React.Component {
                                 type="text"
                                 placeholder="First Name"
                                 name="firstName"
-                                value={this.state.rooms[roomIndex].adults[adultIndex].firstName}
+                                value={this.state.rooms[roomIndex].adults[adultIndex].firstName || ''}
                                 onChange={(e) => { this.handleAdultChange(e, roomIndex, adultIndex); }}
                               />
                               <input
                                 className="guest-name"
                                 type="text"
                                 placeholder="Last Name"
-                                value={this.state.rooms[roomIndex].adults[adultIndex].lastName}
+                                value={this.state.rooms[roomIndex].adults[adultIndex].lastName || ''}
                                 name="lastName" onChange={(e) => { this.handleAdultChange(e, roomIndex, adultIndex); }}
                               />
                             </div>
