@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import { CurrencyConverter } from '../../../services/utilities/currencyConverter';
 import { RoomsXMLCurrency } from '../../../services/utilities/roomsXMLCurrency';
 import { LocPriceWebSocket } from '../../../services/socket/locPriceWebSocket';
-import { clearLocAmounts } from '../../../actions/locAmountsInfo';
+import { removeLocAmount } from '../../../actions/locAmountsInfo';
 
 const DEFAULT_CRYPTO_CURRENCY = 'EUR';
 
@@ -21,13 +21,24 @@ class LocPrice extends PureComponent {
       isLocPriceRendered = true;
     }
 
+    this.locAmount = null;
+
     this.state = {
       fiatInEur,
       isLocPriceRendered,
+      locAmount: this.locAmount
     };
   }
 
   componentWillReceiveProps(nextProps) {
+    if (nextProps.locAmount !== this.props.locAmount) {
+      this.locAmount = nextProps.locAmount;
+    }
+    if (nextProps.renderLocAmount !== this.props.renderLocAmount && this.props.withTimer) {
+      this.setState({
+        locAmount: this.locAmount
+      });
+    }
     if (nextProps.socketInfo.isLocPriceWebsocketConnected &&
       nextProps.socketInfo.isLocPriceWebsocketConnected !== this.props.socketInfo.isLocPriceWebsocketConnected) {
       LocPriceWebSocket.sendMessage(this.state.fiatInEur, this.props.method, Object.assign(this.props.params, { fiatAmount: this.state.fiatInEur }));
@@ -45,12 +56,15 @@ class LocPrice extends PureComponent {
 
   componentWillUnmount() {
     LocPriceWebSocket.sendMessage(this.state.fiatInEur, 'unsubscribe');
-    this.props.dispatch(clearLocAmounts());
+    if (this.props.locAmount) {
+      this.props.dispatch(removeLocAmount(this.state.fiatInEur));
+    }
   }
 
   render() {
     const isLogged = this.props.userInfo.isLogged;
-    const { locAmount, brackets } = this.props;
+    const { brackets } = this.props;
+    const locAmount = this.props.withTimer ? this.state.locAmount : this.props.locAmount;
 
     const bracket = brackets && isLogged;
 
@@ -71,6 +85,7 @@ class LocPrice extends PureComponent {
 LocPrice.defaultProps = {
   params: {},
   brackets: true,
+  withTimer: false,
 };
 
 LocPrice.propTypes = {
@@ -78,23 +93,29 @@ LocPrice.propTypes = {
   brackets: PropTypes.bool,
   method: PropTypes.string,
   params: PropTypes.object,
+  withTimer: PropTypes.bool,
 
   // Redux props
   dispatch: PropTypes.func,
   userInfo: PropTypes.object,
   socketInfo: PropTypes.object,
   locAmount: PropTypes.string,
-  currenciesRatesInfo: PropTypes.object
+  currenciesRatesInfo: PropTypes.object,
+  renderLocAmount: PropTypes.bool
 };
 
 function mapStateToProps(state, ownProps) {
-  const fiat = ownProps.fiat;
+  const { fiat, withTimer } = ownProps;
 
-  const { userInfo, dynamicLocRatesInfo, socketInfo, locAmountsInfo, currenciesRatesInfo } = state;
+  const { userInfo, dynamicLocRatesInfo, socketInfo, locAmountsInfo, currenciesRatesInfo, locPriceUpdateTimerInfo } = state;
 
   const fiatInEur = currenciesRatesInfo.rates && CurrencyConverter.convert(currenciesRatesInfo.rates, RoomsXMLCurrency.get(), DEFAULT_CRYPTO_CURRENCY, fiat);
 
   let locAmount;
+  let renderLocAmount;
+  if (withTimer) {
+    renderLocAmount = locPriceUpdateTimerInfo.seconds === locPriceUpdateTimerInfo.initialSeconds;
+  }
 
   if (locAmountsInfo.locAmounts[fiatInEur]) {
     if (locAmountsInfo.locAmounts[fiatInEur].quotedLoc) {
@@ -113,6 +134,7 @@ function mapStateToProps(state, ownProps) {
     socketInfo,
     locAmount,
     currenciesRatesInfo,
+    renderLocAmount
   };
 }
 

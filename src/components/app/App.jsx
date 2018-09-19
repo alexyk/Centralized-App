@@ -4,10 +4,8 @@ import { Redirect, Route, Switch, withRouter } from 'react-router-dom';
 import { setIsLogged, setUserInfo } from '../../actions/userInfo';
 import { setCurrencyRates } from '../../actions/currenciesRatesInfo';
 
-import AirdropPage from '../profile/airdrop/AirdropPage';
 import Balance from '../external/Balance';
 import BigCalendar from 'react-big-calendar';
-import BuyLocPage from '../profile/buyloc/BuyLocPage';
 import { Config } from '../../config';
 import CreateListingPage from '../listingCRUD/CreateListingPage';
 import EditListingPage from '../listingCRUD/EditListingPage';

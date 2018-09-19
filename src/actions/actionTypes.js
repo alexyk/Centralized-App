@@ -31,11 +31,6 @@ export const searchInfo = {
   SET_SEARCH_INFO: 'SET_SEARCH_INFO'
 };
 
-// bestPrice actions
-export const bookingBestPrice = {
-  SET_BEST_LOC_PRICE: 'SET_BEST_LOC_PRICE',
-};
-
 // socket actions
 export const socketInfo = {
   SET_LOC_PRICE_WEBSOCKET_CONNECTION: 'SET_LOC_PRICE_WEBSOCKET_CONNECTION',
@@ -45,6 +40,7 @@ export const socketInfo = {
 // locAmounts actions
 export const locAmountsInfo = {
   UPDATE_LOC_AMOUNTS: 'UPDATE_LOC_AMOUNTS',
+  REMOVE_LOC_AMOUNT: 'REMOVE_LOC_AMOUNT',
   CLEAR_LOC_AMOUNTS: 'CLEAR_LOC_AMOUNTS'
 };
 
@@ -58,4 +54,10 @@ export const dynamicLocRatesInfo = {
   SET_LOC_RATE: 'SET_LOC_RATE',
   SET_LOC_EUR_RATE: 'SET_LOC_EUR_RATE',
   SET_FIAT_AMOUNT: 'SET_FIAT_AMOUNT',
+};
+
+export const locPriceUpdateTimerInfo = {
+  SET_INITIAL_SECONDS: 'SET_INITIAL_SECONDS',
+  SET_SECONDS: 'SET_SECONDS',
+  RESET: 'RESET'
 };

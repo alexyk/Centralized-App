@@ -193,7 +193,7 @@ class Result extends React.Component {
               ? (!this.props.allElements ? <div className="price">Loading price...</div> : <div></div>)
               : <div className="price">{this.props.userInfo.isLogged && `${currencySign} ${priceInSelectedCurrency}`}</div>
             }
-            {isPriceLoaded && <div className="price">1 night: <LocPrice fiat={price} /></div>}
+            {isPriceLoaded && <div className="price">1 night: <LocPrice fiat={price / this.props.nights} /></div>}
             <div>
               {!isPriceLoaded && this.props.allElements
                 ? <button disabled className="mobile-pricing-button">Unavailable</button>
@@ -209,7 +209,7 @@ class Result extends React.Component {
             ? (!this.props.allElements ? <div className="loader" style={{ width: '100%' }}></div> : <span style={{ padding: '20px 10px 10px 10px' }}>Unavailable</span>)
             : <span className="price">{this.props.userInfo.isLogged && priceInSelectedCurrency && `${currencySign} ${priceInSelectedCurrency}`}</span>
           }
-          {isPriceLoaded && <LocPrice fiat={price} />}
+          {isPriceLoaded && <LocPrice fiat={price / this.props.nights} />}
           {!isPriceLoaded && this.props.allElements
             ? <button disabled className="btn">Unavailable</button>
             : <Link target={isMobile === false ? '_blank' : '_self'} className="btn" to={`${redirectURL}/${id}${search.substr(0, endOfSearch)}`}>Book now</Link>

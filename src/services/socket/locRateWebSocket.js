@@ -30,8 +30,10 @@ class LocRateWS extends WS {
   handleRecieveMessage(event) {
     if (event) {
       const data = JSON.parse(event.data);
-      store.dispatch(setLocRate(data.params[`${(store.getState().paymentInfo.currency).toLowerCase()}Rate`]));
-      store.dispatch(setLocEurRate(data.params.eurRate));      
+      if (data.params) {
+        store.dispatch(setLocRate(data.params[`${(store.getState().paymentInfo.currency).toLowerCase()}Rate`]));
+        store.dispatch(setLocEurRate(data.params.eurRate));
+      }
     }
   }
 
