@@ -22,10 +22,10 @@ import {
   PASSWORDS_DONT_MATCH,
   PROFILE_PASSWORD_REQUIREMENTS
 } from '../../constants/warningMessages';
-import { 
-  PASSWORD_SUCCESSFULLY_CHANGED, 
-  PROFILE_SUCCESSFULLY_CREATED, 
-  EMAIL_VERIFIED 
+import {
+  PASSWORD_SUCCESSFULLY_CHANGED,
+  PROFILE_SUCCESSFULLY_CREATED,
+  EMAIL_VERIFIED
 } from '../../constants/successMessages.js';
 import { Link, withRouter } from 'react-router-dom';
 import { MenuItem, Nav, NavDropdown, NavItem, Navbar } from 'react-bootstrap/lib';
@@ -449,17 +449,23 @@ class MainNav extends React.Component {
     this.props.dispatch(setIsLogged(true));
     requester.getUserInfo().then(res => {
       res.body.then(data => {
-        // Wallet.getBalance(data.locAddress).then(eth => {
-        //   const ethBalance = eth / (Math.pow(10, 18));
-        //   Wallet.getTokenBalance(data.locAddress).then(loc => {
-        //     const locBalance = loc / (Math.pow(10, 18));
-        //   });
-        // });
-        const ethBalance = 0;
-        const locBalance = 0;
-        const { firstName, lastName, phoneNumber, email, locAddress, gender, isEmailVerified } = data;
-        const isAdmin = data.roles.findIndex((r) => r.name === 'ADMIN') !== -1;
-        this.props.dispatch(setUserInfo(firstName, lastName, phoneNumber, email, locAddress, ethBalance, locBalance, gender, isEmailVerified, isAdmin));
+        if (data.locAddress) {
+          Wallet.getBalance(data.locAddress).then(eth => {
+            const ethBalance = eth / (Math.pow(10, 18));
+            Wallet.getTokenBalance(data.locAddress).then(loc => {
+              const locBalance = loc / (Math.pow(10, 18));
+              const { firstName, lastName, phoneNumber, email, locAddress, gender, isEmailVerified } = data;
+              const isAdmin = data.roles.findIndex((r) => r.name === 'ADMIN') !== -1;
+              this.props.dispatch(setUserInfo(firstName, lastName, phoneNumber, email, locAddress, ethBalance, locBalance, gender, isEmailVerified, isAdmin));
+            });
+          });
+        } else {
+          const ethBalance = 0;
+          const locBalance = 0;
+          const { firstName, lastName, phoneNumber, email, locAddress, gender, isEmailVerified } = data;
+          const isAdmin = data.roles.findIndex((r) => r.name === 'ADMIN') !== -1;
+          this.props.dispatch(setUserInfo(firstName, lastName, phoneNumber, email, locAddress, ethBalance, locBalance, gender, isEmailVerified, isAdmin));
+        }
       });
     });
   }
@@ -514,7 +520,7 @@ class MainNav extends React.Component {
               NotificationManager.error(e.message, '', LONG);
               console.log(e);
             });
-            
+
             this.closeModal(CONFIRM_WALLET);
           }
         });
