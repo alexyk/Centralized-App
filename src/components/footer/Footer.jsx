@@ -34,9 +34,9 @@ class Footer extends React.Component {
                       <h5>LockTrip</h5>
                     </li>
                     <li><a href="">Help</a></li>
-                    <li><a href="">Terms and Conditions</a></li>
-                    <li><a href="">Legal Information</a></li>
-                    <li><a href="">Privacy Policy</a></li>
+                    <li><a href="https://locktrip.com/terms.html" target="_blank" rel="noopener noreferrer">Terms and Conditions</a></li>
+                    <li><a href="https://locktrip.com/terms.html" target="_blank" rel="noopener noreferrer">Legal Information</a></li>
+                    <li><a href="https://locktrip.com/privacy.html" target="_blank" rel="noopener noreferrer">Privacy Policy</a></li>
                   </ul>
                 </li>
                 <li>
