@@ -15,7 +15,7 @@ import { RESERVATION_CANCELLED } from '../../../../constants/infoMessages.js';
 import ReCAPTCHA from 'react-google-recaptcha';
 import React from 'react';
 import { connect } from 'react-redux';
-import requester from '../../../../initDependencies';
+import requester from '../../../../requester';
 import { withRouter } from 'react-router-dom';
 
 class HotelTripsPage extends React.Component {
@@ -38,7 +38,7 @@ class HotelTripsPage extends React.Component {
     this.onChange = this.onChange.bind(this);
     this.openModal = this.openModal.bind(this);
     this.closeModal = this.closeModal.bind(this);
-    this.onTripCancel = this.handleCancelTrip.bind(this);
+    this.handleCancelTrip = this.handleCancelTrip.bind(this);
     this.onTripSelect = this.onTripSelect.bind(this);
   }
 
@@ -82,12 +82,10 @@ class HotelTripsPage extends React.Component {
   }
 
   handleCancelTrip() {
-    let bookingForCancellation = {};
-    bookingForCancellation.bookingId = this.state.bookingPrepareId;
-    requester.cancelBooking(bookingForCancellation)
+    requester.cancelBooking({ bookingId: this.state.bookingPrepareId })
       .then(res => res.body)
       .then(data => {
-        if (data.success) {
+        if (data.isCancellationSuccessful) {
           NotificationManager.info(RESERVATION_CANCELLED, '', LONG);
         } else {
           NotificationManager.warning(CANCELLATION_NOT_POSSIBLE, '', LONG);

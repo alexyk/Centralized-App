@@ -10,7 +10,7 @@ import ReCAPTCHA from 'react-google-recaptcha';
 import React from 'react';
 import Select from '../../common/google/GooglePlacesAutocomplete';
 import moment from 'moment';
-import requester from '../../../initDependencies';
+import requester from '../../../requester';
 
 class ProfileEditForm extends React.Component {
   constructor(props) {

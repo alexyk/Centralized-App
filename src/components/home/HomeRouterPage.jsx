@@ -4,7 +4,7 @@ import React, { Component } from 'react';
 import HomePage from './HomePage';
 import HomesRouterPage from '../homes/HomesRouterPage';
 import HotelsRouterPage from '../hotels/HotelsRouterPage';
-import requester from '../../initDependencies';
+import requester from '../../requester';
 
 class HomeRouterPage extends Component {
   constructor(props) {
@@ -25,7 +25,6 @@ class HomeRouterPage extends Component {
 
     requester.getTopHotels().then(res => {
       res.body.then(data => {
-        console.log(data);
         this.setState({ hotels: data.content });
       });
     });

@@ -5,7 +5,7 @@ import Pagination from '../../common/pagination/Pagination';
 import PropTypes from 'prop-types';
 import React from 'react';
 import moment from 'moment';
-import requester from '../../../initDependencies';
+import requester from '../../../requester';
 import { withRouter } from 'react-router-dom';
 
 class HomesSearchPage extends React.Component {

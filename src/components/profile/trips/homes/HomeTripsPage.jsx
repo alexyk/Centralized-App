@@ -7,7 +7,7 @@ import ReCAPTCHA from 'react-google-recaptcha';
 import { Config } from '../../../../config';
 import CancellationModal from '../../../common/modals/CancellationModal';
 import Pagination from '../../../common/pagination/Pagination';
-import requester from '../../../../initDependencies';
+import requester from '../../../../requester';
 import HomeTripsList from './HomeTripsList';
 
 import { withRouter } from 'react-router-dom';

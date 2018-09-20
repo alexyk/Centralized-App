@@ -8,7 +8,7 @@ import moment from 'moment';
 class CustomEvent extends React.Component {
   render() {
     const popoverClickRootClose = (
-      <Popover id="popover-trigger-click-root-close" style={{ zIndex: 10000, color: '#000000' }}>
+      <Popover id="popover-trigger-click-root-close" style={{ zIndex: 10000, color: '#000000', width: '240px' }}>
         <div className="event-popup">
           <div className="col-md-12 event-popup-header">
             <div className="col-md-3">

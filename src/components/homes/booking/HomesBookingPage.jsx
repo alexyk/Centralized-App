@@ -5,7 +5,7 @@ import { parse } from 'query-string';
 import BookingSteps from '../../common/utility/BookingSteps';
 import HomesBookingRoomDetailsInfo from './HomesBookingRoomDetailsInfo';
 import HomesBookingListingDetailsInfo from './HomesBookingListingDetailsInfo';
-import requester from '../../../initDependencies';
+import requester from '../../../requester';
 
 import '../../../styles/css/components/homes/booking/homes-booking-page.css';
 

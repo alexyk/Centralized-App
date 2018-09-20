@@ -15,7 +15,7 @@ import _ from 'lodash';
 import { connect } from 'react-redux';
 import moment from 'moment';
 import { parse } from 'query-string';
-import requester from '../../../initDependencies';
+import requester from '../../../requester';
 import { setCurrency } from '../../../actions/paymentInfo';
 import { setSearchInfo } from '../../../actions/searchInfo';
 import { withRouter } from 'react-router-dom';
@@ -70,7 +70,7 @@ class HotelDetailsPage extends React.Component {
 
   componentDidMount() {
     const id = this.props.match.params.id;
-    const searchParams = this.getNewSearchParams();
+    const searchParams = this.getRequestSearchParams();
     requester.getHotelById(id, searchParams).then(res => {
       res.body.then(data => {
         this.setState({ data: data, loading: false });
@@ -122,7 +122,7 @@ class HotelDetailsPage extends React.Component {
     return map;
   }
 
-  getNewSearchParams() {
+  getRequestSearchParams() {
     const array = [];
     const pairs = this.props.location.search.substr(1).split('&');
     for (let i = 0; i < pairs.length; i++) {
@@ -470,7 +470,6 @@ class HotelDetailsPage extends React.Component {
               endDate={this.state.calendarEndDate}
               data={this.state.data}
               hotelRooms={this.state.hotelRooms}
-              locRate={this.props.paymentInfo.locRateInEur}
               rates={this.state.rates}
               loading={this.state.loading}
               currencySign={this.props.paymentInfo.currencySign}

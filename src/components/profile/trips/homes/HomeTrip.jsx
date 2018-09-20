@@ -14,10 +14,10 @@ const STATUS_TOOLTIP = {
   'PENDING': 'Contact us if status is still Pending after 30 minutes'
 };
 
-function HotelTrip(props) {
+function HomeTrip(props) {
   const extractDatesData = (trip) => {
-    const startDateMoment = moment(trip.startDate);
-    const endDateMoment = moment(trip.endDate);
+    const startDateMoment = moment(trip.startDate, 'DD/MM/YYYY');
+    const endDateMoment = moment(trip.endDate, 'DD/MM/YYYY');
 
     const checkIn = {
       day: startDateMoment.format('D'),
@@ -85,7 +85,7 @@ function HotelTrip(props) {
           </div>
           <div className="flex-row-child trips-status">
             <span className="status">{tripStatus}</span>
-            <span className="icon-question" title={statusMessage}></span>
+            <span className="icon-question" tooltip={statusMessage}></span>
             {tripStatus === 'ACCEPTED' && booking_id &&
               <div>Reference No.: {booking_id}</div>
             }
@@ -107,7 +107,7 @@ function HotelTrip(props) {
   );
 }
 
-HotelTrip.propTypes = {
+HomeTrip.propTypes = {
   trip: PropTypes.object,
   tomorrow: PropTypes.string,
   styleClass: PropTypes.string,
@@ -115,4 +115,4 @@ HotelTrip.propTypes = {
   onTripSelect: PropTypes.func
 };
 
-export default HotelTrip;
+export default HomeTrip;

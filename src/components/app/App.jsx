@@ -2,13 +2,10 @@ import '../../styles/css/main.css';
 
 import { Redirect, Route, Switch, withRouter } from 'react-router-dom';
 import { setIsLogged, setUserInfo } from '../../actions/userInfo';
+import { setCurrencyRates } from '../../actions/currenciesRatesInfo';
 
-import AccountNotificationsPage from '../profile/account/AccountNotificationsPage';
-import AirdropPage from '../profile/airdrop/AirdropPage';
 import Balance from '../external/Balance';
 import BigCalendar from 'react-big-calendar';
-import BuyLocPage from '../profile/buyloc/BuyLocPage';
-import CalendarPage from '../profile/calendar/CalendarPage';
 import { Config } from '../../config';
 import CreateListingPage from '../listingCRUD/CreateListingPage';
 import EditListingPage from '../listingCRUD/EditListingPage';
@@ -29,7 +26,7 @@ import WorldKuCoinCampaign from '../external/WorldKuCoinCampaign';
 import { connect } from 'react-redux';
 import moment from 'moment';
 import queryString from 'query-string';
-import requester from '../../initDependencies';
+import requester from '../../requester';
 import GooglePlaces from '../common/GooglePlaces';
 
 // if (process.env.NODE_ENV === 'development') {
@@ -49,6 +46,8 @@ class App extends React.Component {
   componentDidMount() {
     this.handleInternalAuthorization();
     this.handleExternalAuthorization();
+
+    this.getRates();
   }
 
   isAuthenticated() {
@@ -63,14 +62,23 @@ class App extends React.Component {
     this.props.dispatch(setIsLogged(true));
     requester.getUserInfo().then(res => {
       res.body.then(data => {
-        Wallet.getBalance(data.locAddress).then(eth => {
-          const ethBalance = eth / (Math.pow(10, 18));
-          Wallet.getTokenBalance(data.locAddress).then(loc => {
-            const locBalance = loc / (Math.pow(10, 18));
-            const { firstName, lastName, phoneNumber, email, locAddress, gender, isEmailVerified } = data;
-            this.props.dispatch(setUserInfo(firstName, lastName, phoneNumber, email, locAddress, ethBalance, locBalance, gender, isEmailVerified));
+        if (data.locAddress) {
+          Wallet.getBalance(data.locAddress).then(eth => {
+            const ethBalance = eth / (Math.pow(10, 18));
+            Wallet.getTokenBalance(data.locAddress).then(loc => {
+              const locBalance = loc / (Math.pow(10, 18));
+              const { firstName, lastName, phoneNumber, email, locAddress, gender, isEmailVerified } = data;
+              const isAdmin = data.roles.findIndex((r) => r.name === 'ADMIN') !== -1;
+              this.props.dispatch(setUserInfo(firstName, lastName, phoneNumber, email, locAddress, ethBalance, locBalance, gender, isEmailVerified, isAdmin));
+            });
           });
-        });
+        } else {
+          const ethBalance = 0;
+          const locBalance = 0;
+          const { firstName, lastName, phoneNumber, email, locAddress, gender, isEmailVerified } = data;
+          const isAdmin = data.roles.findIndex((r) => r.name === 'ADMIN') !== -1;
+          this.props.dispatch(setUserInfo(firstName, lastName, phoneNumber, email, locAddress, ethBalance, locBalance, gender, isEmailVerified, isAdmin));
+        }
       });
     });
   }
@@ -93,6 +101,14 @@ class App extends React.Component {
       const search = this.getQueryString(queryStringParameters);
       this.props.history.push(url + search);
     }
+  }
+
+  getRates() {
+    requester.getCurrencyRates().then(res => {
+      res.body.then(rates => {
+        this.props.dispatch(setCurrencyRates(rates));
+      });
+    });
   }
 
   getQueryString(queryStringParameters) {
@@ -124,15 +140,14 @@ class App extends React.Component {
         <Switch>
           <Route exact path="/" render={() => <HomeRouterPage />} />
           <Route exact path="/profile/listings/edit/:step/:id" render={() => !this.isAuthenticated() ? <Redirect to="/" /> : <EditListingPage />} />
-          <Route exact path="/profile/listings/calendar/:id" render={() => !this.isAuthenticated() ? <Redirect to="/" /> : <CalendarPage />} />
-          <Route exact path="/profile/account/notifications" render={() => !this.isAuthenticated() ? <Redirect to="/" /> : <AccountNotificationsPage />} />
+          {/* <Route exact path="/profile/listings/calendar/:id" render={() => !this.isAuthenticated() ? <Redirect to="/" /> : <CalendarPage />} /> */}
           <Route exact path="/users/resetPassword/:confirm" render={() => <HomeRouterPage />} />
           <Route path="/homes" render={() => <HomeRouterPage />} />
           <Route path="/hotels" render={() => <HomeRouterPage />} />
           <Route path="/profile/listings/create" render={() => !this.isAuthenticated() ? <Redirect to="/" /> : <CreateListingPage />} />
           <Route path="/profile/" render={() => !this.isAuthenticated() ? <Redirect to="/" /> : <ProfilePage location={this.props.location} />} />
-          <Route path="/airdrop" render={() => <AirdropPage />} />
-          <Route path="/buyloc" render={() => <BuyLocPage />} />
+          <Route path="/airdrop" render={() => <ProfilePage />} />
+          <Route path="/buyloc" render={() => <ProfilePage />} />
           <Route path="/softuni" render={() => <WorldKuCoinCampaign />} />
           <Route path="/vote" render={() => <WorldKuCoinCampaign />} />
           <Route path="/campaigns/balance/check" render={() => <Balance />} />
@@ -159,6 +174,7 @@ class App extends React.Component {
 App.propTypes = {
   // start Router props
   location: PropTypes.object,
+  history: PropTypes.object,
 
   // start Redux props
   dispatch: PropTypes.func,

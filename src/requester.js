@@ -1,5 +1,5 @@
-import { Config } from './config';
 import Requester from 'locktrip-service-layer';
+import { Config } from './config';
 
 let config = {
   'domainPrefix': Config.getValue('domainPrefix'),

@@ -5,7 +5,7 @@ import React from 'react';
 import HomePage from '../home/HomePage';
 import HomesSearchPage from './search/HomesSearchPage';
 import HomeDetailsPage from './details/HomeDetailsPage';
-import requester from '../../initDependencies';
+import requester from '../../requester';
 import HomesBookingRouterPage from './booking/HomesBookingRouterPage';
 
 class HomesRouterPage extends React.Component {

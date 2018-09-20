@@ -2,7 +2,7 @@ import { Config } from '../../../config';
 import Dropzone from 'react-dropzone';
 import React from 'react';
 import request from 'superagent';
-import requester from '../../../initDependencies';
+import requester from '../../../requester';
 
 import '../../../styles/css/components/profile/me/profile-photos.css';
 

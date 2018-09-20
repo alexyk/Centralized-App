@@ -22,7 +22,7 @@ import React from 'react';
 import { arrayMove } from 'react-sortable-hoc';
 import moment from 'moment';
 import request from 'superagent';
-import requester from '../../initDependencies';
+import requester from '../../requester';
 import update from 'react-addons-update';
 
 const host = Config.getValue('apiHost');
@@ -231,8 +231,8 @@ class EditListingPage extends React.Component {
 
     requester.getCurrencies().then(res => {
       res.body.then(data => {
-        this.setState({ currencies: data.content });
-      })
+        this.setState({ currencies: data });
+      });
     });
   }
 

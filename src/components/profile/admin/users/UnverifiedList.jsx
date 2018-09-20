@@ -10,7 +10,7 @@ import Pagination from '../../../common/pagination/Pagination';
 import PropTypes from 'prop-types';
 import React from 'react';
 import queryString from 'query-string';
-import requester from '../../../../initDependencies';
+import requester from '../../../../requester';
 
 class UnverifiedList extends React.Component {
   constructor(props) {

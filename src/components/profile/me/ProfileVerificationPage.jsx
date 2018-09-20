@@ -14,7 +14,7 @@ import VerificationItem from './VerificationItem';
 import Webcam from 'react-webcam';
 import { connect } from 'react-redux';
 import request from 'superagent';
-import requester from '../../../initDependencies';
+import requester from '../../../requester';
 import { withRouter } from 'react-router-dom';
 
 const API_HOST = Config.getValue('apiHost');

@@ -18,7 +18,7 @@ import PropTypes from 'prop-types';
 import ReCAPTCHA from 'react-google-recaptcha';
 import React from 'react';
 import queryString from 'query-string';
-import requester from '../../../../initDependencies';
+import requester from '../../../../requester';
 
 class PublishedList extends React.Component {
   constructor(props) {

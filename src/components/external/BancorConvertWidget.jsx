@@ -17,7 +17,7 @@ class BancorConvertWidget extends Component {
   render() {
     return (
       <div className='bancor-convert-widget'>
-        <div id='bancor-wc'>фйасхдкйфх</div>
+        <div id='bancor-wc'></div>
       </div>
     );
   }

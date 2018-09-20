@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import ReCAPTCHA from 'react-google-recaptcha';
 import React from 'react';
-import requester from '../../../initDependencies';
+import requester from '../../../requester';
 
 import { PROPERTY_CANNOT_BE_DELETED } from '../../../constants/errorMessages.js';
 import { LONG } from '../../../constants/notificationDisplayTimes.js';

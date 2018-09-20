@@ -30,8 +30,13 @@ import React from 'react';
 import { arrayMove } from 'react-sortable-hoc';
 import moment from 'moment';
 import request from 'superagent';
-import requester from '../../initDependencies';
+import requester from '../../requester';
 import update from 'react-addons-update';
+import NoEntriesMessage from '../common/messages/NoEntriesMessage';
+import { CREATE_WALLET } from '../../constants/modals';
+import ProfileNav from '../profile/ProfileNav';
+import { connect } from 'react-redux';
+import { openModal } from '../../actions/modalsInfo';
 
 const host = Config.getValue('apiHost');
 const LOCKTRIP_UPLOAD_URL = `${host}images/upload`;
@@ -88,7 +93,6 @@ class CreateListingPage extends React.Component {
       currencies: [],
 
       isAddressSelected: false,
-      userHasLocAddress: null,
       locAddress: ''
     };
 
@@ -130,13 +134,7 @@ class CreateListingPage extends React.Component {
 
     requester.getCurrencies().then(res => {
       res.body.then(data => {
-        this.setState({ currencies: data.content });
-      });
-    });
-
-    requester.getUserInfo().then(res => {
-      res.body.then(data => {
-        this.setState({ userHasLocAddress: data.locAddress !== null });
+        this.setState({ currencies: data });
       });
     });
   }
@@ -520,17 +518,32 @@ class CreateListingPage extends React.Component {
     }
   }
 
+  openModal(modal, e) {
+    if (e) {
+      e.preventDefault();
+    }
+
+    this.props.dispatch(openModal(modal));
+  }
+
   render() {
     if (this.state.countries === [] || this.state.currencies === [] ||
       this.state.propertyTypes === [] || this.state.categories === [] ||
-      this.state.cities === [] || this.state.userHasLocAddress === null) {
+      this.state.cities === []) {
       return <div className="loader"></div>;
     }
 
-    if (this.state.userHasLocAddress === false) {
-      return <div>
-        <ListingLocAddress values={this.state} onChange={this.onChange} updateLocAddress={this.updateLocAddress} />
-      </div>;
+    if (!this.props.userInfo.locAddress) {
+      return (
+        <React.Fragment>
+          <ProfileNav />
+          <div className='container'>
+            <NoEntriesMessage text='You need to create a wallet first'>
+              <a href="" className="btn" onClick={(e) => this.openModal(CREATE_WALLET, e)} style={{ minWidth: '200px' }}>Create Wallet</a>
+            </NoEntriesMessage>
+          </div>
+        </React.Fragment>
+      );
     }
 
     return (
@@ -662,4 +675,6 @@ CreateListingPage.propTypes = {
   history: PropTypes.object
 };
 
-export default withRouter(CreateListingPage);
+const mapStateToProps = ({ userInfo }) => ({ userInfo });
+
+export default withRouter(connect(mapStateToProps)(CreateListingPage));

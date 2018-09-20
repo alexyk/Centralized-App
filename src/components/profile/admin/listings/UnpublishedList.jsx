@@ -21,7 +21,7 @@ import ReCAPTCHA from 'react-google-recaptcha';
 import React from 'react';
 import filterListings from '../../../../actions/filterListings';
 import queryString from 'query-string';
-import requester from '../../../../initDependencies';
+import requester from '../../../../requester';
 
 class UnpublishedList extends React.Component {
   constructor(props) {
