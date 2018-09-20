@@ -1,4 +1,4 @@
-import { store } from '../../initDependencies';
+import store from '../../reduxStore';
 import { updateLocAmounts, clearLocAmounts } from '../../actions/locAmountsInfo';
 import { setLocPriceWebsocketConnection } from '../../actions/exchangerSocketInfo';
 import WS from './exchangerWebsocket';

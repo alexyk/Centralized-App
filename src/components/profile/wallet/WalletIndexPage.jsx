@@ -10,7 +10,7 @@ import React from 'react';
 import { TRANSACTION_SUCCESSFUL } from '../../../constants/successMessages.js';
 import { TokenTransactions } from '../../../services/blockchain/tokenTransactions';
 import { connect } from 'react-redux';
-import requester from '../../../initDependencies';
+import requester from '../../../requester';
 
 class WalletIndexPage extends React.Component {
   constructor(props) {

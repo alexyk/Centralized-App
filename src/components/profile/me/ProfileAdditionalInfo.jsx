@@ -5,7 +5,7 @@ import { Config } from '../../../config';
 import { NotificationManager } from 'react-notifications';
 import ReCAPTCHA from 'react-google-recaptcha';
 import React from 'react';
-import requester from '../../../initDependencies';
+import requester from '../../../requester';
 
 class ProfileAdditionalInfo extends React.Component {
   constructor(props) {

@@ -1,4 +1,5 @@
-import requester, { store } from '../../initDependencies';
+import requester from '../../requester';
+import store from '../../reduxStore';
 import { setLocRateWebsocketConnection } from '../../actions/exchangerSocketInfo';
 import { setLocRate, setLocEurRate } from '../../actions/dynamicLocRatesInfo';
 

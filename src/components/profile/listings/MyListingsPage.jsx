@@ -12,7 +12,7 @@ import { PROPERTY_CANNOT_BE_DELETED } from '../../../constants/errorMessages.js'
 import ReCAPTCHA from 'react-google-recaptcha';
 import React from 'react';
 import filterListings from '../../../actions/filterListings';
-import requester from '../../../initDependencies';
+import requester from '../../../requester';
 
 class MyListingsPage extends React.Component {
   constructor(props) {

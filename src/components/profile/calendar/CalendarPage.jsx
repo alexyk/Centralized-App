@@ -7,7 +7,7 @@ import CalendarAsideStatic from './CalendarAsideStatic';
 import PropTypes from 'prop-types';
 import React from 'react';
 import moment from 'moment';
-import requester from '../../../initDependencies';
+import requester from '../../../requester';
 import { withRouter } from 'react-router-dom';
 
 class CalendarPage extends React.Component {

@@ -6,7 +6,7 @@ import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { LONG } from '../../constants/notificationDisplayTimes.js';
 import { NotificationManager } from 'react-notifications';
 import React from 'react';
-import requester from '../../initDependencies';
+import requester from '../../requester';
 import { withRouter } from 'react-router-dom';
 
 class Balance extends React.Component {

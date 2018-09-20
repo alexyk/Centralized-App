@@ -9,7 +9,7 @@ import queryString from 'query-string';
 import { NotificationManager } from 'react-notifications';
 import { ROOM_NO_LONGER_AVAILABLE } from '../../../constants/warningMessages';
 import { LONG } from '../../../constants/notificationDisplayTimes.js';
-import requester from '../../../initDependencies';
+import requester from '../../../requester';
 
 const QUOTE_ID_POLLING_INTERVAL_TIME = 10000;
 

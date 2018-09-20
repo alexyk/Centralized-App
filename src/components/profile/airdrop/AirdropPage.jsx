@@ -19,7 +19,7 @@ import NoEntriesMessage from '../../common/messages/NoEntriesMessage';
 import { NotificationManager } from 'react-notifications';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import requester from '../../../initDependencies';
+import requester from '../../../requester';
 import { setAirdropInfo } from '../../../actions/airdropInfo';
 import { setIsLogged } from '../../../actions/userInfo';
 import validator from 'validator';

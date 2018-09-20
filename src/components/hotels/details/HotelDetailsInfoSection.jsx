@@ -8,7 +8,7 @@ import { withRouter } from 'react-router-dom';
 import { CurrencyConverter } from '../../../services/utilities/currencyConverter';
 import { RoomsXMLCurrency } from '../../../services/utilities/roomsXMLCurrency';
 import Facilities from './Facilities';
-import requester from '../../../initDependencies';
+import requester from '../../../requester';
 import LocPrice from '../../common/utility/LocPrice';
 
 function HotelDetailsInfoSection(props) {

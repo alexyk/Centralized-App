@@ -13,7 +13,7 @@ import { LONG } from '../../../constants/notificationDisplayTimes.js';
 import { HotelReservation } from '../../../services/blockchain/hotelReservation';
 import { RoomsXMLCurrency } from '../../../services/utilities/roomsXMLCurrency';
 import { CurrencyConverter } from '../../../services/utilities/currencyConverter';
-import requester from '../../../initDependencies';
+import requester from '../../../requester';
 import PasswordModal from '../../common/modals/PasswordModal';
 import BookingSteps from '../../common/utility/BookingSteps';
 import LocPrice from '../../common/utility/LocPrice';

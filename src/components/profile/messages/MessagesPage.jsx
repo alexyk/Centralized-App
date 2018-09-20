@@ -2,7 +2,7 @@ import MessagesBox from './MessagesBox';
 import NoEntriesMessage from '../../common/messages/NoEntriesMessage';
 import Pagination from '../../common/pagination/Pagination';
 import React from 'react';
-import requester from '../../../initDependencies';
+import requester from '../../../requester';
 
 class MessagesPage extends React.Component {
   constructor(props) {

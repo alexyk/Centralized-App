@@ -7,7 +7,7 @@ import PropTypes from 'prop-types';
 import { parse } from 'query-string';
 import BookingSteps from '../../common/utility/BookingSteps';
 import HomesBookingListingDetailsInfo from './HomesBookingListingDetailsInfo';
-import requester from '../../../initDependencies';
+import requester from '../../../requester';
 import { Config } from '../../../config';
 import { LONG } from '../../../constants/notificationDisplayTimes.js';
 import { MISSING_NAMES } from '../../../constants/warningMessages.js';

@@ -8,7 +8,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import Star from '../../../../styles/images/star.png';
 import moment from 'moment';
-import requester from '../../../../initDependencies';
+import requester from '../../../../requester';
 
 class HotelTripDetails extends React.Component {
   constructor(props) {
