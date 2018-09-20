@@ -106,7 +106,7 @@ class ConfirmProfilePage extends React.Component {
         .then(res => {
           res.body.then((data) => {
             const { testFiatPriceRoomsXMLInEur } = this.props.location.state;
-            LocPriceWebSocket.sendMessage(testFiatPriceRoomsXMLInEur, 'aproveQuote', { bookingId: paymentInfo.bookingId });
+            LocPriceWebSocket.sendMessage(testFiatPriceRoomsXMLInEur, 'approveQuote', { bookingId: paymentInfo.bookingId });
             const env = Config.getValue('env');
             if (env === 'staging' || env === 'development') {
               window.location.href = data.url;
