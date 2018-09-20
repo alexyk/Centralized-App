@@ -50,7 +50,6 @@ function ListingLandingPage(props) {
 
                 <div className="place-listing-container">
                   <h3>What kind of place do you want to list?</h3>
-                  <hr />
                 </div>
                 <div className="form-group">
                   <div className="row">

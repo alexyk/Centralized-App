@@ -1,6 +1,6 @@
 import '../../../styles/css/components/modals/modal.css';
 
-import { CREATE_WALLET, REGISTER } from '../../../constants/modals.js';
+import { REGISTER } from '../../../constants/modals.js';
 import {
   EMAIL_ALREADY_EXISTS,
   INVALID_EMAIL,
@@ -45,7 +45,6 @@ function RegisterModal(props) {
         } else if (!props.signUpPassword.match('^([^\\s]*[a-zA-Z]+.*?[0-9]+[^\\s]*|[^\\s]*[0-9]+.*?[a-zA-Z]+[^\\s]*)$')) {
           NotificationManager.warning(PROFILE_PASSWORD_REQUIREMENTS, '', LONG);
         } else {
-          props.closeModal(REGISTER);
           props.handleRegister();
         }
       });

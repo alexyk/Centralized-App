@@ -36,7 +36,7 @@ import NoEntriesMessage from '../common/messages/NoEntriesMessage';
 import { CREATE_WALLET } from '../../constants/modals';
 import ProfileNav from '../profile/ProfileNav';
 import { connect } from 'react-redux';
-import { closeModal, openModal } from '../../actions/modalsInfo';
+import { openModal } from '../../actions/modalsInfo';
 
 const host = Config.getValue('apiHost');
 const LOCKTRIP_UPLOAD_URL = `${host}images/upload`;
@@ -128,13 +128,13 @@ class CreateListingPage extends React.Component {
 
     requester.getPropertyTypes().then(res => {
       res.body.then(data => {
-        this.setState({ propertyTypes: data });
+        this.setState({ propertyTypes: data.content });
       });
     });
 
     requester.getCurrencies().then(res => {
       res.body.then(data => {
-        this.setState({ currencies: data.content });
+        this.setState({ currencies: data });
       });
     });
   }
