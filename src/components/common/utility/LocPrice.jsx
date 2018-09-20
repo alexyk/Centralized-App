@@ -39,8 +39,8 @@ class LocPrice extends PureComponent {
         locAmount: this.locAmount
       });
     }
-    if (nextProps.socketInfo.isLocPriceWebsocketConnected &&
-      nextProps.socketInfo.isLocPriceWebsocketConnected !== this.props.socketInfo.isLocPriceWebsocketConnected) {
+    if (nextProps.exchangerSocketInfo.isLocPriceWebsocketConnected &&
+      nextProps.exchangerSocketInfo.isLocPriceWebsocketConnected !== this.props.exchangerSocketInfo.isLocPriceWebsocketConnected) {
       LocPriceWebSocket.sendMessage(this.state.fiatInEur, this.props.method, Object.assign(this.props.params, { fiatAmount: this.state.fiatInEur }));
     }
 
@@ -98,7 +98,7 @@ LocPrice.propTypes = {
   // Redux props
   dispatch: PropTypes.func,
   userInfo: PropTypes.object,
-  socketInfo: PropTypes.object,
+  exchangerSocketInfo: PropTypes.object,
   locAmount: PropTypes.string,
   currenciesRatesInfo: PropTypes.object,
   renderLocAmount: PropTypes.bool
@@ -107,7 +107,7 @@ LocPrice.propTypes = {
 function mapStateToProps(state, ownProps) {
   const { fiat, withTimer } = ownProps;
 
-  const { userInfo, dynamicLocRatesInfo, socketInfo, locAmountsInfo, currenciesRatesInfo, locPriceUpdateTimerInfo } = state;
+  const { userInfo, dynamicLocRatesInfo, exchangerSocketInfo, locAmountsInfo, currenciesRatesInfo, locPriceUpdateTimerInfo } = state;
 
   const fiatInEur = currenciesRatesInfo.rates && CurrencyConverter.convert(currenciesRatesInfo.rates, RoomsXMLCurrency.get(), DEFAULT_CRYPTO_CURRENCY, fiat);
 
@@ -125,13 +125,13 @@ function mapStateToProps(state, ownProps) {
     }
   }
 
-  if (!socketInfo.isLocPriceWebsocketConnected) {
+  if (!exchangerSocketInfo.isLocPriceWebsocketConnected) {
     locAmount = (fiatInEur / dynamicLocRatesInfo.locEurRate).toFixed(2);
   }
 
   return {
     userInfo,
-    socketInfo,
+    exchangerSocketInfo,
     locAmount,
     currenciesRatesInfo,
     renderLocAmount

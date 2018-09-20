@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { Link, withRouter } from 'react-router-dom';
+import { withRouter } from 'react-router-dom';
 import { NotificationManager } from 'react-notifications';
 import PropTypes from 'prop-types';
 import moment from 'moment';

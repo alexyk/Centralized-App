@@ -32,7 +32,7 @@ export const searchInfo = {
 };
 
 // socket actions
-export const socketInfo = {
+export const exchangerSocketInfo = {
   SET_LOC_PRICE_WEBSOCKET_CONNECTION: 'SET_LOC_PRICE_WEBSOCKET_CONNECTION',
   SET_LOC_RATE_WEBSOCKET_CONNECTION: 'SET_LOC_RATE_WEBSOCKET_CONNECTION',
 };

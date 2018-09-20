@@ -1,5 +1,5 @@
 import requester, { store } from '../../initDependencies';
-import { setLocRateWebsocketConnection } from '../../actions/socketInfo';
+import { setLocRateWebsocketConnection } from '../../actions/exchangerSocketInfo';
 import { setLocRate, setLocEurRate } from '../../actions/dynamicLocRatesInfo';
 
 import WS from './exchangerWebsocket';
@@ -52,7 +52,7 @@ class LocRateWS extends WS {
 
   close() {
     super.close(() => {
-      if (store.getState().socketInfo.isLocRateWebsocketConnected) {
+      if (store.getState().exchangerSocketInfo.isLocRateWebsocketConnected) {
         store.dispatch(setLocRateWebsocketConnection(false));
       }
       this.getLocRates();
