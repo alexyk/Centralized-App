@@ -46,12 +46,12 @@ function HomeDetailsInfoSection(props) {
           <p>{street}, {city.name}, {country.name}</p>
           <button className="btn btn-primary" onClick={props.openModal}>Contact Host</button>
 
-          <HomeDetailsCalendar
+          {props.allEvents && <HomeDetailsCalendar
             onApply={props.onApply}
             startDate={props.startDate}
             endDate={props.endDate}
             allEvents={props.allEvents}
-            prices={props.prices} />
+            prices={props.prices} />}
 
           <div className="list-hotel-description">
             <h2>Description</h2>

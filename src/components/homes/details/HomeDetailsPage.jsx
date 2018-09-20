@@ -221,7 +221,7 @@ class HomeDetailsPage extends React.Component {
   initializeCalendar() {
     let now = new Date();
     let end = new Date();
-    const DAY_INTERVAL = 90;
+    const DAY_INTERVAL = 365;
     end.setUTCHours(now.getUTCHours() + 24 * DAY_INTERVAL);
 
     requester.getListing(this.props.match.params.id).then(res => {

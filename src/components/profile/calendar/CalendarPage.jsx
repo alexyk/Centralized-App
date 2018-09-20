@@ -1,6 +1,9 @@
 import 'react-big-calendar/lib/css/react-big-calendar.css';
+import '../../../styles/css/components/profile/calendar/calendar.css';
 
 import Calendar from './Calendar';
+import CalendarAside from './CalendarAside';
+import CalendarAsideStatic from './CalendarAsideStatic';
 import PropTypes from 'prop-types';
 import React from 'react';
 import moment from 'moment';
@@ -14,23 +17,24 @@ class CalendarPage extends React.Component {
       listing: null,
       prices: null,
       reservations: null,
+      loading: false,
+      allEvents: [],
+
       defaultDailyPrice: '',
-      // myListings: null,
+
       selectedDay: '',
       selectedDate: {},
       available: 'true',
       price: null,
+
       currencySign: '',
       currencyCode: '',
-      calendarLoading: false,
-      selectedListing: this.props.match.params.id
     };
 
     this.onCancel = this.onCancel.bind(this);
     this.onSelectSlot = this.onSelectSlot.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
     this.onChange = this.onChange.bind(this);
-    // this.onListingChange = this.onListingChange.bind(this);
     this.updateDailyPrice = this.updateDailyPrice.bind(this);
   }
 
@@ -55,32 +59,28 @@ class CalendarPage extends React.Component {
     });
   }
 
-  updateCalendar() {
-    let now = new Date();
-    let end = new Date();
-    const DAY_INTERVAL = 90;
-    end.setUTCHours(now.getUTCHours() + 24 * DAY_INTERVAL);
-    const { currencyCode, currencySign } = this.state;
+  async updateCalendar() {
+    const DAY_INTERVAL = 365;
 
-    let searchTermMap = [];
-    const startDateParam = `${now.getUTCDate()}/${now.getUTCMonth() + 1}/${now.getUTCFullYear()}`;
-    const endDateParam = `${end.getUTCDate()}/${end.getUTCMonth() + 1}/${end.getUTCFullYear()}`;
-    searchTermMap.push(
+    let now = moment();
+    let end = moment().add(DAY_INTERVAL, 'days');
+
+    let searchTermMap = [
       `listing=${this.props.match.params.id}`,
-      `startDate=${startDateParam}`,
-      `endDate=${endDateParam}`,
-      `page=${0}`,
-      `toCode=${currencyCode}`,
-      `size=${DAY_INTERVAL}`);
+      `startDate=${now.format('DD/MM/YYYY')}`,
+      `endDate=${end.format('DD/MM/YYYY')}`,
+      'page=0',
+      `toCode=${this.state.currencyCode}`,
+      `size=${DAY_INTERVAL}`
+    ];
 
-
-    requester.getCalendarByListingIdAndDateRange(searchTermMap).then(res => {
-      res.body.then(data => {
+    let prices = await requester.getCalendarByListingIdAndDateRange(searchTermMap).then(res => {
+      return res.body.then(data => {
         let prices = [];
         for (let dateInfo of data.content) {
-          let availableStyle = dateInfo.available ? 1 : 0.5;
+          let availableText = dateInfo.available ? this.state.currencySign + Math.round(dateInfo.price, 2) : 'Blocked';
           let price = {
-            'title': <span className="calendar-price bold" style={{ opacity: availableStyle }}>{currencySign}{Math.round(dateInfo.price)}</span>,
+            'title': <span className="calendar-price bold" >{availableText}</span>,
             'start': moment(dateInfo.date, 'DD/MM/YYYY'),
             'end': moment(dateInfo.date, 'DD/MM/YYYY'),
             'allDay': true,
@@ -89,50 +89,51 @@ class CalendarPage extends React.Component {
           };
           prices.push(price);
         }
-
-        this.setState({ prices: prices });
+        return prices;
       });
     });
 
-    requester.getMyReservations().then(res => {
-      res.body.then(data => {
+    let reservations = await requester.getMyReservations().then(res => {
+      return res.body.then(data => {
         let reservations = data.content.filter(r => r.listingId === this.props.match.params.id);
         let events = [];
         for (let reservation of reservations) {
           let event = {
-            'title': <span className="calendar-reservation-event">{reservation.guestName}</span>,
-            'start': new Date(reservation.startDate),
-            'end': new Date(reservation.endDate),
+            'title': <span className="calendar-reservation-event" name={reservation.guestName}>{reservation.guestName}</span>,
+            'start': moment(reservation.startDate, 'DD/MM/YYYY'),
+            'end': moment(reservation.endDate, 'DD/MM/YYYY').add(1, 'days'),
             'isReservation': true,
             'price': reservation.price,
             'guests': reservation.guests
           };
           events.push(event);
         }
-
-        this.setState({
-          reservations: events
-        });
+        return events;
       });
     });
+
+    let merged = this.mergeEvents(prices, reservations);
+
+    let allEvents = merged.concat(reservations);
+    this.setState({ reservations, prices, allEvents });
   }
 
   mergeEvents(prices, reservations) {
-    let myArray = prices;
-    for (let i = 0; i <= reservations.length - 1; i++) {
-      let reservation = reservations[i];
+    for (let reservationIndex = 0; reservationIndex < reservations.length; reservationIndex++) {
+      let reservation = reservations[reservationIndex];
 
-      let reservationStartDate = new Date(reservation['start']);
-      let reservationEndDate = new Date(reservation['end']);
+      let reservationDate = Object.assign({}, reservation.start);
+      for (reservationDate = moment(reservation.start); reservationDate < reservation.end; reservationDate.add(1, 'days')) {
+        for (let priceIndex = 0; priceIndex < prices.length; priceIndex++) {
+          let priceDate = prices[priceIndex].start;
 
-      for (let d = reservationStartDate; d < reservationEndDate; d.setDate(d.getDate() + 1)) {
-        for (let i = myArray.length - 1; i >= 0; i--) {
-          if (new Date(myArray[i].start).getTime() === new Date(d).getTime()) {
-            myArray.splice(i, 1);
+          if (priceDate.isSame(reservationDate)) {
+            prices.splice(priceIndex, 1);
           }
         }
       }
     }
+    return prices;
   }
 
   onCancel() {
@@ -143,12 +144,12 @@ class CalendarPage extends React.Component {
     let date = e.start;
     let day = moment(e.start).format('DD');
 
-    let selectedPriceEvent = this.state.prices.find(function (obj) { return new Date(obj.start).getTime() === new Date(date).getTime(); });
+    let selectedPriceEvent = this.state.prices.find(function (obj) { return obj.start.isSame(date); });
     if (selectedPriceEvent) {
       this.setState({ selectedDay: day, selectedDate: date, price: selectedPriceEvent.price, available: `${selectedPriceEvent.available}` });
     }
     else {
-      this.setState({ selectedDay: day, selectedDate: date, price: null, available: 'true' });
+      this.onCancel();
     }
   }
 
@@ -160,10 +161,24 @@ class CalendarPage extends React.Component {
       price: this.state.price,
       available: this.state.available
     };
+
     requester.publishCalendarSlot(listingId, slotInfo, captchaToken).then(res => {
       if (res.success) {
-        this.setState({ selectedDay: null, date: null, price: null, available: 'true' });
-        this.componentDidMount();
+        let prices = this.state.prices;
+        let indexOfSlot = prices.findIndex(x => x.start.isSame(this.state.selectedDate));
+
+        let calendarSlotToChange = prices[indexOfSlot];
+        let availableText = slotInfo.available === 'true' ? this.state.currencySign + Math.round(slotInfo.price, 2) : 'Blocked';
+
+        calendarSlotToChange.title = <span className="calendar-price bold">{availableText}</span>;
+        calendarSlotToChange.available = slotInfo.available;
+        calendarSlotToChange.price = Number(slotInfo.price);
+
+        prices[indexOfSlot] = calendarSlotToChange;
+
+        let merged = this.mergeEvents(prices, this.state.reservations);
+        let allEvents = merged.concat(this.state.reservations);
+        this.setState({ selectedDay: null, date: null, price: null, available: 'true', prices, allEvents });
       }
     });
   }
@@ -172,25 +187,8 @@ class CalendarPage extends React.Component {
     this.setState({ [e.target.name]: e.target.value });
   }
 
-  // onListingChange(e) {
-  //     this.setState({
-  //         listing: null,
-  //         prices: null,
-  //         reservations: null,
-  //         myListings: null,
-  //         selectedDay: '',
-  //         selectedDate: {},
-  //         available: 'true',
-  //         price: null,
-  //         currencySign: '',
-  //         selectedListing: e.target.value
-  //     });
-  //     this.props.history.push(`/profile/listings/calendar/${e.target.value}`);
-  //     this.componentDidMount();
-  // }
-
   updateDailyPrice(captchaToken) {
-    this.setState({ calendarLoading: true });
+    this.setState({ loading: true });
 
     const listingId = this.props.match.params.id;
     const priceObj = {
@@ -199,42 +197,51 @@ class CalendarPage extends React.Component {
 
     requester.editDefaultDailyPrice(listingId, priceObj, captchaToken).then(res => {
       if (res.success) {
-        this.updateCalendar();
-        this.setState({ calendarLoading: false });
-      } else {
-        alert('failure');
+        let prices = this.state.prices;
+        for (let i = 0; i < prices.length; i++) {
+          let priceObj = prices[i];
+          if (priceObj.available === true) {
+            priceObj.title = <span className="calendar-price bold" style={{ opacity: 1 }}>{this.state.currencySign}{Math.round(this.state.defaultDailyPrice)}</span>;
+            priceObj.price = Number(this.state.defaultDailyPrice);
+          }
+        }
+        let merged = this.mergeEvents(prices, this.state.reservations);
+        let allEvents = merged.concat(this.state.reservations);
+        this.setState({ loading: false, prices, allEvents });
       }
     });
   }
 
   render() {
-    if (this.state.listing === null || this.state.prices === null || this.state.reservations === null) { //|| this.state.myListings === null
+    if ((this.state.listing === null && this.state.prices === null) || this.state.reservations === null || this.state.loading) {
       return <div className="loader"></div>;
     }
 
-    this.mergeEvents(this.state.prices, this.state.reservations);
-    let allEvents = this.state.prices.concat(this.state.reservations);
-
     return (
-      <div>
-        <div className="col-md-12">
-          <div className="container">
+      <div className="container">
+        <div className="calendar">
+          <div className="calendar-box">
             <Calendar
-              allEvents={allEvents}
-              calendarLoading={this.state.calendarLoading}
+              allEvents={this.state.allEvents}
               onCancel={this.onCancel}
               onSelectSlot={this.onSelectSlot}
-              selectedDay={this.state.selectedDay}
-              selectedDate={this.state.selectedDate}
-              price={this.state.price}
-              defaultDailyPrice={this.state.defaultDailyPrice}
-              available={this.state.available}
-              onSubmit={this.onSubmit}
-              onChange={this.onChange}
-              updateDailyPrice={this.updateDailyPrice}
-              currencySign={this.state.currencySign}
-              // myListings={this.state.myListings}
-              selectedListing={this.state.selectedListing} />
+              selectedDate={this.state.selectedDate} />
+          </div>
+          <div className="calendar-aside-box">
+            {this.state.selectedDay !== null && this.state.selectedDay !== '' ?
+              <CalendarAside
+                onCancel={this.onCancel}
+                date={this.state.selectedDate}
+                price={this.state.price}
+                available={this.state.available}
+                onSubmit={this.onSubmit}
+                onChange={this.onChange}
+                currencySign={this.state.currencySign} /> :
+              <CalendarAsideStatic
+                currencySign={this.state.currencySign}
+                defaultDailyPrice={this.state.defaultDailyPrice}
+                onChange={this.onChange}
+                updateDailyPrice={this.updateDailyPrice} />}
           </div>
         </div>
       </div>
@@ -244,7 +251,7 @@ class CalendarPage extends React.Component {
 
 CalendarPage.propTypes = {
   history: PropTypes.object,
-  match: PropTypes.object
+  match: PropTypes.object,
 };
 
 export default withRouter(CalendarPage);

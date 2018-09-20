@@ -102,7 +102,7 @@ class HomeReservationPanel extends React.Component {
         }
       }
 
-      const now = moment().add('89', 'days');
+      const now = moment().add('365', 'days');
       now.hours(0, 0, 0, 0);
       if (dateCandidate.diff(now) > 0) {
         return true;
