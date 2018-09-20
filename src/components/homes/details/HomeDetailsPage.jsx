@@ -10,9 +10,13 @@ import moment from 'moment';
 import { parse } from 'query-string';
 import requester from '../../../initDependencies';
 import { withRouter } from 'react-router-dom';
-
+import Slider from 'react-slick';
 import { INVALID_SEARCH_DATE } from '../../../constants/warningMessages.js';
 import { LONG } from '../../../constants/notificationDisplayTimes.js';
+import '../../../styles/css/components/carousel-component.css';
+import 'slick-carousel/slick/slick.css';
+import 'slick-carousel/slick/slick-theme.css';
+import $ from 'jquery';
 
 class HomeDetailsPage extends React.Component {
   constructor(props) {
@@ -73,6 +77,8 @@ class HomeDetailsPage extends React.Component {
     this.openModal = this.openModal.bind(this);
     this.closeModal = this.closeModal.bind(this);
     this.sendMessageToHost = this.sendMessageToHost.bind(this);
+    this.next = this.next.bind(this);
+    this.previous = this.previous.bind(this);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -133,9 +139,9 @@ class HomeDetailsPage extends React.Component {
     const prices = this.state.prices;
     const range = prices.filter(x => x.start >= startDate && x.end < endDate);
     const isInvalidRange = range.filter(x => !x.available).length > 0;
+
     if (isInvalidRange) {
       NotificationManager.warning(INVALID_SEARCH_DATE, 'Calendar Operations', LONG);
-      this.setState({ calendarStartDate: undefined, calendarEndDate: undefined });
     }
     else {
       this.setState({
@@ -153,11 +159,11 @@ class HomeDetailsPage extends React.Component {
       searchEndDate: picker.endDate,
     });
   }
-
-  openLightbox(event) {
+  openLightbox(event, index) {
     event.preventDefault();
     this.setState({
       lightboxIsOpen: true,
+      currentImage: index,
     });
   }
 
@@ -190,6 +196,7 @@ class HomeDetailsPage extends React.Component {
     if (this.state.currentImage === this.state.data.pictures.length - 1) return;
     this.gotoNext();
   }
+
 
   calculateNights(startDate, endDate) {
     let checkIn = moment(startDate, 'DD/MM/YYYY');
@@ -260,6 +267,32 @@ class HomeDetailsPage extends React.Component {
           }
 
           this.setState({ prices: prices, calendar: data.content, oldCurrency: this.props.paymentInfo.currency });
+          // $(document).ready(() => {
+          //   window.onscroll = function () { sticky() };
+
+          //   let hotelNav = document.getElementById("hotel-nav");
+          //   let stickyHotelNav = hotelNav.offsetTop;
+            
+          //   let bookingPanel = document.getElementById("test");
+          //   let stickyBookingPanel = bookingPanel.offsetTop;
+
+          //   let homeBox = document.getElementById("home-box");
+          //   function sticky() {
+          //     $('#hotel-nav').width($('#hotel-nav').width());
+          //     if (window.pageYOffset >= stickyHotelNav) {
+          //       hotelNav.classList.add("sticky-nav")
+          //     } else {
+          //       hotelNav.classList.remove("sticky-nav");
+          //     }
+
+          //     $('#test').width('100%');
+          //     if (window.pageYOffset >= stickyHotelNav) {
+          //       bookingPanel.classList.add("sticky")
+          //     } else {
+          //       bookingPanel.classList.remove("sticky");
+          //     }
+          //   }
+          // });
         });
       });
     });
@@ -273,26 +306,15 @@ class HomeDetailsPage extends React.Component {
     this.setState({ isShownContactHostModal: false });
   }
 
+  next() {
+    this.slider.slickNext();
+  }
+  previous() {
+    this.slider.slickPrev();
+  }
+
   render() {
     let loading, allEvents, images;
-    // if (this.state.data === null ||
-    //   this.state.prices === null ||
-    //   this.state.reservations === null ||
-    //   this.state.loaded === false) {
-    //   loading = true;
-    // } else {
-    //   allEvents = this.state.prices;
-    //   images = null;
-    //   if (this.state.data.pictures !== undefined) {
-    //     images = this.state.data.pictures.map(x => {
-    //       return { src: Config.getValue('imgHost') + x.original };
-    //     });
-    //   }
-
-    //   if (this.state.oldCurrency !== this.props.paymentInfo.currency) {
-    //     this.initializeCalendar();
-    //   }
-    // }
 
     if (this.state.data === null) {
       loading = true;
@@ -310,10 +332,25 @@ class HomeDetailsPage extends React.Component {
       }
     }
 
+    const settings = {
+      infinite: true,
+      accessibility: false,
+      speed: 500,
+      slidesToShow: 3,
+      slidesToScroll: 1,
+      responsive: [
+        {
+          breakpoint: 1024,
+          settings: {
+            slidesToShow: 1,
+          }
+        }
+      ]
+    };
+
     return (
       <div>
         <div>
-          {/* <ListingTypeNav /> */}
           <div className="container">
             <HomesSearchBar
               countryId={this.state.countryId}
@@ -331,45 +368,58 @@ class HomeDetailsPage extends React.Component {
           <div className="loader"></div> :
           <div>
             <section className="hotel-gallery">
-              <div className="hotel-gallery-bgr" style={(this.state.data.pictures !== undefined && this.state.data.pictures.length > 0) ? { 'backgroundImage': 'url("' + Config.getValue('imgHost') + this.state.data.pictures[0].original + '")' } : { backgroundColor: '#AAA' }}>
-                <div className="container">
-                  <a onClick={(e => this.openLightbox(e))} className="btn btn-primary btn-gallery">Open Gallery</a>
-                  {images !== null && <Lightbox
-                    currentImage={this.state.currentImage}
-                    images={images}
-                    isOpen={this.state.lightboxIsOpen}
-                    onClickImage={this.handleClickImage}
-                    onClickNext={this.gotoNext}
-                    onClickPrev={this.gotoPrevious}
-                    onClickThumbnail={this.gotoImage}
-                    onClose={this.closeLightbox}
-                  />}
+              {images !== null && <Lightbox
+                currentImage={this.state.currentImage}
+                images={images}
+                isOpen={this.state.lightboxIsOpen}
+                onClickImage={this.handleClickImage}
+                onClickNext={this.gotoNext}
+                onClickPrev={this.gotoPrevious}
+                onClickThumbnail={this.gotoImage}
+                onClose={this.closeLightbox}
+              />}
+              <div className='hotel-details-carousel'>
+                <Slider
+                  ref={c => (this.slider = c)}
+                  {...settings}>
+                  {images && images.map((image, index) => {
+                    return (
+                      <div key={index} onClick={(e) => this.openLightbox(e, image.index)}>
+                        <div className='slide' style={{ 'backgroundImage': 'url("' + image.src + '")' }}></div>
+                      </div>
+                    );
+                  })}
+                </Slider>
+              </div>
+              <div className="main-carousel">
+                <div className="carousel-nav">
+                  <button className="prev icon-arrow-left" onClick={this.previous}></button>
+                  <button className="next icon-arrow-right" onClick={this.next}></button>
                 </div>
               </div>
             </section>
-            <nav id="hotel-nav">
-              <div className="container">
-                <ul className="nav navbar-nav">
-                  <li>
-                    <a href="#overview">Overview</a>
-                  </li>
-                  <li>
-                    <a href="#facilities">Facilities</a>
-                  </li>
-                  {this.state.data.descriptionsAccessInfo &&
-                    <li>
-                      <a href="#reviews">Access Info</a>
-                    </li>
-                  }
-                  {this.state.data.reviews && this.state.data.reviews.lenght > 0 &&
-                    <li>
-                      <a href="#reviews">Reviews</a>
-                    </li>
-                  }
-                  <li>
-                    <a href="#map">Location</a>
-                  </li>
-                </ul>
+            <nav className="hotel-nav" id="hotel-nav">
+              <div className="hotel-nav-box">
+                <div className="nav-box">
+                  <ul className="nav navbar-nav">
+                    <li><a href="#overview">Overview</a></li>
+                    <li><a href="#facilities">Facilities</a></li>
+                    {this.state.data.descriptionsAccessInfo &&
+                      <li><a href="#reviews">Access Info</a></li>
+                    }
+                    {this.state.data.reviews && this.state.data.reviews.length > 0 &&
+                      <li><a href="#reviews">User Reviews</a></li>
+                    }
+                    <li><a href="#map">Location</a></li>
+                  </ul>
+                </div>
+                <div className="share-box">
+                  <p><img src={`${Config.getValue("basePath")}/images/icon-share.png`} /> Share</p>
+                  <p><img src={`${Config.getValue("basePath")}/images/icon-heart.png`} /> Save</p>
+                </div>
+                <div className="contact-box">
+                  <button onClick={this.openModal}>Contact Host</button>
+                </div>
               </div>
             </nav>
 
