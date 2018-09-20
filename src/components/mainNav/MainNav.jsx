@@ -57,7 +57,7 @@ import { VERIFICATION_EMAIL_SENT } from '../../constants/infoMessages.js';
 import { Wallet } from '../../services/blockchain/wallet.js';
 import { connect } from 'react-redux';
 import queryString from 'query-string';
-import requester from '../../initDependencies';
+import requester from '../../requester';
 import { setAirdropInfo } from '../../actions/airdropInfo';
 import moment from 'moment';
 

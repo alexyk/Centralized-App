@@ -30,7 +30,7 @@ import React from 'react';
 import { arrayMove } from 'react-sortable-hoc';
 import moment from 'moment';
 import request from 'superagent';
-import requester from '../../initDependencies';
+import requester from '../../requester';
 import update from 'react-addons-update';
 import NoEntriesMessage from '../common/messages/NoEntriesMessage';
 import { CREATE_WALLET } from '../../constants/modals';

@@ -6,7 +6,7 @@ import { NotificationManager } from 'react-notifications';
 
 import { Config } from '../../../config';
 import { AIRDROP_REGISTER, CREATE_WALLET } from '../../../constants/modals.js';
-import requester from '../../../initDependencies';
+import requester from '../../../requester';
 
 import {
   INVALID_EMAIL,

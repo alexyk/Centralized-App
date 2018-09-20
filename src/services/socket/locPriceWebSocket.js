@@ -1,6 +1,6 @@
-import { store } from '../../initDependencies';
+import store from '../../reduxStore';
 import { updateLocAmounts, clearLocAmounts } from '../../actions/locAmountsInfo';
-import { setLocPriceWebsocketConnection } from '../../actions/socketInfo';
+import { setLocPriceWebsocketConnection } from '../../actions/exchangerSocketInfo';
 import WS from './exchangerWebsocket';
 
 const DEFAULT_SOCKET_METHOD = 'getLocPrice';
@@ -36,7 +36,7 @@ class LocPriceWS extends WS {
 
   close() {
     super.close(() => {
-      if (store.getState().socketInfo.isLocPriceWebsocketConnected) {
+      if (store.getState().exchangerSocketInfo.isLocPriceWebsocketConnected) {
         store.dispatch(clearLocAmounts());
         store.dispatch(setLocPriceWebsocketConnection(false));
       }

@@ -6,7 +6,7 @@ import MessagesChatUser from './MessagesChatUser';
 import PropTypes from 'prop-types';
 import React from 'react';
 import moment from 'moment';
-import requester from '../../../initDependencies';
+import requester from '../../../requester';
 import { withRouter } from 'react-router-dom';
 
 // import InfiniteList from 'react-infinite-scroll-list';

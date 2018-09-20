@@ -26,10 +26,10 @@ class LocalizationNav extends PureComponent {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (!nextProps.socketInfo.isLocRateWebsocketConnected && this.isSendMessage) {
+    if (!nextProps.exchangerSocketInfo.isLocRateWebsocketConnected && this.isSendMessage) {
       this.isSendMessage = false;
     }
-    if (nextProps.socketInfo.isLocRateWebsocketConnected && !this.isSendMessage) {
+    if (nextProps.exchangerSocketInfo.isLocRateWebsocketConnected && !this.isSendMessage) {
       this.isSendMessage = true;
       LocRateWebSocket.sendMessage(null, null, { currency: this.props.paymentInfo.currency, fiatAmount: this.props.locRateFiatAmount });
     }
@@ -133,20 +133,20 @@ LocalizationNav.propTypes = {
   dispatch: PropTypes.func,
   paymentInfo: PropTypes.object,
   userInfo: PropTypes.object,
-  socketInfo: PropTypes.object,
+  exchangerSocketInfo: PropTypes.object,
   locRate: PropTypes.string,
   locRateFiatAmount: PropTypes.number,
 };
 
 function mapStateToProps(state) {
-  const { paymentInfo, userInfo, currenciesRatesInfo, dynamicLocRatesInfo, socketInfo, locAmountsInfo } = state;
+  const { paymentInfo, userInfo, currenciesRatesInfo, dynamicLocRatesInfo, exchangerSocketInfo, locAmountsInfo } = state;
 
   let locRate = dynamicLocRatesInfo.locRate && (dynamicLocRatesInfo.locRate).toFixed(4);
   const locRateFiatAmount = dynamicLocRatesInfo.fiatAmount;
   let locAmount;
   let fiat;
 
-  if (socketInfo.isLocRateWebsocketConnected) {
+  if (exchangerSocketInfo.isLocRateWebsocketConnected) {
     locAmount = locAmountsInfo.locAmounts[locRateFiatAmount];
   } else {
     if (dynamicLocRatesInfo.locEurRate) {
@@ -166,7 +166,7 @@ function mapStateToProps(state) {
   return {
     paymentInfo,
     userInfo,
-    socketInfo,
+    exchangerSocketInfo,
     locRate,
     locRateFiatAmount
   };

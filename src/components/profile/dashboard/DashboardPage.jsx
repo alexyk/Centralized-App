@@ -2,7 +2,7 @@ import { Config } from '../../../config';
 import DashboardPending from './DashboardPending';
 import React from 'react';
 import moment from 'moment';
-import requester from '../../../initDependencies';
+import requester from '../../../requester';
 
 class DashboardPage extends React.Component {
   constructor(props) {

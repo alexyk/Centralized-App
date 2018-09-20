@@ -26,7 +26,7 @@ import WorldKuCoinCampaign from '../external/WorldKuCoinCampaign';
 import { connect } from 'react-redux';
 import moment from 'moment';
 import queryString from 'query-string';
-import requester from '../../initDependencies';
+import requester from '../../requester';
 import GooglePlaces from '../common/GooglePlaces';
 
 // if (process.env.NODE_ENV === 'development') {

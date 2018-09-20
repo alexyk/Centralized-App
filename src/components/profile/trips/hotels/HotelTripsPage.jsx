@@ -15,7 +15,7 @@ import { RESERVATION_CANCELLED } from '../../../../constants/infoMessages.js';
 import ReCAPTCHA from 'react-google-recaptcha';
 import React from 'react';
 import { connect } from 'react-redux';
-import requester from '../../../../initDependencies';
+import requester from '../../../../requester';
 import { withRouter } from 'react-router-dom';
 
 class HotelTripsPage extends React.Component {

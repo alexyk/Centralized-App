@@ -15,7 +15,7 @@ import _ from 'lodash';
 import { connect } from 'react-redux';
 import moment from 'moment';
 import queryString from 'query-string';
-import requester from '../../../initDependencies';
+import requester from '../../../requester';
 import { setCurrency } from '../../../actions/paymentInfo';
 import uuid from 'uuid';
 import { withRouter } from 'react-router-dom';

@@ -17,7 +17,7 @@ import { NotificationManager } from 'react-notifications';
 import PropTypes from 'prop-types';
 import React from 'react';
 import StringUtils from '../../../services/utilities/stringUtilities.js';
-import requester from '../../../initDependencies';
+import requester from '../../../requester';
 import validator from 'validator';
 
 function RegisterModal(props) {

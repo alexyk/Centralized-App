@@ -5,7 +5,7 @@ import { NotificationManager } from 'react-notifications';
 import PropTypes from 'prop-types';
 import moment from 'moment';
 import { Config } from '../../../config.js';
-import requester from '../../../initDependencies';
+import requester from '../../../requester';
 import { LONG } from '../../../constants/notificationDisplayTimes';
 import BookingSteps from '../../common/utility/BookingSteps';
 import Select from '../../common/google/GooglePlacesAutocomplete';

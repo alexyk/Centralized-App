@@ -3,8 +3,6 @@ import '../../../styles/css/components/profile/wallet/wallet-index-page.css';
 
 import {
   CREATE_WALLET,
-  SAVE_WALLET,
-  CONFIRM_WALLET,
 } from '../../../constants/modals.js';
 
 import { Config } from '../../../config';
@@ -16,9 +14,9 @@ import React from 'react';
 import { TRANSACTION_SUCCESSFUL } from '../../../constants/successMessages.js';
 import { TokenTransactions } from '../../../services/blockchain/tokenTransactions';
 import { connect } from 'react-redux';
-import requester from '../../../initDependencies';
 import { closeModal, openModal } from '../../../actions/modalsInfo';
 import NoEntriesMessage from '../../common/messages/NoEntriesMessage';
+import requester from '../../../requester';
 
 class WalletIndexPage extends React.Component {
   constructor(props) {
