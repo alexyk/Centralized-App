@@ -62,15 +62,17 @@ class App extends React.Component {
     this.props.dispatch(setIsLogged(true));
     requester.getUserInfo().then(res => {
       res.body.then(data => {
-        Wallet.getBalance(data.locAddress).then(eth => {
-          const ethBalance = eth / (Math.pow(10, 18));
-          Wallet.getTokenBalance(data.locAddress).then(loc => {
-            const locBalance = loc / (Math.pow(10, 18));
-            const { firstName, lastName, phoneNumber, email, locAddress, gender, isEmailVerified } = data;
-            const isAdmin = data.roles.findIndex((r) => r.name === 'ADMIN') !== -1;
-            this.props.dispatch(setUserInfo(firstName, lastName, phoneNumber, email, locAddress, ethBalance, locBalance, gender, isEmailVerified, isAdmin));
-          });
-        });
+        // Wallet.getBalance(data.locAddress).then(eth => {
+        //   const ethBalance = eth / (Math.pow(10, 18));
+        //   Wallet.getTokenBalance(data.locAddress).then(loc => {
+        //     const locBalance = loc / (Math.pow(10, 18));
+        //   });
+        // });
+        const ethBalance = 0;
+        const locBalance = 0;
+        const { firstName, lastName, phoneNumber, email, locAddress, gender, isEmailVerified } = data;
+        const isAdmin = data.roles.findIndex((r) => r.name === 'ADMIN') !== -1;
+        this.props.dispatch(setUserInfo(firstName, lastName, phoneNumber, email, locAddress, ethBalance, locBalance, gender, isEmailVerified, isAdmin));
       });
     });
   }

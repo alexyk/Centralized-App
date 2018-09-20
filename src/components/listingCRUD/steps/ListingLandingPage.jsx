@@ -14,6 +14,7 @@ import { COMMING_SOON, INVALID_TITLE } from '../../../constants/warningMessages.
 import { LONG } from '../../../constants/notificationDisplayTimes.js';
 
 function ListingLandingPage(props) {
+
   const { listingType, name } = props.values;
   const next = validateInput(props.values) ? props.next : props.location.pathname;
   const handleClickNext = validateInput(props.values)
@@ -114,7 +115,7 @@ ListingLandingPage.propTypes = {
   next: PropTypes.string,
 
   // Router props
-  location: PropTypes.object,
+  location: PropTypes.object
 };
 
 export default withRouter(ListingLandingPage);

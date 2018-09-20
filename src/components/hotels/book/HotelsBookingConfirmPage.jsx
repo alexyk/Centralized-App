@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import moment from 'moment';
 import queryString from 'query-string';
 import { Config } from '../../../config.js';
-import { PASSWORD_PROMPT } from '../../../constants/modals.js';
+import { PASSWORD_PROMPT, CREATE_WALLET } from '../../../constants/modals.js';
 import { PROCESSING_TRANSACTION } from '../../../constants/infoMessages.js';
 import { ROOM_NO_LONGER_AVAILABLE } from '../../../constants/warningMessages';
 import { LONG } from '../../../constants/notificationDisplayTimes.js';
@@ -37,7 +37,7 @@ class HotelBookingConfirmPage extends React.Component {
     this.state = {
       data: null,
       password: '',
-      confirmed: false,
+      userConfirmedPaymentWithLOC: false,
       fiatPriceRoomsXML: null,
       testFiatPriceRoomsXML: null
     };
@@ -296,7 +296,7 @@ class HotelBookingConfirmPage extends React.Component {
       const endDate = moment.utc(booking[0].arrivalDate, 'YYYY-MM-DD').add(booking[0].nights, 'days');
 
       NotificationManager.info(PROCESSING_TRANSACTION, 'Transactions', 60000);
-      this.setState({ confirmed: true });
+      this.setState({ userConfirmedPaymentWithLOC: true });
       this.closeModal(PASSWORD_PROMPT);
 
       const queryString = this.props.location.search;
@@ -346,7 +346,7 @@ class HotelBookingConfirmPage extends React.Component {
               }
 
               this.closeModal(PASSWORD_PROMPT);
-              this.setState({ confirmed: false });
+              this.setState({ userConfirmedPaymentWithLOC: false });
             });
           }, 1000);
         });
@@ -485,7 +485,8 @@ class HotelBookingConfirmPage extends React.Component {
   }
 
   render() {
-    const { data, userInfo, confirmed, password, fiatPriceRoomsXML, testFiatPriceRoomsXML } = this.state;
+    const { data, userInfo, userConfirmedPaymentWithLOC, password, fiatPriceRoomsXML, testFiatPriceRoomsXML } = this.state;
+    const hasLocAddress = !!this.props.userInfo.locAddress;
     const { rates } = this.props.currenciesRatesInfo;
     if (userInfo == null) {
       return <div className="loader"></div>;
@@ -584,9 +585,11 @@ class HotelBookingConfirmPage extends React.Component {
                           LOC price will update in <i className="fa fa-clock-o" aria-hidden="true"></i>&nbsp;{<LocPriceUpdateTimer initialSeconds={10} />} sec &nbsp;
                         </div>
                         <p>(Click <a href="">here</a> to learn how you can buy LOC directly to enjoy cheaper travel)</p>
-                        {!confirmed
-                          ? <button className="btn btn-primary" onClick={(e) => this.openModal(PASSWORD_PROMPT, e)}>Pay with LOC Tokens</button>
-                          : <button className="btn btn-primary" disabled>Processing Payment...</button>
+                        {userConfirmedPaymentWithLOC
+                          ? <button className="btn btn-primary" disabled>Processing Payment...</button>
+                          : hasLocAddress 
+                            ? <button className="btn btn-primary" onClick={(e) => this.openModal(PASSWORD_PROMPT, e)}>Pay with LOC Tokens</button>
+                            : <button className="btn btn-primary" onClick={(e) => this.openModal(CREATE_WALLET, e)}>Create Wallet</button>
                         }
                       </div>
                       <div className="logos">

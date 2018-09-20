@@ -1,6 +1,12 @@
 import 'react-notifications/lib/notifications.css';
 import '../../../styles/css/components/profile/wallet/wallet-index-page.css';
 
+import {
+  CREATE_WALLET,
+  SAVE_WALLET,
+  CONFIRM_WALLET,
+} from '../../../constants/modals.js';
+
 import { Config } from '../../../config';
 import { LONG } from '../../../constants/notificationDisplayTimes.js';
 import { NotificationManager } from 'react-notifications';
@@ -11,6 +17,8 @@ import { TRANSACTION_SUCCESSFUL } from '../../../constants/successMessages.js';
 import { TokenTransactions } from '../../../services/blockchain/tokenTransactions';
 import { connect } from 'react-redux';
 import requester from '../../../initDependencies';
+import { closeModal, openModal } from '../../../actions/modalsInfo';
+import NoEntriesMessage from '../../common/messages/NoEntriesMessage';
 
 class WalletIndexPage extends React.Component {
   constructor(props) {
@@ -21,16 +29,35 @@ class WalletIndexPage extends React.Component {
       canProceed: false,
       recipientAddress: '',
       locAmount: 0,
-      password: ''
+      password: '',
     };
+
     this.onChange = this.onChange.bind(this);
     this.sendTokens = this.sendTokens.bind(this);
+    this.openModal = this.openModal.bind(this);
+    this.closeModal = this.closeModal.bind(this);
   }
 
   onChange(e) {
     this.setState({ [e.target.name]: e.target.value }, () => {
-      this.setState({ canProceed: this.state.locAddress !== null && this.state.password !== '' && this.state.recipientAddress !== '' && this.state.locAmount > 0 });
+      this.setState({ canProceed: this.props.userInfo.locAddress !== null && this.state.password !== '' && this.state.recipientAddress !== '' && this.state.locAmount > 0 });
     });
+  }
+
+  openModal(modal, e) {
+    if (e) {
+      e.preventDefault();
+    }
+
+    this.props.dispatch(openModal(modal));
+  }
+
+  closeModal(modal, e) {
+    if (e) {
+      e.preventDefault();
+    }
+
+    this.props.dispatch(closeModal(modal));
   }
 
   sendTokens() {
@@ -49,7 +76,6 @@ class WalletIndexPage extends React.Component {
           locAmount: 0,
           password: ''
         });
-        // console.log(x);
       }).catch(error => {
         if (error.hasOwnProperty('message')) {
           NotificationManager.warning(error.message, 'Send Tokens', LONG);
@@ -64,35 +90,38 @@ class WalletIndexPage extends React.Component {
     }, 1000);
   }
 
-  componentDidMount() {
-    requester.getUserInfo().then(res => {
-      res.body.then(data => {
-        this.setState({ locAddress: data.locAddress }, () => {
-          requester.getMyJsonFile().then(res => {
-            res.body.then(data => {
-              this.setState({ jsonFile: data.jsonFile });
-            });
-          });
+  componentWillMount() {
+    if (this.props.userInfo.locAddress) {
+      requester.getMyJsonFile().then(res => {
+        res.body.then(data => {
+          this.setState({ jsonFile: data.jsonFile });
         });
       });
-    });
+    }
   }
 
   render() {
-    if (!this.state.locAddress) {
-      return <div className="loader"></div>;
+    if (!this.props.userInfo.locAddress) {
+      return (
+        <div className='container'>
+          <NoEntriesMessage text='You need to create a wallet first'>
+            <a href="" className="btn" onClick={(e) => this.openModal(CREATE_WALLET, e)} style={{ minWidth: '200px' }}>Create Wallet</a>
+          </NoEntriesMessage>
+        </div>
+      );
     }
-    const etherscanUrl = `https://etherscan.io/address/${this.state.locAddress}#tokentxns`;
+
+    const etherscanUrl = `https://etherscan.io/address/${this.props.userInfo.locAddress}#tokentxns`;
 
     return (
       <div className="container">
         <section id="wallet-index">
           <div id="profile-edit-form">
             <h2>Your Wallet</h2>
-            <hr/>
+            <hr />
             <div className="loc-address">
               <label htmlFor="loc-address">Your ETH/LOC address <img src={Config.getValue('basePath') + 'images/icon-lock.png'} className="lock" alt="lock-o" /></label>
-              <input className="disable-input" id="loc-address" name="locAddress" value={this.state.locAddress} type="text" readOnly />
+              <input className="disable-input" id="loc-address" name="locAddress" value={this.props.userInfo.locAddress} type="text" readOnly />
             </div>
             <div className="loc-balance">
               <label htmlFor="loc-balance">LOC Balance</label>

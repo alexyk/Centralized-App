@@ -46,7 +46,7 @@ function RegisterModal(props) {
           NotificationManager.warning(PROFILE_PASSWORD_REQUIREMENTS, '', LONG);
         } else {
           props.closeModal(REGISTER);
-          props.openModal(CREATE_WALLET);
+          props.handleRegister();
         }
       });
     });

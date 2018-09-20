@@ -21,7 +21,7 @@ function ConfirmWalletModal(props) {
       props.closeModal(CONFIRM_WALLET);
       props.openModal(SAVE_WALLET);
     } else {
-      props.handleConfirmWallet();
+      props.handleCreateWallet();
     }
   };
 
@@ -47,7 +47,6 @@ function ConfirmWalletModal(props) {
               : <button className="btn btn-primary btn-book" disabled>Processing Registration...</button>
             }
           </form>
-          <button className="btn btn-primary" onClick={onWordsForget}>Sorry, I did not save them</button>
         </Modal.Body>
       </Modal>
     </div>
@@ -57,7 +56,7 @@ function ConfirmWalletModal(props) {
 ConfirmWalletModal.propTypes = {
   openModal: PropTypes.func,
   closeModal: PropTypes.func,
-  handleConfirmWallet: PropTypes.func,
+  handleCreateWallet: PropTypes.func,
   handleMnemonicWordsChange: PropTypes.func,
   mnemonicWords: PropTypes.string,
   isActive: PropTypes.bool,
