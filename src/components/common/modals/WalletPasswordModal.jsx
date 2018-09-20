@@ -1,12 +1,10 @@
-import { Modal } from 'react-bootstrap';
-import PropTypes from 'prop-types';
 import React from 'react';
-
+import PropTypes from 'prop-types';
+import { Modal } from 'react-bootstrap';
+import { PASSWORD_PROMPT, RECOVER_WALLET } from '../../../constants/modals.js';
 import { Config } from '../../../config.js';
 
-import { PASSWORD_PROMPT } from '../../../constants/modals.js';
-
-function PasswordModal(props) {
+function WalletPasswordModal(props) {
 
   return (
     <div>
@@ -23,13 +21,18 @@ function PasswordModal(props) {
             </div>
             <button type="submit" className="btn btn-primary">Confirm</button>
           </form>
+
+          <hr />
+          <div className="login-sign">
+            Forgot your password? <a onClick={(e) => { props.closeModal(PASSWORD_PROMPT, e); props.openModal(RECOVER_WALLET, e); }}>Recover</a>
+          </div>
         </Modal.Body>
       </Modal>
     </div>
   );
 }
 
-PasswordModal.propTypes = {
+WalletPasswordModal.propTypes = {
   password: PropTypes.string,
   text: PropTypes.string,
   placeholder: PropTypes.string,
@@ -40,4 +43,4 @@ PasswordModal.propTypes = {
   isActive: PropTypes.bool
 };
 
-export default PasswordModal;
+export default WalletPasswordModal;
