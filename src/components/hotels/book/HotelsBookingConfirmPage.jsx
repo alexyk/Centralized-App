@@ -14,13 +14,14 @@ import { HotelReservation } from '../../../services/blockchain/hotelReservation'
 import { RoomsXMLCurrency } from '../../../services/utilities/roomsXMLCurrency';
 import { CurrencyConverter } from '../../../services/utilities/currencyConverter';
 import requester from '../../../requester';
-import PasswordModal from '../../common/modals/PasswordModal';
+import WalletPasswordModal from '../../common/modals/WalletPasswordModal';
 import BookingSteps from '../../common/utility/BookingSteps';
 import LocPrice from '../../common/utility/LocPrice';
 import LocPriceUpdateTimer from '../../common/utility/LocPriceUpdateTimer';
 import { closeModal, openModal } from '../../../actions/modalsInfo.js';
 import { setCurrency } from '../../../actions/paymentInfo';
 import { setFiatAmount } from '../../../actions/dynamicLocRatesInfo';
+import RecoverWallerPassword from '../../common/utility/RecoverWallerPassword';
 
 import '../../../styles/css/components/hotels/book/hotel-booking-confirm-page.css';
 
@@ -615,15 +616,17 @@ class HotelBookingConfirmPage extends React.Component {
                 </div>
               }
             </div>
-            <PasswordModal
+            <WalletPasswordModal
               isActive={this.props.modalsInfo.isActive[PASSWORD_PROMPT]}
               text={'Enter your wallet password'}
               placeholder={'Wallet password'}
               handleSubmit={() => this.payWithLocSingleWithdrawer()}
+              openModal={this.openModal}
               closeModal={this.closeModal}
               password={password}
               onChange={this.onChange}
             />
+            <RecoverWallerPassword />
           </div>
         }
       </React.Fragment>
