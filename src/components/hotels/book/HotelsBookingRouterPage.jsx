@@ -111,7 +111,6 @@ class HotelsBookingRouterPage extends React.Component {
   render() {
     return (
       <Fragment>
-        <button onClick={() => this.stringifyRoomsExcludingNames(queryString.parse(decodeURI(this.props.location.search)))}>get rooms</button>
         <Switch>
           <Route exact path="/hotels/listings/book/:id/profile" render={() => <ConfirmProfilePage requestLockOnQuoteId={this.requestLockOnQuoteId} /> } />
           <Route exact path="/hotels/listings/book/:id/confirm" render={() => <HotelsBookingConfirmPage requestLockOnQuoteId={this.requestLockOnQuoteId} />} />
