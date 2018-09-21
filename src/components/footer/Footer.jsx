@@ -5,7 +5,7 @@ import { setCurrency } from '../../actions/paymentInfo';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { withRouter } from 'react-router-dom';
+import { Link, withRouter } from 'react-router-dom';
 
 class Footer extends React.Component {
   componentDidMount() {
@@ -33,10 +33,11 @@ class Footer extends React.Component {
                     <li>
                       <h5>LockTrip</h5>
                     </li>
-                    <li><a href="">Help</a></li>
+                    <li><Link to="/help">Help</Link></li>
                     <li><a href="https://locktrip.com/terms.html" target="_blank" rel="noopener noreferrer">Terms and Conditions</a></li>
                     <li><a href="https://locktrip.com/terms.html" target="_blank" rel="noopener noreferrer">Legal Information</a></li>
                     <li><a href="https://locktrip.com/privacy.html" target="_blank" rel="noopener noreferrer">Privacy Policy</a></li>
+                    <li><Link to="/about">About Us</Link></li>
                   </ul>
                 </li>
                 <li>
@@ -56,8 +57,6 @@ class Footer extends React.Component {
               <div className="select">
                 <select className="language" defaultValue="English">
                   <option value="English">English</option>
-                  {/* <option value="Deutch">Deutch</option>
-                  <option value="Espanol">Espanol</option> */}
                 </select>
               </div>
               <div className="select">
@@ -73,8 +72,9 @@ class Footer extends React.Component {
             </div>
           </div>
           <div className="bottom-footer">
+            <span>LockTrip is owned and operated by LockChain Ltd., Bulgaria. </span>
             <span>Copyright &copy; 2018 LockTrip. </span>
-            <span>All Rights Reserved.</span>
+            <span>All Rights Reserved. </span>
           </div>
         </div>
       </footer>

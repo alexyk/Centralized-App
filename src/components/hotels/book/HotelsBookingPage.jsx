@@ -38,6 +38,7 @@ class HotelsBookingPage extends React.Component {
     this.requestCurrencyRates = this.requestCurrencyRates.bind(this);
     this.requestUserInfo = this.requestUserInfo.bind(this);
     this.getQueryString = this.getQueryString.bind(this);
+    this.getRequestSearchParams = this.getRequestSearchParams.bind(this);
   }
 
   componentDidMount() {
@@ -48,7 +49,7 @@ class HotelsBookingPage extends React.Component {
 
   requestHotel() {
     const id = this.props.match.params.id;
-    const searchParams = this.getNewSearchParams();
+    const searchParams = this.getRequestSearchParams();
     const searchString = this.getSearchParams();
     const quoteId = searchString.get('quoteId');
     const rooms = this.getRoomsFromURL(searchString);
@@ -80,7 +81,7 @@ class HotelsBookingPage extends React.Component {
 
   requestHotelRooms() {
     const id = this.props.match.params.id;
-    const searchParams = this.getNewSearchParams();
+    const searchParams = this.getRequestSearchParams();
     const quoteId = searchParams.pop().split('=')[1];
 
     requester.getHotelRooms(id, searchParams).then(res => {
@@ -167,15 +168,16 @@ class HotelsBookingPage extends React.Component {
     }
   }
 
-  getNewSearchParams() {
-    const array = [];
-    const pairs = this.props.location.search.substr(1).split('&');
-    for (let i = 0; i < pairs.length; i++) {
-      let pair = pairs[i];
-      array.push(pair);
-    }
-
-    return array;
+  getRequestSearchParams() {
+    const params = [];
+    const query = queryString.parse(this.props.location.search);
+    params.push(`region=${encodeURI(query.region)}`);
+    params.push(`currency=${encodeURI(query.currency)}`);
+    params.push(`startDate=${encodeURI(query.startDate)}`);
+    params.push(`endDate=${encodeURI(query.endDate)}`);
+    params.push(`rooms=${encodeURI(query.rooms)}`);
+    params.push(`quoteId=${encodeURI(query.quoteId)}`);
+    return params;
   }
 
   getSearchParams() {

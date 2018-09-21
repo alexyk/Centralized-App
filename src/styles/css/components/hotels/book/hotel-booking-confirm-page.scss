@@ -43,6 +43,10 @@
         width: 60%;
         border-top: 1px solid #cfcfcf;
       }
+      .billing-disclaimer {
+        margin-top: 30px; 
+        text-align: center;
+      }
     }
     .payment-methods {
       display: flex;
@@ -103,8 +107,8 @@
               max-height:100%;
             }
           }
-          .mastercard, .visa {
-            width: 50%;
+          .credit-cards {
+            width: 100%;
           }
           .safecharge, .loc {
             width: 100%;

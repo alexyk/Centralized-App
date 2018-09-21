@@ -1,0 +1,26 @@
+#help-page {
+  background-color: white; 
+  border-top: 1px solid #cccccc; 
+  
+  .help-page__content {
+    padding: 50px 15px;
+
+    p {
+      padding: 10px 0;
+      // text-align: center;
+    }
+
+    ul {
+      padding-left: 40px;
+      
+      li {
+        list-style: circle;
+      }
+    }
+
+    .bottom-padder {
+      height: 150px;
+      background-color: white; 
+    }
+  }
+}

@@ -28,6 +28,8 @@ import moment from 'moment';
 import queryString from 'query-string';
 import requester from '../../requester';
 import GooglePlaces from '../common/GooglePlaces';
+import HelpPage from '../static/HelpPage';
+import AboutUsPage from '../static/AboutUsPage';
 
 // if (process.env.NODE_ENV === 'development') {
 //   console.log(process.env.NODE_ENV);
@@ -152,6 +154,8 @@ class App extends React.Component {
           <Route path="/vote" render={() => <WorldKuCoinCampaign />} />
           <Route path="/campaigns/balance/check" render={() => <Balance />} />
           <Route path="/google" render={() => <GooglePlaces />} />
+          <Route path="/help" render={() => <HelpPage />} />
+          <Route path="/about" render={() => <AboutUsPage />} />
 
           {/* MOBILE ONLY START */}
           <Route path="/mobile/search" render={() => <StaticHotelsSearchPage />} />

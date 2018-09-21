@@ -19,6 +19,7 @@ import requester from '../../../requester';
 import { setCurrency } from '../../../actions/paymentInfo';
 import { setSearchInfo } from '../../../actions/searchInfo';
 import { withRouter } from 'react-router-dom';
+import queryString from 'query-string';
 
 import { CHECKING_ROOM_AVAILABILITY, SIMILAR_ROOM_GIVEN } from '../../../constants/infoMessages.js';
 import { ROOM_IS_NO_LONGER_AVAILABLE } from '../../../constants/errorMessages.js';
@@ -71,6 +72,7 @@ class HotelDetailsPage extends React.Component {
   componentDidMount() {
     const id = this.props.match.params.id;
     const searchParams = this.getRequestSearchParams();
+
     requester.getHotelById(id, searchParams).then(res => {
       res.body.then(data => {
         this.setState({ data: data, loading: false });
@@ -123,14 +125,14 @@ class HotelDetailsPage extends React.Component {
   }
 
   getRequestSearchParams() {
-    const array = [];
-    const pairs = this.props.location.search.substr(1).split('&');
-    for (let i = 0; i < pairs.length; i++) {
-      let pair = pairs[i];
-      array.push(pair);
-    }
-
-    return array;
+    const params = [];
+    const query = queryString.parse(this.props.location.search);
+    params.push(`region=${encodeURI(query.region)}`);
+    params.push(`currency=${encodeURI(query.currency)}`);
+    params.push(`startDate=${encodeURI(query.startDate)}`);
+    params.push(`endDate=${encodeURI(query.endDate)}`);
+    params.push(`rooms=${encodeURI(query.rooms)}`);
+    return params;
   }
 
   getAdults(rooms) {

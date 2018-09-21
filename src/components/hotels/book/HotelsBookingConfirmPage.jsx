@@ -540,6 +540,7 @@ class HotelBookingConfirmPage extends React.Component {
                       <h4>Cancelation Details</h4>
                       {this.getRoomFees(booking)}
                     </div>
+                    <div className="billing-disclaimer">The charge will appear on your bill as LockChain Ltd. (team@locktrip.com)</div>
                   </div>
                   <div className="payment-methods">
                     <div className="payment-methods-card">
@@ -555,11 +556,8 @@ class HotelBookingConfirmPage extends React.Component {
                       </div>
                       <div className="logos">
                         <div className="logos-row">
-                          <div className="logo visa">
-                            <img src={Config.getValue('basePath') + 'images/logos/visa.png'} alt="Visa Logo" />
-                          </div>
-                          <div className="logo mastercard">
-                            <img src={Config.getValue('basePath') + 'images/logos/mastercard.png'} alt="Mastercard Logo" />
+                          <div className="logo credit-cards">
+                            <img src={Config.getValue('basePath') + 'images/logos/credit-cards.png'} alt="Credit Cards Logos" />
                           </div>
                         </div>
                         <div className="logos-row">

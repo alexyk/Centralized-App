@@ -21,8 +21,7 @@ class HotelsBookingRouterPage extends React.Component {
 
     this.state = {
       hotelId: props.match.params.id,
-      quoteId: queryString.parse(props.location.search).quoteId,
-      queryString: props.location.search
+      quoteId: queryString.parse(props.location.search).quoteId
     };
 
     this.setQuoteIdPollingInterval = this.setQuoteIdPollingInterval.bind(this);
@@ -58,6 +57,7 @@ class HotelsBookingRouterPage extends React.Component {
     if (this.state) {
       requester.getQuoteIdExpirationFlag(this.state.quoteId).then(res => res.body).then(data => {
         if (!data.is_quote_valid) {
+          console.log(data);
           this.redirectToHotelDetailsPage();
         }
       });
@@ -85,7 +85,7 @@ class HotelsBookingRouterPage extends React.Component {
     NotificationManager.warning(ROOM_NO_LONGER_AVAILABLE, '', LONG);
     const id = this.props.match.params.id;
     const pathname = this.props.location.pathname.indexOf('/mobile') !== -1 ? '/mobile/details' : '/hotels/listings';
-    const search = this.getQueryString(queryString.parse(this.state.queryString));
+    const search = this.getQueryString(queryString.parse(this.props.location.search));
     this.props.history.push(`${pathname}/${id}${search}`);
   }
 
@@ -95,22 +95,23 @@ class HotelsBookingRouterPage extends React.Component {
     queryString += '&currency=' + encodeURI(queryStringParameters.currency);
     queryString += '&startDate=' + encodeURI(queryStringParameters.startDate);
     queryString += '&endDate=' + encodeURI(queryStringParameters.endDate);
-    queryString += '&rooms=' + this.getRooms(queryStringParameters);
+    queryString += '&rooms=' + encodeURI(this.stringifyRoomsExcludingNames(queryStringParameters.rooms));
     return queryString;
   }
 
-  getRooms(queryParams) {
-    let rooms = JSON.parse(queryParams.rooms);
+  stringifyRoomsExcludingNames(rooms) {
+    rooms = JSON.parse(rooms);
     rooms.forEach((room) => {
-      room.adults = room.adults.length;
+      room.adults = room.adults.length ? room.adults.length : room.adults;
     });
 
-    return encodeURI(JSON.stringify(rooms));
+    return JSON.stringify(rooms);
   }
 
   render() {
     return (
       <Fragment>
+        <button onClick={() => this.stringifyRoomsExcludingNames(queryString.parse(decodeURI(this.props.location.search)))}>get rooms</button>
         <Switch>
           <Route exact path="/hotels/listings/book/:id/profile" render={() => <ConfirmProfilePage requestLockOnQuoteId={this.requestLockOnQuoteId} /> } />
           <Route exact path="/hotels/listings/book/:id/confirm" render={() => <HotelsBookingConfirmPage requestLockOnQuoteId={this.requestLockOnQuoteId} />} />
