@@ -44,7 +44,7 @@ class HotelDetailsPage extends React.Component {
     this.state = {
       calendarStartDate: startDate,
       calendarEndDate: endDate,
-      data: null,
+      hotel: null,
       lightboxIsOpen: false,
       currentImage: 0,
       prices: null,
@@ -56,6 +56,10 @@ class HotelDetailsPage extends React.Component {
       loadingRooms: true,
     };
 
+    this.requestHotel = this.requestHotel.bind(this);
+    this.requestHotelRooms = this.requestHotelRooms.bind(this);
+    this.requestCurrencyRates = this.requestCurrencyRates.bind(this);
+    this.setSearchInfoFromURL = this.setSearchInfoFromURL.bind(this);
     this.handleApply = this.handleApply.bind(this);
     this.closeLightbox = this.closeLightbox.bind(this);
     this.gotoNext = this.gotoNext.bind(this);
@@ -70,43 +74,84 @@ class HotelDetailsPage extends React.Component {
   }
 
   componentDidMount() {
+    if (this.props.location.search) {
+      this.setSearchInfoFromURL();
+    }
+
+    this.requestHotel();
+    this.requestHotelRooms();
+    this.requestCurrencyRates();
+  }
+
+  setSearchInfoFromURL() {
+    const searchParams = this.getSearchParams(this.props.location.search);
+    const startDate = moment(searchParams.get('startDate'), 'DD/MM/YYYY');
+    const endDate = moment(searchParams.get('endDate'), 'DD/MM/YYYY');
+    const rooms = JSON.parse(decodeURI(searchParams.get('rooms')));
+    const adults = this.getAdults(rooms);
+    const hasChildren = this.getHasChildren(rooms);
+
+    this.props.dispatch(setSearchInfo(startDate, endDate, this.props.searchInfo.region, rooms, adults, hasChildren));
+
+    this.setState({
+      nights: endDate.diff(startDate, 'days'),
+    });
+  }
+
+  requestHotel() {
     const id = this.props.match.params.id;
     const searchParams = this.getRequestSearchParams();
 
     requester.getHotelById(id, searchParams).then(res => {
       res.body.then(data => {
-        this.setState({ data: data, loading: false });
+        this.setState({ hotel: data, loading: false });
       });
     });
+  }
 
+  requestHotelRooms() {
+    const id = this.props.match.params.id;
+    const searchParams = this.getRequestSearchParams();
+    
     requester.getHotelRooms(id, searchParams).then(res => {
       res.body.then(data => {
-        this.setState({ hotelRooms: data, loadingRooms: false });
+        this.setState({ hotelRooms: data, loadingRooms: false }, () => {
+          const roomSearchQuote = this.state.hotelRooms[6].roomsResults;
+          const availableHotelRooms = this.state.hotelRooms;
+          console.log(availableHotelRooms);
+          const quoteId = this.findQuoteIdByRoomSearchQuote(roomSearchQuote, availableHotelRooms);
+          console.log(quoteId);
+        });
       });
     });
+  }
 
+  findQuoteIdByRoomSearchQuote(roomSearchQuote, availableHotelRooms) {
+    const searchRoom = roomSearchQuote.map(room => {
+      return `${room.name} ${room.mealType} ${room.price.toFixed()}`;
+    }).sort();
+
+    for (let index = 0; index < availableHotelRooms.length; index++) {
+      const quote = availableHotelRooms[index];
+      const currentRoom = quote.roomsResults.map(room => {
+        return `${room.name} ${room.mealType} ${room.price.toFixed()}`;
+      }).sort();
+
+      if (_.isEqual(searchRoom, currentRoom)) {
+        console.log(searchRoom, currentRoom);
+        return quote.quoteId;
+      }
+    }
+
+    return null;
+  }
+
+  requestCurrencyRates() {
     requester.getCurrencyRates().then(res => {
       res.body.then(data => {
         this.setState({ rates: data });
       });
     });
-  }
-
-  componentWillMount() {
-    if (this.props.location.search) {
-      const searchParams = this.getSearchParams(this.props.location.search);
-      const startDate = moment(searchParams.get('startDate'), 'DD/MM/YYYY');
-      const endDate = moment(searchParams.get('endDate'), 'DD/MM/YYYY');
-      const rooms = JSON.parse(decodeURI(searchParams.get('rooms')));
-      const adults = this.getAdults(rooms);
-      const hasChildren = this.getHasChildren(rooms);
-
-      this.props.dispatch(setSearchInfo(startDate, endDate, this.props.searchInfo.region, rooms, adults, hasChildren));
-
-      this.setState({
-        nights: endDate.diff(startDate, 'days'),
-      });
-    }
   }
   
   redirectToSearchPage(queryString) {
@@ -221,7 +266,7 @@ class HotelDetailsPage extends React.Component {
   }
 
   handleClickImage() {
-    if (this.state.currentImage === this.state.data.pictures.length - 1) return;
+    if (this.state.currentImage === this.state.hotel.pictures.length - 1) return;
     this.gotoNext();
   }
 
@@ -368,12 +413,12 @@ class HotelDetailsPage extends React.Component {
 
   render() {
     let loading, images;
-    if (!this.state.data) {
+    if (!this.state.hotel) {
       loading = true;
     } else {
       images = [];
-      if (this.state.data.hotelPhotos) {
-        let sortedImages = _.orderBy(this.state.data.hotelPhotos, ['url'], ['asc']);
+      if (this.state.hotel.hotelPhotos) {
+        let sortedImages = _.orderBy(this.state.hotel.hotelPhotos, ['url'], ['asc']);
         images = sortedImages.map((image, index) => {
           return { src: Config.getValue('imgHost') + image.url, index };
         });
@@ -447,12 +492,12 @@ class HotelDetailsPage extends React.Component {
                   <li>
                     <a href="#facilities">Facilities</a>
                   </li>
-                  {this.state.data.descriptionsAccessInfo &&
+                  {this.state.hotel.descriptionsAccessInfo &&
                     <li>
                       <a href="#reviews">Access Info</a>
                     </li>
                   }
-                  {this.state.data.reviews && this.state.data.reviews.length > 0 &&
+                  {this.state.hotel.reviews && this.state.hotel.reviews.length > 0 &&
                     <li>
                       <a href="#reviews">Reviews</a>
                     </li>
@@ -470,7 +515,7 @@ class HotelDetailsPage extends React.Component {
               onApply={this.handleApply}
               startDate={this.state.calendarStartDate}
               endDate={this.state.calendarEndDate}
-              data={this.state.data}
+              hotel={this.state.hotel}
               hotelRooms={this.state.hotelRooms}
               rates={this.state.rates}
               loading={this.state.loading}

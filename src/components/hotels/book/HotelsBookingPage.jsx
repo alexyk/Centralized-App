@@ -110,7 +110,7 @@ class HotelsBookingPage extends React.Component {
     requester.getUserInfo()
       .then(res => res.body)
       .then(userInfo => this.setState({ userInfo }, () => {
-        const rooms = [...this.state.rooms];
+        const rooms = this.state.rooms.slice(0);
         rooms[0].adults[0].firstName = userInfo.firstName.trim();
         rooms[0].adults[0].lastName = userInfo.lastName.trim();
         rooms[0].adults[0].title = userInfo.gender === 'female' ? 'Mrs' : 'Mr';

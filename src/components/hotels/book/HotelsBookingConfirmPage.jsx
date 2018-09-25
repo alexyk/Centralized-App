@@ -96,7 +96,7 @@ class HotelBookingConfirmPage extends React.Component {
           const testFiatPriceRoomsXMLInEur = rates && CurrencyConverter.convert(rates, RoomsXMLCurrency.get(), DEFAULT_CRYPTO_CURRENCY, testFiatPriceRoomsXML);
           this.props.dispatch(setFiatAmount(fiatPriceRoomsXMLInEur));
 
-          this.setState({ data: data, booking: booking, fiatPriceRoomsXML, testFiatPriceRoomsXML, fiatPriceRoomsXMLInEur, testFiatPriceRoomsXMLInEur });
+          this.setState({ data: data, fiatPriceRoomsXML, testFiatPriceRoomsXML, fiatPriceRoomsXMLInEur, testFiatPriceRoomsXMLInEur });
         });
       } else {
         res.errors.then((res) => {
