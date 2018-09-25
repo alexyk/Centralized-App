@@ -47,13 +47,11 @@ class HotelBookingConfirmPage extends React.Component {
     this.closeModal = this.closeModal.bind(this);
     this.onChange = this.onChange.bind(this);
     this.payWithLocSingleWithdrawer = this.payWithLocSingleWithdrawer.bind(this);
-    this.requestUserInfo = this.requestUserInfo.bind(this);
     this.requestBookingInfo = this.requestBookingInfo.bind(this);
     this.createBackUrl = this.createBackUrl.bind(this);
   }
 
   componentDidMount() {
-    this.requestUserInfo();
     this.requestBookingInfo();
   }
 
@@ -74,14 +72,6 @@ class HotelBookingConfirmPage extends React.Component {
 
   componentWillUnmount() {
     this.props.dispatch(setFiatAmount(1000));
-  }
-
-  requestUserInfo() {
-    requester.getUserInfo().then(res => {
-      res.body.then(data => {
-        this.setState({ userInfo: data });
-      });
-    });
   }
 
   requestBookingInfo() {
@@ -486,12 +476,14 @@ class HotelBookingConfirmPage extends React.Component {
   }
 
   render() {
-    const { data, userInfo, userConfirmedPaymentWithLOC, password, fiatPriceRoomsXML, testFiatPriceRoomsXML } = this.state;
-    const hasLocAddress = !!this.props.userInfo.locAddress;
-    const { rates } = this.props.currenciesRatesInfo;
-    if (userInfo == null) {
+    if (!this.props.userInfo) {
+      console.log(this.props.userInfo);
       return <div className="loader"></div>;
     }
+
+    const { data, userConfirmedPaymentWithLOC, password, fiatPriceRoomsXML, testFiatPriceRoomsXML } = this.state;
+    const hasLocAddress = !!this.props.userInfo.locAddress;
+    const { rates } = this.props.currenciesRatesInfo;
     const isMobile = this.props.location.pathname.indexOf('/mobile') !== -1;
 
     const booking = data && data.booking.hotelBooking;
@@ -644,7 +636,6 @@ HotelBookingConfirmPage.propTypes = {
 
   // start Redux props
   dispatch: PropTypes.func,
-  userInfo: PropTypes.object,
   paymentInfo: PropTypes.object,
   modalsInfo: PropTypes.object,
   currenciesRatesInfo: PropTypes.object,
@@ -652,9 +643,8 @@ HotelBookingConfirmPage.propTypes = {
 };
 
 function mapStateToProps(state) {
-  const { userInfo, paymentInfo, modalsInfo, currenciesRatesInfo, locAmountsInfo } = state;
+  const { paymentInfo, modalsInfo, currenciesRatesInfo, locAmountsInfo } = state;
   return {
-    userInfo,
     paymentInfo,
     modalsInfo,
     currenciesRatesInfo,
