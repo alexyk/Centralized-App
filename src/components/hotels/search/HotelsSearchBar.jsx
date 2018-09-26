@@ -35,7 +35,6 @@ function HotelsSearchBar(props) {
     queryString += '&startDate=' + props.searchInfo.startDate.format('DD/MM/YYYY');
     queryString += '&endDate=' + props.searchInfo.endDate.format('DD/MM/YYYY');
     queryString += '&rooms=' + encodeURI(JSON.stringify(props.searchInfo.rooms));
-    console.log(queryString);
     return queryString;
   };
 
