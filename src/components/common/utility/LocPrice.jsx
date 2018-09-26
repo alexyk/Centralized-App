@@ -21,22 +21,17 @@ class LocPrice extends PureComponent {
       isLocPriceRendered = true;
     }
 
-    this.locAmount = null;
-
     this.state = {
       fiatInEur,
       isLocPriceRendered,
-      locAmount: this.locAmount
+      locAmount: null,
     };
   }
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.locAmount !== this.props.locAmount) {
-      this.locAmount = nextProps.locAmount;
-    }
     if (nextProps.renderLocAmount !== this.props.renderLocAmount && this.props.withTimer) {
       this.setState({
-        locAmount: this.locAmount
+        locAmount: this.props.locAmount
       });
     }
     if (nextProps.exchangerSocketInfo.isLocPriceWebsocketConnected &&
@@ -121,7 +116,7 @@ function mapStateToProps(state, ownProps) {
     locAmount = (locAmountsInfo.locAmounts[fiatInEur].locAmount).toFixed(2);
   }
 
-  if (!exchangerSocketInfo.isLocPriceWebsocketConnected) {
+  if (!exchangerSocketInfo.isLocPriceWebsocketConnected && dynamicLocRatesInfo.locEurRate) {
     locAmount = (fiatInEur / dynamicLocRatesInfo.locEurRate).toFixed(2);
   }
 
