@@ -104,7 +104,7 @@ class HotelsBookingRouterPage extends React.Component {
       return new Promise((resolve, reject) => {
         if (res.success) {
           res.body.then(reservation => {
-            this.setState({ reservation }, () => { 
+            this.setState({ reservation }, () => {
               resolve(true);
             });
           });

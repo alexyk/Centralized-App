@@ -71,7 +71,7 @@ class HotelBookingConfirmPage extends React.Component {
       const { rates } = nextProps.currenciesRatesInfo;
       const { currency } = nextProps.paymentInfo;
       const { locAmounts } = nextProps.locAmountsInfo;
-      
+
       const fiatPriceRoomsXML = nextProps.reservation.fiatPrice;
       const fiatPriceRoomsXMLInEur = rates && CurrencyConverter.convert(rates, RoomsXMLCurrency.get(), DEFAULT_CRYPTO_CURRENCY, fiatPriceRoomsXML);
       const testFiatPriceRoomsXML = rates && CurrencyConverter.convert(rates, DEFAULT_CRYPTO_CURRENCY, RoomsXMLCurrency.get(), TEST_FIAT_AMOUNT_IN_EUR);
@@ -247,9 +247,9 @@ class HotelBookingConfirmPage extends React.Component {
 
       let locAmount;
       if (this.getEnvironment() !== 'production') {
-        locAmount = locAmounts[testFiatPriceRoomsXMLInEur].locAmount;
+        locAmount = (locAmounts[testFiatPriceRoomsXMLInEur] && locAmounts[testFiatPriceRoomsXMLInEur].locAmount) || testFiatPriceRoomsXMLInEur / this.props.dynamicLocRatesInfo.locEurRate;
       } else {
-        locAmount = locAmounts[fiatPriceRoomsXMLInEur].locAmount;
+        locAmount = (locAmounts[fiatPriceRoomsXMLInEur] && locAmounts[fiatPriceRoomsXMLInEur].locAmount) || fiatPriceRoomsXMLInEur / this.props.dynamicLocRatesInfo.locEurRate;
       }
 
       const wei = (this.tokensToWei(locAmount.toString()));
@@ -280,7 +280,7 @@ class HotelBookingConfirmPage extends React.Component {
                 bookingId: preparedBookingId,
                 transactionHash: transaction.hash,
                 queryString: queryString,
-                locAmount: locAmount
+                locAmount
               };
 
               requester.confirmBooking(bookingConfirmObj).then(() => {
@@ -515,21 +515,28 @@ class HotelBookingConfirmPage extends React.Component {
                     {this.getRoomFees(reservation)}
                   </div>
                   <div className="payment-methods">
-                    <div className="payment-methods-card">
-                      <div className="details">
-                        {(env === 'development' || env === 'staging') &&
-                          <p style={{ color: 'red' }}>
-                            <strong>Pay with Credit Card: TEST Price: {currencySign} {testTotalFiatPrice}</strong>
-                          </p>}
-                        <p className="booking-card-price">
-                          Pay with Credit Card: Current Market Price: <span className="important">{currencySign} {totalFiatPrice}</span>
-                        </p>
-                        <button className="btn btn-primary" disabled={!locAmounts[testFiatPriceRoomsXMLInEur]} onClick={() => this.payWithCard()}>Pay with Credit Card</button>
-                      </div>
-                      <div className="logos">
-                        <div className="logos-row">
-                          <div className="logo credit-cards">
-                            <img src={Config.getValue('basePath') + 'images/logos/credit-cards.png'} alt="Credit Cards Logos" />
+                    {this.props.isLocPriceWebsocketConnected &&
+                      <div className="payment-methods-card">
+                        <div className="details">
+                          {(env === 'development' || env === 'staging') &&
+                            <p style={{ color: 'red' }}>
+                              <strong>Pay with Credit Card: TEST Price: {currencySign} {testTotalFiatPrice}</strong>
+                            </p>}
+                          <p className="booking-card-price">
+                            Pay with Credit Card: Current Market Price: <span className="important">{currencySign} {totalFiatPrice}</span>
+                          </p>
+                          <button className="btn btn-primary" disabled={!locAmounts[testFiatPriceRoomsXMLInEur]} onClick={() => this.payWithCard()}>Pay with Credit Card</button>
+                        </div>
+                        <div className="logos">
+                          <div className="logos-row">
+                            <div className="logo credit-cards">
+                              <img src={Config.getValue('basePath') + 'images/logos/credit-cards.png'} alt="Credit Cards Logos" />
+                            </div>
+                          </div>
+                          <div className="logos-row">
+                            <div className="logo safecharge">
+                              <img src={Config.getValue('basePath') + 'images/logos/safecharge.png'} alt="Safecharge Logo" />
+                            </div>
                           </div>
                         </div>
                         <div className="logos-row">
@@ -538,12 +545,7 @@ class HotelBookingConfirmPage extends React.Component {
                           </div>
                         </div>
                       </div>
-                      <div className="logos-row">
-                        <div className="logo safecharge">
-                          <img src={Config.getValue('basePath') + 'images/logos/safecharge.png'} alt="Safecharge Logo" />
-                        </div>
-                      </div>
-                    </div>
+                    }
                   </div>
                   <div className="payment-methods-loc">
                     <div className="details">
@@ -559,7 +561,7 @@ class HotelBookingConfirmPage extends React.Component {
                       <p>Order Total: <span className="important"><LocPrice fiat={fiatPriceRoomsXML} method="quoteLoc" brackets={false} withTimer /></span></p>
                       <div className="price-update-timer" tooltip="Seconds until we update your quoted price">
                         LOC price will update in <i className="fa fa-clock-o" aria-hidden="true"></i>&nbsp;{<LocPriceUpdateTimer initialSeconds={10} />} sec &nbsp;
-                        </div>
+                      </div>
                       <p>(Click <a href="">here</a> to learn how you can buy LOC directly to enjoy cheaper travel)</p>
                       {userConfirmedPaymentWithLOC
                         ? <button className="btn btn-primary" disabled>Processing Payment...</button>
@@ -627,18 +629,32 @@ HotelBookingConfirmPage.propTypes = {
   paymentInfo: PropTypes.object,
   modalsInfo: PropTypes.object,
   currenciesRatesInfo: PropTypes.object,
-  locAmountsInfo: PropTypes.object
+  locAmountsInfo: PropTypes.object,
+  isLocPriceWebsocketConnected: PropTypes.bool,
+  dynamicLocRatesInfo: PropTypes.object,
 };
 
 function mapStateToProps(state) {
-  const { paymentInfo, modalsInfo, currenciesRatesInfo, locAmountsInfo, locPriceUpdateTimerInfo } = state;
+  const { paymentInfo, modalsInfo, currenciesRatesInfo, locAmountsInfo, locPriceUpdateTimerInfo, exchangerSocketInfo, dynamicLocRatesInfo } = state;
   const renderSafeChargeTotalPrices = locPriceUpdateTimerInfo.seconds === locPriceUpdateTimerInfo.initialSeconds;
+
+  if (exchangerSocketInfo.isLocPriceWebsocketConnected) {
+    return {
+      paymentInfo,
+      modalsInfo,
+      currenciesRatesInfo,
+      locAmountsInfo,
+      renderSafeChargeTotalPrices
+    };
+  }
   return {
     paymentInfo,
     modalsInfo,
     currenciesRatesInfo,
     locAmountsInfo,
-    renderSafeChargeTotalPrices
+    renderSafeChargeTotalPrices,
+    isLocPriceWebsocketConnected: exchangerSocketInfo.isLocPriceWebsocketConnected,
+    dynamicLocRatesInfo
   };
 }
 

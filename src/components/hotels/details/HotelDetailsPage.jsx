@@ -118,9 +118,7 @@ class HotelDetailsPage extends React.Component {
         this.setState({ hotelRooms: data, loadingRooms: false }, () => {
           const roomSearchQuote = this.state.hotelRooms[6].roomsResults;
           const availableHotelRooms = this.state.hotelRooms;
-          console.log(availableHotelRooms);
           const quoteId = this.findQuoteIdByRoomSearchQuote(roomSearchQuote, availableHotelRooms);
-          console.log(quoteId);
         });
       });
     });
@@ -138,7 +136,6 @@ class HotelDetailsPage extends React.Component {
       }).sort();
 
       if (_.isEqual(searchRoom, currentRoom)) {
-        console.log(searchRoom, currentRoom);
         return quote.quoteId;
       }
     }
