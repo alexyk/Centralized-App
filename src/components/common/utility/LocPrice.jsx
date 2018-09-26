@@ -118,11 +118,7 @@ function mapStateToProps(state, ownProps) {
   }
 
   if (locAmountsInfo.locAmounts[fiatInEur]) {
-    if (locAmountsInfo.locAmounts[fiatInEur].quotedLoc) {
-      locAmount = (locAmountsInfo.locAmounts[fiatInEur].quotedLoc).toFixed(2);
-    } else {
-      locAmount = (locAmountsInfo.locAmounts[fiatInEur]).toFixed(2);
-    }
+    locAmount = (locAmountsInfo.locAmounts[fiatInEur].locAmount).toFixed(2);
   }
 
   if (!exchangerSocketInfo.isLocPriceWebsocketConnected) {
