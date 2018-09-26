@@ -111,15 +111,18 @@ class HotelsBookingPage extends React.Component {
       return (<div className="loader"></div>);
     }
 
-    const hotelName = this.props.hotel && this.props.hotel.name;
-    const hotelMainAddress = this.props.hotel && this.props.hotel.additionalInfo.mainAddress;
-    const hotelCityName = this.props.hotel && this.props.hotel.city;
-    const totalPrice = this.calculateRoomsTotalPrice(this.props.rooms);
-    const guests = this.props.guests;
-    const rates = this.props.rates;
-    const currency = this.props.paymentInfo.currency;
-    const hotelPicUrl = this.props.hotel.hotelPhotos && this.props.hotel.hotelPhotos.length > 0 ? this.props.hotel.hotelPhotos[0].url : '/listings/images/default.png';
-    const priceInSelectedCurrency = Number(CurrencyConverter.convert(rates, RoomsXMLCurrency.get(), currency, totalPrice)).toFixed(2);
+    if (!this.props.guests) {
+      return (<div className="loader"></div>);
+    }
+
+    const { hotel, rooms, guests, rates } = this.props;
+    const { handleAdultChange, handleChildAgeChange } = this.props;
+    const { currency, currencySign} = this.props.paymentInfo;
+    const city = hotel.city;
+    const address = hotel.additionalInfo.mainAddress;
+    const roomsTotalPrice = this.calculateRoomsTotalPrice(rooms);
+    const hotelPicUrl = hotel.hotelPhotos && hotel.hotelPhotos.length > 0 ? hotel.hotelPhotos[0].url : '/listings/images/default.png';
+    const priceInSelectedCurrency = Number(CurrencyConverter.convert(rates, RoomsXMLCurrency.get(), currency, roomsTotalPrice)).toFixed(2);
     const nights = this.calculateReservationTotalNights(this.props.location.search);
 
     return (
@@ -134,25 +137,25 @@ class HotelsBookingPage extends React.Component {
                   <div className="hotel-picture">
                     <img src={`${Config.getValue('imgHost')}${hotelPicUrl}`} alt="Hotel" />
                   </div>
-                  <h6>{hotelName}</h6>
-                  <h6>{hotelMainAddress}&nbsp;{hotelCityName}</h6>
+                  <h6>{hotel.name}</h6>
+                  <h6>{address}&nbsp;{city}</h6>
                   <hr />
-                  {this.props.rooms && this.props.rooms.map((room, index) => {
+                  {rooms.map((room, index) => {
                     return (
                       <h6 key={index}>
-                        {room.name}, {nights} nights: {this.props.paymentInfo.currencySign}{rates && (CurrencyConverter.convert(rates, RoomsXMLCurrency.get(), currency, room.price)).toFixed(2)} <LocPrice fiat={room.price} />
+                        {room.name}, {nights} nights: {currencySign}{rates && (CurrencyConverter.convert(rates, RoomsXMLCurrency.get(), currency, room.price)).toFixed(2)} <LocPrice fiat={room.price} />
                       </h6>
                     );
                   })}
                   <hr />
                   <h6 className="total-price">
-                    Total: {this.props.paymentInfo.currencySign}{priceInSelectedCurrency} {totalPrice && <LocPrice fiat={totalPrice} />}
+                    Total: {currencySign}{priceInSelectedCurrency} {roomsTotalPrice && <LocPrice fiat={roomsTotalPrice} />}
                   </h6>
                   <div className="clearfix"></div>
                 </div>
               </div>
               <div className="col-md-7" style={{ 'padding': '0', 'margin': '20px 0' }}>
-                {guests && guests.map((room, roomIndex) => {
+                {guests.map((room, roomIndex) => {
                   return (
                     <div className="form-group" key={roomIndex}>
                       <h4>Room</h4>
@@ -164,8 +167,8 @@ class HotelsBookingPage extends React.Component {
                             <select
                               className="title-select"
                               name="title"
-                              value={this.props.guests[roomIndex].adults[adultIndex].title}
-                              onChange={(e) => { this.props.handleAdultChange(e, roomIndex, adultIndex); }}
+                              value={guests[roomIndex].adults[adultIndex].title}
+                              onChange={(e) => { handleAdultChange(e, roomIndex, adultIndex); }}
                             >
                               <option value="Mr">Mr</option>
                               <option value="Mrs">Mrs</option>
@@ -175,15 +178,15 @@ class HotelsBookingPage extends React.Component {
                               type="text"
                               placeholder="First Name"
                               name="firstName"
-                              value={this.props.guests[roomIndex].adults[adultIndex].firstName || ''}
-                              onChange={(e) => { this.props.handleAdultChange(e, roomIndex, adultIndex); }}
+                              value={guests[roomIndex].adults[adultIndex].firstName || ''}
+                              onChange={(e) => { handleAdultChange(e, roomIndex, adultIndex); }}
                             />
                             <input
                               className="guest-name"
                               type="text"
                               placeholder="Last Name"
-                              value={this.props.guests[roomIndex].adults[adultIndex].lastName || ''}
-                              name="lastName" onChange={(e) => { this.props.handleAdultChange(e, roomIndex, adultIndex); }}
+                              value={guests[roomIndex].adults[adultIndex].lastName || ''}
+                              name="lastName" onChange={(e) => { handleAdultChange(e, roomIndex, adultIndex); }}
                             />
                           </div>
                         );
@@ -193,7 +196,7 @@ class HotelsBookingPage extends React.Component {
                         return (
                           <div className="form-row" key={childIndex}>
                             <label htmlFor="age">Child (age)</label>
-                            <input className="child-age" type="number" value={this.props.guests[roomIndex].children[childIndex].age} placeholder="Age" name="age" onChange={(e) => { this.props.handleChildAgeChange(e, roomIndex, childIndex); }} />
+                            <input className="child-age" type="number" value={guests[roomIndex].children[childIndex].age} placeholder="Age" name="age" onChange={(e) => { handleChildAgeChange(e, roomIndex, childIndex); }} />
                           </div>
                         );
                       })}
@@ -211,7 +214,7 @@ class HotelsBookingPage extends React.Component {
                   </div>
                   <select
                     className="currency"
-                    value={this.props.paymentInfo.currency}
+                    value={currency}
                     style={{ 'height': '40px', 'marginBottom': '10px', 'textAlignLast': 'right', 'paddingRight': '45%', 'direction': 'rtl' }}
                     onChange={(e) => this.props.dispatch(setCurrency(e.target.value))}
                   >
@@ -230,13 +233,18 @@ class HotelsBookingPage extends React.Component {
 }
 
 HotelsBookingPage.propTypes = {
-  userInfo: PropTypes.object,
-  match: PropTypes.object,
-
+  hotel: PropTypes.object,
+  rooms: PropTypes.array,
+  guests: PropTypes.array,
+  rates: PropTypes.object,
+  handleAdultChange: PropTypes.func,
+  handleChildAgeChange: PropTypes.func,
+  
   // start Router props
+  match: PropTypes.object,
   history: PropTypes.object,
   location: PropTypes.object,
-
+  
   // start Redux props
   dispatch: PropTypes.func,
   paymentInfo: PropTypes.object

@@ -24,12 +24,14 @@ class HotelsBookingRouterPage extends React.Component {
     this.state = {
       hotelId: props.match.params.id,
       quoteId: queryString.parse(props.location.search).quoteId,
-      guests: []
+      guests: [],
+      reservation: null,
     };
 
     this.requestHotel = this.requestHotel.bind(this);
     this.requestUserInfo = this.requestUserInfo.bind(this);
     this.requestCurrencyRates = this.requestCurrencyRates.bind(this);
+    this.requestCreateReservation = this.requestCreateReservation.bind(this);
 
     this.setQuoteIdPollingInterval = this.setQuoteIdPollingInterval.bind(this);
     this.clearQuoteIdPollingInterval = this.clearQuoteIdPollingInterval.bind(this);
@@ -88,13 +90,44 @@ class HotelsBookingRouterPage extends React.Component {
       .then(res => res.body)
       .then(data => {
         const rooms = data.filter(r => r.quoteId === quoteId)[0];
-        console.log(rooms);
         if (rooms) {
           this.setState({ rooms: rooms.roomsResults });
         } else {
           this.redirectToHotelDetailsPage();
         }
       });
+  }
+
+  requestCreateReservation() {
+    const booking = this.getBooking(queryString.parse(this.props.location.search));
+    return requester.createReservation(booking).then(res => {
+      return new Promise((resolve, reject) => { 
+        if (res.success) {
+          res.body.then(reservation => {
+            this.setState({ reservation }, () => { 
+              resolve(true);
+            });
+          });
+        } else {
+          res.errors.then((res) => {
+            const errors = res.errors;
+            if (errors.hasOwnProperty('RoomsXmlResponse')) {
+              if (errors['RoomsXmlResponse'].message.indexOf('QuoteNotAvailable:') !== -1) {
+                this.redirectToHotelDetailsPage();
+              }
+            } else {
+              for (let key in errors) {
+                if (typeof errors[key] !== 'function') {
+                  NotificationManager.warning(errors[key].message, '', LONG);
+                }
+              }
+            }
+
+            reject(false);
+          });
+        }
+      });
+    }); 
   }
 
   requestCurrencyRates() {
@@ -117,7 +150,6 @@ class HotelsBookingRouterPage extends React.Component {
       }).sort();
 
       if (_.isEqual(searchRoom, currentRoom)) {
-        console.log(searchRoom, currentRoom);
         return quote.quoteId;
       }
     }
@@ -218,14 +250,12 @@ class HotelsBookingRouterPage extends React.Component {
 
   async getGuestsFromSearchString() {
     const searchRooms = JSON.parse(queryString.parse(this.props.location.search).rooms);
-    console.log(searchRooms);
     const guests = [];
     for (let roomIndex = 0; roomIndex < searchRooms.length; roomIndex++) {
       const searchRoom = searchRooms[roomIndex];
       const adults = [];
       const guestCount = searchRoom.adults.length ? searchRoom.adults.length : searchRoom.adults;
       for (let guestIndex = 0; guestIndex < guestCount; guestIndex++) {
-        console.log(searchRooms[roomIndex].adults[guestIndex]);
         const firstName = searchRoom.adults.length ? searchRooms[roomIndex].adults[guestIndex].firstName : '';
         const lastName = searchRoom.adults.length ? searchRooms[roomIndex].adults[guestIndex].lastName : '';
         const adult = {
@@ -269,13 +299,21 @@ class HotelsBookingRouterPage extends React.Component {
     this.setState({ guests });
   }
 
+  getBooking(queryParams) {
+    return {
+      currency: queryParams.currency,
+      rooms: JSON.parse(queryParams.rooms),
+      quoteId: queryParams.quoteId
+    };
+  }
+
   render() {
-    const { hotel, rooms, guests, quoteId, userInfo, rates } = this.state;
+    const { hotel, rooms, guests, quoteId, userInfo, rates, reservation } = this.state;
     return (
       <Fragment>
         <Switch>
           <Route exact path="/hotels/listings/book/:id/profile" render={() => <ConfirmProfilePage requestLockOnQuoteId={this.requestLockOnQuoteId} />} />
-          <Route exact path="/hotels/listings/book/:id/confirm" render={() => <HotelsBookingConfirmPage userInfo={userInfo} requestLockOnQuoteId={this.requestLockOnQuoteId} />} />
+          <Route exact path="/hotels/listings/book/:id/confirm" render={() => <HotelsBookingConfirmPage reservation={reservation} userInfo={userInfo} requestLockOnQuoteId={this.requestLockOnQuoteId} requestCreateReservation={this.requestCreateReservation} />} />
           <Route exact path="/hotels/listings/book/:id" render={() => <HotelsBookingPage hotel={hotel} rooms={rooms} quoteId={quoteId} guests={guests} rates={rates} handleAdultChange={this.handleAdultChange} handleChildAgeChange={this.handleChildAgeChange} />} />
         </Switch>
       </Fragment>
