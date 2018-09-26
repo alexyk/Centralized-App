@@ -52,7 +52,12 @@ class HotelBookingConfirmPage extends React.Component {
   }
 
   componentDidMount() {
-    this.props.requestCreateReservation();
+    this.props.requestCreateReservation().then(() => {
+      const { rates } = this.props.currenciesRatesInfo;
+      const fiatPriceRoomsXML = this.props.reservation.fiatPrice;
+      const fiatPriceRoomsXMLInEur = rates && CurrencyConverter.convert(rates, RoomsXMLCurrency.get(), DEFAULT_CRYPTO_CURRENCY, fiatPriceRoomsXML);
+      this.props.dispatch(setFiatAmount(fiatPriceRoomsXMLInEur));
+    });
   }
 
   componentWillReceiveProps(nextProps) {
@@ -66,7 +71,11 @@ class HotelBookingConfirmPage extends React.Component {
       const { rates } = nextProps.currenciesRatesInfo;
       const { currency } = nextProps.paymentInfo;
       const { locAmounts } = nextProps.locAmountsInfo;
-      const { fiatPriceRoomsXMLInEur, testFiatPriceRoomsXMLInEur } = this.state;
+      
+      const fiatPriceRoomsXML = nextProps.reservation.fiatPrice;
+      const fiatPriceRoomsXMLInEur = rates && CurrencyConverter.convert(rates, RoomsXMLCurrency.get(), DEFAULT_CRYPTO_CURRENCY, fiatPriceRoomsXML);
+      const testFiatPriceRoomsXML = rates && CurrencyConverter.convert(rates, DEFAULT_CRYPTO_CURRENCY, RoomsXMLCurrency.get(), TEST_FIAT_AMOUNT_IN_EUR);
+      const testFiatPriceRoomsXMLInEur = rates && CurrencyConverter.convert(rates, RoomsXMLCurrency.get(), DEFAULT_CRYPTO_CURRENCY, testFiatPriceRoomsXML);
 
       const totalFiatPrice = rates && locAmounts[fiatPriceRoomsXMLInEur] && (CurrencyConverter.convert(rates, DEFAULT_CRYPTO_CURRENCY, currency, locAmounts[fiatPriceRoomsXMLInEur].roundedLocInEur)).toFixed(2);
       const testTotalFiatPrice = rates && locAmounts[testFiatPriceRoomsXMLInEur] && (CurrencyConverter.convert(rates, DEFAULT_CRYPTO_CURRENCY, currency, locAmounts[testFiatPriceRoomsXMLInEur].roundedLocInEur)).toFixed(2);
@@ -437,7 +446,7 @@ class HotelBookingConfirmPage extends React.Component {
   }
 
   render() {
-    
+
     if (!this.props.userInfo) {
       return <div className="loader"></div>;
     }
@@ -461,6 +470,8 @@ class HotelBookingConfirmPage extends React.Component {
     const fiatPriceRoomsXMLInEur = rates && CurrencyConverter.convert(rates, RoomsXMLCurrency.get(), DEFAULT_CRYPTO_CURRENCY, fiatPriceRoomsXML);
     const testFiatPriceRoomsXML = rates && CurrencyConverter.convert(rates, DEFAULT_CRYPTO_CURRENCY, RoomsXMLCurrency.get(), TEST_FIAT_AMOUNT_IN_EUR);
     const testFiatPriceRoomsXMLInEur = rates && CurrencyConverter.convert(rates, RoomsXMLCurrency.get(), DEFAULT_CRYPTO_CURRENCY, testFiatPriceRoomsXML);
+
+    const { totalFiatPrice, testTotalFiatPrice } = this.state;
 
     return (
       <React.Fragment>

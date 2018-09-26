@@ -101,7 +101,7 @@ class HotelsBookingRouterPage extends React.Component {
   requestCreateReservation() {
     const booking = this.getBooking(queryString.parse(this.props.location.search));
     return requester.createReservation(booking).then(res => {
-      return new Promise((resolve, reject) => { 
+      return new Promise((resolve, reject) => {
         if (res.success) {
           res.body.then(reservation => {
             this.setState({ reservation }, () => { 
@@ -123,11 +123,11 @@ class HotelsBookingRouterPage extends React.Component {
               }
             }
 
-            reject(false);
+            reject();
           });
         }
       });
-    }); 
+    });
   }
 
   requestCurrencyRates() {
@@ -181,6 +181,14 @@ class HotelsBookingRouterPage extends React.Component {
               this.setState({ hotelRooms: data, loadingRooms: false });
             });
           });
+
+          // get new rooms
+
+          // find quote id
+
+          // request booking
+
+          // request create reservation
 
           this.redirectToHotelDetailsPage();
         }
