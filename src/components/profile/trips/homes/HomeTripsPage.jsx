@@ -168,10 +168,6 @@ class HomeTripsPage extends React.Component {
               currentPage={this.state.currentPage}
               totalElements={this.state.totalTrips}
             />
-
-            <div className="my-listings">
-              <Link className="btn btn-primary create-listing" to="#">Print this page</Link>
-            </div>
           </div>
         </section>
       </div>
