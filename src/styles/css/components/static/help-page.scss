@@ -1,9 +1,15 @@
+@import '../../base/variables';
+
 #help-page {
   background-color: white; 
   border-top: 1px solid #cccccc; 
   
   .help-page__content {
     padding: 50px 15px;
+
+    .customer-support-email {
+      color: $moderate-red;
+    }
 
     p {
       padding: 10px 0;

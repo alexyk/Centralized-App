@@ -515,6 +515,7 @@ class HotelBookingConfirmPage extends React.Component {
                     <h4>Cancelation Details</h4>
                     {this.getRoomFees(reservation)}
                   </div>
+                  <p className='billing-disclaimer'>The charge will appear on your bill as LockChain Ltd. (team@locktrip.com)</p>
                 </div>
                 <div className="payment-methods">
                   {/* {this.props.isLocPriceWebsocketConnected && */}
