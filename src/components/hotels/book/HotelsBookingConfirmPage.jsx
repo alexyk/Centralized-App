@@ -129,8 +129,6 @@ class HotelBookingConfirmPage extends React.Component {
       quotedPair = locAmounts[testFiatPriceRoomsXMLInEur].quotedPair;
     }
 
-    console.log(fiatAmount);
-
     const paymentInfo = {
       fiatAmount,
       locAmount,
@@ -144,11 +142,11 @@ class HotelBookingConfirmPage extends React.Component {
     const isWebView = this.props.location.pathname.indexOf('/mobile') !== -1;
     const rootURL = !isWebView ? `/hotels/listings/book/${id}/profile` : `/mobile/book/${id}/profile`;
     const search = this.props.location.search;
-    // this.props.history.push({
-    //   pathname: rootURL,
-    //   search: search,
-    //   state: { paymentInfo: paymentInfo, testFiatPriceRoomsXMLInEur }
-    // });
+    this.props.history.push({
+      pathname: rootURL,
+      search: search,
+      state: { paymentInfo: paymentInfo, testFiatPriceRoomsXMLInEur }
+    });
   }
 
   getCancellationFees() {
