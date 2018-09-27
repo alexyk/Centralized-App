@@ -21,6 +21,7 @@ import { closeModal, openModal } from '../../../actions/modalsInfo.js';
 import { setCurrency } from '../../../actions/paymentInfo';
 import { setFiatAmount } from '../../../actions/dynamicLocRatesInfo';
 import RecoverWallerPassword from '../../common/utility/RecoverWallerPassword';
+import { LocPriceWebSocket } from '../../../services/socket/locPriceWebSocket';
 
 import '../../../styles/css/components/hotels/book/hotel-booking-confirm-page.css';
 
@@ -111,7 +112,6 @@ class HotelBookingConfirmPage extends React.Component {
 
   payWithCard(testFiatPriceRoomsXMLInEur, fiatPriceRoomsXMLInEur) {
     const { reservation } = this.props;
-    const { rates } = this.props.currenciesRatesInfo;
     const { currency } = this.props.paymentInfo;
     const { locAmounts } = this.props.locAmountsInfo;
 
@@ -138,6 +138,8 @@ class HotelBookingConfirmPage extends React.Component {
       backUrl: this.createBackUrl(),
     };
 
+    LocPriceWebSocket.sendMessage(testFiatPriceRoomsXMLInEur, 'approveQuote', { bookingId: reservation.preparedBookingId });
+
     const id = this.props.match.params.id;
     const isWebView = this.props.location.pathname.indexOf('/mobile') !== -1;
     const rootURL = !isWebView ? `/hotels/listings/book/${id}/profile` : `/mobile/book/${id}/profile`;
@@ -145,7 +147,7 @@ class HotelBookingConfirmPage extends React.Component {
     this.props.history.push({
       pathname: rootURL,
       search: search,
-      state: { paymentInfo: paymentInfo, testFiatPriceRoomsXMLInEur }
+      state: { paymentInfo: paymentInfo }
     });
   }
 
@@ -251,6 +253,8 @@ class HotelBookingConfirmPage extends React.Component {
       } else {
         locAmount = (locAmounts[testFiatPriceRoomsXMLInEur] && locAmounts[testFiatPriceRoomsXMLInEur].locAmount) || testFiatPriceRoomsXMLInEur / this.props.dynamicLocRatesInfo.locEurRate;
       }
+
+      LocPriceWebSocket.sendMessage(testFiatPriceRoomsXMLInEur, 'approveQuote', { bookingId: preparedBookingId });
 
       const wei = (this.tokensToWei(locAmount.toString()));
       console.log(wei);

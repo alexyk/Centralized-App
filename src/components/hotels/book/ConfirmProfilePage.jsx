@@ -10,7 +10,6 @@ import { LONG } from '../../../constants/notificationDisplayTimes';
 import BookingSteps from '../../common/utility/BookingSteps';
 import Select from '../../common/google/GooglePlacesAutocomplete';
 import StringUtils from '../../../services/utilities/stringUtilities';
-import { LocPriceWebSocket } from '../../../services/socket/locPriceWebSocket';
 
 import '../../../styles/css/components/hotels/book/profile-confirm-form.css';
 import '../../../styles/css/components/captcha/captcha-container.css';
@@ -105,8 +104,6 @@ class ConfirmProfilePage extends React.Component {
       requester.verifyCreditCardPayment(paymentInfo)
         .then(res => {
           res.body.then((data) => {
-            const { testFiatPriceRoomsXMLInEur } = this.props.location.state;
-            LocPriceWebSocket.sendMessage(testFiatPriceRoomsXMLInEur, 'approveQuote', { bookingId: paymentInfo.bookingId });
             const env = Config.getValue('env');
             if (env === 'staging' || env === 'development') {
               window.location.href = data.url;
