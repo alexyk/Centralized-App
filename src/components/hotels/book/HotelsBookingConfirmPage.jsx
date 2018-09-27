@@ -109,7 +109,7 @@ class HotelBookingConfirmPage extends React.Component {
     return `hotels/listings/${id}?region=${queryParams.region}&currency=${currency}&startDate=${queryParams.startDate}&endDate=${queryParams.endDate}&rooms=${rooms}`;
   }
 
-  payWithCard(fiatPriceRoomsXML, fiatPriceRoomsXMLInEur, testFiatPriceRoomsXML, testFiatPriceRoomsXMLInEur) {
+  payWithCard(testFiatPriceRoomsXMLInEur, fiatPriceRoomsXMLInEur) {
     const { reservation } = this.props;
     const { rates } = this.props.currenciesRatesInfo;
     const { currency } = this.props.paymentInfo;
@@ -120,11 +120,11 @@ class HotelBookingConfirmPage extends React.Component {
     let quotedPair;
 
     if (this.getEnvironment() === 'production') {
-      fiatAmount = CurrencyConverter.convert(rates, DEFAULT_CRYPTO_CURRENCY, currency, locAmounts[fiatPriceRoomsXMLInEur].roundedLocInEur);
+      fiatAmount = CurrencyConverter.convert(rates, DEFAULT_CRYPTO_CURRENCY, currency, this.state.totalFiatPrice);
       locAmount = locAmounts[fiatPriceRoomsXMLInEur].quotedLoc;
       quotedPair = locAmounts[fiatPriceRoomsXMLInEur].quotedPair;
     } else {
-      fiatAmount = CurrencyConverter.convert(rates, DEFAULT_CRYPTO_CURRENCY, currency, locAmounts[testFiatPriceRoomsXMLInEur].roundedLocInEur);
+      fiatAmount = CurrencyConverter.convert(rates, DEFAULT_CRYPTO_CURRENCY, currency, this.state.testTotalFiatPrice);
       locAmount = locAmounts[testFiatPriceRoomsXMLInEur].quotedLoc;
       quotedPair = locAmounts[testFiatPriceRoomsXMLInEur].quotedPair;
     }
@@ -238,7 +238,7 @@ class HotelBookingConfirmPage extends React.Component {
     return wei;
   }
 
-  payWithLocSingleWithdrawer(fiatPriceRoomsXMLInEur, testFiatPriceRoomsXMLInEur) {
+  payWithLocSingleWithdrawer(testFiatPriceRoomsXMLInEur, fiatPriceRoomsXMLInEur) {
     this.props.requestLockOnQuoteId().then(() => {
       const { password } = this.state;
       const { reservation } = this.props;
@@ -246,10 +246,10 @@ class HotelBookingConfirmPage extends React.Component {
       const preparedBookingId = reservation.preparedBookingId;
 
       let locAmount;
-      if (this.getEnvironment() !== 'production') {
-        locAmount = (locAmounts[testFiatPriceRoomsXMLInEur] && locAmounts[testFiatPriceRoomsXMLInEur].locAmount) || testFiatPriceRoomsXMLInEur / this.props.dynamicLocRatesInfo.locEurRate;
-      } else {
+      if (this.getEnvironment() === 'production') {
         locAmount = (locAmounts[fiatPriceRoomsXMLInEur] && locAmounts[fiatPriceRoomsXMLInEur].locAmount) || fiatPriceRoomsXMLInEur / this.props.dynamicLocRatesInfo.locEurRate;
+      } else {
+        locAmount = (locAmounts[testFiatPriceRoomsXMLInEur] && locAmounts[testFiatPriceRoomsXMLInEur].locAmount) || testFiatPriceRoomsXMLInEur / this.props.dynamicLocRatesInfo.locEurRate;
       }
 
       const wei = (this.tokensToWei(locAmount.toString()));
@@ -456,14 +456,13 @@ class HotelBookingConfirmPage extends React.Component {
     }
 
     const { reservation } = this.props;
-    const { userConfirmedPaymentWithLOC, password } = this.state;
+    const { userConfirmedPaymentWithLOC, password, totalFiatPrice, testTotalFiatPrice } = this.state;
     const hasLocAddress = !!this.props.userInfo.locAddress;
     const { rates } = this.props.currenciesRatesInfo;
     const isMobile = this.props.location.pathname.indexOf('/mobile') !== -1;
 
     const booking = reservation && reservation.booking.hotelBooking;
     const { currency, currencySign } = this.props.paymentInfo;
-    const { locAmounts } = this.props.locAmountsInfo;
     const env = this.getEnvironment();
 
     const fiatPriceRoomsXML = reservation.fiatPrice;
@@ -471,8 +470,6 @@ class HotelBookingConfirmPage extends React.Component {
     const testFiatPriceRoomsXML = rates && CurrencyConverter.convert(rates, DEFAULT_CRYPTO_CURRENCY, RoomsXMLCurrency.get(), TEST_FIAT_AMOUNT_IN_EUR);
     const testFiatPriceRoomsXMLInEur = rates && CurrencyConverter.convert(rates, RoomsXMLCurrency.get(), DEFAULT_CRYPTO_CURRENCY, testFiatPriceRoomsXML);
 
-    const { totalFiatPrice, testTotalFiatPrice } = this.state;
-    console.log(totalFiatPrice, testTotalFiatPrice);
 
     return (
       <React.Fragment>
@@ -527,7 +524,7 @@ class HotelBookingConfirmPage extends React.Component {
                       <p className="booking-card-price">
                         Pay with Credit Card: Current Market Price: <span className="important">{currencySign} {totalFiatPrice}</span>
                       </p>
-                      <button className="btn btn-primary" disabled={!locAmounts[testFiatPriceRoomsXMLInEur]} onClick={() => this.payWithCard()}>Pay with Credit Card</button>
+                      <button className="btn btn-primary" disabled={!testTotalFiatPrice} onClick={() => this.payWithCard(testFiatPriceRoomsXMLInEur, fiatPriceRoomsXMLInEur)}>Pay with Credit Card</button>
                     </div>
                     <div className="logos">
                       <div className="logos-row">
@@ -595,7 +592,7 @@ class HotelBookingConfirmPage extends React.Component {
             isActive={this.props.modalsInfo.isActive[PASSWORD_PROMPT]}
             text={'Enter your wallet password'}
             placeholder={'Wallet password'}
-            handleSubmit={() => this.payWithLocSingleWithdrawer(fiatPriceRoomsXMLInEur, testFiatPriceRoomsXMLInEur)}
+            handleSubmit={() => this.payWithLocSingleWithdrawer(testFiatPriceRoomsXMLInEur, fiatPriceRoomsXMLInEur)}
             openModal={this.openModal}
             closeModal={this.closeModal}
             password={password}
