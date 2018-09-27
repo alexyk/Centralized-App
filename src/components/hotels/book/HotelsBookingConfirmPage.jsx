@@ -472,6 +472,7 @@ class HotelBookingConfirmPage extends React.Component {
     const testFiatPriceRoomsXMLInEur = rates && CurrencyConverter.convert(rates, RoomsXMLCurrency.get(), DEFAULT_CRYPTO_CURRENCY, testFiatPriceRoomsXML);
 
     const { totalFiatPrice, testTotalFiatPrice } = this.state;
+    console.log(totalFiatPrice, testTotalFiatPrice);
 
     return (
       <React.Fragment>
@@ -514,39 +515,34 @@ class HotelBookingConfirmPage extends React.Component {
                     <h4>Cancelation Details</h4>
                     {this.getRoomFees(reservation)}
                   </div>
-                  <div className="payment-methods">
-                    {this.props.isLocPriceWebsocketConnected &&
-                      <div className="payment-methods-card">
-                        <div className="details">
-                          {(env === 'development' || env === 'staging') &&
-                            <p style={{ color: 'red' }}>
-                              <strong>Pay with Credit Card: TEST Price: {currencySign} {testTotalFiatPrice}</strong>
-                            </p>}
-                          <p className="booking-card-price">
-                            Pay with Credit Card: Current Market Price: <span className="important">{currencySign} {totalFiatPrice}</span>
-                          </p>
-                          <button className="btn btn-primary" disabled={!locAmounts[testFiatPriceRoomsXMLInEur]} onClick={() => this.payWithCard()}>Pay with Credit Card</button>
-                        </div>
-                        <div className="logos">
-                          <div className="logos-row">
-                            <div className="logo credit-cards">
-                              <img src={Config.getValue('basePath') + 'images/logos/credit-cards.png'} alt="Credit Cards Logos" />
-                            </div>
-                          </div>
-                          <div className="logos-row">
-                            <div className="logo safecharge">
-                              <img src={Config.getValue('basePath') + 'images/logos/safecharge.png'} alt="Safecharge Logo" />
-                            </div>
-                          </div>
-                        </div>
-                        <div className="logos-row">
-                          <div className="logo safecharge">
-                            <img src={Config.getValue('basePath') + 'images/logos/safecharge.png'} alt="Safecharge Logo" />
-                          </div>
+                </div>
+                <div className="payment-methods">
+                  {/* {this.props.isLocPriceWebsocketConnected && */}
+                  <div className="payment-methods-card">
+                    <div className="details">
+                      {(env === 'development' || env === 'staging') &&
+                        <p style={{ color: 'red' }}>
+                          <strong>Pay with Credit Card: TEST Price: {currencySign} {testTotalFiatPrice}</strong>
+                        </p>}
+                      <p className="booking-card-price">
+                        Pay with Credit Card: Current Market Price: <span className="important">{currencySign} {totalFiatPrice}</span>
+                      </p>
+                      <button className="btn btn-primary" disabled={!locAmounts[testFiatPriceRoomsXMLInEur]} onClick={() => this.payWithCard()}>Pay with Credit Card</button>
+                    </div>
+                    <div className="logos">
+                      <div className="logos-row">
+                        <div className="logo credit-cards">
+                          <img src={Config.getValue('basePath') + 'images/logos/credit-cards.png'} alt="Credit Cards Logos" />
                         </div>
                       </div>
-                    }
+                      <div className="logos-row">
+                        <div className="logo safecharge">
+                          <img src={Config.getValue('basePath') + 'images/logos/safecharge.png'} alt="Safecharge Logo" />
+                        </div>
+                      </div>
+                    </div>
                   </div>
+                  {/* } */}
                   <div className="payment-methods-loc">
                     <div className="details">
                       {(env === 'development' || env === 'staging') &&
