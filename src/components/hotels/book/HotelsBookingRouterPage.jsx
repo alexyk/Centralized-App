@@ -123,7 +123,7 @@ class HotelsBookingRouterPage extends React.Component {
               }
             }
 
-            reject();
+            reject(false);
           });
         }
       });

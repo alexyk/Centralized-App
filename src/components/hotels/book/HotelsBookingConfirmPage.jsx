@@ -120,14 +120,16 @@ class HotelBookingConfirmPage extends React.Component {
     let quotedPair;
 
     if (this.getEnvironment() === 'production') {
-      fiatAmount = CurrencyConverter.convert(rates, DEFAULT_CRYPTO_CURRENCY, currency, this.state.totalFiatPrice);
+      fiatAmount = this.state.totalFiatPrice;
       locAmount = locAmounts[fiatPriceRoomsXMLInEur].quotedLoc;
       quotedPair = locAmounts[fiatPriceRoomsXMLInEur].quotedPair;
     } else {
-      fiatAmount = CurrencyConverter.convert(rates, DEFAULT_CRYPTO_CURRENCY, currency, this.state.testTotalFiatPrice);
+      fiatAmount = this.state.testTotalFiatPrice;
       locAmount = locAmounts[testFiatPriceRoomsXMLInEur].quotedLoc;
       quotedPair = locAmounts[testFiatPriceRoomsXMLInEur].quotedPair;
     }
+
+    console.log(fiatAmount);
 
     const paymentInfo = {
       fiatAmount,
@@ -142,11 +144,11 @@ class HotelBookingConfirmPage extends React.Component {
     const isWebView = this.props.location.pathname.indexOf('/mobile') !== -1;
     const rootURL = !isWebView ? `/hotels/listings/book/${id}/profile` : `/mobile/book/${id}/profile`;
     const search = this.props.location.search;
-    this.props.history.push({
-      pathname: rootURL,
-      search: search,
-      state: { paymentInfo: paymentInfo, testFiatPriceRoomsXMLInEur }
-    });
+    // this.props.history.push({
+    //   pathname: rootURL,
+    //   search: search,
+    //   state: { paymentInfo: paymentInfo, testFiatPriceRoomsXMLInEur }
+    // });
   }
 
   getCancellationFees() {

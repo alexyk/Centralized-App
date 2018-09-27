@@ -124,6 +124,7 @@ class App extends React.Component {
   }
 
   render() {
+    console.log(process.env.REACT_APP_SOCKET_HOST_PRICE);
 
     const isWebView = this.props.location.pathname.indexOf('/mobile') !== -1;
 

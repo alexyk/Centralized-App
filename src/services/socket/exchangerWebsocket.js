@@ -28,6 +28,7 @@ class WS {
       callback();
       setTimeout(() => {
         this.initSocket();
+        console.log('reconect');
       }, WEBSOCKET_RECONNECT_DELAY);
     }
   }
