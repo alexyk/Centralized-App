@@ -7,7 +7,16 @@
   .help-page__content {
     padding: 50px 15px;
 
-    .customer-support-email {
+    .question {
+      margin-bottom: 20px;
+
+      p {
+        padding: 0 0 10px 0;
+        margin: 0;
+      }
+    }
+
+    .customer-support-email, .link {
       color: $moderate-red;
     }
 
