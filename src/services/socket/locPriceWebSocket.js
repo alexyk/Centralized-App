@@ -26,8 +26,9 @@ class LocPriceWS extends WS {
   handleRecieveMessage(event) {
     if (event) {
       const data = JSON.parse(event.data);
+      console.log(data);
       if (data.params.quotedLoc) {
-        store.dispatch(updateLocAmounts(data.id, { locAmount: data.params.locAmount, quotedLoc: data.params.quotedLoc, quotedPair: data.params.quotedPair }));
+        store.dispatch(updateLocAmounts(data.id, { locAmount: data.params.locAmount, quotedLoc: data.params.quotedLoc, quotedPair: data.params.quotedPair, roundedLocInEur: data.params.roundedLocInEur }));
       } else {
         store.dispatch(updateLocAmounts(data.id, data.params.locAmount));
       }
