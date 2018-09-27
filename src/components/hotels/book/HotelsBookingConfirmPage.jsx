@@ -52,14 +52,6 @@ class HotelBookingConfirmPage extends React.Component {
     this.createBackUrl = this.createBackUrl.bind(this);
   }
 
-  componentDidMount() {
-    this.props.requestCreateReservation().then(() => {
-      const { rates } = this.props.currenciesRatesInfo;
-      const fiatPriceRoomsXML = this.props.reservation.fiatPrice;
-      const fiatPriceRoomsXMLInEur = rates && CurrencyConverter.convert(rates, RoomsXMLCurrency.get(), DEFAULT_CRYPTO_CURRENCY, fiatPriceRoomsXML);
-      this.props.dispatch(setFiatAmount(fiatPriceRoomsXMLInEur));
-    });
-  }
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.currenciesRatesInfo.rates !== this.props.currenciesRatesInfo.rates && this.props.reservation) {
@@ -351,7 +343,7 @@ class HotelBookingConfirmPage extends React.Component {
           <tr key={(1 + index) * 1000} className="booking-room">
             <td>{bookingRoom.room.roomType.text}</td>
             <td>
-              <span className="booking-price">{currency} {fiatPrice} <LocPrice fiat={bookingRoom.room.totalSellingPrice.amt} method="quoteLoc" withTimer />
+              <span className="booking-price">{currency} {fiatPrice} <LocPrice fiat={bookingRoom.room.totalSellingPrice.amt} withTimer />
               </span>
             </td>
           </tr>
@@ -384,7 +376,7 @@ class HotelBookingConfirmPage extends React.Component {
         </td>
         <td>
           <span className="booking-price">
-            {currency} {rates && (CurrencyConverter.convert(rates, RoomsXMLCurrency.get(), currency, fiatPrice)).toFixed(2)} <LocPrice fiat={fiatPrice} method="quoteLoc" withTimer />
+            {currency} {rates && (CurrencyConverter.convert(rates, RoomsXMLCurrency.get(), currency, fiatPrice)).toFixed(2)} <LocPrice fiat={fiatPrice} withTimer />
           </span>
         </td>
       </tr>
@@ -421,7 +413,7 @@ class HotelBookingConfirmPage extends React.Component {
               </td>
               <td>
                 <span className="booking-price">
-                  {currency} {rates && (CurrencyConverter.convert(rates, RoomsXMLCurrency.get(), currency, amount)).toFixed(2)} <LocPrice fiat={amount} method="quoteLoc" withTimer />
+                  {currency} {rates && (CurrencyConverter.convert(rates, RoomsXMLCurrency.get(), currency, amount)).toFixed(2)} <LocPrice fiat={amount} withTimer />
                 </span>
               </td>
             </tr>
@@ -450,7 +442,7 @@ class HotelBookingConfirmPage extends React.Component {
   }
 
   render() {
-
+    console.log('render confirm page');
     if (!this.props.userInfo) {
       return <div className="loader"></div>;
     }
@@ -473,7 +465,6 @@ class HotelBookingConfirmPage extends React.Component {
     const fiatPriceRoomsXMLInEur = rates && CurrencyConverter.convert(rates, RoomsXMLCurrency.get(), DEFAULT_CRYPTO_CURRENCY, fiatPriceRoomsXML);
     const testFiatPriceRoomsXML = rates && CurrencyConverter.convert(rates, DEFAULT_CRYPTO_CURRENCY, RoomsXMLCurrency.get(), TEST_FIAT_AMOUNT_IN_EUR);
     const testFiatPriceRoomsXMLInEur = rates && CurrencyConverter.convert(rates, RoomsXMLCurrency.get(), DEFAULT_CRYPTO_CURRENCY, testFiatPriceRoomsXML);
-
 
     return (
       <React.Fragment>
@@ -556,7 +547,7 @@ class HotelBookingConfirmPage extends React.Component {
                         <p style={{ color: 'red' }}>
                           <strong>Order Total: TEST Price: <LocPrice fiat={testFiatPriceRoomsXML} method="quoteLoc" params={{ bookingId: reservation.preparedBookingId }} brackets={false} withTimer /></strong>
                         </p>}
-                      <p>Order Total: <span className="important"><LocPrice fiat={fiatPriceRoomsXML} method="quoteLoc" brackets={false} withTimer /></span></p>
+                      <p>Order Total: <span className="important"><LocPrice fiat={fiatPriceRoomsXML} brackets={false} withTimer /></span></p>
                       <div className="price-update-timer" tooltip="Seconds until we update your quoted price">
                         LOC price will update in <i className="fa fa-clock-o" aria-hidden="true"></i>&nbsp;{<LocPriceUpdateTimer initialSeconds={10} />} sec &nbsp;
                       </div>

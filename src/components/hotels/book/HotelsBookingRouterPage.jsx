@@ -44,6 +44,7 @@ class HotelsBookingRouterPage extends React.Component {
   }
 
   componentDidMount() {
+    console.log('did mount router');
     this.requestHotel();
     this.requestHotelRooms();
     this.setQuoteIdPollingInterval();
@@ -98,8 +99,20 @@ class HotelsBookingRouterPage extends React.Component {
       });
   }
 
+  getQueryString(queryStringParameters) {
+    let queryString = '?';
+    queryString += 'region=' + encodeURI(queryStringParameters.region);
+    queryString += '&currency=' + encodeURI(queryStringParameters.currency);
+    queryString += '&startDate=' + encodeURI(queryStringParameters.startDate);
+    queryString += '&endDate=' + encodeURI(queryStringParameters.endDate);
+    queryString += '&rooms=' + encodeURI(JSON.stringify(this.state.guests));
+    queryString += '&quoteId=' + encodeURI(queryStringParameters.quoteId);
+    return queryString;
+  }
+
   requestCreateReservation() {
-    const booking = this.getBooking(queryString.parse(this.props.location.search));
+    const queryStringParameters = queryString.parse(this.props.location.search);
+    const booking = this.getBooking(queryString.parse(this.getQueryString(queryStringParameters)));
     return requester.createReservation(booking).then(res => {
       return new Promise((resolve, reject) => {
         if (res.success) {
@@ -316,13 +329,14 @@ class HotelsBookingRouterPage extends React.Component {
   }
 
   render() {
+    console.log('render');
     const { hotel, rooms, guests, quoteId, userInfo, rates, reservation } = this.state;
     return (
       <Fragment>
         <Switch>
           <Route exact path="/hotels/listings/book/:id/profile" render={() => <ConfirmProfilePage requestLockOnQuoteId={this.requestLockOnQuoteId} />} />
-          <Route exact path="/hotels/listings/book/:id/confirm" render={() => <HotelsBookingConfirmPage reservation={reservation} userInfo={userInfo} requestLockOnQuoteId={this.requestLockOnQuoteId} requestCreateReservation={this.requestCreateReservation} />} />
-          <Route exact path="/hotels/listings/book/:id" render={() => <HotelsBookingPage hotel={hotel} rooms={rooms} quoteId={quoteId} guests={guests} rates={rates} handleAdultChange={this.handleAdultChange} handleChildAgeChange={this.handleChildAgeChange} />} />
+          <Route exact path="/hotels/listings/book/:id/confirm" render={() => <HotelsBookingConfirmPage reservation={reservation} userInfo={userInfo} requestLockOnQuoteId={this.requestLockOnQuoteId} />} />
+          <Route exact path="/hotels/listings/book/:id" render={() => <HotelsBookingPage hotel={hotel} reservation={reservation} requestCreateReservation={this.requestCreateReservation} rooms={rooms} quoteId={quoteId} guests={guests} rates={rates} handleAdultChange={this.handleAdultChange} handleChildAgeChange={this.handleChildAgeChange} />} />
         </Switch>
       </Fragment>
     );

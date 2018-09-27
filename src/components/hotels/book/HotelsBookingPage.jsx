@@ -15,12 +15,16 @@ import BookingSteps from '../../common/utility/BookingSteps';
 import { RoomsXMLCurrency } from '../../../services/utilities/roomsXMLCurrency';
 import LocPrice from '../../common/utility/LocPrice';
 import validator from 'validator';
+import { setFiatAmount } from '../../../actions/dynamicLocRatesInfo';
+
+const DEFAULT_CRYPTO_CURRENCY = 'EUR';
 
 class HotelsBookingPage extends React.Component {
   constructor(props) {
     super(props);
 
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.getHotelsRoomsQueryString = this.getHotelsRoomsQueryString.bind(this);
     this.getQueryString = this.getQueryString.bind(this);
   }
 
@@ -46,13 +50,47 @@ class HotelsBookingPage extends React.Component {
     } else if (!this.isValidAges()) {
       NotificationManager.warning(INVALID_CHILD_AGE, '', LONG);
     } else {
-      const queryParams = queryString.parse(this.props.location.search);
-      const id = this.props.match.params.id;
-      const query = this.getQueryString(queryParams);
-      const isWebView = this.props.location.pathname.indexOf('/mobile') !== -1;
-      const rootURL = !isWebView ? `/hotels/listings/book/${id}/confirm` : '/mobile/book/confirm';
-      this.props.history.push(`${rootURL}${query}`);
+      this.props.requestCreateReservation().then(() => {
+        const { rates } = this.props.currenciesRatesInfo;
+        const fiatPriceRoomsXML = this.props.reservation.fiatPrice;
+        const fiatPriceRoomsXMLInEur = rates && CurrencyConverter.convert(rates, RoomsXMLCurrency.get(), DEFAULT_CRYPTO_CURRENCY, fiatPriceRoomsXML);
+        this.props.dispatch(setFiatAmount(fiatPriceRoomsXMLInEur));
+        
+        fetch(`${Config.getValue('apiHost')}api/hotels/booking/quote`, {
+          headers: {
+            'Authorization': 'Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJocmlzdG8uc2tpcGVybm92QGNvZGV4aW8uYmciLCJleHAiOjE1Mzg3NDQ4MjN9.K4davDNW6wh5YMlZX5_RBc_JCwijMuyeEXl3JLLOLH0x-F2oq_9GQmOkT0cLlha8B2aIAA8tVUNDuVkf6T8-ug',
+            'Content-Type': 'application/json'
+          },
+          method: 'POST',
+          body: JSON.stringify({ bookingId: this.props.reservation.preparedBookingId })
+        }).then((res) => {
+          res.json().then(success => {
+            const id = this.props.match.params.id;
+            const isWebView = this.props.location.pathname.indexOf('/mobile') !== -1;
+            const rootURL = !isWebView ? `/hotels/listings/book/${id}/confirm` : '/mobile/book/confirm';
+            const queryParams = queryString.parse(this.props.location.search);
+
+            if (success.is_successful_quoted) {
+              const query = this.getQueryString(queryParams);
+              this.props.history.push(`${rootURL}${query}`);
+            } else {
+              const query = this.getHotelsRoomsQueryString(queryParams);
+              this.props.history.push(`/hotels/listings/${id}${query}`);
+            }
+          });
+        });
+      });
     }
+  }
+
+  getHotelsRoomsQueryString(queryStringParameters) {
+    let queryString = '?';
+    queryString += 'region=' + encodeURI(queryStringParameters.region);
+    queryString += '&currency=' + encodeURI(queryStringParameters.currency);
+    queryString += '&startDate=' + encodeURI(queryStringParameters.startDate);
+    queryString += '&endDate=' + encodeURI(queryStringParameters.endDate);
+    queryString += '&rooms=' + encodeURI(queryStringParameters.rooms);
+    return queryString;
   }
 
   getQueryString(queryStringParameters) {
@@ -117,7 +155,7 @@ class HotelsBookingPage extends React.Component {
 
     const { hotel, rooms, guests, rates } = this.props;
     const { handleAdultChange, handleChildAgeChange } = this.props;
-    const { currency, currencySign} = this.props.paymentInfo;
+    const { currency, currencySign } = this.props.paymentInfo;
     const city = hotel.city;
     const address = hotel.additionalInfo.mainAddress;
     const roomsTotalPrice = this.calculateRoomsTotalPrice(rooms);
@@ -239,21 +277,25 @@ HotelsBookingPage.propTypes = {
   rates: PropTypes.object,
   handleAdultChange: PropTypes.func,
   handleChildAgeChange: PropTypes.func,
-  
+  requestCreateReservation: PropTypes.func,
+  reservation: PropTypes.object,
+
   // start Router props
   match: PropTypes.object,
   history: PropTypes.object,
   location: PropTypes.object,
-  
+
   // start Redux props
   dispatch: PropTypes.func,
-  paymentInfo: PropTypes.object
+  paymentInfo: PropTypes.object,
+  currenciesRatesInfo: PropTypes.object
 };
 
 function mapStateToProps(state) {
-  const { paymentInfo } = state;
+  const { paymentInfo, currenciesRatesInfo } = state;
   return {
-    paymentInfo
+    paymentInfo,
+    currenciesRatesInfo
   };
 }
 
