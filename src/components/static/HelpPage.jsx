@@ -25,7 +25,7 @@ function HelpPage() {
 
           <div className='question'>
             <p>Q: What is the circulating supply of the LOC Token? </p>
-            <p>A: You can check the circulating supply on our Coinmarketcap profile page: https://coinmarketcap.com/currencies/lockchain/</p>
+            <p>A: You can check the circulating supply on our Coinmarketcap profile page: <a href='https://coinmarketcap.com/currencies/lockchain' target="_blank" rel='noopener noreferrer' className='link'>https://coinmarketcap.com/currencies/lockchain</a></p>
           </div>
 
           <div className='question'>
@@ -40,12 +40,12 @@ function HelpPage() {
 
           <div className='question'>
             <p>Q: Who are LockTrip's advisors?</p>
-            <p>A: LockTrip is proud to be backed by a strong and prominent Advisory Board that includes the president of Bulgaria and the co-founder of SoftUni Educational Center. You can check our Board of Advisors at: https://locktrip.com/#team_advisor</p>
+            <p>A: LockTrip is proud to be backed by a strong and prominent Advisory Board that includes the president of Bulgaria and the co-founder of SoftUni Educational Center. You can check our Board of Advisors at: <a href='https://locktrip.com/#team_advisor' target="_blank" rel='noopener noreferrer' className='link'>https://locktrip.com/#team_advisor</a></p>
           </div>
 
           <div className='question'>
             <p>Q: What is LockTrip’s corporate mailing address?</p>
-            <p>A: Feel free to reach LockTrip at team@locktrip.com</p>
+            <p>A: Feel free to reach LockTrip at <a href="mailto:team@locktrip.com?Subject=Customer%20Support" target="_top" className='customer-support-email'>team@locktrip.com</a></p>
           </div>
           <hr/>
 
