@@ -58,15 +58,35 @@ class WalletIndexPage extends React.Component {
     this.props.dispatch(closeModal(modal));
   }
 
+  tokensToWei(tokens) {
+    let index = tokens.indexOf('.');
+    let trailingZeroes = 0;
+    let wei = '';
+    if (index === -1) {
+      trailingZeroes = 18;
+    } else {
+      trailingZeroes = 18 - (tokens.length - 1 - index);
+    }
+
+    wei = tokens.replace(/[.,]/g, '');
+    if (trailingZeroes >= 0) {
+      wei = wei + '0'.repeat(trailingZeroes);
+    } else {
+      wei = wei.substring(0, index + 18);
+    }
+
+    return wei;
+  }
+
   sendTokens() {
-    // console.log('amount : ' + this.state.locAmount * Math.pow(10, 18));
     NotificationManager.info(PROCESSING_TRANSACTION, 'Transactions', LONG);
+    const wei = (this.tokensToWei(this.state.locAmount.toString()));
     setTimeout(() => {
       TokenTransactions.sendTokens(
         this.state.jsonFile,
         this.state.password,
         this.state.recipientAddress,
-        (this.state.locAmount * Math.pow(10, 18)).toString()
+        wei.toString()
       ).then(() => {
         NotificationManager.success(TRANSACTION_SUCCESSFUL, 'Send Tokens', LONG);
         this.setState({
