@@ -78,8 +78,8 @@ class HotelBookingConfirmPage extends React.Component {
       const testFiatPriceRoomsXML = rates && CurrencyConverter.convert(rates, DEFAULT_CRYPTO_CURRENCY, RoomsXMLCurrency.get(), TEST_FIAT_AMOUNT_IN_EUR);
       const testFiatPriceRoomsXMLInEur = rates && CurrencyConverter.convert(rates, RoomsXMLCurrency.get(), DEFAULT_CRYPTO_CURRENCY, testFiatPriceRoomsXML);
 
-      const totalFiatPrice = rates && locAmounts[fiatPriceRoomsXMLInEur] && (CurrencyConverter.convert(rates, DEFAULT_CRYPTO_CURRENCY, currency, locAmounts[fiatPriceRoomsXMLInEur].roundedLocInEur)).toFixed(2);
-      const testTotalFiatPrice = rates && locAmounts[testFiatPriceRoomsXMLInEur] && (CurrencyConverter.convert(rates, DEFAULT_CRYPTO_CURRENCY, currency, locAmounts[testFiatPriceRoomsXMLInEur].roundedLocInEur)).toFixed(2);
+      const totalFiatPrice = rates && locAmounts[fiatPriceRoomsXMLInEur] && CurrencyConverter.convert(rates, DEFAULT_CRYPTO_CURRENCY, currency, locAmounts[fiatPriceRoomsXMLInEur].roundedLocInEur);
+      const testTotalFiatPrice = rates && locAmounts[testFiatPriceRoomsXMLInEur] && CurrencyConverter.convert(rates, DEFAULT_CRYPTO_CURRENCY, currency, locAmounts[testFiatPriceRoomsXMLInEur].roundedLocInEur);
 
       this.setState({
         totalFiatPrice,
@@ -522,10 +522,10 @@ class HotelBookingConfirmPage extends React.Component {
                     <div className="details">
                       {(env === 'development' || env === 'staging') &&
                         <p style={{ color: 'red' }}>
-                          <strong>Pay with Credit Card: TEST Price: {currencySign} {testTotalFiatPrice}</strong>
+                          <strong>Pay with Credit Card: TEST Price: {currencySign} {testTotalFiatPrice && (testTotalFiatPrice).toFixed(2)}</strong>
                         </p>}
                       <p className="booking-card-price">
-                        Pay with Credit Card: Current Market Price: <span className="important">{currencySign} {totalFiatPrice}</span>
+                        Pay with Credit Card: Current Market Price: <span className="important">{currencySign} {totalFiatPrice && (totalFiatPrice).toFixed(2)}</span>
                       </p>
                       <button className="btn btn-primary" disabled={!testTotalFiatPrice} onClick={() => this.payWithCard(testFiatPriceRoomsXMLInEur, fiatPriceRoomsXMLInEur)}>Pay with Credit Card</button>
                     </div>
@@ -554,7 +554,7 @@ class HotelBookingConfirmPage extends React.Component {
                         <p style={{ color: 'red' }}>
                           <strong>Order Total: TEST Price: <LocPrice fiat={testFiatPriceRoomsXML} method="quoteLoc" params={{ bookingId: reservation.preparedBookingId }} brackets={false} withTimer /></strong>
                         </p>}
-                      <p>Order Total: <span className="important"><LocPrice fiat={fiatPriceRoomsXML} brackets={false} withTimer /></span></p>
+                      <p>Order Total: <span className="important"><LocPrice fiat={fiatPriceRoomsXML}  method="quoteLoc" params={{ bookingId: reservation.preparedBookingId }} brackets={false} withTimer /></span></p>
                       <div className="price-update-timer" tooltip="Seconds until we update your quoted price">
                         LOC price will update in <i className="fa fa-clock-o" aria-hidden="true"></i>&nbsp;{<LocPriceUpdateTimer initialSeconds={10} />} sec &nbsp;
                       </div>
