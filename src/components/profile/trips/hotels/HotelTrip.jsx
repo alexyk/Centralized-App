@@ -75,7 +75,7 @@ class HotelTrip extends React.Component {
 
     const isCompleted = status === 'COMPLETE' && this.isFutureDate(moment().format('YYYY-MM-DD'), this.props.trip.arrival_date);
 
-    console.log(this.props.trip);
+    // console.log(this.props.trip);
 
     return (
       <ProfileFlexContainer styleClass={`flex-container-row ${this.props.styleClass}`}>
