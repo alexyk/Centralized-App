@@ -8,10 +8,6 @@ import LocRate from '../common/utility/LocRate';
 import '../../styles/css/components/tabs-component.css';
 
 class LocalizationNav extends PureComponent {
-  constructor(props) {
-    super(props);
-  }
-
   componentDidMount() {
     if (localStorage['currency']) {
       this.props.dispatch(setCurrency(localStorage['currency']));
@@ -106,7 +102,7 @@ function mapStateToProps(state) {
 
   return {
     paymentInfo,
-    userInfo,
+    userInfo
   };
 }
 

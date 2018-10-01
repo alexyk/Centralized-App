@@ -15,15 +15,15 @@ class PopularHomesPrice extends Component {
   }
 
   render() {
-    const { paymentInfo, currenciesRatesInfo, item } = this.props;
+    const { paymentInfo, ratesInfo, item } = this.props;
     const { currency } = paymentInfo;
-    const { rates } = currenciesRatesInfo;
+    const { currenciesRates } = ratesInfo;
     const price = (item.prices) && currency === item.currencyCode ? item.defaultDailyPrice : item.prices[RoomsXMLCurrency.get()];
 
     return (
       <div className="list-property-price">
-        {this.props.userInfo.isLogged && rates &&
-          `${paymentInfo.currencySign}${rates && Number(CurrencyConverter.convert(rates, RoomsXMLCurrency.get(), currency, price)).toFixed(2)} `}
+        {this.props.userInfo.isLogged && currenciesRates &&
+          `${paymentInfo.currencySign}${currenciesRates && Number(CurrencyConverter.convert(currenciesRates, RoomsXMLCurrency.get(), currency, price)).toFixed(2)} `}
         <LocPrice fiat={price} /> per night
       </div>
     );
@@ -36,15 +36,15 @@ PopularHomesPrice.propTypes = {
   // start Redux props
   paymentInfo: PropTypes.object,
   userInfo: PropTypes.object,
-  currenciesRatesInfo: PropTypes.object,
+  ratesInfo: PropTypes.object,
 };
 
 function mapStateToProps(state) {
-  const { paymentInfo, userInfo, currenciesRatesInfo } = state;
+  const { paymentInfo, userInfo, ratesInfo } = state;
   return {
     paymentInfo,
     userInfo,
-    currenciesRatesInfo
+    ratesInfo
   };
 }
 

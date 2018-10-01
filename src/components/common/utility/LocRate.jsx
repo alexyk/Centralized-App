@@ -1,7 +1,7 @@
 import React, { PureComponent, Fragment } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { LocRateWebSocket } from '../../../services/socket/locRateWebSocket';
+import { LocPriceWebSocket } from '../../../services/socket/locPriceWebSocket';
 import { CurrencyConverter } from '../../../services/utilities/currencyConverter';
 
 const DEFAULT_CRYPTO_CURRENCY = 'EUR';
@@ -14,30 +14,29 @@ class LocRate extends PureComponent {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (!nextProps.exchangerSocketInfo.isLocRateWebsocketConnected && this.isSendMessage) {
+    if (!nextProps.exchangerSocketInfo.isLocPriceWebsocketConnected && this.isSendMessage) {
       this.isSendMessage = false;
     }
-    if (nextProps.exchangerSocketInfo.isLocRateWebsocketConnected && !this.isSendMessage) {
+    if (nextProps.exchangerSocketInfo.isLocPriceWebsocketConnected && !this.isSendMessage) {
       this.isSendMessage = true;
-      LocRateWebSocket.sendMessage(null, null, { currency: this.props.paymentInfo.currency, fiatAmount: this.props.locRateFiatAmount });
-    }
-    if (nextProps.locRateFiatAmount !== this.props.locRateFiatAmount) {
-      LocRateWebSocket.sendMessage(null, 'unsubscribe');
-      LocRateWebSocket.sendMessage(null, null, { currency: this.props.paymentInfo.currency, fiatAmount: nextProps.locRateFiatAmount });
-    }
-    if (nextProps.paymentInfo.currency !== this.props.paymentInfo.currency) {
-      localStorage['currency'] = nextProps.paymentInfo.currency;
-      LocRateWebSocket.sendMessage(null, null, { currency: nextProps.paymentInfo.currency, fiatAmount: this.props.locRateFiatAmount });
+      LocPriceWebSocket.sendMessage(this.props.ratesInfo.locRateFiatAmount, null, { fiatAmount: this.props.ratesInfo.locRateFiatAmount });
     }
   }
 
   componentWillUnmount() {
-    LocRateWebSocket.sendMessage(null, 'unsubscribe');
+    LocPriceWebSocket.sendMessage(this.props.ratesInfo.locRateFiatAmount, 'unsubscribe');
   }
 
   render() {
-    const { currency } = this.props.paymentInfo;
-    let { locRate } = this.props;
+    const { paymentInfo, ratesInfo, locAmountsInfo } = this.props;
+    
+    const fiat = ratesInfo.currenciesRates && CurrencyConverter.convert(ratesInfo.currenciesRates, DEFAULT_CRYPTO_CURRENCY, paymentInfo.currency, this.props.ratesInfo.locRateFiatAmount);
+    let locAmount = locAmountsInfo.locAmounts[ratesInfo.locRateFiatAmount] && locAmountsInfo.locAmounts[ratesInfo.locRateFiatAmount].locAmount;
+    if (!locAmount) {
+      locAmount = ratesInfo.locRateFiatAmount / ratesInfo.baseLocRate;
+    }
+
+    let locRate = fiat / locAmount;
 
     if (!locRate) {
       return <div className="loader sm-none" style={{ width: '100px' }} ></div>;
@@ -45,8 +44,8 @@ class LocRate extends PureComponent {
 
     return (
       <Fragment>
-        <span className="cross-rate">LOC/{currency} </span>
-        <span className="rate">{Number(locRate).toFixed(4)} {currency}</span>
+        <span className="cross-rate">LOC/{paymentInfo.currency} </span>
+        <span className="rate">{Number(locRate).toFixed(4)} {paymentInfo.currency}</span>
       </Fragment>
     );
   }
@@ -57,39 +56,17 @@ LocRate.propTypes = {
 
   // Redux props
   exchangerSocketInfo: PropTypes.object,
-  locRate: PropTypes.string,
-  locRateFiatAmount: PropTypes.number,
+  ratesInfo: PropTypes.object,
+  locAmountsInfo: PropTypes.object
 };
 
-function mapStateToProps(state, ownProps) {
-  const { currenciesRatesInfo, dynamicLocRatesInfo, exchangerSocketInfo, locAmountsInfo } = state;
-
-  let locRate = dynamicLocRatesInfo.locRate && (dynamicLocRatesInfo.locRate).toFixed(4);
-  const locRateFiatAmount = dynamicLocRatesInfo.fiatAmount;
-  let locAmount;
-  let fiat;
-
-  if (exchangerSocketInfo.isLocRateWebsocketConnected) {
-    locAmount = locAmountsInfo.locAmounts[locRateFiatAmount];
-  } else {
-    if (dynamicLocRatesInfo.locEurRate) {
-      locAmount = locRateFiatAmount / dynamicLocRatesInfo.locEurRate;
-    }
-  }
-
-  if (!dynamicLocRatesInfo.locRate || ownProps.paymentInfo.currency !== localStorage['currency']) {
-    fiat = currenciesRatesInfo.rates && CurrencyConverter.convert(currenciesRatesInfo.rates, DEFAULT_CRYPTO_CURRENCY, ownProps.paymentInfo.currency, locRateFiatAmount);
-  }
-
-  if (fiat && locAmount) {
-    dynamicLocRatesInfo.locRate = fiat / locAmount;
-    locRate = (dynamicLocRatesInfo.locRate).toFixed(4);
-  }
+function mapStateToProps(state) {
+  const { exchangerSocketInfo, ratesInfo, locAmountsInfo } = state;
 
   return {
     exchangerSocketInfo,
-    locRate,
-    locRateFiatAmount
+    ratesInfo,
+    locAmountsInfo
   };
 }
 

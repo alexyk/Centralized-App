@@ -6,8 +6,7 @@ import airdropInfo from './airdropInfo';
 import searchInfo from './searchInfo';
 import exchangerSocketInfo from './exchangerSocketInfo';
 import locAmountsInfo from './locAmountsInfo';
-import currenciesRatesInfo from './currenciesRatesInfo';
-import dynamicLocRatesInfo from './dynamicLocRatesInfo';
+import ratesInfo from './ratesInfo';
 import locPriceUpdateTimerInfo from './locPriceUpdateTimerInfo';
 
 const rootReducer = combineReducers({
@@ -18,8 +17,7 @@ const rootReducer = combineReducers({
   searchInfo,
   exchangerSocketInfo,
   locAmountsInfo,
-  currenciesRatesInfo,
-  dynamicLocRatesInfo,
+  ratesInfo,
   locPriceUpdateTimerInfo,
 });
 
