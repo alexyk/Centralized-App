@@ -45,15 +45,10 @@ export const locAmountsInfo = {
 };
 
 // currencies rates actions
-export const currenciesRatesInfo = {
+export const ratesInfo = {
   SET_CURRENCY_RATES: 'SET_CURRENCY_RATES',
-};
-
-// dynamic loc rates
-export const dynamicLocRatesInfo = {
-  SET_LOC_RATE: 'SET_LOC_RATE',
-  SET_LOC_EUR_RATE: 'SET_LOC_EUR_RATE',
-  SET_FIAT_AMOUNT: 'SET_FIAT_AMOUNT',
+  SET_BASE_LOC_RATE: 'SET_BASE_LOC_RATE',
+  SET_LOC_RATE_FIAT_AMOUNT: 'SET_LOC_RATE_FIAT_AMOUNT'
 };
 
 export const locPriceUpdateTimerInfo = {

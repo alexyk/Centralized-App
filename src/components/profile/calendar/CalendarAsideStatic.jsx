@@ -8,7 +8,7 @@ class CalendarAsideStatic extends React.Component {
       <div className="calendar-aside-static">
         <h2>Adjust Your Prices</h2>
         <img src={Config.getValue('basePath') + 'images/price-statistic.png'} alt="price-statistic" />
-        <p class="slot-sub-subtitle">Click on specific dates on the calendar to set custom rates and increase your revenue.</p>
+        <p className="slot-sub-subtitle">Click on specific dates on the calendar to set custom rates and increase your revenue.</p>
         <div>
           <form onSubmit={(e) => { e.preventDefault(); this.props.updateDailyPrice(); }}>
             <h6 className="slot-subtitle">Default Daily Price</h6>

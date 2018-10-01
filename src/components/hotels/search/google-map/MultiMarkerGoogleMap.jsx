@@ -109,9 +109,9 @@ class MultiMarkerGoogleMap extends Component {
 
   createInfoWindow(hotel) {
     const { rates, isLogged, nights } = this.props;
-    const { locEurRate } = this.props.dynamicLocRatesInfo;
+    const { baseLocRate } = this.props.ratesInfo;
     const { currency, currencySign } = this.props.paymentInfo;
-    const locPrice = ((hotel.price / locEurRate) / this.props.nights).toFixed(2);
+    const locPrice = ((hotel.price / baseLocRate) / this.props.nights).toFixed(2);
     const fiatPrice = rates && ((CurrencyConverter.convert(rates, RoomsXMLCurrency.get(), currency, hotel.price)) / nights).toFixed(2);
     const isMobile = this.props.location.pathname.indexOf('/mobile') !== -1;
     const rootUrl = isMobile ? '/mobile/details' : '/hotels/listings';
@@ -154,15 +154,15 @@ MultiMarkerGoogleMap.propTypes = {
 
   // start Redux props
   paymentInfo: PropTypes.object,
-  dynamicLocRatesInfo: PropTypes.object,
+  ratesInfo: PropTypes.object,
 };
 
 
 function mapStateToProps(state) {
-  const { paymentInfo, dynamicLocRatesInfo } = state;
+  const { paymentInfo, ratesInfo } = state;
   return {
     paymentInfo,
-    dynamicLocRatesInfo,
+    ratesInfo,
   };
 }
 
