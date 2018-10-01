@@ -52,6 +52,14 @@ class HotelBookingConfirmPage extends React.Component {
     this.createBackUrl = this.createBackUrl.bind(this);
   }
 
+  componentDidMount() {
+    this.props.requestCreateReservation().then(() => {
+      const { rates } = this.props.currenciesRatesInfo;
+      const fiatPriceRoomsXML = this.props.reservation.fiatPrice;
+      const fiatPriceRoomsXMLInEur = rates && CurrencyConverter.convert(rates, RoomsXMLCurrency.get(), DEFAULT_CRYPTO_CURRENCY, fiatPriceRoomsXML);
+      this.props.dispatch(setFiatAmount(fiatPriceRoomsXMLInEur));
+    });
+  }
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.currenciesRatesInfo.rates !== this.props.currenciesRatesInfo.rates && this.props.reservation) {
@@ -442,7 +450,6 @@ class HotelBookingConfirmPage extends React.Component {
   }
 
   render() {
-    console.log('render confirm page');
     if (!this.props.userInfo) {
       return <div className="loader"></div>;
     }
