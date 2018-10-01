@@ -257,7 +257,7 @@ class HotelBookingConfirmPage extends React.Component {
       LocPriceWebSocket.sendMessage(testFiatPriceRoomsXMLInEur, 'approveQuote', { bookingId: preparedBookingId });
 
       const wei = (this.tokensToWei(locAmount.toString()));
-      console.log(wei);
+      // console.log(wei);
       const booking = reservation.booking.hotelBooking;
       const endDate = moment.utc(booking[0].arrivalDate, 'YYYY-MM-DD').add(booking[0].nights, 'days');
 
@@ -270,8 +270,8 @@ class HotelBookingConfirmPage extends React.Component {
       requester.getMyJsonFile().then(res => {
         res.body.then(data => {
           setTimeout(() => {
-            console.log('HotelBookingConfirmPage.jsx, wei:', wei.toString());
-            console.log('HotelBookingConfirmPage.jsx, end date:', endDate.unix().toString());
+            // console.log('HotelBookingConfirmPage.jsx, wei:', wei.toString());
+            // console.log('HotelBookingConfirmPage.jsx, end date:', endDate.unix().toString());
 
             HotelReservation.createSimpleReservationSingleWithdrawer(
               data.jsonFile,
@@ -279,7 +279,7 @@ class HotelBookingConfirmPage extends React.Component {
               wei.toString(),
               endDate.unix().toString(),
             ).then(transaction => {
-              console.log('transaction', transaction);
+              // console.log('transaction', transaction);
               const bookingConfirmObj = {
                 bookingId: preparedBookingId,
                 transactionHash: transaction.hash,
