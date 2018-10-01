@@ -259,25 +259,19 @@ export class HotelReservation {
     const withdrawDateFormatted = formatTimestampToDays(withdrawDateInSeconds);
 
     let wallet = await ethers.Wallet.fromEncryptedWallet(jsonObj, password);
-    console.log(1);
 
     const gasPrice = await getGasPrice();
-    console.log(2);
 
     let overrideOptions = {
       gasLimit: gasConfig.simpleReservationSingleWithdrawer.create,
       gasPrice: gasPrice,
     };
     await ReservationValidators.validateSimpleReservationSingleWithdrawerParams(jsonObj, password, reservationCostLOC, withdrawDateFormatted)
-    console.log(3);
     
     await TokenValidators.validateLocBalance(wallet.address, reservationCostLOC, wallet, gasConfig.simpleReservationSingleWithdrawer.create);
-    console.log(4);
     await EtherValidators.validateEthBalance(wallet, overrideOptions.gasLimit);
-    console.log(5);
 
     let currentNonce = await approveContract(wallet, reservationCostLOC, SimpleReservationSingleWithdrawerContract.address, gasPrice);
-    console.log(6);
 
     overrideOptions.nonce = currentNonce;
 
@@ -288,7 +282,6 @@ export class HotelReservation {
       withdrawDateFormatted,
       overrideOptions
     );
-    console.log(7);
 
     return createReservationSingleWithdrawerTxResult;
   }
