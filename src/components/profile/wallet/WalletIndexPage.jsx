@@ -21,7 +21,8 @@ class WalletIndexPage extends React.Component {
       canProceed: false,
       recipientAddress: '',
       locAmount: 0,
-      password: ''
+      password: '',
+      loading: false
     };
     this.onChange = this.onChange.bind(this);
     this.sendTokens = this.sendTokens.bind(this);
@@ -55,11 +56,13 @@ class WalletIndexPage extends React.Component {
 
   sendTokens() {
     // console.log('amount : ' + this.state.locAmount * Math.pow(10, 18));
+    this.setState({ loading: true });
     NotificationManager.info(PROCESSING_TRANSACTION, 'Transactions', LONG);
     const wei = (this.tokensToWei(this.state.locAmount.toString()));
-    setTimeout(() => {
+    requester.getMyJsonFile().then(res => res.body).then(data => {
+      const { jsonFile } = data;
       TokenTransactions.sendTokens(
-        this.state.jsonFile,
+        jsonFile,
         this.state.password,
         this.state.recipientAddress,
         wei.toString()
@@ -68,9 +71,9 @@ class WalletIndexPage extends React.Component {
         this.setState({
           recipientAddress: '',
           locAmount: 0,
-          password: ''
+          password: '',
+          loading: false
         });
-        // console.log(x);
       }).catch(error => {
         if (error.hasOwnProperty('message')) {
           NotificationManager.warning(error.message, 'Send Tokens', LONG);
@@ -81,20 +84,16 @@ class WalletIndexPage extends React.Component {
         } else {
           // console.log(error);
         }
+
+        this.setState({ loading: false });
       });
-    }, 1000);
+    });
   }
 
   componentDidMount() {
     requester.getUserInfo().then(res => {
       res.body.then(data => {
-        this.setState({ locAddress: data.locAddress }, () => {
-          requester.getMyJsonFile().then(res => {
-            res.body.then(data => {
-              this.setState({ jsonFile: data.jsonFile });
-            });
-          });
-        });
+        this.setState({ locAddress: data.locAddress });
       });
     });
   }
@@ -138,7 +137,7 @@ class WalletIndexPage extends React.Component {
                   <input id="password" name="password" onChange={this.onChange} type="password" value={this.state.password} placeholder="The password is needed to unlock your wallet for a single transaction" />
                 </div>
                 <div>
-                  {this.state.canProceed ? <button className="btn btn-primary" type="submit">Send Tokens</button> : <button className="btn btn-primary" disabled="disabled">Send Tokens</button>}
+                  {(this.state.canProceed && !this.state.loading) ? <button className="btn btn-primary" type="submit">Send Tokens</button> : <button className="btn btn-primary" disabled="disabled">Send Tokens</button>}
                   &nbsp; &nbsp;
                     <div className="button-wallet-link"><a href={etherscanUrl} target="_blank" className="wallet-link">Check your transactions</a></div>
                 </div>
