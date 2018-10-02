@@ -33,7 +33,7 @@ class HotelTrip extends React.Component {
   }
 
   extractDatesData(trip) {
-    const startDateMoment = moment(trip.arrival_date, 'YYYY-MM-DD');
+    const startDateMoment = moment(trip.arrival_date);
     const endDateMoment = moment(trip.arrival_date).add(trip.nights, 'days');
 
     const checkIn = {
@@ -66,6 +66,8 @@ class HotelTrip extends React.Component {
   }
 
   render() {
+
+    console.log(this.props.trip);
 
     const status = STATUS[this.props.trip.status];
     const statusMessage = STATUS_TOOLTIP[status];

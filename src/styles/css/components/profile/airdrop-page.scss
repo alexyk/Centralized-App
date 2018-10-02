@@ -103,6 +103,23 @@ $padding-sm: 15px 10px;
         // }
       }
 
+      .claim-button {
+        position: absolute;
+        right: 5px;
+        top: 5px;
+        padding: 10px 10px;
+        border-radius: 3px;
+        color: $white;
+        background: $light-cyan;
+        min-width: 145px;
+      }
+
+      .etherscan-link {
+        position: absolute;
+        right: 5px;
+        top: 15px;
+      }
+
       .save-vote-url {
         position: absolute;
         right: 5px;

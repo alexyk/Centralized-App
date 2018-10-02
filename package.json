@@ -13,7 +13,7 @@
     "javascript-time-ago": "^1.0.21",
     "jquery": "^3.2.1",
     "json-fetch": "^7.5.0",
-    "locktrip-service-layer": "^1.0.32",
+    "locktrip-service-layer": "^1.0.36",
     "lodash": "^4.17.10",
     "moment": "^2.19.3",
     "npm-run-all": "^4.1.2",
