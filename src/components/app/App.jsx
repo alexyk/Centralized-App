@@ -2,7 +2,7 @@ import '../../styles/css/main.css';
 
 import { Redirect, Route, Switch, withRouter } from 'react-router-dom';
 import { setIsLogged, setUserInfo } from '../../actions/userInfo';
-import { setCurrencyRates } from '../../actions/currenciesRatesInfo';
+import { setCurrencyExchangeRates, setLocEurRate } from '../../actions/exchangeRatesInfo';
 
 import Balance from '../external/Balance';
 import BigCalendar from 'react-big-calendar';
@@ -49,7 +49,8 @@ class App extends React.Component {
     this.handleInternalAuthorization();
     this.handleExternalAuthorization();
 
-    this.getRates();
+    this.requestExchangeRates();
+    this.requestLocEurRate();
   }
 
   isAuthenticated() {
@@ -105,10 +106,19 @@ class App extends React.Component {
     }
   }
 
-  getRates() {
+  requestExchangeRates() {
     requester.getCurrencyRates().then(res => {
-      res.body.then(rates => {
-        this.props.dispatch(setCurrencyRates(rates));
+      res.body.then(currencyExchangeRates => {
+        this.props.dispatch(setCurrencyExchangeRates(currencyExchangeRates));
+      });
+    });
+  }
+
+  requestLocEurRate() {
+    const baseCurrency = 'EUR';
+    requester.getLocRateByCurrency(baseCurrency).then(res => {
+      res.body.then(data => {
+        this.props.dispatch(setLocEurRate(Number(data[0][`price_${(baseCurrency).toLowerCase()}`])));
       });
     });
   }

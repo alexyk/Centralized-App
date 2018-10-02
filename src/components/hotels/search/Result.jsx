@@ -99,10 +99,10 @@ class Result extends React.Component {
     let { id, name, generalDescription, star } = this.props.hotel;
     let { price } = this.props;
 
-    const { rates } = this.props;
+    const { exchangeRates } = this.props;
     const { currencySign } = this.props.paymentInfo;
     const isPriceLoaded = !!price;
-    const priceInSelectedCurrency = rates && ((CurrencyConverter.convert(rates, RoomsXMLCurrency.get(), this.props.paymentInfo.currency, price)) / this.props.nights).toFixed(2);
+    const priceInSelectedCurrency = exchangeRates && ((CurrencyConverter.convert(exchangeRates, RoomsXMLCurrency.get(), this.props.paymentInfo.currency, price)) / this.props.nights).toFixed(2);
 
     name = name && StringUtils.shorten(name, this.state.titleLength);
     generalDescription = generalDescription && StringUtils.shorten(generalDescription, this.state.descriptionLength);
@@ -223,7 +223,7 @@ class Result extends React.Component {
 Result.propTypes = {
   hotel: PropTypes.object,
   nights: PropTypes.number,
-  rates: PropTypes.any,
+  exchangeRates: PropTypes.any,
   price: PropTypes.any,
   allElements: PropTypes.bool,
 

@@ -108,11 +108,11 @@ class MultiMarkerGoogleMap extends Component {
   }
 
   createInfoWindow(hotel) {
-    const { rates, isLogged, nights } = this.props;
-    const { locEurRate } = this.props.dynamicLocRatesInfo;
+    const { exchangeRates, isLogged, nights } = this.props;
+    const { locEurRate } = this.props.exchangeRatesInfo;
     const { currency, currencySign } = this.props.paymentInfo;
     const locPrice = ((hotel.price / locEurRate) / this.props.nights).toFixed(2);
-    const fiatPrice = rates && ((CurrencyConverter.convert(rates, RoomsXMLCurrency.get(), currency, hotel.price)) / nights).toFixed(2);
+    const fiatPrice = exchangeRates && ((CurrencyConverter.convert(exchangeRates, RoomsXMLCurrency.get(), currency, hotel.price)) / nights).toFixed(2);
     const isMobile = this.props.location.pathname.indexOf('/mobile') !== -1;
     const rootUrl = isMobile ? '/mobile/details' : '/hotels/listings';
 
@@ -141,7 +141,7 @@ class MultiMarkerGoogleMap extends Component {
 }
 
 MultiMarkerGoogleMap.propTypes = {
-  rates: PropTypes.object,
+  exchangeRates: PropTypes.object,
   lat: PropTypes.number,
   lon: PropTypes.number,
   mapInfo: PropTypes.array,
@@ -154,15 +154,15 @@ MultiMarkerGoogleMap.propTypes = {
 
   // start Redux props
   paymentInfo: PropTypes.object,
-  dynamicLocRatesInfo: PropTypes.object,
+  exchangeRatesInfo: PropTypes.object,
 };
 
 
 function mapStateToProps(state) {
-  const { paymentInfo, dynamicLocRatesInfo } = state;
+  const { paymentInfo, exchangeRatesInfo } = state;
   return {
     paymentInfo,
-    dynamicLocRatesInfo,
+    exchangeRatesInfo,
   };
 }
 

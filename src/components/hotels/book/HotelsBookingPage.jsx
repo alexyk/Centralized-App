@@ -107,7 +107,7 @@ class HotelsBookingPage extends React.Component {
       return (<div className="loader"></div>);
     }
 
-    if (!this.props.rates) {
+    if (!this.props.exchangeRates) {
       return (<div className="loader"></div>);
     }
 
@@ -115,14 +115,14 @@ class HotelsBookingPage extends React.Component {
       return (<div className="loader"></div>);
     }
 
-    const { hotel, rooms, guests, rates } = this.props;
+    const { hotel, rooms, guests, exchangeRates } = this.props;
     const { handleAdultChange, handleChildAgeChange } = this.props;
     const { currency, currencySign } = this.props.paymentInfo;
     const city = hotel.city;
     const address = hotel.additionalInfo.mainAddress;
     const roomsTotalPrice = this.calculateRoomsTotalPrice(rooms);
     const hotelPicUrl = hotel.hotelPhotos && hotel.hotelPhotos.length > 0 ? hotel.hotelPhotos[0].url : '/listings/images/default.png';
-    const priceInSelectedCurrency = Number(CurrencyConverter.convert(rates, RoomsXMLCurrency.get(), currency, roomsTotalPrice)).toFixed(2);
+    const priceInSelectedCurrency = Number(CurrencyConverter.convert(exchangeRates, RoomsXMLCurrency.get(), currency, roomsTotalPrice)).toFixed(2);
     const nights = this.calculateReservationTotalNights(this.props.location.search);
 
     return (
@@ -143,7 +143,7 @@ class HotelsBookingPage extends React.Component {
                   {rooms.map((room, index) => {
                     return (
                       <h6 key={index}>
-                        {room.name}, {nights} nights: {currencySign}{rates && (CurrencyConverter.convert(rates, RoomsXMLCurrency.get(), currency, room.price)).toFixed(2)} <LocPrice fiat={room.price} />
+                        {room.name}, {nights} nights: {currencySign}{exchangeRates && (CurrencyConverter.convert(exchangeRates , RoomsXMLCurrency.get(), currency, room.price)).toFixed(2)} <LocPrice fiat={room.price} />
                       </h6>
                     );
                   })}
@@ -236,7 +236,7 @@ HotelsBookingPage.propTypes = {
   hotel: PropTypes.object,
   rooms: PropTypes.array,
   guests: PropTypes.array,
-  rates: PropTypes.object,
+  exchangeRates: PropTypes.object,
   handleAdultChange: PropTypes.func,
   handleChildAgeChange: PropTypes.func,
 
