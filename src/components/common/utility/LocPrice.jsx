@@ -16,7 +16,11 @@ class LocPrice extends PureComponent {
     let fiatInEur;
 
     if (this.props.currenciesRatesInfo.rates) {
-      fiatInEur = this.props.currenciesRatesInfo.rates && CurrencyConverter.convert(this.props.currenciesRatesInfo.rates, RoomsXMLCurrency.get(), DEFAULT_CRYPTO_CURRENCY, this.props.fiat);
+      if (this.props.fiat === 15) {
+        fiatInEur = this.props.fiat;
+      } else {
+        fiatInEur = this.props.currenciesRatesInfo.rates && CurrencyConverter.convert(this.props.currenciesRatesInfo.rates, RoomsXMLCurrency.get(), DEFAULT_CRYPTO_CURRENCY, this.props.fiat);
+      }
       LocPriceWebSocket.sendMessage(fiatInEur, this.props.method, Object.assign(this.props.params, { fiatAmount: fiatInEur }));
       isLocPriceRendered = true;
     }
@@ -40,7 +44,12 @@ class LocPrice extends PureComponent {
     }
 
     if (nextProps.currenciesRatesInfo.rates && !this.state.isLocPriceRendered) {
-      const fiatInEur = nextProps.currenciesRatesInfo.rates && CurrencyConverter.convert(nextProps.currenciesRatesInfo.rates, RoomsXMLCurrency.get(), DEFAULT_CRYPTO_CURRENCY, this.props.fiat);
+      let fiatInEur;
+      if (this.props.fiat === 15) {
+        fiatInEur = this.props.fiat;
+      } else {
+        fiatInEur = nextProps.currenciesRatesInfo.rates && CurrencyConverter.convert(nextProps.currenciesRatesInfo.rates, RoomsXMLCurrency.get(), DEFAULT_CRYPTO_CURRENCY, this.props.fiat);
+      }
       LocPriceWebSocket.sendMessage(fiatInEur, this.props.method, Object.assign(this.props.params, { fiatAmount: fiatInEur }));
       this.setState({
         isLocPriceRendered: true,
@@ -104,7 +113,12 @@ function mapStateToProps(state, ownProps) {
 
   const { userInfo, dynamicLocRatesInfo, exchangerSocketInfo, locAmountsInfo, currenciesRatesInfo, locPriceUpdateTimerInfo } = state;
 
-  const fiatInEur = currenciesRatesInfo.rates && CurrencyConverter.convert(currenciesRatesInfo.rates, RoomsXMLCurrency.get(), DEFAULT_CRYPTO_CURRENCY, fiat);
+  let fiatInEur;
+  if (fiat === 15) {
+    fiatInEur = fiat;
+  } else {
+    fiatInEur = currenciesRatesInfo.rates && CurrencyConverter.convert(currenciesRatesInfo.rates, RoomsXMLCurrency.get(), DEFAULT_CRYPTO_CURRENCY, fiat);
+  }
 
   let locAmount;
   let renderLocAmount;
