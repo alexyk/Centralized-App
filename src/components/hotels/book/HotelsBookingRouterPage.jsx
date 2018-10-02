@@ -99,14 +99,25 @@ class HotelsBookingRouterPage extends React.Component {
   }
 
   requestCreateReservation() {
-    const booking = this.getBooking(queryString.parse(this.props.location.search));
+    const query = queryString.parse(this.props.location.search);
+    const booking = this.getBooking(query);
     return requester.createReservation(booking).then(res => {
       return new Promise((resolve, reject) => {
         if (res.success) {
           res.body.then(reservation => {
-            this.setState({ reservation }, () => {
-              resolve(true);
-            });
+            const quoteBookingCandidate = { bookingId: reservation.preparedBookingId };
+            requester.quoteBooking(quoteBookingCandidate)
+              .then((res) => {
+                res.body.then(success => {
+                  if (success.is_successful_quoted) {
+                    this.setState({ reservation }, () => {
+                      resolve(true);
+                    });
+                  } else {
+                    this.redirectToHotelDetailsPage();
+                  }
+                });
+              });
           });
         } else {
           res.errors.then((res) => {
