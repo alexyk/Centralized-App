@@ -47,7 +47,7 @@ export const locAmountsInfo = {
 // currencies rates actions
 export const ratesInfo = {
   SET_CURRENCY_RATES: 'SET_CURRENCY_RATES',
-  SET_BASE_LOC_RATE: 'SET_BASE_LOC_RATE',
+  SET_LOC_EUR_RATE: 'SET_LOC_EUR_RATE',
   SET_LOC_RATE_FIAT_AMOUNT: 'SET_LOC_RATE_FIAT_AMOUNT'
 };
 

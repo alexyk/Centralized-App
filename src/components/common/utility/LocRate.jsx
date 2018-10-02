@@ -33,7 +33,7 @@ class LocRate extends PureComponent {
     const fiat = ratesInfo.currenciesRates && CurrencyConverter.convert(ratesInfo.currenciesRates, DEFAULT_CRYPTO_CURRENCY, paymentInfo.currency, this.props.ratesInfo.locRateFiatAmount);
     let locAmount = locAmountsInfo.locAmounts[ratesInfo.locRateFiatAmount] && locAmountsInfo.locAmounts[ratesInfo.locRateFiatAmount].locAmount;
     if (!locAmount) {
-      locAmount = ratesInfo.locRateFiatAmount / ratesInfo.baseLocRate;
+      locAmount = ratesInfo.locRateFiatAmount / ratesInfo.locEurRate;
     }
 
     let locRate = fiat / locAmount;
