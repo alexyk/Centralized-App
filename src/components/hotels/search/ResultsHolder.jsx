@@ -25,7 +25,7 @@ function ResultsHolder(props) {
     return <Result
       key={hotel.id}
       hotel={hotel}
-      rates={props.rates}
+      exchangeRates={props.exchangeRates}
       nights={props.nights}
       allElements={props.allElements}
       price={hotel.price} />;
@@ -46,7 +46,7 @@ function ResultsHolder(props) {
 ResultsHolder.propTypes = {
   hotels: PropTypes.any,
   allElements: PropTypes.bool,
-  rates: PropTypes.object,
+  exchangeRates: PropTypes.object,
   nights: PropTypes.number
 };
 

@@ -12,7 +12,7 @@ import '../../../styles/css/components/homes/booking/homes-booking-listing-detai
 
 function HomesBookingListingDetailsInfo(props) {
 
-  const { listing, searchParams, rates, paymentInfo } = props;
+  const { listing, searchParams, exchangeRates, paymentInfo } = props;
   const pictures = listing.pictures;
   const startDate = moment(searchParams.startDate, 'DD/MM/YYYY');
   const endDate = moment(searchParams.endDate, 'DD/MM/YYYY');
@@ -50,7 +50,7 @@ function HomesBookingListingDetailsInfo(props) {
 
   const nights = calculateNights(startDate, endDate);
 
-  const pricePerNightInCurrentCurrency = CurrencyConverter.convert(rates, listing.currencyCode, paymentInfo.currency, listing.defaultDailyPrice);
+  const pricePerNightInCurrentCurrency = CurrencyConverter.convert(exchangeRates, listing.currencyCode, paymentInfo.currency, listing.defaultDailyPrice);
   
   return (
     <div className="left-part">
@@ -97,7 +97,7 @@ function HomesBookingListingDetailsInfo(props) {
 HomesBookingListingDetailsInfo.propTypes = {
   listing: PropTypes.object,
   searchParams: PropTypes.object,
-  rates: PropTypes.object,
+  exchangeRates: PropTypes.object,
 
   // Redux props
   paymentInfo: PropTypes.object

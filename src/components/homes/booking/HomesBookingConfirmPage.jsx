@@ -41,7 +41,7 @@ class HomesBookingConfirmPage extends React.Component {
 
     requester.getCurrencyRates().then(res => {
       res.body.then(data => {
-        this.setState({ rates: data });
+        this.setState({ exchangeRates: data });
       });
     });
 
@@ -111,7 +111,7 @@ class HomesBookingConfirmPage extends React.Component {
   }
 
   render() {
-    const { listing, rates } = this.state;
+    const { listing, exchangeRates } = this.state;
 
     if (!listing || this.state.sending) {
       return <div className="loader"></div>;
@@ -125,7 +125,7 @@ class HomesBookingConfirmPage extends React.Component {
             <HomesBookingListingDetailsInfo
               listing={listing}
               searchParams={parse(this.props.location.search)}
-              rates={rates}
+              exchangeRates={exchangeRates}
             />
             <div className="confirm-and-pay-details">
               <h2 className="title">Request Booking</h2>
