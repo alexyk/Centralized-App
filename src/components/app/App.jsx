@@ -2,7 +2,7 @@ import '../../styles/css/main.css';
 
 import { Redirect, Route, Switch, withRouter } from 'react-router-dom';
 import { setIsLogged, setUserInfo } from '../../actions/userInfo';
-import { setCurrencyRates, setBaseLocRate } from '../../actions/ratesInfo';
+import { setCurrencyRates, setLocEurRate } from '../../actions/ratesInfo';
 
 import Balance from '../external/Balance';
 import BigCalendar from 'react-big-calendar';
@@ -49,8 +49,8 @@ class App extends React.Component {
     this.handleInternalAuthorization();
     this.handleExternalAuthorization();
 
-    this.getRates();
-    this.getBaseLocRate();
+    this.requestRates();
+    this.requestLocEurRate();
   }
 
   isAuthenticated() {
@@ -106,7 +106,7 @@ class App extends React.Component {
     }
   }
 
-  getRates() {
+  requestRates() {
     requester.getCurrencyRates().then(res => {
       res.body.then(currenciesRates => {
         this.props.dispatch(setCurrencyRates(currenciesRates));
@@ -114,11 +114,11 @@ class App extends React.Component {
     });
   }
 
-  getBaseLocRate() {
+  requestLocEurRate() {
     const baseCurrency = 'EUR';
     requester.getLocRateByCurrency(baseCurrency).then(res => {
       res.body.then(data => {
-        this.props.dispatch(setBaseLocRate(Number(data[0][`price_${(baseCurrency).toLowerCase()}`])));
+        this.props.dispatch(setLocEurRate(Number(data[0][`price_${(baseCurrency).toLowerCase()}`])));
       });
     });
   }

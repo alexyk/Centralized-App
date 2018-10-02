@@ -114,7 +114,7 @@ function mapStateToProps(state, ownProps) {
   let locAmount = locAmountsInfo.locAmounts[fiatInEur] && (locAmountsInfo.locAmounts[fiatInEur].locAmount).toFixed(2);
 
   if (!locAmount) {
-    locAmount = (fiatInEur / ratesInfo.baseLocRate).toFixed(2);
+    locAmount = (fiatInEur / ratesInfo.locEurRate).toFixed(2);
   }
 
   return {

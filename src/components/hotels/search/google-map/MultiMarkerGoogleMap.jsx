@@ -109,9 +109,9 @@ class MultiMarkerGoogleMap extends Component {
 
   createInfoWindow(hotel) {
     const { rates, isLogged, nights } = this.props;
-    const { baseLocRate } = this.props.ratesInfo;
+    const { locEurRate } = this.props.ratesInfo;
     const { currency, currencySign } = this.props.paymentInfo;
-    const locPrice = ((hotel.price / baseLocRate) / this.props.nights).toFixed(2);
+    const locPrice = ((hotel.price / locEurRate) / this.props.nights).toFixed(2);
     const fiatPrice = rates && ((CurrencyConverter.convert(rates, RoomsXMLCurrency.get(), currency, hotel.price)) / nights).toFixed(2);
     const isMobile = this.props.location.pathname.indexOf('/mobile') !== -1;
     const rootUrl = isMobile ? '/mobile/details' : '/hotels/listings';

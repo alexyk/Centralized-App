@@ -7,10 +7,10 @@ export function setCurrencyRates(currenciesRates) {
   };
 }
 
-export function setBaseLocRate(baseLocRate) {
+export function setLocEurRate(locEurRate) {
   return {
-    type: ratesInfo.SET_BASE_LOC_RATE,
-    baseLocRate
+    type: ratesInfo.SET_LOC_EUR_RATE,
+    locEurRate
   };
 }
 

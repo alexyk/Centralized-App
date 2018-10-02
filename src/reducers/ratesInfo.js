@@ -2,7 +2,7 @@ import { ratesInfo } from '../actions/actionTypes';
 
 const initialState = {
   currenciesRates: null,
-  baseLocRate: null,
+  locEurRate: null,
   locRateFiatAmount: 1000
 };
 
@@ -14,10 +14,10 @@ export default function reducer(state = initialState, action) {
         currenciesRates: action.currenciesRates
       };
 
-    case ratesInfo.SET_BASE_LOC_RATE:
+    case ratesInfo.SET_LOC_EUR_RATE:
       return {
         ...state,
-        baseLocRate: action.baseLocRate
+        locEurRate: action.locEurRate
       };
 
     case ratesInfo.SET_LOC_RATE_FIAT_AMOUNT:
