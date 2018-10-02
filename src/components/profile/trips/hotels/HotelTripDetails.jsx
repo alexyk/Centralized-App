@@ -20,8 +20,8 @@ class HotelTripDetails extends React.Component {
         guestsCount: '',
         startDate: '',
         endDate: '',
-        roomType: '',
-        boardType: '',
+        roomType: [],
+        boardType: [],
         bookingId: '',
         hotelAddress: '',
         hotelPhone: '',
@@ -134,6 +134,24 @@ class HotelTripDetails extends React.Component {
     );
   }
 
+  renderRoomTypes(roomTypes){
+    if(!Array.isArray(roomTypes)){
+      return (<h5>{roomTypes}</h5>);
+    } else {
+      const types = roomTypes.map((rt) => <h5>{rt}</h5>);
+      return ( <div>{types}</div> );
+    }
+  }
+
+  renderRoomBoards(roomBoards){
+    if(!Array.isArray(roomBoards)){
+      return (<h5>{roomBoards}</h5>);
+    } else {
+      const boards = roomBoards.map((rt) => <h5>{rt}</h5>);
+      return ( <div>{boards}</div> );
+    }
+  }
+
   renderHeading() {
     switch (this.state.bookingData.bookingStatus) {
       case 'PENDING':
@@ -154,7 +172,6 @@ class HotelTripDetails extends React.Component {
     const { bookingData } = this.state;
     const checkInData = bookingData.checkIn;
     const checkOutData = bookingData.checkOut;
-
 
     return (
       <div>
@@ -186,9 +203,11 @@ class HotelTripDetails extends React.Component {
               <h5 className="guests-content">{bookingData.guestsCount}</h5>
             </div>
             <h3>Room Type</h3>
-            <h5 style={{ marginBottom: '5%' }}>{bookingData.roomType}</h5>
-            <h3>Board Type</h3>
-            <h5>{bookingData.boardType}</h5>
+            {/*<h5 style={{ marginBottom: '5%' }}>{bookingData.roomType}</h5>*/}
+            {this.renderRoomTypes(bookingData.roomType)}
+            <h3 style={{ marginTop: '5%' }}>Board Type</h3>
+            {/*<h5>{bookingData.boardType}</h5>*/}
+            {this.renderRoomBoards(bookingData.boardType)}
             <hr />
             <h3>Address</h3>
             <h5>{bookingData.hotelAddress}</h5>
