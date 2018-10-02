@@ -21,7 +21,6 @@ class LocPrice extends PureComponent {
       } else {
         fiatInEur = this.props.exchangeRatesInfo.currencyExchangeRates && CurrencyConverter.convert(this.props.exchangeRatesInfo.currencyExchangeRates, RoomsXMLCurrency.get(), DEFAULT_CRYPTO_CURRENCY, this.props.fiat);
       }
-
       LocPriceWebSocket.sendMessage(fiatInEur, this.props.method, Object.assign(this.props.params, { fiatAmount: fiatInEur }));
       isLocPriceRendered = true;
     }
@@ -51,7 +50,6 @@ class LocPrice extends PureComponent {
       } else {
         fiatInEur = nextProps.exchangeRatesInfo.currencyExchangeRates && CurrencyConverter.convert(nextProps.exchangeRatesInfo.currencyExchangeRates, RoomsXMLCurrency.get(), DEFAULT_CRYPTO_CURRENCY, this.props.fiat);
       }
-
       LocPriceWebSocket.sendMessage(fiatInEur, this.props.method, Object.assign(this.props.params, { fiatAmount: fiatInEur }));
       this.setState({
         isLocPriceRendered: true,

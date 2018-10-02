@@ -103,14 +103,20 @@ class ConfirmProfilePage extends React.Component {
       const { paymentInfo } = this.props.location.state;
       requester.verifyCreditCardPayment(paymentInfo)
         .then(res => {
-          res.body.then((data) => {
-            const env = Config.getValue('env');
-            if (env === 'staging' || env === 'development') {
-              window.location.href = data.url;
-            } else {
-              this.payWithCreditCard(data.url);
-            }
-          });
+          if (res.success) {
+            res.body.then((data) => {
+              const env = Config.getValue('env');
+              if (env === 'staging' || env === 'development') {
+                window.location.href = data.url;
+              } else {
+                this.payWithCreditCard(data.url);
+              }
+            });
+          } else {
+            res.errors.then((error) => {
+              NotificationManager.warning(error.message, '', LONG);
+            });
+          }
         });
     });
   }
@@ -152,6 +158,7 @@ class ConfirmProfilePage extends React.Component {
     const userInfo = { ...this.state.userInfo };
     userInfo.country = value;
     userInfo.city = '';
+    userInfo.countryState = '';
 
     this.setState({ userInfo });
   }
