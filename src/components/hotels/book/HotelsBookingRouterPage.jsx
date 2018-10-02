@@ -2,6 +2,7 @@ import { withRouter, Route, Switch } from 'react-router-dom';
 
 import PropTypes from 'prop-types';
 import React, { Fragment } from 'react';
+import { connect } from 'react-redux';
 import HotelsBookingPage from './HotelsBookingPage';
 import HotelsBookingConfirmPage from './HotelsBookingConfirmPage';
 import ConfirmProfilePage from './ConfirmProfilePage';
@@ -26,6 +27,8 @@ class HotelsBookingRouterPage extends React.Component {
       quoteId: queryString.parse(props.location.search).quoteId,
       guests: [],
       reservation: null,
+      hotelsRooms: [],
+      roomSearchQuote: []
     };
 
     this.requestHotel = this.requestHotel.bind(this);
@@ -45,7 +48,13 @@ class HotelsBookingRouterPage extends React.Component {
 
   componentDidMount() {
     this.requestHotel();
-    this.requestHotelRooms();
+    this.requestHotelRooms()
+      .then((success) => {
+        if (success) {
+          const quoteId = queryString.parse(this.props.location.search).quoteId;
+          this.filterRoomsByQuoteId(quoteId);
+        }
+      });
     this.setQuoteIdPollingInterval();
     this.requestUpdateOnQuoteId();
     this.requestCurrencyRates();
@@ -81,20 +90,31 @@ class HotelsBookingRouterPage extends React.Component {
     });
   }
 
+  filterRoomsByQuoteId(quoteId) {
+    const rooms = this.state.hotelRooms.filter(r => r.quoteId === quoteId)[0];
+    if (rooms) {
+      this.setState({ rooms: rooms.roomsResults });
+    } else {
+      this.redirectToHotelDetailsPage();
+    }
+  }
+
   requestHotelRooms() {
     const id = this.props.match.params.id;
-    const quoteId = queryString.parse(this.props.location.search).quoteId;
     const searchParams = this.getRequestSearchParams();
 
     return requester.getHotelRooms(id, searchParams)
       .then(res => res.body)
       .then(data => {
-        const rooms = data.filter(r => r.quoteId === quoteId)[0];
-        if (rooms) {
-          this.setState({ rooms: rooms.roomsResults });
-        } else {
-          this.redirectToHotelDetailsPage();
-        }
+        return new Promise((resolve, reject) => {
+          if (data) {
+            this.setState({ hotelRooms: data }, () => {
+              resolve(true);
+            });
+          } else {
+            reject();
+          }
+        });
       });
   }
 
@@ -170,27 +190,49 @@ class HotelsBookingRouterPage extends React.Component {
     clearInterval(this.quoteIdPollingInterval);
   }
 
+  replaceSearchQuoteId(quoteId) {
+    const cleanQueryString = this.getCleanQueryString();
+
+    return `${cleanQueryString}&quoteId=${quoteId}`;
+  }
+
   requestUpdateOnQuoteId() {
     if (this.state) {
       requester.getQuoteIdExpirationFlag(this.state.quoteId).then(res => res.body).then(data => {
+        console.log(data);
         if (!data.is_quote_valid) {
-          const id = this.props.match.params.id;
-          const searchParams = this.getRequestSearchParams();
-          requester.getHotelRooms(id, searchParams).then(res => {
-            res.body.then(data => {
-              this.setState({ hotelRooms: data, loadingRooms: false });
+          console.log(this.state.quoteId);
+          this.requestHotelRooms()
+            .then((success) => {
+              if (success) {
+                const newQuoteId = this.findQuoteIdByRoomSearchQuote(this.state.rooms, this.state.hotelRooms);
+                if (newQuoteId) {
+                  console.log(newQuoteId);
+                  const search = this.replaceSearchQuoteId(newQuoteId);
+                  this.props.history.replace(`${this.props.location.pathname}${search}`);
+
+                  const booking = {
+                    // rooms: rooms,
+                    currency: this.props.paymentInfo.currency
+                  };
+                  requester.createReservation(booking).then(res => {
+                    if (res.success) {
+                      console.log(res);
+                    }
+                  });
+                } else {
+                  this.redirectToHotelDetailsPage();
+                }
+              }
             });
-          });
 
-          // get new rooms
+          // get new rooms => done
 
-          // find quote id
+          // find quote id => done
 
           // request booking
 
           // request create reservation
-
-          this.redirectToHotelDetailsPage();
         }
       });
     }
@@ -332,7 +374,18 @@ class HotelsBookingRouterPage extends React.Component {
 HotelsBookingRouterPage.propTypes = {
   location: PropTypes.object,
   history: PropTypes.object,
-  match: PropTypes.object
+  match: PropTypes.object,
+
+  // Redux props
+  paymentInfo: PropTypes.object
 };
 
-export default withRouter(HotelsBookingRouterPage);
+const mapStateToProps = (state) => {
+  const { paymentInfo } = state;
+
+  return {
+    paymentInfo
+  };
+};
+
+export default withRouter(connect(mapStateToProps)(HotelsBookingRouterPage));
