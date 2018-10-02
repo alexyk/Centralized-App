@@ -136,10 +136,11 @@ class AirdropPage extends Component {
   }
 
   requestWithdraw() {
-    requester.withdrawTokensFromAirdrop().then(res => res.body).then(res => {
-      NotificationManager.info(WITHDRAW_REQUEST_SUCCESSFUL, '', LONG);
-      this.requestCheckIfUserHasIssuedWithdraw();
-    });
+    // requester.withdrawTokensFromAirdrop().then(res => res.body).then(res => {
+    //   NotificationManager.info(WITHDRAW_REQUEST_SUCCESSFUL, '', LONG);
+    //   this.requestCheckIfUserHasIssuedWithdraw();
+    // });
+    NotificationManager.info('Distribution will be enabled soon', '', LONG);
   }
 
   // componentDidUpdate(prevState) {
