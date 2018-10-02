@@ -98,15 +98,49 @@ class HotelsBookingRouterPage extends React.Component {
       });
   }
 
+  getReservationRoomsQueryString(queryStringParameters) {
+    const rooms = JSON.parse(queryStringParameters.rooms);
+    const pathname = this.props.location.pathname;
+    if (pathname === `/hotels/listings/book/${this.props.match.params.id}/confirm` ||
+      pathname === `/mobile/book/confirm/${this.props.match.params.id}`) {
+      rooms.forEach((room) => {
+        room.adults = room.adults.length;
+      });
+    }
+    let queryString = '?';
+    queryString += 'region=' + encodeURI(queryStringParameters.region);
+    queryString += '&currency=' + encodeURI(queryStringParameters.currency);
+    queryString += '&startDate=' + encodeURI(queryStringParameters.startDate);
+    queryString += '&endDate=' + encodeURI(queryStringParameters.endDate);
+    queryString += '&rooms=' + encodeURI(JSON.stringify(rooms));
+    return queryString;
+  }
+
   requestCreateReservation() {
-    const booking = this.getBooking(queryString.parse(this.props.location.search));
+    const query = queryString.parse(this.props.location.search);
+    const booking = this.getBooking(query);
     return requester.createReservation(booking).then(res => {
       return new Promise((resolve, reject) => {
         if (res.success) {
           res.body.then(reservation => {
-            this.setState({ reservation }, () => {
-              resolve(true);
-            });
+            const quoteBookingCandidate = { bookingId: reservation.preparedBookingId };
+            requester.quoteBooking(quoteBookingCandidate)
+              .then((res) => {
+                res.body.then(success => {
+                  if (success.is_successful_quoted) {
+                    this.setState({ reservation }, () => {
+                      resolve(true);
+                    });
+                  } else {
+                    const id = this.props.match.params.id;
+                    const isWebView = this.props.location.pathname.indexOf('/mobile') !== -1;
+                    const rootURL = !isWebView ? `/hotels/listings/${id}` : `/mobile/details/${id}`;
+
+                    const reservationRoomsQuery = this.getReservationRoomsQueryString(query);
+                    this.props.history.push(`${rootURL}${reservationRoomsQuery}`);
+                  }
+                });
+              });
           });
         } else {
           res.errors.then((res) => {

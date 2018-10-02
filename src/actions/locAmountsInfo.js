@@ -1,10 +1,10 @@
 import { locAmountsInfo } from './actionTypes';
 
-export function updateLocAmounts(fiatAmount, locAmount) {
+export function updateLocAmounts(fiatAmount, params) {
   return {
     type: locAmountsInfo.UPDATE_LOC_AMOUNTS,
     fiatAmount,
-    locAmount
+    params
   };
 }
 

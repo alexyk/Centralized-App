@@ -16,7 +16,12 @@ class LocPrice extends PureComponent {
     let fiatInEur;
 
     if (this.props.exchangeRatesInfo.currencyExchangeRates) {
-      fiatInEur = this.props.exchangeRatesInfo.currencyExchangeRates && CurrencyConverter.convert(this.props.exchangeRatesInfo.currencyExchangeRates, RoomsXMLCurrency.get(), DEFAULT_CRYPTO_CURRENCY, this.props.fiat);
+      if (this.props.fiat === 15) {
+        fiatInEur = this.props.fiat;
+      } else {
+        fiatInEur = this.props.exchangeRatesInfo.currencyExchangeRates && CurrencyConverter.convert(this.props.exchangeRatesInfo.currencyExchangeRates, RoomsXMLCurrency.get(), DEFAULT_CRYPTO_CURRENCY, this.props.fiat);
+      }
+
       LocPriceWebSocket.sendMessage(fiatInEur, this.props.method, Object.assign(this.props.params, { fiatAmount: fiatInEur }));
       isLocPriceRendered = true;
     }
@@ -40,7 +45,13 @@ class LocPrice extends PureComponent {
     }
 
     if (nextProps.exchangeRatesInfo.currencyExchangeRates && !this.state.isLocPriceRendered) {
-      const fiatInEur = nextProps.exchangeRatesInfo.currencyExchangeRates && CurrencyConverter.convert(nextProps.exchangeRatesInfo.currencyExchangeRates, RoomsXMLCurrency.get(), DEFAULT_CRYPTO_CURRENCY, this.props.fiat);
+      let fiatInEur;
+      if (this.props.fiat === 15) {
+        fiatInEur = this.props.fiat;
+      } else {
+        fiatInEur = nextProps.exchangeRatesInfo.currencyExchangeRates && CurrencyConverter.convert(nextProps.exchangeRatesInfo.currencyExchangeRates, RoomsXMLCurrency.get(), DEFAULT_CRYPTO_CURRENCY, this.props.fiat);
+      }
+
       LocPriceWebSocket.sendMessage(fiatInEur, this.props.method, Object.assign(this.props.params, { fiatAmount: fiatInEur }));
       this.setState({
         isLocPriceRendered: true,
@@ -104,7 +115,12 @@ function mapStateToProps(state, ownProps) {
 
   const { userInfo, exchangerSocketInfo, locAmountsInfo, exchangeRatesInfo, locPriceUpdateTimerInfo } = state;
 
-  const fiatInEur = exchangeRatesInfo.currencyExchangeRates && CurrencyConverter.convert(exchangeRatesInfo.currencyExchangeRates, RoomsXMLCurrency.get(), DEFAULT_CRYPTO_CURRENCY, fiat);
+  let fiatInEur;
+  if (fiat === 15) {
+    fiatInEur = fiat;
+  } else {
+    fiatInEur = exchangeRatesInfo.currencyExchangeRates && CurrencyConverter.convert(exchangeRatesInfo.currencyExchangeRates, RoomsXMLCurrency.get(), DEFAULT_CRYPTO_CURRENCY, fiat);
+  }
 
   let renderLocAmount;
   if (withTimer) {

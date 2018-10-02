@@ -117,7 +117,7 @@ class HotelsBookingPage extends React.Component {
 
     const { hotel, rooms, guests, exchangeRates } = this.props;
     const { handleAdultChange, handleChildAgeChange } = this.props;
-    const { currency, currencySign} = this.props.paymentInfo;
+    const { currency, currencySign } = this.props.paymentInfo;
     const city = hotel.city;
     const address = hotel.additionalInfo.mainAddress;
     const roomsTotalPrice = this.calculateRoomsTotalPrice(rooms);
@@ -239,12 +239,12 @@ HotelsBookingPage.propTypes = {
   exchangeRates: PropTypes.object,
   handleAdultChange: PropTypes.func,
   handleChildAgeChange: PropTypes.func,
-  
+
   // start Router props
   match: PropTypes.object,
   history: PropTypes.object,
   location: PropTypes.object,
-  
+
   // start Redux props
   dispatch: PropTypes.func,
   paymentInfo: PropTypes.object
