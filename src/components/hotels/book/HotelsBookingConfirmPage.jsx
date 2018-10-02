@@ -475,6 +475,8 @@ class HotelBookingConfirmPage extends React.Component {
 
     return (
       <React.Fragment>
+        <LocPriceUpdateTimer initialSeconds={10} />
+
         <div className="sm-none">
           <BookingSteps steps={['Provide Guest Information', 'Review Room Details', 'Confirm and Pay']} currentStepIndex={2} />
         </div>
@@ -527,7 +529,12 @@ class HotelBookingConfirmPage extends React.Component {
                       <p className="booking-card-price">
                         Pay with Credit Card: Current Market Price: <span className="important">{currencySign} {totalFiatPrice && (totalFiatPrice).toFixed(2)}</span>
                       </p>
-                      <button className="btn btn-primary" disabled={!testTotalFiatPrice} onClick={() => this.payWithCard(testFiatPriceRoomsXMLInEur, fiatPriceRoomsXMLInEur)}>Pay with Credit Card</button>
+                      <div className="price-update-timer" tooltip="Seconds until we update your quoted price">
+                        Market Price will update in <i className="fa fa-clock-o" aria-hidden="true"></i>&nbsp;{this.props.locPriceUpdateTimerInfo.seconds} sec &nbsp;
+                      </div>
+                      <div>
+                        <button className="btn btn-primary" disabled={!testTotalFiatPrice} onClick={() => this.payWithCard(testFiatPriceRoomsXMLInEur, fiatPriceRoomsXMLInEur)}>Pay with Credit Card</button>
+                      </div>
                     </div>
                     <div className="logos">
                       <div className="logos-row">
@@ -554,9 +561,9 @@ class HotelBookingConfirmPage extends React.Component {
                         <p style={{ color: 'red' }}>
                           <strong>Order Total: TEST Price: <LocPrice fiat={testFiatPriceRoomsXML} method="quoteLoc" params={{ bookingId: reservation.preparedBookingId }} brackets={false} withTimer /></strong>
                         </p>}
-                      <p>Order Total: <span className="important"><LocPrice fiat={fiatPriceRoomsXML}  method="quoteLoc" params={{ bookingId: reservation.preparedBookingId }} brackets={false} withTimer /></span></p>
+                      <p>Order Total: <span className="important"><LocPrice fiat={fiatPriceRoomsXML} brackets={false} withTimer /></span></p>
                       <div className="price-update-timer" tooltip="Seconds until we update your quoted price">
-                        LOC price will update in <i className="fa fa-clock-o" aria-hidden="true"></i>&nbsp;{<LocPriceUpdateTimer initialSeconds={10} />} sec &nbsp;
+                        LOC price will update in <i className="fa fa-clock-o" aria-hidden="true"></i>&nbsp;{this.props.locPriceUpdateTimerInfo.seconds} sec &nbsp;
                       </div>
                       <p>(Click <a href="">here</a> to learn how you can buy LOC directly to enjoy cheaper travel)</p>
                       {userConfirmedPaymentWithLOC
@@ -628,6 +635,7 @@ HotelBookingConfirmPage.propTypes = {
   locAmountsInfo: PropTypes.object,
   isLocPriceWebsocketConnected: PropTypes.bool,
   dynamicLocRatesInfo: PropTypes.object,
+  locPriceUpdateTimerInfo: PropTypes.object
 };
 
 function mapStateToProps(state) {
@@ -640,7 +648,8 @@ function mapStateToProps(state) {
       modalsInfo,
       currenciesRatesInfo,
       locAmountsInfo,
-      renderSafeChargeTotalPrices
+      renderSafeChargeTotalPrices,
+      locPriceUpdateTimerInfo
     };
   }
   return {
@@ -650,7 +659,8 @@ function mapStateToProps(state) {
     locAmountsInfo,
     renderSafeChargeTotalPrices,
     isLocPriceWebsocketConnected: exchangerSocketInfo.isLocPriceWebsocketConnected,
-    dynamicLocRatesInfo
+    dynamicLocRatesInfo,
+    locPriceUpdateTimerInfo
   };
 }
 

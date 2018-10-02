@@ -112,7 +112,7 @@ function mapStateToProps(state, ownProps) {
     renderLocAmount = locPriceUpdateTimerInfo.seconds === locPriceUpdateTimerInfo.initialSeconds;
   }
 
-  if (locAmountsInfo.locAmounts[fiatInEur]) {
+  if (locAmountsInfo.locAmounts[fiatInEur] && locAmountsInfo.locAmounts[fiatInEur].locAmount) {
     locAmount = (locAmountsInfo.locAmounts[fiatInEur].locAmount).toFixed(2);
   }
 
