@@ -2,7 +2,7 @@ import '../../styles/css/main.css';
 
 import { Redirect, Route, Switch, withRouter } from 'react-router-dom';
 import { setIsLogged, setUserInfo } from '../../actions/userInfo';
-import { setCurrencyRates, setLocEurRate } from '../../actions/ratesInfo';
+import { setCurrencyExchangeRates, setLocEurRate } from '../../actions/exchangeRatesInfo';
 
 import Balance from '../external/Balance';
 import BigCalendar from 'react-big-calendar';
@@ -49,7 +49,7 @@ class App extends React.Component {
     this.handleInternalAuthorization();
     this.handleExternalAuthorization();
 
-    this.requestRates();
+    this.requestExchangeRates();
     this.requestLocEurRate();
   }
 
@@ -106,10 +106,10 @@ class App extends React.Component {
     }
   }
 
-  requestRates() {
+  requestExchangeRates() {
     requester.getCurrencyRates().then(res => {
-      res.body.then(currenciesRates => {
-        this.props.dispatch(setCurrencyRates(currenciesRates));
+      res.body.then(currencyExchangeRates => {
+        this.props.dispatch(setCurrencyExchangeRates(currencyExchangeRates));
       });
     });
   }

@@ -19,21 +19,21 @@ class LocRate extends PureComponent {
     }
     if (nextProps.exchangerSocketInfo.isLocPriceWebsocketConnected && !this.isSendMessage) {
       this.isSendMessage = true;
-      LocPriceWebSocket.sendMessage(this.props.ratesInfo.locRateFiatAmount, null, { fiatAmount: this.props.ratesInfo.locRateFiatAmount });
+      LocPriceWebSocket.sendMessage(this.props.exchangeRatesInfo.locRateFiatAmount, null, { fiatAmount: this.props.exchangeRatesInfo.locRateFiatAmount });
     }
   }
 
   componentWillUnmount() {
-    LocPriceWebSocket.sendMessage(this.props.ratesInfo.locRateFiatAmount, 'unsubscribe');
+    LocPriceWebSocket.sendMessage(this.props.exchangeRatesInfo.locRateFiatAmount, 'unsubscribe');
   }
 
   render() {
-    const { paymentInfo, ratesInfo, locAmountsInfo } = this.props;
+    const { paymentInfo, exchangeRatesInfo, locAmountsInfo } = this.props;
     
-    const fiat = ratesInfo.currenciesRates && CurrencyConverter.convert(ratesInfo.currenciesRates, DEFAULT_CRYPTO_CURRENCY, paymentInfo.currency, this.props.ratesInfo.locRateFiatAmount);
-    let locAmount = locAmountsInfo.locAmounts[ratesInfo.locRateFiatAmount] && locAmountsInfo.locAmounts[ratesInfo.locRateFiatAmount].locAmount;
+    const fiat = exchangeRatesInfo.currencyExchangeRates && CurrencyConverter.convert(exchangeRatesInfo.currencyExchangeRates, DEFAULT_CRYPTO_CURRENCY, paymentInfo.currency, this.props.exchangeRatesInfo.locRateFiatAmount);
+    let locAmount = locAmountsInfo.locAmounts[exchangeRatesInfo.locRateFiatAmount] && locAmountsInfo.locAmounts[exchangeRatesInfo.locRateFiatAmount].locAmount;
     if (!locAmount) {
-      locAmount = ratesInfo.locRateFiatAmount / ratesInfo.locEurRate;
+      locAmount = exchangeRatesInfo.locRateFiatAmount / exchangeRatesInfo.locEurRate;
     }
 
     let locRate = fiat / locAmount;
@@ -56,16 +56,16 @@ LocRate.propTypes = {
 
   // Redux props
   exchangerSocketInfo: PropTypes.object,
-  ratesInfo: PropTypes.object,
+  exchangeRatesInfo: PropTypes.object,
   locAmountsInfo: PropTypes.object
 };
 
 function mapStateToProps(state) {
-  const { exchangerSocketInfo, ratesInfo, locAmountsInfo } = state;
+  const { exchangerSocketInfo, exchangeRatesInfo, locAmountsInfo } = state;
 
   return {
     exchangerSocketInfo,
-    ratesInfo,
+    exchangeRatesInfo,
     locAmountsInfo
   };
 }
