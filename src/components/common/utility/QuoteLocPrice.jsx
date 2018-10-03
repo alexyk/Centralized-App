@@ -17,6 +17,7 @@ class QuoteLocPrice extends PureComponent {
     super(props);
 
     this.isQuoteLocRendered = false;
+    this.quoteLocSendAttempts = 0;
 
     this.sendWebsocketMessage(null, null, this.props.params);
 
@@ -49,15 +50,24 @@ class QuoteLocPrice extends PureComponent {
     LocPriceWebSocket.sendMessage(id || DEFAULT_QUOTE_LOC_ID, method || DEFAULT_QUOTE_LOC_METHOD, params);
   }
 
+  redirectToHotelDetailsPage() {
+    NotificationManager.warning(this.props.quoteLocError, '', LONG);
+    this.props.redirectToHotelDetailsPage();
+  }
+
   render() {
     if (!this.isQuoteLocRendered && this.state.locAmount) {
       this.isQuoteLocRendered = true;
     }
     if (!this.isQuoteLocRendered && this.props.quoteLocError) {
-      this.sendWebsocketMessage(null, null, this.props.params);
+      if (this.quoteLocSendAttempts === 10) {
+        this.redirectToHotelDetailsPage();
+      } else {
+        this.quoteLocSendAttempts += 1;
+        this.sendWebsocketMessage(null, null, this.props.params);
+      }
     } else if (this.isQuoteLocRendered && this.props.quoteLocError) {
-      NotificationManager.warning(this.props.quoteLocError, '', LONG);
-      this.props.redirectToHotelDetailsPage();
+      this.redirectToHotelDetailsPage();
     }
     const isLogged = this.props.userInfo.isLogged;
     const { brackets } = this.props;
@@ -121,7 +131,7 @@ function mapStateToProps(state, ownProps) {
     if (fiat === 15) {
       fiatInEur = fiat;
     } else {
-      fiatInEur = exchangeRatesInfo.currencyExchangeRates && CurrencyConverter.convert(exchangeRatesInfo.currencyExchangeRates, RoomsXMLCurrency.get(),   DEFAULT_CRYPTO_CURRENCY, fiat);
+      fiatInEur = exchangeRatesInfo.currencyExchangeRates && CurrencyConverter.convert(exchangeRatesInfo.currencyExchangeRates, RoomsXMLCurrency.get(), DEFAULT_CRYPTO_CURRENCY, fiat);
     }
 
     locAmount = (fiatInEur / exchangeRatesInfo.locEurRate).toFixed(2);
