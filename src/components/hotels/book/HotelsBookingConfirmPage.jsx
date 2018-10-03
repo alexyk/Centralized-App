@@ -93,7 +93,7 @@ class HotelBookingConfirmPage extends React.Component {
     return `hotels/listings/${id}?region=${queryParams.region}&currency=${currency}&startDate=${queryParams.startDate}&endDate=${queryParams.endDate}&rooms=${rooms}`;
   }
 
-  payWithCard() {
+  payWithCard(roundedFiatPrice) {
     const { reservation } = this.props;
     const { currency } = this.props.paymentInfo;
     const { locAmounts } = this.props.locAmountsInfo;
@@ -102,7 +102,7 @@ class HotelBookingConfirmPage extends React.Component {
     let locAmount;
     let quotedPair;
 
-    fiatAmount = this.state.roundedFiatPrice;
+    fiatAmount = roundedFiatPrice;
     locAmount = locAmounts[DEFAULT_QUOTE_LOC_ID].quotedLoc;
     quotedPair = locAmounts[DEFAULT_QUOTE_LOC_ID].quotedPair;
 
@@ -442,7 +442,7 @@ class HotelBookingConfirmPage extends React.Component {
 
     const fiatPriceRoomsXML = reservation.fiatPrice;
     const fiatPriceRoomsXMLInEur = currencyExchangeRates && CurrencyConverter.convert(currencyExchangeRates, RoomsXMLCurrency.get(), DEFAULT_CRYPTO_CURRENCY, fiatPriceRoomsXML);
-    
+
     const roundedFiatPrice = currencyExchangeRates && locAmounts[DEFAULT_QUOTE_LOC_ID] && CurrencyConverter.convert(currencyExchangeRates, DEFAULT_CRYPTO_CURRENCY, currency, locAmounts[DEFAULT_QUOTE_LOC_ID].roundedLocInEur);
 
     return (
@@ -501,7 +501,7 @@ class HotelBookingConfirmPage extends React.Component {
                           Market Price will update in <i className="fa fa-clock-o" aria-hidden="true"></i>&nbsp;{this.props.locPriceUpdateTimerInfo.seconds} sec &nbsp;
                         </div>
                         <div>
-                          <button className="btn btn-primary" disabled={!roundedFiatPrice} onClick={() => this.payWithCard()}>Pay with Credit Card</button>
+                          <button className="btn btn-primary" disabled={!roundedFiatPrice} onClick={() => this.payWithCard(roundedFiatPrice)}>Pay with Credit Card</button>
                         </div>
                       </div>
                       <div className="logos">
