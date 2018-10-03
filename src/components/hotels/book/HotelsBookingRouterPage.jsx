@@ -28,7 +28,8 @@ class HotelsBookingRouterPage extends React.Component {
       guests: [],
       reservation: null,
       hotelsRooms: [],
-      roomSearchQuote: []
+      roomSearchQuote: [],
+      isQuoteLocValid: false
     };
 
     this.requestHotel = this.requestHotel.bind(this);
@@ -44,6 +45,7 @@ class HotelsBookingRouterPage extends React.Component {
     this.getCleanQueryString = this.getCleanQueryString.bind(this);
     this.handleAdultChange = this.handleAdultChange.bind(this);
     this.handleChildAgeChange = this.handleChildAgeChange.bind(this);
+    this.invalidateQuoteLoc = this.invalidateQuoteLoc.bind(this);
   }
 
   componentDidMount() {
@@ -129,7 +131,7 @@ class HotelsBookingRouterPage extends React.Component {
               .then((res) => {
                 res.body.then(success => {
                   if (success.is_successful_quoted) {
-                    this.setState({ reservation }, () => {
+                    this.setState({ reservation, isQuoteLocValid: success.is_successful_quoted }, () => {
                       resolve(true);
                     });
                   } else {
@@ -157,6 +159,12 @@ class HotelsBookingRouterPage extends React.Component {
           });
         }
       });
+    });
+  }
+
+  invalidateQuoteLoc() {
+    this.setState({
+      isQuoteLocValid: false
     });
   }
 
@@ -381,7 +389,7 @@ class HotelsBookingRouterPage extends React.Component {
       <Fragment>
         <Switch>
           <Route exact path="/hotels/listings/book/:id/profile" render={() => <ConfirmProfilePage requestLockOnQuoteId={this.requestLockOnQuoteId} />} />
-          <Route exact path="/hotels/listings/book/:id/confirm" render={() => <HotelsBookingConfirmPage reservation={reservation} userInfo={userInfo} requestLockOnQuoteId={this.requestLockOnQuoteId} requestCreateReservation={this.requestCreateReservation} />} />
+          <Route exact path="/hotels/listings/book/:id/confirm" render={() => <HotelsBookingConfirmPage reservation={reservation} userInfo={userInfo} isQuoteLocValid={this.state.isQuoteLocValid} requestLockOnQuoteId={this.requestLockOnQuoteId} requestCreateReservation={this.requestCreateReservation} invalidateQuoteLoc={this.invalidateQuoteLoc} redirectToHotelDetailsPage={this.redirectToHotelDetailsPage} />} />
           <Route exact path="/hotels/listings/book/:id" render={() => <HotelsBookingPage hotel={hotel} rooms={rooms} quoteId={quoteId} guests={guests} exchangeRates={exchangeRates} handleAdultChange={this.handleAdultChange} handleChildAgeChange={this.handleChildAgeChange} />} />
         </Switch>
       </Fragment>
