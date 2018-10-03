@@ -33,7 +33,7 @@ class HotelsBookingRouterPage extends React.Component {
 
     this.requestHotel = this.requestHotel.bind(this);
     this.requestUserInfo = this.requestUserInfo.bind(this);
-    this.requestCurrencyRates = this.requestCurrencyRates.bind(this);
+    this.requestCurrencyExchangeRates = this.requestCurrencyExchangeRates.bind(this);
     this.requestCreateReservation = this.requestCreateReservation.bind(this);
 
     this.setQuoteIdPollingInterval = this.setQuoteIdPollingInterval.bind(this);
@@ -57,7 +57,7 @@ class HotelsBookingRouterPage extends React.Component {
       });
     this.setQuoteIdPollingInterval();
     this.requestUpdateOnQuoteId();
-    this.requestCurrencyRates();
+    this.requestCurrencyExchangeRates();
     this.getGuestsFromSearchString().then(() => {
       this.requestUserInfo();
     });
@@ -119,14 +119,25 @@ class HotelsBookingRouterPage extends React.Component {
   }
 
   requestCreateReservation() {
-    const booking = this.getBooking(queryString.parse(this.props.location.search));
+    const query = queryString.parse(this.props.location.search);
+    const booking = this.getBooking(query);
     return requester.createReservation(booking).then(res => {
       return new Promise((resolve, reject) => {
         if (res.success) {
           res.body.then(reservation => {
-            this.setState({ reservation }, () => {
-              resolve(true);
-            });
+            const quoteBookingCandidate = { bookingId: reservation.preparedBookingId };
+            requester.quoteBooking(quoteBookingCandidate)
+              .then((res) => {
+                res.body.then(success => {
+                  if (success.is_successful_quoted) {
+                    this.setState({ reservation }, () => {
+                      resolve(true);
+                    });
+                  } else {
+                    this.redirectToHotelDetailsPage();
+                  }
+                });
+              });
           });
         } else {
           res.errors.then((res) => {
@@ -150,10 +161,10 @@ class HotelsBookingRouterPage extends React.Component {
     });
   }
 
-  requestCurrencyRates() {
+  requestCurrencyExchangeRates() {
     requester.getCurrencyRates().then(res => {
-      res.body.then(rates => {
-        this.setState({ rates: rates });
+      res.body.then(exchangeRates => {
+        this.setState({ exchangeRates });
       });
     });
   }
@@ -358,13 +369,13 @@ class HotelsBookingRouterPage extends React.Component {
   }
 
   render() {
-    const { hotel, rooms, guests, quoteId, userInfo, rates, reservation } = this.state;
+    const { hotel, rooms, guests, quoteId, userInfo, exchangeRates, reservation } = this.state;
     return (
       <Fragment>
         <Switch>
           <Route exact path="/hotels/listings/book/:id/profile" render={() => <ConfirmProfilePage requestLockOnQuoteId={this.requestLockOnQuoteId} />} />
           <Route exact path="/hotels/listings/book/:id/confirm" render={() => <HotelsBookingConfirmPage reservation={reservation} userInfo={userInfo} requestLockOnQuoteId={this.requestLockOnQuoteId} requestCreateReservation={this.requestCreateReservation} />} />
-          <Route exact path="/hotels/listings/book/:id" render={() => <HotelsBookingPage hotel={hotel} rooms={rooms} quoteId={quoteId} guests={guests} rates={rates} handleAdultChange={this.handleAdultChange} handleChildAgeChange={this.handleChildAgeChange} />} />
+          <Route exact path="/hotels/listings/book/:id" render={() => <HotelsBookingPage hotel={hotel} rooms={rooms} quoteId={quoteId} guests={guests} exchangeRates={exchangeRates} handleAdultChange={this.handleAdultChange} handleChildAgeChange={this.handleChildAgeChange} />} />
         </Switch>
       </Fragment>
     );

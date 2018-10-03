@@ -143,7 +143,7 @@ function HotelDetailsInfoSection(props) {
                               <div key={roomIndex} className="room">
                                 <span>{room.name} ({room.mealType}) - </span>
                                 {props.userInfo.isLogged &&
-                                  <span>{props.currencySign}{props.rates && Number((CurrencyConverter.convert(props.rates, roomsXMLCurrency, currency, room.price)) / props.nights).toFixed(2)} </span>
+                                  <span>{props.currencySign}{props.exchangeRates && Number((CurrencyConverter.convert(props.exchangeRates, roomsXMLCurrency, currency, room.price)) / props.nights).toFixed(2)} </span>
                                 }
                                 <LocPrice fiat={room.price / props.nights} />
                                 / night
@@ -157,7 +157,7 @@ function HotelDetailsInfoSection(props) {
                           <span className="price-details">
                             <span>{props.nights} {props.nights === 1 ? 'night: ' : 'nights: '}</span>
                             {props.userInfo.isLogged &&
-                              <span>{props.currencySign}{props.rates && Number(CurrencyConverter.convert(props.rates, roomsXMLCurrency, currency, getTotalPrice(results[0].roomsResults))).toFixed(2)} </span>
+                              <span>{props.currencySign}{props.exchangeRates && Number(CurrencyConverter.convert(props.exchangeRates, roomsXMLCurrency, currency, getTotalPrice(results[0].roomsResults))).toFixed(2)} </span>
                             }
                             <LocPrice fiat={getTotalPrice(results[0].roomsResults)} />
                           </span>
@@ -212,7 +212,7 @@ HotelDetailsInfoSection.propTypes = {
   handleBookRoom: PropTypes.func,
   loadingRooms: PropTypes.bool,
   currencySign: PropTypes.string,
-  rates: PropTypes.object,
+  exchangeRates: PropTypes.object,
 
   // Redux props
   paymentInfo: PropTypes.object,

@@ -58,7 +58,7 @@ class HotelDetailsPage extends React.Component {
 
     this.requestHotel = this.requestHotel.bind(this);
     this.requestHotelRooms = this.requestHotelRooms.bind(this);
-    this.requestCurrencyRates = this.requestCurrencyRates.bind(this);
+    this.requestCurrencyExchangeRates = this.requestCurrencyExchangeRates.bind(this);
     this.setSearchInfoFromURL = this.setSearchInfoFromURL.bind(this);
     this.handleApply = this.handleApply.bind(this);
     this.closeLightbox = this.closeLightbox.bind(this);
@@ -80,7 +80,7 @@ class HotelDetailsPage extends React.Component {
 
     this.requestHotel();
     this.requestHotelRooms();
-    this.requestCurrencyRates();
+    this.requestCurrencyExchangeRates();
   }
 
   setSearchInfoFromURL() {
@@ -139,10 +139,10 @@ class HotelDetailsPage extends React.Component {
     return null;
   }
 
-  requestCurrencyRates() {
+  requestCurrencyExchangeRates() {
     requester.getCurrencyRates().then(res => {
       res.body.then(data => {
-        this.setState({ rates: data });
+        this.setState({ exchangeRates: data });
       });
     });
   }
@@ -512,7 +512,7 @@ class HotelDetailsPage extends React.Component {
               endDate={this.state.calendarEndDate}
               hotel={this.state.hotel}
               hotelRooms={this.state.hotelRooms}
-              rates={this.state.rates}
+              exchangeRates={this.state.exchangeRates}
               loading={this.state.loading}
               currencySign={this.props.paymentInfo.currencySign}
               handleBookRoom={this.handleBookRoom}

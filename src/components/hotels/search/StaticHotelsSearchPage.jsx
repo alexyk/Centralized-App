@@ -94,7 +94,7 @@ class StaticHotelsSearchPage extends React.Component {
   componentDidMount() {
     requester.getCurrencyRates().then(res => {
       res.body.then(data => {
-        this.setState({ rates: data });
+        this.setState({ exchangeRates: data });
       });
     });
 
@@ -656,7 +656,7 @@ class StaticHotelsSearchPage extends React.Component {
                           lon={this.state.lon}
                           hotels={hotels}
                           mapInfo={this.state.mapInfo}
-                          rates={this.state.rates}
+                          exchangeRates={this.state.exchangeRates}
                           isLogged={this.props.userInfo.isLogged}
                           nights={this.state.nights}
                           loading={this.state.loading}
@@ -669,7 +669,7 @@ class StaticHotelsSearchPage extends React.Component {
                         : <ResultsHolder
                           hotels={hotels}
                           allElements={this.state.allElements}
-                          rates={this.state.rates}
+                          exchangeRates={this.state.exchangeRates}
                           nights={this.state.nights}
                           loading={this.state.loading}
                         />

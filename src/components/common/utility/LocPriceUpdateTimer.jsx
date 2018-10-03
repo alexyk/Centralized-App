@@ -28,7 +28,7 @@ class LocPriceUpdateTimer extends PureComponent {
   }
 
   render() {
-    return <Fragment>{this.props.seconds}</Fragment>;
+    return null;
   }
 }
 
