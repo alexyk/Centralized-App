@@ -26,7 +26,7 @@ class LocPriceWS extends WS {
   handleRecieveMessage(event) {
     if (event) {
       const data = JSON.parse(event.data);
-      store.dispatch(updateLocAmounts(data.id, data.params));
+      store.dispatch(updateLocAmounts(data.id, data.params, data.error));
     }
   }
 
