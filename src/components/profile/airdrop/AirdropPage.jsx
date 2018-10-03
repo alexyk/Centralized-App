@@ -64,6 +64,7 @@ class AirdropPage extends Component {
     this._getTooLateVerifiedStatus = this._getTooLateVerifiedStatus.bind(this);
     this._getUnverifiedStatus = this._getUnverifiedStatus.bind(this);
     this._getFailedStatus = this._getFailedStatus.bind(this);
+    this._getFailedSocialStatus = this._getFailedSocialStatus.bind(this);
     this._getIncompleteStatus = this._getIncompleteStatus.bind(this);
   }
 
@@ -336,6 +337,8 @@ class AirdropPage extends Component {
         return this._getTooLateVerifiedStatus();
       case 'FAILED':
         return this._getFailedStatus();
+      case 'FAILED_SOCIAL':
+        return this._getFailedSocialStatus();
       case 'INCOMPLETE':
         return this._getIncompleteStatus();
       default:
@@ -359,23 +362,27 @@ class AirdropPage extends Component {
   }
 
   _getVerifiedWithIncompleteReferrals() {
-    return [
-      <div className="balance-row__label">
-        <span className="step-check checked" style={{ "margin-top": "3.5em" }}></span>
-        <span className="emphasized-text">Your status has been verified, however your referrals might be subjected to additional verification checks which might affect your final balance.</span>
-      </div>,
-      <div className="balance-row__content centered-balance">${Math.max(10, this.props.airdropInfo.referralCount * 5 + 10)}</div>
-    ];
+    return (
+      <React.Fragment>
+        <div className="balance-row__label">
+          <span className="step-check checked" style={{ "margin-top": "3.5em" }}></span>
+          <span className="emphasized-text">Your status has been verified, however your referrals might be subjected to additional verification checks which might affect your final balance.</span>
+        </div>,
+        <div className="balance-row__content centered-balance">${Math.max(10, this.props.airdropInfo.referralCount * 5 + 10)}</div>
+      </React.Fragment>
+    );
   }
 
   _getTooLateVerifiedStatus() {
-    return [
-      <div className="balance-row__label">
-        <span className="step-check checked" style={{ "margin-top": "3.5em" }}></span>
-        <span className="emphasized-text">Your balance is verified as $0, because the airdrop has been finalized in your country prior to the moment you had joined and  because you have not referred any other people. For more info, <a href="https://medium.com/@LockChainCo/participating-in-the-loc-airdrop-from-a-country-where-the-airdrop-has-been-finalized-621fd7f7a78b" target="_blank" rel='noreferrer noopener' className="referral-url"><u>read this post</u></a>. </span>
-      </div>,
-      <div className="balance-row__content centered-balance">$0</div>
-    ];
+    return (
+      <React.Fragment>
+        <div className="balance-row__label">
+          <span className="step-check checked" style={{ "margin-top": "3.5em" }}></span>
+          <span className="emphasized-text">Your balance is verified as $0, because the airdrop has been finalized in your country prior to the moment you had joined and  because you have not referred any other people. For more info, <a href="https://medium.com/@LockChainCo/participating-in-the-loc-airdrop-from-a-country-where-the-airdrop-has-been-finalized-621fd7f7a78b" target="_blank" rel='noreferrer noopener' className="referral-url"><u>read this post</u></a>. </span>
+        </div>,
+        <div className="balance-row__content centered-balance">$0</div>
+      </React.Fragment>
+    );
   }
 
   _getUnverifiedStatus() {
@@ -388,29 +395,47 @@ class AirdropPage extends Component {
   }
 
   _getFailedStatus() {
-    return [
-      <div className="balance-row__label">
-        <span className="step-check unchecked" style={{ "margin-top": "1.5em" }}></span>
-        <span className="mandatory">
-          Duplicate accounting/multi accounting has been detected. As a result your balance has been voided.
-        </span>
-      </div>,
-      <div className="balance-row__content centered-balance">$0</div>
-    ];
+    return (
+      <React.Fragment>
+        <div className="balance-row__label">
+          <span className="step-check unchecked" style={{ "margin-top": "1.5em" }}></span>
+          <span className="mandatory">
+            Duplicate accounting/multi accounting has been detected. As a result your balance has been voided.
+          </span>
+        </div>
+        <div className="balance-row__content centered-balance">$0</div>
+      </React.Fragment>
+    );
+  }
+
+  _getFailedSocialStatus() {
+    return (
+      <React.Fragment>
+        <div className="balance-row__label">
+          <span className="step-check unchecked" style={{ "margin-top": "1.5em" }}></span>
+          <span className="mandatory">
+            Your account has failed our social joins verification.
+          </span>
+        </div>
+        <div className="balance-row__content centered-balance">$0</div>
+      </React.Fragment>
+    );
   }
 
   _getIncompleteStatus() {
-    return [
-      <div className="balance-row__label">
-        <span className="step-check unchecked" style={{ "margin-top": "3.5em" }}></span>
-        <span className="mandatory">
-          Our checks indicate that you have not completed all social joins.
-          Please make sure you have joined our telegram, followed us on Twitter and Facebook.<br />
-          For more info, please <a href="https://medium.com/@LockChainCo/how-to-fix-social-joins-requirement-ea31b6e31801" target="_blank" rel='noreferrer noopener' className="referral-url"><u>read this post</u></a>.
-        </span>
-      </div>,
-      <div className="balance-row__content centered-balance">$0</div>
-    ];
+    return (
+      <React.Fragment>
+        <div className="balance-row__label">
+          <span className="step-check unchecked" style={{ "margin-top": "3.5em" }}></span>
+          <span className="mandatory">
+            Our checks indicate that you have not completed all social joins.
+            Please make sure you have joined our telegram, followed us on Twitter and Facebook.<br />
+            For more info, please <a href="https://medium.com/@LockChainCo/how-to-fix-social-joins-requirement-ea31b6e31801" target="_blank" rel='noreferrer noopener' className="referral-url"><u>read this post</u></a>.
+          </span>
+        </div>,
+        <div className="balance-row__content centered-balance">$0</div>
+      </React.Fragment>
+    );
   }
 
   render() {
