@@ -16,8 +16,10 @@ class QuoteLocPrice extends PureComponent {
   constructor(props) {
     super(props);
 
+    this.isQuoteLocRendered = false;
+
     this.sendWebsocketMessage(null, null, this.props.params);
-    
+
     this.state = {
       locAmount: null,
     };
@@ -48,7 +50,12 @@ class QuoteLocPrice extends PureComponent {
   }
 
   render() {
-    if (this.props.quoteLocError) {
+    if (!this.isQuoteLocRendered && this.state.locAmount) {
+      this.isQuoteLocRendered = true;
+    }
+    if (!this.isQuoteLocRendered && this.props.quoteLocError) {
+      this.sendWebsocketMessage(null, null, this.props.params);
+    } else if (this.isQuoteLocRendered && this.props.quoteLocError) {
       NotificationManager.warning(this.props.quoteLocError, '', LONG);
       this.props.redirectToHotelDetailsPage();
     }
