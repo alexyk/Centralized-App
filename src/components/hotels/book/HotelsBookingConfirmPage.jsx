@@ -16,6 +16,7 @@ import requester from '../../../requester';
 import WalletPasswordModal from '../../common/modals/WalletPasswordModal';
 import BookingSteps from '../../common/utility/BookingSteps';
 import LocPrice from '../../common/utility/LocPrice';
+import QuoteLocPrice from '../../common/utility/QuoteLocPrice';
 import LocPriceUpdateTimer from '../../common/utility/LocPriceUpdateTimer';
 import { closeModal, openModal } from '../../../actions/modalsInfo.js';
 import { setCurrency } from '../../../actions/paymentInfo';
@@ -28,6 +29,7 @@ import '../../../styles/css/components/hotels/book/hotel-booking-confirm-page.cs
 const ERROR_MESSAGE_TIME = 20000;
 const DEFAULT_CRYPTO_CURRENCY = 'EUR';
 const TEST_FIAT_AMOUNT_IN_EUR = 15;
+const DEFAULT_QUOTE_LOC_ID = 'quote';
 
 class HotelBookingConfirmPage extends React.Component {
   constructor(props) {
@@ -67,20 +69,6 @@ class HotelBookingConfirmPage extends React.Component {
       const fiatPriceRoomsXMLInEur = currencyExchangeRates && CurrencyConverter.convert(currencyExchangeRates, RoomsXMLCurrency.get(), DEFAULT_CRYPTO_CURRENCY, fiatPriceRoomsXML);
       this.props.dispatch(setLocRateFiatAmount(fiatPriceRoomsXMLInEur));
     }
-    if (nextProps.renderSafeChargeTotalPrices !== this.props.renderSafeChargeTotalPrices || nextProps.paymentInfo.currency !== this.props.paymentInfo.currency) {
-      const { currencyExchangeRates } = nextProps.exchangeRatesInfo;
-      const { currency } = nextProps.paymentInfo;
-      const { locAmounts } = nextProps.locAmountsInfo;
-
-      const fiatPriceRoomsXML = nextProps.reservation.fiatPrice;
-      const fiatPriceRoomsXMLInEur = currencyExchangeRates && CurrencyConverter.convert(currencyExchangeRates, RoomsXMLCurrency.get(), DEFAULT_CRYPTO_CURRENCY, fiatPriceRoomsXML);
-
-      const roundedFiatPrice = currencyExchangeRates && locAmounts[TEST_FIAT_AMOUNT_IN_EUR] && CurrencyConverter.convert(currencyExchangeRates, DEFAULT_CRYPTO_CURRENCY, currency, locAmounts[TEST_FIAT_AMOUNT_IN_EUR].roundedLocInEur);
-
-      this.setState({
-        roundedFiatPrice,
-      });
-    }
   }
 
   componentWillUnmount() {
@@ -105,7 +93,7 @@ class HotelBookingConfirmPage extends React.Component {
     return `hotels/listings/${id}?region=${queryParams.region}&currency=${currency}&startDate=${queryParams.startDate}&endDate=${queryParams.endDate}&rooms=${rooms}`;
   }
 
-  payWithCard(testFiatPriceInEur, fiatPriceRoomsXMLInEur) {
+  payWithCard() {
     const { reservation } = this.props;
     const { currency } = this.props.paymentInfo;
     const { locAmounts } = this.props.locAmountsInfo;
@@ -115,8 +103,8 @@ class HotelBookingConfirmPage extends React.Component {
     let quotedPair;
 
     fiatAmount = this.state.roundedFiatPrice;
-    locAmount = locAmounts[TEST_FIAT_AMOUNT_IN_EUR].quotedLoc;
-    quotedPair = locAmounts[TEST_FIAT_AMOUNT_IN_EUR].quotedPair;
+    locAmount = locAmounts[DEFAULT_QUOTE_LOC_ID].quotedLoc;
+    quotedPair = locAmounts[DEFAULT_QUOTE_LOC_ID].quotedPair;
 
     const paymentInfo = {
       fiatAmount,
@@ -127,7 +115,7 @@ class HotelBookingConfirmPage extends React.Component {
       backUrl: this.createBackUrl(),
     };
 
-    LocPriceWebSocket.sendMessage(TEST_FIAT_AMOUNT_IN_EUR, 'approveQuote', { bookingId: reservation.preparedBookingId });
+    LocPriceWebSocket.sendMessage(DEFAULT_QUOTE_LOC_ID, 'approveQuote', { bookingId: reservation.preparedBookingId });
 
     const id = this.props.match.params.id;
     const isWebView = this.props.location.pathname.indexOf('/mobile') !== -1;
@@ -229,16 +217,16 @@ class HotelBookingConfirmPage extends React.Component {
     return wei;
   }
 
-  payWithLocSingleWithdrawer(testFiatPriceInEur, fiatPriceRoomsXMLInEur) {
+  payWithLocSingleWithdrawer() {
     this.props.requestLockOnQuoteId().then(() => {
       const { password } = this.state;
       const { reservation } = this.props;
       const { locAmounts } = this.props.locAmountsInfo;
       const preparedBookingId = reservation.preparedBookingId;
 
-      const locAmount = (locAmounts[TEST_FIAT_AMOUNT_IN_EUR] && locAmounts[TEST_FIAT_AMOUNT_IN_EUR].locAmount) || TEST_FIAT_AMOUNT_IN_EUR / this.props.exchangeRatesInfo.locEurRate;
+      const locAmount = (locAmounts[DEFAULT_QUOTE_LOC_ID] && locAmounts[DEFAULT_QUOTE_LOC_ID].locAmount) || DEFAULT_QUOTE_LOC_ID / this.props.exchangeRatesInfo.locEurRate;
 
-      LocPriceWebSocket.sendMessage(TEST_FIAT_AMOUNT_IN_EUR, 'approveQuote', { bookingId: preparedBookingId });
+      LocPriceWebSocket.sendMessage(DEFAULT_QUOTE_LOC_ID, 'approveQuote', { bookingId: preparedBookingId });
 
       const wei = (this.tokensToWei(locAmount.toString()));
       // console.log(wei);
@@ -443,16 +431,19 @@ class HotelBookingConfirmPage extends React.Component {
     }
 
     const { reservation } = this.props;
-    const { userConfirmedPaymentWithLOC, password, roundedFiatPrice } = this.state;
+    const { userConfirmedPaymentWithLOC, password } = this.state;
     const hasLocAddress = !!this.props.userInfo.locAddress;
     const { currencyExchangeRates } = this.props.exchangeRatesInfo;
     const isMobile = this.props.location.pathname.indexOf('/mobile') !== -1;
 
     const booking = reservation && reservation.booking.hotelBooking;
     const { currency, currencySign } = this.props.paymentInfo;
+    const { locAmounts } = this.props.locAmountsInfo;
 
     const fiatPriceRoomsXML = reservation.fiatPrice;
     const fiatPriceRoomsXMLInEur = currencyExchangeRates && CurrencyConverter.convert(currencyExchangeRates, RoomsXMLCurrency.get(), DEFAULT_CRYPTO_CURRENCY, fiatPriceRoomsXML);
+    
+    const roundedFiatPrice = currencyExchangeRates && locAmounts[DEFAULT_QUOTE_LOC_ID] && CurrencyConverter.convert(currencyExchangeRates, DEFAULT_CRYPTO_CURRENCY, currency, locAmounts[DEFAULT_QUOTE_LOC_ID].roundedLocInEur);
 
     return (
       <React.Fragment>
@@ -508,9 +499,9 @@ class HotelBookingConfirmPage extends React.Component {
                         </p>
                         <div className="price-update-timer" tooltip="Seconds until we update your quoted price">
                           Market Price will update in <i className="fa fa-clock-o" aria-hidden="true"></i>&nbsp;{this.props.locPriceUpdateTimerInfo.seconds} sec &nbsp;
-                      </div>
+                        </div>
                         <div>
-                          <button className="btn btn-primary" disabled={!roundedFiatPrice} onClick={() => this.payWithCard(TEST_FIAT_AMOUNT_IN_EUR, fiatPriceRoomsXMLInEur)}>Pay with Credit Card</button>
+                          <button className="btn btn-primary" disabled={!roundedFiatPrice} onClick={() => this.payWithCard()}>Pay with Credit Card</button>
                         </div>
                       </div>
                       <div className="logos">
@@ -530,7 +521,7 @@ class HotelBookingConfirmPage extends React.Component {
                   <div className="payment-methods-loc">
                     <div className="details">
                       <p>Pay Directly With LOC: <span className="important">{currencySign}{currencyExchangeRates && fiatPriceRoomsXML && (CurrencyConverter.convert(currencyExchangeRates, DEFAULT_CRYPTO_CURRENCY, currency, TEST_FIAT_AMOUNT_IN_EUR)).toFixed(2)}</span></p>
-                      <p>Order Total: <span className="important"><LocPrice fiat={TEST_FIAT_AMOUNT_IN_EUR} method="quoteLoc" params={{ bookingId: reservation.preparedBookingId }} brackets={false} withTimer /></span></p>
+                      <p>Order Total: <span className="important">{this.props.isQuoteLocValid && <QuoteLocPrice fiat={TEST_FIAT_AMOUNT_IN_EUR} params={{ bookingId: reservation.preparedBookingId }} brackets={false} withTimer invalidateQuoteLoc={this.props.invalidateQuoteLoc} redirectToHotelDetailsPage={this.props.redirectToHotelDetailsPage} />}</span></p>
                       <div className="price-update-timer" tooltip="Seconds until we update your quoted price">
                         LOC price will update in <i className="fa fa-clock-o" aria-hidden="true"></i>&nbsp;{this.props.locPriceUpdateTimerInfo.seconds} sec &nbsp;
                       </div>
@@ -571,7 +562,7 @@ class HotelBookingConfirmPage extends React.Component {
             isActive={this.props.modalsInfo.isActive[PASSWORD_PROMPT]}
             text={'Enter your wallet password'}
             placeholder={'Wallet password'}
-            handleSubmit={() => this.payWithLocSingleWithdrawer(TEST_FIAT_AMOUNT_IN_EUR, fiatPriceRoomsXMLInEur)}
+            handleSubmit={() => this.payWithLocSingleWithdrawer()}
             openModal={this.openModal}
             closeModal={this.closeModal}
             password={password}
@@ -587,8 +578,11 @@ class HotelBookingConfirmPage extends React.Component {
 HotelBookingConfirmPage.propTypes = {
   userInfo: PropTypes.object,
   reservation: PropTypes.object,
+  isQuoteLocValid: PropTypes.bool,
   requestLockOnQuoteId: PropTypes.func,
   requestCreateReservation: PropTypes.func,
+  invalidateQuoteLoc: PropTypes.func,
+  redirectToHotelDetailsPage: PropTypes.func,
 
   // start Router props
   history: PropTypes.object,

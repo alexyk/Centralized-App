@@ -20,6 +20,17 @@ export default function reducer(state = initialState, action) {
             }
           }
         };
+      } else if (action.error) {
+        return {
+          ...state,
+          locAmounts: {
+            ...state.locAmounts,
+            [action.fiatAmount]: {
+              locAmount: null,
+              error: action.error
+            }
+          }
+        };
       }
       return {
         ...state,
