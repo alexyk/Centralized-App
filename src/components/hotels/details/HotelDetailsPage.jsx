@@ -277,48 +277,48 @@ class HotelDetailsPage extends React.Component {
     }
   }
 
-  checkAvailability(quoteId) {
-    const rooms = this.props.searchInfo.rooms.map((room) => {
-      const adults = [];
-      const children = room.children;
-      for (let j = 0; j < room.adults; j++) {
-        const adult = {
-          title: 'Mr',
-          firstName: null,
-          lastName: null,
-        };
+  // checkAvailability(quoteId) {
+  //   const rooms = this.props.searchInfo.rooms.map((room) => {
+  //     const adults = [];
+  //     const children = room.children;
+  //     for (let j = 0; j < room.adults; j++) {
+  //       const adult = {
+  //         title: 'Mr',
+  //         firstName: null,
+  //         lastName: null,
+  //       };
 
-        adults.push(adult);
-      }
+  //       adults.push(adult);
+  //     }
 
-      return {
-        adults: adults,
-        children: children
-      };
-    });
+  //     return {
+  //       adults: adults,
+  //       children: children
+  //     };
+  //   });
 
-    const currency = this.props.paymentInfo.currency;
-    const booking = {
-      quoteId: quoteId,
-      rooms: rooms,
-      currency: currency
-    };
+  //   const currency = this.props.paymentInfo.currency;
+  //   const booking = {
+  //     quoteId: quoteId,
+  //     rooms: rooms,
+  //     currency: currency
+  //   };
 
-    const roomAvailability = new Map(this.state.roomAvailability);
-    roomAvailability.set(quoteId, 'loading');
-    this.setState({ roomAvailability: roomAvailability }, () => {
-      requester.createReservation(booking).then(res => {
-        const updatedRoomAvailability = new Map(this.state.roomAvailability);
-        if (res.success) {
-          updatedRoomAvailability.set(quoteId, true);
-        } else {
-          updatedRoomAvailability.set(quoteId, false);
-        }
+  //   const roomAvailability = new Map(this.state.roomAvailability);
+  //   roomAvailability.set(quoteId, 'loading');
+  //   this.setState({ roomAvailability: roomAvailability }, () => {
+  //     requester.createReservation(booking).then(res => {
+  //       const updatedRoomAvailability = new Map(this.state.roomAvailability);
+  //       if (res.success) {
+  //         updatedRoomAvailability.set(quoteId, true);
+  //       } else {
+  //         updatedRoomAvailability.set(quoteId, false);
+  //       }
 
-        this.setState({ roomAvailability: updatedRoomAvailability });
-      });
-    });
-  }
+  //       this.setState({ roomAvailability: updatedRoomAvailability });
+  //     });
+  //   });
+  // }
 
   handleBookRoom(roomsResults) {
     this.setState({ loadingRooms: true });
@@ -516,7 +516,6 @@ class HotelDetailsPage extends React.Component {
               loading={this.state.loading}
               currencySign={this.props.paymentInfo.currencySign}
               handleBookRoom={this.handleBookRoom}
-              checkAvailability={this.checkAvailability}
               loadingRooms={this.state.loadingRooms}
             />
 

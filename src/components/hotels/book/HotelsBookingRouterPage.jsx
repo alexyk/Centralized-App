@@ -81,9 +81,8 @@ class HotelsBookingRouterPage extends React.Component {
 
   requestHotel() {
     const id = this.props.match.params.id;
-    const searchParams = this.getRequestSearchParams();
 
-    requester.getHotelById(id, searchParams).then(res => {
+    requester.getHotelById(id).then(res => {
       res.body.then(hotel => {
         this.setState({ hotel });
       });
@@ -212,23 +211,31 @@ class HotelsBookingRouterPage extends React.Component {
       requester.getQuoteIdExpirationFlag(this.state.quoteId).then(res => res.body).then(data => {
         console.log(data);
         if (!data.is_quote_valid) {
-          console.log(this.state.quoteId);
           this.requestHotelRooms()
             .then((success) => {
               if (success) {
                 const newQuoteId = this.findQuoteIdByRoomSearchQuote(this.state.rooms, this.state.hotelRooms);
                 if (newQuoteId) {
+                  console.log(this.state.quoteId);
                   console.log(newQuoteId);
                   const search = this.replaceSearchQuoteId(newQuoteId);
                   this.props.history.replace(`${this.props.location.pathname}${search}`);
 
                   const booking = {
-                    // rooms: rooms,
-                    currency: this.props.paymentInfo.currency
+                    rooms: this.state.guests,
+                    currency: this.props.paymentInfo.currency,
+                    quoteId: newQuoteId
                   };
                   requester.createReservation(booking).then(res => {
                     if (res.success) {
-                      console.log(res);
+                      res.body.then(reservation => {
+                        // TODO handle if new quote id is expire between retrieved available hotel rooms request and createReservation request
+                        this.setState({
+                          quoteId: newQuoteId,
+                          reservation
+                        });
+                        console.log(res);
+                      });
                     }
                   });
                 } else {
@@ -241,9 +248,9 @@ class HotelsBookingRouterPage extends React.Component {
 
           // find quote id => done
 
-          // request booking
+          // request booking => done
 
-          // request create reservation
+          // request create reservation => done
         }
       });
     }
