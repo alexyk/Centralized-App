@@ -238,7 +238,11 @@ class HotelsBookingRouterPage extends React.Component {
                             quoteId: newQuoteId
                           });
                         });
+                      } else {
+                        this.requestUpdateOnQuoteId();
                       }
+                    }).catch(() => {
+                      this.requestUpdateOnQuoteId();
                     });
                   } else if (this.props.location.pathname === `/hotels/listings/book/${this.state.hotelId}/confirm`) {
                     const queryString = `${this.getQueryString()}&quoteId=${newQuoteId}`;
