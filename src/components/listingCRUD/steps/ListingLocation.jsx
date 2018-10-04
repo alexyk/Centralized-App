@@ -28,9 +28,9 @@ function ListingLocation(props) {
       let addressComponentsMap = props.convertGoogleApiAddressComponents(place);
       let lat = place.geometry.location.lat();
       let lng = place.geometry.location.lng();
-      console.log(place);
-      console.log(lat);
-      console.log(lng);
+      // console.log(place);
+      // console.log(lat);
+      // console.log(lng);
       props.onChange({ target: { name: 'lng', value: undefined } });
       props.onChange({ target: { name: 'lat', value: undefined } });
       if (addressComponentsMap.filter(x => x.type === 'route')[0] && lat && lng) {

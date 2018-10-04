@@ -20,8 +20,6 @@
       flex-direction: column;
     }
     .tables-container {
-      display: flex;
-      flex-direction: column;
       border: 1px solid #cfcfcf;
       border-radius: 5px;
       background-color: #fff;
@@ -40,8 +38,12 @@
         }
       }
       .table-splitter {
-        width: 60%;
+        width: 80%;
         border-top: 1px solid #cfcfcf;
+      }
+      .billing-disclaimer {
+        margin-top: 30px; 
+        text-align: center;
       }
     }
     .payment-methods {
@@ -103,8 +105,8 @@
               max-height:100%;
             }
           }
-          .mastercard, .visa {
-            width: 50%;
+          .credit-cards {
+            width: 100%;
           }
           .safecharge, .loc {
             width: 100%;

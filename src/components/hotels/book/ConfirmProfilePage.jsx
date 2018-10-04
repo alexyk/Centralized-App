@@ -10,7 +10,6 @@ import { LONG } from '../../../constants/notificationDisplayTimes';
 import BookingSteps from '../../common/utility/BookingSteps';
 import Select from '../../common/google/GooglePlacesAutocomplete';
 import StringUtils from '../../../services/utilities/stringUtilities';
-import { LocPriceWebSocket } from '../../../services/socket/locPriceWebSocket';
 
 import '../../../styles/css/components/hotels/book/profile-confirm-form.css';
 import '../../../styles/css/components/captcha/captcha-container.css';
@@ -104,16 +103,20 @@ class ConfirmProfilePage extends React.Component {
       const { paymentInfo } = this.props.location.state;
       requester.verifyCreditCardPayment(paymentInfo)
         .then(res => {
-          res.body.then((data) => {
-            const { testFiatPriceRoomsXMLInEur } = this.props.location.state;
-            LocPriceWebSocket.sendMessage(testFiatPriceRoomsXMLInEur, 'approveQuote', { bookingId: paymentInfo.bookingId });
-            const env = Config.getValue('env');
-            if (env === 'staging' || env === 'development') {
-              window.location.href = data.url;
-            } else {
-              this.payWithCreditCard(data.url);
-            }
-          });
+          if (res.success) {
+            res.body.then((data) => {
+              const env = Config.getValue('env');
+              if (env === 'staging' || env === 'development') {
+                window.location.href = data.url;
+              } else {
+                this.payWithCreditCard(data.url);
+              }
+            });
+          } else {
+            res.errors.then((error) => {
+              NotificationManager.warning(error.message, '', LONG);
+            });
+          }
         });
     });
   }
@@ -155,6 +158,7 @@ class ConfirmProfilePage extends React.Component {
     const userInfo = { ...this.state.userInfo };
     userInfo.country = value;
     userInfo.city = '';
+    userInfo.countryState = '';
 
     this.setState({ userInfo });
   }

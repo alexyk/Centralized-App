@@ -51,8 +51,8 @@ function HotelDetailsInfoSection(props) {
     }
   };
 
-  const { hotelAmenities, city, country, generalDescription } = props.data;
-  const address = props.data.additionalInfo.mainAddress;
+  const { hotelAmenities, city, country, generalDescription } = props.hotel;
+  const address = props.hotel.additionalInfo.mainAddress;
   const rooms = props.hotelRooms;
   let roomsResults = [];
   if (rooms) {
@@ -87,10 +87,10 @@ function HotelDetailsInfoSection(props) {
     <section id="hotel-info">
       <div className="container">
         <div className="hotel-content" id="hotel-section">
-          <h2> {props.data.name} </h2>
+          <h2> {props.hotel.name} </h2>
           <div className="list-hotel-rating">
             <div className="list-hotel-rating-stars">
-              {calculateStars(props.data.star)}
+              {calculateStars(props.hotel.star)}
             </div>
           </div>
           <div className="clearfix" />
@@ -106,16 +106,16 @@ function HotelDetailsInfoSection(props) {
             {props.descriptionsAccessInfo &&
               <div id="hotel-rules">
                 <h2>Access info</h2>
-                <p>{props.data.descriptionsAccessInfo}</p>
+                <p>{props.hotel.descriptionsAccessInfo}</p>
                 <hr />
               </div>
             }
             <div className="clearfix" />
 
-            {props.data.reviews && props.data.reviews.length > 0 &&
+            {props.hotel.reviews && props.hotel.reviews.length > 0 &&
               <div id="reviews">
                 <h2>User Rating &amp; Reviews</h2>
-                {props.data.reviews.map((item, i) => {
+                {props.hotel.reviews.map((item, i) => {
                   return (
                     <HotelDetailsReviewBox
                       key={i}
@@ -143,7 +143,7 @@ function HotelDetailsInfoSection(props) {
                               <div key={roomIndex} className="room">
                                 <span>{room.name} ({room.mealType}) - </span>
                                 {props.userInfo.isLogged &&
-                                  <span>{props.currencySign}{props.rates && Number((CurrencyConverter.convert(props.rates, roomsXMLCurrency, currency, room.price)) / props.nights).toFixed(2)} </span>
+                                  <span>{props.currencySign}{props.exchangeRates && Number((CurrencyConverter.convert(props.exchangeRates, roomsXMLCurrency, currency, room.price)) / props.nights).toFixed(2)} </span>
                                 }
                                 <LocPrice fiat={room.price / props.nights} />
                                 / night
@@ -157,7 +157,7 @@ function HotelDetailsInfoSection(props) {
                           <span className="price-details">
                             <span>{props.nights} {props.nights === 1 ? 'night: ' : 'nights: '}</span>
                             {props.userInfo.isLogged &&
-                              <span>{props.currencySign}{props.rates && Number(CurrencyConverter.convert(props.rates, roomsXMLCurrency, currency, getTotalPrice(results[0].roomsResults))).toFixed(2)} </span>
+                              <span>{props.currencySign}{props.exchangeRates && Number(CurrencyConverter.convert(props.exchangeRates, roomsXMLCurrency, currency, getTotalPrice(results[0].roomsResults))).toFixed(2)} </span>
                             }
                             <LocPrice fiat={getTotalPrice(results[0].roomsResults)} />
                           </span>
@@ -176,7 +176,7 @@ function HotelDetailsInfoSection(props) {
 
             <div id="map">
               <h2>Location</h2>
-              <iframe title="location" src={`https://maps.google.com/maps?q=${props.data.latitude},${props.data.longitude}&z=15&output=embed`}
+              <iframe title="location" src={`https://maps.google.com/maps?q=${props.hotel.latitude},${props.hotel.longitude}&z=15&output=embed`}
                 width="100%" height="400" frameBorder="0" style={{ border: 0 }} />
               <hr />
             </div>
@@ -190,7 +190,7 @@ function HotelDetailsInfoSection(props) {
 }
 
 HotelDetailsInfoSection.propTypes = {
-  data: PropTypes.object,
+  hotel: PropTypes.object,
   hotelRooms: PropTypes.array,
   showLoginModal: PropTypes.bool,
   isLogged: PropTypes.bool,
@@ -212,7 +212,7 @@ HotelDetailsInfoSection.propTypes = {
   handleBookRoom: PropTypes.func,
   loadingRooms: PropTypes.bool,
   currencySign: PropTypes.string,
-  rates: PropTypes.object,
+  exchangeRates: PropTypes.object,
 
   // Redux props
   paymentInfo: PropTypes.object,

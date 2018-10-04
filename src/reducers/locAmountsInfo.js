@@ -7,15 +7,27 @@ const initialState = {
 export default function reducer(state = initialState, action) {
   switch (action.type) {
     case locAmountsInfo.UPDATE_LOC_AMOUNTS:
-      if (action.locAmount.quoteLoc) {
+      if (action.params && action.params.quotedLoc) {
         return {
           ...state,
           locAmounts: {
             ...state.locAmounts,
             [action.fiatAmount]: {
-              locAmount: action.locAmount.quotedLoc,
-              quotedLoc: action.locAmount.quotedLoc,
-              quotedPair: action.locAmount.quotedPair
+              locAmount: action.params.locAmount,
+              quotedLoc: action.params.quotedLoc,
+              quotedPair: action.params.quotedPair,
+              roundedLocInEur: action.params.roundedLocInEur
+            }
+          }
+        };
+      } else if (action.error) {
+        return {
+          ...state,
+          locAmounts: {
+            ...state.locAmounts,
+            [action.fiatAmount]: {
+              locAmount: null,
+              error: action.error
             }
           }
         };
@@ -24,7 +36,9 @@ export default function reducer(state = initialState, action) {
         ...state,
         locAmounts: {
           ...state.locAmounts,
-          [action.fiatAmount]: action.locAmount
+          [action.fiatAmount]: {
+            locAmount: action.params.locAmount
+          }
         }
       };
 

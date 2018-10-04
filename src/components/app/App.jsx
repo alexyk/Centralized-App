@@ -2,7 +2,7 @@ import '../../styles/css/main.css';
 
 import { Redirect, Route, Switch, withRouter } from 'react-router-dom';
 import { setIsLogged, setUserInfo } from '../../actions/userInfo';
-import { setCurrencyRates } from '../../actions/currenciesRatesInfo';
+import { setCurrencyExchangeRates, setLocEurRate } from '../../actions/exchangeRatesInfo';
 
 import Balance from '../external/Balance';
 import BigCalendar from 'react-big-calendar';
@@ -28,6 +28,8 @@ import moment from 'moment';
 import queryString from 'query-string';
 import requester from '../../requester';
 import GooglePlaces from '../common/GooglePlaces';
+import HelpPage from '../static/HelpPage';
+import AboutUsPage from '../static/AboutUsPage';
 
 // if (process.env.NODE_ENV === 'development') {
 //   console.log(process.env.NODE_ENV);
@@ -47,7 +49,8 @@ class App extends React.Component {
     this.handleInternalAuthorization();
     this.handleExternalAuthorization();
 
-    this.getRates();
+    this.requestExchangeRates();
+    this.requestLocEurRate();
   }
 
   isAuthenticated() {
@@ -103,10 +106,19 @@ class App extends React.Component {
     }
   }
 
-  getRates() {
+  requestExchangeRates() {
     requester.getCurrencyRates().then(res => {
-      res.body.then(rates => {
-        this.props.dispatch(setCurrencyRates(rates));
+      res.body.then(currencyExchangeRates => {
+        this.props.dispatch(setCurrencyExchangeRates(currencyExchangeRates));
+      });
+    });
+  }
+
+  requestLocEurRate() {
+    const baseCurrency = 'EUR';
+    requester.getLocRateByCurrency(baseCurrency).then(res => {
+      res.body.then(data => {
+        this.props.dispatch(setLocEurRate(Number(data[0][`price_${(baseCurrency).toLowerCase()}`])));
       });
     });
   }
@@ -152,6 +164,8 @@ class App extends React.Component {
           <Route path="/vote" render={() => <WorldKuCoinCampaign />} />
           <Route path="/campaigns/balance/check" render={() => <Balance />} />
           <Route path="/google" render={() => <GooglePlaces />} />
+          <Route path="/help" render={() => <HelpPage />} />
+          <Route path="/about" render={() => <AboutUsPage />} />
 
           {/* MOBILE ONLY START */}
           <Route path="/mobile/search" render={() => <StaticHotelsSearchPage />} />
