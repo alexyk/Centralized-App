@@ -14,10 +14,9 @@ $media-expressions: ( 'screen': 'screen', 'print': 'print', 'handheld': 'handhel
   padding: 30px 0 15px 0;
   @include media(">=desktop") {
     padding: 0;
-    min-height: 555px; // margin-bottom: 78px;
+    min-height: 555px;
     background: url(../../images/hero-background-optimized.jpg);
-    size: cover;
-    repeat: no-repeat;
+    height: 555px;
   }
   h1 {
     font-family: $base-font-cursive;

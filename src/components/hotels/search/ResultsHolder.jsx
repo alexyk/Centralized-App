@@ -33,12 +33,12 @@ function ResultsHolder(props) {
 
   return (
     <div className="results-holder">
-      <ReactCSSTransitionGroup
+      {/* <ReactCSSTransitionGroup
         transitionName="example"
         transitionEnterTimeout={500}
-        transitionLeaveTimeout={500}>
+        transitionLeaveTimeout={500}> */}
         {hotels}
-      </ReactCSSTransitionGroup>
+      {/* </ReactCSSTransitionGroup> */}
     </div>
   );
 }
