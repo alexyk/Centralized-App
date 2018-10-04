@@ -32,7 +32,7 @@ class ContactHostModal extends React.Component {
         <Modal show={this.props.isActive} onHide={e => this.props.closeModal(modal.current, e)} className="modal fade myModal">
           <Modal.Header>
             <h1>Contact Host</h1>
-            <button type="button" className="close" onClick={(e) => this.props.closeModal(modal.current, e)}>&times;</button>
+            <button type="button" className="close" onClick={e => this.props.closeModal(modal.current, e)}>&times;</button>
           </Modal.Header>
           <Modal.Body>
             <form onSubmit={(e) => { e.preventDefault(); this.captcha.execute(); }}>

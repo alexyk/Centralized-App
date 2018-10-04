@@ -2,7 +2,6 @@ import { Config } from '../../../config';
 import HomeDetailsInfoSection from './HomeDetailsInfoSection';
 import HomesSearchBar from '../search/HomesSearchBar';
 import Lightbox from 'react-images';
-import { NotificationManager } from 'react-notifications';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
@@ -11,12 +10,23 @@ import { parse } from 'query-string';
 import requester from '../../../requester';
 import { withRouter } from 'react-router-dom';
 import Slider from 'react-slick';
-import { INVALID_SEARCH_DATE } from '../../../constants/warningMessages.js';
-import { LONG } from '../../../constants/notificationDisplayTimes.js';
 import '../../../styles/css/components/carousel-component.css';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
-import $ from 'jquery';
+import ContactHostModal from '../../common/modals/ContactHostModal';
+import _ from 'lodash';
+import {
+  openLightbox,
+  closeLightbox,
+  gotoNext,
+  gotoPrevious,
+  gotoImage,
+  handleClickImage,
+  next,
+  previous,
+  setCheckInOutHours,
+  calculateCheckInOuts
+} from '../common/detailsPageUtils.js';
 
 class HomeDetailsPage extends React.Component {
   constructor(props) {
@@ -41,67 +51,89 @@ class HomeDetailsPage extends React.Component {
       }
     }
 
-    let nights = this.calculateNights(startDate, endDate);
-
     this.state = {
       countryId: countryId,
       searchStartDate: startDate,
       searchEndDate: endDate,
+      guests: guests,
+
       calendarStartDate: startDate,
       calendarEndDate: endDate,
-      nigths: nights,
-      guests: guests,
+
       data: null,
+
       lightboxIsOpen: false,
       currentImage: 0,
-      prices: null,
-      oldCurrency: this.props.paymentInfo.currency,
-      loaded: false,
-      userInfo: null,
-      loading: true,
+      nights: 0,
+
       isShownContactHostModal: false
     };
 
-    this.handleApply = this.handleApply.bind(this);
     this.handleSearch = this.handleSearch.bind(this);
     this.handleDatePick = this.handleDatePick.bind(this);
     this.onChange = this.onChange.bind(this);
-    this.closeLightbox = this.closeLightbox.bind(this);
-    this.gotoNext = this.gotoNext.bind(this);
-    this.gotoPrevious = this.gotoPrevious.bind(this);
-    this.gotoImage = this.gotoImage.bind(this);
-    this.handleClickImage = this.handleClickImage.bind(this);
-    this.openLightbox = this.openLightbox.bind(this);
-    this.initializeCalendar = this.initializeCalendar.bind(this);
-    this.getUserInfo = this.getUserInfo.bind(this);
+
+    this.closeLightbox = closeLightbox.bind(this);
+    this.gotoNext = gotoNext.bind(this);
+    this.gotoPrevious = gotoPrevious.bind(this);
+    this.gotoImage = gotoImage.bind(this);
+    this.handleClickImage = handleClickImage.bind(this);
+    this.openLightbox = openLightbox.bind(this);
+
     this.openModal = this.openModal.bind(this);
     this.closeModal = this.closeModal.bind(this);
     this.sendMessageToHost = this.sendMessageToHost.bind(this);
-    this.next = this.next.bind(this);
-    this.previous = this.previous.bind(this);
-  }
 
-  componentWillReceiveProps(nextProps) {
-    this.setState({ loading: true });
-    this.getUserInfo();
+    this.next = next.bind(this);
+    this.previous = previous.bind(this);
+
+    this.handleChangeStart = this.handleChangeStart.bind(this);
+    this.handleChangeEnd = this.handleChangeEnd.bind(this);
+
+    this.setCheckInOutHours = setCheckInOutHours.bind(this);
+    this.calculateCheckInOuts = calculateCheckInOuts.bind(this);
   }
 
   componentDidMount() {
-    this.initializeCalendar();
+    const DAY_INTERVAL = 365;
 
-    const { searchStartDate, searchEndDate } = this.state;
-    if (searchStartDate && searchEndDate) {
-      this.calculateNights(searchStartDate, searchEndDate);
+    requester.getListing(this.props.match.params.id).then(res => {
+      res.body.then(listing => {
+        const checks = this.calculateCheckInOuts(listing);
+        this.setState({ data: listing, checks });
+      });
+    });
+
+    const searchTermMap = [
+      `listing=${this.props.match.params.id}`,
+      `startDate=${moment().format('DD/MM/YYYY')}`,
+      `endDate=${moment().add(DAY_INTERVAL, 'days').format('DD/MM/YYYY')}`,
+      `page=${0}`,
+      `toCode=${this.props.paymentInfo.currency}`,
+      `size=${DAY_INTERVAL}`];
+
+    requester.getCalendarByListingIdAndDateRange(searchTermMap).then(res => {
+      res.body.then(data => {
+        let calendar = data.content;
+        calendar = _.sortBy(calendar, function (x) {
+          return new moment(x.date, 'DD/MM/YYYY');
+        });
+        this.setState({ calendar: calendar });
+      });
+    });
+
+    requester.getHomeBookingDetails(this.props.match.params.id).then(res => res.body).then(roomDetails => {
+      this.setState({ roomDetails });
+    });
+
+    const { calendarStartDate, calendarEndDate } = this.state;
+    if (calendarStartDate && calendarEndDate) {
+      this.calculateNights(calendarStartDate, calendarEndDate);
     }
-
-    this.getUserInfo();
   }
 
   onChange(e) {
     this.setState({ [e.target.name]: e.target.value });
-    if (this.updateParamsMap) {
-      this.updateParamsMap(e.target.name, e.target.value);
-    }
   }
 
   handleSearch(e) {
@@ -117,94 +149,17 @@ class HomeDetailsPage extends React.Component {
     this.props.history.push('/homes/listings' + queryString);
   }
 
-  getUserInfo() {
-    if (localStorage.getItem(Config.getValue('domainPrefix') + '.auth.locktrip')) {
-      requester.getUserInfo().then(res => {
-        res.body.then(data => {
-          this.setState({
-            loaded: true,
-            userInfo: data,
-            loading: false
-          });
-        });
-      });
-    }
-    else {
-      this.setState({ loaded: true, loading: false });
-    }
-  }
-
-  handleApply(event, picker) {
-    const { startDate, endDate } = picker;
-    const prices = this.state.prices;
-    const range = prices.filter(x => x.start >= startDate && x.end < endDate);
-    const isInvalidRange = range.filter(x => !x.available).length > 0;
-
-    if (isInvalidRange) {
-      NotificationManager.warning(INVALID_SEARCH_DATE, 'Calendar Operations', LONG);
-    }
-    else {
-      this.setState({
-        calendarStartDate: startDate,
-        calendarEndDate: endDate,
-      });
-
-      this.calculateNights(startDate, endDate);
-    }
-  }
-
   handleDatePick(event, picker) {
     this.setState({
       searchStartDate: picker.startDate,
       searchEndDate: picker.endDate,
     });
   }
-  openLightbox(event, index) {
-    event.preventDefault();
-    this.setState({
-      lightboxIsOpen: true,
-      currentImage: index,
-    });
-  }
-
-  closeLightbox() {
-    this.setState({
-      currentImage: 0,
-      lightboxIsOpen: false,
-    });
-  }
-
-  gotoPrevious() {
-    this.setState({
-      currentImage: this.state.currentImage - 1,
-    });
-  }
-
-  gotoNext() {
-    this.setState({
-      currentImage: this.state.currentImage + 1,
-    });
-  }
-
-  gotoImage(index) {
-    this.setState({
-      currentImage: index,
-    });
-  }
-
-  handleClickImage() {
-    if (this.state.currentImage === this.state.data.pictures.length - 1) return;
-    this.gotoNext();
-  }
-
 
   calculateNights(startDate, endDate) {
-    let checkIn = moment(startDate, 'DD/MM/YYYY');
-    let checkOut = moment(endDate, 'DD/MM/YYYY');
+    let diffDays = endDate.startOf('day').diff(startDate.startOf('day'), 'days');
 
-    let diffDays = checkOut.diff(checkIn, 'days');
-
-    if (checkOut > checkIn) {
+    if (endDate > startDate) {
       this.setState({ nights: diffDays });
     }
     else {
@@ -213,7 +168,6 @@ class HomeDetailsPage extends React.Component {
   }
 
   sendMessageToHost(id, message, captchaToken) {
-    this.setState({ loading: true });
     let contactHostObj = {
       message: message
     };
@@ -225,110 +179,43 @@ class HomeDetailsPage extends React.Component {
     });
   }
 
-  initializeCalendar() {
-    let now = new Date();
-    let end = new Date();
-    const DAY_INTERVAL = 90;
-    end.setUTCHours(now.getUTCHours() + 24 * DAY_INTERVAL);
-
-    requester.getListing(this.props.match.params.id).then(res => {
-
-      res.body.then(data => {
-        this.setState({ data: data });
-      });
-
-      let searchTermMap = [];
-      const startDateParam = `${now.getUTCDate()}/${now.getUTCMonth() + 1}/${now.getUTCFullYear()}`;
-      const endDateParam = `${end.getUTCDate()}/${end.getUTCMonth() + 1}/${end.getUTCFullYear()}`;
-      searchTermMap.push(
-        `listing=${this.props.match.params.id}`,
-        `startDate=${startDateParam}`,
-        `endDate=${endDateParam}`,
-        `page=${0}`,
-        `toCode=${this.props.paymentInfo.currency}`,
-        `size=${DAY_INTERVAL}`);
-
-
-      requester.getCalendarByListingIdAndDateRange(searchTermMap).then(res => {
-        res.body.then(data => {
-          let prices = [];
-          for (let dateInfo of data.content) {
-            let price = dateInfo.available ? `${this.props.paymentInfo.currencySign}${Math.round(dateInfo.price)}` : '';
-            prices.push(
-              {
-                'title': <span className="calendar-price bold">{price}</span>,
-                'start': moment(dateInfo.date, 'DD/MM/YYYY'),
-                'end': moment(dateInfo.date, 'DD/MM/YYYY'),
-                'allDay': true,
-                'price': dateInfo.price,
-                'available': dateInfo.available
-              }
-            );
-          }
-
-          this.setState({ prices: prices, calendar: data.content, oldCurrency: this.props.paymentInfo.currency });
-          // $(document).ready(() => {
-          //   window.onscroll = function () { sticky() };
-
-          //   let hotelNav = document.getElementById("hotel-nav");
-          //   let stickyHotelNav = hotelNav.offsetTop;
-            
-          //   let bookingPanel = document.getElementById("test");
-          //   let stickyBookingPanel = bookingPanel.offsetTop;
-
-          //   let homeBox = document.getElementById("home-box");
-          //   function sticky() {
-          //     $('#hotel-nav').width($('#hotel-nav').width());
-          //     if (window.pageYOffset >= stickyHotelNav) {
-          //       hotelNav.classList.add("sticky-nav")
-          //     } else {
-          //       hotelNav.classList.remove("sticky-nav");
-          //     }
-
-          //     $('#test').width('100%');
-          //     if (window.pageYOffset >= stickyHotelNav) {
-          //       bookingPanel.classList.add("sticky")
-          //     } else {
-          //       bookingPanel.classList.remove("sticky");
-          //     }
-          //   }
-          // });
-        });
-      });
-    });
-  }
-
   openModal() {
     this.setState({ isShownContactHostModal: true });
   }
-
   closeModal() {
     this.setState({ isShownContactHostModal: false });
   }
 
-  next() {
-    this.slider.slickNext();
+  handleChangeStart(date) {
+    this.setState({
+      calendarStartDate: date,
+      calendarEndDate: date
+    });
+    this.calculateNights(date, date);
   }
-  previous() {
-    this.slider.slickPrev();
+
+  handleChangeEnd(date) {
+    if (this.state.calendarStartDate.isAfter(date)) {
+      this.handleChangeStart(date);
+    }
+    else {
+      this.setState({
+        calendarEndDate: date
+      });
+      this.calculateNights(this.state.calendarStartDate, date);
+    }
   }
 
   render() {
-    let loading, allEvents, images;
+    let loading, images;
 
     if (this.state.data === null) {
       loading = true;
     } else {
-      allEvents = this.state.prices;
-      images = null;
       if (this.state.data.pictures !== undefined) {
-        images = this.state.data.pictures.map(x => {
-          return { src: Config.getValue('imgHost') + x.original };
+        images = this.state.data.pictures.map((x, index) => {
+          return { src: Config.getValue('imgHost') + x.thumbnail, index };
         });
-      }
-
-      if (this.state.oldCurrency !== this.props.paymentInfo.currency) {
-        this.initializeCalendar();
       }
     }
 
@@ -350,23 +237,26 @@ class HomeDetailsPage extends React.Component {
 
     return (
       <div>
-        <div>
-          <div className="container">
-            <HomesSearchBar
-              countryId={this.state.countryId}
-              countries={this.props.countries}
-              startDate={this.state.searchStartDate}
-              endDate={this.state.searchEndDate}
-              guests={this.state.guests}
-              onChange={this.onChange}
-              handleSearch={this.handleSearch}
-              handleDatePick={this.handleDatePick} />
-          </div>
+        <div className="container">
+          <HomesSearchBar
+            countryId={this.state.countryId}
+            countries={this.props.countries}
+            startDate={this.state.searchStartDate}
+            endDate={this.state.searchEndDate}
+            guests={this.state.guests}
+            onChange={this.onChange}
+            handleSearch={this.handleSearch}
+            handleDatePick={this.handleDatePick} />
         </div>
+        <ContactHostModal
+          id={this.props.match.params.id}
+          isActive={this.state.isShownContactHostModal}
+          closeModal={this.closeModal}
+          handleContactHost={this.sendMessageToHost} />
 
         {loading ?
           <div className="loader"></div> :
-          <div>
+          <div className="home-details-container">
             <section className="hotel-gallery">
               {images !== null && <Lightbox
                 currentImage={this.state.currentImage}
@@ -404,18 +294,15 @@ class HomeDetailsPage extends React.Component {
                   <ul className="nav navbar-nav">
                     <li><a href="#overview">Overview</a></li>
                     <li><a href="#facilities">Facilities</a></li>
-                    {this.state.data.descriptionsAccessInfo &&
-                      <li><a href="#reviews">Access Info</a></li>
-                    }
                     {this.state.data.reviews && this.state.data.reviews.length > 0 &&
                       <li><a href="#reviews">User Reviews</a></li>
                     }
-                    <li><a href="#map">Location</a></li>
+                    <li><a href="#location">Location</a></li>
                   </ul>
                 </div>
                 <div className="share-box">
-                  <p><img src={`${Config.getValue("basePath")}/images/icon-share.png`} /> Share</p>
-                  <p><img src={`${Config.getValue("basePath")}/images/icon-heart.png`} /> Save</p>
+                  <p><img alt="share" src={`${Config.getValue("basePath")}/images/icon-share.png`} /> Share</p>
+                  <p><img alt="save" src={`${Config.getValue("basePath")}/images/icon-heart.png`} /> Save</p>
                 </div>
                 <div className="contact-box">
                   <button onClick={this.openModal}>Contact Host</button>
@@ -424,20 +311,17 @@ class HomeDetailsPage extends React.Component {
             </nav>
 
             <HomeDetailsInfoSection
-              allEvents={allEvents}
               calendar={this.state.calendar}
-              nights={this.state.nights}
-              onApply={this.handleApply}
               startDate={this.state.calendarStartDate}
               endDate={this.state.calendarEndDate}
               data={this.state.data}
-              prices={this.state.prices}
               isLogged={this.props.userInfo.isLogged}
-              loading={this.state.loading}
               openModal={this.openModal}
-              closeModal={this.closeModal}
-              isShownContactHostModal={this.state.isShownContactHostModal}
-              sendMessageToHost={this.sendMessageToHost} />
+              roomDetails={this.state.roomDetails}
+              nights={this.state.nights}
+              checks={this.state.checks}
+              handleChangeStart={this.handleChangeStart}
+              handleChangeEnd={this.handleChangeEnd} />
           </div>
         }
       </div>

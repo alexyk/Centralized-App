@@ -1,10 +1,7 @@
 @import "../../../vendors/include-media";
 
-#hotel-info {
-  .btn-home-details-info-section-container {
-    display: flex;
-    justify-content: space-between;
-  }
+.home-details-container {
+  margin-top: 15px;
 }
 
 .home-container {
@@ -17,7 +14,65 @@
     display: grid;
     grid-template-columns: 60% 35%;
     grid-gap: 5%;
+    @include media("<=desktop") {
+      grid-template-columns: auto;
+    }
+    .home-rating {
+      display: flex;
+      align-items: center;
+      @include media("<tablet") {
+        display: grid;
+        grid-template-columns: auto auto;
+      }
+      p {
+        margin-right: 15px;
+        @include media("<tablet") {
+          margin-right: 5px;
+        }
+      }
+      .home-rating-count,
+      .home-rating-reviews {
+        font-size: 18px;
+        color: #898c8d;
+        @include media("<=tablet") {
+          font-size: 16px;
+        }
+        .max-rating {
+          font-size: 16px;
+        }
+        .fa.fa-star::before {
+          content: "\E919";
+          color: white;
+        }
+        .fa.fa-star.full::before {
+          color: #a1c5bf;
+        }
+      }
+      .home-rating-stars {
+        margin-left: 15px;
+        @include media("<=tablet") {
+          margin-left: 5px;
+        }
+      }
+    }
+    h2 {
+      margin: 20px 0 10px 0;
+    }
+    .icons-container-space div {
+      border: 1px solid #d3d3d3;
+      border-radius: 4px;
+      padding: 20px;
+      @include media("<=desktop") {
+        padding: 10px 6px;
+      }
+      @include media("<tablet") {
+        padding: 10px 2px;
+      }
+    }
     .home-booking-panel {
+      @include media("<=desktop") {
+        margin-top: 15px;
+      }
       .box {
         border-radius: 4px;
         background-color: #ffffff;
@@ -37,6 +92,9 @@
           grid-template-columns: 79% 19%;
           grid-gap: 2%;
           margin: 10px 0;
+          @include media("<=tablet") {
+            grid-template-columns: auto;
+          }
           > div {
             border: 1px solid #cccccc99;
             border-radius: 4px;
@@ -51,8 +109,9 @@
             margin-bottom: 10px;
             border: 1px solid #cccccc99;
             border-radius: 4px;
-            @include media(">=700px") {
-              margin-bottom: 0;
+            margin-bottom: 0;
+            @include media("<=desktop") {
+              display: none;
             }
             span {
               font-size: 12px;
@@ -123,6 +182,11 @@
           border-radius: 4px;
           padding: 20px 0;
           margin: 15px 0;
+          text-align: center;
+          &.disabled {
+            cursor: default;
+            opacity: 0.7;
+          }
         }
         .booking-helper {
           font-size: 14px;
@@ -142,9 +206,9 @@
     margin: 0;
   }
   .daterangepicker {
-    width: 23.2%!important;
-    .table-condensed>tbody>tr>td {
-      padding: 10px!important;
+    width: 23.2% !important;
+    .table-condensed > tbody > tr > td {
+      padding: 10px !important;
     }
   }
 }
@@ -157,6 +221,13 @@
     margin: 0 auto;
     display: grid;
     grid-template-columns: auto 20% 20%;
+    @include media("<=tablet") {
+      grid-template-columns: auto;
+    }
+    // remove this when remove bootstrap
+    .navbar-nav {
+      margin: 7.5px 0;
+    }
     a {
       font-size: 20px;
       margin: 10px 0;
@@ -177,6 +248,9 @@
           margin-right: 5px;
         }
       }
+      @include media("<=tablet") {
+        display: none;
+      }
     }
     .contact-box {
       display: flex;
@@ -189,6 +263,9 @@
         border-radius: 4px;
         letter-spacing: 1px;
         padding: 10px 15px;
+        @include media("<=tablet") {
+          width: 95%;
+        }
       }
     }
   }
@@ -196,11 +273,30 @@
 
 .sticky {
   position: fixed;
-  top: 80px;
+  top: 100px;
 }
 
 .sticky-nav {
   position: fixed;
   top: 0;
   z-index: 999;
+}
+@include media("<=desktop") {
+  .daterangepicker.ltr .left .daterangepicker_input {
+    padding-right: 0;
+  }
+  .daterangepicker.ltr .calendar.left .calendar-table {
+    padding: 0 15px;
+  }
+  .daterangepicker.ltr .calendar.right .calendar-table {
+    padding: 0 15px;
+  }
+}
+
+.datepicker {
+  display: grid;
+  grid-template-columns: auto auto;
+  input[type="text"] {
+    padding: 0;
+  }
 }
