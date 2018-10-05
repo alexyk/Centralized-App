@@ -27,17 +27,11 @@ class LocPrice extends PureComponent {
 
     this.state = {
       fiatInEur,
-      isLocPriceRendered,
-      locAmount: null,
+      isLocPriceRendered
     };
   }
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.renderLocAmount !== this.props.renderLocAmount && this.props.withTimer) {
-      this.setState({
-        locAmount: this.props.locAmount
-      });
-    }
     if (nextProps.exchangerSocketInfo.isLocPriceWebsocketConnected &&
       nextProps.exchangerSocketInfo.isLocPriceWebsocketConnected !== this.props.exchangerSocketInfo.isLocPriceWebsocketConnected) {
       LocPriceWebSocket.sendMessage(this.state.fiatInEur, this.props.method, Object.assign(this.props.params, { fiatAmount: this.state.fiatInEur }));
@@ -67,8 +61,7 @@ class LocPrice extends PureComponent {
 
   render() {
     const isLogged = this.props.userInfo.isLogged;
-    const { brackets } = this.props;
-    const locAmount = this.props.withTimer ? this.state.locAmount : this.props.locAmount;
+    const { brackets, locAmount } = this.props;
 
     const bracket = brackets && isLogged;
 
@@ -88,8 +81,7 @@ class LocPrice extends PureComponent {
 
 LocPrice.defaultProps = {
   params: {},
-  brackets: true,
-  withTimer: false,
+  brackets: true
 };
 
 LocPrice.propTypes = {
@@ -97,7 +89,6 @@ LocPrice.propTypes = {
   brackets: PropTypes.bool,
   method: PropTypes.string,
   params: PropTypes.object,
-  withTimer: PropTypes.bool,
 
   // Redux props
   dispatch: PropTypes.func,
@@ -109,20 +100,15 @@ LocPrice.propTypes = {
 };
 
 function mapStateToProps(state, ownProps) {
-  const { fiat, withTimer } = ownProps;
+  const { fiat } = ownProps;
 
-  const { userInfo, exchangerSocketInfo, locAmountsInfo, exchangeRatesInfo, locPriceUpdateTimerInfo } = state;
+  const { userInfo, exchangerSocketInfo, locAmountsInfo, exchangeRatesInfo } = state;
 
   let fiatInEur;
   if (fiat === 15) {
     fiatInEur = fiat;
   } else {
     fiatInEur = exchangeRatesInfo.currencyExchangeRates && CurrencyConverter.convert(exchangeRatesInfo.currencyExchangeRates, RoomsXMLCurrency.get(), DEFAULT_CRYPTO_CURRENCY, fiat);
-  }
-
-  let renderLocAmount;
-  if (withTimer) {
-    renderLocAmount = locPriceUpdateTimerInfo.seconds === locPriceUpdateTimerInfo.initialSeconds;
   }
 
   let locAmount = locAmountsInfo.locAmounts[fiatInEur] && (locAmountsInfo.locAmounts[fiatInEur].locAmount).toFixed(2);
@@ -135,8 +121,7 @@ function mapStateToProps(state, ownProps) {
     userInfo,
     exchangerSocketInfo,
     locAmount,
-    exchangeRatesInfo,
-    renderLocAmount
+    exchangeRatesInfo
   };
 }
 

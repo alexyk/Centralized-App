@@ -6,10 +6,3 @@ export function setLocPriceWebsocketConnection(isLocPriceWebsocketConnected) {
     isLocPriceWebsocketConnected
   };
 }
-
-export function setLocRateWebsocketConnection(isLocRateWebsocketConnected) {
-  return {
-    type: exchangerSocketInfo.SET_LOC_RATE_WEBSOCKET_CONNECTION,
-    isLocRateWebsocketConnected
-  };
-}
