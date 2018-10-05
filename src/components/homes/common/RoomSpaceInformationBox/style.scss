@@ -1,0 +1,14 @@
+@import '../../../../styles/css/vendors/include-media';
+
+.icons-container-space {
+    display: flex;
+    justify-content: space-between;
+    text-align: center;
+    p {
+      margin-top: 10px;
+      margin-bottom: 0;
+      @include media("<tablet") {
+        font-size: 0.7em;
+      }
+    }
+  }
