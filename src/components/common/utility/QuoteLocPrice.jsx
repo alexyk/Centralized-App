@@ -20,18 +20,9 @@ class QuoteLocPrice extends PureComponent {
     this.quoteLocSendAttempts = 0;
 
     this.sendWebsocketMessage(null, null, this.props.params);
-
-    this.state = {
-      locAmount: null,
-    };
   }
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.renderLocAmount !== this.props.renderLocAmount && this.props.withTimer) {
-      this.setState({
-        locAmount: this.props.locAmount
-      });
-    }
     if (nextProps.exchangerSocketInfo.isLocPriceWebsocketConnected &&
       nextProps.exchangerSocketInfo.isLocPriceWebsocketConnected !== this.props.exchangerSocketInfo.isLocPriceWebsocketConnected) {
       this.sendWebsocketMessage(null, null, this.props.params);
@@ -56,22 +47,22 @@ class QuoteLocPrice extends PureComponent {
   }
 
   render() {
-    if (!this.isQuoteLocRendered && this.state.locAmount) {
+    const { brackets, locAmount, quoteLocError, userInfo, params } = this.props;
+
+    if (!this.isQuoteLocRendered && locAmount) {
       this.isQuoteLocRendered = true;
     }
-    if (!this.isQuoteLocRendered && this.props.quoteLocError) {
+    if (!this.isQuoteLocRendered && quoteLocError) {
       if (this.quoteLocSendAttempts === 10) {
         this.redirectToHotelDetailsPage();
       } else {
         this.quoteLocSendAttempts += 1;
-        this.sendWebsocketMessage(null, null, this.props.params);
+        this.sendWebsocketMessage(null, null, params);
       }
-    } else if (this.isQuoteLocRendered && this.props.quoteLocError) {
+    } else if (this.isQuoteLocRendered && quoteLocError) {
       this.redirectToHotelDetailsPage();
     }
-    const isLogged = this.props.userInfo.isLogged;
-    const { brackets } = this.props;
-    const locAmount = this.props.withTimer ? this.state.locAmount : this.props.locAmount;
+    const isLogged = userInfo.isLogged;
 
     const bracket = brackets && isLogged;
 
@@ -91,8 +82,7 @@ class QuoteLocPrice extends PureComponent {
 
 QuoteLocPrice.defaultProps = {
   params: {},
-  brackets: true,
-  withTimer: false,
+  brackets: true
 };
 
 QuoteLocPrice.propTypes = {
@@ -100,7 +90,6 @@ QuoteLocPrice.propTypes = {
   brackets: PropTypes.bool,
   method: PropTypes.string,
   params: PropTypes.object,
-  withTimer: PropTypes.bool,
   invalidateQuoteLoc: PropTypes.func,
   redirectToHotelDetailsPage: PropTypes.func,
 
@@ -114,14 +103,9 @@ QuoteLocPrice.propTypes = {
 };
 
 function mapStateToProps(state, ownProps) {
-  const { fiat, withTimer } = ownProps;
+  const { fiat } = ownProps;
 
-  const { userInfo, exchangerSocketInfo, locAmountsInfo, exchangeRatesInfo, locPriceUpdateTimerInfo } = state;
-
-  let renderLocAmount;
-  if (withTimer) {
-    renderLocAmount = locPriceUpdateTimerInfo.seconds === locPriceUpdateTimerInfo.initialSeconds;
-  }
+  const { userInfo, exchangerSocketInfo, locAmountsInfo, exchangeRatesInfo } = state;
 
   let locAmount = locAmountsInfo.locAmounts[DEFAULT_QUOTE_LOC_ID] && locAmountsInfo.locAmounts[DEFAULT_QUOTE_LOC_ID].locAmount && (locAmountsInfo.locAmounts[DEFAULT_QUOTE_LOC_ID].locAmount).toFixed(2);
   const quoteLocError = locAmountsInfo.locAmounts[DEFAULT_QUOTE_LOC_ID] && locAmountsInfo.locAmounts[DEFAULT_QUOTE_LOC_ID].error;
@@ -141,7 +125,6 @@ function mapStateToProps(state, ownProps) {
     userInfo,
     exchangerSocketInfo,
     locAmount,
-    renderLocAmount,
     quoteLocError
   };
 }
