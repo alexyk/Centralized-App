@@ -48,7 +48,7 @@ function HomesBookingRoomDetailsInfo(props) {
   const { roomDetails, checkInStart, checkInEnd, checkOutStart, checkOutEnd } = props;
   const { property_type, guests, size, bathroom, bedrooms, rooms } = roomDetails;
   const { eventsAllowed, smokingAllowed, suitableForPets, suitableForInfants, house_rules } = roomDetails;
-  const houseRules = house_rules.split('\r\n');
+  const houseRules = house_rules && house_rules.split('\r\n');
 
   const hasSpaceDetails = property_type || guests || size || bathroom || bedrooms;
   const hasHouseRules = eventsAllowed || smokingAllowed || suitableForPets || suitableForInfants || house_rules;
