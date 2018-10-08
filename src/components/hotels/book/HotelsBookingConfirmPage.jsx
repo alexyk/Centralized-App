@@ -22,7 +22,7 @@ import { closeModal, openModal } from '../../../actions/modalsInfo.js';
 import { setCurrency } from '../../../actions/paymentInfo';
 import { setLocRateFiatAmount } from '../../../actions/exchangeRatesInfo.js';
 import RecoverWallerPassword from '../../common/utility/RecoverWallerPassword';
-import { LocPriceWebSocket } from '../../../services/socket/locPriceWebSocket';
+import { Websocket } from '../../../services/socket/exchangerWebsocket';
 
 import '../../../styles/css/components/hotels/book/hotel-booking-confirm-page.css';
 
@@ -87,7 +87,7 @@ class HotelBookingConfirmPage extends React.Component {
   }
 
   stopQuote() {
-    LocPriceWebSocket.sendMessage(DEFAULT_QUOTE_LOC_ID, 'approveQuote', { bookingId: this.props.reservation.preparedBookingId });
+    Websocket.sendMessage(DEFAULT_QUOTE_LOC_ID, 'approveQuote', { bookingId: this.props.reservation.preparedBookingId });
 
     this.setState({
       isQuoteStopped: true
@@ -95,7 +95,7 @@ class HotelBookingConfirmPage extends React.Component {
   }
 
   restartQuote() {
-    LocPriceWebSocket.sendMessage(DEFAULT_QUOTE_LOC_ID, 'quoteLoc', { bookingId: this.props.reservation.preparedBookingId });
+    Websocket.sendMessage(DEFAULT_QUOTE_LOC_ID, 'quoteLoc', { bookingId: this.props.reservation.preparedBookingId });
 
     this.setState({
       isQuoteStopped: false
