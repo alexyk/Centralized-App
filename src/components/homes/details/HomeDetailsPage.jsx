@@ -219,6 +219,11 @@ class HomeDetailsPage extends React.Component {
       }
     }
 
+
+    while (images && images.length < 3) {
+      images.push(images[0]);
+    }
+
     const settings = {
       infinite: true,
       accessibility: false,
