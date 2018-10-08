@@ -45,7 +45,7 @@ class HomesBookingPage extends React.Component {
       });
     });
 
-    requester.getHomeBookingDetails(993).then(res => res.body).then(roomDetails => {
+    requester.getHomeBookingDetails(this.props.match.params.id).then(res => res.body).then(roomDetails => {
       this.setState({ roomDetails });
     });
 

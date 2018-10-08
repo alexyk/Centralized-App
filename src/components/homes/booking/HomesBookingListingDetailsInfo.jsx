@@ -26,8 +26,6 @@ function HomesBookingListingDetailsInfo(props) {
     endDateDayOfWeek: endDate.format('ddd').toUpperCase()
   };
 
-  let slider = null;
-
   const SlickButton = ({ currentSlide, slideCount, ...arrowProps }) => {
     return (
       <button {...arrowProps} />
@@ -54,7 +52,7 @@ function HomesBookingListingDetailsInfo(props) {
   
   return (
     <div className="left-part">
-      <Slider ref={s => slider = s}
+      <Slider
         {...settings}>
         {pictures.map((picture, i) => {
           return (

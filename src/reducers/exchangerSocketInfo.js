@@ -13,12 +13,6 @@ export default function reducer(state = initialState, action) {
         isLocPriceWebsocketConnected: action.isLocPriceWebsocketConnected
       };
 
-    case exchangerSocketInfo.SET_LOC_RATE_WEBSOCKET_CONNECTION:
-      return {
-        ...state,
-        isLocRateWebsocketConnected: action.isLocRateWebsocketConnected
-      };
-
     default:
       return state;
   }

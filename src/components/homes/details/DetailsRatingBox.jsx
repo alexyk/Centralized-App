@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-function ListingItemRatingBox(props) {
+function DetailsRatingBox(props) {
   const getRatingString = (ratingNumber, reviewsCount) => {
     if (reviewsCount === 0) {
       return '';
@@ -29,7 +29,7 @@ function ListingItemRatingBox(props) {
       result += 'Poor';
     }
     result += ' ';
-    result += Math.round(ratingNumber * 100) / 100 + '/5';
+    result += Math.round(ratingNumber * 100) / 100;
     return result;
   };
 
@@ -45,20 +45,22 @@ function ListingItemRatingBox(props) {
 
     return starsElements;
   };
-
+  if (props.reviewsCount <= 0) {
+    return null;
+  }
   return (
-    <div className="list-hotel-rating">
-      <div className={`list-hotel-rating-count count-${props.reviewsCount}`}>{getRatingString(props.rating, props.reviewsCount)}</div>
-      <div className="list-hotel-rating-stars">{calculateStars(props.rating)}</div>
-      <div className="list-hotel-rating-reviews">{props.reviewsCount ? props.reviewsCount + ' ' : ''}{props.isHomePage ? '' : ' Reviews'}</div>
+    <div className="hotel-rating">
+      <div className="hotel-rating-stars">{calculateStars(props.rating)}</div>
+      <div className="hotel-rating-count">{getRatingString(props.rating, props.reviewsCount)}<span className="max-rating">/ 5</span></div>
+      <div className="hotel-rating-reviews">{props.reviewsCount} Reviews</div>
     </div>
   );
 }
 
-ListingItemRatingBox.propTypes = {
+DetailsRatingBox.propTypes = {
   rating: PropTypes.number,
   reviewsCount: PropTypes.number,
   isHomePage: PropTypes.bool
 };
 
-export default ListingItemRatingBox;
+export default DetailsRatingBox;
