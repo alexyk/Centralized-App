@@ -185,7 +185,7 @@ class MainNav extends React.Component {
       lastName: this.state.signUpLastName,
       password: this.state.signUpPassword,
       country: this.state.country.id,
-      image: Config.getValue('basePath') + 'images/default.png'
+      image: 'images/default.png'
     };
 
     this.clearLocalStorage();
@@ -517,7 +517,7 @@ class MainNav extends React.Component {
       token: this.state.recoveryToken,
       password: this.state.newPassword,
     };
-  
+
     requester.sendNewPassword(postObj, token).then(res => {
       if (res.success) {
         this.closeModal(CHANGE_PASSWORD);

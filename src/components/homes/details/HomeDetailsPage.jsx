@@ -209,7 +209,7 @@ class HomeDetailsPage extends React.Component {
   render() {
     let loading, images;
 
-    if (this.state.data === null) {
+    if (this.state.data === null || this.state.calendar === null) {
       loading = true;
     } else {
       if (this.state.data.pictures !== undefined) {
