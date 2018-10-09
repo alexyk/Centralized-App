@@ -50,13 +50,9 @@ class HotelsBookingRouterPage extends React.Component {
 
   componentDidMount() {
     this.requestHotel();
-    this.requestHotelRooms()
-      .then((success) => {
-        if (success) {
-          const quoteId = queryString.parse(this.props.location.search).quoteId;
-          this.filterRoomsByQuoteId(quoteId);
-        }
-      });
+    this.requestHotelRooms().then((hasAvailableRooms) => {
+      this.findAndSetUserRequestedRoomsByQuoteId(hasAvailableRooms);
+    });
     this.setQuoteIdPollingInterval();
     this.requestUpdateOnQuoteId();
     this.requestCurrencyExchangeRates();
@@ -91,12 +87,15 @@ class HotelsBookingRouterPage extends React.Component {
     });
   }
 
-  filterRoomsByQuoteId(quoteId) {
-    const rooms = this.state.hotelRooms.filter(r => r.quoteId === quoteId)[0];
-    if (rooms) {
-      this.setState({ rooms: rooms.roomsResults });
-    } else {
-      this.redirectToHotelDetailsPage();
+  findAndSetUserRequestedRoomsByQuoteId(hasAvailableRooms) {
+    if (hasAvailableRooms) {
+      const quoteId = queryString.parse(this.props.location.search).quoteId;
+      const rooms = this.state.hotelRooms.filter(r => r.quoteId === quoteId)[0];
+      if (rooms) {
+        this.setState({ rooms: rooms.roomsResults });
+      } else {
+        this.redirectToHotelDetailsPage();
+      }
     }
   }
 
@@ -211,16 +210,12 @@ class HotelsBookingRouterPage extends React.Component {
   requestUpdateOnQuoteId() {
     if (this.state) {
       requester.getQuoteIdExpirationFlag(this.state.quoteId).then(res => res.body).then(data => {
-        console.log(data);
         if (!data.is_quote_valid) {
           this.requestHotelRooms()
             .then((success) => {
               if (success) {
                 const newQuoteId = this.findQuoteIdByRoomSearchQuote(this.state.rooms, this.state.hotelRooms);
                 if (newQuoteId) {
-                  console.log(this.state.quoteId);
-                  console.log(newQuoteId);
-
                   if (this.props.location.pathname === `/hotels/listings/book/${this.state.hotelId}`) {
                     const queryString = `${this.getCleanQueryString()}&quoteId=${newQuoteId}`;
                     this.props.history.replace(`${this.props.location.pathname}${queryString}`);

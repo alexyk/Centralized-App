@@ -344,7 +344,6 @@ class HotelDetailsPage extends React.Component {
 
     const currency = this.props.paymentInfo.currency;
 
-    console.log(rooms);
     const booking = {
       rooms: rooms,
       currency: currency
