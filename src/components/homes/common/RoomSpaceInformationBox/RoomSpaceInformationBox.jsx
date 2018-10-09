@@ -34,7 +34,7 @@ function RoomSpaceInformationBox(props) {
         </div>
       }
 
-      {bathroom && bedrooms.toString() &&
+      {bedrooms && bedrooms.toString() &&
         <div>
           <img src="/images/icon-review/icon-bedrooms.png" alt="icon-bedrooms" />
           <p>{bedrooms} {bedrooms === 1 ? 'Bedroom' : 'Bedrooms'}</p>

@@ -227,12 +227,18 @@ $media-expressions: (
   }
   .source-panel-item {
     background: $white;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	> .Select {
-		min-width: 307px;
-	}
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    > .Select {
+      min-width: 307px;
+    }
+    .Select-placeholder {
+      line-height: 24px;
+    }
+    .Select-value-label {
+      line-height: 39px;
+    }
     // height: 50px;
     // @include media(">=tablet") {
     //   width: 100%;
@@ -256,15 +262,14 @@ $media-expressions: (
     }
     select {
       border: 0;
-      padding: 10px;
       width: 100%;
-      min-width: 85px;
+      min-width: 120px;
     }
     .select-children {
       display: flex;
       flex-direction: column;
-	  justify-content: center;
-	  min-width: 55px;
+      justify-content: center;
+      min-width: 55px;
       width: 55px;
       margin-right: 10px;
     }
