@@ -119,6 +119,8 @@ class AirdropPage extends Component {
       this.setState({ isWithdrawStarted: res.isWithdrawStarted });
       if (res.isWithdrawStarted && !res.tx) {
         this.startTransactionHashPolling();
+      } else if (res.tx) {
+        this.setState({ withdrawTransactionHash: res.tx });
       }
     });
   }
@@ -412,7 +414,7 @@ class AirdropPage extends Component {
     return (
       <React.Fragment>
         <div className="balance-row__label">
-          <span className="step-check unchecked" style={{ "margin-top": "1.5em" }}></span>
+          <span className="step-check unchecked"></span>
           <span className="mandatory">
             Your account has failed our social joins verification.
           </span>
