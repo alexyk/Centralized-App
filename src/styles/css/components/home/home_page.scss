@@ -233,7 +233,7 @@
     li {
       list-style: none;
       margin-bottom: 30px;
-      width: 100%;
+      // width: 100%;
       @include media(">=desktop") {
         margin-right: 30px;
         margin-bottom: 0;
