@@ -356,9 +356,10 @@ class AirdropPage extends Component {
           <span className="emphasized-text">Verified Balance</span>
         </div>
         <div className="balance-row__content">${Math.max(10, this.props.airdropInfo.referralCount * 5 + 10)}</div>
-        {this.state.userIsVerified && !this.state.isWithdrawStarted && <button className="claim-button" onClick={this.requestWithdraw}>Claim</button>}
+        {this.state.userIsVerified && !this.state.isWithdrawStarted && <button className="cla\im-button" onClick={this.requestWithdraw}>Claim</button>}
         {this.state.isWithdrawStarted && !this.state.withdrawTransactionHash && <button className="claim-button">Waiting for transaction hash</button>}
-        {this.state.isWithdrawStarted && this.state.withdrawTransactionHash && <a href={`https://etherscan.io/tx/${this.state.withdrawTransactionHash}`} className='etherscan-link' target='_blank'>TxHash: {this.state.withdrawTransactionHash.substring(0, 8)}...</a>}
+        {this.state.isWithdrawStarted && this.state.withdrawTransactionHash && this.state.withdrawTransactionHash === '0x0' && <a href="mailto:team@locktrip.com?Subject=Customer%20Support" className='etherscan-link' tooltip="Contact Support">Transaction Failed</a>}
+        {this.state.isWithdrawStarted && this.state.withdrawTransactionHash && this.state.withdrawTransactionHash !== '0x0' && <a href={`https://etherscan.io/tx/${this.state.withdrawTransactionHash}`} className='etherscan-link' target='_blank'>TxHash: {this.state.withdrawTransactionHash.substring(0, 8)}...</a>}
       </React.Fragment>
     );
   }

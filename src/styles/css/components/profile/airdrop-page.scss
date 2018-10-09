@@ -199,15 +199,14 @@ $padding-sm: 15px 10px;
     opacity:1;
   }
   [tooltip]::before {
-      content: "\e914";
       color: #abc3bd;
   }
   [tooltip]::after {
       content: attr(tooltip);
       position: absolute;
       z-index: 999;
-      left: 50%;
-      top: 6px;
+      left: 40%;
+      top: 2px;
       transform: translateX(-50%) translateY(-22%);
       background: #a2c5bf;
       text-align: center;
