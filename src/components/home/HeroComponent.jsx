@@ -5,6 +5,7 @@ import { withRouter } from 'react-router-dom';
 import requester from '../../requester';
 import HomesSearchBar from '../homes/search/HomesSearchBar';
 import HotelsSearchBar from '../hotels/search/HotelsSearchBar';
+import AirTicketsSearchBar from '../airTickets/search/AirTicketsSearchBar';
 import ListingTypeNav from '../common/listingTypeNav/ListingTypeNav';
 
 import '../../styles/css/components/hero-component.css';
@@ -79,6 +80,30 @@ class HeroComponent extends React.Component {
     this.props.history.push('/hotels/listings' + queryString);
   }
 
+  getSearchBar(homePage) {
+    switch (homePage) {
+      case 'homes':
+        return (
+          <HomesSearchBar
+            countryId={this.state.countryId}
+            countries={this.state.countries}
+            startDate={this.state.startDate}
+            endDate={this.state.endDate}
+            guests={this.state.guests}
+            onChange={this.onChange}
+            handleSearch={this.handleSearch}
+            handleDatePick={this.handleDatePick}
+          />
+        );
+      case 'tickets':
+        return (
+          <AirTicketsSearchBar />
+        );
+      default:
+        return <HotelsSearchBar redirectToSearchPage={this.redirectToSearchPage} />
+    }
+  }
+
   render() {
     return (
       <div className="hero">
@@ -88,18 +113,7 @@ class HeroComponent extends React.Component {
             <h2>Browse for homes &amp; hotels worldwide</h2>
             <div className="source-data">
               <ListingTypeNav />
-              {this.props.homePage === 'hotels' ?
-                <HotelsSearchBar redirectToSearchPage={this.redirectToSearchPage} /> :
-                <HomesSearchBar
-                  countryId={this.state.countryId}
-                  countries={this.state.countries}
-                  startDate={this.state.startDate}
-                  endDate={this.state.endDate}
-                  guests={this.state.guests}
-                  onChange={this.onChange}
-                  handleSearch={this.handleSearch}
-                  handleDatePick={this.handleDatePick}
-                />}
+              {this.getSearchBar(this.props.homePage)}
             </div>
           </div>
         </div>

@@ -4,6 +4,7 @@ import React, { Component } from 'react';
 import HomePage from './HomePage';
 import HomesRouterPage from '../homes/HomesRouterPage';
 import HotelsRouterPage from '../hotels/HotelsRouterPage';
+import AirTicketsRouterPage from '../airTickets/AirTicketsRouterPage';
 import requester from '../../requester';
 
 class HomeRouterPage extends Component {
@@ -36,6 +37,7 @@ class HomeRouterPage extends Component {
         <Switch>
           <Route path="/homes" render={() => <HomesRouterPage listings={this.state.listings} hotels={this.state.hotels} />} />
           <Route path="/hotels" render={() => <HotelsRouterPage listings={this.state.listings} hotels={this.state.hotels} />} />
+          <Route path="/tickets" render={() => <AirTicketsRouterPage listings={this.state.listings} hotels={this.state.hotels} />} />
           <Route exact path="/users/resetPassword/:confirm" render={() => <HomePage listings={this.state.listings} hotels={this.state.hotels} />} />
           <Redirect from="/" to="/hotels" />
         </Switch>
