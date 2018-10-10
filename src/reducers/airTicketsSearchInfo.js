@@ -3,11 +3,11 @@ import moment from 'moment';
 
 const initialState = {
   routing: '2',
-  flightClass: '0',
-  flightStops: '-1',
+  clazz: '0',
+  stops: '-1',
   departureTime: '',
-  flightOrigin: null,
-  flightDestination: null,
+  origin: null,
+  destination: null,
   startDate: moment().add(1, 'day'),
   endDate: moment().add(2, 'day'),
   adultsCount: 1,
@@ -22,25 +22,25 @@ export default function reducer(state = initialState, action) {
       return Object.assign({}, state, {
         routing: action.routing
       });
-    case airTicketsSearchInfo.SET_FLIGHT_CLASS:
+    case airTicketsSearchInfo.SET_CLASS:
       return Object.assign({}, state, {
-        flightClass: action.flightClass
+        clazz: action.clazz
       });
-    case airTicketsSearchInfo.SET_FLIGHT_STOPS:
+    case airTicketsSearchInfo.SET_STOPS:
       return Object.assign({}, state, {
-        flightStops: action.flightStops
+        stops: action.stops
       });
     case airTicketsSearchInfo.SET_DEPARTURE_TIME:
       return Object.assign({}, state, {
         departureTime: action.departureTime
       });
-    case airTicketsSearchInfo.SET_FLIGHT_ORIGIN:
+    case airTicketsSearchInfo.SET_ORIGIN:
       return Object.assign({}, state, {
-        flightOrigin: action.flightOrigin
+        origin: action.origin
       });
-    case airTicketsSearchInfo.SET_FLIGHT_DESTINATION:
+    case airTicketsSearchInfo.SET_DESTINATION:
       return Object.assign({}, state, {
-        flightDestination: action.flightDestination
+        destination: action.destination
       });
     case airTicketsSearchInfo.SET_DATES:
       return Object.assign({}, state, {
@@ -66,11 +66,11 @@ export default function reducer(state = initialState, action) {
     case airTicketsSearchInfo.SET_AIR_TICKETS_SEARCH_INFO:
       return Object.assign({}, state, {
         routing: action.routing,
-        flightClass: action.flightClass,
-        flightStops: action.flightStops,
+        clazz: action.clazz,
+        stops: action.stops,
         departureTime: action.departureTime,
-        flightOrigin: action.flightOrigin,
-        flightDestination: action.flightDestination,
+        origin: action.origin,
+        destination: action.destination,
         startDate: action.startDate,
         endDate: action.endDate.diff(action.startDate, 'days') === 0 ? action.endDate.add(1, 'day') : action.endDate,
         adultsCount: action.adultsCount,

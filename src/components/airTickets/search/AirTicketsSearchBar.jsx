@@ -1,5 +1,5 @@
 import { closeModal, openModal } from '../../../actions/modalsInfo.js';
-import { setRouting, setFlightClass, setFlightStops, setDepartureTime, setFlightOrigin, setFlightDestination, setDates, setAdults, setHasChildren } from '../../../actions/airTicketsSearchInfo';
+import { setRouting, setClass, setStops, setDepartureTime, setOrigin, setDestination, setDates, setAdults, setHasChildren } from '../../../actions/airTicketsSearchInfo';
 
 import { AIR_TICKETS_CHILDREN } from '../../../constants/modals';
 import AirTicketsChildrenModal from '../modals/AirTicketsChildrenModal';
@@ -18,7 +18,8 @@ function AirTicketsSearchBar(props) {
     return null;
   }
 
-  const getRegions = (param) => {
+  // TODO change logic with air tickets locations when backend is ready
+  const getAirports = (param) => {
     if (!param) {
       return Promise.resolve({ options: [] });
     }
@@ -33,8 +34,8 @@ function AirTicketsSearchBar(props) {
   const getQueryString = () => {
     let queryString = '?';
 
-    queryString += 'origin=' + props.airTicketsSearchInfo.flightOrigin.id;
-    queryString += '&destination=' + props.airTicketsSearchInfo.flightDestination.id;    
+    queryString += 'origin=' + props.airTicketsSearchInfo.origin.id;
+    queryString += '&destination=' + props.airTicketsSearchInfo.destination.id;    
     queryString += '&startDate=' + props.airTicketsSearchInfo.startDate.format('DD/MM/YYYY');
     if (props.airTicketsSearchInfo.endDate) {
       queryString += '&endDate=' + props.airTicketsSearchInfo.endDate.format('DD/MM/YYYY');
@@ -43,8 +44,8 @@ function AirTicketsSearchBar(props) {
     queryString += '&children=' + encodeURI(JSON.stringify(props.airTicketsSearchInfo.children));
     queryString += '&infants=' + props.airTicketsSearchInfo.infants;
     queryString += '&routing=' + props.airTicketsSearchInfo.routing;
-    queryString += '&class=' + props.airTicketsSearchInfo.flightClass;
-    queryString += '&stops=' + props.airTicketsSearchInfo.flightStops;
+    queryString += '&class=' + props.airTicketsSearchInfo.clazz;
+    queryString += '&stops=' + props.airTicketsSearchInfo.stops;
     if (props.airTicketsSearchInfo.departureTime) {
       queryString += '&departureTime=' + props.airTicketsSearchInfo.departureTime;
     }
@@ -111,7 +112,7 @@ function AirTicketsSearchBar(props) {
         </div>
         <div className="class-type air-tickets-form-group-item">
           <span>Ticket class: </span>
-          <select name="classType" value={props.airTicketsSearchInfo.flightClass} onChange={e => props.dispatch(setFlightClass(e.target.value))}>
+          <select name="classType" value={props.airTicketsSearchInfo.clazz} onChange={e => props.dispatch(setClass(e.target.value))}>
             <option value="0">any</option>
             <option value="Y">economy</option>
             <option value="J">premium economy</option>
@@ -121,7 +122,7 @@ function AirTicketsSearchBar(props) {
         </div>
         <div className="flight-stops air-tickets-form-group-item">
           <span>Flight stops: </span>
-          <select name="classType" value={props.airTicketsSearchInfo.flightStops} onChange={e => props.dispatch(setFlightStops(e.target.value))}>
+          <select name="classType" value={props.airTicketsSearchInfo.stops} onChange={e => props.dispatch(setStops(e.target.value))}>
             <option value="-1">any</option>
             <option value="0">direct flight</option>
             <option value="1">one stop</option>
@@ -144,11 +145,11 @@ function AirTicketsSearchBar(props) {
             placeholder="Origin"
             required
             style={{ boxShadow: 'none', border: 'none' }}
-            value={props.airTicketsSearchInfo.flightOrigin}
-            onChange={value => props.dispatch(setFlightOrigin(value))}
+            value={props.airTicketsSearchInfo.origin}
+            onChange={value => props.dispatch(setOrigin(value))}
             valueKey={'id'}
             labelKey={'query'}
-            loadOptions={getRegions}
+            loadOptions={getAirports}
             backspaceRemoves={true}
             arrowRenderer={null}
             onSelectResetsInput={false}
@@ -159,11 +160,11 @@ function AirTicketsSearchBar(props) {
             placeholder="Destination"
             required
             style={{ boxShadow: 'none', border: 'none' }}
-            value={props.airTicketsSearchInfo.flightDestination}
-            onChange={value => props.dispatch(setFlightDestination(value))}
+            value={props.airTicketsSearchInfo.destination}
+            onChange={value => props.dispatch(setDestination(value))}
             valueKey={'id'}
             labelKey={'query'}
-            loadOptions={getRegions}
+            loadOptions={getAirports}
             backspaceRemoves={true}
             arrowRenderer={null}
             onSelectResetsInput={false}

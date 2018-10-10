@@ -7,17 +7,17 @@ export function setRouting(routing) {
   };
 }
 
-export function setFlightClass(flightClass) {
+export function setClass(clazz) {
   return {
-    type: airTicketsSearchInfo.SET_FLIGHT_CLASS,
-    flightClass
+    type: airTicketsSearchInfo.SET_CLASS,
+    clazz
   };
 }
 
-export function setFlightStops(flightStops) {
+export function setStops(stops) {
   return {
-    type: airTicketsSearchInfo.SET_FLIGHT_STOPS,
-    flightStops
+    type: airTicketsSearchInfo.SET_STOPS,
+    stops
   };
 }
 
@@ -28,17 +28,17 @@ export function setDepartureTime(departureTime) {
   };
 }
 
-export function setFlightOrigin(flightOrigin) {
+export function setOrigin(origin) {
   return {
-    type: airTicketsSearchInfo.SET_FLIGHT_ORIGIN,
-    flightOrigin
+    type: airTicketsSearchInfo.SET_ORIGIN,
+    origin
   };
 }
 
-export function setFlightDestination(flightDestination) {
+export function setDestination(destination) {
   return {
-    type: airTicketsSearchInfo.SET_FLIGHT_DESTINATION,
-    flightDestination
+    type: airTicketsSearchInfo.SET_DESTINATION,
+    destination
   };
 }
 
@@ -77,15 +77,15 @@ export function setInfants(infants) {
   };
 }
 
-export function setAirTicketsSearchInfo(routing, flightClass, flightStops, departureTime, flightOrigin, flightDestination, startDate, endDate, adultsCount, hasChildren) {
+export function setAirTicketsSearchInfo(routing, clazz, stops, departureTime, origin, destination, startDate, endDate, adultsCount, hasChildren) {
   return {
     type: airTicketsSearchInfo.SET_AIR_TICKETS_SEARCH_INFO,
     routing,
-    flightClass,
-    flightStops,
+    clazz,
+    stops,
     departureTime,
-    flightOrigin,
-    flightDestination,
+    origin,
+    destination,
     startDate,
     endDate,
     adultsCount,
