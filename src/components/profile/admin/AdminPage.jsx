@@ -6,6 +6,7 @@ import React from 'react';
 import UnpublishedList from './listings/UnpublishedList';
 import UnverifiedList from './users/UnverifiedList';
 import VerifiedList from './users/VerifiedList';
+import AdminAirdrop from './airdrop/AdminAirdrop';
 
 function AdminPage() {
   return (
@@ -18,6 +19,7 @@ function AdminPage() {
         <Route exact path="/profile/admin/listings/unpublished" render={() => <UnpublishedList />} />
         <Route exact path="/profile/admin/users/verified" render={() => <VerifiedList />} />
         <Route exact path="/profile/admin/users/unverified" render={() => <UnverifiedList />} />
+        <Route exact path="/profile/admin/airdrop" render={() => <AdminAirdrop />} />
       </Switch>
     </div>
   );
