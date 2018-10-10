@@ -5,6 +5,7 @@ import { withRouter } from 'react-router-dom';
 import requester from '../../requester';
 import HomesSearchBar from '../homes/search/HomesSearchBar';
 import HotelsSearchBar from '../hotels/search/HotelsSearchBar';
+import AirTicketsSearchBar from '../airTickets/search/AirTicketsSearchBar';
 import ListingTypeNav from '../common/listingTypeNav/ListingTypeNav';
 
 import '../../styles/css/components/hero-component.css';
@@ -29,7 +30,6 @@ class HeroComponent extends React.Component {
     this.onChange = this.onChange.bind(this);
     this.handleSearch = this.handleSearch.bind(this);
     this.handleDatePick = this.handleDatePick.bind(this);
-    this.redirectToSearchPage = this.redirectToSearchPage.bind(this);
     this.handleDestinationPick = this.handleDestinationPick.bind(this);
   }
 
@@ -75,8 +75,26 @@ class HeroComponent extends React.Component {
     document.getElementsByName('stay')[0].click();
   }
 
-  redirectToSearchPage(queryString) {
-    this.props.history.push('/hotels/listings' + queryString);
+  getSearchBar(homePage) {
+    switch (homePage) {
+      case 'homes':
+        return (
+          <HomesSearchBar
+            countryId={this.state.countryId}
+            countries={this.state.countries}
+            startDate={this.state.startDate}
+            endDate={this.state.endDate}
+            guests={this.state.guests}
+            onChange={this.onChange}
+            handleSearch={this.handleSearch}
+            handleDatePick={this.handleDatePick}
+          />
+        );
+      case 'tickets':
+        return <AirTicketsSearchBar />;
+      default:
+        return <HotelsSearchBar />;
+    }
   }
 
   render() {
@@ -88,18 +106,7 @@ class HeroComponent extends React.Component {
             <h2>Browse for homes &amp; hotels worldwide</h2>
             <div className="source-data">
               <ListingTypeNav />
-              {this.props.homePage === 'hotels' ?
-                <HotelsSearchBar redirectToSearchPage={this.redirectToSearchPage} /> :
-                <HomesSearchBar
-                  countryId={this.state.countryId}
-                  countries={this.state.countries}
-                  startDate={this.state.startDate}
-                  endDate={this.state.endDate}
-                  guests={this.state.guests}
-                  onChange={this.onChange}
-                  handleSearch={this.handleSearch}
-                  handleDatePick={this.handleDatePick}
-                />}
+              {this.getSearchBar(this.props.homePage)}
             </div>
           </div>
         </div>
