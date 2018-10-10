@@ -38,8 +38,13 @@ function HotelsSearchBar(props) {
     return queryString;
   };
 
+  
+  const redirectToSearchPage = (queryString) => {
+    this.props.history.push('/hotels/listings' + queryString);
+  };
+
   const handleSubmitModal = () => {
-    props.redirectToSearchPage(getQueryString());
+    redirectToSearchPage(getQueryString());
   };
 
   const distributeAdults = async () => {
@@ -88,7 +93,7 @@ function HotelsSearchBar(props) {
       if (props.searchInfo.hasChildren) {
         openChildrenModal(CHILDREN);
       } else {
-        props.redirectToSearchPage(getQueryString(rooms), e);
+        redirectToSearchPage(getQueryString(rooms), e);
       }
     });
   };
@@ -174,8 +179,6 @@ function HotelsSearchBar(props) {
 }
 
 HotelsSearchBar.propTypes = {
-  redirectToSearchPage: PropTypes.func,
-
   // start Router props
   location: PropTypes.object,
 

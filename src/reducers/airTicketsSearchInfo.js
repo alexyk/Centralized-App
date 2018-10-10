@@ -2,23 +2,25 @@ import { airTicketsSearchInfo } from '../actions/actionTypes';
 import moment from 'moment';
 
 const initialState = {
-  flightType: 'roundTrip',
-  flightClass: 'any',
-  flightStops: 'any',
-  departureTime: 'any',
+  routing: '2',
+  flightClass: '0',
+  flightStops: '-1',
+  departureTime: '',
   flightOrigin: null,
   flightDestination: null,
   startDate: moment().add(1, 'day'),
   endDate: moment().add(2, 'day'),
   adultsCount: 1,
+  children: [],
+  infants: 0,
   hasChildren: false
 };
 
 export default function reducer(state = initialState, action) {
   switch (action.type) {
-    case airTicketsSearchInfo.SET_FLIGHT_TYPE:
+    case airTicketsSearchInfo.SET_ROUTING:
       return Object.assign({}, state, {
-        flightType: action.flightType
+        routing: action.routing
       });
     case airTicketsSearchInfo.SET_FLIGHT_CLASS:
       return Object.assign({}, state, {
@@ -49,13 +51,21 @@ export default function reducer(state = initialState, action) {
       return Object.assign({}, state, {
         adultsCount: action.adultsCount,
       });
-    case airTicketsSearchInfo.SET_CHILDREN:
+    case airTicketsSearchInfo.SET_HAS_CHILDREN:
       return Object.assign({}, state, {
         hasChildren: !state.hasChildren
       });
+    case airTicketsSearchInfo.SET_CHILDREN:
+      return Object.assign({}, state, {
+        children: action.children
+      });
+    case airTicketsSearchInfo.SET_INFANTS:
+      return Object.assign({}, state, {
+        infants: action.infants
+      });
     case airTicketsSearchInfo.SET_AIR_TICKETS_SEARCH_INFO:
       return Object.assign({}, state, {
-        flightType: action.flightType,
+        routing: action.routing,
         flightClass: action.flightClass,
         flightStops: action.flightStops,
         departureTime: action.departureTime,

@@ -30,6 +30,9 @@ $media-expressions: (
   border-radius: 3px;
   margin-bottom: 5px;
   text-align: center;
+  .Select-clear {
+    display: none !important;
+  }
   .air-tickets-form-group {
     &-first {
       margin: 15px;
@@ -51,7 +54,7 @@ $media-expressions: (
     background: $white;
     margin-bottom: 35px;
   }
-  .flight-type {
+  .routing {
     border-right: 1px solid $gray;
     input {
       margin-right: 1%;
@@ -64,8 +67,11 @@ $media-expressions: (
   .flight-stops,
   .departure-time {
     border-right: 1px solid $gray;
+    display: grid;
+    grid-template-columns: 90px auto;
+    justify-self: center;
+    align-items: center;
     select {
-      width: 50%;
       font-size: 18px;
       height: 100%;
       border: none;
@@ -90,6 +96,7 @@ $media-expressions: (
   }
   .departure-time {
     border: none;
+    grid-template-columns: 150px auto;
   }
   .air-tickets {
     &-select {
@@ -247,11 +254,11 @@ $media-expressions: (
       }
       select,
       .select-children,
-      .select-babies {
+      .select-infants {
         border: 0;
       }
       .select-children:hover,
-      .select-babies:hover {
+      .select-infants:hover {
         cursor: pointer;
       }
     }

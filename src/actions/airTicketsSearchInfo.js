@@ -1,9 +1,9 @@
 import { airTicketsSearchInfo } from './actionTypes';
 
-export function setFlightType(flightType) {
+export function setRouting(routing) {
   return {
-    type: airTicketsSearchInfo.SET_FLIGHT_TYPE,
-    flightType
+    type: airTicketsSearchInfo.SET_ROUTING,
+    routing
   };
 }
 
@@ -57,16 +57,30 @@ export function setAdults(adultsCount) {
   };
 }
 
-export function setChildren() {
+export function setHasChildren() {
   return {
-    type: airTicketsSearchInfo.SET_CHILDREN
+    type: airTicketsSearchInfo.SET_HAS_CHILDREN
   };
 }
 
-export function setAirTicketsSearchInfo(flightType, flightClass, flightStops, departureTime, flightOrigin, flightDestination, startDate, endDate, adultsCount, hasChildren) {
+export function setChildren(children) {
+  return {
+    type: airTicketsSearchInfo.SET_CHILDREN,
+    children
+  };
+}
+
+export function setInfants(infants) {
+  return {
+    type: airTicketsSearchInfo.SET_INFANTS,
+    infants
+  };
+}
+
+export function setAirTicketsSearchInfo(routing, flightClass, flightStops, departureTime, flightOrigin, flightDestination, startDate, endDate, adultsCount, hasChildren) {
   return {
     type: airTicketsSearchInfo.SET_AIR_TICKETS_SEARCH_INFO,
-    flightType,
+    routing,
     flightClass,
     flightStops,
     departureTime,
