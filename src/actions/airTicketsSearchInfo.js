@@ -77,7 +77,7 @@ export function setInfants(infants) {
   };
 }
 
-export function setAirTicketsSearchInfo(routing, clazz, stops, departureTime, origin, destination, startDate, endDate, adultsCount, hasChildren) {
+export function setAirTicketsSearchInfo(routing, clazz, stops, departureTime, origin, destination, startDate, endDate, adultsCount, children, infants, hasChildren) {
   return {
     type: airTicketsSearchInfo.SET_AIR_TICKETS_SEARCH_INFO,
     routing,
@@ -89,6 +89,8 @@ export function setAirTicketsSearchInfo(routing, clazz, stops, departureTime, or
     startDate,
     endDate,
     adultsCount,
+    children,
+    infants,
     hasChildren
   };
 }

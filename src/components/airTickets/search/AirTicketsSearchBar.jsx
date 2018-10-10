@@ -3,7 +3,7 @@ import { setRouting, setClass, setStops, setDepartureTime, setOrigin, setDestina
 
 import { AIR_TICKETS_CHILDREN } from '../../../constants/modals';
 import AirTicketsChildrenModal from '../modals/AirTicketsChildrenModal';
-import AirTicketsSearchBarDatePicker from './AirTicketsSearchBarDatePicker';
+import AirTicketsSearchBarDatePicker from './common/AirTicketsSearchBarDatePicker';
 import PropTypes from 'prop-types';
 import React from 'react';
 import Select from 'react-select';

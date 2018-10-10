@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import '../../../styles/css/components/common/search/search-bar-date-picker-hide-preview.css';
+import '../../../../styles/css/components/common/search/search-bar-date-picker-hide-preview.css';
 
 function AirTicketsSearchBarDatePickerHidePreview(props) {
   const { datesDetails } = props;
