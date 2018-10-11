@@ -7,10 +7,10 @@ export function setRouting(routing) {
   };
 }
 
-export function setClass(clazz) {
+export function setFlightClass(flightClass) {
   return {
-    type: airTicketsSearchInfo.SET_CLASS,
-    clazz
+    type: airTicketsSearchInfo.SET_FLIGHT_CLASS,
+    flightClass
   };
 }
 
@@ -45,8 +45,8 @@ export function setDestination(destination) {
 export function setDates(event, picker) {
   return {
     type: airTicketsSearchInfo.SET_DATES,
-    startDate: picker.startDate,
-    endDate: picker.endDate
+    departureDate: picker.departureDate,
+    arrivalDate: picker.arrivalDate
   };
 }
 
@@ -77,18 +77,20 @@ export function setInfants(infants) {
   };
 }
 
-export function setAirTicketsSearchInfo(routing, clazz, stops, departureTime, origin, destination, startDate, endDate, adultsCount, hasChildren) {
+export function setAirTicketsSearchInfo(routing, flightClass, stops, departureTime, origin, destination, departureDate, arrivalDate, adultsCount, children, infants, hasChildren) {
   return {
     type: airTicketsSearchInfo.SET_AIR_TICKETS_SEARCH_INFO,
     routing,
-    clazz,
+    flightClass,
     stops,
     departureTime,
     origin,
     destination,
-    startDate,
-    endDate,
+    departureDate,
+    arrivalDate,
     adultsCount,
+    children,
+    infants,
     hasChildren
   };
 }

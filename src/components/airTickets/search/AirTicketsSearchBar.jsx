@@ -1,9 +1,9 @@
 import { closeModal, openModal } from '../../../actions/modalsInfo.js';
-import { setRouting, setClass, setStops, setDepartureTime, setOrigin, setDestination, setDates, setAdults, setHasChildren } from '../../../actions/airTicketsSearchInfo';
+import { setRouting, setFlightClass, setStops, setDepartureTime, setOrigin, setDestination, setDates, setAdults, setHasChildren } from '../../../actions/airTicketsSearchInfo';
 
 import { AIR_TICKETS_CHILDREN } from '../../../constants/modals';
 import AirTicketsChildrenModal from '../modals/AirTicketsChildrenModal';
-import AirTicketsSearchBarDatePicker from './AirTicketsSearchBarDatePicker';
+import AirTicketsSearchBarDatePicker from './common/AirTicketsSearchBarDatePicker';
 import PropTypes from 'prop-types';
 import React from 'react';
 import Select from 'react-select';
@@ -36,15 +36,15 @@ function AirTicketsSearchBar(props) {
 
     queryString += 'origin=' + props.airTicketsSearchInfo.origin.id;
     queryString += '&destination=' + props.airTicketsSearchInfo.destination.id;    
-    queryString += '&startDate=' + props.airTicketsSearchInfo.startDate.format('DD/MM/YYYY');
-    if (props.airTicketsSearchInfo.endDate) {
-      queryString += '&endDate=' + props.airTicketsSearchInfo.endDate.format('DD/MM/YYYY');
+    queryString += '&departureDate=' + props.airTicketsSearchInfo.departureDate.format('DD/MM/YYYY');
+    if (props.airTicketsSearchInfo.arrivalDate) {
+      queryString += '&arrivalDate=' + props.airTicketsSearchInfo.arrivalDate.format('DD/MM/YYYY');
     }
     queryString += '&adults=' + props.airTicketsSearchInfo.adultsCount;
     queryString += '&children=' + encodeURI(JSON.stringify(props.airTicketsSearchInfo.children));
     queryString += '&infants=' + props.airTicketsSearchInfo.infants;
     queryString += '&routing=' + props.airTicketsSearchInfo.routing;
-    queryString += '&class=' + props.airTicketsSearchInfo.clazz;
+    queryString += '&class=' + props.airTicketsSearchInfo.flightClass;
     queryString += '&stops=' + props.airTicketsSearchInfo.stops;
     if (props.airTicketsSearchInfo.departureTime) {
       queryString += '&departureTime=' + props.airTicketsSearchInfo.departureTime;
@@ -112,7 +112,7 @@ function AirTicketsSearchBar(props) {
         </div>
         <div className="class-type air-tickets-form-group-item">
           <span>Ticket class: </span>
-          <select name="classType" value={props.airTicketsSearchInfo.clazz} onChange={e => props.dispatch(setClass(e.target.value))}>
+          <select name="classType" value={props.airTicketsSearchInfo.flightClass} onChange={e => props.dispatch(setFlightClass(e.target.value))}>
             <option value="0">any</option>
             <option value="Y">economy</option>
             <option value="J">premium economy</option>
@@ -180,8 +180,8 @@ function AirTicketsSearchBar(props) {
           <div className="check">
             <AirTicketsSearchBarDatePicker
               id='search-bar-date-picker'
-              startDate={props.airTicketsSearchInfo.startDate}
-              endDate={props.airTicketsSearchInfo.endDate}
+              departureDate={props.airTicketsSearchInfo.departureDate}
+              arrivalDate={props.airTicketsSearchInfo.arrivalDate}
               onApply={(e, picker) => props.dispatch(setDates(e, picker))}
             />
           </div>
@@ -231,6 +231,7 @@ AirTicketsSearchBar.propTypes = {
 
 function mapStateToProps(state) {
   const { airTicketsSearchInfo, paymentInfo, modalsInfo } = state;
+
   return {
     airTicketsSearchInfo,
     paymentInfo,

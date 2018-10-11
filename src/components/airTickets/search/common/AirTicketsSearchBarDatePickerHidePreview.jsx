@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import '../../../styles/css/components/common/search/search-bar-date-picker-hide-preview.css';
+import '../../../../styles/css/components/common/search/search-bar-date-picker-hide-preview.css';
 
 function AirTicketsSearchBarDatePickerHidePreview(props) {
   const { datesDetails } = props;
@@ -14,7 +14,7 @@ function AirTicketsSearchBarDatePickerHidePreview(props) {
         <div className="row-container">
           <div>Departure</div>
           <div className="date-mon-day">
-            <p><span>{datesDetails.startDateDay} </span>{datesDetails.startDateMonth}, {datesDetails.startDateDayOfWeek}</p>
+            <p><span>{datesDetails.departureDateDay} </span>{datesDetails.departureDateMonth}, {datesDetails.departureDateDayOfWeek}</p>
           </div>
         </div>
       </div>
@@ -28,7 +28,7 @@ function AirTicketsSearchBarDatePickerHidePreview(props) {
         <div className="row-container">
           <div>Аrrival</div>
           <div className="date-mon-day">
-            <p><span className="date-color">{datesDetails.endDateDay} </span>{datesDetails.endDateMonth}, {datesDetails.endDateDayOfWeek}</p>
+            <p><span className="date-color">{datesDetails.arrivalDateDay} </span>{datesDetails.arrivalDateMonth}, {datesDetails.arrivalDateDayOfWeek}</p>
           </div>
         </div>
       </div>

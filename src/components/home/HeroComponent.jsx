@@ -31,6 +31,7 @@ class HeroComponent extends React.Component {
     this.handleSearch = this.handleSearch.bind(this);
     this.handleDatePick = this.handleDatePick.bind(this);
     this.handleDestinationPick = this.handleDestinationPick.bind(this);
+    this.redirectToHotelsSearchPage = this.redirectToHotelsSearchPage.bind(this);
   }
 
   componentDidMount() {
@@ -75,6 +76,10 @@ class HeroComponent extends React.Component {
     document.getElementsByName('stay')[0].click();
   }
 
+  redirectToHotelsSearchPage(queryString) {
+    this.props.history.push('/hotels/listings' + queryString);
+  }
+
   getSearchBar(homePage) {
     switch (homePage) {
       case 'homes':
@@ -93,7 +98,7 @@ class HeroComponent extends React.Component {
       case 'tickets':
         return <AirTicketsSearchBar />;
       default:
-        return <HotelsSearchBar />;
+        return <HotelsSearchBar redirectToSearchPage={this.redirectToHotelsSearchPage} />;
     }
   }
 
