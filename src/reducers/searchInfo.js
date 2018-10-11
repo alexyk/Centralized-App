@@ -15,6 +15,9 @@ const initialState = {
 export default function reducer(state = initialState, action) {
   switch (action.type) {
     case searchInfo.SET_DATES:
+      if (!action.startDate || !action.endDate) {
+        return state;
+      }
       return Object.assign({}, state, {
         startDate: action.startDate,
         endDate: action.endDate.diff(action.startDate, 'days') === 0 ? action.endDate.add(1, 'day') : action.endDate,

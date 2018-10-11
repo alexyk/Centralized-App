@@ -14,7 +14,6 @@ import { RoomsXMLCurrency } from '../../../services/utilities/roomsXMLCurrency';
 import Slider from 'react-slick';
 import StringUtils from '../../../services/utilities/stringUtilities';
 import _ from 'lodash';
-import { connect } from 'react-redux';
 import HotelItemRatingBox from '../../common/hotel/HotelItemRatingBox';
 import requester from '../../../requester';
 import LocPrice from '../../common/utility/LocPrice';
@@ -47,7 +46,7 @@ class AirTicketsSearchResult extends React.Component {
 
     const screenWidth = window.innerWidth;
     const screenSize = this.getScreenSize(screenWidth);
-    const photoUrl = this.props.hotel.hotelPhoto && this.props.hotel.hotelPhoto.url ? this.props.hotel.hotelPhoto.url : this.props.hotel.hotelPhoto;
+    const photoUrl = this.props.result.hotelPhoto && this.props.result.hotelPhoto.url ? this.props.result.hotelPhoto.url : this.props.result.hotelPhoto;
 
     this.state = {
       screenWidth: screenWidth,
@@ -96,13 +95,12 @@ class AirTicketsSearchResult extends React.Component {
   }
 
   render() {
-    let { id, name, generalDescription, star } = this.props.hotel;
-    let { price } = this.props;
+    const { exchangeRatesInfo, paymentInfo, userInfo, price, result, allElements } = this.props;
+    let { id, name, generalDescription, star } = result;
 
-    const { exchangeRates } = this.props;
-    const { currencySign } = this.props.paymentInfo;
     const isPriceLoaded = !!price;
-    const priceInSelectedCurrency = exchangeRates && ((CurrencyConverter.convert(exchangeRates, RoomsXMLCurrency.get(), this.props.paymentInfo.currency, price)) / this.props.nights).toFixed(2);
+    const priceForLoc = exchangeRatesInfo.currencyExchangeRates && (CurrencyConverter.convert(exchangeRatesInfo.currencyExchangeRates, result.pricesInfo.currency, RoomsXMLCurrency.get(), price)).toFixed(2);
+    const priceInSelectedCurrency = exchangeRatesInfo.currencyExchangeRates && (CurrencyConverter.convert(exchangeRatesInfo.currencyExchangeRates, result.pricesInfo.currency, paymentInfo.currency, price)).toFixed(2);
 
     name = name && StringUtils.shorten(name, this.state.titleLength);
     generalDescription = generalDescription && StringUtils.shorten(generalDescription, this.state.descriptionLength);
@@ -114,7 +112,7 @@ class AirTicketsSearchResult extends React.Component {
     const SlickButtonLoad = ({ currentSlide, slideCount, ...props }) => (
       <button {...props} onClick={() => {
         this.setState({ loadedPictures: false });
-        requester.getHotelPictures(this.props.hotel.id).then(res => {
+        requester.getHotelPictures(result.id).then(res => {
           res.body.then(data => {
             let images = _.orderBy(data, ['url'], ['asc']);
             images.push(images.shift());
@@ -141,7 +139,7 @@ class AirTicketsSearchResult extends React.Component {
         // console.log(event, slick);
         if (!this.state.calledBackendForAllImages) {
           this.setState({ loadedPictures: false });
-          requester.getHotelPictures(this.props.hotel.id).then(res => {
+          requester.getHotelPictures(result.id).then(res => {
             res.body.then(data => {
               let images = _.orderBy(data, ['url'], ['asc']);
               images.push(images.shift());
@@ -190,12 +188,12 @@ class AirTicketsSearchResult extends React.Component {
           <div className="result-description">{generalDescription && ReactHtmlParser(generalDescription)}</div>
           <div className="result-mobile-pricing">
             {!isPriceLoaded
-              ? (!this.props.allElements ? <div className="price">Loading price...</div> : <div></div>)
-              : <div className="price">{this.props.userInfo.isLogged && `${currencySign} ${priceInSelectedCurrency}`}</div>
+              ? (!allElements ? <div className="price">Loading price...</div> : <div></div>)
+              : <div className="price">{userInfo.isLogged && `${paymentInfo.currencySign} ${priceInSelectedCurrency}`}</div>
             }
-            {isPriceLoaded && <div className="price">1 night: <LocPrice fiat={price / this.props.nights} /></div>}
+            {isPriceLoaded && <div className="price">Total price: <LocPrice fiat={priceForLoc} /></div>}
             <div>
-              {!isPriceLoaded && this.props.allElements
+              {!isPriceLoaded && allElements
                 ? <button disabled className="mobile-pricing-button">Unavailable</button>
                 : <Link target={isMobile === false ? '_blank' : '_self'} className="mobile-pricing-button" to={`${redirectURL}/${id}${search.substr(0, endOfSearch)}`}>Book now</Link>
               }
@@ -204,13 +202,16 @@ class AirTicketsSearchResult extends React.Component {
         </div>
 
         <div className="result-pricing">
-          <div className="price-for">Price for 1 night</div>
+          <div className="price-for">
+            <div>Price for 1 adult</div>
+            {result.routing === 1 ? <div>one way</div> : <div>round trip</div>}
+          </div>
           {!isPriceLoaded
-            ? (!this.props.allElements ? <div className="loader" style={{ width: '100%' }}></div> : <span style={{ padding: '20px 10px 10px 10px' }}>Unavailable</span>)
-            : <span className="price">{this.props.userInfo.isLogged && priceInSelectedCurrency && `${currencySign} ${priceInSelectedCurrency}`}</span>
+            ? (!allElements ? <div className="loader" style={{ width: '100%' }}></div> : <span style={{ padding: '20px 10px 10px 10px' }}>Unavailable</span>)
+            : <span className="price">{userInfo.isLogged && priceInSelectedCurrency && `${paymentInfo.currencySign} ${priceInSelectedCurrency}`}</span>
           }
-          {isPriceLoaded && <LocPrice fiat={price / this.props.nights} />}
-          {!isPriceLoaded && this.props.allElements
+          {isPriceLoaded && <LocPrice fiat={priceForLoc} />}
+          {!isPriceLoaded && allElements
             ? <button disabled className="btn">Unavailable</button>
             : <Link target={isMobile === false ? '_blank' : '_self'} className="btn" to={`${redirectURL}/${id}${search.substr(0, endOfSearch)}`}>Book now</Link>
           }
@@ -221,26 +222,15 @@ class AirTicketsSearchResult extends React.Component {
 }
 
 AirTicketsSearchResult.propTypes = {
-  hotel: PropTypes.object,
-  nights: PropTypes.number,
-  exchangeRates: PropTypes.any,
+  result: PropTypes.object,
   price: PropTypes.any,
   allElements: PropTypes.bool,
+  exchangeRatesInfo: PropTypes.object,
+  paymentInfo: PropTypes.object,
+  userInfo: PropTypes.object,
 
   // Router props
   location: PropTypes.object,
-
-  // Redux props
-  paymentInfo: PropTypes.object,
-  userInfo: PropTypes.object
 };
 
-function mapStateToProps(state) {
-  const { paymentInfo, userInfo } = state;
-  return {
-    paymentInfo,
-    userInfo
-  };
-}
-
-export default withRouter(connect(mapStateToProps)(AirTicketsSearchResult));
+export default withRouter(AirTicketsSearchResult);

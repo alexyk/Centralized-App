@@ -5,20 +5,20 @@ import PropTypes from 'prop-types';
 import AirTicketsSearchBarDatePickerHidePreview from './AirTicketsSearchBarDatePickerHidePreview';
 
 function AirTicketsSearchBarDatePicker(props) {
-  let { startDate, endDate } = props;
+  let { departureDate, arrivalDate } = props;
   
   const datesDetails = {
-    startDateDay: startDate.format('DD'),
-    startDateMonth: startDate.format('MMM').toUpperCase(),
-    startDateDayOfWeek: startDate.format('ddd').toUpperCase(),
-    endDateDay: endDate.format('DD'),
-    endDateMonth: endDate.format('MMM').toUpperCase(),
-    endDateDayOfWeek: endDate.format('ddd').toUpperCase()
+    departureDateDay: departureDate.format('DD'),
+    departureDateMonth: departureDate.format('MMM').toUpperCase(),
+    departureDateDayOfWeek: departureDate.format('ddd').toUpperCase(),
+    arrivalDateDay: arrivalDate.format('DD'),
+    arrivalDateMonth: arrivalDate.format('MMM').toUpperCase(),
+    arrivalDateDayOfWeek: arrivalDate.format('ddd').toUpperCase()
   };
 
   const pickerProps = {
-    startDate,
-    endDate,
+    departureDate,
+    arrivalDate,
   };
 
   return (
@@ -40,10 +40,9 @@ function AirTicketsSearchBarDatePicker(props) {
 }
 
 AirTicketsSearchBarDatePicker.propTypes = {
-  startDate: PropTypes.any,
-  endDate: PropTypes.any,
+  departureDate: PropTypes.any,
+  arrivalDate: PropTypes.any,
   isInvalidDate: PropTypes.bool,
-  nights: PropTypes.number,
   onApply: PropTypes.func,
 };
 

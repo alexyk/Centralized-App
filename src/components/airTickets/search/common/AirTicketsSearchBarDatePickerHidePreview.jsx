@@ -14,7 +14,7 @@ function AirTicketsSearchBarDatePickerHidePreview(props) {
         <div className="row-container">
           <div>Departure</div>
           <div className="date-mon-day">
-            <p><span>{datesDetails.startDateDay} </span>{datesDetails.startDateMonth}, {datesDetails.startDateDayOfWeek}</p>
+            <p><span>{datesDetails.departureDateDay} </span>{datesDetails.departureDateMonth}, {datesDetails.departureDateDayOfWeek}</p>
           </div>
         </div>
       </div>
@@ -28,7 +28,7 @@ function AirTicketsSearchBarDatePickerHidePreview(props) {
         <div className="row-container">
           <div>Аrrival</div>
           <div className="date-mon-day">
-            <p><span className="date-color">{datesDetails.endDateDay} </span>{datesDetails.endDateMonth}, {datesDetails.endDateDayOfWeek}</p>
+            <p><span className="date-color">{datesDetails.arrivalDateDay} </span>{datesDetails.arrivalDateMonth}, {datesDetails.arrivalDateDayOfWeek}</p>
           </div>
         </div>
       </div>

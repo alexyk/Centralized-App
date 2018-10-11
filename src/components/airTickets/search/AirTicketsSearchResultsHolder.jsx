@@ -21,13 +21,16 @@ function AirTicketsResultsHolder(props) {
     return <NoEntriesMessage text='No Results' />;
   }
 
-  const results = props.results && props.results.map((result) => {
+  const results = props.results && props.results.map((result, index) => {
     return <AirTicketsSearchResult
-      key={result.id}
-      hotel={result}
-      exchangeRates={props.exchangeRates}
+      // key={result.id}
+      key={index}
+      result={result}
+      exchangeRatesInfo={props.exchangeRatesInfo}
+      paymentInfo={props.paymentInfo}
+      userInfo={props.userInfo}
       allElements={props.allElements}
-      price={result.price} />;
+      price={result.pricesInfo.totalPrice} />;
   });
 
   return (
@@ -46,7 +49,9 @@ AirTicketsResultsHolder.propTypes = {
   results: PropTypes.any,
   loading: PropTypes.bool,
   allElements: PropTypes.bool,
-  exchangeRates: PropTypes.object
+  exchangeRatesInfo: PropTypes.object,
+  paymentInfo: PropTypes.object,
+  userInfo: PropTypes.object
 };
 
 export default AirTicketsResultsHolder;
