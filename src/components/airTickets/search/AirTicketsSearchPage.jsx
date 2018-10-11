@@ -10,12 +10,13 @@ import { setOrigin, setDestination, setAirTicketsSearchInfo } from '../../../act
 import requester from '../../../requester';
 import AirTicketsResultsHolder from './AirTicketsSearchResultsHolder';
 import * as airTicketsResults from './mockData/airTicketsResults.json';
+import AirTicketsSearchFilterPanel from './filter/AirTicketsSearchFilterPanel';
+
+import '../../../styles/css/components/airTickets/search/air-tickets-search-page.css';
 
 class AirTicketsSearchPage extends Component {
   constructor(props) {
     super(props);
-
-    this.populateSearchBar();
 
     this.state = {
       results: [],
@@ -27,10 +28,12 @@ class AirTicketsSearchPage extends Component {
   }
 
   componentDidMount() {
+    this.populateSearchBar();
     setTimeout(() => {
       this.setState({
         results: airTicketsResults.default,
-        loading: false
+        loading: false,
+        allElements: true
       });
     }, 1000);
   }
@@ -97,8 +100,8 @@ class AirTicketsSearchPage extends Component {
       loading: true
     });
 
-    const query = this.props.location.search;
-    const searchParams = queryString.parse(query);
+    // const query = this.props.location.search;
+    // const searchParams = queryString.parse(query);
 
     window.scrollTo(0, 0);
 
@@ -132,26 +135,35 @@ class AirTicketsSearchPage extends Component {
     return (
       <div className="container">
         <AirTicketsSearchBar />
-        {this.state.loading
-          ? <div className="loader"></div>
-          : <AirTicketsResultsHolder
-            results={results}
-            exchangeRatesInfo={exchangeRatesInfo}
-            paymentInfo={paymentInfo}
-            userInfo={userInfo}
-            allElements={allElements}
-            loading={loading}
-          />
-        }
-        {!this.state.loading &&
-          <Pagination
-            loading={this.state.loading}
-            onPageChange={this.onPageChange}
-            currentPage={this.state.page + 1}
-            pageSize={10}
-            totalElements={results.length}
-          />
-        }
+        <div className="air-tickets-search-results">
+          <div className="air-tickets-search-filter-panel">
+            <AirTicketsSearchFilterPanel
+              isSearchReady={allElements}
+            />
+          </div>
+          <div className="air-tickets-search-results-holder">
+            {this.state.loading
+              ? <div className="loader"></div>
+              : <AirTicketsResultsHolder
+                results={results}
+                exchangeRatesInfo={exchangeRatesInfo}
+                paymentInfo={paymentInfo}
+                userInfo={userInfo}
+                allElements={allElements}
+                loading={loading}
+              />
+            }
+            {!this.state.loading &&
+              <Pagination
+                loading={this.state.loading}
+                onPageChange={this.onPageChange}
+                currentPage={this.state.page + 1}
+                pageSize={10}
+                totalElements={results.length}
+              />
+            }
+          </div>
+        </div>
       </div>
     );
   }

@@ -34,7 +34,7 @@ class LocPriceUpdateTimer extends PureComponent {
   }
 
   render() {
-    return null;
+    return <div />;
   }
 }
 

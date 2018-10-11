@@ -1,0 +1,10 @@
+.air-tickets-search-results {
+  display: flex;
+  .air-tickets-search-filter-panel {
+    width: 25%;
+    margin-right: 20px;
+  }
+  .air-tickets-search-results-holder {
+    width: 75%;
+  }
+}
