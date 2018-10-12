@@ -185,7 +185,6 @@ class MainNav extends React.Component {
 
     this.clearLocalStorage();
     requester.register(user, captchaToken).then(res => {
-      console.log(res);
       if (res.success) {
         this.closeModal(REGISTER);
         this.setState({
@@ -421,17 +420,26 @@ class MainNav extends React.Component {
   }
 
   setUserInfo() {
+    this.props.dispatch(setIsLogged(true));
     requester.getUserInfo().then(res => {
       res.body.then(data => {
-        Wallet.getBalance(data.locAddress).then(eth => {
-          const ethBalance = eth / (Math.pow(10, 18));
-          Wallet.getTokenBalance(data.locAddress).then(loc => {
-            const locBalance = loc / (Math.pow(10, 18));
-            const { firstName, lastName, phoneNumber, email, locAddress, gender, isEmailVerified } = data;
-            this.props.dispatch(setIsLogged(true));
-            this.props.dispatch(setUserInfo(firstName, lastName, phoneNumber, email, locAddress, ethBalance, locBalance, gender, isEmailVerified));
+        if (data.locAddress) {
+          Wallet.getBalance(data.locAddress).then(eth => {
+            const ethBalance = eth / (Math.pow(10, 18));
+            Wallet.getTokenBalance(data.locAddress).then(loc => {
+              const locBalance = loc / (Math.pow(10, 18));
+              const { firstName, lastName, phoneNumber, email, locAddress, gender, isEmailVerified } = data;
+
+              this.props.dispatch(setUserInfo(firstName, lastName, phoneNumber, email, locAddress, ethBalance, locBalance, gender, isEmailVerified));
+            });
           });
-        });
+        } else {
+          const ethBalance = 0;
+          const locBalance = 0;
+          const { firstName, lastName, phoneNumber, email, locAddress, gender, isEmailVerified } = data;
+          
+          this.props.dispatch(setUserInfo(firstName, lastName, phoneNumber, email, locAddress, ethBalance, locBalance, gender, isEmailVerified));
+        }
       });
     });
   }
