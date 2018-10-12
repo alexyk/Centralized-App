@@ -180,16 +180,14 @@ class MainNav extends React.Component {
       lastName: this.state.signUpLastName,
       password: this.state.signUpPassword,
       country: this.state.country.id,
-      locAddress: localStorage.walletAddress,
-      jsonFile: localStorage.walletJson,
       image: Config.getValue('basePath') + 'images/default.png'
     };
 
     this.clearLocalStorage();
-
     requester.register(user, captchaToken).then(res => {
+      console.log(res);
       if (res.success) {
-        this.closeModal(CONFIRM_WALLET);
+        this.closeModal(REGISTER);
         this.setState({
           confirmedRegistration: false,
         });
@@ -617,6 +615,8 @@ class MainNav extends React.Component {
         return this.handleLogin;
       case 'recoveryEmail':
         return this.handleSubmitRecoveryEmail;
+      case 'register':
+        return this.handleRegister;
       case 'confirmWallet':
         return this.handleConfirmWallet;
       case 'changePassword':
@@ -661,7 +661,7 @@ class MainNav extends React.Component {
           <ChangePasswordModal isActive={this.props.modalsInfo.isActive[CHANGE_PASSWORD]} openModal={this.openModal} closeModal={this.closeModal} newPassword={this.state.newPassword} confirmNewPassword={this.state.confirmNewPassword} onChange={this.onChange} handlePasswordChange={() => this.executeReCaptcha('changePassword')} />
           <LoginModal isActive={this.props.modalsInfo.isActive[LOGIN]} openModal={this.openModal} closeModal={this.closeModal} loginEmail={this.state.loginEmail} loginPassword={this.state.loginPassword} onChange={this.onChange} handleLogin={this.handleLogin} />
           <AirdropLoginModal isActive={this.props.modalsInfo.isActive[AIRDROP_LOGIN]} openModal={this.openModal} closeModal={this.closeModal} loginEmail={this.state.loginEmail} loginPassword={this.state.loginPassword} onChange={this.onChange} handleLogin={this.handleAirdropLogin} />
-          <RegisterModal isActive={this.props.modalsInfo.isActive[REGISTER]} openModal={this.openModal} closeModal={this.closeModal} signUpEmail={this.state.signUpEmail} signUpFirstName={this.state.signUpFirstName} signUpLastName={this.state.signUpLastName} signUpPassword={this.state.signUpPassword} countries={this.state.countries} onChange={this.onChange} handleChangeCountry={this.handleChangeCountry} />
+          <RegisterModal isActive={this.props.modalsInfo.isActive[REGISTER]} openModal={this.openModal} closeModal={this.closeModal} signUpEmail={this.state.signUpEmail} signUpFirstName={this.state.signUpFirstName} signUpLastName={this.state.signUpLastName} signUpPassword={this.state.signUpPassword} countries={this.state.countries} onChange={this.onChange} handleChangeCountry={this.handleChangeCountry} handleRegister={() => this.executeReCaptcha('register')} />
           <AirdropRegisterModal isActive={this.props.modalsInfo.isActive[AIRDROP_REGISTER]} openModal={this.openModal} closeModal={this.closeModal} signUpEmail={this.state.signUpEmail} signUpFirstName={this.state.signUpFirstName} signUpLastName={this.state.signUpLastName} signUpPassword={this.state.signUpPassword} onChange={this.onChange} />
           <UpdateCountryModal isActive={this.props.modalsInfo.isActive[UPDATE_COUNTRY]} openModal={this.openModal} closeModal={this.closeModal} country={this.state.country} countries={this.state.countries} handleUpdateCountry={this.handleUpdateCountry} handleChangeCountry={this.handleChangeCountry} />
           <EmailVerificationModal isActive={this.props.modalsInfo.isActive[EMAIL_VERIFICATION]} openModal={this.openModal} closeModal={this.closeModal} onChange={this.onChange} requestVerificationEmail={this.requestVerificationEmail} />
