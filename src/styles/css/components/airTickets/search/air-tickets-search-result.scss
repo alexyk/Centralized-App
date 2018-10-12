@@ -1,0 +1,160 @@
+$breakpoints: (
+	'xs-phone': 320px,
+	'phone': 480px,
+	'tablet': 768px,
+	'desktop': 1024px,
+	'widescreen': 1200px
+);
+
+// keywords
+$media-expressions: (
+	'screen': 'screen',
+	'print': 'print',
+	'handheld': 'handheld',
+	'landscape': '(orientation: landscape)',
+	'portrait': '(orientation: portrait)',
+	'retina2x': '(-webkit-min-device-pixel-ratio: 1.5), (min-resolution: 144dpi)',
+	'retina3x': '(-webkit-min-device-pixel-ratio: 2.5), (min-resolution: 240dpi)'
+);
+
+// ligatured operators ≥ ≤
+
+@import '../../../vendors/include-media';
+
+@import '../../../base/functions';
+@import '../../../base/variables';
+@import '../../../base/mixins';
+@import '../../../base/helpers';
+
+.result {
+	background: $white;
+	border-radius: 3px;
+	overflow: hidden;
+	padding: 5px;
+	font-size: 12px;
+	color: $dark-gray;
+	margin-bottom: 20px;
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+	@include media(">=tablet") {
+		flex-direction: row;
+  }
+  @include media(">=desktop") {
+    max-height: 200px;
+  }
+	> div {
+		width: 100%;
+		&:last-child {
+			margin-bottom: 0;
+		}
+		@include media(">=tablet") {
+			width: 30%;
+			margin-bottom: 0;
+		}
+		@include media(">=widescreen") {
+			width: auto;
+		}
+  }
+	&-content {
+    overflow: hidden;
+    .flight {
+      margin-bottom: 30px;
+      display: flex;
+      align-items: center;
+      .item {
+        margin-right: 20px;
+        font-size: 18px;
+      }
+      input {
+        margin-top: 0;
+      }
+    }
+    @include media("<tablet") {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+		@include media(">=desktop") {
+			padding-top: 11px;
+      margin-right: 33px;
+		}
+  }
+	&-pricing {
+		background: $light-gray;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		padding: 5px;
+		@include media(">=desktop") {
+			min-width: 195px;
+    }
+    @include media("<tablet") {
+			display: none;
+		}
+		.price-for {
+			position: relative;
+			display: inline-block;
+			vertical-align: middle;
+			text-align: center;
+			font-size: 12px;
+			color: $white;
+			background: $gray;
+			padding: 5px 13px;
+			margin-bottom: 1px;
+			letter-spacing: 0.03em;
+			&:after {
+				position: absolute;
+				content: '';
+				top: 100%;
+				right: 10px;
+				width: 0;
+				height: 0;
+				border-style: solid;
+				border-width: 4px 5.5px 0 5.5px;
+				border-color: $gray transparent transparent transparent;
+			}
+		}
+		.price {
+			font-size: 32px;
+			margin-bottom: 5px;
+		}
+		span {
+			font-size: 16px;
+			color: $text-black;
+			font-weight: 400;
+			margin-bottom: 21px;
+		}
+  }
+  &-mobile-pricing {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    @include media(">=tablet") {
+			display: none !important;
+    }
+    .price {
+      font-weight: 600;
+    }
+    div {
+      text-align: right;
+    }
+    .mobile-pricing-button {
+      display: block;
+      width: 100%;
+      text-align: right;
+      background: none;
+      color: $moderate-red;
+      font-size: 16px;
+      font-weight: 400;
+      padding: 10px 0 10px 10px;
+    }
+  }
+	.btn {
+		padding: 12px;
+		@include media(">=desktop") {
+			min-width: 160px;
+		}
+	}
+}

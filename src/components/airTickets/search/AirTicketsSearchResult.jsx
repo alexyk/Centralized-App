@@ -6,7 +6,7 @@ import { CurrencyConverter } from '../../../services/utilities/currencyConverter
 import { RoomsXMLCurrency } from '../../../services/utilities/roomsXMLCurrency';
 import LocPrice from '../../common/utility/LocPrice';
 
-import '../../../styles/css/components/search-result-component.css';
+import '../../../styles/css/components/airTickets/search/air-tickets-search-result.css';
 
 const SCREEN_SIZE_SMALL = 'SMALL';
 const SCREEN_SIZE_MEDIUM = 'MEDIUM';
@@ -39,11 +39,13 @@ class AirTicketsSearchResult extends React.Component {
 
     this.state = {
       screenWidth: screenWidth,
+      departureFlightIndex: 0,
       titleLength: this.getTitleLength(screenSize),
       descriptionLength: this.getDescriptionLength(screenSize)
     };
 
     this.updateWindowDimensions = _.debounce(this.updateWindowDimensions.bind(this), 500);
+    this.handleFlightChange = this.handleFlightChange.bind(this);
   }
 
   componentDidMount() {
@@ -81,10 +83,17 @@ class AirTicketsSearchResult extends React.Component {
     return TITLE_LENGTH[screenSize];
   }
 
+  handleFlightChange(e) {
+    this.setState({
+      departureFlightIndex: Number(e.target.value)
+    });
+  }
+
   render() {
     const { exchangeRatesInfo, paymentInfo, userInfo, price, result, allElements } = this.props;
+    const { departureFlightIndex } = this.state;
     let { id } = result;
-    // console.log(result);
+    console.log(result);
 
     const isPriceLoaded = !!price;
     const priceForLoc = exchangeRatesInfo.currencyExchangeRates && CurrencyConverter.convert(exchangeRatesInfo.currencyExchangeRates, result.pricesInfo.currency, RoomsXMLCurrency.get(), price);
@@ -103,6 +112,19 @@ class AirTicketsSearchResult extends React.Component {
     return (
       <div className="result" >
         <div className="result-content">
+          <form>
+            {result.solutions.map((segment, index) => {
+              return (
+                <div key={index} className="flight">
+                  <input className="item" type="radio" name="flight" value="0" onClick={this.handleFlightChange} defaultChecked={departureFlightIndex === 0} />
+                  <div className="item">dates {segment.dayChange > 0 ? <div className="item">{segment.dayChange}</div> : ''}</div>
+                  <div className="item">duration</div>
+                  <div className="item">{segment.carrierName}</div>
+                  <div className="item">airports</div>
+                </div>
+              );
+            })}
+          </form>
           <div className="result-mobile-pricing">
             {!isPriceLoaded
               ? (!allElements ? <div className="price">Loading price...</div> : <div></div>)
