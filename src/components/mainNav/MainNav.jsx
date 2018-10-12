@@ -55,6 +55,7 @@ import { connect } from 'react-redux';
 import queryString from 'query-string';
 import requester from '../../initDependencies';
 import { setAirdropInfo } from '../../actions/airdropInfo';
+import moment from 'moment';
 
 class MainNav extends React.Component {
   constructor(props) {
@@ -88,6 +89,7 @@ class MainNav extends React.Component {
 
     this.onChange = this.onChange.bind(this);
     this.handleRegister = this.handleRegister.bind(this);
+    this.handleCreateWallet = this.handleCreateWallet.bind(this);
     this.handleLogin = this.handleLogin.bind(this);
     this.logout = this.logout.bind(this);
     this.setUserInfo = this.setUserInfo.bind(this);
@@ -104,7 +106,6 @@ class MainNav extends React.Component {
     this.handleMnemonicWordsChange = this.handleMnemonicWordsChange.bind(this);
     this.handleSubmitRecoveryToken = this.handleSubmitRecoveryToken.bind(this);
     this.handleSubmitRecoveryEmail = this.handleSubmitRecoveryEmail.bind(this);
-    this.handleConfirmWallet = this.handleConfirmWallet.bind(this);
     this.handleUpdateCountry = this.handleUpdateCountry.bind(this);
     this.handleChangeCountry = this.handleChangeCountry.bind(this);
     this.requestVerificationEmail = this.requestVerificationEmail.bind(this);
@@ -180,16 +181,13 @@ class MainNav extends React.Component {
       lastName: this.state.signUpLastName,
       password: this.state.signUpPassword,
       country: this.state.country.id,
-      locAddress: localStorage.walletAddress,
-      jsonFile: localStorage.walletJson,
       image: Config.getValue('basePath') + 'images/default.png'
     };
 
     this.clearLocalStorage();
-
     requester.register(user, captchaToken).then(res => {
       if (res.success) {
-        this.closeModal(CONFIRM_WALLET);
+        this.closeModal(REGISTER);
         this.setState({
           confirmedRegistration: false,
         });
@@ -423,17 +421,26 @@ class MainNav extends React.Component {
   }
 
   setUserInfo() {
+    this.props.dispatch(setIsLogged(true));
     requester.getUserInfo().then(res => {
       res.body.then(data => {
-        Wallet.getBalance(data.locAddress).then(eth => {
-          const ethBalance = eth / (Math.pow(10, 18));
-          Wallet.getTokenBalance(data.locAddress).then(loc => {
-            const locBalance = loc / (Math.pow(10, 18));
-            const { firstName, lastName, phoneNumber, email, locAddress, gender, isEmailVerified } = data;
-            this.props.dispatch(setIsLogged(true));
-            this.props.dispatch(setUserInfo(firstName, lastName, phoneNumber, email, locAddress, ethBalance, locBalance, gender, isEmailVerified));
+        if (data.locAddress) {
+          Wallet.getBalance(data.locAddress).then(eth => {
+            const ethBalance = eth / (Math.pow(10, 18));
+            Wallet.getTokenBalance(data.locAddress).then(loc => {
+              const locBalance = loc / (Math.pow(10, 18));
+              const { firstName, lastName, phoneNumber, email, locAddress, gender, isEmailVerified } = data;
+
+              this.props.dispatch(setUserInfo(firstName, lastName, phoneNumber, email, locAddress, ethBalance, locBalance, gender, isEmailVerified));
+            });
           });
-        });
+        } else {
+          const ethBalance = 0;
+          const locBalance = 0;
+          const { firstName, lastName, phoneNumber, email, locAddress, gender, isEmailVerified } = data;
+
+          this.props.dispatch(setUserInfo(firstName, lastName, phoneNumber, email, locAddress, ethBalance, locBalance, gender, isEmailVerified));
+        }
       });
     });
   }
@@ -453,6 +460,42 @@ class MainNav extends React.Component {
     });
 
     this.props.history.push('/');
+  }
+
+  handleCreateWallet(captchaToken) {
+    requester.getUserInfo()
+      .then(res => res.body)
+      .then(userInfo => {
+        if (userInfo.birthday) {
+          let birthday = moment.utc(userInfo.birthday);
+          const day = birthday.add(1, 'days').format('D');
+          const month = birthday.format('MM');
+          const year = birthday.format('YYYY');
+          userInfo.birthday = `${day}/${month}/${year}`;
+        }
+
+        userInfo.countryState = userInfo.countryState && userInfo.countryState.id;
+        userInfo.preferredCurrency = userInfo.preferredCurrency ? userInfo.preferredCurrency.id : 1;
+        userInfo.country = userInfo.country && userInfo.country.id;
+        userInfo.countryState = userInfo.countryState && parseInt(userInfo.countryState, 10);
+        userInfo.locAddress = localStorage.walletAddress;
+        userInfo.jsonFile = localStorage.walletJson;
+
+        this.clearLocalStorage();
+
+        requester.updateUserInfo(userInfo, captchaToken).then(res => {
+          if (res.success) {
+            NotificationManager.success('Successfully created your wallet.', '', LONG);
+            this.setUserInfo();
+          } else {
+            res.errors.then(e => {
+              NotificationManager.error(e.message, '', LONG);
+            });
+          }
+
+          this.closeModal(CONFIRM_WALLET);
+        });
+      });
   }
 
   openModal(modal, e) {
@@ -617,10 +660,14 @@ class MainNav extends React.Component {
         return this.handleLogin;
       case 'recoveryEmail':
         return this.handleSubmitRecoveryEmail;
+      case 'register':
+        return this.handleRegister;
       case 'confirmWallet':
         return this.handleConfirmWallet;
       case 'changePassword':
         return this.handlePasswordChange;
+      case 'createWallet':
+        return this.handleCreateWallet;
       default:
         return null;
     }
@@ -655,13 +702,13 @@ class MainNav extends React.Component {
           </div>
           <CreateWalletModal setUserInfo={this.setUserInfo} userToken={this.state.userToken} userName={this.state.userName} walletPassword={this.state.walletPassword} repeatWalletPassword={this.state.repeatWalletPassword} isActive={this.props.modalsInfo.isActive[CREATE_WALLET]} openModal={this.openModal} closeModal={this.closeModal} onChange={this.onChange} />
           <SaveWalletModal setUserInfo={this.setUserInfo} userToken={this.state.userToken} userName={this.state.userName} isActive={this.props.modalsInfo.isActive[SAVE_WALLET]} openModal={this.openModal} closeModal={this.closeModal} onChange={this.onChange} />
-          <ConfirmWalletModal isActive={this.props.modalsInfo.isActive[CONFIRM_WALLET]} openModal={this.openModal} closeModal={this.closeModal} handleMnemonicWordsChange={this.handleMnemonicWordsChange} mnemonicWords={this.state.mnemonicWords} handleConfirmWallet={() => this.executeReCaptcha('confirmWallet')} confirmedRegistration={this.state.confirmedRegistration} />
+          <ConfirmWalletModal isActive={this.props.modalsInfo.isActive[CONFIRM_WALLET]} openModal={this.openModal} closeModal={this.closeModal} handleMnemonicWordsChange={this.handleMnemonicWordsChange} mnemonicWords={this.state.mnemonicWords} handleCreateWallet={() => this.executeReCaptcha('createWallet')} confirmedRegistration={this.state.confirmedRegistration} />
           <SendRecoveryEmailModal isActive={this.props.modalsInfo.isActive[SEND_RECOVERY_EMAIL]} openModal={this.openModal} closeModal={this.closeModal} recoveryEmail={this.state.recoveryEmail} handleSubmitRecoveryEmail={() => this.executeReCaptcha('recoveryEmail')} onChange={this.onChange} />
           <EnterRecoveryTokenModal isActive={this.props.modalsInfo.isActive[ENTER_RECOVERY_TOKEN]} openModal={this.openModal} closeModal={this.closeModal} onChange={this.onChange} recoveryToken={this.state.recoveryToken} handleSubmitRecoveryToken={this.handleSubmitRecoveryToken} />
           <ChangePasswordModal isActive={this.props.modalsInfo.isActive[CHANGE_PASSWORD]} openModal={this.openModal} closeModal={this.closeModal} newPassword={this.state.newPassword} confirmNewPassword={this.state.confirmNewPassword} onChange={this.onChange} handlePasswordChange={() => this.executeReCaptcha('changePassword')} />
           <LoginModal isActive={this.props.modalsInfo.isActive[LOGIN]} openModal={this.openModal} closeModal={this.closeModal} loginEmail={this.state.loginEmail} loginPassword={this.state.loginPassword} onChange={this.onChange} handleLogin={this.handleLogin} />
           <AirdropLoginModal isActive={this.props.modalsInfo.isActive[AIRDROP_LOGIN]} openModal={this.openModal} closeModal={this.closeModal} loginEmail={this.state.loginEmail} loginPassword={this.state.loginPassword} onChange={this.onChange} handleLogin={this.handleAirdropLogin} />
-          <RegisterModal isActive={this.props.modalsInfo.isActive[REGISTER]} openModal={this.openModal} closeModal={this.closeModal} signUpEmail={this.state.signUpEmail} signUpFirstName={this.state.signUpFirstName} signUpLastName={this.state.signUpLastName} signUpPassword={this.state.signUpPassword} countries={this.state.countries} onChange={this.onChange} handleChangeCountry={this.handleChangeCountry} />
+          <RegisterModal isActive={this.props.modalsInfo.isActive[REGISTER]} openModal={this.openModal} closeModal={this.closeModal} signUpEmail={this.state.signUpEmail} signUpFirstName={this.state.signUpFirstName} signUpLastName={this.state.signUpLastName} signUpPassword={this.state.signUpPassword} countries={this.state.countries} onChange={this.onChange} handleChangeCountry={this.handleChangeCountry} handleRegister={() => this.executeReCaptcha('register')} />
           <AirdropRegisterModal isActive={this.props.modalsInfo.isActive[AIRDROP_REGISTER]} openModal={this.openModal} closeModal={this.closeModal} signUpEmail={this.state.signUpEmail} signUpFirstName={this.state.signUpFirstName} signUpLastName={this.state.signUpLastName} signUpPassword={this.state.signUpPassword} onChange={this.onChange} />
           <UpdateCountryModal isActive={this.props.modalsInfo.isActive[UPDATE_COUNTRY]} openModal={this.openModal} closeModal={this.closeModal} country={this.state.country} countries={this.state.countries} handleUpdateCountry={this.handleUpdateCountry} handleChangeCountry={this.handleChangeCountry} />
           <EmailVerificationModal isActive={this.props.modalsInfo.isActive[EMAIL_VERIFICATION]} openModal={this.openModal} closeModal={this.closeModal} onChange={this.onChange} requestVerificationEmail={this.requestVerificationEmail} />
