@@ -9,7 +9,11 @@ import { LONG } from '../../../constants/notificationDisplayTimes.js';
 import '../../../styles/css/components/modals/modal.css';
 
 function ConfirmWalletModal(props) {
-  const onWordsForget = () => {
+  const onWordsForget = (e) => {
+    if (e) {
+      e.preventDefault();
+    }
+
     NotificationManager.warning(MNEMONIC_LAST_CALL, '', LONG);
     props.closeModal(CONFIRM_WALLET);
     props.openModal(SAVE_WALLET);
@@ -21,7 +25,7 @@ function ConfirmWalletModal(props) {
       props.closeModal(CONFIRM_WALLET);
       props.openModal(SAVE_WALLET);
     } else {
-      props.handleConfirmWallet();
+      props.handleCreateWallet();
     }
   };
 
@@ -42,12 +46,12 @@ function ConfirmWalletModal(props) {
           <form onSubmit={(e) => { e.preventDefault(); handleSubmit(); }}>
             <div className="modal-input-label">Enter your wallet mnemonic words:</div>
             <textarea name="mnemonicWords" onChange={props.handleMnemonicWordsChange} value={props.mnemonicWords} autoFocus onKeyPress={handleEnterKeyPress} />
+            <button className="btn" onClick={onWordsForget}>Back to Mnemonic Words</button>
             {!props.confirmedRegistration
               ? <button type="submit" className="btn btn-primary">Confirm Wallet</button>
-              : <button className="btn btn-primary btn-book" disabled>Processing Registration...</button>
+              : <button className="btn btn-primary btn-book" disabled>Processing Creation...</button>
             }
           </form>
-          <button className="btn btn-primary" onClick={onWordsForget}>Sorry, I did not save them</button>
         </Modal.Body>
       </Modal>
     </div>
@@ -57,7 +61,7 @@ function ConfirmWalletModal(props) {
 ConfirmWalletModal.propTypes = {
   openModal: PropTypes.func,
   closeModal: PropTypes.func,
-  handleConfirmWallet: PropTypes.func,
+  handleCreateWallet: PropTypes.func,
   handleMnemonicWordsChange: PropTypes.func,
   mnemonicWords: PropTypes.string,
   isActive: PropTypes.bool,
