@@ -413,7 +413,12 @@ class MainNav extends React.Component {
     const refLink = info.refLink;
     const participates = info.participates;
     const isVerifyEmail = info.isVerifyEmail;
-    this.props.dispatch(setAirdropInfo(email, facebookProfile, telegramProfile, twitterProfile, redditProfile, refLink, participates, isVerifyEmail));
+    const referralCount = info.referralCount;
+    const isCampaignSuccessfullyCompleted = info.isCampaignSuccessfullyCompleted;
+    const voteUrl = info.voteUrl ? info.voteUrl : '';
+    const finalizedStatus = info.finalizedStatus;
+    this.props.dispatch(setAirdropInfo(email, facebookProfile, telegramProfile, twitterProfile, redditProfile, refLink, participates, isVerifyEmail, referralCount, isCampaignSuccessfullyCompleted, voteUrl, finalizedStatus));
+    this.setState({ voteUrl: voteUrl, loading: false });
   }
 
   clearLocalStorage() {
