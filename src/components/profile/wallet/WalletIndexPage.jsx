@@ -28,6 +28,7 @@ class WalletIndexPage extends React.Component {
       recipientAddress: '',
       locAmount: 0,
       password: '',
+      latestTxHash: ''
     };
 
     this.onChange = this.onChange.bind(this);
@@ -87,12 +88,14 @@ class WalletIndexPage extends React.Component {
         this.state.password,
         this.state.recipientAddress,
         wei.toString()
-      ).then(() => {
+      ).then((transaction) => {
+        console.log(transaction);
         NotificationManager.success(TRANSACTION_SUCCESSFUL, 'Send Tokens', LONG);
         this.setState({
           recipientAddress: '',
           locAmount: 0,
-          password: ''
+          password: '',
+          lastTxHash: transaction.hash
         });
       }).catch(error => {
         if (error.hasOwnProperty('message')) {
@@ -130,6 +133,7 @@ class WalletIndexPage extends React.Component {
     }
 
     const etherscanUrl = `https://etherscan.io/address/${this.props.userInfo.locAddress}#tokentxns`;
+    const etherscanLatestTxUrl = `${Config.getValue('ETHERS_HTTP_PROVIDER_NETWORK_BASE_URL')}/tx/${this.state.lastTxHash}`;
 
     return (
       <div className="container">
@@ -165,8 +169,8 @@ class WalletIndexPage extends React.Component {
               </div>
               <div>
                 {this.state.canProceed ? <button className="btn btn-primary" type="submit">Send Tokens</button> : <button className="btn btn-primary" disabled="disabled">Send Tokens</button>}
-                &nbsp; &nbsp;
-                    <div className="button-wallet-link"><a href={etherscanUrl} target="_blank" className="wallet-link">Check your transactions</a></div>
+                <div className="button-wallet-link"><a href={etherscanUrl} target="_blank" className="wallet-link">Check your transactions</a></div>
+                {this.state.latestTxHash && <div className="button-wallet-link"><a href={etherscanLatestTxUrl} target="_blank" className="wallet-link">Latest transaction status</a></div>}
               </div>
             </form>
           </div>
