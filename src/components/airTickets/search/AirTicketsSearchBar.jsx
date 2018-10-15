@@ -1,15 +1,15 @@
+import React from 'react';
+import { connect } from 'react-redux';
+import { withRouter } from 'react-router-dom';
+import Select from 'react-select';
+import PropTypes from 'prop-types';
 import { closeModal, openModal } from '../../../actions/modalsInfo.js';
 import { setRouting, setFlightClass, setStops, setDepartureTime, setOrigin, setDestination, setDates, setAdults, setHasChildren } from '../../../actions/airTicketsSearchInfo';
-
 import { AIR_TICKETS_CHILDREN } from '../../../constants/modals';
 import AirTicketsChildrenModal from '../modals/AirTicketsChildrenModal';
 import AirTicketsSearchBarDatePicker from './common/AirTicketsSearchBarDatePicker';
-import PropTypes from 'prop-types';
-import React from 'react';
-import Select from 'react-select';
-import { connect } from 'react-redux';
 import requester from '../../../requester';
-import { withRouter } from 'react-router-dom';
+import { Config } from '../../../config';
 
 import '../../../styles/css/components/airTickets/search/air-tickets-search-bar.css';
 
@@ -24,9 +24,21 @@ function AirTicketsSearchBar(props) {
       return Promise.resolve({ options: [] });
     }
 
-    return requester.getRegionsBySearchParameter([`query=${param}`]).then(res => {
-      return res.body.then(data => {
-        return { options: data };
+    return fetch(`http://localhost:8088/city/search?query=${param}`, {
+      headers: {
+        'Content-type': 'application/json',
+        'Authorization': localStorage.getItem(Config.getValue('domainPrefix') + '.auth.locktrip')
+      }
+    }).then(res => {
+      return res.json().then(towns => {
+        console.log(towns);
+        let options = [];
+        towns.map(town => {
+          town.airports.map(airport => {
+            options.push({ code: airport.code, name: `${town.name}, ${airport.code} airport` });
+          });
+        });
+        return { options };
       });
     });
   };
@@ -34,8 +46,8 @@ function AirTicketsSearchBar(props) {
   const getQueryString = () => {
     let queryString = '?';
 
-    queryString += 'origin=' + props.airTicketsSearchInfo.origin.id;
-    queryString += '&destination=' + props.airTicketsSearchInfo.destination.id;    
+    queryString += 'origin=' + props.airTicketsSearchInfo.origin.code;
+    queryString += '&destination=' + props.airTicketsSearchInfo.destination.code;    
     queryString += '&departureDate=' + props.airTicketsSearchInfo.departureDate.format('DD/MM/YYYY');
     if (props.airTicketsSearchInfo.arrivalDate) {
       queryString += '&arrivalDate=' + props.airTicketsSearchInfo.arrivalDate.format('DD/MM/YYYY');
@@ -147,12 +159,13 @@ function AirTicketsSearchBar(props) {
             style={{ boxShadow: 'none', border: 'none' }}
             value={props.airTicketsSearchInfo.origin}
             onChange={value => props.dispatch(setOrigin(value))}
-            valueKey={'id'}
-            labelKey={'query'}
+            valueKey={'code'}
+            labelKey={'name'}
             loadOptions={getAirports}
             backspaceRemoves={true}
             arrowRenderer={null}
             onSelectResetsInput={false}
+            ignoreCase={false}
           />
         </div>
         <div className="air-tickets-select air-tickets-form-group-item">
@@ -162,12 +175,13 @@ function AirTicketsSearchBar(props) {
             style={{ boxShadow: 'none', border: 'none' }}
             value={props.airTicketsSearchInfo.destination}
             onChange={value => props.dispatch(setDestination(value))}
-            valueKey={'id'}
-            labelKey={'query'}
+            valueKey={'code'}
+            labelKey={'name'}
             loadOptions={getAirports}
             backspaceRemoves={true}
             arrowRenderer={null}
             onSelectResetsInput={false}
+            ignoreCase={false}
           />
         </div>
 

@@ -30,7 +30,7 @@ function AirTicketsResultsHolder(props) {
       paymentInfo={props.paymentInfo}
       userInfo={props.userInfo}
       allElements={props.allElements}
-      price={result.pricesInfo.totalPrice} />;
+      price={0.00} />;
   });
 
   return (

@@ -69,4 +69,349 @@
 			}
 		}
 	]
+},
+{
+	"itemId": "72b32a1f754ba1c09b3695e0cb6cde7f_1",
+	"solutions": [
+		{
+			"isLowCost": false,
+			"journeyTime": 2015,
+			"segments": [
+				{
+					"waitTime": 1070,
+					"flightClassName": "Economy",
+					"origin": {
+						"code": "KBP",
+						"name": "Borispol Arpt",
+						"date": "2018-10-30",
+						"time": "14:45",
+						"timezone": "+02:00",
+						"terminal": ""
+					},
+					"destination": {
+						"code": "CDG",
+						"name": "Paris Charles De Gaulle",
+						"date": "2018-10-30",
+						"time": "17:10",
+						"timezone": "+01:00",
+						"terminal": "2Е"
+					},
+					"dayChange": 0,
+					"flightTime": 205,
+					"planeInfo": {
+						"code": 319,
+						"name": "Airbus A319"
+					},
+					"carrierName": "Air France",
+					"distance": 1248
+				},
+				{
+					"flightClassName": "Economy",
+					"origin": {
+						"code": "CDG",
+						"name": "Paris Charles De Gaulle",
+						"date": "2018-10-31",
+						"time": "11:00",
+						"timezone": "+01:00",
+						"terminal": "2E"
+					},
+					"destination": {
+						"code": "MEX",
+						"name": "Mexico City",
+						"date": "2018-10-31",
+						"time": "16:20",
+						"timezone": "-06:00",
+						"terminal": "1"
+					},
+					"dayChange": 0,
+					"flightTime": 740,
+					"planeInfo": {
+						"code": 388,
+						"name": "Airbus A380-800"
+					},
+					"carrierName": "Air France",
+					"distance": 5735
+				}
+			],
+			"pricesInfo": {
+				"currency": "EUR",
+				"basePrice": 3702.67,
+				"tax": 200.78,
+				"totalPrice": 3903.45
+			}
+    },
+    {
+			"isLowCost": false,
+			"journeyTime": 2015,
+			"segments": [
+				{
+					"waitTime": 1070,
+					"flightClassName": "Economy",
+					"origin": {
+						"code": "KBP",
+						"name": "Borispol Arpt",
+						"date": "2018-10-30",
+						"time": "14:45",
+						"timezone": "+02:00",
+						"terminal": ""
+					},
+					"destination": {
+						"code": "CDG",
+						"name": "Paris Charles De Gaulle",
+						"date": "2018-10-30",
+						"time": "17:10",
+						"timezone": "+01:00",
+						"terminal": "2Е"
+					},
+					"dayChange": 0,
+					"flightTime": 205,
+					"planeInfo": {
+						"code": 319,
+						"name": "Airbus A319"
+					},
+					"carrierName": "Air France",
+					"distance": 1248
+				},
+				{
+					"flightClassName": "Economy",
+					"origin": {
+						"code": "CDG",
+						"name": "Paris Charles De Gaulle",
+						"date": "2018-10-31",
+						"time": "11:00",
+						"timezone": "+01:00",
+						"terminal": "2E"
+					},
+					"destination": {
+						"code": "MEX",
+						"name": "Mexico City",
+						"date": "2018-10-31",
+						"time": "16:20",
+						"timezone": "-06:00",
+						"terminal": "1"
+					},
+					"dayChange": 0,
+					"flightTime": 740,
+					"planeInfo": {
+						"code": 388,
+						"name": "Airbus A380-800"
+					},
+					"carrierName": "Air France",
+					"distance": 5735
+				}
+			],
+			"pricesInfo": {
+				"currency": "EUR",
+				"basePrice": 3702.67,
+				"tax": 200.78,
+				"totalPrice": 3903.45
+			}
+    },
+    {
+			"isLowCost": false,
+			"journeyTime": 2015,
+			"segments": [
+				{
+					"waitTime": 1070,
+					"flightClassName": "Economy",
+					"origin": {
+						"code": "KBP",
+						"name": "Borispol Arpt",
+						"date": "2018-10-30",
+						"time": "14:45",
+						"timezone": "+02:00",
+						"terminal": ""
+					},
+					"destination": {
+						"code": "CDG",
+						"name": "Paris Charles De Gaulle",
+						"date": "2018-10-30",
+						"time": "17:10",
+						"timezone": "+01:00",
+						"terminal": "2Е"
+					},
+					"dayChange": 0,
+					"flightTime": 205,
+					"planeInfo": {
+						"code": 319,
+						"name": "Airbus A319"
+					},
+					"carrierName": "Air France",
+					"distance": 1248
+				},
+				{
+					"flightClassName": "Economy",
+					"origin": {
+						"code": "CDG",
+						"name": "Paris Charles De Gaulle",
+						"date": "2018-10-31",
+						"time": "11:00",
+						"timezone": "+01:00",
+						"terminal": "2E"
+					},
+					"destination": {
+						"code": "MEX",
+						"name": "Mexico City",
+						"date": "2018-10-31",
+						"time": "16:20",
+						"timezone": "-06:00",
+						"terminal": "1"
+					},
+					"dayChange": 0,
+					"flightTime": 740,
+					"planeInfo": {
+						"code": 388,
+						"name": "Airbus A380-800"
+					},
+					"carrierName": "Air France",
+					"distance": 5735
+				}
+			],
+			"pricesInfo": {
+				"currency": "EUR",
+				"basePrice": 3702.67,
+				"tax": 200.78,
+				"totalPrice": 3903.45
+			}
+		}
+	]
+},
+{
+	"itemId": "72b32a1f754ba1c09b3695e0cb6cde7f_1",
+	"solutions": [
+		{
+			"isLowCost": false,
+			"journeyTime": 2015,
+			"segments": [
+				{
+					"waitTime": 1070,
+					"flightClassName": "Economy",
+					"origin": {
+						"code": "KBP",
+						"name": "Borispol Arpt",
+						"date": "2018-10-30",
+						"time": "14:45",
+						"timezone": "+02:00",
+						"terminal": ""
+					},
+					"destination": {
+						"code": "CDG",
+						"name": "Paris Charles De Gaulle",
+						"date": "2018-10-30",
+						"time": "17:10",
+						"timezone": "+01:00",
+						"terminal": "2Е"
+					},
+					"dayChange": 0,
+					"flightTime": 205,
+					"planeInfo": {
+						"code": 319,
+						"name": "Airbus A319"
+					},
+					"carrierName": "Air France",
+					"distance": 1248
+				},
+				{
+					"flightClassName": "Economy",
+					"origin": {
+						"code": "CDG",
+						"name": "Paris Charles De Gaulle",
+						"date": "2018-10-31",
+						"time": "11:00",
+						"timezone": "+01:00",
+						"terminal": "2E"
+					},
+					"destination": {
+						"code": "MEX",
+						"name": "Mexico City",
+						"date": "2018-10-31",
+						"time": "16:20",
+						"timezone": "-06:00",
+						"terminal": "1"
+					},
+					"dayChange": 0,
+					"flightTime": 740,
+					"planeInfo": {
+						"code": 388,
+						"name": "Airbus A380-800"
+					},
+					"carrierName": "Air France",
+					"distance": 5735
+				}
+			],
+			"pricesInfo": {
+				"currency": "EUR",
+				"basePrice": 3702.67,
+				"tax": 200.78,
+				"totalPrice": 3903.45
+			}
+    },
+    {
+			"isLowCost": false,
+			"journeyTime": 2015,
+			"segments": [
+				{
+					"waitTime": 1070,
+					"flightClassName": "Economy",
+					"origin": {
+						"code": "KBP",
+						"name": "Borispol Arpt",
+						"date": "2018-10-30",
+						"time": "14:45",
+						"timezone": "+02:00",
+						"terminal": ""
+					},
+					"destination": {
+						"code": "CDG",
+						"name": "Paris Charles De Gaulle",
+						"date": "2018-10-30",
+						"time": "17:10",
+						"timezone": "+01:00",
+						"terminal": "2Е"
+					},
+					"dayChange": 0,
+					"flightTime": 205,
+					"planeInfo": {
+						"code": 319,
+						"name": "Airbus A319"
+					},
+					"carrierName": "Air France",
+					"distance": 1248
+				},
+				{
+					"flightClassName": "Economy",
+					"origin": {
+						"code": "CDG",
+						"name": "Paris Charles De Gaulle",
+						"date": "2018-10-31",
+						"time": "11:00",
+						"timezone": "+01:00",
+						"terminal": "2E"
+					},
+					"destination": {
+						"code": "MEX",
+						"name": "Mexico City",
+						"date": "2018-10-31",
+						"time": "16:20",
+						"timezone": "-06:00",
+						"terminal": "1"
+					},
+					"dayChange": 0,
+					"flightTime": 740,
+					"planeInfo": {
+						"code": 388,
+						"name": "Airbus A380-800"
+					},
+					"carrierName": "Air France",
+					"distance": 5735
+				}
+			],
+			"pricesInfo": {
+				"currency": "EUR",
+				"basePrice": 3702.67,
+				"tax": 200.78,
+				"totalPrice": 3903.45
+			}
+    }
+	]
 }]

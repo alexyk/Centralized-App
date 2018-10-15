@@ -1,20 +1,17 @@
-$breakpoints: (
-	'xs-phone': 320px,
-	'phone': 480px,
-	'tablet': 768px,
-	'desktop': 1024px,
-	'widescreen': 1200px
-);
+$breakpoints: ('xs-phone': 320px,
+'phone': 480px,
+'tablet': 768px,
+'desktop': 1024px,
+'widescreen': 1200px);
 
 // keywords
-$media-expressions: (
-	'screen': 'screen',
-	'print': 'print',
-	'handheld': 'handheld',
-	'landscape': '(orientation: landscape)',
-	'portrait': '(orientation: portrait)',
-	'retina2x': '(-webkit-min-device-pixel-ratio: 1.5), (min-resolution: 144dpi)',
-	'retina3x': '(-webkit-min-device-pixel-ratio: 2.5), (min-resolution: 240dpi)'
+$media-expressions: ('screen': 'screen',
+'print': 'print',
+'handheld': 'handheld',
+'landscape': '(orientation: landscape)',
+'portrait': '(orientation: portrait)',
+'retina2x': '(-webkit-min-device-pixel-ratio: 1.5), (min-resolution: 144dpi)',
+'retina3x': '(-webkit-min-device-pixel-ratio: 2.5), (min-resolution: 240dpi)'
 );
 
 // ligatured operators ≥ ≤
@@ -26,120 +23,234 @@ $media-expressions: (
 @import '../../../base/mixins';
 @import '../../../base/helpers';
 
-.result {
-	background: $white;
-	border-radius: 3px;
-	overflow: hidden;
-	padding: 5px;
-	font-size: 12px;
-	color: $dark-gray;
-	margin-bottom: 20px;
-	display: flex;
-	flex-direction: row;
-	justify-content: space-between;
-	@include media(">=tablet") {
-		flex-direction: row;
+.air-tickets-result {
+  background: $white;
+  border-radius: 3px;
+  overflow: hidden;
+  padding: 5px;
+  font-size: 14px;
+  color: $dark-gray;
+  margin-bottom: 40px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+
+  @include media(">=tablet") {
+    flex-direction: row;
   }
-  @include media(">=desktop") {
-    max-height: 200px;
-  }
-	> div {
-		width: 100%;
-		&:last-child {
-			margin-bottom: 0;
-		}
-		@include media(">=tablet") {
-			width: 30%;
-			margin-bottom: 0;
-		}
-		@include media(">=widescreen") {
-			width: auto;
-		}
-  }
-	&-content {
+
+  &-content {
     overflow: hidden;
-    .flight {
-      margin-bottom: 30px;
+    width: 100%;
+
+    .solution-main-info {
       display: flex;
+      padding: 5px 10px;
       align-items: center;
-      .item {
-        margin-right: 20px;
-        font-size: 18px;
+      font-weight: 400;
+
+      h5 {
+        font-weight: 400;
       }
-      input {
-        margin-top: 0;
+
+      .departure {
+        width: 25%;
+        margin-left: 23px;
+      }
+
+      .carrier {
+        width: 45%;
+      }
+
+      .duration {
+        width: 20%;
+        margin: 0 0 0.5em;
+        display: flex;
+        align-items: center;
+        font-size: 12px;
+        img {
+          margin-right: 5px;
+        }
+      }
+
+      .stops-count {
+        width: 10%;
+        margin: 0 0 0.5em
       }
     }
+
+    .solution-flight {
+      background-color: #f0f1f3;
+
+      .flight {
+        padding: 10px 10px;
+        display: flex;
+        align-items: center;
+
+        .item {
+          margin-right: 10px;
+          display: flex;
+          align-items: center;
+          position: relative;
+        }
+
+        input {
+          margin-top: 0;
+        }
+
+        .arrow-icon-container {
+          min-width: 30px;
+          margin: 0 5px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+
+        .stop {
+          text-align: center;
+        }
+
+        .middle-stop {
+          position: absolute;
+          left: 40%;
+          top: 80%;
+        }
+
+        .stops-container {
+          margin: 0 10px;
+          position: relative;
+          display: flex;
+          align-items: center;
+          background-color: white;
+          padding: 2px;
+
+          .bulet-container {
+            display: flex;
+
+            .bulet {
+              display: inline-block;
+              font-weight: 800;
+              width: 0.5em;
+              height: 0.5em;
+              text-align: center;
+              line-height: 1em;
+              border-radius: 1em;
+              background: #d87a61;
+              position: relative;
+            }
+          }
+
+          .line {
+            width: 50px;
+            border: 1px solid #d87a61;
+            margin: 0;
+          }
+        }
+
+        .icons {
+          display: flex;
+          justify-content: space-between;
+          margin-right: 0;
+
+          .icon {
+            width: 30px;
+            height: 30px;
+            padding: 3px;
+            margin-left: 5px;
+            background-color: white;
+            border: 1px solid #cccccc;
+
+            &.wi-fi {
+              padding: 0;
+            }
+          }
+        }
+      }
+    }
+
     @include media("<tablet") {
       display: flex;
       flex-direction: column;
       justify-content: space-between;
     }
-		@include media(">=desktop") {
-			padding-top: 11px;
-      margin-right: 33px;
-		}
-  }
-	&-pricing {
-		background: $light-gray;
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		justify-content: center;
-		padding: 5px;
-		@include media(">=desktop") {
-			min-width: 195px;
+
+    @include media(">=desktop") {
+      margin-right: 5px;
     }
-    @include media("<tablet") {
-			display: none;
-		}
-		.price-for {
-			position: relative;
-			display: inline-block;
-			vertical-align: middle;
-			text-align: center;
-			font-size: 12px;
-			color: $white;
-			background: $gray;
-			padding: 5px 13px;
-			margin-bottom: 1px;
-			letter-spacing: 0.03em;
-			&:after {
-				position: absolute;
-				content: '';
-				top: 100%;
-				right: 10px;
-				width: 0;
-				height: 0;
-				border-style: solid;
-				border-width: 4px 5.5px 0 5.5px;
-				border-color: $gray transparent transparent transparent;
-			}
-		}
-		.price {
-			font-size: 32px;
-			margin-bottom: 5px;
-		}
-		span {
-			font-size: 16px;
-			color: $text-black;
-			font-weight: 400;
-			margin-bottom: 21px;
-		}
   }
+
+  &-pricing {
+    width: auto;
+    background: $light-gray;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 5px;
+
+    @include media(">=desktop") {
+      min-width: 195px;
+    }
+
+    @include media("<tablet") {
+      display: none;
+    }
+
+    .price-for {
+      position: relative;
+      display: inline-block;
+      vertical-align: middle;
+      text-align: center;
+      font-size: 12px;
+      color: $white;
+      background: $gray;
+      padding: 5px 13px;
+      margin-bottom: 1px;
+      letter-spacing: 0.03em;
+
+      &:after {
+        position: absolute;
+        content: '';
+        top: 100%;
+        right: 10px;
+        width: 0;
+        height: 0;
+        border-style: solid;
+        border-width: 4px 5.5px 0 5.5px;
+        border-color: $gray transparent transparent transparent;
+      }
+    }
+
+    .price {
+      font-size: 32px;
+      margin-bottom: 5px;
+    }
+
+    span {
+      font-size: 16px;
+      color: $text-black;
+      font-weight: 400;
+      margin-bottom: 21px;
+    }
+  }
+
   &-mobile-pricing {
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
+
     @include media(">=tablet") {
-			display: none !important;
+      display: none !important;
     }
+
     .price {
       font-weight: 600;
     }
+
     div {
       text-align: right;
     }
+
     .mobile-pricing-button {
       display: block;
       width: 100%;
@@ -151,10 +262,12 @@ $media-expressions: (
       padding: 10px 0 10px 10px;
     }
   }
-	.btn {
-		padding: 12px;
-		@include media(">=desktop") {
-			min-width: 160px;
-		}
-	}
+
+  .btn {
+    padding: 12px;
+
+    @include media(">=desktop") {
+      min-width: 160px;
+    }
+  }
 }

@@ -1,10 +1,14 @@
-import React from 'react';
+import React, { Component, Fragment } from 'react';
 import { Link, withRouter } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 import { CurrencyConverter } from '../../../services/utilities/currencyConverter';
 import { RoomsXMLCurrency } from '../../../services/utilities/roomsXMLCurrency';
 import LocPrice from '../../common/utility/LocPrice';
+import BagIcon from '../../../styles/images/bag-icon.png';
+import MealIcon from '../../../styles/images/meal-icon.png';
+import WirelessIcon from '../../../styles/images/icon-wireless_internet.png';
+import TimeIcon from '../../../styles/images/time-icon.png';
 
 import '../../../styles/css/components/airTickets/search/air-tickets-search-result.css';
 
@@ -30,7 +34,7 @@ const TITLE_LENGTH = {
   LARGE: 200,
 };
 
-class AirTicketsSearchResult extends React.Component {
+class AirTicketsSearchResult extends Component {
   constructor(props) {
     super(props);
 
@@ -89,15 +93,21 @@ class AirTicketsSearchResult extends React.Component {
     });
   }
 
+  extractFlightFullDurationFromMinutes(minutes) {
+    const hours = Math.floor(minutes / 60);
+    const remainingMinutes = minutes % 60;
+
+    return `${hours}h ${remainingMinutes}min`;
+  }
+
   render() {
     const { exchangeRatesInfo, paymentInfo, userInfo, price, result, allElements } = this.props;
     const { departureFlightIndex } = this.state;
     let { id } = result;
-    console.log(result);
 
     const isPriceLoaded = !!price;
-    const priceForLoc = exchangeRatesInfo.currencyExchangeRates && CurrencyConverter.convert(exchangeRatesInfo.currencyExchangeRates, result.pricesInfo.currency, RoomsXMLCurrency.get(), price);
-    const priceInSelectedCurrency = exchangeRatesInfo.currencyExchangeRates && (CurrencyConverter.convert(exchangeRatesInfo.currencyExchangeRates, result.pricesInfo.currency, paymentInfo.currency, price)).toFixed(2);
+    const priceForLoc = exchangeRatesInfo.currencyExchangeRates && CurrencyConverter.convert(exchangeRatesInfo.currencyExchangeRates, 'EUR', RoomsXMLCurrency.get(), price);
+    const priceInSelectedCurrency = exchangeRatesInfo.currencyExchangeRates && (CurrencyConverter.convert(exchangeRatesInfo.currencyExchangeRates, 'EUR', paymentInfo.currency, price)).toFixed(2);
 
     const isMobile = this.props.location.pathname.indexOf('mobile') !== -1;
 
@@ -110,22 +120,71 @@ class AirTicketsSearchResult extends React.Component {
     const endOfSearch = search.indexOf('&filters=') !== -1 ? search.indexOf('&filters=') : search.length;
 
     return (
-      <div className="result" >
-        <div className="result-content">
-          <form>
-            {result.solutions.map((segment, index) => {
-              return (
-                <div key={index} className="flight">
-                  <input className="item" type="radio" name="flight" value="0" onClick={this.handleFlightChange} defaultChecked={departureFlightIndex === 0} />
-                  <div className="item">dates {segment.dayChange > 0 ? <div className="item">{segment.dayChange}</div> : ''}</div>
-                  <div className="item">duration</div>
-                  <div className="item">{segment.carrierName}</div>
-                  <div className="item">airports</div>
-                </div>
+      <div className="air-tickets-result" >
+        <form className="air-tickets-result-content">
+          {result.solutions.map((solution, solutionIndex) => {
+            const departureTime = solution.segments[0].origin.time;
+            const arrivalTime = solution.segments[solution.segments.length - 1].destination.time;
+            const carrierName = solution.segments[0].carrierName;
+            let middleStopsBulets = [];
+            for (let i = 0; i < solution.segments.length - 1; i++) {
+              middleStopsBulets.push(
+                <Fragment>
+                  <div key={i} className="bulet-container"><span className="bulet"></span></div>
+                  <hr className="line" />
+                </Fragment>
               );
-            })}
-          </form>
-          <div className="result-mobile-pricing">
+            }
+
+            return (
+              <Fragment key={solutionIndex}>
+                <div className="solution-main-info">
+                  <h5 className="departure">Departure</h5>
+                  <h5 className="carrier">{carrierName}</h5>
+                  <div className="duration">
+                    <img width="20" src={TimeIcon} alt="time" />
+                    {this.extractFlightFullDurationFromMinutes(solution.journeyTime)}
+                  </div>
+                  <div className="stops-count">{solution.segments.length - 1} stops</div>
+                </div>
+                <div className="solution-flight">
+                  <div className="flight">
+                    <input className="item" type="radio" name="flight" value="0" onClick={this.handleFlightChange} defaultChecked={departureFlightIndex === solutionIndex} />
+                    <div className="item">
+                      {departureTime}
+                      <div className="arrow-icon-container">
+                        <img src="/images/icon-arrow.png" alt="icon-arrow" />
+                      </div>
+                      {arrivalTime}
+                    </div>
+                    <div className="item">
+                      <div className="stop">{solution.segments[0].origin.name}</div>
+                      <div className="stops-container horizontal">
+                        <div className="bulet-container"><span className="bulet"></span></div>
+                        <hr className="line" />
+                        {solution.segments.length === 1 ? null : middleStopsBulets}
+                        <div className="bulet-container"><span className="bulet"></span></div>
+                      </div>
+                      <div className="middle-stop">Amsterdam</div>
+                      <div className="stop">{solution.segments[solution.segments.length - 1].destination.name}</div>
+                    </div>
+                    <div className="item icons">
+                      <div className="icon">
+                        <img src={MealIcon} alt="meal" />
+                      </div>
+                      <div className="icon">
+                        <img src={BagIcon} alt="bag" />
+                      </div>
+                      <div className="icon wi-fi">
+                        <img src={WirelessIcon} alt="bag" />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </Fragment>
+            );
+          })}
+          <div className="air-tickets-result-mobile-pricing">
             {!isPriceLoaded
               ? (!allElements ? <div className="price">Loading price...</div> : <div></div>)
               : <div className="price">{userInfo.isLogged && `${paymentInfo.currencySign} ${priceInSelectedCurrency}`}</div>
@@ -138,9 +197,9 @@ class AirTicketsSearchResult extends React.Component {
               }
             </div>
           </div>
-        </div>
+        </form>
 
-        <div className="result-pricing">
+        <div className="air-tickets-result-pricing">
           <div className="price-for">
             <div>Price for 1 adult</div>
             {result.routing === 1 ? <div>one way</div> : <div>round trip</div>}
