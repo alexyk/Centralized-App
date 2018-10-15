@@ -10,7 +10,7 @@ import { CurrencyConverter } from '../../../services/utilities/currencyConverter
 import { HotelReservation } from '../../../services/blockchain/hotelReservation';
 import { LOC_PAYMENT_INITIATED } from '../../../constants/successMessages.js';
 import { NotificationManager } from 'react-notifications';
-import { PASSWORD_PROMPT } from '../../../constants/modals.js';
+import { PASSWORD_PROMPT, CREATE_WALLET } from '../../../constants/modals.js';
 import { PROCESSING_TRANSACTION } from '../../../constants/infoMessages.js';
 import PasswordModal from '../../common/modals/PasswordModal';
 import PropTypes from 'prop-types';
@@ -40,7 +40,7 @@ class HotelsBookingConfirmPage extends React.Component {
       loading: true,
       locRate: null,
       password: '',
-      confirmed: false,
+      userConfirmedPaymentWithLOC: false,
       fiatPriceInEUR: null,
       seconds: 0,
     };
@@ -411,7 +411,7 @@ class HotelsBookingConfirmPage extends React.Component {
     const endDate = moment.utc(booking[0].arrivalDate, 'YYYY-MM-DD').add(booking[0].nights, 'days');
 
     NotificationManager.info(PROCESSING_TRANSACTION, 'Transactions', 60000);
-    this.setState({ confirmed: true });
+    this.setState({ userConfirmedPaymentWithLOC: true });
     this.closeModal(PASSWORD_PROMPT);
 
     const queryString = this.props.location.search;
@@ -460,7 +460,7 @@ class HotelsBookingConfirmPage extends React.Component {
             }
 
             this.closeModal(PASSWORD_PROMPT);
-            this.setState({ confirmed: false });
+            this.setState({ userConfirmedPaymentWithLOC: false });
           });
         }, 1000);
       });
@@ -627,10 +627,11 @@ class HotelsBookingConfirmPage extends React.Component {
   }
 
   render() {
-    const { data, rates, locRate, userInfo, showRoomsCanxDetails, confirmed, password } = this.state;
+    const { data, rates, locRate, userInfo, showRoomsCanxDetails, userConfirmedPaymentWithLOC, password } = this.state;
     if (userInfo === null) {
       return <div className="loader"></div>;
     }
+    const hasLocAddress = this.props.userInfo.locAddress;
     const isMobile = this.props.location.pathname.indexOf('/mobile') !== -1;
 
     const booking = data && data.booking.hotelBooking;
@@ -718,10 +719,13 @@ class HotelsBookingConfirmPage extends React.Component {
                         <div>
                           {/* <p className="booking-price">LOC {(locPrice).toFixed(4)}</p> */}
 
-                          {!confirmed
-                            ? <button className="btn btn-primary btn-book" onClick={(e) => this.openModal(PASSWORD_PROMPT, e)}>Pay with LOC</button>
-                            : <button className="btn btn-primary btn-book" disabled>Processing Payment...</button>
-                          }</div>
+                          {userConfirmedPaymentWithLOC
+                            ? <button className="btn btn-primary" disabled>Processing Payment...</button>
+                            : hasLocAddress
+                              ? <button className="btn btn-primary" onClick={(e) => { this.openModal(PASSWORD_PROMPT, e); }}>Pay with LOC Tokens</button>
+                              : <button className="btn btn-primary" onClick={(e) => this.openModal(CREATE_WALLET, e)}>Create Wallet</button>
+                          }
+                        </div>
                       </div>
                     </div>
                   </div>
