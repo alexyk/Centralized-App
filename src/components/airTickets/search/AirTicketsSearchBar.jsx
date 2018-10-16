@@ -8,7 +8,7 @@ import { setRouting, setFlightClass, setStops, setDepartureTime, setOrigin, setD
 import { AIR_TICKETS_CHILDREN } from '../../../constants/modals';
 import AirTicketsChildrenModal from '../modals/AirTicketsChildrenModal';
 import AirTicketsSearchBarDatePicker from './common/AirTicketsSearchBarDatePicker';
-import requester from '../../../requester';
+// import requester from '../../../requester';
 import { Config } from '../../../config';
 
 import '../../../styles/css/components/airTickets/search/air-tickets-search-bar.css';
@@ -31,10 +31,9 @@ function AirTicketsSearchBar(props) {
       }
     }).then(res => {
       return res.json().then(towns => {
-        console.log(towns);
         let options = [];
-        towns.map(town => {
-          town.airports.map(airport => {
+        towns.forEach(town => {
+          town.airports.forEach(airport => {
             options.push({ code: airport.code, name: `${town.name}, ${airport.code} airport` });
           });
         });

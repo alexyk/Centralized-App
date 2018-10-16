@@ -129,7 +129,7 @@ class AirTicketsSearchResult extends Component {
             let middleStopsBulets = [];
             for (let i = 0; i < solution.segments.length - 1; i++) {
               middleStopsBulets.push(
-                <Fragment>
+                <Fragment key={i}>
                   <div key={i} className="bulet-container"><span className="bulet"></span></div>
                   <hr className="line" />
                 </Fragment>

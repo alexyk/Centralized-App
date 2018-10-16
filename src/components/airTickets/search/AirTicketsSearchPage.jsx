@@ -7,7 +7,7 @@ import queryString from 'query-string';
 import moment from 'moment';
 import uuid from 'uuid';
 import Stomp from 'stompjs';
-import _ from 'lodash';
+// import _ from 'lodash';
 import Pagination from '../../common/pagination/Pagination';
 import AirTicketsSearchBar from './AirTicketsSearchBar';
 import { setOrigin, setDestination, setAirTicketsSearchInfo } from '../../../actions/airTicketsSearchInfo';
@@ -77,7 +77,7 @@ class AirTicketsSearchPage extends Component {
   componentWillUnmount() {
     // this.unsubscribe();
     // this.disconnect();
-    this.clearIntervals();
+    // this.clearIntervals();
     // this.hotelInfo = [];
     // this.hotelInfoById = {};
   }
