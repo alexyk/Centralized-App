@@ -45,8 +45,8 @@ export function setDestination(destination) {
 export function setDates(event, picker) {
   return {
     type: airTicketsSearchInfo.SET_DATES,
-    departureDate: picker.departureDate,
-    arrivalDate: picker.arrivalDate
+    departureDate: picker.startDate,
+    arrivalDate: picker.endDate
   };
 }
 
