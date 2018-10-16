@@ -22,10 +22,12 @@
         color: $moderate-red;
         text-decoration: underline $moderate-red;
         display: inline-block;
+        padding: 10px;
       }
     }
   }
   .btn {
+    margin-right: 10px;
     @include media('<tablet') {
       padding: 15px 70px;
       width: 100%;
