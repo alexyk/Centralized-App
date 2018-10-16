@@ -80,22 +80,25 @@ class WalletIndexPage extends React.Component {
   }
 
   sendTokens() {
+    this.setState({ loading: true });
     NotificationManager.info(PROCESSING_TRANSACTION, 'Transactions', LONG);
     const wei = (this.tokensToWei(this.state.locAmount.toString()));
-    setTimeout(() => {
+    requester.getMyJsonFile().then(res => res.body).then(data => {
+      const { jsonFile } = data;
       TokenTransactions.sendTokens(
-        this.state.jsonFile,
+        jsonFile,
         this.state.password,
         this.state.recipientAddress,
         wei.toString()
       ).then((transaction) => {
-        console.log(transaction);
         NotificationManager.success(TRANSACTION_SUCCESSFUL, 'Send Tokens', LONG);
         this.setState({
           recipientAddress: '',
           locAmount: 0,
           password: '',
-          lastTxHash: transaction.hash
+          loading: false,
+          canProceed: false,
+          latestTxHash: transaction.hash
         });
       }).catch(error => {
         if (error.hasOwnProperty('message')) {
@@ -108,21 +111,14 @@ class WalletIndexPage extends React.Component {
           // console.log(error);
         }
       });
-    }, 1000);
-  }
-
-  componentWillMount() {
-    if (this.props.userInfo.locAddress) {
-      requester.getMyJsonFile().then(res => {
-        res.body.then(data => {
-          this.setState({ jsonFile: data.jsonFile });
-        });
-      });
-    }
+    });
   }
 
   render() {
-    if (!this.props.userInfo.locAddress) {
+    const { email, locAddress, locBalance, ethBalance } = this.props.userInfo;
+    if (!email) {
+      return null;
+    } else if (!locAddress) {
       return (
         <div className='container'>
           <NoEntriesMessage text='You need to create a wallet first'>
@@ -132,8 +128,8 @@ class WalletIndexPage extends React.Component {
       );
     }
 
-    const etherscanUrl = `https://etherscan.io/address/${this.props.userInfo.locAddress}#tokentxns`;
-    const etherscanLatestTxUrl = `${Config.getValue('ETHERS_HTTP_PROVIDER_NETWORK_BASE_URL')}/tx/${this.state.lastTxHash}`;
+    const etherscanUrl = `https://etherscan.io/address/${locAddress}#tokentxns`;
+    const etherscanLatestTxUrl = `${Config.getValue('ETHERS_HTTP_PROVIDER_NETWORK_BASE_URL')}/tx/${this.state.latestTxHash}`;
 
     return (
       <div className="container">
@@ -143,15 +139,15 @@ class WalletIndexPage extends React.Component {
             <hr />
             <div className="loc-address">
               <label htmlFor="loc-address">Your ETH/LOC address <img src={Config.getValue('basePath') + 'images/icon-lock.png'} className="lock" alt="lock-o" /></label>
-              <input className="disable-input" id="loc-address" name="locAddress" value={this.props.userInfo.locAddress} type="text" readOnly />
+              <input className="disable-input" id="loc-address" name="locAddress" value={locAddress} type="text" readOnly />
             </div>
             <div className="loc-balance">
               <label htmlFor="loc-balance">LOC Balance</label>
-              <input className="disable-input" id="loc-balance" name="locBalance" value={this.props.userInfo.locBalance} type="text" readOnly />
+              <input className="disable-input" id="loc-balance" name="locBalance" value={locBalance} type="text" readOnly />
             </div>
             <div className="eth-balance">
               <label htmlFor="eth-balance">ETH Balance</label>
-              <input className="disable-input" id="eth-balance" name="ethBalance" value={this.props.userInfo.ethBalance} type="text" readOnly />
+              <input className="disable-input" id="eth-balance" name="ethBalance" value={ethBalance} type="text" readOnly />
             </div>
             <h2>Send Tokens</h2>
             <form onSubmit={(e) => { e.preventDefault(); this.sendTokens(); }}>
