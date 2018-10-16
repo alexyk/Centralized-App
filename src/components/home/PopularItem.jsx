@@ -5,6 +5,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import ListingItemRatingBox from '../common/listing/ListingItemRatingBox';
 import HotelItemRatingBox from '../common/hotel/HotelItemRatingBox';
+import Rating from '../common/rating';
 
 class PopularItem extends Component {
   constructor(props) {
@@ -76,14 +77,15 @@ class PopularItem extends Component {
                 <div className="name">
                   {item.name.substr(0, 35)}{item.name.length > 35 ? '...' : ''}
                 </div>
-                {itemType === 'homes' ?
+                <Rating rating={rating}/>
+                {/* {itemType === 'homes' ?
                   <ListingItemRatingBox
                     rating={rating}
                     isHomePage={true}
                   /> :
                   <HotelItemRatingBox
                     rating={rating}
-                  />}
+                  />} */}
               </div>
               <div className="clearfix">
               </div>

@@ -37,7 +37,7 @@ function ListingItemRatingBox(props) {
     let starsElements = [];
     let rating = Math.round(ratingNumber);
     for (let i = 0; i < rating; i++) {
-      starsElements.push(<span key={i} className="full-star star"></span>);
+      starsElements.push(<span key={i} className="fa fa-star full"></span>);
     }
     for (let i = 0; i < 5 - rating; i++) {
       starsElements.push(<span key={100 - i} className="empty-star star"></span>);
