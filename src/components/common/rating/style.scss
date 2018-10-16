@@ -5,9 +5,6 @@
   color: $moderate-gray;
   display: inline-block;
   margin-bottom: 5px;
-  &-summary {
-    margin-right: 5px;
-  }
   &-stars {
     .fa.fa-star::before {
       content: "\E919";
@@ -19,6 +16,14 @@
   }
 
   @include media("<=tablet") {
-		display: flex;
+		// display: flex;
+    &-summary {
+      margin-right: 5px;
+      float: left;
+    }
+
+    &-stars {
+      float: left;
+    }
   }
 }

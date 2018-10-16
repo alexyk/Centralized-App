@@ -2,7 +2,6 @@ import { Link, withRouter } from 'react-router-dom';
 
 import { Config } from '../../../config';
 import ListingItemPictureCarousel from '../../common/listing/ListingItemPictureCarousel';
-import ListingItemRatingBox from '../../common/listing/ListingItemRatingBox';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';

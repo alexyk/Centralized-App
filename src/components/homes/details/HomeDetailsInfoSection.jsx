@@ -14,6 +14,7 @@ import '../../../styles/css/components/homes/booking/homes-booking-page.css';
 
 import HomeDetailsRatingBox from './HomeDetailsRatingBox';
 import { setCheckInOutHours, initStickyElements } from '../common/detailsPageUtils.js';
+import Rating from '../../common/rating/Rating';
 
 class HomeDetailsInfoSection extends React.Component {
   componentDidMount() {

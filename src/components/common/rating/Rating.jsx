@@ -17,9 +17,14 @@ function Rating(props) {
   };
 
   const getStars = (rating) => {
-    let stars = new Array(5);
-    stars = stars.fill(<span className="fa fa-star full"></span>, 0, rating);
-    stars = stars.fill(<span className={`fa fa-star ${props.color}`}></span>, rating, 5);
+    let stars = [];
+    for (let index = 0; index < 5; index++) {
+      if (index < rating) {
+        stars.push(<span key={index} className="fa fa-star full"></span>);
+      } else {
+        stars.push(<span key={index} className="fa fa-star"></span>);
+      }
+    }
 
     return stars;
   };
@@ -37,10 +42,6 @@ function Rating(props) {
     </div>
   );
 }
-
-Rating.defaultProps = {
-  color: 'grey'
-};
 
 Rating.propTypes = {
   rating: PropTypes.number,

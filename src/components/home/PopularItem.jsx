@@ -3,8 +3,6 @@ import { Link } from 'react-router-dom';
 import Slider from 'react-slick';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import ListingItemRatingBox from '../common/listing/ListingItemRatingBox';
-import HotelItemRatingBox from '../common/hotel/HotelItemRatingBox';
 import Rating from '../common/rating';
 
 class PopularItem extends Component {
@@ -78,14 +76,6 @@ class PopularItem extends Component {
                   {item.name.substr(0, 35)}{item.name.length > 35 ? '...' : ''}
                 </div>
                 <Rating rating={rating}/>
-                {/* {itemType === 'homes' ?
-                  <ListingItemRatingBox
-                    rating={rating}
-                    isHomePage={true}
-                  /> :
-                  <HotelItemRatingBox
-                    rating={rating}
-                  />} */}
               </div>
               <div className="clearfix">
               </div>
