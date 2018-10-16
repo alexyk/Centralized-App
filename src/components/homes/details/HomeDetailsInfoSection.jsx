@@ -144,19 +144,24 @@ class HomeDetailsInfoSection extends React.Component {
             currencyCode={currencyCode}
           />
         </div>
-      </section >
+      </section>
     );
   }
 }
 
 HomeDetailsInfoSection.propTypes = {
   data: PropTypes.object,
+  checks: PropTypes.object,
+  roomDetails: PropTypes.object,
   isLogged: PropTypes.bool,
   startDate: PropTypes.object,
   endDate: PropTypes.object,
+  nights: PropTypes.number,
   match: PropTypes.object,
   openModal: PropTypes.func,
   calendar: PropTypes.array,
+  handleChangeStart: PropTypes.func,
+  handleChangeEnd: PropTypes.func,
 
   // start Router props
   location: PropTypes.object,
