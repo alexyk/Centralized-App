@@ -10,13 +10,14 @@ class Facilities extends React.Component {
 
     this.state = {
       showAllFacilities: false
-    }
+    };
 
-    this.showAllFacilities = this.showAllFacilities.bind(this);
+    this.toggleShowAllFacilities = this.toggleShowAllFacilities.bind(this);
   }
 
-  showAllFacilities() {
-    this.setState({ showAllFacilities: true });
+  toggleShowAllFacilities() {
+    const { showAllFacilities } = this.state;
+    this.setState({ showAllFacilities: !showAllFacilities });
   }
 
   render() {
@@ -46,7 +47,7 @@ class Facilities extends React.Component {
                 )
               );
             })}
-            <div onClick={this.showAllFacilities} className="more-facilities">
+            <div onClick={this.toggleShowAllFacilities} className="more-facilities">
               <p>+{otherFacilities.length}</p>
             </div>
           </div>
