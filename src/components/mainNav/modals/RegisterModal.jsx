@@ -117,7 +117,8 @@ RegisterModal.propTypes = {
   onChange: PropTypes.func,
   openModal: PropTypes.func,
   closeModal: PropTypes.func,
-  isActive: PropTypes.bool
+  isActive: PropTypes.bool,
+  handleRegister: PropTypes.func
 };
 
 export default RegisterModal;

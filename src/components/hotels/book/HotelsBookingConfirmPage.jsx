@@ -303,7 +303,6 @@ class HotelBookingConfirmPage extends React.Component {
     });
   }
 
-
   openModal(modal, e) {
     if (e) {
       e.preventDefault();

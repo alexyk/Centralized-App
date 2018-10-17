@@ -100,6 +100,11 @@ class StaticHotelsSearchPage extends React.Component {
 
     const query = this.props.location.search;
     const queryParams = queryString.parse(query);
+
+    if (!this.props.paymentInfo.currency) {
+      this.props.dispatch(setCurrency(queryParams.currency));
+    }
+
     const { region } = queryParams;
 
     if (this.isSearchReady()) {
@@ -137,8 +142,12 @@ class StaticHotelsSearchPage extends React.Component {
       const regionId = searchParams.region;
       const region = { id: regionId };
       const page = searchParams.page;
-
+      
       this.props.dispatch(setSearchInfo(startDate, endDate, region, rooms, adults, hasChildren));
+      if (this.props.location.pathname.indexOf('/mobile') !== -1) {
+        const currency = searchParams.currency;
+        this.props.dispatch(setCurrency(currency));
+      }
 
       this.setState({
         nights: endDate.diff(startDate, 'days'),

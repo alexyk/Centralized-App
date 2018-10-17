@@ -15,6 +15,7 @@ import BookingSteps from '../../common/utility/BookingSteps';
 import { RoomsXMLCurrency } from '../../../services/utilities/roomsXMLCurrency';
 import LocPrice from '../../common/utility/LocPrice';
 import validator from 'validator';
+import xregexp from 'xregexp';
 
 class HotelsBookingPage extends React.Component {
   constructor(props) {
@@ -67,14 +68,14 @@ class HotelsBookingPage extends React.Component {
   }
 
   isValidNames() {
-    const regexp = /^([A-Za-z]{2,}([-\s][A-Za-z]{2,})?)$/;
     const rooms = this.props.guests;
+    const regexp = xregexp('^\\pL+([- \']?\\pL*)?([- \']?\\pL*)$');
     for (let i = 0; i < rooms.length; i++) {
       const adults = rooms[i].adults;
       for (let j = 0; j < adults.length; j++) {
         const first = adults[j].firstName;
         const last = adults[j].lastName;
-        if (!(validator.matches(first, regexp) && validator.matches(last, regexp))) {
+        if (!(regexp.test(first) && regexp.test(last))) {
           return false;
         }
       }
