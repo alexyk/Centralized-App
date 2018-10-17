@@ -1,4 +1,5 @@
 import '../../styles/css/components/captcha/captcha-container.css';
+import '../../styles/css/components/main_nav/main_nav.css';
 
 import {
   AIRDROP_LOGIN,
@@ -60,6 +61,7 @@ import queryString from 'query-string';
 import requester from '../../requester';
 import { setAirdropInfo } from '../../actions/airdropInfo';
 import moment from 'moment';
+import BurgerMenu from '../common/burger-menu/BurgerMenu';
 
 class MainNav extends React.Component {
   constructor(props) {
@@ -406,7 +408,9 @@ class MainNav extends React.Component {
   }
 
   logout(e) {
-    e.preventDefault();
+    if (e) {
+      e.preventDefault();
+    }
 
     localStorage.removeItem(Config.getValue('domainPrefix') + '.auth.locktrip');
     localStorage.removeItem(Config.getValue('domainPrefix') + '.auth.username');
@@ -517,7 +521,7 @@ class MainNav extends React.Component {
       token: this.state.recoveryToken,
       password: this.state.newPassword,
     };
-  
+
     requester.sendNewPassword(postObj, token).then(res => {
       if (res.success) {
         this.closeModal(CHANGE_PASSWORD);
@@ -617,51 +621,46 @@ class MainNav extends React.Component {
     const { currentReCaptcha } = this.state;
     return (
       <nav id="main-nav" className="navbar">
-        <div style={{ background: 'rgba(255,255,255, 0.8)' }}>
-          <div className="captcha-container">
-            {
-              currentReCaptcha && (
-                <ReCAPTCHA
-                  ref={el => this.captcha = el}
-                  size="invisible"
-                  sitekey={Config.getValue('recaptchaKey')}
-                  onChange={(token) => {
-                    const reCaptchaFunc = this.getReCaptchaFunction(currentReCaptcha);
-                    reCaptchaFunc(token);
-                    this.captcha.reset();
-                    this.setState({
-                      currentReCaptcha: ''
-                    });
-                  }}
-                />
-              )
-            }
-          </div>
-          <CreateWalletModal setUserInfo={this.setUserInfo} userToken={this.state.userToken} userName={this.state.userName} walletPassword={this.state.walletPassword} repeatWalletPassword={this.state.repeatWalletPassword} isActive={this.props.modalsInfo.isActive[CREATE_WALLET]} openModal={this.openModal} closeModal={this.closeModal} onChange={this.onChange} />
-          <SaveWalletModal setUserInfo={this.setUserInfo} userToken={this.state.userToken} userName={this.state.userName} isActive={this.props.modalsInfo.isActive[SAVE_WALLET]} openModal={this.openModal} closeModal={this.closeModal} onChange={this.onChange} />
-          <ConfirmWalletModal isActive={this.props.modalsInfo.isActive[CONFIRM_WALLET]} openModal={this.openModal} closeModal={this.closeModal} handleMnemonicWordsChange={this.handleMnemonicWordsChange} mnemonicWords={this.state.mnemonicWords} handleCreateWallet={() => this.executeReCaptcha('createWallet')} confirmedRegistration={this.state.confirmedRegistration} />
-          <SendRecoveryEmailModal isActive={this.props.modalsInfo.isActive[SEND_RECOVERY_EMAIL]} openModal={this.openModal} closeModal={this.closeModal} recoveryEmail={this.state.recoveryEmail} handleSubmitRecoveryEmail={() => this.executeReCaptcha('recoveryEmail')} onChange={this.onChange} />
-          <EnterRecoveryTokenModal isActive={this.props.modalsInfo.isActive[ENTER_RECOVERY_TOKEN]} openModal={this.openModal} closeModal={this.closeModal} onChange={this.onChange} recoveryToken={this.state.recoveryToken} handleSubmitRecoveryToken={this.handleSubmitRecoveryToken} />
-          <ChangePasswordModal isActive={this.props.modalsInfo.isActive[CHANGE_PASSWORD]} openModal={this.openModal} closeModal={this.closeModal} newPassword={this.state.newPassword} confirmNewPassword={this.state.confirmNewPassword} onChange={this.onChange} handlePasswordChange={this.verifyUserPassword} />
-          <LoginModal isActive={this.props.modalsInfo.isActive[LOGIN]} openModal={this.openModal} closeModal={this.closeModal} loginEmail={this.state.loginEmail} loginPassword={this.state.loginPassword} onChange={this.onChange} handleLogin={this.handleLogin} />
-          <AirdropLoginModal isActive={this.props.modalsInfo.isActive[AIRDROP_LOGIN]} openModal={this.openModal} closeModal={this.closeModal} loginEmail={this.state.loginEmail} loginPassword={this.state.loginPassword} onChange={this.onChange} handleLogin={this.handleAirdropLogin} />
-          <RegisterModal isActive={this.props.modalsInfo.isActive[REGISTER]} openModal={this.openModal} closeModal={this.closeModal} signUpEmail={this.state.signUpEmail} signUpFirstName={this.state.signUpFirstName} signUpLastName={this.state.signUpLastName} signUpPassword={this.state.signUpPassword} countries={this.state.countries} country={this.state.country} onChange={this.onChange} handleChangeCountry={this.handleChangeCountry} handleRegister={() => this.executeReCaptcha('register')} />
-          <AirdropRegisterModal isActive={this.props.modalsInfo.isActive[AIRDROP_REGISTER]} openModal={this.openModal} closeModal={this.closeModal} signUpEmail={this.state.signUpEmail} signUpFirstName={this.state.signUpFirstName} signUpLastName={this.state.signUpLastName} signUpPassword={this.state.signUpPassword} onChange={this.onChange} />
-          <UpdateCountryModal isActive={this.props.modalsInfo.isActive[UPDATE_COUNTRY]} openModal={this.openModal} closeModal={this.closeModal} onChange={this.onChange} country={this.state.country} countries={this.state.countries} states={this.state.states} countryState={this.state.countryState} handleUpdateCountry={this.handleUpdateCountry} handleChangeCountry={this.handleChangeCountry} />
-          <EmailVerificationModal isActive={this.props.modalsInfo.isActive[EMAIL_VERIFICATION]} openModal={this.openModal} closeModal={this.closeModal} onChange={this.onChange} requestVerificationEmail={this.requestVerificationEmail} />
-          <EnterEmailVerificationTokenModal isActive={this.props.modalsInfo.isActive[ENTER_EMAIL_VERIFICATION_SECURITY_TOKEN]} openModal={this.openModal} closeModal={this.closeModal} onChange={this.onChange} handleLogin={this.handleLogin} emailVerificationToken={this.state.emailVerificationToken} />
+        {/* <div style={{ background: 'rgba(255,255,255, 0.8)' }}> */}
+        <div className="captcha-container">
+          {
+            currentReCaptcha && (
+              <ReCAPTCHA
+                ref={el => this.captcha = el}
+                size="invisible"
+                sitekey={Config.getValue('recaptchaKey')}
+                onChange={(token) => {
+                  const reCaptchaFunc = this.getReCaptchaFunction(currentReCaptcha);
+                  reCaptchaFunc(token);
+                  this.captcha.reset();
+                  this.setState({
+                    currentReCaptcha: ''
+                  });
+                }}
+              />
+            )
+          }
+        </div>
+        <CreateWalletModal setUserInfo={this.setUserInfo} userToken={this.state.userToken} userName={this.state.userName} walletPassword={this.state.walletPassword} repeatWalletPassword={this.state.repeatWalletPassword} isActive={this.props.modalsInfo.isActive[CREATE_WALLET]} openModal={this.openModal} closeModal={this.closeModal} onChange={this.onChange} />
+        <SaveWalletModal setUserInfo={this.setUserInfo} userToken={this.state.userToken} userName={this.state.userName} isActive={this.props.modalsInfo.isActive[SAVE_WALLET]} openModal={this.openModal} closeModal={this.closeModal} onChange={this.onChange} />
+        <ConfirmWalletModal isActive={this.props.modalsInfo.isActive[CONFIRM_WALLET]} openModal={this.openModal} closeModal={this.closeModal} handleMnemonicWordsChange={this.handleMnemonicWordsChange} mnemonicWords={this.state.mnemonicWords} handleCreateWallet={() => this.executeReCaptcha('createWallet')} confirmedRegistration={this.state.confirmedRegistration} />
+        <SendRecoveryEmailModal isActive={this.props.modalsInfo.isActive[SEND_RECOVERY_EMAIL]} openModal={this.openModal} closeModal={this.closeModal} recoveryEmail={this.state.recoveryEmail} handleSubmitRecoveryEmail={() => this.executeReCaptcha('recoveryEmail')} onChange={this.onChange} />
+        <EnterRecoveryTokenModal isActive={this.props.modalsInfo.isActive[ENTER_RECOVERY_TOKEN]} openModal={this.openModal} closeModal={this.closeModal} onChange={this.onChange} recoveryToken={this.state.recoveryToken} handleSubmitRecoveryToken={this.handleSubmitRecoveryToken} />
+        <ChangePasswordModal isActive={this.props.modalsInfo.isActive[CHANGE_PASSWORD]} openModal={this.openModal} closeModal={this.closeModal} newPassword={this.state.newPassword} confirmNewPassword={this.state.confirmNewPassword} onChange={this.onChange} handlePasswordChange={this.verifyUserPassword} />
+        <LoginModal isActive={this.props.modalsInfo.isActive[LOGIN]} openModal={this.openModal} closeModal={this.closeModal} loginEmail={this.state.loginEmail} loginPassword={this.state.loginPassword} onChange={this.onChange} handleLogin={this.handleLogin} />
+        <AirdropLoginModal isActive={this.props.modalsInfo.isActive[AIRDROP_LOGIN]} openModal={this.openModal} closeModal={this.closeModal} loginEmail={this.state.loginEmail} loginPassword={this.state.loginPassword} onChange={this.onChange} handleLogin={this.handleAirdropLogin} />
+        <RegisterModal isActive={this.props.modalsInfo.isActive[REGISTER]} openModal={this.openModal} closeModal={this.closeModal} signUpEmail={this.state.signUpEmail} signUpFirstName={this.state.signUpFirstName} signUpLastName={this.state.signUpLastName} signUpPassword={this.state.signUpPassword} countries={this.state.countries} country={this.state.country} onChange={this.onChange} handleChangeCountry={this.handleChangeCountry} handleRegister={() => this.executeReCaptcha('register')} />
+        <AirdropRegisterModal isActive={this.props.modalsInfo.isActive[AIRDROP_REGISTER]} openModal={this.openModal} closeModal={this.closeModal} signUpEmail={this.state.signUpEmail} signUpFirstName={this.state.signUpFirstName} signUpLastName={this.state.signUpLastName} signUpPassword={this.state.signUpPassword} onChange={this.onChange} />
+        <UpdateCountryModal isActive={this.props.modalsInfo.isActive[UPDATE_COUNTRY]} openModal={this.openModal} closeModal={this.closeModal} onChange={this.onChange} country={this.state.country} countries={this.state.countries} states={this.state.states} countryState={this.state.countryState} handleUpdateCountry={this.handleUpdateCountry} handleChangeCountry={this.handleChangeCountry} />
+        <EmailVerificationModal isActive={this.props.modalsInfo.isActive[EMAIL_VERIFICATION]} openModal={this.openModal} closeModal={this.closeModal} onChange={this.onChange} requestVerificationEmail={this.requestVerificationEmail} />
+        <EnterEmailVerificationTokenModal isActive={this.props.modalsInfo.isActive[ENTER_EMAIL_VERIFICATION_SECURITY_TOKEN]} openModal={this.openModal} closeModal={this.closeModal} onChange={this.onChange} handleLogin={this.handleLogin} emailVerificationToken={this.state.emailVerificationToken} />
 
-          <Navbar>
-            <Navbar.Header>
-              <Navbar.Brand>
-                <Link className="navbar-brand" to="/">
-                  <img src={Config.getValue('basePath') + 'images/locktrip_logo.svg'} alt='logo' />
-                </Link>
-              </Navbar.Brand>
-              <Navbar.Toggle />
-            </Navbar.Header>
+        <div className="container">
+          <Link className="navbar-logo" to="/">
+            <img src={Config.getValue('basePath') + 'images/locktrip_logo.svg'} alt='logo' />
+          </Link>
 
-            <Navbar.Collapse>
+          {/* <Navbar.Collapse>
               {localStorage[Config.getValue('domainPrefix') + '.auth.locktrip']
                 ? <Nav>
                   <NavItem componentClass={Link} href="/profile/reservations" to="/profile/reservations">Hosting</NavItem>
@@ -687,8 +686,14 @@ class MainNav extends React.Component {
                   <NavItem componentClass={Link} to="/signup" onClick={() => { this.openModal(REGISTER); this.requestCountries(); }}>Register</NavItem>
                 </Nav>
               }
-            </Navbar.Collapse>
-          </Navbar>
+            </Navbar.Collapse> */}
+          <BurgerMenu 
+            isUserLogged={localStorage[Config.getValue('domainPrefix') + '.auth.locktrip']}
+            unreadMessages={this.state.unreadMessages}
+            openModal={this.openModal}
+            requestCountries={this.requestCountries}
+            logout={this.logout}
+          />
         </div>
       </nav>
     );

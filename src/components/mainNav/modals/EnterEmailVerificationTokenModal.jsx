@@ -8,7 +8,7 @@ import '../../../styles/css/components/modals/modal.css';
 function EmailVerificationModal(props) {
 
   return (
-    <div>
+    <React.Fragment>
       <Modal show={props.isActive} onHide={() => props.closeModal(ENTER_EMAIL_VERIFICATION_SECURITY_TOKEN)} className="modal fade myModal">
         <Modal.Header>
           <h1>Email Verification</h1>
@@ -24,7 +24,7 @@ function EmailVerificationModal(props) {
           </form>
         </Modal.Body>
       </Modal>
-    </div>
+    </React.Fragment>
   );
 }
 
