@@ -2,14 +2,14 @@ import { airTicketsSearchInfo } from '../actions/actionTypes';
 import moment from 'moment';
 
 const initialState = {
-  routing: '2',
+  routing: null,
   flightClass: '0',
   stops: '-1',
   departureTime: '',
   origin: null,
   destination: null,
-  departureDate: moment().add(1, 'day'),
-  arrivalDate: moment().add(2, 'day'),
+  departureDate: moment(),
+  arrivalDate: moment().add(1, 'day'),
   adultsCount: 1,
   children: [],
   infants: 0,
@@ -20,7 +20,8 @@ export default function reducer(state = initialState, action) {
   switch (action.type) {
     case airTicketsSearchInfo.SET_ROUTING:
       return Object.assign({}, state, {
-        routing: action.routing
+        routing: action.routing,
+        arrivalDate: setArrivalDate(action.routing, state.departureDate, state.arrivalDate)
       });
     case airTicketsSearchInfo.SET_FLIGHT_CLASS:
       return Object.assign({}, state, {
@@ -45,7 +46,7 @@ export default function reducer(state = initialState, action) {
     case airTicketsSearchInfo.SET_DATES:
       return Object.assign({}, state, {
         departureDate: action.departureDate,
-        arrivalDate: action.arrivalDate //.diff(action.startDate, 'days') === 0 ? action.endDate.add(1, 'day') : action.endDate
+        arrivalDate: setArrivalDate(state.routing, action.departureDate, action.arrivalDate)
       });
     case airTicketsSearchInfo.SET_ADULTS:
       return Object.assign({}, state, {
@@ -72,11 +73,25 @@ export default function reducer(state = initialState, action) {
         origin: action.origin,
         destination: action.destination,
         departureDate: action.departureDate,
-        arrivalDate: action.arrivalDate.diff(action.departureDate, 'days') === 0 ? action.arrivalDate.add(1, 'day') : action.arrivalDate,
+        arrivalDate: setArrivalDate(action.routing, action.departureDate, action.arrivalDate),
         adultsCount: action.adultsCount,
-        hasChildren: action.hasChildren
+        hasChildren: action.hasChildren,
+        children: action.children,
+        infants: action.infants
       });
     default:
       return state;
   }
+}
+
+function setArrivalDate(routing, departureDate, arrivalDate) {
+  if (routing === '2') {
+    if (arrivalDate && arrivalDate.diff(departureDate, 'days') !== 0) {
+      return arrivalDate;
+    }
+
+    return moment(departureDate).add(1, 'day');
+  }
+
+  return null;
 }

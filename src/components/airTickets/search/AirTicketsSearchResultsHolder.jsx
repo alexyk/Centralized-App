@@ -11,26 +11,23 @@ function AirTicketsResultsHolder(props) {
   if (!props.results) {
     return;
   }
-
   if (props.results && props.results.length === 0 && props.loading) {
-    return <div className="text-center"><h2 style={{ margin: '80px 0' }}>Looking for the best rates for your trip...</h2></div>;
+    return <div className="text-center"><h2 style={{ margin: '80px 0' }}>Looking for the best offers...</h2></div>;
   }
 
   if (props.results && props.results.length === 0 && !props.loading) {
-    // return <div className="text-center"><h2 style={{ margin: '80px 0' }}>No Results</h2></div>;
     return <NoEntriesMessage text='No Results' />;
   }
 
-  const results = props.results && props.results.map((result, index) => {
+  const results = props.results && props.results.map((result) => {
     return <AirTicketsSearchResult
-      // key={result.id}
-      key={index}
-      result={result}
+      key={result.id}
+      result={result.receiveResultItem}
+      id={result.id}
       exchangeRatesInfo={props.exchangeRatesInfo}
       paymentInfo={props.paymentInfo}
       userInfo={props.userInfo}
-      allElements={props.allElements}
-      price={0.00} />;
+      allElements={props.allElements} />;
   });
 
   return (

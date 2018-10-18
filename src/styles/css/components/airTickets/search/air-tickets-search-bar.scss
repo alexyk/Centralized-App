@@ -37,7 +37,7 @@ $media-expressions: (
     &-first {
       margin: 15px;
       display: grid;
-      grid-template-columns: auto auto auto auto;
+      grid-template-columns: auto auto 320px 290px;
     }
     &-second {
       margin: 15px;
@@ -56,6 +56,12 @@ $media-expressions: (
   }
   .routing {
     border-right: 1px solid $gray;
+    @include media(">=widescreen") {
+      min-width: 307px;
+    }
+    @include media(">=desktop") {
+      min-width: 200px;
+    }
     input {
       margin-right: 1%;
     }
@@ -68,14 +74,13 @@ $media-expressions: (
   .departure-time {
     border-right: 1px solid $gray;
     display: grid;
-    grid-template-columns: 90px auto;
-    justify-self: center;
+    grid-template-columns: 140px auto;
     align-items: center;
     select {
       font-size: 18px;
       height: 100%;
       border: none;
-      padding: 5px 18px;
+      padding: 5px 6px;
       text-align: center;
     }
     &:after {
@@ -94,17 +99,22 @@ $media-expressions: (
       }
     }
   }
-  .departure-time {
+  .class-type {
     border: none;
-    grid-template-columns: 150px auto;
   }
   .air-tickets {
     &-select {
       position: relative;
       margin-bottom: 10px;
+      @include media(">=widescreen") {
+        border-right: 1px solid $gray;
+        margin-bottom: 0;
+        min-width: 307px;
+      }
       @include media(">=desktop") {
         border-right: 1px solid $gray;
         margin-bottom: 0;
+        min-width: 200px;
       }
       select {
         font-size: 18px;
@@ -267,6 +277,10 @@ $media-expressions: (
       text-align: center;
       justify-content: center;
       padding: 0 10px;
+      height: 100%;
+      .air-tickets-date-range-picker-container {
+        height: 100%;
+      }
       @include media(">=desktop") {
         width: auto;
         padding: 0 6px 0 26px;

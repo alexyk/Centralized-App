@@ -2,23 +2,19 @@ import DateRangePicker from 'react-bootstrap-daterangepicker';
 import React from 'react';
 import moment from 'moment';
 import PropTypes from 'prop-types';
-import AirTicketsSearchBarDatePickerHidePreview from './AirTicketsSearchBarDatePickerHidePreview';
+import AirTicketsSearchBarDatePickerHidePreviewSingle from './AirTicketsSearchBarDatePickerHidePreviewSingle';
 
-function AirTicketsSearchBarDatePicker(props) {
-  let { departureDate, arrivalDate } = props;
+function AirTicketsSearchBarDatePickerSingle(props) {
+  let { departureDate } = props;
   
   const datesDetails = {
     departureDateDay: departureDate.format('DD'),
     departureDateMonth: departureDate.format('MMM').toUpperCase(),
-    departureDateDayOfWeek: departureDate.format('ddd').toUpperCase(),
-    arrivalDateDay: arrivalDate.format('DD'),
-    arrivalDateMonth: arrivalDate.format('MMM').toUpperCase(),
-    arrivalDateDayOfWeek: arrivalDate.format('ddd').toUpperCase()
+    departureDateDayOfWeek: departureDate.format('ddd').toUpperCase()
   };
 
   const pickerProps = {
-    departureDate,
-    arrivalDate
+    departureDate
   };
 
   return (
@@ -29,19 +25,21 @@ function AirTicketsSearchBarDatePicker(props) {
       minDate={moment().format('DD/MM/YYYY')}
       maxDate={moment().add(12, 'months').format('DD/MM/YYYY')}
       locale={{ format: 'DD/MM/YYYY' }}
+      singleDatePicker={true}
       {...pickerProps}
-      {...props}>
-      <div>
-        <AirTicketsSearchBarDatePickerHidePreview datesDetails={datesDetails} />
+      {...props}
+    >
+      <div className="air-tickets-date-range-picker-container">
+        <AirTicketsSearchBarDatePickerHidePreviewSingle datesDetails={datesDetails} />
       </div>
     </DateRangePicker>
   );
 }
 
-AirTicketsSearchBarDatePicker.propTypes = {
+AirTicketsSearchBarDatePickerSingle.propTypes = {
   departureDate: PropTypes.any,
   arrivalDate: PropTypes.any,
   onApply: PropTypes.func
 };
 
-export default AirTicketsSearchBarDatePicker;
+export default AirTicketsSearchBarDatePickerSingle;

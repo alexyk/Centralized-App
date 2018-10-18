@@ -4,31 +4,36 @@ $breakpoints: (
 	'desktop': 1024px
 );
 
-@import '../../../vendors/include-media';
+@import '../../../../vendors/include-media';
 
-.search-bar-date-picker-hide-preview {
+.search-bar-date-picker-hide-preview-single {
   display: flex;
-  .check-in,
-  .check-out {
+  width: 100%;
+  height: inherit;
+  .check-in {
     min-width: 120px;
+    width: 100%;
     display: inline-flex;
-    div:first-of-type {
+    .calendar-image-container {
+      min-width: 26px;
+      width: 20%;
+      height: 37px;
       display: flex;
       align-items: center;
-      justify-content: center;
     }
     .row-container {
       text-align: left;
       margin: 0 5px;
       font-size: 18px;
-      p {
-        margin-bottom: 0;
-        &:first-of-type {
-          font-size: 16px;
-        }
+      display: flex;
+      align-items: center;
+      width: 90%;
+      .title {
+        width: 50%;
       }
       .date-mon-day {
-        p {
+        width: 50%;
+        div {
           font-size: 12px;
           font-weight: 400;
           span {
@@ -42,15 +47,8 @@ $breakpoints: (
       }
     }
   }
-  .arrow-icon-container {
-    min-width: 30px;
-    margin-right: 15px;
-    display: flex;
-    align-items: center;
-  }
   @include media("<=desktop") {
-    .check-in,
-    .check-out {
+    .check-in {
       justify-content: center;
     }
   }
@@ -64,15 +62,11 @@ $breakpoints: (
     }
   }
   @include media("<=phone") {
-    .check-in,
-    .check-out {
+    .check-in {
       min-width: 100px;
       img {
         display: none;
       }
-    }
-    .arrow-icon-container {
-      display: none;
     }
   }
 }

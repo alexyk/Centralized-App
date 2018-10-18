@@ -43,7 +43,7 @@ class AirTicketsSearchResult extends Component {
 
     this.state = {
       screenWidth: screenWidth,
-      departureFlightIndex: 0,
+      flightSolutionIndex: 0,
       titleLength: this.getTitleLength(screenSize),
       descriptionLength: this.getDescriptionLength(screenSize)
     };
@@ -89,7 +89,7 @@ class AirTicketsSearchResult extends Component {
 
   handleFlightChange(e) {
     this.setState({
-      departureFlightIndex: Number(e.target.value)
+      flightSolutionIndex: Number(e.target.value)
     });
   }
 
@@ -101,13 +101,15 @@ class AirTicketsSearchResult extends Component {
   }
 
   render() {
-    const { exchangeRatesInfo, paymentInfo, userInfo, price, result, allElements } = this.props;
-    const { departureFlightIndex } = this.state;
-    let { id } = result;
+    const { exchangeRatesInfo, paymentInfo, userInfo, result, allElements, id } = this.props;
+    const { flightSolutionIndex } = this.state;
+
+    const priceInfo = result.solutions[flightSolutionIndex].prices.pricesOffice.prices[0];
+    const price = priceInfo.total;
 
     const isPriceLoaded = !!price;
-    const priceForLoc = exchangeRatesInfo.currencyExchangeRates && CurrencyConverter.convert(exchangeRatesInfo.currencyExchangeRates, 'EUR', RoomsXMLCurrency.get(), price);
-    const priceInSelectedCurrency = exchangeRatesInfo.currencyExchangeRates && (CurrencyConverter.convert(exchangeRatesInfo.currencyExchangeRates, 'EUR', paymentInfo.currency, price)).toFixed(2);
+    const priceForLoc = exchangeRatesInfo.currencyExchangeRates && CurrencyConverter.convert(exchangeRatesInfo.currencyExchangeRates, priceInfo.currency, RoomsXMLCurrency.get(), price);
+    const priceInSelectedCurrency = exchangeRatesInfo.currencyExchangeRates && (CurrencyConverter.convert(exchangeRatesInfo.currencyExchangeRates, priceInfo.currency, paymentInfo.currency, price)).toFixed(2);
 
     const isMobile = this.props.location.pathname.indexOf('mobile') !== -1;
 
@@ -132,6 +134,7 @@ class AirTicketsSearchResult extends Component {
                 <Fragment key={i}>
                   <div key={i} className="bulet-container"><span className="bulet"></span></div>
                   <hr className="line" />
+                  <div className="middle-stop" style={{ left: `${(i * 40) + 100}px` }}>{solution.segments[i].destination.name}</div>
                 </Fragment>
               );
             }
@@ -143,21 +146,21 @@ class AirTicketsSearchResult extends Component {
                   <h5 className="carrier">{carrierName}</h5>
                   <div className="duration">
                     <img width="20" src={TimeIcon} alt="time" />
-                    {this.extractFlightFullDurationFromMinutes(solution.journeyTime)}
+                    {this.extractFlightFullDurationFromMinutes(solution.segments[solution.segments.length - 1].journeyTime)}
                   </div>
                   <div className="stops-count">{solution.segments.length - 1} stops</div>
                 </div>
                 <div className="solution-flight">
                   <div className="flight">
-                    <input className="item" type="radio" name="flight" value="0" onClick={this.handleFlightChange} defaultChecked={departureFlightIndex === solutionIndex} />
-                    <div className="item">
+                    <input className="item" type="radio" name="flight" value={solutionIndex} onClick={this.handleFlightChange} defaultChecked={flightSolutionIndex === solutionIndex} />
+                    <div className="item flight-times">
                       {departureTime}
                       <div className="arrow-icon-container">
                         <img src="/images/icon-arrow.png" alt="icon-arrow" />
                       </div>
                       {arrivalTime}
                     </div>
-                    <div className="item">
+                    <div className="item flight-stops">
                       <div className="stop">{solution.segments[0].origin.name}</div>
                       <div className="stops-container horizontal">
                         <div className="bulet-container"><span className="bulet"></span></div>
@@ -165,10 +168,9 @@ class AirTicketsSearchResult extends Component {
                         {solution.segments.length === 1 ? null : middleStopsBulets}
                         <div className="bulet-container"><span className="bulet"></span></div>
                       </div>
-                      <div className="middle-stop">Amsterdam</div>
                       <div className="stop">{solution.segments[solution.segments.length - 1].destination.name}</div>
                     </div>
-                    <div className="item icons">
+                    <div className="item flight-icons">
                       <div className="icon">
                         <img src={MealIcon} alt="meal" />
                       </div>
@@ -220,6 +222,7 @@ class AirTicketsSearchResult extends Component {
 }
 
 AirTicketsSearchResult.propTypes = {
+  id: PropTypes.string,
   result: PropTypes.object,
   price: PropTypes.any,
   allElements: PropTypes.bool,
