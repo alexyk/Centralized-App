@@ -16,7 +16,6 @@
   }
 
   @include media("<=tablet") {
-		// display: flex;
     &-summary {
       margin-right: 5px;
       float: left;
