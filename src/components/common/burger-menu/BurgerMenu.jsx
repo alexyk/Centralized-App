@@ -1,58 +1,55 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { slide as Menu } from 'react-burger-menu';
-import { Link } from 'react-router-dom';
 
 import './style.css';
-import { LOGIN, REGISTER } from '../../../constants/modals';
 
 class BurgerMenu extends React.Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      menuOpen: false
+      showMenu: false
     };
 
+    this.showMenu = this.showMenu.bind(this);
     this.toggleMenu = this.toggleMenu.bind(this);
+    this.closeMenu = this.closeMenu.bind(this);
+  }
+
+  showMenu(event) {
+    if (event) {
+      event.preventDefault();
+    }
+
+    this.setState({ showMenu: true }, () => {
+      document.addEventListener('click', this.closeMenu);
+    });
   }
 
   toggleMenu() {
-    this.setState({ menuOpen: !this.state.menuOpen });
+    this.setState({ showMenu: !this.state.menuOpen });
   }
 
   handleStateChange(state) {
-    this.setState({ menuOpen: state.isOpen });
+    this.setState({ showMenu: state.isOpen });
   }
 
-  closeMenu () {
-    this.setState({menuOpen: false});
+  closeMenu() {
+    this.setState({ showMenu: false }, () => {
+      document.removeEventListener('click', this.closeMenu);
+    });
   }
 
   render() {
+    const menuClass = this.state.showMenu ? 'menu open' : 'menu';
     return (
-      <React.Fragment>
-        <Menu right isOpen={this.state.menuOpen} customBurgerIcon={false} onStateChange={(state) => this.handleStateChange(state)}>
-          {this.props.isUserLogged
-            ? <React.Fragment>
-              <Link className="menu-item" to="/profile/dashboard" onClick={() => { this.closeMenu(); }}>Dashboard</Link>
-              <Link className="menu-item" to="/profile/reservations" onClick={() => { this.closeMenu(); }}>My Guests</Link>
-              <Link className="menu-item" to="/profile/trips" onClick={() => { this.closeMenu(); }}>My Trips</Link>
-              <Link className="menu-item" to="/profile/listings" onClick={() => { this.closeMenu(); }}>My Listings</Link>
-              <Link className="menu-item" to="/profile/wallet" onClick={() => { this.closeMenu(); }}>Wallet</Link>
-              <Link className="menu-item" to="/profile/messages" onClick={() => { this.closeMenu(); }}>Messages({this.props.unreadMessages})</Link>
-              <Link className="menu-item" to="/profile/me/edit" onClick={() => { this.closeMenu(); }}>Profile</Link>
-              <Link className="menu-item" to="/airdrop" onClick={() => { this.closeMenu(); }}>Airdrop</Link>
-              <Link className="menu-item" to="/" onClick={() => { this.closeMenu(); this.props.logout(); }}>Logout</Link>
-            </React.Fragment>
-            : <React.Fragment>
-              <Link className="menu-item" to="/login" onClick={() => { this.props.openModal(LOGIN); this.closeMenu(); }}>Login</Link>
-              <Link className="menu-item" to="/signup" onClick={() => { this.props.openModal(REGISTER); this.closeMenu(); }}>Register</Link>
-            </React.Fragment>
-          }
-        </Menu>
-        <button onClick={this.toggleMenu}>X</button>
-      </React.Fragment>
+      <div className="burger-menu mb-only">
+        <button className="toggle-button" onClick={this.showMenu}><span className="fa fa-bars"></span></button>
+        <div className={`${menuClass}`}>
+          {this.props.children}
+        </div>
+      </div>
     );
   }
 }

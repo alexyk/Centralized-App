@@ -2,6 +2,14 @@
 
 #main-nav {
   background: #fff;
+  overflow: hidden;
+
+  .nav-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 100%;
+  }
 }
 
 #main-nav .navbar-nav a {
@@ -79,10 +87,9 @@
 }
 
 .navbar-logo {
-    margin-top: 0;
     float: left;
     height: 50px;
-    padding: 15px 15px;
+    margin: 15px 0;
     font-size: 18px;
     line-height: 20px;
 }
@@ -90,7 +97,7 @@
   height: auto;
 }
 .navbar-logo {
-  padding: 15px 20px;
+  margin: 15px 0;
   width: 180px;
   height: 100%;
 }
