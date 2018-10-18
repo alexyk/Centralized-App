@@ -1,5 +1,4 @@
 import { Link } from 'react-router-dom';
-import ListingItemRatingBox from '../../../components/common/listing/ListingItemRatingBox';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { Config } from '../../../config';
@@ -7,6 +6,7 @@ import ProfileFlexContainer from '../flexContainer/ProfileFlexContainer';
 import DefaultBackground from '../../../styles/images/silver_background.png';
 
 import '../../../styles/css/components/profile/listings/my-listings-page.css';
+import Rating from '../../common/rating/Rating';
 
 function MyListingsItemRow(props) {
   return (
@@ -22,9 +22,8 @@ function MyListingsItemRow(props) {
           <div className="name">
             <Link to={'/homes/listings/' + props.listing.id}>{props.listing.name}</Link>
           </div>
-          <ListingItemRatingBox
+          <Rating
             rating={props.listing.averageRating}
-            reviewsCount={props.listing.reviewsCount}
           />
         </div>
       </div>
