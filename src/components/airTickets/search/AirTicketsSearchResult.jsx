@@ -104,8 +104,8 @@ class AirTicketsSearchResult extends Component {
     const { exchangeRatesInfo, paymentInfo, userInfo, result, allElements, id } = this.props;
     const { flightSolutionIndex } = this.state;
 
-    const priceInfo = result.solutions[flightSolutionIndex].prices.pricesOffice.prices[0];
-    const price = priceInfo.total;
+    const { priceInfo } = result.solutions[flightSolutionIndex];
+    const price = priceInfo.totalPrice;
 
     const isPriceLoaded = !!price;
     const priceForLoc = exchangeRatesInfo.currencyExchangeRates && CurrencyConverter.convert(exchangeRatesInfo.currencyExchangeRates, priceInfo.currency, RoomsXMLCurrency.get(), price);
@@ -134,7 +134,7 @@ class AirTicketsSearchResult extends Component {
                 <Fragment key={i}>
                   <div key={i} className="bulet-container"><span className="bulet"></span></div>
                   <hr className="line" />
-                  <div className="middle-stop" style={{ left: `${(i * 40) + 100}px` }}>{solution.segments[i].destination.name}</div>
+                  <div className="middle-stop" style={{ left: `${(i * 60) + 40}px` }}>{solution.segments[i].destination.code}</div>
                 </Fragment>
               );
             }
@@ -161,14 +161,14 @@ class AirTicketsSearchResult extends Component {
                       {arrivalTime}
                     </div>
                     <div className="item flight-stops">
-                      <div className="stop">{solution.segments[0].origin.name}</div>
+                      <div className="stop">{solution.segments[0].origin.code}</div>
                       <div className="stops-container horizontal">
                         <div className="bulet-container"><span className="bulet"></span></div>
                         <hr className="line" />
                         {solution.segments.length === 1 ? null : middleStopsBulets}
                         <div className="bulet-container"><span className="bulet"></span></div>
                       </div>
-                      <div className="stop">{solution.segments[solution.segments.length - 1].destination.name}</div>
+                      <div className="stop">{solution.segments[solution.segments.length - 1].destination.code}</div>
                     </div>
                     <div className="item flight-icons">
                       <div className="icon">

@@ -277,7 +277,7 @@ $media-expressions: (
 		width: 70%;
 		@include media(">=desktop") {
 			width: auto;
-			padding: 0 6px 0 26px;
+			padding: 0 16px;
 			border-right: 1px solid $gray;
 		}
 		@include media("<=phone") {

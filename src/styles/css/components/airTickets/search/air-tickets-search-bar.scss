@@ -26,95 +26,39 @@ $media-expressions: (
 @import "../../../base/mixins";
 @import "../../../base/helpers";
 
-.air-tickets-form {
-  border-radius: 3px;
-  margin-bottom: 5px;
-  text-align: center;
-  .Select-clear {
-    display: none !important;
-  }
-  .air-tickets-form-group {
-    &-first {
-      margin: 15px;
-      display: grid;
-      grid-template-columns: auto auto 320px 290px;
-    }
-    &-second {
-      margin: 15px;
-      display: grid;
-      grid-template-columns: auto auto 320px 200px 90px;
-    }
-    &-item {
-      background: $white;
-      padding: 7px 0;
-    }
-  }
-  @include media(">=desktop") {
+.air-tickets {
+  &-form {
+    display: flex;
+    border-radius: 3px;
+    margin-bottom: 5px;
+    text-align: center;
     padding: 4px 7px;
+    justify-content: center;
     background: $white;
-    margin-bottom: 35px;
-  }
-  .routing {
-    border-right: 1px solid $gray;
-    @include media(">=widescreen") {
-      min-width: 307px;
+    .Select-clear {
+      display: none !important;
     }
-    @include media(">=desktop") {
-      min-width: 200px;
+    @include media("<=widescreen") {
+      flex-wrap: wrap;
+      margin-bottom: 15px;
     }
-    input {
-      margin-right: 1%;
+    @include media("<=desktop") {
+      background: $light-gray;
     }
-    label {
-      margin-right: 10%;
-    }
-  }
-  .class-type,
-  .flight-stops,
-  .departure-time {
-    border-right: 1px solid $gray;
-    display: grid;
-    grid-template-columns: 140px auto;
-    align-items: center;
-    select {
-      font-size: 18px;
-      height: 100%;
-      border: none;
-      padding: 5px 6px;
-      text-align: center;
-    }
-    &:after {
-      position: absolute;
-      padding: 0 8px;
-      font-size: 5px;
-      right: 16px;
-      top: 50%;
-      transform: translateY(-50%);
-      z-index: 1;
-      text-align: center;
-      pointer-events: none;
-      box-sizing: border-box;
-      @include media(">=desktop") {
-        font-size: 7px;
-      }
-    }
-  }
-  .class-type {
-    border: none;
-  }
-  .air-tickets {
     &-select {
       position: relative;
-      margin-bottom: 10px;
-      @include media(">=widescreen") {
-        border-right: 1px solid $gray;
-        margin-bottom: 0;
-        min-width: 307px;
+      padding: 7px 0;
+      width: 15%;
+      border-right: 1px solid $gray;
+      min-width: 200px;
+      background: $white;
+      @include media("<=widescreen") {
+        width: 33%;
       }
-      @include media(">=desktop") {
-        border-right: 1px solid $gray;
-        margin-bottom: 0;
-        min-width: 200px;
+      @include media("<=desktop") {
+        width: 100%;
+        margin-bottom: 10px;
+        border-right: none;
       }
       select {
         font-size: 18px;
@@ -248,96 +192,105 @@ $media-expressions: (
         }
       }
     }
-    .check-wrap {
-      margin-bottom: 10px;
-      @include media(">=desktop") {
-        margin-bottom: 0;
+    &-check-wrap {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 25%;
+      padding: 0 16px;
+      border-right: 1px solid $gray;
+      background: $white;
+      @include media("<=widescreen") {
+        width: 33%;
+        border-right: none;
+      }
+      @include media("<=desktop") {
+        width: 100%;
+        margin-bottom: 10px;
+        padding: 7px 0;
+      }
+      .check {
+        align-items: center;
+        text-align: center;
+        justify-content: center;
+        @include media("<=phone") {
+          width: 85%;
+        }
+        .air-tickets-date-range-picker-container {
+          height: 100%;
+        }
       }
     }
-    .guest-wrap {
-      margin-bottom: 10px;
-      display: grid;
-      grid-template-columns: 80px 65px;
-      justify-self: center;
-      @include media(">=desktop") {
-        margin-bottom: 0;
+    .air-tickets-form-guest-wrap {
+      width: 25%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border-right: 1px solid $gray;
+      background: $white;
+      @include media("<=widescreen") {
+        width: 30%;
+      }
+      @include media("<=desktop") {
+        width: 25%;
+        margin-bottom: 10px;
       }
       select,
-      .select-children,
-      .select-infants {
+      .select-children {
         border: 0;
       }
-      .select-children:hover,
-      .select-infants:hover {
+      .select-children:hover {
         cursor: pointer;
       }
+      .select-adults {
+        width: 80%;
+      }
+      .select-children {
+        width: 80px;
+        padding: 8px;
+      }
     }
-    .check {
-      align-items: center;
-      text-align: center;
+    .air-tickets-form-flight-class,
+    .air-tickets-form-flight-stops,
+    .air-tickets-form-departure-time {
+      background: $white;
+      border-right: 1px solid $gray;
+      display: flex;
       justify-content: center;
-      padding: 0 10px;
-      height: 100%;
-      .air-tickets-date-range-picker-container {
-        height: 100%;
-      }
-      @include media(">=desktop") {
-        width: auto;
-        padding: 0 6px 0 26px;
-        border-right: 1px solid $gray;
-      }
-      @include media("<=phone") {
-        width: 85%;
-      }
-    }
-    .checkin {
       align-items: center;
-      color: $text-black;
-      @include media(">=desktop") {
-        margin-bottom: 0;
-      }
-      div {
-        text-align: left;
-        > span {
-          display: block;
-          font-size: 12px;
-          @include media(">=desktop") {
-            font-size: 18px;
-          }
-        }
-      }
-      time {
-        text-transform: uppercase;
-        font-size: 10px;
-        letter-spacing: -0.05em;
-        @include media(">=tablet") {
-          font-size: 12px;
-        }
-        @include media(">=desktop") {
-          font-size: 14px;
-        }
-      }
-      .day-in {
-        color: $light-cyan;
-      }
-      .day-out {
-        color: $moderate-red;
+      .select-selected {
+        height: 50px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
       }
     }
-    .icon-calendar {
-      margin-right: 5px;
-      font-size: 12px;
-      @include media(">=tablet") {
-        margin-right: 16px;
-        font-size: 20px;
+    .air-tickets-form-flight-class,
+    .air-tickets-form-departure-time {
+      min-width: 80px;
+      width: 7%;
+      @include media("<=widescreen") {
+        width: 20%;
+      }
+      @include media("<=desktop") {
+        width: 25%;
+        margin-bottom: 10px;
       }
     }
-    .icon-arrow-right {
-      margin: 0 10px;
-      font-size: 12px;
-      @include media(">=desktop") {
-        margin: 0 25px 0 14px;
-        font-size: 18px;
+    .air-tickets-form-flight-stops {
+      min-width: 70px;
+      width: 6%;
+      @include media("<=widescreen") {
+        width: 20%;
+      }
+      @include media("<=desktop") {
+        width: 25%;
+        margin-bottom: 10px;
+      }
+    }
+    .air-tickets-form-flight-class {
+      @include media("<=widescreen") {
+      border-right: none;
       }
     }
     .btn {

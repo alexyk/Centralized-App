@@ -12,6 +12,7 @@ $breakpoints: (
   .check-out {
     min-width: 120px;
     display: inline-flex;
+    justify-content: center;
     div:first-of-type {
       display: flex;
       align-items: center;
@@ -43,10 +44,10 @@ $breakpoints: (
     }
   }
   .arrow-icon-container {
-    min-width: 30px;
-    margin-right: 15px;
+    width: 40px;
     display: flex;
     align-items: center;
+    justify-content: center;
   }
   @include media("<=desktop") {
     .check-in,

@@ -57,9 +57,9 @@ class AirTicketsSearchPage extends Component {
     if (!localStorage.getItem('uuid')) {
       localStorage.setItem('uuid', `${uuid()}`);
     }
-    const uuid = localStorage.getItem('tickets-uuid');
+    const ticketsUUID = localStorage.getItem('tickets-uuid');
     const rnd = this.getRandomInt();
-    this.queueId = `${uuid}-${rnd}`;
+    this.queueId = `${ticketsUUID}-${rnd}`;
 
     this.populateSearchBar();
 
@@ -78,9 +78,12 @@ class AirTicketsSearchPage extends Component {
   requestFlightsSearch() {
     fetch(`http://localhost:8088/flight/search${this.props.location.search}&uuid=${this.queueId}`)
       .then(res => {
-        if (res.ok) {
+        if (res.success) {
           this.connectSocket();
         }
+      })
+      .catch(res => {
+        console.log(res);
       });
   }
 
@@ -88,7 +91,7 @@ class AirTicketsSearchPage extends Component {
     this.setState({ windowWidth: window.innerWidth });
   }
 
-  getAirportInfo(airportCode) {
+  requestAirportInfo(airportCode) {
     return fetch(`http://localhost:8088/city/code?iata=${airportCode}`, {
       headers: {
         'Content-type': 'application/json'
@@ -100,8 +103,8 @@ class AirTicketsSearchPage extends Component {
             resolve(data);
           });
         } else {
-          res.errors.then((errors) => {
-            reject(errors);
+          res.json().then((data) => {
+            reject(data);
           });
         }
       });
@@ -109,15 +112,21 @@ class AirTicketsSearchPage extends Component {
   }
 
   populateLocations(origin, destination) {
-    this.getAirportInfo(origin)
+    this.requestAirportInfo(origin)
       .then((data) => {
         this.props.dispatch(setOrigin({ code: origin, name: `${data.cityName}, ${data.cityState ? data.cityState + ', ' : ''}${data.countryName}, ${origin} airport` }));
+      })
+      .catch(() => {
+        NotificationManager.warning('Wrong origin airport IATA code', '', LONG);
       });
 
 
-    this.getAirportInfo(destination)
+    this.requestAirportInfo(destination)
       .then((data) => {
         this.props.dispatch(setDestination({ code: destination, name: `${data.cityName}, ${data.cityState ? data.cityState + ', ' : ''}${data.countryName}, ${destination} airport` }));
+      })
+      .catch(() => {
+        NotificationManager.warning('Wrong destination airport IATA code', '', LONG);
       });
   }
 
@@ -230,20 +239,17 @@ class AirTicketsSearchPage extends Component {
     console.log(messageBody);
     if (messageBody.allElements) {
       let results = this.state.results.slice();
-      results = results.sort((r1, r2) => r1.receiveResultItem.solutions[0].prices.pricesOffice.prices[0].total - r2.receiveResultItem.solutions[0].prices.pricesOffice.prices[0].total);
-      this.setState({ allElements: true, results });
+      results = results.sort((r1, r2) => r1.solutions[0].priceInfo.totalPrice - r2.solutions[0].priceInfo.totalPrice);
+      this.setState({ allElements: messageBody.allElements, results });
       this.unsubscribe();
       this.clearIntervals();
-    } else if (messageBody.ok === false) {
+    } else if (messageBody.success === false) {
       this.setState({ loading: false });
       this.clearIntervals();
       NotificationManager.warning(messageBody.message, '', LONG);
     } else {
-      if (messageBody.receiveResultItem) {
-        const result = messageBody;
-        result.receiveResultItem = JSON.parse(result.receiveResultItem);
-
-        this.setState({ results:  [...this.state.results, result], loading: false });
+      if (messageBody.solutions) {
+        this.setState({ results: [...this.state.results, messageBody], loading: false });
       }
     }
   }
