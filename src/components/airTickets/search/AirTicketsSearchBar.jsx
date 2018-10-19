@@ -1,15 +1,15 @@
+import React from 'react';
+import { connect } from 'react-redux';
+import { withRouter } from 'react-router-dom';
+import Select from 'react-select';
+import PropTypes from 'prop-types';
 import { closeModal, openModal } from '../../../actions/modalsInfo.js';
 import { setRouting, setFlightClass, setStops, setDepartureTime, setOrigin, setDestination, setDates, setAdults, setHasChildren } from '../../../actions/airTicketsSearchInfo';
-
 import { AIR_TICKETS_CHILDREN } from '../../../constants/modals';
 import AirTicketsChildrenModal from '../modals/AirTicketsChildrenModal';
 import AirTicketsSearchBarDatePicker from './common/AirTicketsSearchBarDatePicker';
-import PropTypes from 'prop-types';
-import React from 'react';
-import Select from 'react-select';
-import { connect } from 'react-redux';
-import requester from '../../../requester';
-import { withRouter } from 'react-router-dom';
+import AirTicketsSearchBarDatePickerSingle from './common/AirTicketsSearchBarDatePickerSingle';
+// import requester from '../../../requester';
 
 import '../../../styles/css/components/airTickets/search/air-tickets-search-bar.css';
 
@@ -24,9 +24,19 @@ function AirTicketsSearchBar(props) {
       return Promise.resolve({ options: [] });
     }
 
-    return requester.getRegionsBySearchParameter([`query=${param}`]).then(res => {
-      return res.body.then(data => {
-        return { options: data };
+    return fetch(`http://localhost:8088/city/search?query=${param}`, {
+      headers: {
+        'Content-type': 'application/json'
+      }
+    }).then(res => {
+      return res.json().then(towns => {
+        let options = [];
+        towns.forEach(town => {
+          town.airports.forEach(airport => {
+            options.push({ code: airport.code, name: `${town.name}, ${town.cityState ? town.cityState + ', ' : ''}${town.countryName}, ${airport.code} airport` });
+          });
+        });
+        return { options };
       });
     });
   };
@@ -34,17 +44,17 @@ function AirTicketsSearchBar(props) {
   const getQueryString = () => {
     let queryString = '?';
 
-    queryString += 'origin=' + props.airTicketsSearchInfo.origin.id;
-    queryString += '&destination=' + props.airTicketsSearchInfo.destination.id;    
+    queryString += 'origin=' + props.airTicketsSearchInfo.origin.code;
+    queryString += '&destination=' + props.airTicketsSearchInfo.destination.code;
     queryString += '&departureDate=' + props.airTicketsSearchInfo.departureDate.format('DD/MM/YYYY');
-    if (props.airTicketsSearchInfo.arrivalDate) {
+    if (props.airTicketsSearchInfo.routing === '2') {
       queryString += '&arrivalDate=' + props.airTicketsSearchInfo.arrivalDate.format('DD/MM/YYYY');
     }
     queryString += '&adults=' + props.airTicketsSearchInfo.adultsCount;
     queryString += '&children=' + encodeURI(JSON.stringify(props.airTicketsSearchInfo.children));
     queryString += '&infants=' + props.airTicketsSearchInfo.infants;
     queryString += '&routing=' + props.airTicketsSearchInfo.routing;
-    queryString += '&class=' + props.airTicketsSearchInfo.flightClass;
+    queryString += '&flightClass=' + props.airTicketsSearchInfo.flightClass;
     queryString += '&stops=' + props.airTicketsSearchInfo.stops;
     if (props.airTicketsSearchInfo.departureTime) {
       queryString += '&departureTime=' + props.airTicketsSearchInfo.departureTime;
@@ -52,13 +62,9 @@ function AirTicketsSearchBar(props) {
 
     return queryString;
   };
-  
-  const redirectToSearchPage = (queryString) => {
-    props.history.push('/tickets/results' + queryString);
-  };
 
   const handleSubmitModal = () => {
-    redirectToSearchPage(getQueryString());
+    props.redirectToSearchPage(getQueryString());
   };
 
   const openChildrenModal = (modal, e) => {
@@ -85,7 +91,7 @@ function AirTicketsSearchBar(props) {
     if (props.airTicketsSearchInfo.hasChildren) {
       openChildrenModal(AIR_TICKETS_CHILDREN);
     } else {
-      redirectToSearchPage(getQueryString(), e);
+      props.redirectToSearchPage(getQueryString(), e);
     }
   };
 
@@ -103,21 +109,18 @@ function AirTicketsSearchBar(props) {
     <form className="air-tickets-form" onSubmit={handleSearch}>
       <div className="air-tickets-form-group-first">
         <div className="routing air-tickets-form-group-item">
-          <input type="radio" id="roundTrip" name="routing" value="2" onClick={e => props.dispatch(setRouting(e.target.value))} defaultChecked={props.airTicketsSearchInfo.routing === '2'}/>
+          <input type="radio" id="roundTrip" name="routing" value="2" onClick={e => props.dispatch(setRouting(e.target.value))} defaultChecked={props.airTicketsSearchInfo.routing === '2'} required />
           <label htmlFor="roundTrip">Round trip</label>
-          <input type="radio" id="oneWay" name="routing" value="1" onClick={e => props.dispatch(setRouting(e.target.value))} defaultChecked={props.airTicketsSearchInfo.routing === '1'}/>
+          <input type="radio" id="oneWay" name="routing" value="1" onClick={e => props.dispatch(setRouting(e.target.value))} defaultChecked={props.airTicketsSearchInfo.routing === '1'} required />
           <label htmlFor="oneWay">One way</label>
-          {/* <input type="radio" id="multiCity" name="routing" value="3" onClick={e => props.dispatch(setRouting(e.target.value))} defaultChecked={props.airTicketsSearchInfo.routing === '3'}/>
-          <label htmlFor="multiCity">Multi city</label> */}
         </div>
-        <div className="class-type air-tickets-form-group-item">
-          <span>Ticket class: </span>
-          <select name="classType" value={props.airTicketsSearchInfo.flightClass} onChange={e => props.dispatch(setFlightClass(e.target.value))}>
-            <option value="0">any</option>
-            <option value="Y">economy</option>
-            <option value="J">premium economy</option>
-            <option value="C">business</option>
-            <option value="F">first</option>
+        <div className="departure-time air-tickets-form-group-item">
+          <span>Departure time: </span>
+          <select name="classType" value={props.airTicketsSearchInfo.departureTime} onChange={e => props.dispatch(setDepartureTime(e.target.value))}>
+            <option value="">any</option>
+            {departureTimes.map((time) => {
+              return <option value={time} key={time}>{time.padStart(2, 0)}:00</option>;
+            })}
           </select>
         </div>
         <div className="flight-stops air-tickets-form-group-item">
@@ -129,13 +132,14 @@ function AirTicketsSearchBar(props) {
             <option value="2">one or more stops</option>
           </select>
         </div>
-        <div className="departure-time air-tickets-form-group-item">
-          <span>Departure time: </span>
-          <select name="classType" value={props.airTicketsSearchInfo.departureTime} onChange={e => props.dispatch(setDepartureTime(e.target.value))}>
-            <option value="">any</option>
-            {departureTimes.map((time) => {
-              return <option value={time} key={time}>{time.padStart(2, 0)}:00</option>;
-            })}
+        <div className="class-type air-tickets-form-group-item">
+          <span>Ticket class: </span>
+          <select name="classType" value={props.airTicketsSearchInfo.flightClass} onChange={e => props.dispatch(setFlightClass(e.target.value))}>
+            <option value="0">any</option>
+            <option value="Y">economy</option>
+            <option value="J">premium economy</option>
+            <option value="C">business</option>
+            <option value="F">first</option>
           </select>
         </div>
       </div>
@@ -147,12 +151,13 @@ function AirTicketsSearchBar(props) {
             style={{ boxShadow: 'none', border: 'none' }}
             value={props.airTicketsSearchInfo.origin}
             onChange={value => props.dispatch(setOrigin(value))}
-            valueKey={'id'}
-            labelKey={'query'}
+            valueKey={'code'}
+            labelKey={'name'}
             loadOptions={getAirports}
             backspaceRemoves={true}
             arrowRenderer={null}
             onSelectResetsInput={false}
+            ignoreCase={false}
           />
         </div>
         <div className="air-tickets-select air-tickets-form-group-item">
@@ -162,12 +167,13 @@ function AirTicketsSearchBar(props) {
             style={{ boxShadow: 'none', border: 'none' }}
             value={props.airTicketsSearchInfo.destination}
             onChange={value => props.dispatch(setDestination(value))}
-            valueKey={'id'}
-            labelKey={'query'}
+            valueKey={'code'}
+            labelKey={'name'}
             loadOptions={getAirports}
             backspaceRemoves={true}
             arrowRenderer={null}
             onSelectResetsInput={false}
+            ignoreCase={false}
           />
         </div>
 
@@ -178,18 +184,22 @@ function AirTicketsSearchBar(props) {
             handleSubmit={handleSubmitModal}
           />
           <div className="check">
-            <AirTicketsSearchBarDatePicker
-              id='search-bar-date-picker'
-              departureDate={props.airTicketsSearchInfo.departureDate}
-              arrivalDate={props.airTicketsSearchInfo.arrivalDate}
-              onApply={(e, picker) => props.dispatch(setDates(e, picker))}
-            />
+            {props.airTicketsSearchInfo.routing === '1' ?
+              <AirTicketsSearchBarDatePickerSingle
+                departureDate={props.airTicketsSearchInfo.departureDate}
+                onApply={(e, picker) => props.dispatch(setDates(e, picker))}
+              /> :
+              <AirTicketsSearchBarDatePicker
+                departureDate={props.airTicketsSearchInfo.departureDate}
+                arrivalDate={props.airTicketsSearchInfo.arrivalDate}
+                onApply={(e, picker) => props.dispatch(setDates(e, picker))}
+              />}
           </div>
         </div>
 
         <div className="guest-wrap guests air-tickets-form-group-item">
 
-          <select name={'adults'} value={props.airTicketsSearchInfo.adults} onChange={e => props.dispatch(setAdults(e.target.value))}>
+          <select name={'adults'} value={props.airTicketsSearchInfo.adultsCount} onChange={e => props.dispatch(setAdults(e.target.value))}>
             <option value="1">1 adult</option>
             <option value="2">2 adults</option>
             <option value="3">3 adults</option>
@@ -218,6 +228,8 @@ function AirTicketsSearchBar(props) {
 }
 
 AirTicketsSearchBar.propTypes = {
+  redirectToSearchPage: PropTypes.func,
+
   // start Router props
   location: PropTypes.object,
   history: PropTypes.object,
