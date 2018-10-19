@@ -63,7 +63,7 @@ class RoomInfoModal extends React.Component {
     }
 
     return (
-      <div>
+      <React.Fragment>
         <Modal show={this.props.isActive} onHide={e => this.props.closeModal(this.props.modalId, e)} className="modal fade myModal">
           <Modal.Header>
             <h1>Room {this.props.roomId + 1}</h1>
@@ -114,7 +114,7 @@ class RoomInfoModal extends React.Component {
             }
           </Modal.Body>
         </Modal>
-      </div>
+      </React.Fragment>
     );
   }
 }

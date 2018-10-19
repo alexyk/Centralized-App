@@ -30,7 +30,7 @@ function ChangeWalletPasswordModal(props) {
   };
 
   return (
-    <div>
+    <React.Fragment>
       <Modal show={props.isActive} className="modal fade myModal">
         <Modal.Header>
           <h1>Recover your password (2)</h1>
@@ -67,7 +67,7 @@ function ChangeWalletPasswordModal(props) {
 
         </Modal.Body>
       </Modal>
-    </div>
+    </React.Fragment>
   );
 }
 

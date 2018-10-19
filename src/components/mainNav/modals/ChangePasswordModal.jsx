@@ -9,7 +9,7 @@ import '../../../styles/css/components/modals/modal.css';
 function ChangePasswordModal(props) {
 
   return (
-    <div>
+    <React.Fragment>
       <Modal show={props.isActive} onHide={e => props.closeModal(CHANGE_PASSWORD, e)} className="modal fade myModal">
         <Modal.Header>
           <h1>Recover your password (3)</h1>
@@ -32,7 +32,7 @@ function ChangePasswordModal(props) {
           </form>
         </Modal.Body>
       </Modal>
-    </div>
+    </React.Fragment>
   );
 }
 
