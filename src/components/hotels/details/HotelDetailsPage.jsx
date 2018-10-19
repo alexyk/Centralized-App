@@ -372,7 +372,7 @@ class HotelDetailsPage extends React.Component {
     if (index >= allRooms.length) {
       NotificationManager.warning(ALL_ROOMS_TAKEN, '', LONG);
       const search = this.props.location.search;
-      const rootURL = !isWebView ? '/hotels/listings' : '/mobile/search';
+      const rootURL = !isWebView ? '/hotels/listings' : '/mobile/hotels/listings';
       const URL = `${rootURL}/${search}`;
       this.props.history.push(URL);
       return;
@@ -387,7 +387,7 @@ class HotelDetailsPage extends React.Component {
 
         const id = this.props.match.params.id;
         const search = this.props.location.search;
-        const rootURL = !isWebView ? '/hotels/listings/book' : '/mobile/book';
+        const rootURL = !isWebView ? '/hotels/listings/book' : '/mobile/hotels/listings/book';
         const URL = `${rootURL}/${id}${search}&quoteId=${booking.quoteId}`;
         this.props.history.push(URL);
       } else {
@@ -519,7 +519,7 @@ class HotelDetailsPage extends React.Component {
             />
 
             {/* MOBILE ONLY START */}
-            {this.props.location.pathname.indexOf('/mobile') !== -1 &&
+            {/* {this.props.location.pathname.indexOf('/mobile') !== -1 &&
               <div className="container">
                 <button className="btn" style={{ 'width': '100%', 'marginBottom': '20px' }} onClick={(e) => this.props.history.goBack()}>Back</button>
                 <div className="select">
@@ -535,7 +535,7 @@ class HotelDetailsPage extends React.Component {
                   </select>
                 </div>
               </div>
-            }
+            } */}
             {/* MOBILE ONLY END */}
           </div>
         }

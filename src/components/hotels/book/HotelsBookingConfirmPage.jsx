@@ -555,21 +555,6 @@ class HotelBookingConfirmPage extends React.Component {
                 </div>
               </div>
             </div>
-            {isMobile &&
-              <div>
-                <button className="btn btn-primary btn-book" onClick={(e) => this.props.history.goBack()}>Back</button>
-                <select
-                  className="currency"
-                  value={currency}
-                  style={{ 'height': '40px', 'marginBottom': '10px', 'textAlignLast': 'right', 'paddingRight': '45%', 'direction': 'rtl' }}
-                  onChange={(e) => this.props.dispatch(setCurrency(e.target.value))}
-                >
-                  <option value="EUR">EUR</option>
-                  <option value="USD">USD</option>
-                  <option value="GBP">GBP</option>
-                </select>
-              </div>
-            }
           </div>
           <WalletPasswordModal
             isActive={this.props.modalsInfo.isActive[PASSWORD_PROMPT]}

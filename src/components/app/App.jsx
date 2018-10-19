@@ -156,6 +156,7 @@ class App extends React.Component {
           <Route exact path="/users/resetPassword/:confirm" render={() => <HomeRouterPage />} />
           <Route path="/homes" render={() => <HomeRouterPage />} />
           <Route path="/hotels" render={() => <HomeRouterPage />} />
+          <Route path="/mobile" render={() => <HomeRouterPage />} />
           <Route path="/profile/listings/create" render={() => !this.isAuthenticated() ? <Redirect to="/" /> : <CreateListingPage />} />
           <Route path="/profile/" render={() => !this.isAuthenticated() ? <Redirect to="/" /> : <ProfilePage location={this.props.location} />} />
           <Route path="/airdrop" render={() => <ProfilePage />} />
@@ -166,13 +167,6 @@ class App extends React.Component {
           <Route path="/google" render={() => <GooglePlaces />} />
           <Route path="/help" render={() => <HelpPage />} />
           <Route path="/about" render={() => <AboutUsPage />} />
-
-          {/* MOBILE ONLY START */}
-          <Route path="/mobile/search" render={() => <StaticHotelsSearchPage />} />
-          <Route path="/mobile/details/:id" render={() => <HotelDetailsPage />} />
-          <Route path="/mobile/book/confirm/:id" render={() => <HotelsBookingConfirmPage />} />
-          <Route path="/mobile/book/:id" render={() => <HotelsBookingPage />} />
-          {/* MOBILE ONLY END */}
 
           <Route render={() => <HomeRouterPage />} />
         </Switch>
