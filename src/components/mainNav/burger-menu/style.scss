@@ -1,0 +1,51 @@
+@import '../../../styles/css/base/variables';
+@import '../../../styles/css/vendors/include-media';
+
+.burger-menu {
+  float: right;
+  .menu {
+    border-left: 1px solid #ccc;
+    z-index: 1000;
+    width: 70%;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    transform: translate(90%, 0);
+    transition: 0.3s ease;
+
+    padding: 3.5em 0;
+
+    &.open {
+      background: #fff;
+      transform: translate(-90%, 0);
+    }
+
+    @include media('>=tablet') {
+      width: 40%;
+    }
+  }
+
+  .menu-item {
+    display: block;
+    text-align: center;
+    cursor: pointer;
+    font-size: 1.2em;
+    padding: 10px;
+    color: $moderate-gray;
+  }
+}
+
+.slider-menu-toggle-button {
+  font-size: 2em;
+  padding: 15px;
+  background: none;
+  color: $moderate-gray;
+  height: 70px;
+  position: absolute;
+  top: 0;
+  right: 0;
+
+  @include media(">=tablet") {
+    padding: 25px;
+  }
+}

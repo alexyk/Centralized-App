@@ -61,9 +61,10 @@ import queryString from 'query-string';
 import requester from '../../requester';
 import { setAirdropInfo } from '../../actions/airdropInfo';
 import moment from 'moment';
-import BurgerMenu from '../common/burger-menu';
-import DropdownMenu from '../common/dropdown-menu';
-import ListMenu from '../common/list-menu';
+import BurgerMenu from './burger-menu';
+import DropdownMenu from './dropdown-menu';
+import ListMenu from './list-menu';
+import { setShowMenu } from '../../actions/burgerMenuInfo.js';
 
 class MainNav extends React.Component {
   constructor(props) {
@@ -120,6 +121,7 @@ class MainNav extends React.Component {
     this.requestVerificationEmail = this.requestVerificationEmail.bind(this);
     this.requestCountries = this.requestCountries.bind(this);
     this.requestStates = this.requestStates.bind(this);
+    this.showMenu = this.showMenu.bind(this);
 
     this.executeReCaptcha = this.executeReCaptcha.bind(this);
     this.getReCaptchaFunction = this.getReCaptchaFunction.bind(this);
@@ -619,6 +621,10 @@ class MainNav extends React.Component {
     }
   }
 
+  showMenu() {
+    this.props.dispatch(setShowMenu(true));
+  }
+
   render() {
     const { currentReCaptcha } = this.state;
     return (
@@ -663,38 +669,7 @@ class MainNav extends React.Component {
             <Link className="navbar-logo" to="/">
               <img src={Config.getValue('basePath') + 'images/locktrip_logo.svg'} alt='logo' />
             </Link>
-
-            {/* <button onClick={() => this.openModal(LOGIN)}>Login</button>
-          <button onClick={() => { this.openModal(REGISTER); this.requestCountries(); }}>Register</button> */}
-
-
-            {/* <Navbar.Collapse>
-            {localStorage[Config.getValue('domainPrefix') + '.auth.locktrip']
-              ? <Nav>
-                <NavItem componentClass={Link} href="/profile/reservations" to="/profile/reservations">Hosting</NavItem>
-                <NavItem componentClass={Link} href="/profile/trips" to="/profile/trips">Traveling</NavItem>
-                <NavItem componentClass={Link} href="/profile/wallet" to="/profile/wallet">Wallet</NavItem>
-                <NavItem componentClass={Link} href="/profile/messages" to="/profile/messages">
-                  <div className={(this.state.unreadMessages === 0 ? 'not ' : '') + 'unread-messages-box'}>
-                    {this.state.unreadMessages > 0 && <span className="bold unread" style={{ right: this.state.unreadMessages.toString().split('').length === 2 ? '2px' : '4px' }}>{this.state.unreadMessages}</span>}
-                  </div>
-                </NavItem>
-                <NavDropdown title={localStorage[Config.getValue('domainPrefix') + '.auth.username']} id="main-nav-dropdown">
-                  <MenuItem componentClass={Link} href="/profile/dashboard" to="/profile/dashboard">Dashboard</MenuItem>
-                  <MenuItem componentClass={Link} href="/profile/listings" to="/profile/listings">My Listings</MenuItem>
-                  <MenuItem componentClass={Link} href="/profile/trips" to="/profile/trips">My Trips</MenuItem>
-                  <MenuItem componentClass={Link} href="/profile/reservations" to="/profile/reservations">My Guests</MenuItem>
-                  <MenuItem componentClass={Link} href="/profile/me/edit" to="/profile/me/edit">Profile</MenuItem>
-                  <MenuItem componentClass={Link} href="/airdrop" to="/airdrop">Airdrop</MenuItem>
-                  <MenuItem componentClass={Link} href="/" to="/" onClick={this.logout}>Logout</MenuItem>
-                </NavDropdown>
-              </Nav>
-              : <Nav pullRight={true}>
-                <NavItem componentClass={Link} to="/login" onClick={() => this.openModal(LOGIN)}>Login</NavItem>
-                <NavItem componentClass={Link} to="/signup" onClick={() => { this.openModal(REGISTER); this.requestCountries(); }}>Register</NavItem>
-              </Nav>
-            }
-          </Navbar.Collapse> */}
+            
             {localStorage[Config.getValue('domainPrefix') + '.auth.locktrip']
               ? <ListMenu>
                 <Link className="list-menu-item" to="/profile/reservations">Hosting</Link>
@@ -739,6 +714,7 @@ class MainNav extends React.Component {
               </BurgerMenu>
             }
           </div>
+          <button className="slider-menu-toggle-button mb-only" onClick={this.showMenu}><span className="fa fa-bars"></span></button>
         </div>
       </nav>
     );
