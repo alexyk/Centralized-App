@@ -629,7 +629,6 @@ class MainNav extends React.Component {
     const { currentReCaptcha } = this.state;
     return (
       <nav id="main-nav" className="navbar">
-        {/* <div style={{ background: 'rgba(255,255,255, 0.8)' }}> */}
         <div className="captcha-container">
           {
             currentReCaptcha && (

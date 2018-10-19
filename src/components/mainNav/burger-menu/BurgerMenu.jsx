@@ -37,7 +37,8 @@ class BurgerMenu extends React.Component {
 }
 
 BurgerMenu.propTypes = {
-  showMenu: PropTypes.boolean,
+  // Redux props
+  showMenu: PropTypes.bool,
   dispatch: PropTypes.func,
 };
 
