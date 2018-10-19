@@ -691,22 +691,6 @@ class StaticHotelsSearchPage extends React.Component {
             </div>
           </div>
         </section>
-
-        {/* MOBILE ONLY START */}
-        {/* {this.props.location.pathname.indexOf('/mobile') !== -1 &&
-          <select
-            className="currency"
-            value={this.props.paymentInfo.currency}
-            style={{ 'height': '40px', 'marginBottom': '10px', 'textAlignLast': 'right', 'paddingRight': '45%', 'direction': 'rtl' }}
-            onChange={(e) => this.props.dispatch(setCurrency(e.target.value))}
-          >
-            <option value="EUR">EUR</option>
-            <option value="USD">USD</option>
-            <option value="GBP">GBP</option>
-          </select>
-        } */}
-        {/* MOBILE ONLY END */}
-
       </div>
     );
   }

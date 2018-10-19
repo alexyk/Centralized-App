@@ -517,26 +517,6 @@ class HotelDetailsPage extends React.Component {
               handleBookRoom={this.handleBookRoom}
               loadingRooms={this.state.loadingRooms}
             />
-
-            {/* MOBILE ONLY START */}
-            {/* {this.props.location.pathname.indexOf('/mobile') !== -1 &&
-              <div className="container">
-                <button className="btn" style={{ 'width': '100%', 'marginBottom': '20px' }} onClick={(e) => this.props.history.goBack()}>Back</button>
-                <div className="select">
-                  <select
-                    className="currency"
-                    value={this.props.paymentInfo.currency}
-                    style={{ 'height': '40px', 'margin': '10px 0', 'textAlignLast': 'right', 'paddingRight': '45%', 'direction': 'rtl' }}
-                    onChange={(e) => this.props.dispatch(setCurrency(e.target.value))}
-                  >
-                    <option value="EUR">EUR</option>
-                    <option value="USD">USD</option>
-                    <option value="GBP">GBP</option>
-                  </select>
-                </div>
-              </div>
-            } */}
-            {/* MOBILE ONLY END */}
           </div>
         }
       </div>

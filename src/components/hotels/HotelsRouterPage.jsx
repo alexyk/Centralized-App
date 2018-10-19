@@ -14,7 +14,6 @@ function HotelsRouterPage(props) {
 
   const isMobile = props.location.pathname.indexOf('/mobile') !== -1;
   const showBackButton = props.location.pathname !== '/mobile/hotels/listings';
-  console.log(props.location.pathname);
 
   return (
     <Fragment>
@@ -56,7 +55,15 @@ function HotelsRouterPage(props) {
 
 HotelsRouterPage.propTypes = {
   listings: PropTypes.array,
-  hotels: PropTypes.array
+  hotels: PropTypes.array,
+
+  // Router props
+  location: PropTypes.object,
+  history: PropTypes.object,
+
+  // Redux props
+  paymentInfo: PropTypes.object,
+  dispatch: PropTypes.func,
 };
 
 const mapStateToProps = (state) => ({
