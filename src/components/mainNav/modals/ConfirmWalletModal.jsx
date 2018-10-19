@@ -36,7 +36,7 @@ function ConfirmWalletModal(props) {
   };
 
   return (
-    <div>
+    <React.Fragment>
       <Modal show={props.isActive} className="modal fade myModal">
         <Modal.Header>
           <h1>Confirm Wallet Information</h1>
@@ -54,7 +54,7 @@ function ConfirmWalletModal(props) {
           </form>
         </Modal.Body>
       </Modal>
-    </div>
+    </React.Fragment>
   );
 }
 

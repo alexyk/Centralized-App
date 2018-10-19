@@ -8,7 +8,7 @@ import '../../../styles/css/components/modals/modal.css';
 
 function EnterRecoveryTokenModal(props) {
   return (
-    <div>
+    <React.Fragment>
       <Modal show={props.isActive} onHide={e => props.closeModal(ENTER_RECOVERY_TOKEN, e)} className="modal fade myModal">
         <Modal.Header>
           <h1>Recover your password (2)</h1>
@@ -27,7 +27,7 @@ function EnterRecoveryTokenModal(props) {
           </form>
         </Modal.Body>
       </Modal>
-    </div>
+    </React.Fragment>
   );
 }
 

@@ -54,7 +54,7 @@ function RegisterModal(props) {
   const countryHasMandatoryState = ['Canada', 'India', 'United States of America'].includes(props.country.name);
 
   return (
-    <div>
+    <React.Fragment>
       <Modal show={props.isActive} onHide={() => props.closeModal(REGISTER)} className="modal fade myModal">
         <Modal.Header>
           <h1>Sign up</h1>
@@ -105,7 +105,7 @@ function RegisterModal(props) {
           </div>
         </Modal.Body>
       </Modal>
-    </div>
+    </React.Fragment>
   );
 }
 

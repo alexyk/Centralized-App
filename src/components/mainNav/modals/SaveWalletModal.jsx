@@ -17,7 +17,7 @@ function SaveWalletModal(props) {
   };
 
   return (
-    <div>
+    <React.Fragment>
       <Modal show={props.isActive} className="modal fade myModal">
         <Modal.Header>
           <h1>Save your wallet info</h1>
@@ -33,7 +33,7 @@ function SaveWalletModal(props) {
           <button className="btn btn-primary" onClick={handleSubmit}>Continue</button>
         </Modal.Body>
       </Modal>
-    </div>
+    </React.Fragment>
   );
 }
 

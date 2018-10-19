@@ -8,6 +8,7 @@ import exchangerSocketInfo from './exchangerSocketInfo';
 import locAmountsInfo from './locAmountsInfo';
 import exchangeRatesInfo from './exchangeRatesInfo';
 import locPriceUpdateTimerInfo from './locPriceUpdateTimerInfo';
+import burgerMenuInfo from './burgerMenuInfo';
 
 const rootReducer = combineReducers({
   userInfo,
@@ -19,6 +20,7 @@ const rootReducer = combineReducers({
   locAmountsInfo,
   exchangeRatesInfo,
   locPriceUpdateTimerInfo,
+  burgerMenuInfo,
 });
 
 export default rootReducer;
