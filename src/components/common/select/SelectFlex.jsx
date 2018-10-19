@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 
 import './style.css';
 
-const DEFAULT_PLACEHOLDER = 'Choose a option';
+const DEFAULT_PLACEHOLDER = 'Choose an option';
 
 class SelectFlex extends Component {
   constructor(props) {
