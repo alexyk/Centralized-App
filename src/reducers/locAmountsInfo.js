@@ -16,7 +16,8 @@ export default function reducer(state = initialState, action) {
               locAmount: action.params.locAmount,
               quotedLoc: action.params.quotedLoc,
               quotedPair: action.params.quotedPair,
-              roundedLocInEur: action.params.roundedLocInEur
+              roundedLocInEur: action.params.roundedLocInEur,
+              fundsSufficient: action.params.fundsSufficient
             }
           }
         };

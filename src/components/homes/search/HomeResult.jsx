@@ -2,12 +2,12 @@ import { Link, withRouter } from 'react-router-dom';
 
 import { Config } from '../../../config';
 import ListingItemPictureCarousel from '../../common/listing/ListingItemPictureCarousel';
-import ListingItemRatingBox from '../../common/listing/ListingItemRatingBox';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { RoomsXMLCurrency } from '../../../services/utilities/roomsXMLCurrency';
 import LocPrice from '../../common/utility/LocPrice';
+import Rating from '../../common/rating';
 
 function HomeResult(props) {
   const { currency, currencySign } = props.paymentInfo;
@@ -26,7 +26,7 @@ function HomeResult(props) {
       </div>
       <div className="list-content">
         <h2><Link to={`/homes/listings/${id}${props.location.search}`}>{name}</Link></h2>
-        <ListingItemRatingBox rating={averageRating} reviewsCount={reviewsCount} />
+        <Rating rating={averageRating} />
         <div className="clearfix"></div>
         <p>{cityName}, {countryName}</p>
         <div className="list-hotel-text">

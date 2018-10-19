@@ -10,6 +10,7 @@ import { RoomsXMLCurrency } from '../../../services/utilities/roomsXMLCurrency';
 import Facilities from './Facilities';
 import requester from '../../../requester';
 import LocPrice from '../../common/utility/LocPrice';
+import Rating from '../../common/rating';
 
 function HotelDetailsInfoSection(props) {
   const getTotalPrice = (room) => {
@@ -88,12 +89,13 @@ function HotelDetailsInfoSection(props) {
       <div className="container">
         <div className="hotel-content" id="hotel-section">
           <h2> {props.hotel.name} </h2>
-          <div className="list-hotel-rating">
+          <Rating rating={props.hotel.star} />
+          {/* <div className="list-hotel-rating">
             <div className="list-hotel-rating-stars">
               {calculateStars(props.hotel.star)}
             </div>
-          </div>
-          <div className="clearfix" />
+          </div> */}
+          {/* <div className="clearfix" /> */}
           <p>{address} {city}, {country}</p>
           <div className="list-hotel-description">
             <h2>Description</h2>
