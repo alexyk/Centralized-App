@@ -1,8 +1,39 @@
+@import '../../../styles/css/base/variables';
+
 .nav-list-menu {
   display: flex;
   font-size: 1.1em;
   .list-menu-item {
     cursor: pointer;
     padding: 20px;
+
+    &:hover, &:active {
+      color: $moderate-red;
+    }
+  }
+
+  .messages {
+    position: relative;
+
+    .mailbox {
+      font-size: 1.4em;
+    }
+
+    .count {
+      position: absolute;
+      top: -6px;
+      right: -5px;
+      color: #fff;
+      font-size: 0.7em;
+      font-weight: 400;
+    }
+
+    .count-background {
+      position: absolute;
+      top: -10px;
+      right: -10px;
+      color: $moderate-red;
+      font-size: 1.2em;
+    }
   }
 }

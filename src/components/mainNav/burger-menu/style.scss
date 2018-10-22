@@ -32,6 +32,11 @@
     font-size: 1.2em;
     padding: 10px;
     color: $moderate-gray;
+
+    &:active, &:hover {
+      background: $light-gray;
+      color: $moderate-red;
+    }
   }
 }
 

@@ -626,7 +626,7 @@ class MainNav extends React.Component {
   }
 
   render() {
-    const { currentReCaptcha } = this.state;
+    const { unreadMessages, currentReCaptcha } = this.state;
     return (
       <nav id="main-nav" className="navbar">
         <div className="captcha-container">
@@ -675,8 +675,13 @@ class MainNav extends React.Component {
                 <Link className="list-menu-item" to="/profile/trips">Traveling</Link>
                 <Link className="list-menu-item" to="/profile/wallet">Wallet</Link>
                 <Link className="list-menu-item" to="/profile/messages">
-                  <div className={(this.state.unreadMessages === 0 ? 'not ' : '') + 'unread-messages-box'}>
+                  {/* <div className={(this.state.unreadMessages === 0 ? 'not ' : '') + 'unread-messages-box'}>
                     {this.state.unreadMessages > 0 && <span className="bold unread" style={{ right: this.state.unreadMessages.toString().split('').length === 2 ? '2px' : '4px' }}>{this.state.unreadMessages}</span>}
+                  </div> */}
+                  <div className="messages">
+                    <span className="fa fa-envelope-o mailbox"></span>
+                    {unreadMessages > 0 && <span className="fa fa-circle count-background"></span>}
+                    {unreadMessages > 0 && <span className="count">{unreadMessages > 9 ? 9 : unreadMessages}</span>}
                   </div>
                 </Link>
                 <DropdownMenu buttonText={localStorage[Config.getValue('domainPrefix') + '.auth.username']}>
