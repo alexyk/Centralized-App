@@ -691,7 +691,7 @@ class MainNav extends React.Component {
               </ListMenu>
               : <ListMenu>
                 <div className="list-menu-item" onClick={() => { this.openModal(LOGIN); }}>Login</div>
-                <div className="list-menu-item" onClick={() => { this.openModal(REGISTER); }}>Register</div>
+                <div className="list-menu-item" onClick={() => { this.requestCountries(); this.openModal(REGISTER); }}>Register</div>
               </ListMenu>
             }
 
@@ -709,7 +709,7 @@ class MainNav extends React.Component {
               </BurgerMenu>
               : <BurgerMenu>
                 <div className="menu-item" onClick={() => { this.openModal(LOGIN); }}>Login</div>
-                <div className="menu-item" onClick={() => { this.openModal(REGISTER); }}>Register</div>
+                <div className="menu-item" onClick={() => { this.requestCountries(); this.openModal(REGISTER); }}>Register</div>
               </BurgerMenu>
             }
           </div>
