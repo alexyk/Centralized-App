@@ -1,10 +1,16 @@
 import { searchInfo } from './actionTypes';
 
-export function setDates(event, picker) {
+export function setStartDate(startDate) {
   return {
-    type: searchInfo.SET_DATES,
-    startDate: picker.startDate,
-    endDate: picker.endDate
+    type: searchInfo.SET_START_DATE,
+    startDate: startDate,
+  };
+}
+
+export function setEndDate(endDate) {
+  return {
+    type: searchInfo.SET_END_DATE,
+    endDate: endDate
   };
 }
 

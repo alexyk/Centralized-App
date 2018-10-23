@@ -10,6 +10,8 @@ import Select from 'react-select';
 import { connect } from 'react-redux';
 import requester from '../../../requester';
 import { withRouter } from 'react-router-dom';
+import Datepicker from '../../common/datepicker';
+import moment from 'moment';
 
 function HotelsSearchBar(props) {
   if (props.location.pathname.indexOf('/mobile') !== -1) {
@@ -118,12 +120,13 @@ function HotelsSearchBar(props) {
           handleSubmit={handleSubmitModal}
         />
         <div className="check">
-          <SearchBarDatePicker
+          {/* <SearchBarDatePicker
             id='search-bar-date-picker'
             startDate={props.searchInfo.startDate}
             endDate={props.searchInfo.endDate}
             onApply={(e, picker) => props.dispatch(setDates(e, picker))}
-            nights={props.searchInfo.nights} />
+            nights={props.searchInfo.nights} /> */}
+          <Datepicker minDate={moment()} enableRanges />
         </div>
 
         <div className="days-of-stay">

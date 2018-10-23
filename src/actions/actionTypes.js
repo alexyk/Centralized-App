@@ -22,7 +22,8 @@ export const airdropInfo = {
 
 // searchInfo actions
 export const searchInfo = {
-  SET_DATES: 'SET_DATES',
+  SET_START_DATE: 'SET_START_DATE',
+  SET_END_DATE: 'SET_END_DATE',
   SET_REGION: 'SET_REGION',
   SET_ROOMS_BY_COUNT_OF_ROOMS: 'SET_ROOMS_BY_COUNT_OF_ROOMS',
   SET_ROOMS: 'SET_ROOMS',

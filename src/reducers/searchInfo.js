@@ -14,11 +14,17 @@ const initialState = {
 
 export default function reducer(state = initialState, action) {
   switch (action.type) {
-    case searchInfo.SET_DATES:
+    case searchInfo.SET_START_DATE:
       return Object.assign({}, state, {
         startDate: action.startDate,
+        // endDate: action.endDate.diff(action.startDate, 'days') === 0 ? action.endDate.add(1, 'day') : action.endDate,
+        // nights: calculateNights(action.startDate, action.endDate)
+      });
+    case searchInfo.SET_END_DATE:
+      return Object.assign({}, state, {
+        // startDate: action.startDate,
         endDate: action.endDate.diff(action.startDate, 'days') === 0 ? action.endDate.add(1, 'day') : action.endDate,
-        nights: calculateNights(action.startDate, action.endDate)
+        // nights: calculateNights(action.startDate, action.endDate)
       });
     case searchInfo.SET_REGION:
       return Object.assign({}, state, {
