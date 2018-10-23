@@ -157,7 +157,6 @@ function AirTicketsSearchBar(props) {
             backspaceRemoves={true}
             arrowRenderer={null}
             onSelectResetsInput={false}
-            ignoreCase={false}
           />
         </div>
         <div className="air-tickets-select air-tickets-form-group-item">
@@ -173,7 +172,6 @@ function AirTicketsSearchBar(props) {
             backspaceRemoves={true}
             arrowRenderer={null}
             onSelectResetsInput={false}
-            ignoreCase={false}
           />
         </div>
 

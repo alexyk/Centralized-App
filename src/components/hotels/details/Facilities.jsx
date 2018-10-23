@@ -26,6 +26,7 @@ class Facilities extends React.Component {
     if (!facilities || facilities.length === 0) {
       return null;
     }
+    console.log(facilities);
     const mostPopularFacilities = facilities.filter(a => a.picture != null).splice(0, 5);
     const otherFacilities = facilities.filter(a => !mostPopularFacilities.includes(a));
 

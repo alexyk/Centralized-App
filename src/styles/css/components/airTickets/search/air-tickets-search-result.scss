@@ -23,7 +23,8 @@ $media-expressions: ('screen': 'screen',
 @import '../../../base/mixins';
 @import '../../../base/helpers';
 
-.air-tickets-result {
+.air-tickets-result,
+.air-tickets-details-result {
   background: $white;
   border-radius: 3px;
   overflow: hidden;
@@ -111,6 +112,7 @@ $media-expressions: ('screen': 'screen',
 
         .flight-stops {
           width: 60%;
+          justify-content: center;
           .stop {
             text-align: center;
           }
@@ -118,7 +120,8 @@ $media-expressions: ('screen': 'screen',
           .middle-stop {
             position: absolute;
             top: 10px;
-            width: 80px;
+            width: 40px;
+            text-align: center;
           }
 
           .stops-container {
@@ -144,7 +147,7 @@ $media-expressions: ('screen': 'screen',
             }
 
             .line {
-              width: 80px;
+              width: 50px;
               border: 1px solid #d87a61;
               margin: 0;
             }

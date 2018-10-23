@@ -1,0 +1,200 @@
+$breakpoints: (
+  "xs-phone": 320px,
+  "phone": 480px,
+  "tablet": 768px,
+  "desktop": 1024px,
+  "widescreen": 1200px
+);
+
+// keywords
+$media-expressions: (
+  "screen": "screen",
+  "print": "print",
+  "handheld": "handheld",
+  "landscape": "(orientation: landscape)",
+  "portrait": "(orientation: portrait)",
+  "retina2x": "(-webkit-min-device-pixel-ratio: 1.5), (min-resolution: 144dpi)",
+  "retina3x": "(-webkit-min-device-pixel-ratio: 2.5), (min-resolution: 240dpi)"
+);
+
+// ligatured operators ≥ ≤
+
+@import "../../../vendors/include-media";
+
+.air-tickets-details-container {
+  padding: 20px 0;
+  .air-tickets-details-box {
+    max-width: 1200px;
+    width: 100%;
+    padding: 0 15px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 60% 35%;
+    grid-gap: 5%;
+    .air-tickets-details-content {
+      .facilities {
+        display: flex;
+        flex-wrap: wrap;
+        .facility {
+          margin-right: 20px;
+          margin-bottom: 20px;
+          span {
+            display: flex;
+            -ms-flex-pack: center;
+            justify-content: center;
+            -ms-flex-align: center;
+            align-items: center;
+            width: 70px;
+            height: 70px;
+            background-color: #fff;
+            border: 1px solid #cccccc;
+            border-radius: 2px;
+            img {
+              width: 60%;
+              height: 60%;
+            }
+          }
+        }
+        .more-facilities {
+          font-size: 24px;
+          letter-spacing: 1px;
+          color: #d97a61;
+          text-align: center;
+          display: -ms-flexbox;
+          display: flex;
+          -ms-flex-align: center;
+          align-items: center;
+          cursor: pointer;
+        }
+      }
+    }
+    .air-tickets-details-booking-panel {
+      @include media("<=desktop") {
+        margin-top: 15px;
+      }
+      .box {
+        border-radius: 4px;
+        background-color: #ffffff;
+        border: 1px solid #cbcbcb;
+        padding: 20px;
+        .default-price {
+          font-size: 20px;
+          color: #1f2427;
+          font-weight: 300;
+          .main-fiat {
+            font-size: 34px;
+            font-weight: normal;
+          }
+        }
+        .booking-dates {
+          margin: 10px 0;
+          > div {
+            border: 1px solid #cccccc99;
+            border-radius: 4px;
+            padding: 10px 5px;
+          }
+          .datepicker {
+            display: flex;
+            .search-bar-date-picker-hide-preview {
+              width: 100%;
+              
+            }
+          }
+          .days-of-stay {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            text-align: center;
+            padding: 3px 9px;
+            margin-bottom: 10px;
+            border: 1px solid #cccccc99;
+            border-radius: 4px;
+            margin-bottom: 0;
+            @include media("<=desktop") {
+              display: none;
+            }
+            span {
+              font-size: 12px;
+            }
+            .icon-moon {
+              font-size: 18px;
+              margin-bottom: 5px;
+            }
+          }
+        }
+        .booking-guests {
+          position: relative;
+          select {
+            padding: 17px 18px;
+            border: 1px solid #cccccc99;
+            border-radius: 4px;
+            margin: 5px 0;
+          }
+          &:after {
+            position: absolute;
+            content: "\e900";
+            font-family: "icomoon" !important;
+            padding: 0 8px;
+            font-size: 5px;
+            right: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 1;
+            text-align: center;
+            pointer-events: none;
+            box-sizing: border-box;
+            @include media(">=desktop") {
+              font-size: 7px;
+            }
+          }
+        }
+        .without-fees p,
+        .cleaning-fee p,
+        .total p {
+          display: inline-block;
+          margin: 0;
+          font-size: 18px;
+          color: #1f2427;
+          font-weight: 300;
+        }
+        .without-fees p:last-of-type,
+        .cleaning-fee p:last-of-type,
+        .total p:last-of-type {
+          text-align: right;
+        }
+        .total p {
+          font-weight: normal;
+        }
+        .without-fees,
+        .cleaning-fee,
+        .total {
+          display: grid;
+          grid-template-columns: 70% 30%;
+          margin: 10px 0;
+        }
+        .pay-in {
+          display: block;
+          width: 100%;
+          letter-spacing: 1px;
+          font-size: 18px;
+          color: #ffffff;
+          background-color: #d77961;
+          border-radius: 4px;
+          padding: 20px 0;
+          margin: 15px 0;
+          text-align: center;
+          &.disabled {
+            cursor: default;
+            opacity: 0.7;
+          }
+        }
+        .booking-helper {
+          font-size: 14px;
+          text-align: center;
+          margin: 0;
+          color: #898c8d;
+        }
+      }
+    }
+  }
+}

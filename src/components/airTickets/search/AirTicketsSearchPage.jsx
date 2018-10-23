@@ -29,6 +29,7 @@ class AirTicketsSearchPage extends Component {
     this.queueId = null;
     this.client = null;
     this.subscription = null;
+    this.results = [];
 
     this.flightsResultsInterval = null;
 
@@ -57,9 +58,9 @@ class AirTicketsSearchPage extends Component {
     if (!localStorage.getItem('uuid')) {
       localStorage.setItem('uuid', `${uuid()}`);
     }
-    const uuid = localStorage.getItem('tickets-uuid');
+    const ticketsUUID = localStorage.getItem('tickets-uuid');
     const rnd = this.getRandomInt();
-    this.queueId = `${uuid}-${rnd}`;
+    this.queueId = `${ticketsUUID}-${rnd}`;
 
     this.populateSearchBar();
 
@@ -100,7 +101,7 @@ class AirTicketsSearchPage extends Component {
             resolve(data);
           });
         } else {
-          res.errors.then((errors) => {
+          res.json().then((errors) => {
             reject(errors);
           });
         }
@@ -108,7 +109,7 @@ class AirTicketsSearchPage extends Component {
     });
   }
 
-  populateLocations(origin, destination) {
+  populateAirports(origin, destination) {
     this.getAirportInfo(origin)
       .then((data) => {
         this.props.dispatch(setOrigin({ code: origin, name: `${data.cityName}, ${data.cityState ? data.cityState + ', ' : ''}${data.countryName}, ${origin} airport` }));
@@ -143,7 +144,7 @@ class AirTicketsSearchPage extends Component {
 
       this.props.dispatch(setAirTicketsSearchInfo(routing, flightClass, stops, departureTime, origin, destination, departureDate, arrivalDate, adultsCount, children, infants, hasChildren));
 
-      this.populateLocations(searchParams.origin, searchParams.destination);
+      this.populateAirports(searchParams.origin, searchParams.destination);
 
       this.setState({
         page: page ? Number(page) : 0,
@@ -229,22 +230,16 @@ class AirTicketsSearchPage extends Component {
     const messageBody = JSON.parse(message.body);
     console.log(messageBody);
     if (messageBody.allElements) {
-      let results = this.state.results.slice();
-      results = results.sort((r1, r2) => r1.receiveResultItem.solutions[0].prices.pricesOffice.prices[0].total - r2.receiveResultItem.solutions[0].prices.pricesOffice.prices[0].total);
-      this.setState({ allElements: true, results });
+      this.results = this.results.sort((r1, r2) => r1.solutions[0].priceInfo.totalPrice - r2.solutions[0].priceInfo.totalPrice);
+      this.setState({ results: this.results, loading: false, allElements: true });
       this.unsubscribe();
       this.clearIntervals();
-    } else if (messageBody.ok === false) {
+    } else if (messageBody.success === false) {
       this.setState({ loading: false });
       this.clearIntervals();
       NotificationManager.warning(messageBody.message, '', LONG);
-    } else {
-      if (messageBody.receiveResultItem) {
-        const result = messageBody;
-        result.receiveResultItem = JSON.parse(result.receiveResultItem);
-
-        this.setState({ results:  [...this.state.results, result], loading: false });
-      }
+    } else if (messageBody.solutions) {
+      this.results.push(messageBody);
     }
   }
 
@@ -278,7 +273,7 @@ class AirTicketsSearchPage extends Component {
           </div>
           <div className="air-tickets-search-results-holder">
             <AirTicketsResultsHolder
-              results={results.filter((el, index) => index > this.state.page * DEFAULT_PAGE_SIZE && index <= (this.state.page * DEFAULT_PAGE_SIZE) + DEFAULT_PAGE_SIZE)}
+              results={results.filter((el, index) => index >= (this.state.page * DEFAULT_PAGE_SIZE) && index < (this.state.page * DEFAULT_PAGE_SIZE) + DEFAULT_PAGE_SIZE)}
               exchangeRatesInfo={exchangeRatesInfo}
               paymentInfo={paymentInfo}
               userInfo={userInfo}
