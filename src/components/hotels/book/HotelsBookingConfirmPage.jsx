@@ -22,7 +22,7 @@ import { closeModal, openModal } from '../../../actions/modalsInfo.js';
 import { setCurrency } from '../../../actions/paymentInfo';
 import { setLocRateFiatAmount } from '../../../actions/exchangeRatesInfo.js';
 import RecoverWallerPassword from '../../common/utility/RecoverWallerPassword';
-import { LocPriceWebSocket } from '../../../services/socket/locPriceWebSocket';
+import { Websocket } from '../../../services/socket/exchangerWebsocket';
 
 import '../../../styles/css/components/hotels/book/hotel-booking-confirm-page.css';
 
@@ -87,7 +87,7 @@ class HotelBookingConfirmPage extends React.Component {
   }
 
   stopQuote() {
-    LocPriceWebSocket.sendMessage(DEFAULT_QUOTE_LOC_ID, 'approveQuote', { bookingId: this.props.reservation.preparedBookingId });
+    Websocket.sendMessage(DEFAULT_QUOTE_LOC_ID, 'approveQuote', { bookingId: this.props.reservation.preparedBookingId });
 
     this.setState({
       isQuoteStopped: true
@@ -95,7 +95,7 @@ class HotelBookingConfirmPage extends React.Component {
   }
 
   restartQuote() {
-    LocPriceWebSocket.sendMessage(DEFAULT_QUOTE_LOC_ID, 'quoteLoc', { bookingId: this.props.reservation.preparedBookingId });
+    Websocket.sendMessage(DEFAULT_QUOTE_LOC_ID, 'quoteLoc', { bookingId: this.props.reservation.preparedBookingId });
 
     this.setState({
       isQuoteStopped: false
@@ -303,7 +303,6 @@ class HotelBookingConfirmPage extends React.Component {
     });
   }
 
-
   openModal(modal, e) {
     if (e) {
       e.preventDefault();
@@ -503,7 +502,7 @@ class HotelBookingConfirmPage extends React.Component {
                   <p className='billing-disclaimer'>The charge will appear on your bill as LockChain Ltd. (team@locktrip.com)</p>
                 </div>
                 <div className="payment-methods">
-                  {locAmounts[DEFAULT_QUOTE_LOC_ID] &&
+                  {locAmounts[DEFAULT_QUOTE_LOC_ID] && locAmounts[DEFAULT_QUOTE_LOC_ID].fundsSufficient && false &&
                     <div className="payment-methods-card">
                       <div className="details">
                         <p className="booking-card-price">
@@ -555,21 +554,6 @@ class HotelBookingConfirmPage extends React.Component {
                 </div>
               </div>
             </div>
-            {isMobile &&
-              <div>
-                <button className="btn btn-primary btn-book" onClick={(e) => this.props.history.goBack()}>Back</button>
-                <select
-                  className="currency"
-                  value={currency}
-                  style={{ 'height': '40px', 'marginBottom': '10px', 'textAlignLast': 'right', 'paddingRight': '45%', 'direction': 'rtl' }}
-                  onChange={(e) => this.props.dispatch(setCurrency(e.target.value))}
-                >
-                  <option value="EUR">EUR</option>
-                  <option value="USD">USD</option>
-                  <option value="GBP">GBP</option>
-                </select>
-              </div>
-            }
           </div>
           <WalletPasswordModal
             isActive={this.props.modalsInfo.isActive[PASSWORD_PROMPT]}

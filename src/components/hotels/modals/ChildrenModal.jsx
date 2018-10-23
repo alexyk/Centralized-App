@@ -46,7 +46,7 @@ function ChildrenModal(props) {
   };
 
   return (
-    <div>
+    <React.Fragment>
       <Modal show={props.isActive} onHide={e => props.closeModal(CHILDREN, e)} className="modal fade myModal">
         <Modal.Header>
           <h1>Children</h1>
@@ -117,7 +117,7 @@ function ChildrenModal(props) {
           }
         </Modal.Body>
       </Modal>
-    </div>
+    </React.Fragment>
   );
 }
 

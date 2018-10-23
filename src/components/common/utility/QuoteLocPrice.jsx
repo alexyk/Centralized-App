@@ -4,7 +4,7 @@ import { NotificationManager } from 'react-notifications';
 import PropTypes from 'prop-types';
 import { CurrencyConverter } from '../../../services/utilities/currencyConverter';
 import { RoomsXMLCurrency } from '../../../services/utilities/roomsXMLCurrency';
-import { LocPriceWebSocket } from '../../../services/socket/locPriceWebSocket';
+import { Websocket } from '../../../services/socket/exchangerWebsocket';
 import { removeLocAmount } from '../../../actions/locAmountsInfo';
 import { LONG } from '../../../constants/notificationDisplayTimes.js';
 
@@ -38,7 +38,7 @@ class QuoteLocPrice extends PureComponent {
   }
 
   sendWebsocketMessage(id, method, params) {
-    LocPriceWebSocket.sendMessage(id || DEFAULT_QUOTE_LOC_ID, method || DEFAULT_QUOTE_LOC_METHOD, params);
+    Websocket.sendMessage(id || DEFAULT_QUOTE_LOC_ID, method || DEFAULT_QUOTE_LOC_METHOD, params);
   }
 
   redirectToHotelDetailsPage() {

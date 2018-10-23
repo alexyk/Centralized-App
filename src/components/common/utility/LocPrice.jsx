@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { CurrencyConverter } from '../../../services/utilities/currencyConverter';
 import { RoomsXMLCurrency } from '../../../services/utilities/roomsXMLCurrency';
-import { LocPriceWebSocket } from '../../../services/socket/locPriceWebSocket';
+import { Websocket } from '../../../services/socket/exchangerWebsocket';
 import { removeLocAmount } from '../../../actions/locAmountsInfo';
 
 const DEFAULT_CRYPTO_CURRENCY = 'EUR';
@@ -21,7 +21,7 @@ class LocPrice extends PureComponent {
       } else {
         fiatInEur = this.props.exchangeRatesInfo.currencyExchangeRates && CurrencyConverter.convert(this.props.exchangeRatesInfo.currencyExchangeRates, RoomsXMLCurrency.get(), DEFAULT_CRYPTO_CURRENCY, this.props.fiat);
       }
-      LocPriceWebSocket.sendMessage(fiatInEur, this.props.method, Object.assign(this.props.params, { fiatAmount: fiatInEur }));
+      Websocket.sendMessage(fiatInEur, this.props.method, Object.assign(this.props.params, { fiatAmount: fiatInEur }));
       isLocPriceRendered = true;
     }
 
@@ -34,7 +34,7 @@ class LocPrice extends PureComponent {
   componentWillReceiveProps(nextProps) {
     if (nextProps.exchangerSocketInfo.isLocPriceWebsocketConnected &&
       nextProps.exchangerSocketInfo.isLocPriceWebsocketConnected !== this.props.exchangerSocketInfo.isLocPriceWebsocketConnected) {
-      LocPriceWebSocket.sendMessage(this.state.fiatInEur, this.props.method, Object.assign(this.props.params, { fiatAmount: this.state.fiatInEur }));
+      Websocket.sendMessage(this.state.fiatInEur, this.props.method, Object.assign(this.props.params, { fiatAmount: this.state.fiatInEur }));
     }
 
     if (nextProps.exchangeRatesInfo.currencyExchangeRates && !this.state.isLocPriceRendered) {
@@ -44,7 +44,7 @@ class LocPrice extends PureComponent {
       } else {
         fiatInEur = nextProps.exchangeRatesInfo.currencyExchangeRates && CurrencyConverter.convert(nextProps.exchangeRatesInfo.currencyExchangeRates, RoomsXMLCurrency.get(), DEFAULT_CRYPTO_CURRENCY, this.props.fiat);
       }
-      LocPriceWebSocket.sendMessage(fiatInEur, this.props.method, Object.assign(this.props.params, { fiatAmount: fiatInEur }));
+      Websocket.sendMessage(fiatInEur, this.props.method, Object.assign(this.props.params, { fiatAmount: fiatInEur }));
       this.setState({
         isLocPriceRendered: true,
         fiatInEur
@@ -53,7 +53,7 @@ class LocPrice extends PureComponent {
   }
 
   componentWillUnmount() {
-    LocPriceWebSocket.sendMessage(this.state.fiatInEur, 'unsubscribe');
+    Websocket.sendMessage(this.state.fiatInEur, 'unsubscribe');
     if (this.props.locAmount) {
       this.props.dispatch(removeLocAmount(this.state.fiatInEur));
     }

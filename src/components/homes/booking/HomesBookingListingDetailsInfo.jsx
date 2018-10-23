@@ -4,16 +4,16 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import moment from 'moment';
 import { Config } from '../../../config.js';
-import ListingItemRatingBox from '../../common/listing/ListingItemRatingBox';
 import SearchBarDatePickerHidePreview from '../../common/search/SearchBarDatePickerHidePreview';
 import { CurrencyConverter } from '../../../services/utilities/currencyConverter.js';
 
 import '../../../styles/css/components/homes/booking/homes-booking-listing-details-info.css';
+import Rating from '../../common/rating/Rating';
 
 function HomesBookingListingDetailsInfo(props) {
 
   const { listing, searchParams, exchangeRates, paymentInfo } = props;
-  const pictures = listing.pictures;
+  const pictures = listing.pictures.filter(x => x.thumbnail !== null);
   const startDate = moment(searchParams.startDate, 'DD/MM/YYYY');
   const endDate = moment(searchParams.endDate, 'DD/MM/YYYY');
 
@@ -49,10 +49,10 @@ function HomesBookingListingDetailsInfo(props) {
   const nights = calculateNights(startDate, endDate);
 
   const pricePerNightInCurrentCurrency = CurrencyConverter.convert(exchangeRates, listing.currencyCode, paymentInfo.currency, listing.defaultDailyPrice);
-  
+
   return (
     <div className="left-part">
-      <Slider
+      {pictures.length > 0 && <Slider
         {...settings}>
         {pictures.map((picture, i) => {
           return (
@@ -61,10 +61,10 @@ function HomesBookingListingDetailsInfo(props) {
             </div>
           );
         })}
-      </Slider>
+      </Slider>}
       <div className="review-info-container">
         <h2>{listing.name}</h2>
-        <ListingItemRatingBox reviewsCount={0} rating={listing.averageRating} />
+        <Rating rating={listing.averageRating} />
         <div><p className="city">{listing.city.name}, {listing.country.name}</p></div></div>
       <div className="booking-info-container">
         <div className="div-guest">

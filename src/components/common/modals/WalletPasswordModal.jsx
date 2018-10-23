@@ -7,7 +7,7 @@ import { Config } from '../../../config.js';
 function WalletPasswordModal(props) {
 
   return (
-    <div>
+    <React.Fragment>
       <Modal show={props.isActive} onHide={e => props.closeModal(PASSWORD_PROMPT, e)} className="modal fade myModal">
         <Modal.Header>
           <h1>{props.text}</h1>
@@ -28,7 +28,7 @@ function WalletPasswordModal(props) {
           </div>
         </Modal.Body>
       </Modal>
-    </div>
+    </React.Fragment>
   );
 }
 

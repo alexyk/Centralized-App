@@ -55,3 +55,8 @@ export const locPriceUpdateTimerInfo = {
   SET_SECONDS: 'SET_SECONDS',
   RESET: 'RESET'
 };
+
+// burger menu actions
+export const burgerMenuInfo = {
+  SET_SHOW_MENU: 'SET_SHOW_MENU'
+};
