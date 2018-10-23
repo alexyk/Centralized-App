@@ -303,7 +303,6 @@ class HotelBookingConfirmPage extends React.Component {
     });
   }
 
-
   openModal(modal, e) {
     if (e) {
       e.preventDefault();
@@ -503,7 +502,7 @@ class HotelBookingConfirmPage extends React.Component {
                   <p className='billing-disclaimer'>The charge will appear on your bill as LockChain Ltd. (team@locktrip.com)</p>
                 </div>
                 <div className="payment-methods">
-                  {locAmounts[DEFAULT_QUOTE_LOC_ID] && locAmounts[DEFAULT_QUOTE_LOC_ID].fundsSufficient &&
+                  {locAmounts[DEFAULT_QUOTE_LOC_ID] && locAmounts[DEFAULT_QUOTE_LOC_ID].fundsSufficient && false &&
                     <div className="payment-methods-card">
                       <div className="details">
                         <p className="booking-card-price">

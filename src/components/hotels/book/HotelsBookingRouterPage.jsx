@@ -400,7 +400,7 @@ class HotelsBookingRouterPage extends React.Component {
     return (
       <Fragment>
         <Switch>
-          <Route exact path="/hotels/listings/book/:id/profile" render={() => <ConfirmProfilePage requestLockOnQuoteId={this.requestLockOnQuoteId} preparedBookingId={this.state.reservation && this.state.reservation.preparedBookingId} />} />
+          {/* <Route exact path="/hotels/listings/book/:id/profile" render={() => <ConfirmProfilePage requestLockOnQuoteId={this.requestLockOnQuoteId} preparedBookingId={this.state.reservation && this.state.reservation.preparedBookingId} />} /> */}
           <Route exact path="/hotels/listings/book/:id/confirm" render={() => <HotelsBookingConfirmPage reservation={reservation} userInfo={userInfo} isQuoteLocValid={this.state.isQuoteLocValid} requestLockOnQuoteId={this.requestLockOnQuoteId} requestCreateReservation={this.requestCreateReservation} invalidateQuoteLoc={this.invalidateQuoteLoc} redirectToHotelDetailsPage={this.redirectToHotelDetailsPage} />} />
           <Route exact path="/hotels/listings/book/:id" render={() => <HotelsBookingPage hotel={hotel} rooms={rooms} quoteId={quoteId} guests={guests} exchangeRates={exchangeRates} handleAdultChange={this.handleAdultChange} handleChildAgeChange={this.handleChildAgeChange} />} />
 
