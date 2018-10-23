@@ -15,13 +15,15 @@
     // padding: 20px;
     border: 1px solid $light-gray;
     text-align: center;
+    padding: 20px 0;
 
     .dropdown-menu-item {
       display: block;
       padding: 15px 30px;
 
-      &:hover {
+      &:hover, &:active {
         background: $light-gray;
+        color: $moderate-red;
       }
     }
   }
@@ -29,6 +31,10 @@
   &__button {
     cursor: pointer;
     padding: 20px;
+
+    &:hover, &:active {
+      color: $moderate-red;
+    }
   }
 
   &__button::after {
