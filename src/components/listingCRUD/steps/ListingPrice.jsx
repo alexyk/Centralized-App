@@ -29,17 +29,17 @@ function ListingPrice(props) {
                     <div className="form-group">
                       <label htmlFor="city">Currency</label>
                       <div className='select'>
-                      <select
-                        onChange={props.onChange}
-                       
-                        name="currency"
-                        value={currency}
-                        required="required"
-                        id="currency">
-                        {currencies.map((item, i) => {
-                          return <option key={i} value={item.id}>{item.code}</option>;
-                        })}
-                      </select>
+                        <select
+                          onChange={props.onChange}
+
+                          name="currency"
+                          value={currency}
+                          required="required"
+                          id="currency">
+                          {currencies.map((item, i) => {
+                            return <option key={i} value={item.id}>{item.code}</option>;
+                          })}
+                        </select>
                       </div>
                     </div>
                   </div>
@@ -48,7 +48,7 @@ function ListingPrice(props) {
                   <div className="col-md-6">
                     <div className="form-group">
                       <label htmlFor="defaultDailyPrice">Price per Night</label>
-                      <input onChange={props.onChange} type="number" id="defaultDailyPrice"  name="defaultDailyPrice" value={defaultDailyPrice} />
+                      <input onChange={props.onChange} type="number" id="defaultDailyPrice" name="defaultDailyPrice" value={defaultDailyPrice} />
                     </div>
                   </div>
                 </div>
@@ -56,7 +56,7 @@ function ListingPrice(props) {
                   <div className="col-md-6">
                     <div className="form-group">
                       <label htmlFor="cleaningFee">Cleaning Fee</label>
-                      <input onChange={props.onChange} type="number" id="cleaningFee"  name="cleaningFee" value={cleaningFee} />
+                      <input onChange={props.onChange} type="number" id="cleaningFee" name="cleaningFee" value={cleaningFee} />
                     </div>
                   </div>
                 </div>
@@ -64,7 +64,7 @@ function ListingPrice(props) {
                   <div className="col-md-6">
                     <div className="form-group">
                       <label htmlFor="depositRate">Deposit Required</label>
-                      <input onChange={props.onChange} type="number" id="depositRate"  name="depositRate" value={depositRate} />
+                      <input onChange={props.onChange} type="number" id="depositRate" name="depositRate" value={depositRate} />
                     </div>
                   </div>
                 </div>
