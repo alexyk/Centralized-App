@@ -97,6 +97,7 @@ class CreateListingPage extends React.Component {
     };
 
     this.onChange = this.onChange.bind(this);
+    this.onNumberChange = this.onNumberChange.bind(this);
     this.onSelect = this.onSelect.bind(this);
     this.toggleCheckbox = this.toggleCheckbox.bind(this);
     this.updateCounter = this.updateCounter.bind(this);
@@ -143,6 +144,14 @@ class CreateListingPage extends React.Component {
     this.setState({
       [event.target.name]: event.target.value,
     });
+  }
+
+  onNumberChange(event) {
+    const pattern = /^[1-9]+\d*$/;
+    const number = event.target.value;
+    if ((!number || pattern.test(number)) && number.length < 5) {
+      this.setState({ [event.target.name]: number });
+    }
   }
 
   toggleCheckbox(event) {
@@ -564,6 +573,7 @@ class CreateListingPage extends React.Component {
             values={this.state}
             toggleCheckbox={this.toggleCheckbox}
             onChange={this.onChange}
+            onNumberChange={this.onNumberChange}
             updateProgress={this.updateProgress}
             routes={routes}
             prev={routes.landing}
