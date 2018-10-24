@@ -12,36 +12,11 @@ class Datepicker extends Component {
   constructor(props) {
     super(props);
 
-    // const startDate = props.startDate;
-    // const endDate = props.endDate;
-    
-    // props.dispatch(asyncSetStartDate(startDate));
-    // props.dispatch(asyncSetEndDate(endDate));
-
-    // this.getStartDate = this.getStartDate.bind(this);
-    // this.getEndDate = this.getEndDate.bind(this);
     this.openEndDatePicker = this.openEndDatePicker.bind(this);
     this.handleChangeStart = this.handleChangeStart.bind(this);
     this.handleChangeEnd = this.handleChangeEnd.bind(this);
     this.selectValidDates = this.selectValidDates.bind(this);
   }
-
-  // getStartDate() {
-  //   return moment().add(1, 'days');
-  // }
-
-  // getEndDate(startDate) {
-  //   const { enableRanges, enableSameDates } = this.props;
-  //   if (!enableRanges) {
-  //     return null;
-  //   }
-
-  //   if (!enableSameDates) {
-  //     return moment(startDate).add(1, 'days');
-  //   }
-
-  //   return moment(startDate);
-  // }
 
   handleChangeStart(date) {
     this.props.dispatch(asyncSetStartDate(date)).then(() => {
@@ -98,33 +73,34 @@ class Datepicker extends Component {
   }
 
   render() {
+    const { startDate, endDate, intervalStartText, intervalEndText, enableRanges } = this.props; 
     const excludedDates = this.getExcludedDates();
     let isMobile = window.innerWidth < 1024;
     return (
       <div className="search-bar-date-picker-hide-preview">
         <DatePicker
           ref={(c) => (this.startdatepicker = c)}
-          customInput={<DateInput text={'Check-in'} date={this.props.startDate} calendar={this.startdatepicker} />}
-          selected={this.props.startDate}
+          customInput={<DateInput text={intervalStartText} date={this.props.startDate} calendar={this.startdatepicker} />}
+          selected={startDate}
           selectsStart
-          startDate={this.props.startDate}
-          endDate={this.props.endDate}
+          startDate={startDate}
+          endDate={endDate}
           onChange={this.handleChangeStart}
           excludeDates={this.props.excludedDates}
           withPortal={isMobile}
           {...this.props}
         />
 
-        {this.props.enableRanges && <span className="icon-arrow-right arrow"></span>}
+        {enableRanges && <span className="icon-arrow-right arrow"></span>}
 
-        {this.props.enableRanges &&
+        {enableRanges &&
           <DatePicker
             ref={(c) => (this.enddatepicker = c)}
-            customInput={<DateInput text={'Check-out'} date={this.props.endDate} calendar={this.enddatepicker} />}
-            selected={this.props.endDate}
+            customInput={<DateInput text={intervalEndText} date={endDate} calendar={this.enddatepicker} />}
+            selected={endDate}
             selectsEnd
-            startDate={this.props.startDate}
-            endDate={this.props.endDate}
+            startDate={startDate}
+            endDate={endDate}
             onChange={this.handleChangeEnd}
             excludeDates={excludedDates}
             withPortal={isMobile}
@@ -137,6 +113,8 @@ class Datepicker extends Component {
 }
 
 Datepicker.defaultProps = {
+  intervalStartText: 'Check-in',
+  intervalEndText: 'Check-out',
   enableRanges: false,
   enableSameDates: false,
   excludedDates: []
