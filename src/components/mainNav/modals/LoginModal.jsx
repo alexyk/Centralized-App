@@ -9,7 +9,7 @@ import '../../../styles/css/components/modals/modal.css';
 function LoginModal(props) {
 
   return (
-    <div>
+    <React.Fragment>
       <Modal show={props.isActive} onHide={() => props.closeModal(LOGIN)} className="modal fade myModal">
         <Modal.Header>
           <h1>Login</h1>
@@ -40,7 +40,7 @@ function LoginModal(props) {
           </div>
         </Modal.Body>
       </Modal>
-    </div>
+    </React.Fragment>
   );
 }
 

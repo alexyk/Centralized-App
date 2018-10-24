@@ -41,7 +41,7 @@ function CreateWalletModal(props) {
   };
 
   return (
-    <div>
+    <React.Fragment>
       <Modal show={props.isActive} className="modal fade myModal">
         <Modal.Header>
           <h1>Please setup your personal wallet password</h1>
@@ -71,7 +71,7 @@ function CreateWalletModal(props) {
           </form>
         </Modal.Body>
       </Modal>
-    </div>
+    </React.Fragment>
   );
 }
 

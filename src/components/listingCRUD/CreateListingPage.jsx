@@ -671,8 +671,13 @@ const routes = {
 };
 
 CreateListingPage.propTypes = {
+  // Router props
   location: PropTypes.object,
-  history: PropTypes.object
+  history: PropTypes.object,
+
+  // Redux props
+  dispatch: PropTypes.func,
+  userInfo: PropTypes.object
 };
 
 const mapStateToProps = ({ userInfo }) => ({ userInfo });

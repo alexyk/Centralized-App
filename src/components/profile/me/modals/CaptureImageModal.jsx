@@ -9,7 +9,7 @@ class CaptureImageModal extends React.Component {
   render() {
     const props = this.props;
     return (
-      <div>
+      <React.Fragment>
         <Modal show={props.isActive} onHide={() => props.closeModal(CAPTURE_IMAGE)} className="modal fade myModal">
           <Modal.Header>
             <h1>Capture Image</h1>
@@ -19,7 +19,7 @@ class CaptureImageModal extends React.Component {
             {props.children}
           </Modal.Body>
         </Modal>
-      </div>
+      </React.Fragment>
     );
   }
 }
