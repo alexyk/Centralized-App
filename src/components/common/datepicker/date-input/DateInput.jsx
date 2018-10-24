@@ -11,7 +11,7 @@ class DateInput extends React.Component {
     const openClass = (this.props.calendar && this.props.calendar.state.open) ? 'opened' : 'closed';
     return (
       <React.Fragment>
-        <div className={`check-in ${openClass}`} onClick={this.props.onClick} onBlur={() => {console.log('kur')}}>
+        <div className={`check-in ${openClass}`} onClick={this.props.onClick}>
           <div>
             <img src="/images/icon-calendar.png" alt="icon-calendar" />
           </div>

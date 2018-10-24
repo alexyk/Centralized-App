@@ -14,10 +14,10 @@ $breakpoints: (
   .check-in,
   .check-out {
     padding: 5px;
-    border-radius: 3px;
+    // border-radius: 3px;
     min-width: 130px;
     display: inline-flex;
-    border: 1px solid $white;
+    border-bottom: 2px solid $white;
     div:first-of-type {
       display: flex;
       align-items: center;
@@ -47,7 +47,7 @@ $breakpoints: (
           font-weight: 400;
           span {
             color: #A2C5BF;
-            font-size: 14px;
+            // font-size: 14px;
           }
           .date-color {
             color: #DA836F;
@@ -58,8 +58,8 @@ $breakpoints: (
 
     &:hover, &.opened {
       cursor: pointer;
-      background: $light-gray;
-      border: 1px solid $moderate-gray;
+      // background: $light-gray;
+      border-bottom: 2px solid $moderate-red;
     }
   }
   .arrow-icon-container {
