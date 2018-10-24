@@ -53,6 +53,8 @@ class Datepicker extends Component {
       } else {
         this.openEndDatePicker(date);
       }
+
+      this.selectValidDates();
     });
   }
 
