@@ -214,11 +214,11 @@ $media-expressions: (
 	justify-content: center;
   flex-direction: column;
   text-align: center;
-	width: 100%;
+  width: 100%;
 	@include media(">=tablet") {
 		flex-wrap: wrap;
 		flex-direction: row;
-		margin-bottom: 15px;
+    margin-bottom: 15px;
 	}
 	@include media(">=desktop") {
 		padding: 4px 7px;
@@ -231,25 +231,29 @@ $media-expressions: (
 		background: $white;
     padding: 7px 0;
     // height: 50px;
-    @include media(">=tablet") {
+    @include media("<desktop") {
       width: 100%;
 		}
 	}
 	.check-wrap{
 		display: flex;
 		margin-bottom: 10px;
-		justify-content: space-between;
+		justify-content: center;
 		@include media(">=desktop") {
-			margin-bottom: 0;
+      margin-bottom: 0;
+      // width: 30%;
 		}
   }
   .guest-wrap{
 		display: flex;
 		margin-bottom: 10px;
     justify-content: space-between;
+    align-items: center;
     padding: 0 10px;
+    min-height: 50px;
 		@include media(">=desktop") {
 			margin-bottom: 0;
+      max-width: 250px;
     }
     select {
       border: 0;
@@ -274,14 +278,16 @@ $media-expressions: (
     text-align: center;
 		justify-content: center;
 		padding: 0 10px;
-		width: 70%;
+		// width: 70%;
 		@include media(">=desktop") {
 			width: auto;
-			padding: 0 6px 0 26px;
+			// padding: 0 6px 0 26px;
 			border-right: 1px solid $gray;
+			border-left: 1px solid $gray;
 		}
 		@include media("<=phone") {
-			width: 85%;
+      width: 85%;
+		  padding: 0 0 0 10px;
 		}
 	}
 	.checkin {
@@ -331,11 +337,12 @@ $media-expressions: (
 		}
 	}
 	.icon-arrow-right {
-		margin: 0 10px;
-		font-size: 12px;
-		@include media(">=desktop") {
-			margin: 0 25px 0 14px;
-			font-size: 18px;
+		display: none;
+    font-size: 0.8em;
+    @include media(">=tablet") {
+      display: flex;
+      align-items: center;
+			margin: 0 10px 0 5px;
 		}
 	}
 	&-select {
@@ -343,7 +350,8 @@ $media-expressions: (
 		min-width: 200px;
 		margin-bottom: 10px;
 		@include media(">=desktop") {
-			border-right: 1px solid $gray;
+			// border-right: 1px solid $gray;
+      width: 25%;
 			margin-bottom: 0;
 		}
 		@include media(">=widescreen") {
@@ -504,6 +512,7 @@ $media-expressions: (
 		}
 		span {
 			font-size: 14px;
+      min-width: 60px;
 		}
 		.icon-moon {
 			font-size: 18px;
@@ -514,7 +523,7 @@ $media-expressions: (
 		width: 100%;
 		@include media(">=desktop") {
 			width: auto;
-			min-width: 110px;
+			min-width: 150px;
 		}
 	}
 }
