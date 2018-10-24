@@ -15,6 +15,7 @@ import BookingSteps from '../../common/utility/BookingSteps';
 import { RoomsXMLCurrency } from '../../../services/utilities/roomsXMLCurrency';
 import LocPrice from '../../common/utility/LocPrice';
 import validator from 'validator';
+import xregexp from 'xregexp';
 
 class HotelsBookingPage extends React.Component {
   constructor(props) {
@@ -50,7 +51,7 @@ class HotelsBookingPage extends React.Component {
       const id = this.props.match.params.id;
       const query = this.getQueryString(queryParams);
       const isWebView = this.props.location.pathname.indexOf('/mobile') !== -1;
-      const rootURL = !isWebView ? `/hotels/listings/book/${id}/confirm` : '/mobile/book/confirm';
+      const rootURL = !isWebView ? `/hotels/listings/book/${id}/confirm` : `/mobile/hotels/listings/book/${id}/confirm`;
       this.props.history.push(`${rootURL}${query}`);
     }
   }
@@ -67,14 +68,14 @@ class HotelsBookingPage extends React.Component {
   }
 
   isValidNames() {
-    const regexp = /^([A-Za-z]{2,}([-\s][A-Za-z]{2,})?)$/;
     const rooms = this.props.guests;
+    const regexp = xregexp('^\\pL+([- \']?\\pL*)?([- \']?\\pL*)$');
     for (let i = 0; i < rooms.length; i++) {
       const adults = rooms[i].adults;
       for (let j = 0; j < adults.length; j++) {
         const first = adults[j].firstName;
         const last = adults[j].lastName;
-        if (!(validator.matches(first, regexp) && validator.matches(last, regexp))) {
+        if (!(regexp.test(first) && regexp.test(last))) {
           return false;
         }
       }
@@ -207,23 +208,6 @@ class HotelsBookingPage extends React.Component {
               <div className="col col-md-12" style={{ 'padding': '0', 'margin': '10px 0' }}>
                 <button className="btn btn-primary btn-book" onClick={this.handleSubmit}>Proceed</button>
               </div>
-              {this.props.location.pathname.indexOf('/mobile') !== -1 &&
-                <div>
-                  <div className="col col-md-12" style={{ 'padding': '0', 'margin': '10px 0' }}>
-                    <button className="btn btn-primary btn-book" onClick={() => this.props.history.goBack()}>Back</button>
-                  </div>
-                  <select
-                    className="currency"
-                    value={currency}
-                    style={{ 'height': '40px', 'marginBottom': '10px', 'textAlignLast': 'right', 'paddingRight': '45%', 'direction': 'rtl' }}
-                    onChange={(e) => this.props.dispatch(setCurrency(e.target.value))}
-                  >
-                    <option value="EUR">EUR</option>
-                    <option value="USD">USD</option>
-                    <option value="GBP">GBP</option>
-                  </select>
-                </div>
-              }
             </div>
           </section>
         </div>

@@ -22,6 +22,8 @@ export default function reducer(state = initialState, action) {
         refLink: action.refLink,
         participates: action.participates,
         isVerifyEmail: action.isVerifyEmail,
+        referralCount: action.referralCount,
+        isCampaignSuccessfullyCompleted: action.isCampaignSuccessfullyCompleted,
         voteUrl: action.voteUrl,
         finalizedStatus: action.finalizedStatus
       };

@@ -1,0 +1,28 @@
+@import '../../../styles/css/vendors/include-media';
+@import '../../../styles/css/base/variables';
+
+.rating {
+  color: $moderate-gray;
+  display: inline-block;
+  margin-bottom: 5px;
+  &-stars {
+    .fa.fa-star::before {
+      content: "\E919";
+      color: $gray;
+    }
+    .fa.fa-star.full::before {
+      color: $light-cyan;
+    }
+  }
+
+  @include media("<=tablet") {
+    &-summary {
+      margin-right: 5px;
+      float: left;
+    }
+
+    &-stars {
+      float: left;
+    }
+  }
+}

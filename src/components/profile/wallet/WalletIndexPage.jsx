@@ -1,10 +1,6 @@
 import 'react-notifications/lib/notifications.css';
 import '../../../styles/css/components/profile/wallet/wallet-index-page.css';
-
-import {
-  CREATE_WALLET,
-} from '../../../constants/modals.js';
-
+import { CREATE_WALLET } from '../../../constants/modals.js';
 import { Config } from '../../../config';
 import { LONG } from '../../../constants/notificationDisplayTimes.js';
 import { NotificationManager } from 'react-notifications';
@@ -22,12 +18,11 @@ class WalletIndexPage extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      jsonFile: null,
-      locAddress: null,
       canProceed: false,
       recipientAddress: '',
       locAmount: 0,
       password: '',
+      latestTxHash: ''
     };
 
     this.onChange = this.onChange.bind(this);
@@ -79,20 +74,25 @@ class WalletIndexPage extends React.Component {
   }
 
   sendTokens() {
+    this.setState({ loading: true });
     NotificationManager.info(PROCESSING_TRANSACTION, 'Transactions', LONG);
     const wei = (this.tokensToWei(this.state.locAmount.toString()));
-    setTimeout(() => {
+    requester.getMyJsonFile().then(res => res.body).then(data => {
+      const { jsonFile } = data;
       TokenTransactions.sendTokens(
-        this.state.jsonFile,
+        jsonFile,
         this.state.password,
         this.state.recipientAddress,
         wei.toString()
-      ).then(() => {
+      ).then((transaction) => {
         NotificationManager.success(TRANSACTION_SUCCESSFUL, 'Send Tokens', LONG);
         this.setState({
           recipientAddress: '',
           locAmount: 0,
-          password: ''
+          password: '',
+          loading: false,
+          canProceed: false,
+          latestTxHash: transaction.hash
         });
       }).catch(error => {
         if (error.hasOwnProperty('message')) {
@@ -104,22 +104,17 @@ class WalletIndexPage extends React.Component {
         } else {
           // console.log(error);
         }
-      });
-    }, 1000);
-  }
 
-  componentWillMount() {
-    if (this.props.userInfo.locAddress) {
-      requester.getMyJsonFile().then(res => {
-        res.body.then(data => {
-          this.setState({ jsonFile: data.jsonFile });
-        });
+        this.setState({ loading: false });
       });
-    }
+    });
   }
 
   render() {
-    if (!this.props.userInfo.locAddress) {
+    const { email, locAddress, locBalance, ethBalance } = this.props.userInfo;
+    if (!email) {
+      return null;
+    } else if (!locAddress) {
       return (
         <div className='container'>
           <NoEntriesMessage text='You need to create a wallet first'>
@@ -129,7 +124,8 @@ class WalletIndexPage extends React.Component {
       );
     }
 
-    const etherscanUrl = `https://etherscan.io/address/${this.props.userInfo.locAddress}#tokentxns`;
+    const etherscanUrl = `https://etherscan.io/address/${locAddress}#tokentxns`;
+    const etherscanLatestTxUrl = `${Config.getValue('ETHERS_HTTP_PROVIDER_NETWORK_BASE_URL')}/tx/${this.state.latestTxHash}`;
 
     return (
       <div className="container">
@@ -139,15 +135,15 @@ class WalletIndexPage extends React.Component {
             <hr />
             <div className="loc-address">
               <label htmlFor="loc-address">Your ETH/LOC address <img src={Config.getValue('basePath') + 'images/icon-lock.png'} className="lock" alt="lock-o" /></label>
-              <input className="disable-input" id="loc-address" name="locAddress" value={this.props.userInfo.locAddress} type="text" readOnly />
+              <input className="disable-input" id="loc-address" name="locAddress" value={locAddress} type="text" readOnly />
             </div>
             <div className="loc-balance">
               <label htmlFor="loc-balance">LOC Balance</label>
-              <input className="disable-input" id="loc-balance" name="locBalance" value={this.props.userInfo.locBalance} type="text" readOnly />
+              <input className="disable-input" id="loc-balance" name="locBalance" value={locBalance} type="text" readOnly />
             </div>
             <div className="eth-balance">
               <label htmlFor="eth-balance">ETH Balance</label>
-              <input className="disable-input" id="eth-balance" name="ethBalance" value={this.props.userInfo.ethBalance} type="text" readOnly />
+              <input className="disable-input" id="eth-balance" name="ethBalance" value={ethBalance} type="text" readOnly />
             </div>
             <h2>Send Tokens</h2>
             <form onSubmit={(e) => { e.preventDefault(); this.sendTokens(); }}>
@@ -165,8 +161,8 @@ class WalletIndexPage extends React.Component {
               </div>
               <div>
                 {this.state.canProceed ? <button className="btn btn-primary" type="submit">Send Tokens</button> : <button className="btn btn-primary" disabled="disabled">Send Tokens</button>}
-                &nbsp; &nbsp;
-                    <div className="button-wallet-link"><a href={etherscanUrl} target="_blank" className="wallet-link">Check your transactions</a></div>
+                <div className="button-wallet-link"><a href={etherscanUrl} target="_blank" className="wallet-link">Check your transactions</a></div>
+                {this.state.latestTxHash && <div className="button-wallet-link"><a href={etherscanLatestTxUrl} target="_blank" className="wallet-link">Latest transaction status</a></div>}
               </div>
             </form>
           </div>
@@ -178,6 +174,8 @@ class WalletIndexPage extends React.Component {
 }
 
 WalletIndexPage.propTypes = {
+  // Redux props
+  dispatch: PropTypes.func,
   userInfo: PropTypes.object
 };
 

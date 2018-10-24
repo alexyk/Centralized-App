@@ -38,6 +38,7 @@ class HomeRouterPage extends Component {
           <Route path="/homes" render={() => <HomesRouterPage listings={this.state.listings} hotels={this.state.hotels} />} />
           <Route path="/hotels" render={() => <HotelsRouterPage listings={this.state.listings} hotels={this.state.hotels} />} />
           <Route path="/tickets" render={() => <AirTicketsRouterPage listings={this.state.listings} hotels={this.state.hotels} />} />
+          <Route path="/mobile" render={() => <HotelsRouterPage />} />
           <Route exact path="/users/resetPassword/:confirm" render={() => <HomePage listings={this.state.listings} hotels={this.state.hotels} />} />
           <Redirect from="/" to="/hotels" />
         </Switch>
