@@ -12,35 +12,36 @@ class Datepicker extends Component {
   constructor(props) {
     super(props);
 
-    const startDate = this.getStartDate();
-    const endDate = this.getEndDate(startDate);
-    props.dispatch(asyncSetStartDate(startDate));
-    props.dispatch(asyncSetEndDate(endDate));
+    // const startDate = props.startDate;
+    // const endDate = props.endDate;
+    
+    // props.dispatch(asyncSetStartDate(startDate));
+    // props.dispatch(asyncSetEndDate(endDate));
 
-    this.getStartDate = this.getStartDate.bind(this);
-    this.getEndDate = this.getEndDate.bind(this);
+    // this.getStartDate = this.getStartDate.bind(this);
+    // this.getEndDate = this.getEndDate.bind(this);
     this.openEndDatePicker = this.openEndDatePicker.bind(this);
     this.handleChangeStart = this.handleChangeStart.bind(this);
     this.handleChangeEnd = this.handleChangeEnd.bind(this);
     this.selectValidDates = this.selectValidDates.bind(this);
   }
 
-  getStartDate() {
-    return moment().add(1, 'days');
-  }
+  // getStartDate() {
+  //   return moment().add(1, 'days');
+  // }
 
-  getEndDate(startDate) {
-    const { enableRanges, enableSameDates } = this.props;
-    if (!enableRanges) {
-      return null;
-    }
+  // getEndDate(startDate) {
+  //   const { enableRanges, enableSameDates } = this.props;
+  //   if (!enableRanges) {
+  //     return null;
+  //   }
 
-    if (!enableSameDates) {
-      return moment(startDate).add(1, 'days');
-    }
+  //   if (!enableSameDates) {
+  //     return moment(startDate).add(1, 'days');
+  //   }
 
-    return moment(startDate);
-  }
+  //   return moment(startDate);
+  // }
 
   handleChangeStart(date) {
     this.props.dispatch(asyncSetStartDate(date)).then(() => {

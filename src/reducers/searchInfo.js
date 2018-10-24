@@ -2,8 +2,8 @@ import { searchInfo } from '../actions/actionTypes';
 import moment from 'moment';
 
 const initialState = {
-  startDate: moment().add(1, 'day'),
-  endDate: moment().add(2, 'day'),
+  startDate: moment().add(1, 'days'),
+  endDate: moment().add(2, 'days'),
   nights: 1,
   rooms: [{ adults: '2', children: [] }],
   adults: '2',
