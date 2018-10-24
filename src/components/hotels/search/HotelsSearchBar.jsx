@@ -119,13 +119,8 @@ function HotelsSearchBar(props) {
           closeModal={closeChildrenModal}
           handleSubmit={handleSubmitModal}
         />
+        
         <div className="check">
-          {/* <SearchBarDatePicker
-            id='search-bar-date-picker'
-            startDate={props.searchInfo.startDate}
-            endDate={props.searchInfo.endDate}
-            onApply={(e, picker) => props.dispatch(setDates(e, picker))}
-            nights={props.searchInfo.nights} /> */}
           <Datepicker minDate={moment().add(1, 'days')} enableRanges />
         </div>
 

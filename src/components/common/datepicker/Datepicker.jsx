@@ -1,14 +1,12 @@
 import React, { Component } from 'react';
 import DatePicker from 'react-datepicker';
 import moment from 'moment';
-import './styles.css';
 import DateInput from './date-input';
 import { connect } from 'react-redux';
 import { asyncSetStartDate, asyncSetEndDate } from '../../../actions/searchInfo.js';
 
 import 'react-datepicker/dist/react-datepicker.css';
-import './date-picker-preview.css';
-import './search-bar-date-picker-hide-preview.css';
+import './style.css';
 
 class Datepicker extends Component {
   constructor(props) {
@@ -54,8 +52,6 @@ class Datepicker extends Component {
       } else {
         this.openEndDatePicker(date);
       }
-      
-      // this.selectValidDates();
     });
   }
 
