@@ -77,7 +77,7 @@ class Datepicker extends Component {
     const excludedDates = this.getExcludedDates();
     let isMobile = window.innerWidth < 1024;
     return (
-      <div className="search-bar-date-picker-hide-preview">
+      <div className="common-datepicker">
         <DatePicker
           ref={(c) => (this.startdatepicker = c)}
           customInput={<DateInput text={intervalStartText} date={this.props.startDate} calendar={this.startdatepicker} />}
