@@ -126,7 +126,7 @@ function HotelsSearchBar(props) {
             endDate={props.searchInfo.endDate}
             onApply={(e, picker) => props.dispatch(setDates(e, picker))}
             nights={props.searchInfo.nights} /> */}
-          <Datepicker minDate={moment()} enableRanges />
+          <Datepicker minDate={moment().add(1, 'days')} enableRanges />
         </div>
 
         <div className="days-of-stay">

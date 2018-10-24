@@ -24,8 +24,7 @@ class Datepicker extends Component {
     this.openEndDatePicker = this.openEndDatePicker.bind(this);
     this.handleChangeStart = this.handleChangeStart.bind(this);
     this.handleChangeEnd = this.handleChangeEnd.bind(this);
-    this.handleStartDateOnBlur = this.handleStartDateOnBlur.bind(this);
-    this.handleEndDateOnBlur = this.handleEndDateOnBlur.bind(this);
+    this.selectValidDates = this.selectValidDates.bind(this);
   }
 
   getStartDate() {
@@ -55,6 +54,8 @@ class Datepicker extends Component {
       } else {
         this.openEndDatePicker(date);
       }
+      
+      // this.selectValidDates();
     });
   }
 
@@ -63,46 +64,27 @@ class Datepicker extends Component {
       if (date.isBefore(this.props.startDate, 'day')) {
         this.props.dispatch(asyncSetStartDate(date));
         this.openEndDatePicker();
+        this.selectValidDates();
       }
     });
-  }
-
-  handleStartDateOnBlur(date) {
-    const { enableRanges, enableSameDates } = this.props;
-    if (!enableRanges) {
-      return;
-    }
-
-    const { startDate, endDate } = this.props;
-    if (enableSameDates && endDate.isBefore(startDate)) {
-      this.props.dispatch(asyncSetEndDate(moment(startDate)));
-    } else if (!enableSameDates && endDate.isSameOrBefore(startDate, 'day')) {
-      this.props.dispatch(asyncSetEndDate(moment(startDate).add(1, 'days')));
-    }
-
-    if (date.format) {
-      console.log('asdf');
-      this.openEndDatePicker();
-    }
-  }
-
-  handleEndDateOnBlur() {
-    const { enableRanges, enableSameDates } = this.props;
-    if (!enableRanges) {
-      return;
-    }
-
-    const { startDate, endDate } = this.props;
-    if (enableSameDates && endDate.isBefore(startDate)) {
-      this.props.dispatch(asyncSetEndDate(moment(startDate)));
-    } else if (!enableSameDates && endDate.isSameOrBefore(startDate, 'day')) {
-      this.props.dispatch(asyncSetEndDate(moment(startDate).add(1, 'days')));
-    }
   }
 
   openEndDatePicker() {
     if (this.props.enableRanges) {
       this.enddatepicker.setOpen(true);
+    }
+  }
+
+  selectValidDates() {
+    const { startDate, endDate, enableRanges, enableSameDates } = this.props;
+    if (!enableRanges) {
+      return;
+    }
+
+    if (enableSameDates && endDate.isBefore(startDate)) {
+      this.props.dispatch(asyncSetEndDate(moment(startDate)));
+    } else if (!enableSameDates && endDate.isSameOrBefore(startDate, 'day')) {
+      this.props.dispatch(asyncSetEndDate(moment(startDate).add(1, 'days')));
     }
   }
 
@@ -130,7 +112,6 @@ class Datepicker extends Component {
           endDate={this.props.endDate}
           onChange={this.handleChangeStart}
           excludeDates={this.props.excludedDates}
-          onBlur={this.handleStartDateOnBlur}
           withPortal={isMobile}
           {...this.props}
         />
@@ -147,7 +128,6 @@ class Datepicker extends Component {
             endDate={this.props.endDate}
             onChange={this.handleChangeEnd}
             excludeDates={excludedDates}
-            onBlur={this.handleEndDateOnBlur}
             withPortal={isMobile}
             {...this.props}
           />

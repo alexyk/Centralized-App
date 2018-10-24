@@ -58,7 +58,7 @@ $breakpoints: (
 
     &:hover, &.opened {
       cursor: pointer;
-      // background: $light-gray;
+      background: $light-gray;
       border: 1px solid $moderate-gray;
     }
   }
