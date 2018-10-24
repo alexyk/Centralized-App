@@ -355,7 +355,7 @@ $media-expressions: (
 			margin-bottom: 0;
 		}
 		@include media(">=widescreen") {
-			min-width: 307px;
+			min-width: 285px;
 		}
 		select {
 			font-size: 18px;
