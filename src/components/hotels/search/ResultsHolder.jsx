@@ -24,8 +24,9 @@ function ResultsHolder(props) {
   const hotels = props.hotels && props.hotels.map((hotel, i) => {
     return <CSSTransition
       key={i}
-      classNames="example"
-      timeout={{ enter: 500, exit: 300 }}><Result
+      classNames="animation"
+      timeout={300}
+      unmountOnExit><Result
         key={hotel.id}
         hotel={hotel}
         exchangeRates={props.exchangeRates}

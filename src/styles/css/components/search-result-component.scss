@@ -318,3 +318,18 @@ $media-expressions: (
     }
   }
 }
+
+.animation-enter {
+  opacity: 0.01;
+}
+.animation-enter-active {
+  opacity: 1;
+  transition: all 300ms ease-out;
+}
+.animation-exit {
+  opacity: 1;
+}
+.animation-exit-active {
+  opacity: 0.01;
+  transition: all 300ms ease-out;
+}
