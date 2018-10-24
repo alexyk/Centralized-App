@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import SearchBarDatePicker from '../../common/search/SearchBarDatePicker';
 import moment from 'moment';
 import StringUtils from '../../../services/utilities/stringUtilities.js';
 import Datepicker from '../../common/datepicker';
@@ -26,13 +25,7 @@ const HomesSearchBar = (props) => (
 
     <div className="check-wrap source-panel-item">
       <div className="check">
-        {/* <SearchBarDatePicker
-          startDate={props.startDate}
-          endDate={props.endDate}
-          onApply={props.handleDatePick}
-          search={true}
-          nights={calculateNights(props.startDate, props.endDate)} /> */}
-          <Datepicker minDate={moment().add(1, 'days')} enableRanges />
+        <Datepicker minDate={moment().add(1, 'days')} enableRanges />
       </div>
 
       <div className="days-of-stay">
