@@ -100,6 +100,11 @@ class StaticHotelsSearchPage extends React.Component {
 
     const query = this.props.location.search;
     const queryParams = queryString.parse(query);
+
+    if (!this.props.paymentInfo.currency) {
+      this.props.dispatch(setCurrency(queryParams.currency));
+    }
+
     const { region } = queryParams;
 
     if (this.isSearchReady()) {
@@ -137,8 +142,12 @@ class StaticHotelsSearchPage extends React.Component {
       const regionId = searchParams.region;
       const region = { id: regionId };
       const page = searchParams.page;
-
+      
       this.props.dispatch(setSearchInfo(startDate, endDate, region, rooms, adults, hasChildren));
+      if (this.props.location.pathname.indexOf('/mobile') !== -1) {
+        const currency = searchParams.currency;
+        this.props.dispatch(setCurrency(currency));
+      }
 
       this.setState({
         nights: endDate.diff(startDate, 'days'),
@@ -397,7 +406,7 @@ class StaticHotelsSearchPage extends React.Component {
   }
 
   applyFilters(onSuccess) {
-    const baseUrl = this.props.location.pathname.indexOf('/mobile') !== -1 ? '/mobile/search' : '/hotels/listings';
+    const baseUrl = this.props.location.pathname.indexOf('/mobile') !== -1 ? '/mobile/hotels/listings' : '/hotels/listings';
     const search = this.getSearchString();
     const filters = this.getFilterString();
     const page = this.state.page ? this.state.page : 0;
@@ -675,8 +684,6 @@ class StaticHotelsSearchPage extends React.Component {
                         />
                       }
 
-
-
                       {!this.state.loading &&
                         <Pagination
                           loading={this.state.loading}
@@ -693,22 +700,6 @@ class StaticHotelsSearchPage extends React.Component {
             </div>
           </div>
         </section>
-
-        {/* MOBILE ONLY START */}
-        {this.props.location.pathname.indexOf('/mobile') !== -1 &&
-          <select
-            className="currency"
-            value={this.props.paymentInfo.currency}
-            style={{ 'height': '40px', 'marginBottom': '10px', 'textAlignLast': 'right', 'paddingRight': '45%', 'direction': 'rtl' }}
-            onChange={(e) => this.props.dispatch(setCurrency(e.target.value))}
-          >
-            <option value="EUR">EUR</option>
-            <option value="USD">USD</option>
-            <option value="GBP">GBP</option>
-          </select>
-        }
-        {/* MOBILE ONLY END */}
-
       </div>
     );
   }

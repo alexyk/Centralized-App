@@ -13,7 +13,7 @@ import Rating from '../../common/rating/Rating';
 function HomesBookingListingDetailsInfo(props) {
 
   const { listing, searchParams, exchangeRates, paymentInfo } = props;
-  const pictures = listing.pictures;
+  const pictures = listing.pictures.filter(x => x.thumbnail !== null);
   const startDate = moment(searchParams.startDate, 'DD/MM/YYYY');
   const endDate = moment(searchParams.endDate, 'DD/MM/YYYY');
 
@@ -49,10 +49,10 @@ function HomesBookingListingDetailsInfo(props) {
   const nights = calculateNights(startDate, endDate);
 
   const pricePerNightInCurrentCurrency = CurrencyConverter.convert(exchangeRates, listing.currencyCode, paymentInfo.currency, listing.defaultDailyPrice);
-  
+
   return (
     <div className="left-part">
-      <Slider
+      {pictures.length > 0 && <Slider
         {...settings}>
         {pictures.map((picture, i) => {
           return (
@@ -61,7 +61,7 @@ function HomesBookingListingDetailsInfo(props) {
             </div>
           );
         })}
-      </Slider>
+      </Slider>}
       <div className="review-info-container">
         <h2>{listing.name}</h2>
         <Rating rating={listing.averageRating} />

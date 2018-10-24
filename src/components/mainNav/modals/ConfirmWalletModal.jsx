@@ -36,7 +36,7 @@ function ConfirmWalletModal(props) {
   };
 
   return (
-    <div>
+    <React.Fragment>
       <Modal show={props.isActive} className="modal fade myModal">
         <Modal.Header>
           <h1>Confirm Wallet Information</h1>
@@ -49,12 +49,12 @@ function ConfirmWalletModal(props) {
             <button className="btn" onClick={onWordsForget}>Back to Mnemonic Words</button>
             {!props.confirmedRegistration
               ? <button type="submit" className="btn btn-primary">Confirm Wallet</button>
-              : <button className="btn btn-primary btn-book" disabled>Processing Registration...</button>
+              : <button className="btn btn-primary btn-book" disabled>Processing Creation...</button>
             }
           </form>
         </Modal.Body>
       </Modal>
-    </div>
+    </React.Fragment>
   );
 }
 

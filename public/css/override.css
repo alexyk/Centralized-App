@@ -22,14 +22,6 @@ a.dropdown-toggle {
 .checkbox label {
   user-select: none;
 }
-.navbar-brand {
-  height: auto;
-}
-.navbar-brand {
-  padding: 15px 20px;
-  width: 180px;
-  height: 100%;
-}
 /* .form-control {
   background-image: auto;
 } */
@@ -53,9 +45,6 @@ a.dropdown-toggle {
   .navbar-header {
     align-items: center;
     display: flex;
-  }
-  .navbar-brand {
-    flex-basis: 87%;
   }
 }
 

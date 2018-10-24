@@ -50,12 +50,19 @@ export const exchangeRatesInfo = {
   SET_LOC_RATE_FIAT_AMOUNT: 'SET_LOC_RATE_FIAT_AMOUNT'
 };
 
+// loc price update timer actions
 export const locPriceUpdateTimerInfo = {
   SET_INITIAL_SECONDS: 'SET_INITIAL_SECONDS',
   SET_SECONDS: 'SET_SECONDS',
   RESET: 'RESET'
 };
 
+// burger menu actions
+export const burgerMenuInfo = {
+  SET_SHOW_MENU: 'SET_SHOW_MENU'
+};
+
+// air tickets search info actions
 export const airTicketsSearchInfo = {
   SET_ROUTING: 'SET_ROUTING',
   SET_FLIGHT_CLASS: 'SET_FLIGHT_CLASS',
