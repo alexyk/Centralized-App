@@ -73,12 +73,15 @@ class Datepicker extends Component {
   }
 
   render() {
-    const { startDate, endDate, intervalStartText, intervalEndText, enableRanges } = this.props; 
+    const { startDate, endDate, intervalStartText, intervalEndText, enableRanges } = this.props;
     const excludedDates = this.getExcludedDates();
-    let isMobile = window.innerWidth < 1024;
+    const isMobile = window.innerWidth < 1024;
+    const monthsToShow = isMobile ? 1 : 2;
+    console.log(this.enddatepicker);
     return (
       <div className="common-datepicker">
         <DatePicker
+          popperClassName="check-in-popper"
           ref={(c) => (this.startdatepicker = c)}
           customInput={<DateInput text={intervalStartText} date={this.props.startDate} calendar={this.startdatepicker} />}
           selected={startDate}
@@ -88,6 +91,7 @@ class Datepicker extends Component {
           onChange={this.handleChangeStart}
           excludeDates={this.props.excludedDates}
           withPortal={isMobile}
+          monthsShown={monthsToShow}
           {...this.props}
         />
 
@@ -95,6 +99,7 @@ class Datepicker extends Component {
 
         {enableRanges &&
           <DatePicker
+            popperClassName="check-out-popper"
             ref={(c) => (this.enddatepicker = c)}
             customInput={<DateInput text={intervalEndText} date={endDate} calendar={this.enddatepicker} />}
             selected={endDate}
@@ -104,6 +109,7 @@ class Datepicker extends Component {
             onChange={this.handleChangeEnd}
             excludeDates={excludedDates}
             withPortal={isMobile}
+            monthsShown={monthsToShow}
             {...this.props}
           />
         }
