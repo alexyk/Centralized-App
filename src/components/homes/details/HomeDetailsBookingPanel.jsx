@@ -8,14 +8,14 @@ import { RoomsXMLCurrency } from '../../../services/utilities/roomsXMLCurrency';
 import { connect } from 'react-redux';
 import React from 'react';
 import { withRouter } from 'react-router-dom';
-import { isInvalidRange } from '../common/detailsPageUtils.js';
+import { isInvalidRange, getPriceForPeriod } from '../common/detailsPageUtils.js';
 import PropTypes from 'prop-types';
 
 class HomeDetailsBookingPanel extends React.Component {
   render() {
     const { currencyExchangeRates } = this.props.exchangeRatesInfo;
     if (!currencyExchangeRates || !this.props.calendar) {
-      return <div className="loader"></div>
+      return <div className="loader"></div>;
     }
 
     const {
@@ -29,21 +29,6 @@ class HomeDetailsBookingPanel extends React.Component {
     const { currency,
       currencySign } = this.props.paymentInfo;
 
-    function getPriceForPeriod(startDate, nights, calendar) {
-      let price = 0;
-
-      let startDateIndex = calendar.findIndex(x => x.date === startDate.format('DD/MM/YYYY'));
-      if (startDateIndex && startDateIndex < 0) {
-        return 0;
-      }
-      for (let i = startDateIndex; i < nights + startDateIndex; i++) {
-        price += calendar[i].price
-      }
-      if (nights === 0) {
-        return 0;
-      }
-      return price / nights;
-    }
     const price = getPriceForPeriod(startDate, nights, calendar);
 
     let defaultDailyPrice = CurrencyConverter.convert(currencyExchangeRates, currencyCode, currency, price);
@@ -80,9 +65,9 @@ class HomeDetailsBookingPanel extends React.Component {
           </div>
         </div>
         <div className="booking-guests">
-          <select>
+          <select onChange={this.props.handleGuestsChange}>
             {this.props.guestArray.map((item, i) => {
-              return <option key={i}>{`${item} Guests`}</option>
+              return <option key={i}>{`${item} Guests`}</option>;
             })}
           </select>
         </div>
@@ -117,11 +102,11 @@ class HomeDetailsBookingPanel extends React.Component {
           </div>
         </div>
         {this.props.userInfo.isLogged ?
-          <Link to={`/homes/listings/book/${this.props.match.params.id}${this.props.location.search}`} onClick={e => invalidRange && e.preventDefault()} className={[invalidRange ? 'disabled' : null, "pay-in"].join(' ')}>Request Booking in LOC</Link> :
+          <Link to={`/homes/listings/book/${this.props.match.params.id}?startDate=${this.props.startDate.format('DD/MM/YYYY')}&endDate=${this.props.endDate.format('DD/MM/YYYY')}&guests=${this.props.guests}`} onClick={e => invalidRange && e.preventDefault()} className={[invalidRange ? 'disabled' : null, "pay-in"].join(' ')}>Request Booking in LOC</Link> :
           <button className="pay-in" onClick={(e) => this.props.dispatch(openModal(LOGIN, e))}>Login</button>}
         <p className="booking-helper">You won't be charged yet</p>
       </div>
-    </div>)
+    </div>);
   }
 }
 
@@ -138,7 +123,8 @@ HomeDetailsBookingPanel.propTypes = {
   cleaningFee: PropTypes.number,
   handleChangeStart: PropTypes.func,
   handleChangeEnd: PropTypes.func,
-  guestArray: PropTypes.array
+  guestArray: PropTypes.array,
+  guests: PropTypes.number
 };
 
 function mapStateToProps(state) {
