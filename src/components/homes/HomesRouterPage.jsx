@@ -6,7 +6,7 @@ import HomePage from '../home/HomePage';
 import HomesSearchPage from './search/HomesSearchPage';
 import HomeDetailsPage from './details/HomeDetailsPage';
 import requester from '../../requester';
-import HomesBookingRouterPage from './booking/HomesBookingRouterPage';
+import HomesBookingPage from './booking/HomesBookingPage';
 
 class HomesRouterPage extends React.Component {
   constructor(props) {
@@ -32,7 +32,7 @@ class HomesRouterPage extends React.Component {
           <Route exact path="/homes" render={() => <HomePage homePage="homes" listings={this.props.listings} hotels={this.props.hotels} />} />
           <Route exact path="/homes/listings" render={() => <HomesSearchPage countries={this.state.countries} />} />
           <Route exact path="/homes/listings/:id" render={() => <HomeDetailsPage countries={this.state.countries} />} />
-          <Route path="/homes/listings/book" render={() => <HomesBookingRouterPage />} />
+          <Route path="/homes/listings/book/:id" render={() => <HomesBookingPage />} />
         </Switch>
       </div>
     );
