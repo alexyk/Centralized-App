@@ -12,13 +12,14 @@ class DateInput extends React.Component {
     return (
       <React.Fragment>
         <div className={`check-in ${openClass}`} onClick={this.props.onClick}>
-          <div>
+          {/* <div>
             <img src="/images/icon-calendar.png" alt="icon-calendar" />
-          </div>
-          <div className="row-container">
-            <p>{text}</p>
-            <div className="date-mon-day">
-              <p><span>{date.format('DD')} </span>{date.format('MMM, ddd').toUpperCase()}</p>
+          </div> */}
+          <span className='icon-calendar'></span>
+          <div className="date-container">
+            <div className="text">{text}</div>
+            <div className="date">
+              <span>{date.format('DD')} </span>{date.format('MMM, ddd').toUpperCase()}
             </div>
           </div>
         </div>
