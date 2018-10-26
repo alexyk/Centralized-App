@@ -2,7 +2,6 @@ import '../../../styles/css/components/search-result-component.css';
 
 import PropTypes from 'prop-types';
 import React from 'react';
-import { TransitionGroup, CSSTransition } from 'react-transition-group';
 import Result from './Result';
 import NoEntriesMessage from '../../common/messages/NoEntriesMessage';
 
@@ -21,26 +20,19 @@ function ResultsHolder(props) {
     return <NoEntriesMessage text='No Results' />;
   }
 
-  const hotels = props.hotels && props.hotels.map((hotel, i) => {
-    return <CSSTransition
-      key={i}
-      classNames="animation"
-      timeout={300}
-      unmountOnExit><Result
-        key={hotel.id}
-        hotel={hotel}
-        exchangeRates={props.exchangeRates}
-        nights={props.nights}
-        allElements={props.allElements}
-        price={hotel.price} />
-    </CSSTransition>;
+  const hotels = props.hotels && props.hotels.map((hotel) => {
+    return <Result
+      key={hotel.id}
+      hotel={hotel}
+      exchangeRates={props.exchangeRates}
+      nights={props.nights}
+      allElements={props.allElements}
+      price={hotel.price} />;
   });
 
   return (
     <div className="results-holder">
-      <TransitionGroup>
-        {hotels}
-      </TransitionGroup>
+      {hotels}
     </div>
   );
 }

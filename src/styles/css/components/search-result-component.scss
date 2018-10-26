@@ -76,8 +76,8 @@ $media-expressions: (
     position: relative;
     height: 190px;
     display: flex;
-	margin-right: 15px;
-	width: 30%;
+    margin-right: 15px;
+    width: 30%;
     @include media(">=tablet") {
       margin-right: 25px;
       width: 240px !important;
@@ -196,9 +196,9 @@ $media-expressions: (
     }
     @include media(">=desktop") {
       padding-top: 11px;
-	  margin-right: 33px;
-	  min-width: 42%;
-	  max-width: 42%;
+      margin-right: 33px;
+      min-width: 42%;
+      max-width: 42%;
     }
   }
   // &-description {
@@ -332,4 +332,12 @@ $media-expressions: (
 .animation-exit-active {
   opacity: 0.01;
   transition: all 300ms ease-out;
+}
+
+.results-holder > div {
+  transition: all 1s ease-out;
+  opacity: 0;
+}
+.results-holder .result.ready {
+  opacity: 1;
 }
