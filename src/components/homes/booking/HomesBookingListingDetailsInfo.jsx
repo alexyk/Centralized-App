@@ -9,7 +9,8 @@ import { CurrencyConverter } from '../../../services/utilities/currencyConverter
 import { getPriceForPeriod } from '../common/detailsPageUtils.js';
 import '../../../styles/css/components/homes/booking/homes-booking-listing-details-info.css';
 import Rating from '../../common/rating/Rating';
-
+import LocPrice from '../../common/utility/LocPrice';
+import { RoomsXMLCurrency } from '../../../services/utilities/roomsXMLCurrency.js';
 class HomesBookingListingDetailsInfo extends React.Component {
   render() {
     const { listing, searchParams, calendar } = this.props;
@@ -62,7 +63,10 @@ class HomesBookingListingDetailsInfo extends React.Component {
     const price = getPriceForPeriod(startDate, nights, calendar);
 
     let defaultDailyPrice = CurrencyConverter.convert(currencyExchangeRates, currencyCode, currency, price);
+    let fiatPriceInRoomsXMLCurrency = CurrencyConverter.convert(currencyExchangeRates, currencyCode, RoomsXMLCurrency.get(), price);
+
     let defaultCleaningFee = CurrencyConverter.convert(currencyExchangeRates, currencyCode, currency, cleaningFee);
+    let fiatCleaningFeePriceInRoomsXMLCurrency = CurrencyConverter.convert(currencyExchangeRates, currencyCode, RoomsXMLCurrency.get(), cleaningFee);
 
     return (
       <div className="left-part">
@@ -99,6 +103,10 @@ class HomesBookingListingDetailsInfo extends React.Component {
           <div className="price">{currencySign}{(defaultDailyPrice).toFixed(3)} x {nights} nights</div>
           <div className="price">{currencySign}{(defaultCleaningFee).toFixed(3)} cleaning fee</div>
           <div className="total">total price <span>{currencySign}{((nights * defaultDailyPrice) + defaultCleaningFee).toFixed(3)}</span></div>
+
+          <div className="price"><p><LocPrice fiat={fiatPriceInRoomsXMLCurrency} brackets={false} /> x {nights} nights</p></div>
+          <div className="price"><p><LocPrice fiat={fiatCleaningFeePriceInRoomsXMLCurrency} brackets={false} /> cleaning fee</p></div>
+          <div className="total">total price <LocPrice fiat={(fiatPriceInRoomsXMLCurrency * nights) + fiatCleaningFeePriceInRoomsXMLCurrency} brackets={false} /></div>
         </div>
         <div className="image-dot">
           <img src="/images/dot-bgr.png" alt="dot-bgr" />

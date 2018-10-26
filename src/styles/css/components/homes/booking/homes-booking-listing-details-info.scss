@@ -225,6 +225,7 @@ $breakpoints: (
         color: #000;
         margin-left: 3%;
         font-size: 28px;
+        flex-wrap: nowrap;
         @include media("<=tablet") {
           font-size: 18px;
         }
