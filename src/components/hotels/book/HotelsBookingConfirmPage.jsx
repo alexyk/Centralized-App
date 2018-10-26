@@ -203,10 +203,10 @@ class HotelBookingConfirmPage extends React.Component {
   }
 
   tokensToWei(tokens) {
-    const env = Config.getValue('env');
-    if (env === 'staging' || env === 'development') {
-      tokens = '1';
-    }
+    // const env = Config.getValue('env');
+    // if (env === 'staging' || env === 'development') {
+    //   tokens = '1';
+    // }
 
     let index = tokens.indexOf('.');
     let trailingZeroes = 0;
@@ -227,7 +227,14 @@ class HotelBookingConfirmPage extends React.Component {
     return wei;
   }
 
+  showLeavePagePromt(e) {
+    e.preventDefault();
+    e.returnValue = 'You have a pending transaction. Are you sure you want to leave the page?';
+  }
+
   payWithLocSingleWithdrawer() {
+    window.addEventListener('beforeunload', this.showLeavePagePromt);
+
     this.props.requestLockOnQuoteId().then(() => {
       const { password } = this.state;
       const { reservation } = this.props;
@@ -236,10 +243,13 @@ class HotelBookingConfirmPage extends React.Component {
 
       const locAmount = (locAmounts[DEFAULT_QUOTE_LOC_ID] && locAmounts[DEFAULT_QUOTE_LOC_ID].locAmount) ||
         TEST_FIAT_AMOUNT_IN_EUR / this.props.exchangeRatesInfo.locEurRate;
+
       this.approveQuote();
+      console.log('LOC',locAmounts[DEFAULT_QUOTE_LOC_ID]);
+      console.log('LOC',locAmounts[DEFAULT_QUOTE_LOC_ID].locAmount);
 
       const wei = (this.tokensToWei(locAmount.toString()));
-      // console.log(wei);
+      console.log(wei);
       const booking = reservation.booking.hotelBooking;
       const endDate = moment.utc(booking[0].arrivalDate, 'YYYY-MM-DD').add(booking[0].nights, 'days');
 
@@ -261,7 +271,7 @@ class HotelBookingConfirmPage extends React.Component {
               wei.toString(),
               endDate.unix().toString(),
             ).then(transaction => {
-              // console.log('transaction', transaction);
+              console.log('transaction', transaction);
               const bookingConfirmObj = {
                 bookingId: preparedBookingId,
                 transactionHash: transaction.hash,
@@ -271,12 +281,14 @@ class HotelBookingConfirmPage extends React.Component {
 
               requester.confirmBooking(bookingConfirmObj).then(() => {
                 NotificationManager.success('LOC Payment has been initiated. We will send you a confirmation message once it has been processed by the Blockchain.', '', LONG);
+                window.removeEventListener('beforeunload', this.showLeavePagePromt);
                 setTimeout(() => {
                   this.props.history.push('/profile/trips/hotels');
                 }, 2000);
               }).catch(error => {
                 this.restartQuote();
                 NotificationManager.success('Something with your transaction went wrong...', '', LONG);
+                window.removeEventListener('beforeunload', this.showLeavePagePromt);
                 console.log(error);
               });
             }).catch(error => {
@@ -296,6 +308,7 @@ class HotelBookingConfirmPage extends React.Component {
               }
 
               this.setState({ userConfirmedPaymentWithLOC: false });
+              window.removeEventListener('beforeunload', this.showLeavePagePromt);
             });
           }, 1000);
         });

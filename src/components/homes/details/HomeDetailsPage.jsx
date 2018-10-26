@@ -24,7 +24,6 @@ import {
   handleClickImage,
   next,
   previous,
-  setCheckInOutHours,
   calculateCheckInOuts
 } from '../common/detailsPageUtils.js';
 
@@ -89,8 +88,8 @@ class HomeDetailsPage extends React.Component {
 
     this.handleChangeStart = this.handleChangeStart.bind(this);
     this.handleChangeEnd = this.handleChangeEnd.bind(this);
+    this.handleGuestsChange = this.handleGuestsChange.bind(this);
 
-    this.setCheckInOutHours = setCheckInOutHours.bind(this);
     this.calculateCheckInOuts = calculateCheckInOuts.bind(this);
   }
 
@@ -204,6 +203,10 @@ class HomeDetailsPage extends React.Component {
       });
       this.calculateNights(this.state.calendarStartDate, date);
     }
+  }
+
+  handleGuestsChange(e) {
+    this.setState({guests: Number(e.target.value.split(' ')[0])});
   }
 
   render() {
@@ -324,9 +327,11 @@ class HomeDetailsPage extends React.Component {
               openModal={this.openModal}
               roomDetails={this.state.roomDetails}
               nights={this.state.nights}
+              guests={this.state.guests}
               checks={this.state.checks}
               handleChangeStart={this.handleChangeStart}
-              handleChangeEnd={this.handleChangeEnd} />
+              handleChangeEnd={this.handleChangeEnd}
+              handleGuestsChange={this.handleGuestsChange} />
           </div>
         }
       </div>

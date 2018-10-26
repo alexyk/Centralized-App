@@ -32,13 +32,13 @@ const BREAKPOINTS = {
 const DESCRIPTION_LENGTH = {
   SMALL: 50,
   MEDIUM: 100,
-  LARGE: 500,
+  LARGE: 200,
 };
 
 const TITLE_LENGTH = {
   SMALL: 20,
   MEDIUM: 40,
-  LARGE: 200,
+  LARGE: 100,
 };
 
 class Result extends React.Component {

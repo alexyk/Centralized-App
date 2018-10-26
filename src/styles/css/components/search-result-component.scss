@@ -58,22 +58,25 @@ $media-expressions: (
   @include media(">=desktop") {
     max-height: 200px;
   }
-  > div {
-    width: 100%;
-    // margin-bottom: 10px;
-    &:last-child {
+	> div {
+		width: 100%;
+		// margin-bottom: 10px;
+		&:last-child {
+			margin-bottom: 0;
+    }
+		@include media(">=tablet") {
+			width: 30%;
       margin-bottom: 0;
+      &:nth-child(2) {
+        flex-grow: 2;
+      }
     }
-    @include media(">=tablet") {
-      width: 30%;
-      margin-bottom: 0;
-    }
-    @include media(">=widescreen") {
-      width: auto;
-    }
-  }
-  &-images {
-    position: relative;
+		@include media(">=widescreen") {
+			width: auto;
+		}
+	}
+	&-images {
+		position: relative;
     height: 190px;
     display: flex;
     margin-right: 15px;

@@ -146,3 +146,19 @@ export function isInvalidRange(startDate, nights, calendar) {
 
   return result;
 }
+
+export function getPriceForPeriod(startDate, nights, calendar) {
+  let price = 0;
+
+  let startDateIndex = calendar.findIndex(x => x.date === startDate.format('DD/MM/YYYY'));
+  if (startDateIndex && startDateIndex < 0) {
+    return 0;
+  }
+  for (let i = startDateIndex; i < nights + startDateIndex; i++) {
+    price += calendar[i].price;
+  }
+  if (nights === 0) {
+    return 0;
+  }
+  return price / nights;
+}

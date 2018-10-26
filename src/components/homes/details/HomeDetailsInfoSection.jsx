@@ -137,9 +137,11 @@ class HomeDetailsInfoSection extends React.Component {
             endDate={this.props.endDate}
             handleChangeStart={this.props.handleChangeStart}
             handleChangeEnd={this.props.handleChangeEnd}
+            handleGuestsChange={this.props.handleGuestsChange}
             calendar={this.props.calendar}
             nights={this.props.nights}
             guestArray={guestArray}
+            guests={this.props.guests}
             cleaningFee={cleaningFee}
             currencyCode={currencyCode}
           />
@@ -162,6 +164,7 @@ HomeDetailsInfoSection.propTypes = {
   calendar: PropTypes.array,
   handleChangeStart: PropTypes.func,
   handleChangeEnd: PropTypes.func,
+  handleGuestsChange: PropTypes.func,
 
   // start Router props
   location: PropTypes.object,
