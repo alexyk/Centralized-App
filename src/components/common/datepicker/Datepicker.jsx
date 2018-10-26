@@ -77,7 +77,7 @@ class Datepicker extends Component {
     const excludedDates = this.getExcludedDates();
     const isMobile = window.innerWidth < 1024;
     const monthsToShow = isMobile ? 1 : 2;
-    console.log(this.enddatepicker);
+
     return (
       <div className="common-datepicker">
         <DatePicker
