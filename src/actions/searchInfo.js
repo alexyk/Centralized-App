@@ -1,31 +1,5 @@
 import { searchInfo } from './actionTypes';
 
-export function asyncSetStartDate(startDate) {
-  return function (dispatch) {
-    return Promise.resolve(dispatch(setStartDate(startDate)));
-  };
-}
-
-function setStartDate(startDate) {
-  return {
-    type: searchInfo.SET_START_DATE,
-    startDate: startDate,
-  };
-}
-
-export function asyncSetEndDate(endDate) {
-  return function (dispatch) {
-    return Promise.resolve(dispatch(setEndDate(endDate)));
-  };
-}
-
-function setEndDate(endDate) {
-  return {
-    type: searchInfo.SET_END_DATE,
-    endDate: endDate
-  };
-}
-
 export function setRegion(value) {
   return {
     type: searchInfo.SET_REGION,

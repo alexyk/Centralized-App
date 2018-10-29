@@ -2,8 +2,6 @@ import { searchInfo } from '../actions/actionTypes';
 import moment from 'moment';
 
 const initialState = {
-  startDate: moment().add(1, 'days'),
-  endDate: moment().add(2, 'days'),
   nights: 1,
   rooms: [{ adults: '2', children: [] }],
   adults: '2',
@@ -14,16 +12,6 @@ const initialState = {
 
 export default function reducer(state = initialState, action) {
   switch (action.type) {
-    case searchInfo.SET_START_DATE:
-      return Object.assign({}, state, {
-        startDate: action.startDate,
-        nights: calculateNights(action.startDate, state.endDate)
-      });
-    case searchInfo.SET_END_DATE:
-      return Object.assign({}, state, {
-        endDate: action.endDate,
-        nights: calculateNights(state.startDate, action.endDate)
-      });
     case searchInfo.SET_REGION:
       return Object.assign({}, state, {
         region: action.region
@@ -47,8 +35,6 @@ export default function reducer(state = initialState, action) {
       });
     case searchInfo.SET_SEARCH_INFO:
       return Object.assign({}, state, {
-        startDate: action.startDate,
-        endDate: action.endDate.diff(action.startDate, 'days') === 0 ? action.endDate.add(1, 'day') : action.endDate,
         nights: calculateNights(action.startDate, action.endDate),
         region: action.region,
         rooms: action.rooms,

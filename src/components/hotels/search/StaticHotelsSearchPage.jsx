@@ -143,6 +143,8 @@ class StaticHotelsSearchPage extends React.Component {
       const region = { id: regionId };
       const page = searchParams.page;
       
+      // this.props.dispatch(asyncSetStartDate(startDate));
+      // this.props.dispatch(asyncSetEndDate(endDate));
       this.props.dispatch(setSearchInfo(startDate, endDate, region, rooms, adults, hasChildren));
       if (this.props.location.pathname.indexOf('/mobile') !== -1) {
         const currency = searchParams.currency;
