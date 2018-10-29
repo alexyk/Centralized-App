@@ -68,6 +68,9 @@ class HomesBookingListingDetailsInfo extends React.Component {
     let defaultCleaningFee = CurrencyConverter.convert(currencyExchangeRates, currencyCode, currency, cleaningFee);
     let fiatCleaningFeePriceInRoomsXMLCurrency = CurrencyConverter.convert(currencyExchangeRates, currencyCode, RoomsXMLCurrency.get(), cleaningFee);
 
+    let totalPrice = (nights * defaultDailyPrice) + defaultCleaningFee;
+    let totalPriceRoomsXMLCurrency = (fiatPriceInRoomsXMLCurrency * nights) + fiatCleaningFeePriceInRoomsXMLCurrency;
+
     return (
       <div className="left-part">
         {pictures.length > 0 && <Slider
@@ -100,13 +103,19 @@ class HomesBookingListingDetailsInfo extends React.Component {
           </div>
         </div>
         <div className="price-container">
-          <div className="price">{currencySign}{(defaultDailyPrice).toFixed(3)} x {nights} nights</div>
-          <div className="price">{currencySign}{(defaultCleaningFee).toFixed(3)} cleaning fee</div>
-          <div className="total">total price <span>{currencySign}{((nights * defaultDailyPrice) + defaultCleaningFee).toFixed(3)}</span></div>
+          <div className="price">
+            <span>{currencySign}{(defaultDailyPrice).toFixed(2)} <LocPrice fiat={fiatPriceInRoomsXMLCurrency} brackets={true} /> x {nights} nights</span>
+          </div>
+          <div className="price">
+            <span>{currencySign}{(defaultCleaningFee).toFixed(3)} <LocPrice fiat={fiatCleaningFeePriceInRoomsXMLCurrency} /> cleaning fee</span>
+          </div>
+          <div className="total">
+            <span>total price <span className="value">{currencySign}{(totalPrice).toFixed(3)} <LocPrice fiat={totalPriceRoomsXMLCurrency} /></span></span>
+          </div>
 
-          <div className="price"><p><LocPrice fiat={fiatPriceInRoomsXMLCurrency} brackets={false} /> x {nights} nights</p></div>
-          <div className="price"><p><LocPrice fiat={fiatCleaningFeePriceInRoomsXMLCurrency} brackets={false} /> cleaning fee</p></div>
-          <div className="total">total price <LocPrice fiat={(fiatPriceInRoomsXMLCurrency * nights) + fiatCleaningFeePriceInRoomsXMLCurrency} brackets={false} /></div>
+          {/* <div className="price"><LocPrice fiat={fiatPriceInRoomsXMLCurrency} brackets={false} /> x {nights} nights</div>
+          <div className="price"><LocPrice fiat={fiatCleaningFeePriceInRoomsXMLCurrency} brackets={false} /> cleaning fee</div>
+          <div className="total">total price <LocPrice fiat={totalPriceRoomsXMLCurrency} brackets={false} /></div> */}
         </div>
         <div className="image-dot">
           <img src="/images/dot-bgr.png" alt="dot-bgr" />
