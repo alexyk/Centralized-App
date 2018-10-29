@@ -22,6 +22,7 @@ function ProfileNav(props) {
           {props.isAdmin && <NavDropdown id="admin-panel" title="Admin">
             <li><NavLink activeClassName="active" to="/profile/admin/listings">All Listings</NavLink></li>
             <li><NavLink activeClassName="active" to="/profile/admin/users">All Users</NavLink></li>
+            <li><NavLink activeClassName="active" to="/profile/admin/airdrop">Airdrop</NavLink></li>
           </NavDropdown>}
         </ul>
       </div>
