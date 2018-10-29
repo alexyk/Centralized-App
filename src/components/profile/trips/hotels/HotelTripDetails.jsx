@@ -63,8 +63,8 @@ class HotelTripDetails extends React.Component {
   }
 
   extractDatesData(bookingData) {
-    const startDateMoment = moment(bookingData.startDate);
-    const endDateMoment = moment(bookingData.endDate);
+    const startDateMoment = moment(bookingData.startDate).utc();
+    const endDateMoment = moment(bookingData.endDate).utc();
 
     let startDateHour = startDateMoment.hour();
     let endDateHour = endDateMoment.hour();

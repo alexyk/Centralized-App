@@ -137,13 +137,13 @@ class HomePage extends React.Component {
             text="What are you looking for?"
           >
             <ul className="categories">
-              <li className={isHotels === true ? 'active' : ''}>
+              <li className={isHotels ? 'active' : ''}>
                 <Link to="/hotels">
                   <img src="/images/hotels.jpg" alt="hotels" />
                   <h3>Hotels</h3>
                 </Link>
               </li>
-              <li className={!isHotels === true ? 'active homes' : 'homes'}>
+              <li className={!isHotels ? 'active homes' : 'homes'}>
                 <Link to="/homes">
                   <img src="/images/homes.jpg" alt="homes" />
                   <h3>Homes</h3>
