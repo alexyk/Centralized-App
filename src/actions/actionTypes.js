@@ -51,6 +51,7 @@ export const exchangeRatesInfo = {
   SET_LOC_RATE_FIAT_AMOUNT: 'SET_LOC_RATE_FIAT_AMOUNT'
 };
 
+// loc price update timer actions
 export const locPriceUpdateTimerInfo = {
   SET_INITIAL_SECONDS: 'SET_INITIAL_SECONDS',
   SET_SECONDS: 'SET_SECONDS',
