@@ -37,7 +37,7 @@ class SelectFlex extends Component {
   }
 
   handleOnChange(e) {
-    this.props.onChange(e.target.innerHTML);
+    this.props.onChange(e.target.dataset.value);
 
     this.setState({
       isSelectToggle: !this.state.isSelectToggle,
@@ -68,10 +68,10 @@ class SelectFlex extends Component {
           {selectElement.props.children.map((option, i) => {
             if (option.length && option.length > 0) {
               return option.map((element, j) => {
-                return <div className="option" key={j} onClick={this.handleOnChange}>{element.props.children}</div>;
+                return <div className="option" key={j} onClick={this.handleOnChange} data-value={element.props.value}>{element.props.children}</div>;
               });
             }
-            return <div className="option" key={i} onClick={this.handleOnChange}>{option.props.children}</div>;
+            return <div className="option" key={i} onClick={this.handleOnChange} data-value={option.props.value}>{option.props.children}</div>;
           })}
         </div>
       </div >
