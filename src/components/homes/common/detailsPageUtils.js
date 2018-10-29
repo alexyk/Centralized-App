@@ -95,33 +95,34 @@ export function calculateCheckInOuts(listing) {
 
 export function initStickyElements() {
   $(document).ready(() => {
-    window.onscroll = function () { sticky() };
+    window.onscroll = function () { sticky(); };
 
-    let hotelNav = document.getElementById("hotel-nav");
+    let hotelNav = document.getElementById('hotel-nav');
     let stickyHotelNav = hotelNav.offsetTop;
-    let bookingPanel = document.getElementById("test");
+    let bookingPanel = document.getElementById('test');
 
     function sticky() {
       if (window.innerWidth > 1024) {
         $('#hotel-nav').width('100%');
         if (window.pageYOffset >= stickyHotelNav) {
           if (hotelNav && hotelNav.classList && !hotelNav.classList.contains('sticky-nav')) {
-            hotelNav.classList.add("sticky-nav")
+            hotelNav.classList.add('sticky-nav');
           }
         } else {
           if (hotelNav && hotelNav.classList && hotelNav.classList.contains('sticky-nav')) {
-            hotelNav.classList.remove("sticky-nav");
+            hotelNav.classList.remove('sticky-nav');
           }
         }
 
         $('#test').width($('#test').width());
+        $('#test').height($('#test').height());
         if (window.pageYOffset >= stickyHotelNav) {
           if (bookingPanel && bookingPanel.classList && !bookingPanel.classList.contains('sticky')) {
-            bookingPanel.classList.add("sticky")
+            bookingPanel.classList.add('sticky');
           }
         } else {
           if (bookingPanel && bookingPanel.classList && bookingPanel.classList.contains('sticky')) {
-            bookingPanel.classList.remove("sticky");
+            bookingPanel.classList.remove('sticky');
           }
         }
       }

@@ -82,25 +82,23 @@ class HeroComponent extends React.Component {
   render() {
     return (
       <div className="hero">
-        <div className="container">
-          <div className="hero-content">
-            <h1>Discover your next experience</h1>
-            <h2>Browse for homes &amp; hotels worldwide</h2>
-            <div className="source-data">
-              <ListingTypeNav />
-              {this.props.homePage === 'hotels' ?
-                <HotelsSearchBar redirectToSearchPage={this.redirectToSearchPage} /> :
-                <HomesSearchBar
-                  countryId={this.state.countryId}
-                  countries={this.state.countries}
-                  startDate={this.state.startDate}
-                  endDate={this.state.endDate}
-                  guests={this.state.guests}
-                  onChange={this.onChange}
-                  handleSearch={this.handleSearch}
-                  handleDatePick={this.handleDatePick}
-                />}
-            </div>
+        <div className="hero-content">
+          <h1>Discover your next experience</h1>
+          <h2>Browse for homes &amp; hotels worldwide</h2>
+          <div className="source-data">
+            <ListingTypeNav />
+            {this.props.homePage === 'hotels' ?
+              <HotelsSearchBar redirectToSearchPage={this.redirectToSearchPage} /> :
+              <HomesSearchBar
+                countryId={this.state.countryId}
+                countries={this.state.countries}
+                startDate={this.state.startDate}
+                endDate={this.state.endDate}
+                guests={this.state.guests}
+                onChange={this.onChange}
+                handleSearch={this.handleSearch}
+                handleDatePick={this.handleDatePick}
+              />}
           </div>
         </div>
       </div>

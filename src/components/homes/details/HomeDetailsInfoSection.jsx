@@ -18,7 +18,6 @@ import Rating from '../../common/rating/Rating';
 
 class HomeDetailsInfoSection extends React.Component {
   componentDidMount() {
-    initStickyElements();
     setCheckInOutHours(this.props.checks);
   }
 

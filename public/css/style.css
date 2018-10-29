@@ -2849,3 +2849,7 @@ h3 {
 /* .slick-prev:before, .slick-next:before {
   color: #d87a61!important;
 } */
+
+select::-ms-expand {
+    display: none;
+}

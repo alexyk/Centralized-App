@@ -21,7 +21,6 @@
     "query-string": "^5.1.1",
     "rc-pagination": "^1.17.1",
     "react": "^16.5.1",
-    "react-addons-css-transition-group": "^15.6.2",
     "react-addons-update": "^15.6.2",
     "react-anything-sortable": "^1.7.4",
     "react-async-script": "^0.9.1",

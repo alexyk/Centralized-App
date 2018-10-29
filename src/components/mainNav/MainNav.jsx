@@ -191,7 +191,7 @@ class MainNav extends React.Component {
       lastName: this.state.signUpLastName,
       password: this.state.signUpPassword,
       country: this.state.country.id,
-      image: Config.getValue('basePath') + 'images/default.png'
+      image: 'images/default.png'
     };
 
     this.clearLocalStorage();

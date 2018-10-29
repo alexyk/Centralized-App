@@ -131,7 +131,7 @@ function HotelsSearchBar(props) {
       </div>
 
       <div className="guest-wrap guests source-panel-item">
-        <select className="guest-select" name={'rooms'} value={props.searchInfo.rooms.length} onChange={e => props.dispatch(setRoomsByCountOfRooms(e.target.value))}>
+        <select className="guest-select " name={'rooms'} value={props.searchInfo.rooms.length} onChange={e => props.dispatch(setRoomsByCountOfRooms(e.target.value))}>
           <option value="1">1 room</option>
           <option value="2">2 rooms</option>
           <option value="3">3 rooms</option>
@@ -143,7 +143,6 @@ function HotelsSearchBar(props) {
           <option value="9">9 rooms</option>
           <option value="10">10 rooms</option>
         </select>
-
         <select name={'adults'} value={props.searchInfo.adults} onChange={e => props.dispatch(setAdults(e.target.value))}>
           <option value="1">1 adult</option>
           <option value="2">2 adults</option>
@@ -156,7 +155,6 @@ function HotelsSearchBar(props) {
           <option value="9">9 adults</option>
           <option value="10">10 adults</option>
         </select>
-
         <div className="select-children" onClick={() => props.dispatch(setChildren())}>
           <div>
             {!props.searchInfo.hasChildren
