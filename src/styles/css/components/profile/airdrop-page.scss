@@ -104,6 +104,28 @@ $padding-sm: 15px 10px;
         // }
       }
 
+      .claim-button {
+        position: absolute;
+        right: 5px;
+        top: 5px;
+        padding: 10px 10px;
+        border-radius: 3px;
+        color: $white;
+        background: $light-cyan;
+        min-width: 145px;
+      }
+
+      .claim-button[disabled] {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+
+      .etherscan-link {
+        position: absolute;
+        right: 5px;
+        top: 15px;
+      }
+
       .save-vote-url {
         position: absolute;
         right: 5px;
@@ -167,6 +189,42 @@ $padding-sm: 15px 10px;
         color: $white;
         content: "\f00d";
       }
+    }
+
+   // ICON TOOLTIPS
+   [tooltip]{
+    position:relative;
+  }
+  [tooltip]:hover::after,
+  [tooltip]:hover::before {
+    opacity:1;
+  }
+  [tooltip]::before {
+      color: #abc3bd;
+  }
+  [tooltip]::after {
+      content: attr(tooltip);
+      position: absolute;
+      z-index: 999;
+      left: 40%;
+      top: 2px;
+      transform: translateX(-50%) translateY(-22%);
+      background: #a2c5bf;
+      text-align: center;
+      font-weight: 200;
+      color: #fff;
+      padding: 5px 10px 5px 10px;
+      // font-size: 12px;
+      min-width: 145px;
+      border-radius: 3px;
+      border: 1px solid a2c5bf;
+      pointer-events: none;
+      opacity:0;
+      // color: $base-text-color;
+      // background: $base-background-color;
+      // font: #{$font-size-base}/#{$line-height-base} $base-font-family;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
     }
   }
 

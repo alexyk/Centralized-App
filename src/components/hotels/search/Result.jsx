@@ -32,13 +32,13 @@ const BREAKPOINTS = {
 const DESCRIPTION_LENGTH = {
   SMALL: 50,
   MEDIUM: 100,
-  LARGE: 500,
+  LARGE: 200,
 };
 
 const TITLE_LENGTH = {
   SMALL: 20,
   MEDIUM: 40,
-  LARGE: 200,
+  LARGE: 100,
 };
 
 class Result extends React.Component {
@@ -157,7 +157,7 @@ class Result extends React.Component {
 
     const redirectURL = this.props.location.pathname.indexOf('mobile') === -1
       ? '/hotels/listings'
-      : '/mobile/details';
+      : '/mobile/hotels/listings';
 
     const search = this.props.location.search;
     const endOfSearch = search.indexOf('&filters=') !== -1 ? search.indexOf('&filters=') : search.length;
@@ -172,7 +172,7 @@ class Result extends React.Component {
               {this.state.pictures.map((picture, i) => {
                 return (
                   <div key={i}>
-                    <Link target={isMobile === false ? '_blank' : '_self'} to={`${redirectURL}/${id}${search.substr(0, endOfSearch)}`} key={i}>
+                    <Link target={isMobile === false ? '_blank' : ''} to={`${redirectURL}/${id}${search.substr(0, endOfSearch)}`} key={i}>
                       <div style={{ backgroundImage: 'url(' + Config.getValue('imgHost') + picture.url + ')' }}>
                       </div>
                     </Link>
@@ -184,7 +184,7 @@ class Result extends React.Component {
         </div>
         <div className="result-content">
           <div>
-            <h4><Link target={isMobile === false ? '_blank' : '_self'} to={`${redirectURL}/${id}${search.substr(0, endOfSearch)}`}>{name}</Link></h4>
+            <h4><Link target={isMobile === false ? '_blank' : ''} to={`${redirectURL}/${id}${search.substr(0, endOfSearch)}`}>{name}</Link></h4>
             <Rating rating={star} />
           </div>
           <div className="result-description">{generalDescription && ReactHtmlParser(generalDescription)}</div>
@@ -197,7 +197,7 @@ class Result extends React.Component {
             <div>
               {!isPriceLoaded && this.props.allElements
                 ? <button disabled className="mobile-pricing-button">Unavailable</button>
-                : <Link target={isMobile === false ? '_blank' : '_self'} className="mobile-pricing-button" to={`${redirectURL}/${id}${search.substr(0, endOfSearch)}`}>Book now</Link>
+                : <Link target={isMobile === false ? '_blank' : ''} className="mobile-pricing-button" to={`${redirectURL}/${id}${search.substr(0, endOfSearch)}`}>Book now</Link>
               }
             </div>
           </div>
@@ -212,7 +212,7 @@ class Result extends React.Component {
           {isPriceLoaded && <LocPrice fiat={price / this.props.nights} />}
           {!isPriceLoaded && this.props.allElements
             ? <button disabled className="btn">Unavailable</button>
-            : <Link target={isMobile === false ? '_blank' : '_self'} className="btn" to={`${redirectURL}/${id}${search.substr(0, endOfSearch)}`}>Book now</Link>
+            : <Link target={isMobile === false ? '_blank' : ''} className="btn" to={`${redirectURL}/${id}${search.substr(0, endOfSearch)}`}>Book now</Link>
           }
         </div>
       </div>

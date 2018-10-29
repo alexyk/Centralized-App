@@ -42,9 +42,9 @@ class CalendarPage extends React.Component {
   componentDidMount() {
     requester.getListing(this.props.match.params.id).then(res => {
       res.body.then(listing => {
-        requester.getCurrencies().then((res) => res.body).then(data => {
-          this.setState({ curDataTransferItem: data }, () => {
-            const currency = data.content.filter(c => c.code === listing.currencyCode)[0];
+        requester.getCurrencies().then((res) => res.body).then(currencies => {
+          this.setState({ currencies: currencies }, () => {
+            const currency = currencies.filter(c => c.code === listing.currencyCode)[0];
             this.setState({
               currencySign: currency.unicode ? currency.unicode : currency.code,
               currencyCode: currency.code,

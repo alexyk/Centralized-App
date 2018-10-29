@@ -1,8 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import SearchBarDatePicker from '../../common/search/SearchBarDatePicker';
 import moment from 'moment';
 import StringUtils from '../../../services/utilities/stringUtilities.js';
+import Datepicker from '../../common/datepicker';
+import HomesSearchBarDatePicker from './HomesSearchBarDatePicker';
 
 const HomesSearchBar = (props) => (
   <form className="source-panel" onSubmit={props.handleSearch}>
@@ -25,7 +26,8 @@ const HomesSearchBar = (props) => (
 
     <div className="check-wrap source-panel-item">
       <div className="check">
-        <SearchBarDatePicker
+        {/* <Datepicker minDate={moment().add(1, 'days')} enableRanges /> */}
+        <HomesSearchBarDatePicker
           startDate={props.startDate}
           endDate={props.endDate}
           onApply={props.handleDatePick}
