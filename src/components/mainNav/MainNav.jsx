@@ -206,7 +206,7 @@ class MainNav extends React.Component {
         NotificationManager.success(PROFILE_SUCCESSFULLY_CREATED, '', LONG);
       } else {
         res.errors.then(res => {
-          const errors = res;
+          const errors = res.errors;
           for (let key in errors) {
             if (typeof errors[key] !== 'function') {
               NotificationManager.warning(errors[key].message, 'Field: ' + key.toUpperCase(), LONG);
