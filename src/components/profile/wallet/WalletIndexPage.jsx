@@ -1,10 +1,6 @@
 import 'react-notifications/lib/notifications.css';
 import '../../../styles/css/components/profile/wallet/wallet-index-page.css';
-
-import {
-  CREATE_WALLET,
-} from '../../../constants/modals.js';
-
+import { CREATE_WALLET } from '../../../constants/modals.js';
 import { Config } from '../../../config';
 import { LONG } from '../../../constants/notificationDisplayTimes.js';
 import { NotificationManager } from 'react-notifications';
@@ -22,8 +18,6 @@ class WalletIndexPage extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      jsonFile: null,
-      locAddress: null,
       canProceed: false,
       recipientAddress: '',
       locAmount: 0,
@@ -110,6 +104,8 @@ class WalletIndexPage extends React.Component {
         } else {
           // console.log(error);
         }
+
+        this.setState({ loading: false });
       });
     });
   }
@@ -178,6 +174,8 @@ class WalletIndexPage extends React.Component {
 }
 
 WalletIndexPage.propTypes = {
+  // Redux props
+  dispatch: PropTypes.func,
   userInfo: PropTypes.object
 };
 

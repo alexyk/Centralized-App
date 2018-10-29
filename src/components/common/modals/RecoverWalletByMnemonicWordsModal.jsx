@@ -14,7 +14,7 @@ function RecoverWalletByMnemonicWordsModal(props) {
   };
 
   return (
-    <div>
+    <React.Fragment>
       <Modal show={props.isActive} className="modal fade myModal">
         <Modal.Header>
           <h1>Recover Wallet Password</h1>
@@ -28,7 +28,7 @@ function RecoverWalletByMnemonicWordsModal(props) {
           </form>
         </Modal.Body>
       </Modal>
-    </div>
+    </React.Fragment>
   );
 }
 

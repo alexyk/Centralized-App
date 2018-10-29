@@ -75,7 +75,7 @@ class RoomInfoModal extends React.Component {
 
     // console.log(this.state);
     return (
-      <div>
+      <React.Fragment>
         <Modal show={this.props.isActive} onHide={() => this.props.closeModal(SMS_VERIFICATION)} className="modal fade myModal">
           <Modal.Header>
             <h1>SMS Verfication</h1>
@@ -89,7 +89,7 @@ class RoomInfoModal extends React.Component {
             <button className="btn btn-primary" onClick={() => this.verifySMSCode()}>Verify</button>
           </Modal.Body>
         </Modal>
-      </div>
+      </React.Fragment>
     );
   }
 }

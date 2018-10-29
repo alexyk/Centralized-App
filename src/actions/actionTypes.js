@@ -22,7 +22,8 @@ export const airdropInfo = {
 
 // searchInfo actions
 export const searchInfo = {
-  SET_DATES: 'SET_DATES',
+  SET_START_DATE: 'SET_START_DATE',
+  SET_END_DATE: 'SET_END_DATE',
   SET_REGION: 'SET_REGION',
   SET_ROOMS_BY_COUNT_OF_ROOMS: 'SET_ROOMS_BY_COUNT_OF_ROOMS',
   SET_ROOMS: 'SET_ROOMS',
@@ -69,4 +70,9 @@ export const airTicketsSearchInfo = {
   SET_CHILDREN: 'SET_CHILDREN',
   SET_INFANTS: 'SET_INFANTS',
   SET_AIR_TICKETS_SEARCH_INFO: 'SET_AIR_TICKETS_SEARCH_INFO'
+};
+
+// burger menu actions
+export const burgerMenuInfo = {
+  SET_SHOW_MENU: 'SET_SHOW_MENU'
 };

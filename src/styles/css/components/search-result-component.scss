@@ -65,11 +65,14 @@ $media-expressions: (
 		// margin-bottom: 10px;
 		&:last-child {
 			margin-bottom: 0;
-		}
+    }
 		@include media(">=tablet") {
 			width: 30%;
-			margin-bottom: 0;
-		}
+      margin-bottom: 0;
+      &:nth-child(2) {
+        flex-grow: 2;
+      }
+    }
 		@include media(">=widescreen") {
 			width: auto;
 		}

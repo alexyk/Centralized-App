@@ -9,6 +9,7 @@ import locAmountsInfo from './locAmountsInfo';
 import exchangeRatesInfo from './exchangeRatesInfo';
 import locPriceUpdateTimerInfo from './locPriceUpdateTimerInfo';
 import airTicketsSearchInfo from './airTicketsSearchInfo';
+import burgerMenuInfo from './burgerMenuInfo';
 
 const rootReducer = combineReducers({
   userInfo,
@@ -20,7 +21,8 @@ const rootReducer = combineReducers({
   locAmountsInfo,
   exchangeRatesInfo,
   locPriceUpdateTimerInfo,
-  airTicketsSearchInfo
+  airTicketsSearchInfo,
+  burgerMenuInfo
 });
 
 export default rootReducer;
