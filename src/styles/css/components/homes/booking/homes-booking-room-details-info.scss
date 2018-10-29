@@ -1,0 +1,43 @@
+@import "../../../vendors/include-media";
+
+.right-part {
+  width: 50%;
+  @include media("<=tablet") {
+    width: 100%;
+  }
+  h2 {
+    @include media("<=tablet") {
+      padding-top: 10px;
+    }
+  }
+  h3 {
+    font-weight: 400;
+    font-size: 24px;
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 10px;
+    margin: 30px 0;
+  }
+  .arrangements-container div {
+    display: flex;
+    margin: 20px 0;
+    p {
+      margin-top: 15px;
+      margin-bottom: 0;
+    }
+    span {
+      color: #54585b;
+      font-weight: 400;
+    }
+    img {
+      padding: 0 20px;
+    }
+  }
+  .btn {
+    margin: 30px 0;
+    width: 60%;
+    float: right;
+    @include media("<=tablet") {
+      width: 100%;
+    }
+  }
+}

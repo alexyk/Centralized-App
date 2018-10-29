@@ -1,148 +1,120 @@
-import React from 'react';
-
-
+import React, { Fragment } from 'react';
+import { withRouter, Route, Switch } from 'react-router-dom';
+import HomesBookingConfirmPage from './HomesBookingConfirmPage';
+import BookingSteps from '../../common/utility/BookingSteps';
+import HomesBookingListingDetailsInfo from './HomesBookingListingDetailsInfo';
+import _ from 'lodash';
+import { parse } from 'query-string';
+import PropTypes from 'prop-types';
+import HomesBookingRoomDetailsInfo from './HomesBookingRoomDetailsInfo';
+import requester from '../../../requester';
+import { setCheckInOutHours, calculateCheckInOuts } from '../common/detailsPageUtils.js';
+import moment from 'moment';
 import '../../../styles/css/components/homes/booking/homes-booking-page.css';
+import { connect } from 'react-redux';
 
 class HomesBookingPage extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      listing: null,
+      calendar: null,
+      checks: null,
+      stepsNumber: 1
+    };
+
+    this.handleSubmit = this.handleSubmit.bind(this);
+
+    this.setCheckInOutHours = setCheckInOutHours.bind(this);
+    this.calculateCheckInOuts = calculateCheckInOuts.bind(this);
+  }
+
+  componentDidMount() {
+    const DAY_INTERVAL = 365;
+    requester.getListing(this.props.match.params.id).then(res => {
+      res.body.then((listing) => {
+        const checks = this.calculateCheckInOuts(listing);
+        this.setState({ listing: listing, checks });
+      });
+    });
+
+    requester.getHomeBookingDetails(this.props.match.params.id).then(res => res.body).then(roomDetails => {
+      this.setState({ roomDetails });
+    });
+
+    const searchTermMap = [
+      `listing=${this.props.match.params.id}`,
+      `startDate=${moment().format('DD/MM/YYYY')}`,
+      `endDate=${moment().add(DAY_INTERVAL, 'days').format('DD/MM/YYYY')}`,
+      `page=${0}`,
+      `toCode=${this.props.paymentInfo.currency}`,
+      `size=${DAY_INTERVAL}`];
+
+    requester.getCalendarByListingIdAndDateRange(searchTermMap).then(res => {
+      res.body.then(data => {
+        let calendar = data.content;
+        calendar = _.sortBy(calendar, function (x) {
+          return new moment(x.date, 'DD/MM/YYYY');
+        });
+        this.setState({ calendar: calendar });
+      });
+    });
+  }
+
+  handleSubmit() {
+    const id = this.props.match.params.id;
+    const isWebView = this.props.location.pathname.indexOf('/mobile') !== -1;
+    const rootURL = !isWebView ? '/homes/listings/book' : '/mobile/book';
+    this.props.history.push(`${rootURL}/${id}/confirm${this.props.location.search}`);
+    this.setState({ stepsNumber: 2 });
+  }
 
   render() {
+    let { listing, calendar, roomDetails, checks } = this.state;
+
+    if (!listing || !calendar) {
+      return <div className="loader"></div>;
+    }
+
     return (
-
-      <div id="homes-booking-page-container">
-        <div className="container">
-          <div className="left-part">
-            <img className="hotel-img" src="/images/wish-hotel-img.jpg" alt="wish-hotel" />
-            <div className="review-info-container">
-              <h2>Heaven - Junior Suite with view</h2>
-              <div className="rating">
-                <p>Excellent 4.1/5 </p>
-                <div>
-                  <img src="/images/icon-star-filter.png" alt="star" />
-                  <img src="/images/icon-star-filter.png" alt="star" />
-                  <img src="/images/icon-star-filter.png" alt="star" />
-                  <img src="/images/icon-star-filter.png" alt="star" />
-                  <img src="/images/icon-star-filter-g.png" alt="star" />
-                </div>
-                <p> 73 Reviews</p></div>
-              <div><p className="city">Sozopol, Bulgaria</p></div></div>
-
-            <div className="booking-info-container">
-              <div className="div-guest">
-                <div>
-                  <img src="/images/icon-guest.png" alt="icon-guest" />
-                </div>
-                <p> 2 Adults, 2 Children</p>
-              </div>
-              <div className="check-in-out">
-                <div>
-                  <img src="/images/icon-calendar.png" alt="icon-calendar" />
-                </div>
-                <div className="row-container">
-                  <p>Check-in</p>
-                  <div className="date-mon-day">
-                    <p><span>18 </span>SEP, MON</p>
-                  </div>
-                </div>
-                <div className="arrow-icon-container">
-                  <img src="/images/icon-arrow.png" alt="icon-arrow" />
-                </div>
-                <div>
-                  <img src="/images/icon-calendar.png" alt="icon-calendar" />
-                </div>
-                <div className="row-container">
-                  <p>Check-out</p>
-                  <div className="date-mon-day">
-                    <p><span className="date-color">22 </span>SEP, FRI</p>
-                  </div>
-                </div>
-                <div className="border-nights-container">
-                  <div>
-                    <img src="/images/icon-moon.png" alt="icon-moon" />
-                  </div>
-                  <p>4 nights</p>
-                </div>
-
-              </div>
-            </div>
-            <div className="price-container">
-              <p>$85 x 4 nights</p>
-              <p>total price <span>$340</span></p>
-            </div>
-            <div className="image-dot">
-              <img src="/images/dot-bgr.png" alt="dot-bgr" />
-            </div>
-          </div>
-          <div className="right-part">
-            <h2>Review Room Details</h2>
-            <h3>The Space</h3>
-            <div className="icons-container-space">
-              <div>        <img src="/images/icon-review/icon-home.png" alt="icon-home" />
-                <p>Entire Home/Apt</p></div>
-              <div>
-                <img src="/images/icon-review/icon-guest.png" alt="icon-guest" />
-                <p>Guests x4</p></div>
-              <div>
-                <img src="/images/icon-review/icon-size.png" alt="icon-size" />
-                <p>85 m2</p></div>
-              <div>
-                <img src="/images/icon-review/icon-bathroom.png" alt="icon-bathroom" />
-                <p>1 Bathroom</p>
-              </div>
-              <div>
-                <img src="/images/icon-review/icon-bedrooms.png" alt="icon-bedrooms" />
-                <p>2 Bedrooms</p>
-              </div>
-            </div>
-            <h3>Sleeping Arrangements</h3>
-            <div className="arrangements-container">
-              <div>
-                <p><span>Bedroom 1 </span>One double bed</p>
-                <img src="/images/icon-review/icon-bedroom.png" alt="icon-bedroom" />
-              </div>
-              <div>
-                <p><span>Bedroom 2 </span>Two twin beds</p>
-                <img src="/images/icon-review/icon-bed-room.png" alt="icon-bedroom" />
-              </div>
-              <div>
-                <p><span>Living Room </span>One sofa bed</p>
-                <img src="/images/icon-review/icon-sofa-bed.png" alt="icon-sofa-bed" />
-              </div>
-            </div>
-            <div className="hotel-rules-container">
-              <h3>Hotel Rules</h3>
-              <p>No smoking</p>
-              <p>Not suitable fot pets</p>
-              <p>No parties or events</p>
-
-
-
-
-              {/* <div className="Check-in">
-                <p>Check-in</p>
-
-              </div>
-              <div className="Check-out">
-                <p>Check-out</p>
-
-              </div> */}
-
-
-
-
-            </div>
-            <div className="children-and-extra-beds">
-              <h3>Children & Extra Beds</h3>
-              <p>All children are welcome.</p>
-              <p>FREE! One child under 2 years stays free of charge in a crib.</p>
-              <p>There is no capacity for extra beds in the room.</p>
-            </div>
-            <button className="btn">Agree & Continue</button>
+      <Fragment>
+        <BookingSteps steps={['Select your Room', 'Review Room Details', 'Confirm & Pay']} currentStepIndex={this.state.stepsNumber} />
+        <div id={`${this.props.location.pathname.indexOf('/confirm') !== -1 ? 'homes-booking-confirm-page-container' : 'homes-booking-page-container'}`}>
+          <div className="container">
+            <HomesBookingListingDetailsInfo
+              listing={listing}
+              searchParams={parse(this.props.location.search)}
+              calendar={calendar}
+            />
+            <Switch>
+              <Route path="/homes/listings/book/:id/confirm" render={() => <HomesBookingConfirmPage listing={listing} />} />
+              <Route path="/homes/listings/book/:id" render={() => <HomesBookingRoomDetailsInfo
+                listing={listing}
+                roomDetails={roomDetails}
+                checks={checks}
+                handleSubmit={this.handleSubmit} />} />
+            </Switch>
           </div>
         </div>
-      </div>
 
+      </Fragment>
     );
   }
 }
 
-export default HomesBookingPage;
+HomesBookingPage.propTypes = {
+  location: PropTypes.object,
+  match: PropTypes.object,
+  history: PropTypes.object,
+  paymentInfo: PropTypes.object
+};
+
+function mapStateToProps(state) {
+  const { paymentInfo } = state;
+  return {
+    paymentInfo
+  };
+}
+
+export default withRouter(connect(mapStateToProps)(HomesBookingPage));

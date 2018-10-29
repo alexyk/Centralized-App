@@ -10,7 +10,7 @@ import ReCAPTCHA from 'react-google-recaptcha';
 import React from 'react';
 import Select from '../../common/google/GooglePlacesAutocomplete';
 import moment from 'moment';
-import requester from '../../../initDependencies';
+import requester from '../../../requester';
 
 class ProfileEditForm extends React.Component {
   constructor(props) {
@@ -26,7 +26,7 @@ class ProfileEditForm extends React.Component {
       day: '',
       year: '',
       gender: '',
-      country: { id: 1, name: 'US', code: 'US' },
+      country: '',
       city: '',
       countryState: '',
       address: '',
@@ -75,7 +75,7 @@ class ProfileEditForm extends React.Component {
           preferredLanguage: data.preferredLanguage ? data.preferredLanguage : '',
           preferredCurrency: data.preferredCurrency ? data.preferredCurrency.id : '',
           gender: data.gender ? data.gender : '',
-          country: data.country ? data.country : { name: 'United States of America', id: 1, code: 'US' },
+          country: data.country ? data.country : '',
           city: data.city ? data.city : '',
           countryState: data.countryState ? data.countryState.id : '',
           address: data.address ? data.address : '',
@@ -328,7 +328,7 @@ class ProfileEditForm extends React.Component {
           </div>
 
           <div className="zip-code">
-            <label htmlFor="zip-code">Zip Code</label>
+            <label htmlFor="zip-code">Zip Code <span className="mandatory">*</span></label>
             <input id="zip-code" name="zipCode" value={this.state.zipCode} onChange={this.onChange} type="text" placeholder='Enter your zip code' />
           </div>
 

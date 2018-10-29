@@ -15,12 +15,11 @@ import { Config } from '../../../config';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { INVALID_SECURITY_CODE } from '../../../constants/warningMessages.js';
 import { LONG } from '../../../constants/notificationDisplayTimes.js';
-import NavProfile from '../NavProfile';
-import NoEntriesMessage from '../common/NoEntriesMessage';
+import NoEntriesMessage from '../../common/messages/NoEntriesMessage';
 import { NotificationManager } from 'react-notifications';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import requester from '../../../initDependencies';
+import requester from '../../../requester';
 import { setAirdropInfo } from '../../../actions/airdropInfo';
 import { setIsLogged } from '../../../actions/userInfo';
 import validator from 'validator';
@@ -459,7 +458,6 @@ class AirdropPage extends Component {
     if (!this.props.airdropInfo.participates) {
       return (
         <div>
-          <NavProfile />
           <div className="container">
             <NoEntriesMessage text='Participate in our airdrop campaign.'>
               <a href={'https://locktrip.com/airdrop/' + this.props.location.search} className="btn">Participate</a>
@@ -471,10 +469,10 @@ class AirdropPage extends Component {
 
     return (
       <div>
-        <NavProfile />
         <div className="container">
           <div id="airdrop-main">
-            <h4>Personal Dashboard</h4>
+            <h2>Personal Dashboard</h2>
+            <hr />
             <p>You can view your current balance, as well as your unique Referral Link.</p>
             <p>Every Person who completes our airdrop via your unique referral link, will generate $5 for you! <span className="emphasized-text">Make sure you refer as much friends and family as you can!</span></p>
 
@@ -568,30 +566,8 @@ class AirdropPage extends Component {
                     </div>
                   }
                 </div>
-                <hr />
-                {/*<div className="airdrop-row final">*/}
-                {/*<div className="description">*/}
-                {/*<span className="step-check unchecked"></span><span className="airdrop-row__heading">Final Step</span>*/}
-                {/*</div>*/}
-                {/*</div>*/}
               </div>
             </div>
-
-            {/* <div>
-              Email: {this.props.airdropInfo.email}
-            </div>
-            <div>
-              Facebook: {this.props.airdropInfo.facebookProfile}
-            </div>
-            <div>
-              Twitter: {this.props.airdropInfo.twitterProfile}
-            </div>
-            <div>
-              Reddit: {this.props.airdropInfo.redditProfile}
-            </div>
-            <div>
-              telegram: {this.props.airdropInfo.telegramProfile}
-            </div> */}
           </div>
         </div>
       </div>

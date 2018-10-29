@@ -7,7 +7,7 @@ import Pagination from '../../common/pagination/Pagination';
 import PropTypes from 'prop-types';
 import ReCAPTCHA from 'react-google-recaptcha';
 import React from 'react';
-import requester from '../../../initDependencies';
+import requester from '../../../requester';
 import { withRouter } from 'react-router-dom';
 
 import { RESERVATION_ACCEPTED, RESERVATION_DELETED, RESERVATION_CANCELLED } from '../../../constants/successMessages.js';
@@ -218,7 +218,7 @@ class MyGuestsPage extends React.Component {
               reservations={this.state.reservations}
               onReservationAccept={() => this.executeReCaptcha('accept')}
               onReservationCancel={() => this.executeReCaptcha('cancel')}
-              onReservationSelect={() => this.onReservationSelect}
+              onReservationSelect={this.onReservationSelect}
               onReservationReject={() => { this.openModal('showRejectReservationModal'); }} />
 
             <Pagination

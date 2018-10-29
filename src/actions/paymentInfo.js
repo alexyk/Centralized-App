@@ -6,10 +6,3 @@ export function setCurrency(currency) {
     currency
   };
 }
-
-export function setLocRate(locRate) {
-  return {
-    type: paymentInfo.SET_LOC_RATE,
-    locRate
-  };
-}

@@ -22,7 +22,7 @@ import React from 'react';
 import { arrayMove } from 'react-sortable-hoc';
 import moment from 'moment';
 import request from 'superagent';
-import requester from '../../initDependencies';
+import requester from '../../requester';
 import update from 'react-addons-update';
 
 const host = Config.getValue('apiHost');
@@ -99,6 +99,7 @@ class EditListingPage extends React.Component {
     };
 
     this.onChange = this.onChange.bind(this);
+    this.onNumberChange = this.onNumberChange.bind(this);
     this.onSelect = this.onSelect.bind(this);
     this.toggleCheckbox = this.toggleCheckbox.bind(this);
     this.updateCounter = this.updateCounter.bind(this);
@@ -240,6 +241,14 @@ class EditListingPage extends React.Component {
     this.setState({
       [event.target.name]: event.target.value,
     });
+  }
+
+  onNumberChange(event) {
+    const pattern = /^[1-9]+\d*$/;
+    const number = event.target.value;
+    if ((!number || pattern.test(number)) && number.length < 5) {
+      this.setState({ [event.target.name]: number });
+    }
   }
 
   toggleCheckbox(event) {
@@ -643,6 +652,7 @@ class EditListingPage extends React.Component {
             values={this.state}
             toggleCheckbox={this.toggleCheckbox}
             onChange={this.onChange}
+            onNumberChange={this.onNumberChange}
             updateProgress={this.updateProgress}
             routes={routes}
             prev={routes.landing}

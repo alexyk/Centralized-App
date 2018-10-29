@@ -1,36 +1,24 @@
 import '../../styles/css/components/footer/footer-component.css';
 
-import { setCurrency, setLocRate } from '../../actions/paymentInfo';
+import { setCurrency } from '../../actions/paymentInfo';
 
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import requester from '../../initDependencies';
-import { withRouter } from 'react-router-dom';
+import { Link, withRouter } from 'react-router-dom';
 
 class Footer extends React.Component {
   componentDidMount() {
-    const { currency, locRate } = this.props.paymentInfo;
+    const { currency } = this.props.paymentInfo;
     if (localStorage['currency']) setCurrency(localStorage['currency']);
     else localStorage['currency'] = currency;
-
-    if (!locRate) this.getAndSetLocRate(currency);
   }
 
   componentWillReceiveProps(nextProps) {
-    const { currency, locRate } = nextProps.paymentInfo;
-    if (!locRate || currency !== this.props.paymentInfo.currency) {
-      this.getAndSetLocRate(currency);
+    const { currency } = nextProps.paymentInfo;
+    if (currency !== this.props.paymentInfo.currency) {
       localStorage['currency'] = currency;
     }
-  }
-
-  getAndSetLocRate(currency) {
-    requester.getLocRateByCurrency(currency).then(res => {
-      res.body.then(data => {
-        this.props.dispatch(setLocRate(data[0][`price_${currency.toLowerCase()}`]));
-      });
-    });
   }
 
   render() {
@@ -45,10 +33,11 @@ class Footer extends React.Component {
                     <li>
                       <h5>LockTrip</h5>
                     </li>
-                    <li><a href="">Help</a></li>
-                    <li><a href="">Terms and Conditions</a></li>
-                    <li><a href="">Legal Information</a></li>
-                    <li><a href="">Privacy Policy</a></li>
+                    <li><Link to="/help">Help</Link></li>
+                    <li><a href="https://locktrip.com/terms.html" target="_blank" rel="noopener noreferrer">Terms and Conditions</a></li>
+                    <li><a href="https://locktrip.com/terms.html" target="_blank" rel="noopener noreferrer">Legal Information</a></li>
+                    <li><a href="https://locktrip.com/privacy.html" target="_blank" rel="noopener noreferrer">Privacy Policy</a></li>
+                    <li><Link to="/about">About Us</Link></li>
                   </ul>
                 </li>
                 <li>
@@ -56,10 +45,10 @@ class Footer extends React.Component {
                     <li>
                       <h5>Hosting</h5>
                     </li>
-                    <li><a href="">Why Host</a></li>
-                    <li><a href="">Hospitality</a></li>
-                    <li><a href="">Responsible Hosting</a></li>
-                    <li><a href="">Community Center</a></li>
+                    <li><a href="#">Why Host</a></li>
+                    <li><a href="#">Hospitality</a></li>
+                    <li><a href="#">Responsible Hosting</a></li>
+                    <li><a href="#">Community Center</a></li>
                   </ul>
                 </li>
               </ul>
@@ -68,8 +57,6 @@ class Footer extends React.Component {
               <div className="select">
                 <select className="language" defaultValue="English">
                   <option value="English">English</option>
-                  {/* <option value="Deutch">Deutch</option>
-                  <option value="Espanol">Espanol</option> */}
                 </select>
               </div>
               <div className="select">
@@ -85,8 +72,9 @@ class Footer extends React.Component {
             </div>
           </div>
           <div className="bottom-footer">
+            <span>LockTrip is owned and operated by LockChain Ltd., Bulgaria. </span>
             <span>Copyright &copy; 2018 LockTrip. </span>
-            <span>All Rights Reserved.</span>
+            <span>All Rights Reserved. </span>
           </div>
         </div>
       </footer>

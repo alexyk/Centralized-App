@@ -12,7 +12,7 @@ import { TokenTransactions } from '../../../services/blockchain/tokenTransaction
 import { connect } from 'react-redux';
 import { closeModal, openModal } from '../../../actions/modalsInfo';
 import NoEntriesMessage from '../../common/messages/NoEntriesMessage';
-import requester from '../../../initDependencies';
+import requester from '../../../requester';
 
 class WalletIndexPage extends React.Component {
   constructor(props) {
@@ -21,7 +21,8 @@ class WalletIndexPage extends React.Component {
       canProceed: false,
       recipientAddress: '',
       locAmount: 0,
-      password: ''
+      password: '',
+      latestTxHash: ''
     };
 
     this.onChange = this.onChange.bind(this);
@@ -73,7 +74,6 @@ class WalletIndexPage extends React.Component {
   }
 
   sendTokens() {
-    // console.log('amount : ' + this.state.locAmount * Math.pow(10, 18));
     this.setState({ loading: true });
     NotificationManager.info(PROCESSING_TRANSACTION, 'Transactions', LONG);
     const wei = (this.tokensToWei(this.state.locAmount.toString()));
@@ -84,13 +84,15 @@ class WalletIndexPage extends React.Component {
         this.state.password,
         this.state.recipientAddress,
         wei.toString()
-      ).then(() => {
+      ).then((transaction) => {
         NotificationManager.success(TRANSACTION_SUCCESSFUL, 'Send Tokens', LONG);
         this.setState({
           recipientAddress: '',
           locAmount: 0,
           password: '',
-          loading: false
+          loading: false,
+          canProceed: false,
+          latestTxHash: transaction.hash
         });
       }).catch(error => {
         if (error.hasOwnProperty('message')) {
@@ -123,47 +125,46 @@ class WalletIndexPage extends React.Component {
     }
 
     const etherscanUrl = `https://etherscan.io/address/${locAddress}#tokentxns`;
+    const etherscanLatestTxUrl = `${Config.getValue('ETHERS_HTTP_PROVIDER_NETWORK_BASE_URL')}/tx/${this.state.latestTxHash}`;
 
     return (
-      <div>
+      <div className="container">
         <section id="wallet-index">
-          <div className="container">
-            <div className="after-header" />
-            <div id="profile-edit-form">
-              <h2>Your Wallet</h2>
-              <div className="loc-address">
-                <label htmlFor="loc-address">Your ETH/LOC address <img src={Config.getValue('basePath') + 'images/icon-lock.png'} className="lock" alt="lock-o" /></label>
-                <input className="disable-input" id="loc-address" name="locAddress" value={locAddress} type="text" readOnly />
-              </div>
-              <div className="loc-balance">
-                <label htmlFor="loc-balance">LOC Balance</label>
-                <input className="disable-input" id="loc-balance" name="locBalance" value={locBalance} type="text" readOnly />
-              </div>
-              <div className="eth-balance">
-                <label htmlFor="eth-balance">ETH Balance</label>
-                <input className="disable-input" id="eth-balance" name="ethBalance" value={ethBalance} type="text" readOnly />
-              </div>
-              <h2>Send Tokens</h2>
-              <form onSubmit={(e) => { e.preventDefault(); this.sendTokens(); }}>
-                <div className="loc-address">
-                  <label htmlFor="recipient-loc-address">Recipient ETH/LOC address</label>
-                  <input id="recipient-loc-address" name="recipientAddress" onChange={this.onChange} value={this.state.recipientAddress} type="text" placeholder="Valid ERC-20 compliant wallet address" />
-                </div>
-                <div className="name">
-                  <label htmlFor="loc-amount">Send LOC Amount</label>
-                  <input id="loc-amount" name="locAmount" onChange={this.onChange} type="number" value={this.state.locAmount} placeholder="0.000" />
-                </div>
-                <div className="name">
-                  <label htmlFor="password">Your wallet password</label>
-                  <input id="password" name="password" onChange={this.onChange} type="password" value={this.state.password} placeholder="The password is needed to unlock your wallet for a single transaction" />
-                </div>
-                <div>
-                  {this.state.canProceed ? <button className="btn btn-primary" type="submit">Send Tokens</button> : <button className="btn btn-primary" disabled="disabled">Send Tokens</button>}
-                  &nbsp; &nbsp;
-                    <div className="button-wallet-link"><a href={etherscanUrl} target="_blank" className="wallet-link">Check your transactions</a></div>
-                </div>
-              </form>
+          <div id="profile-edit-form">
+            <h2>Your Wallet</h2>
+            <hr />
+            <div className="loc-address">
+              <label htmlFor="loc-address">Your ETH/LOC address <img src={Config.getValue('basePath') + 'images/icon-lock.png'} className="lock" alt="lock-o" /></label>
+              <input className="disable-input" id="loc-address" name="locAddress" value={locAddress} type="text" readOnly />
             </div>
+            <div className="loc-balance">
+              <label htmlFor="loc-balance">LOC Balance</label>
+              <input className="disable-input" id="loc-balance" name="locBalance" value={locBalance} type="text" readOnly />
+            </div>
+            <div className="eth-balance">
+              <label htmlFor="eth-balance">ETH Balance</label>
+              <input className="disable-input" id="eth-balance" name="ethBalance" value={ethBalance} type="text" readOnly />
+            </div>
+            <h2>Send Tokens</h2>
+            <form onSubmit={(e) => { e.preventDefault(); this.sendTokens(); }}>
+              <div className="loc-address">
+                <label htmlFor="recipient-loc-address">Recipient ETH/LOC address</label>
+                <input id="recipient-loc-address" name="recipientAddress" onChange={this.onChange} value={this.state.recipientAddress} type="text" placeholder="Valid ERC-20 compliant wallet address" />
+              </div>
+              <div className="name">
+                <label htmlFor="loc-amount">Send LOC Amount</label>
+                <input id="loc-amount" name="locAmount" onChange={this.onChange} type="number" value={this.state.locAmount} placeholder="0.000" />
+              </div>
+              <div className="name">
+                <label htmlFor="password">Your wallet password</label>
+                <input id="password" name="password" onChange={this.onChange} type="password" value={this.state.password} placeholder="The password is needed to unlock your wallet for a single transaction" />
+              </div>
+              <div>
+                {this.state.canProceed ? <button className="btn btn-primary" type="submit">Send Tokens</button> : <button className="btn btn-primary" disabled="disabled">Send Tokens</button>}
+                <div className="button-wallet-link"><a href={etherscanUrl} target="_blank" className="wallet-link">Check your transactions</a></div>
+                {this.state.latestTxHash && <div className="button-wallet-link"><a href={etherscanLatestTxUrl} target="_blank" className="wallet-link">Latest transaction status</a></div>}
+              </div>
+            </form>
           </div>
           <div className="before-footer clear-both" />
         </section>

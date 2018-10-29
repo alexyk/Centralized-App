@@ -16,24 +16,24 @@ function PopularDestinationsCarousel(props) {
     },
     {
       id: 18417,
-      query: 'Madrid',
       countryId: 3,
+      query: 'Madrid',
       image: `${Config.getValue('basePath')}images/destinations/Madrid.png`,
       searchUrl: `hotels/listings?region=18417&currency=${props.paymentInfo.currency}&startDate=${moment().add(1, 'days').format('DD/MM/YYYY')}&endDate=${moment().add(2, 'days').format('DD/MM/YYYY')}&rooms=%5B%7B"adults":2,"children":%5B%5D%7D%5D`,
     },
     {
       id: 16471,
-      query: 'Paris',
       countryId: 6,
+      query: 'Paris',
       image: `${Config.getValue('basePath')}images/destinations/Paris.png`,
       searchUrl: `hotels/listings?region=16471&currency=${props.paymentInfo.currency}&startDate=${moment().add(1, 'days').format('DD/MM/YYYY')}&endDate=${moment().add(2, 'days').format('DD/MM/YYYY')}&rooms=%5B%7B"adults":2,"children":%5B%5D%7D%5D`,
     },
     {
       id: 15375,
-      query: 'Sydney',
       countryId: 24,
+      query: 'Sydney',
       image: `${Config.getValue('basePath')}images/destinations/Sydney.png`,
-      searchUrl: `hotels/listings?region=15286&currency=${props.paymentInfo.currency}&startDate=${moment().add(1, 'days').format('DD/MM/YYYY')}&endDate=${moment().add(2, 'days').format('DD/MM/YYYY')}&rooms=%5B%7B"adults":2,"children":%5B%5D%7D%5D`,
+      searchUrl: `hotels/listings?region=15375&currency=${props.paymentInfo.currency}&startDate=${moment().add(1, 'days').format('DD/MM/YYYY')}&endDate=${moment().add(2, 'days').format('DD/MM/YYYY')}&rooms=%5B%7B"adults":2,"children":%5B%5D%7D%5D`,
     },
   ];
 

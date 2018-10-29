@@ -3,13 +3,15 @@ import { setAdults, setChildren, setDates, setRegion, setRooms, setRoomsByCountO
 
 import { CHILDREN } from '../../../constants/modals';
 import ChildrenModal from '../modals/ChildrenModal';
-import HotelsSearchBarDatePicker from './HotelsSearchBarDatePicker';
+import SearchBarDatePicker from '../../common/search/SearchBarDatePicker';
 import PropTypes from 'prop-types';
 import React from 'react';
 import Select from 'react-select';
 import { connect } from 'react-redux';
-import requester from '../../../initDependencies';
+import requester from '../../../requester';
 import { withRouter } from 'react-router-dom';
+import Datepicker from '../../common/datepicker';
+import moment from 'moment';
 
 function HotelsSearchBar(props) {
   if (props.location.pathname.indexOf('/mobile') !== -1) {
@@ -117,13 +119,9 @@ function HotelsSearchBar(props) {
           closeModal={closeChildrenModal}
           handleSubmit={handleSubmitModal}
         />
+        
         <div className="check">
-          <HotelsSearchBarDatePicker
-            id='search-bar-date-picker'
-            startDate={props.searchInfo.startDate}
-            endDate={props.searchInfo.endDate}
-            onApply={(e, picker) => props.dispatch(setDates(e, picker))}
-            nights={props.searchInfo.nights} />
+          <Datepicker minDate={moment().add(1, 'days')} enableRanges />
         </div>
 
         <div className="days-of-stay">
@@ -133,7 +131,7 @@ function HotelsSearchBar(props) {
       </div>
 
       <div className="guest-wrap guests source-panel-item">
-        <select className="guest-select" name={'rooms'} value={props.searchInfo.rooms.length} onChange={e => props.dispatch(setRoomsByCountOfRooms(e.target.value))}>
+        <select className="guest-select " name={'rooms'} value={props.searchInfo.rooms.length} onChange={e => props.dispatch(setRoomsByCountOfRooms(e.target.value))}>
           <option value="1">1 room</option>
           <option value="2">2 rooms</option>
           <option value="3">3 rooms</option>
@@ -145,7 +143,6 @@ function HotelsSearchBar(props) {
           <option value="9">9 rooms</option>
           <option value="10">10 rooms</option>
         </select>
-
         <select name={'adults'} value={props.searchInfo.adults} onChange={e => props.dispatch(setAdults(e.target.value))}>
           <option value="1">1 adult</option>
           <option value="2">2 adults</option>
@@ -158,7 +155,6 @@ function HotelsSearchBar(props) {
           <option value="9">9 adults</option>
           <option value="10">10 adults</option>
         </select>
-
         <div className="select-children" onClick={() => props.dispatch(setChildren())}>
           <div>
             {!props.searchInfo.hasChildren

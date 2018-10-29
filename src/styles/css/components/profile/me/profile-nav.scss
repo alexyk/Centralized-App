@@ -1,28 +1,33 @@
-@import '../../../vendors/include-media';
-.after-header {
-  height: 60px;
-  @include media('<=desktop') {
-    height: 20px;
+#profile-nav {
+  background-color: #223843;
+  margin-bottom: 30px;
+
+  ul.navbar-profile {
+    list-style: none;
   }
-}
-.host-step {
-  /* padding: 10px 10px 10px 20px; */
-  margin-bottom: 10px;
-  font-size: 16px;
-  display: block;
-  a {
-    padding: 10px 10px 10px 20px;
-    font-size: 16px;
-    /* font-weight: bold; */
+  
+  ul.navbar-profile>li {
+    float: left;
+    border-bottom: 3px solid transparent;
+  }
+  
+  ul.navbar-profile>li>a {
+    color: #f0f1f3;
+    /* font-size: 17px; */
+    letter-spacing: 1px;
+    text-decoration: none;
+    margin: 15px 20px 10px 20px;
     display: block;
-    &.active {
-      padding: 10px 10px 10px 20px;
-      background-color: #A2C5BF;
-      border-radius: 3px;
-      color: #FFFFFF;
-      font-weight: normal;
-      display: block;
+    &:first-child {
+      margin-left: 0;
     }
   }
+  
+  ul.navbar-profile>li>a:hover {
+    color: #d87a61;
+  }
+  
+  ul.navbar-profile>li>a.active {
+    color: #d87a61;
+  }
 }
-

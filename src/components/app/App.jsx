@@ -2,25 +2,20 @@ import '../../styles/css/main.css';
 
 import { Redirect, Route, Switch, withRouter } from 'react-router-dom';
 import { setIsLogged, setUserInfo } from '../../actions/userInfo';
+import { setCurrencyExchangeRates, setLocEurRate } from '../../actions/exchangeRatesInfo';
 
-import AccountNotificationsPage from '../profile/account/AccountNotificationsPage';
-import AirdropPage from '../profile/airdrop/AirdropPage';
 import Balance from '../external/Balance';
 import BigCalendar from 'react-big-calendar';
-import BuyLocPage from '../profile/buyloc/BuyLocPage';
-import CalendarPage from '../profile/calendar/CalendarPage';
 import { Config } from '../../config';
 import CreateListingPage from '../listingCRUD/CreateListingPage';
 import EditListingPage from '../listingCRUD/EditListingPage';
 import Footer from '../footer/Footer';
 import HomeRouterPage from '../home/HomeRouterPage';
-import HomesRouterPage from '../homes/HomesRouterPage';
 import HotelsBookingConfirmPage from '../hotels/book/HotelsBookingConfirmPage';
 import HotelsBookingPage from '../hotels/book/HotelsBookingPage';
 import HotelDetailsPage from '../hotels/details/HotelDetailsPage';
-import HotelsRouterPage from '../hotels/HotelsRouterPage';
 import MainNav from '../mainNav/MainNav';
-import NavLocalization from '../profile/NavLocalization';
+import LocalizationNav from '../profile/LocalizationNav';
 import { NotificationContainer } from 'react-notifications';
 import ProfilePage from '../profile/ProfilePage';
 import PropTypes from 'prop-types';
@@ -31,8 +26,10 @@ import WorldKuCoinCampaign from '../external/WorldKuCoinCampaign';
 import { connect } from 'react-redux';
 import moment from 'moment';
 import queryString from 'query-string';
-import requester from '../../initDependencies';
+import requester from '../../requester';
 import GooglePlaces from '../common/GooglePlaces';
+import HelpPage from '../static/HelpPage';
+import AboutUsPage from '../static/AboutUsPage';
 
 // if (process.env.NODE_ENV === 'development') {
 //   console.log(process.env.NODE_ENV);
@@ -48,9 +45,12 @@ class App extends React.Component {
     );
   }
 
-  componentWillMount() {
+  componentDidMount() {
     this.handleInternalAuthorization();
     this.handleExternalAuthorization();
+
+    this.requestExchangeRates();
+    this.requestLocEurRate();
   }
 
   isAuthenticated() {
@@ -71,16 +71,16 @@ class App extends React.Component {
             Wallet.getTokenBalance(data.locAddress).then(loc => {
               const locBalance = loc / (Math.pow(10, 18));
               const { firstName, lastName, phoneNumber, email, locAddress, gender, isEmailVerified } = data;
-
-              this.props.dispatch(setUserInfo(firstName, lastName, phoneNumber, email, locAddress, ethBalance, locBalance, gender, isEmailVerified));
+              const isAdmin = data.roles.findIndex((r) => r.name === 'ADMIN') !== -1;
+              this.props.dispatch(setUserInfo(firstName, lastName, phoneNumber, email, locAddress, ethBalance, locBalance, gender, isEmailVerified, isAdmin));
             });
           });
         } else {
           const ethBalance = 0;
           const locBalance = 0;
           const { firstName, lastName, phoneNumber, email, locAddress, gender, isEmailVerified } = data;
-
-          this.props.dispatch(setUserInfo(firstName, lastName, phoneNumber, email, locAddress, ethBalance, locBalance, gender, isEmailVerified));
+          const isAdmin = data.roles.findIndex((r) => r.name === 'ADMIN') !== -1;
+          this.props.dispatch(setUserInfo(firstName, lastName, phoneNumber, email, locAddress, ethBalance, locBalance, gender, isEmailVerified, isAdmin));
         }
       });
     });
@@ -106,6 +106,23 @@ class App extends React.Component {
     }
   }
 
+  requestExchangeRates() {
+    requester.getCurrencyRates().then(res => {
+      res.body.then(currencyExchangeRates => {
+        this.props.dispatch(setCurrencyExchangeRates(currencyExchangeRates));
+      });
+    });
+  }
+
+  requestLocEurRate() {
+    const baseCurrency = 'EUR';
+    requester.getLocRateByCurrency(baseCurrency).then(res => {
+      res.body.then(data => {
+        this.props.dispatch(setLocEurRate(Number(data[0][`price_${(baseCurrency).toLowerCase()}`])));
+      });
+    });
+  }
+
   getQueryString(queryStringParameters) {
     let queryString = '?';
     queryString += 'region=' + encodeURI(queryStringParameters.region);
@@ -127,7 +144,7 @@ class App extends React.Component {
         }
 
         {!isWebView &&
-          <NavLocalization />
+          <LocalizationNav />
         }
 
         <NotificationContainer />
@@ -135,26 +152,21 @@ class App extends React.Component {
         <Switch>
           <Route exact path="/" render={() => <HomeRouterPage />} />
           <Route exact path="/profile/listings/edit/:step/:id" render={() => !this.isAuthenticated() ? <Redirect to="/" /> : <EditListingPage />} />
-          <Route exact path="/profile/listings/calendar/:id" render={() => !this.isAuthenticated() ? <Redirect to="/" /> : <CalendarPage />} />
-          <Route exact path="/profile/account/notifications" render={() => !this.isAuthenticated() ? <Redirect to="/" /> : <AccountNotificationsPage />} />
+          {/* <Route exact path="/profile/listings/calendar/:id" render={() => !this.isAuthenticated() ? <Redirect to="/" /> : <CalendarPage />} /> */}
           <Route exact path="/users/resetPassword/:confirm" render={() => <HomeRouterPage />} />
-          <Route path="/homes" render={() => <HomesRouterPage />} />
-          <Route path="/hotels" render={() => <HotelsRouterPage />} />
+          <Route path="/homes" render={() => <HomeRouterPage />} />
+          <Route path="/hotels" render={() => <HomeRouterPage />} />
+          <Route path="/mobile" render={() => <HomeRouterPage />} />
           <Route path="/profile/listings/create" render={() => !this.isAuthenticated() ? <Redirect to="/" /> : <CreateListingPage />} />
           <Route path="/profile/" render={() => !this.isAuthenticated() ? <Redirect to="/" /> : <ProfilePage location={this.props.location} />} />
-          <Route path="/airdrop" render={() => <AirdropPage />} />
-          <Route path="/buyloc" render={() => <BuyLocPage />} />
+          <Route path="/airdrop" render={() => <ProfilePage />} />
+          <Route path="/buyloc" render={() => <ProfilePage />} />
           <Route path="/softuni" render={() => <WorldKuCoinCampaign />} />
           <Route path="/vote" render={() => <WorldKuCoinCampaign />} />
           <Route path="/campaigns/balance/check" render={() => <Balance />} />
           <Route path="/google" render={() => <GooglePlaces />} />
-
-          {/* MOBILE ONLY START */}
-          <Route path="/mobile/search" render={() => <StaticHotelsSearchPage />} />
-          <Route path="/mobile/details/:id" render={() => <HotelDetailsPage />} />
-          <Route path="/mobile/book/confirm/:id" render={() => <HotelsBookingConfirmPage />} />
-          <Route path="/mobile/book/:id" render={() => <HotelsBookingPage />} />
-          {/* MOBILE ONLY END */}
+          <Route path="/help" render={() => <HelpPage />} />
+          <Route path="/about" render={() => <AboutUsPage />} />
 
           <Route render={() => <HomeRouterPage />} />
         </Switch>
@@ -170,6 +182,7 @@ class App extends React.Component {
 App.propTypes = {
   // start Router props
   location: PropTypes.object,
+  history: PropTypes.object,
 
   // start Redux props
   dispatch: PropTypes.func,

@@ -30,11 +30,11 @@ import React from 'react';
 import { arrayMove } from 'react-sortable-hoc';
 import moment from 'moment';
 import request from 'superagent';
-import requester from '../../initDependencies';
+import requester from '../../requester';
 import update from 'react-addons-update';
 import NoEntriesMessage from '../common/messages/NoEntriesMessage';
 import { CREATE_WALLET } from '../../constants/modals';
-import NavProfile from '../profile/NavProfile';
+import ProfileNav from '../profile/ProfileNav';
 import { connect } from 'react-redux';
 import { openModal } from '../../actions/modalsInfo';
 
@@ -97,6 +97,7 @@ class CreateListingPage extends React.Component {
     };
 
     this.onChange = this.onChange.bind(this);
+    this.onNumberChange = this.onNumberChange.bind(this);
     this.onSelect = this.onSelect.bind(this);
     this.toggleCheckbox = this.toggleCheckbox.bind(this);
     this.updateCounter = this.updateCounter.bind(this);
@@ -143,6 +144,14 @@ class CreateListingPage extends React.Component {
     this.setState({
       [event.target.name]: event.target.value,
     });
+  }
+
+  onNumberChange(event) {
+    const pattern = /^[1-9]+\d*$/;
+    const number = event.target.value;
+    if ((!number || pattern.test(number)) && number.length < 5) {
+      this.setState({ [event.target.name]: number });
+    }
   }
 
   toggleCheckbox(event) {
@@ -536,7 +545,7 @@ class CreateListingPage extends React.Component {
     if (!this.props.userInfo.locAddress) {
       return (
         <React.Fragment>
-          <NavProfile />
+          <ProfileNav />
           <div className='container'>
             <NoEntriesMessage text='You need to create a wallet first'>
               <a href="" className="btn" onClick={(e) => this.openModal(CREATE_WALLET, e)} style={{ minWidth: '200px' }}>Create Wallet</a>
@@ -564,6 +573,7 @@ class CreateListingPage extends React.Component {
             values={this.state}
             toggleCheckbox={this.toggleCheckbox}
             onChange={this.onChange}
+            onNumberChange={this.onNumberChange}
             updateProgress={this.updateProgress}
             routes={routes}
             prev={routes.landing}
@@ -680,6 +690,6 @@ CreateListingPage.propTypes = {
   userInfo: PropTypes.object
 };
 
-const mapStateToProps = ({ userInfo }) => ({ userInfo });	
+const mapStateToProps = ({ userInfo }) => ({ userInfo });
 
 export default withRouter(connect(mapStateToProps)(CreateListingPage));

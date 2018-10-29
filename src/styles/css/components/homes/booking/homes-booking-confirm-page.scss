@@ -1,0 +1,55 @@
+@import '../../../vendors/include-media';
+
+#homes-booking-confirm-page-container {
+  .container {
+    display: flex;
+    justify-content: space-between;
+    @include media("<=tablet") {
+      flex-direction: column;
+    }
+    .confirm-and-pay-details {
+      width: 50%;
+      @include media("<=tablet") {
+        width: 100%;
+      }
+      .title {
+        margin-bottom: 30px;
+        @include media("<=tablet") {
+          padding-top: 10px;
+        }
+      }
+      .billing-address {
+        font-weight: 400;
+        font-size: 24px;
+        border-bottom: 1px solid #CCC;
+        padding-bottom: 10px;
+        margin: 30px 0;
+      }
+      form {
+        margin-bottom: 30px;
+        .customer-first-name,
+        .customer-last-name,
+        .customer-phone,
+        .customer-email {
+          margin-bottom: 20px;
+        }
+
+        input {
+          border: 1px solid #cfcfcf;
+          border-radius: 5px;
+          background-color: white;
+          padding: 15px;
+          width: 100%;
+        }
+        .btn {
+          margin: 30px 0;
+          width: 60%;
+          float: right;
+          @include media("<=tablet") {
+            width: 100%;
+          }
+        }
+      }
+    }
+  }
+}

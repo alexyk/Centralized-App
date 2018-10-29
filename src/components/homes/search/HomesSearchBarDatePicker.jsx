@@ -21,9 +21,6 @@ function HomesSearchBarDatePicker(props) {
 
   return (
     <div>
-      {/* <div className="input-daterange">
-        <div className="form-group has-feedback has-feedback-left"> */}
-      {/* <i className="icon icon-calendar form-control-feedback"></i> */}
       <span>Check in &amp; Check out</span>
       <DateRangePicker
         autoUpdateInput={true}
