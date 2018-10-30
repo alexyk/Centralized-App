@@ -192,15 +192,8 @@ $media-expressions: (
     @include media(">=desktop") {
       padding-top: 11px;
       margin-right: 33px;
-      min-width: 42%;
-      max-width: 42%;
     }
   }
-  // &-description {
-  //   @include media("<=phone") {
-  //     display: none;
-  //   }
-  // }
   &-pricing {
     background: $light-gray;
     display: flex;
