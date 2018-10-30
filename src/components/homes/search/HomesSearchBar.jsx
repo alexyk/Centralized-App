@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment';
 import StringUtils from '../../../services/utilities/stringUtilities.js';
-import Datepicker from '../../common/datepicker';
+// import Datepicker from '../../common/datepicker';
 import HomesSearchBarDatePicker from './HomesSearchBarDatePicker';
 
 const HomesSearchBar = (props) => (

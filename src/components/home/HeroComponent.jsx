@@ -22,8 +22,7 @@ class HeroComponent extends React.Component {
       countries: undefined,
       startDate: startDate,
       endDate: endDate,
-      guests: '2',
-      listings: undefined
+      guests: '2'
     };
 
     this.onChange = this.onChange.bind(this);
@@ -34,12 +33,6 @@ class HeroComponent extends React.Component {
   }
 
   componentDidMount() {
-    requester.getTopListings().then(res => {
-      res.body.then(data => {
-        this.setState({ listings: data.content });
-      });
-    });
-
     requester.getCountries().then(res => {
       res.body.then(data => {
         this.setState({ countries: data });

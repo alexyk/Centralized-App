@@ -3,7 +3,7 @@ import DatePicker from 'react-datepicker';
 import moment from 'moment';
 import DateInput from './date-input';
 import { connect } from 'react-redux';
-import { asyncSetStartDate, asyncSetEndDate } from '../../../actions/searchInfo.js';
+import { asyncSetStartDate, asyncSetEndDate } from '../../../actions/searchDatesInfo.js';
 
 import 'react-datepicker/dist/react-datepicker.css';
 import './style.css';
@@ -127,8 +127,8 @@ Datepicker.defaultProps = {
 };
 
 const mapStateToProps = (state) => ({
-  startDate: state.searchInfo.startDate,
-  endDate: state.searchInfo.endDate
+  startDate: state.searchDatesInfo.startDate,
+  endDate: state.searchDatesInfo.endDate
 });
 
 export default connect(mapStateToProps)(Datepicker);

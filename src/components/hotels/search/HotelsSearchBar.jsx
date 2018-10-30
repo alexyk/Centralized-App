@@ -34,8 +34,8 @@ function HotelsSearchBar(props) {
     let queryString = '?';
     queryString += 'region=' + props.searchInfo.region.id;
     queryString += '&currency=' + props.paymentInfo.currency;
-    queryString += '&startDate=' + props.searchInfo.startDate.format('DD/MM/YYYY');
-    queryString += '&endDate=' + props.searchInfo.endDate.format('DD/MM/YYYY');
+    queryString += '&startDate=' + props.searchDatesInfo.startDate.format('DD/MM/YYYY');
+    queryString += '&endDate=' + props.searchDatesInfo.endDate.format('DD/MM/YYYY');
     queryString += '&rooms=' + encodeURI(JSON.stringify(props.searchInfo.rooms));
     return queryString;
   };
@@ -126,7 +126,7 @@ function HotelsSearchBar(props) {
 
         <div className="days-of-stay">
           <span className="icon-moon"></span>
-          <span>{props.searchInfo.nights} nights</span>
+          <span>{props.searchDatesInfo.endDate.diff(props.searchDatesInfo.startDate, 'days')} nights</span>
         </div>
       </div>
 
@@ -178,14 +178,16 @@ HotelsSearchBar.propTypes = {
   // Redux props
   dispatch: PropTypes.func,
   searchInfo: PropTypes.object,
+  searchDatesInfo: PropTypes.object,
   paymentInfo: PropTypes.object,
   modalsInfo: PropTypes.object
 };
 
 function mapStateToProps(state) {
-  const { searchInfo, paymentInfo, modalsInfo } = state;
+  const { searchInfo, searchDatesInfo, paymentInfo, modalsInfo } = state;
   return {
     searchInfo,
+    searchDatesInfo,
     paymentInfo,
     modalsInfo
   };

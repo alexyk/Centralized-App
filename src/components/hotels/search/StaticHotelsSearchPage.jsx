@@ -1,6 +1,7 @@
 import '../../../styles/css/components/hotels_search/sidebar/sidebar.css';
 
 import { setRegion, setSearchInfo } from '../../../actions/searchInfo';
+import { asyncSetStartDate, asyncSetEndDate } from '../../../actions/searchDatesInfo';
 
 import { Config } from '../../../config';
 import FilterPanel from './filter/FilterPanel';
@@ -143,14 +144,15 @@ class StaticHotelsSearchPage extends React.Component {
       const region = { id: regionId };
       const page = searchParams.page;
       
-      this.props.dispatch(setSearchInfo(startDate, endDate, region, rooms, adults, hasChildren));
+      this.props.dispatch(asyncSetStartDate(startDate));
+      this.props.dispatch(asyncSetEndDate(endDate));
+      this.props.dispatch(setSearchInfo(region, rooms, adults, hasChildren));
       if (this.props.location.pathname.indexOf('/mobile') !== -1) {
         const currency = searchParams.currency;
         this.props.dispatch(setCurrency(currency));
       }
 
       this.setState({
-        nights: endDate.diff(startDate, 'days'),
         page: page ? Number(page) : 0,
       });
 
@@ -272,12 +274,6 @@ class StaticHotelsSearchPage extends React.Component {
     return false;
   }
 
-  calculateNights(startDate, endDate) {
-    const checkIn = moment(startDate, 'DD/MM/YYYY');
-    const checkOut = moment(endDate, 'DD/MM/YYYY');
-    return (checkOut > checkIn) ? checkOut.diff(checkIn, 'days') : 0;
-  }
-
   redirectToSearchPage(queryString) {
     this.unsubscribe();
     this.disconnect();
@@ -285,7 +281,6 @@ class StaticHotelsSearchPage extends React.Component {
     this.hotelInfoById = {};
     this.hotelInfo = [];
 
-    const nights = this.props.searchInfo.nights;
     this.props.history.push('/hotels/listings' + queryString);
 
     const region = this.props.searchInfo.region.id;
@@ -299,7 +294,6 @@ class StaticHotelsSearchPage extends React.Component {
       hotels: [],
       mapInfo: [],
       allElements: false,
-      nights: nights,
       stars: [false, false, false, false, false]
     }, () => {
       requester.getStaticHotels(region).then(res => {
@@ -620,6 +614,7 @@ class StaticHotelsSearchPage extends React.Component {
 
   render() {
     const { hotels, totalElements } = this.state;
+    const nights = this.props.searchDatesInfo.endDate.diff(this.props.searchDatesInfo.startDate, 'days');
 
     return (
       <div>
@@ -667,7 +662,7 @@ class StaticHotelsSearchPage extends React.Component {
                           mapInfo={this.state.mapInfo}
                           exchangeRates={this.state.exchangeRates}
                           isLogged={this.props.userInfo.isLogged}
-                          nights={this.state.nights}
+                          nights={nights}
                           loading={this.state.loading}
                         />
                       }
@@ -679,7 +674,7 @@ class StaticHotelsSearchPage extends React.Component {
                           hotels={hotels}
                           allElements={this.state.allElements}
                           exchangeRates={this.state.exchangeRates}
-                          nights={this.state.nights}
+                          nights={nights}
                           loading={this.state.loading}
                         />
                       }
@@ -714,16 +709,18 @@ StaticHotelsSearchPage.propTypes = {
   dispatch: PropTypes.func,
   paymentInfo: PropTypes.object,
   userInfo: PropTypes.object,
-  searchInfo: PropTypes.object
+  searchInfo: PropTypes.object,
+  searchDatesInfo: PropTypes.object
 };
 
 
 function mapStateToProps(state) {
-  const { paymentInfo, userInfo, searchInfo } = state;
+  const { paymentInfo, userInfo, searchInfo, searchDatesInfo } = state;
   return {
     paymentInfo,
     userInfo,
-    searchInfo
+    searchInfo,
+    searchDatesInfo
   };
 }
 

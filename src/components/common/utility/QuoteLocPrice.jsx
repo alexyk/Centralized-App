@@ -111,12 +111,7 @@ function mapStateToProps(state, ownProps) {
   const quoteLocError = locAmountsInfo.locAmounts[DEFAULT_QUOTE_LOC_ID] && locAmountsInfo.locAmounts[DEFAULT_QUOTE_LOC_ID].error;
 
   if (!locAmount) {
-    let fiatInEur;
-    if (fiat === 15) {
-      fiatInEur = fiat;
-    } else {
-      fiatInEur = exchangeRatesInfo.currencyExchangeRates && CurrencyConverter.convert(exchangeRatesInfo.currencyExchangeRates, RoomsXMLCurrency.get(), DEFAULT_CRYPTO_CURRENCY, fiat);
-    }
+    const fiatInEur = exchangeRatesInfo.currencyExchangeRates && CurrencyConverter.convert(exchangeRatesInfo.currencyExchangeRates, RoomsXMLCurrency.get(), DEFAULT_CRYPTO_CURRENCY, fiat);
 
     locAmount = (fiatInEur / exchangeRatesInfo.locEurRate).toFixed(2);
   }
