@@ -22,8 +22,6 @@ export const airdropInfo = {
 
 // searchInfo actions
 export const searchInfo = {
-  SET_START_DATE: 'SET_START_DATE',
-  SET_END_DATE: 'SET_END_DATE',
   SET_REGION: 'SET_REGION',
   SET_ROOMS_BY_COUNT_OF_ROOMS: 'SET_ROOMS_BY_COUNT_OF_ROOMS',
   SET_ROOMS: 'SET_ROOMS',
@@ -60,4 +58,10 @@ export const locPriceUpdateTimerInfo = {
 // burger menu actions
 export const burgerMenuInfo = {
   SET_SHOW_MENU: 'SET_SHOW_MENU'
+};
+
+// search dates actions
+export const searchDatesInfo = {
+  SET_START_DATE: 'SET_START_DATE',
+  SET_END_DATE: 'SET_END_DATE',
 };

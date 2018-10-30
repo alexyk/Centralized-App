@@ -80,7 +80,7 @@ $media-expressions: (
     height: 190px;
     display: flex;
     margin-right: 15px;
-    width: 30%;
+    width: 140px !important;
     @include media(">=tablet") {
       margin-right: 25px;
       width: 240px !important;
@@ -150,14 +150,6 @@ $media-expressions: (
     margin-bottom: 3px;
     font-weight: 400;
   }
-  .rating {
-    color: #898c8d;
-    margin-bottom: 10px;
-    display: flex;
-    .rating-holder {
-      margin: 0 7px;
-    }
-  }
   p {
     line-height: 1.5;
     letter-spacing: 0.04em;
@@ -200,15 +192,8 @@ $media-expressions: (
     @include media(">=desktop") {
       padding-top: 11px;
       margin-right: 33px;
-      min-width: 42%;
-      max-width: 42%;
     }
   }
-  // &-description {
-  //   @include media("<=phone") {
-  //     display: none;
-  //   }
-  // }
   &-pricing {
     background: $light-gray;
     display: flex;

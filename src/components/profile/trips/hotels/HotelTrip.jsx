@@ -34,9 +34,9 @@ class HotelTrip extends React.Component {
   }
 
   extractDatesData(trip) {
-    const startDateMoment = moment(trip.arrival_date);
-    const endDateMoment = moment(trip.arrival_date).add(trip.nights, 'days');
-
+    const startDateMoment = moment(trip.arrival_date).utc();
+    const endDateMoment = moment(trip.arrival_date).add(trip.nights, 'days').utc();
+    
     const checkIn = {
       day: startDateMoment.format('D'),
       year: startDateMoment.format('YYYY'),

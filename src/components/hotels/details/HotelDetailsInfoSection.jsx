@@ -198,7 +198,6 @@ HotelDetailsInfoSection.propTypes = {
   isLogged: PropTypes.bool,
   userInfo: PropTypes.object,
   nights: PropTypes.number,
-  onApply: PropTypes.func,
   startDate: PropTypes.object,
   endDate: PropTypes.object,
   loading: PropTypes.bool,
