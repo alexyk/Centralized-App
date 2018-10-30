@@ -80,7 +80,7 @@ $media-expressions: (
     height: 190px;
     display: flex;
     margin-right: 15px;
-    width: 30%;
+    width: 140px !important;
     @include media(">=tablet") {
       margin-right: 25px;
       width: 240px !important;
