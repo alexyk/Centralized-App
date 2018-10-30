@@ -16,8 +16,8 @@ function DashboardTripRow(props) {
   };
 
   const extractDatesData = (trip) => {
-    const startDateMoment = moment(trip.displayStartDate, 'DD MMM, YYYY');
-    const endDateMoment = moment(trip.displayEndDate, 'DD MMM, YYYY');
+    const startDateMoment = moment(trip.displayStartDate, 'DD MMM, YYYY').utc();
+    const endDateMoment = moment(trip.displayEndDate, 'DD MMM, YYYY').utc();
 
     const checkIn = {
       day: startDateMoment.format('DD'),

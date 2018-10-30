@@ -54,7 +54,7 @@ function MyGuestsTable(props) {
                 {reservation.guestEmail ? <div><span className="send-message-icon"></span><a href={`mailto:${reservation.guestEmail}`}>Send Message</a></div> : ''}
               </div>
               <div className="col-md-3">
-                <div>{moment(reservation.startDate, 'DD/MM/YYYY').format('DD MMM, YYYY')}<i aria-hidden="true" className="fa fa-long-arrow-right"></i>{moment(reservation.endDate, 'DD/MM/YYYY').format('DD MMM, YYYY')}</div>
+                <div>{moment(reservation.startDate, 'DD/MM/YYYY').utc().format('DD MMM, YYYY')}<i aria-hidden="true" className="fa fa-long-arrow-right"></i>{moment(reservation.endDate, 'DD/MM/YYYY').utc().format('DD MMM, YYYY')}</div>
                 <div>{reservation.listingName}</div>
               </div>
               <div className="col-md-2">
