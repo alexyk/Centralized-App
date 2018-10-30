@@ -59,7 +59,6 @@ class HotelDetailsPage extends React.Component {
 
     this.requestHotel = this.requestHotel.bind(this);
     this.requestHotelRooms = this.requestHotelRooms.bind(this);
-    this.requestCurrencyExchangeRates = this.requestCurrencyExchangeRates.bind(this);
     this.setSearchInfoFromURL = this.setSearchInfoFromURL.bind(this);
     this.closeLightbox = this.closeLightbox.bind(this);
     this.gotoNext = this.gotoNext.bind(this);
@@ -80,7 +79,6 @@ class HotelDetailsPage extends React.Component {
 
     this.requestHotel();
     this.requestHotelRooms();
-    this.requestCurrencyExchangeRates();
   }
 
   setSearchInfoFromURL() {
@@ -135,14 +133,6 @@ class HotelDetailsPage extends React.Component {
     }
 
     return null;
-  }
-
-  requestCurrencyExchangeRates() {
-    requester.getCurrencyRates().then(res => {
-      res.body.then(data => {
-        this.setState({ exchangeRates: data });
-      });
-    });
   }
   
   redirectToSearchPage(queryString) {
@@ -406,6 +396,8 @@ class HotelDetailsPage extends React.Component {
       ]
     };
 
+    const { searchDatesInfo, paymentInfo } = this.props;
+
     return (
       <div>
         <div className="container sm-none">
@@ -470,14 +462,13 @@ class HotelDetailsPage extends React.Component {
             </nav>
 
             <HotelDetailsInfoSection
-              nights={this.props.searchDatesInfo.endDate.diff(this.props.searchDatesInfo.startDate, 'days')}
+              nights={searchDatesInfo.endDate.diff(searchDatesInfo.startDate, 'days')}
               startDate={this.state.calendarStartDate}
               endDate={this.state.calendarEndDate}
               hotel={this.state.hotel}
               hotelRooms={this.state.hotelRooms}
-              exchangeRates={this.state.exchangeRates}
               loading={this.state.loading}
-              currencySign={this.props.paymentInfo.currencySign}
+              currencySign={paymentInfo.currencySign}
               handleBookRoom={this.handleBookRoom}
               loadingRooms={this.state.loadingRooms}
             />

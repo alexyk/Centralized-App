@@ -93,12 +93,6 @@ class StaticHotelsSearchPage extends React.Component {
   }
 
   componentDidMount() {
-    requester.getCurrencyRates().then(res => {
-      res.body.then(data => {
-        this.setState({ exchangeRates: data });
-      });
-    });
-
     const query = this.props.location.search;
     const queryParams = queryString.parse(query);
 
@@ -660,7 +654,6 @@ class StaticHotelsSearchPage extends React.Component {
                           lon={this.state.lon}
                           hotels={hotels}
                           mapInfo={this.state.mapInfo}
-                          exchangeRates={this.state.exchangeRates}
                           isLogged={this.props.userInfo.isLogged}
                           nights={nights}
                           loading={this.state.loading}
@@ -673,7 +666,6 @@ class StaticHotelsSearchPage extends React.Component {
                         : <ResultsHolder
                           hotels={hotels}
                           allElements={this.state.allElements}
-                          exchangeRates={this.state.exchangeRates}
                           nights={nights}
                           loading={this.state.loading}
                         />
