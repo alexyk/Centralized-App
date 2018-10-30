@@ -263,10 +263,10 @@ class HotelsBookingRouterPage extends React.Component {
     }
   }
 
-  requestLockOnQuoteId() {
+  requestLockOnQuoteId(paymentMethod) {
     if (this.state) {
       const quoteId = this.state.quoteId;
-      const body = { quoteId: quoteId };
+      const body = { quoteId, paymentMethod };
       return requester.markQuoteIdAsLocked(quoteId, body).then(res => res.body).then(res => {
         return new Promise((resolve, reject) => {
           if (res.success) {

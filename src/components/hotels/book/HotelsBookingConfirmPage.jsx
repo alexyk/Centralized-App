@@ -235,7 +235,7 @@ class HotelBookingConfirmPage extends React.Component {
   payWithLocSingleWithdrawer() {
     window.addEventListener('beforeunload', this.showLeavePagePromt);
 
-    this.props.requestLockOnQuoteId().then(() => {
+    this.props.requestLockOnQuoteId('privateWallet').then(() => {
       const { password } = this.state;
       const { reservation } = this.props;
       const { locAmounts } = this.props.locAmountsInfo;
