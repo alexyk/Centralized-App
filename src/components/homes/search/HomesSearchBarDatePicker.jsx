@@ -50,7 +50,6 @@ HomesSearchBarDatePicker.propTypes = {
   startDate: PropTypes.any,
   endDate: PropTypes.any,
   isInvalidDate: PropTypes.bool,
-  nights: PropTypes.number,
   onApply: PropTypes.func,
 };
 

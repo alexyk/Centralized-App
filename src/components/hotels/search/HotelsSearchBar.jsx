@@ -126,7 +126,7 @@ function HotelsSearchBar(props) {
 
         <div className="days-of-stay">
           <span className="icon-moon"></span>
-          <span>{props.searchInfo.nights} nights</span>
+          <span>{props.searchDatesInfo.endDate.diff(props.searchDatesInfo.startDate, 'days')} nights</span>
         </div>
       </div>
 

@@ -1,8 +1,6 @@
 import { searchInfo } from '../actions/actionTypes';
-import moment from 'moment';
 
 const initialState = {
-  nights: 1,
   rooms: [{ adults: '2', children: [] }],
   adults: '2',
   hasChildren: false,
@@ -35,7 +33,6 @@ export default function reducer(state = initialState, action) {
       });
     case searchInfo.SET_SEARCH_INFO:
       return Object.assign({}, state, {
-        nights: calculateNights(action.startDate, action.endDate),
         region: action.region,
         rooms: action.rooms,
         adults: action.adults,
@@ -68,10 +65,4 @@ function handleRoomsChange(countOfRooms, rooms) {
   }
 
   return cloneRooms;
-}
-
-function calculateNights(startDate, endDate) {
-  const checkIn = moment(startDate, 'DD/MM/YYYY');
-  const checkOut = moment(endDate, 'DD/MM/YYYY');
-  return (checkOut > checkIn) ? checkOut.diff(checkIn, 'days') : 0;
 }

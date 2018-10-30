@@ -14,7 +14,7 @@ export default function reducer(state = initialState, action) {
       });
     case searchDatesInfo.SET_END_DATE:
       return Object.assign({}, state, {
-        endDate: action.endDate
+        endDate: action.endDate.isAfter(state.startDate) ? action.endDate : moment(state.startDate).add(1, 'day'),
       });
     default:
       return state;

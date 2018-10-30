@@ -34,11 +34,9 @@ export function setChildren() {
   };
 }
 
-export function setSearchInfo(startDate, endDate, region, rooms, adults, hasChildren) {
+export function setSearchInfo(region, rooms, adults, hasChildren) {
   return {
     type: searchInfo.SET_SEARCH_INFO,
-    startDate,
-    endDate,
     region,
     rooms,
     adults,

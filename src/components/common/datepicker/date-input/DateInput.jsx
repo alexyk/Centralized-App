@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import './style.css';
 
 class DateInput extends React.Component {
@@ -27,5 +28,12 @@ class DateInput extends React.Component {
     );
   }
 }
+
+DateInput.propTypes = {
+  text: PropTypes.string,
+  date: PropTypes.object,
+  calendar: PropTypes.object,
+  onClick: PropTypes.func
+};
 
 export default DateInput;
