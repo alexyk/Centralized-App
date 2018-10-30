@@ -212,7 +212,7 @@ class HomeDetailsPage extends React.Component {
   render() {
     let loading, images;
 
-    if (this.state.data === null) {
+    if (this.state.data === null || this.state.calendar === null) {
       loading = true;
     } else {
       if (this.state.data.pictures !== undefined) {
@@ -220,6 +220,11 @@ class HomeDetailsPage extends React.Component {
           return { src: Config.getValue('imgHost') + x.thumbnail, index };
         });
       }
+    }
+
+
+    while (images && images.length < 3) {
+      images.push(images[0]);
     }
 
     const settings = {
