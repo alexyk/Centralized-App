@@ -16,8 +16,8 @@ const STATUS_TOOLTIP = {
 
 function HomeTrip(props) {
   const extractDatesData = (trip) => {
-    const startDateMoment = moment(trip.startDate, 'DD/MM/YYYY');
-    const endDateMoment = moment(trip.endDate, 'DD/MM/YYYY');
+    const startDateMoment = moment(trip.startDate, 'DD/MM/YYYY').utc();
+    const endDateMoment = moment(trip.endDate, 'DD/MM/YYYY').utc();
 
     const checkIn = {
       day: startDateMoment.format('D'),

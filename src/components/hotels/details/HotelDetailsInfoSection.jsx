@@ -33,15 +33,15 @@ function HotelDetailsInfoSection(props) {
   };
 
   const hangleBookNowClick = (resultIndex) => {
-    requester.getUserInfo().then(res => res.body)
-      .then(data => {
-        const { isEmailVerified } = data;
-        if (!isEmailVerified) {
-          props.dispatch(openModal(EMAIL_VERIFICATION));
-        } else {
+    // requester.getUserInfo().then(res => res.body)
+    //   .then(data => {
+    //     const { isEmailVerified } = data;
+    //     if (!isEmailVerified) {
+    //       props.dispatch(openModal(EMAIL_VERIFICATION));
+    //     } else {
           props.handleBookRoom(roomsResults.slice(resultIndex));
-        }
-      });
+      //   }
+      // });
   };
 
   const getButton = (resultIndex) => {

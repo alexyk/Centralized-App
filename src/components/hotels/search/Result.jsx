@@ -54,15 +54,22 @@ class Result extends React.Component {
       titleLength: this.getTitleLength(screenSize),
       descriptionLength: this.getDescriptionLength(screenSize),
       pictures: photoUrl ? [{ url: photoUrl }, { url: photoUrl }] : [],
-      loadedPictures: true
+      loadedPictures: true,
+      ready: false
     };
 
     this.updateWindowDimensions = _.debounce(this.updateWindowDimensions.bind(this), 500);
+    this.setReady = this.setReady;
   }
 
   componentDidMount() {
     this.updateWindowDimensions();
     window.addEventListener('resize', this.updateWindowDimensions);
+    setTimeout(this.setReady(), 10);
+  }
+
+  setReady() {
+    this.setState({ ready: true });
   }
 
   componentWillUnmount() {
@@ -163,7 +170,7 @@ class Result extends React.Component {
     const endOfSearch = search.indexOf('&filters=') !== -1 ? search.indexOf('&filters=') : search.length;
 
     return (
-      <div className="result" >
+      <div className={`${this.state.ready === true ? 'ready' : ''} result`}>
         <div className="result-images">
           {this.state.pictures && this.state.loadedPictures === true ?
             <Slider

@@ -10,8 +10,12 @@ import React from 'react';
 import { withRouter } from 'react-router-dom';
 import { isInvalidRange, getPriceForPeriod } from '../common/detailsPageUtils.js';
 import PropTypes from 'prop-types';
-
+import { initStickyElements } from '../common/detailsPageUtils.js';
 class HomeDetailsBookingPanel extends React.Component {
+  componentDidMount() {
+
+    initStickyElements();
+  }
   render() {
     const { currencyExchangeRates } = this.props.exchangeRatesInfo;
     if (!currencyExchangeRates || !this.props.calendar) {

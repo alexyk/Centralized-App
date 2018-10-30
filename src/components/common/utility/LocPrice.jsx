@@ -70,11 +70,7 @@ class LocPrice extends PureComponent {
     }
 
     return (
-      <span>
-        {bracket && '('}
-        LOC {locAmount && locAmount}
-        {bracket && ')'}
-      </span>
+      <span>{bracket && '('}LOC {locAmount && locAmount}{bracket && ')'}</span>
     );
   }
 }
