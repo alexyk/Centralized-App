@@ -309,8 +309,8 @@ class HomeDetailsPage extends React.Component {
                   </ul>
                 </div>
                 <div className="share-box">
-                  <p><img alt="share" src={`${Config.getValue("basePath")}/images/icon-share.png`} /> Share</p>
-                  <p><img alt="save" src={`${Config.getValue("basePath")}/images/icon-heart.png`} /> Save</p>
+                  <p><img alt="share" src={`${Config.getValue('basePath')}/images/icon-share.png`} /> Share</p>
+                  <p><img alt="save" src={`${Config.getValue('basePath')}/images/icon-heart.png`} /> Save</p>
                 </div>
                 <div className="contact-box">
                   <button onClick={this.openModal}>Contact Host</button>
