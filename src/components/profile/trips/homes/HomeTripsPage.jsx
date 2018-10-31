@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Link } from 'react-router-dom';
 import { NotificationManager } from 'react-notifications';
 import ReCAPTCHA from 'react-google-recaptcha';
 

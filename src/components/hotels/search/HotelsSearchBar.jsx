@@ -1,9 +1,8 @@
 import { closeModal, openModal } from '../../../actions/modalsInfo.js';
-import { setAdults, setChildren, setDates, setRegion, setRooms, setRoomsByCountOfRooms } from '../../../actions/searchInfo';
+import { setAdults, setChildren, setRegion, setRooms, setRoomsByCountOfRooms } from '../../../actions/searchInfo';
 
 import { CHILDREN } from '../../../constants/modals';
 import ChildrenModal from '../modals/ChildrenModal';
-import SearchBarDatePicker from '../../common/search/SearchBarDatePicker';
 import PropTypes from 'prop-types';
 import React from 'react';
 import Select from 'react-select';
