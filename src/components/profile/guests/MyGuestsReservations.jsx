@@ -1,12 +1,7 @@
-import '../../../styles/css/components/profile/guests/homes-guests-table.css';
-
-import { Config } from '../../../config';
-import HotelIcon from '../../../styles/images/icon-hotel.png';
-import { Link } from 'react-router-dom';
-import ProfileFlexContainer from '../flexContainer/ProfileFlexContainer';
-import PropTypes from 'prop-types';
 import React from 'react';
+import PropTypes from 'prop-types';
 import moment from 'moment';
+import ProfileFlexContainer from '../flexContainer/ProfileFlexContainer';
 
 function MyGuestsReservations(props) {
   const extractDatesData = (reservation) => {
@@ -37,7 +32,6 @@ function MyGuestsReservations(props) {
 
   const dates = extractDatesData(props.reservation);
   const { id, userImage, guestName, guestEmail, guestPhone, guestLocAddress, listingName, currencyCode, price, accepted } = props.reservation;
-  console.log(props.reservation);
 
   return (
     <ProfileFlexContainer styleClass={`flex-container-row ${props.styleClass}`}>
@@ -48,12 +42,12 @@ function MyGuestsReservations(props) {
           }
         </div>
         <div className="flex-row-child guests-guest">
-          <img className="icon" src={HotelIcon} alt="hotel" />
           <div className="content-row">
-            <div className="hostName">{guestName}</div>
+            <div className="host-name">{guestName}</div>
             <div className="email">{guestEmail}</div>
-            <div className="phoneNumber">{guestPhone}</div>
-            {guestEmail ? <div><span className="send-message-icon"></span><a href={`mailto:${guestEmail}`}>Send Message</a></div> : ''}
+            <div className="phone-number">{guestPhone}</div>
+            {guestLocAddress ? <div className="loc-address"><a href={`https://etherscan.io/address/${guestLocAddress}`} target="_blank">Loc Address</a></div> : ''}
+            {guestEmail ? <div className="send-message"><span className="send-message-icon"></span><a href={`mailto:${guestEmail}`}>Send Message</a></div> : ''}
           </div>
         </div>
       </div>
@@ -61,20 +55,23 @@ function MyGuestsReservations(props) {
         <div className="flex-row-child guests-date-location">
           <i className="fa fa-info-circle icon" />
           <div className="content-row">
-            <div><span className="date-in-day">{dates.checkIn.day}</span> {dates.checkIn.month}, {dates.checkIn.year} <i aria-hidden="true" className="fa fa-long-arrow-right" /> <span className="date-out-day">{dates.checkOut.day}</span> {dates.checkOut.month}, {dates.checkOut.year}</div>
-            <div className="trips-location-link content-row"><u>{listingName}</u></div>
+            <div className="dates"><span className="date-in-day">{dates.checkIn.day}</span> {dates.checkIn.month}, {dates.checkIn.year} <i aria-hidden="true" className="fa fa-long-arrow-right" /> <span className="date-out-day">{dates.checkOut.day}</span> {dates.checkOut.month}, {dates.checkOut.year}</div>
+            <div className="trips-location-link content-row">{listingName}</div>
           </div>
         </div>
         <div className="flex-row-child guests-price">
-          <span className="icon-calendar icon" />
+          <i className="fa fa-money icon"></i>
           <div className="content-row">
             <div>{getCurrencySign(currencyCode)} {price} total</div>
           </div>
         </div>
         <div className="flex-row-child guests-actions">
-          {!accepted && <div><button onClick={() => { props.onReservationSelect(id); props.onReservationAccept(); }}>Accept Reservation</button></div>}
-          {!accepted && <div><button onClick={() => { props.onReservationSelect(id); props.onReservationReject(); }}>Delete Reservation</button></div>}
-          {accepted && <div><button onClick={() => { props.onReservationSelect(id); props.onReservationCancel(); }}>Cancel Reservation</button></div>}
+          <i className="fa fa-bolt icon" />
+          <div className="content-row">
+            {!accepted && <button onClick={() => { props.onReservationSelect(id); props.onReservationAccept(); }}>Accept Reservation</button>}
+            {!accepted && <button onClick={() => { props.onReservationSelect(id); props.onReservationReject(); }}>Delete Reservation</button>}
+            {accepted && <button onClick={() => { props.onReservationSelect(id); props.onReservationCancel(); }}>Cancel Reservation</button>}
+          </div>
         </div>
         <div className="flex-row-child guests-status">
           {accepted ? 'Accepted' : 'Pending'}

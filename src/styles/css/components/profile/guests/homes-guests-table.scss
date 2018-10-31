@@ -1,9 +1,9 @@
 $breakpoints: (
-	'xs-phone': 320px,
-	'phone': 490px,
-	'tablet': 768px,
-	'desktop': 1024px,
-	'widescreen': 1200px
+  'xs-phone': 320px,
+  'phone': 490px,
+  'tablet': 768px,
+  'desktop': 1024px,
+  'widescreen': 1200px
 );
 
 @import '../../../vendors/include-media';
@@ -24,6 +24,7 @@ $breakpoints: (
     }
     .guests-guest {
       width: 75%;
+      word-break: break-all;
       .send-message-icon {
         background: url(../../../../images/icon-mail.png) center center;
         display: inline-block;
@@ -31,13 +32,26 @@ $breakpoints: (
         width: 23px;
         margin-right: 5px;
       }
-      .hostName {
-        font-weight: 400;
+      .host-name,
+      .email,
+      .phone-number,
+      .loc-address {
         margin-bottom: 3%;
+        a:hover {
+          color: #e98b73;
+        }
       }
-      .email, .phoneNumber {
+      .host-name {
+        font-weight: 400;
+      }
+      .email,
+      .phone-number {
         font-size: 19px;
-        margin-bottom: 3%;
+      }
+      .send-message {
+        a:hover {
+          color: #e98b73;
+        }
       }
     }
   }
@@ -47,6 +61,9 @@ $breakpoints: (
     .guests-date-location {
       width: 45%;
       @include checkInCheckoutDates();
+      .dates {
+        margin-bottom: 10px;
+      }
     }
     .guests-price {
       width: 20%;
@@ -56,7 +73,7 @@ $breakpoints: (
       button {
         padding-bottom: 10px;
         padding-left: 0;
-        color: #E98B73;
+        color: #e98b73;
         background: none;
         border: none;
         outline: none;
@@ -94,18 +111,23 @@ $breakpoints: (
     .tablet-col-2 {
       width: 70%;
       flex-wrap: wrap;
-      @include icon();
       .guests-date-location,
       .guests-price,
       .guests-actions {
         margin-bottom: 5%;
       }
-      .guests-date-location,
+      .guests-date-location {
+        @include rowWithIconInMobile(center, 70%);
+      }
       .guests-price {
-        @include rowWithIconInMobile(left, 50%);
+        @include rowWithIconInMobile(center, 30%);
       }
       .guests-actions {
-        @include rowWithIconInMobile(left, 100%);
+        @include rowWithIconInMobile(center, 100%);
+        .content-row {
+          display: inline-flex;
+          justify-content: space-around;
+        }
       }
       .guests-status {
         width: 50%;
@@ -113,7 +135,6 @@ $breakpoints: (
         @include statusRowInMobile();
       }
     }
-
   }
 
   @include media("<=tablet") {
@@ -133,9 +154,6 @@ $breakpoints: (
         @include rowWithIconInMobile(center, 100%);
       }
       .guests-price {
-        @include rowWithIconInMobile(center, 100%);
-      }
-      .guests-actions {
         @include rowWithIconInMobile(center, 100%);
       }
       .guests-status {
@@ -163,6 +181,13 @@ $breakpoints: (
     .tablet-col-2 {
       display: block;
       width: 100%;
+      .guests-date-location,
+      .guests-price,
+      .guests-actions {
+        .icon {
+          display: none;
+        }
+      }
       .guests-status {
         @include statusRowInMobile();
       }
@@ -177,5 +202,5 @@ $breakpoints: (
       margin-bottom: 10%;
       padding: 2%;
     }
-  } 
+  }
 }

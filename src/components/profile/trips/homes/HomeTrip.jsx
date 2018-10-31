@@ -1,7 +1,6 @@
 import '../../../../styles/css/components/profile/trips/hotel-trips-table.css';
 
 import { Config } from '../../../../config';
-import HotelIcon from '../../../../styles/images/icon-hotel.png';
 import { Link } from 'react-router-dom';
 import ProfileFlexContainer from '../../flexContainer/ProfileFlexContainer';
 import PropTypes from 'prop-types';
@@ -58,7 +57,6 @@ function HomeTrip(props) {
             }
           </div>
           <div className="flex-row-child trips-host">
-            <img className="icon" src={HotelIcon} alt="hotel" />
             <div className="content-row">
               <div className="hostName">{getHostName(hostName)}</div>
               <div className="phoneNumber">{hostPhone}</div>
@@ -68,7 +66,7 @@ function HomeTrip(props) {
         <div className="tablet-col-2">
           <div className="flex-row-child trips-location">
             <i className="fa fa-info-circle icon" />
-            <Link className="trips-location-link content-row" to={`/homes/listings/${listingId}`}><u>{listingName}</u></Link>
+            <Link className="trips-location-link content-row" to={`/homes/listings/${listingId}`}>{listingName}</Link>
           </div>
           <div className="flex-row-child trips-dates">
             <span className="icon-calendar icon" />
@@ -77,6 +75,9 @@ function HomeTrip(props) {
             </div>
           </div>
           <div className="flex-row-child trips-actions">
+            {!accepted &&
+              <i className="fa fa-bolt icon" />
+            }
             <div className="content-row">
               {!accepted &&
                 <button type="submit" onClick={e => { e.preventDefault(); props.onTripSelect(id); props.handleCancelReservation(); }}>Cancel Trip</button>

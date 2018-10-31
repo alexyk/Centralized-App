@@ -201,6 +201,13 @@ $breakpoints: (
     .tablet-col-2 {
       display: block;
       width: 100%;
+      .trips-location,
+      .trips-dates,
+      .trips-actions {
+        .icon {
+          display: none;
+        }
+      }
       .trips-status {
         @include statusRowInMobile();
       }
