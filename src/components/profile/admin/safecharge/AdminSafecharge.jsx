@@ -47,7 +47,7 @@ class AdminSafecharge extends Component {
   }
 
   render() {
-    const { isSafechargeEnabled } = this.props.configVars[SAFECHARGE_VAR] == 'true';
+    const isSafechargeEnabled = this.props.configVars[SAFECHARGE_VAR] === 'true';
   
     return (
       <div className="safecharge">
