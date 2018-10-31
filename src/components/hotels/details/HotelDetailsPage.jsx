@@ -16,7 +16,6 @@ import { connect } from 'react-redux';
 import moment from 'moment';
 import { parse } from 'query-string';
 import requester from '../../../requester';
-import { setCurrency } from '../../../actions/paymentInfo';
 import { setSearchInfo } from '../../../actions/searchInfo';
 import { asyncSetStartDate, asyncSetEndDate } from '../../../actions/searchDatesInfo';
 import { withRouter } from 'react-router-dom';
@@ -24,7 +23,7 @@ import queryString from 'query-string';
 
 import { CHECKING_ROOM_AVAILABILITY, SIMILAR_ROOM_GIVEN } from '../../../constants/infoMessages.js';
 import { ROOM_IS_NO_LONGER_AVAILABLE } from '../../../constants/errorMessages.js';
-import { INVALID_SEARCH_DATE, ALL_ROOMS_TAKEN } from '../../../constants/warningMessages.js';
+import { ALL_ROOMS_TAKEN } from '../../../constants/warningMessages.js';
 import { LONG } from '../../../constants/notificationDisplayTimes.js';
 
 class HotelDetailsPage extends React.Component {

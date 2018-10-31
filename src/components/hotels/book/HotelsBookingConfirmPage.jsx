@@ -19,7 +19,6 @@ import LocPrice from '../../common/utility/LocPrice';
 import QuoteLocPrice from '../../common/utility/QuoteLocPrice';
 import LocPriceUpdateTimer from '../../common/utility/LocPriceUpdateTimer';
 import { closeModal, openModal } from '../../../actions/modalsInfo.js';
-import { setCurrency } from '../../../actions/paymentInfo';
 import { setLocRateFiatAmount } from '../../../actions/exchangeRatesInfo.js';
 import RecoverWallerPassword from '../../common/utility/RecoverWallerPassword';
 import { Websocket } from '../../../services/socket/exchangerWebsocket';
@@ -461,7 +460,6 @@ class HotelBookingConfirmPage extends React.Component {
     const { userConfirmedPaymentWithLOC, password, isQuoteStopped } = this.state;
     const hasLocAddress = !!this.props.userInfo.locAddress;
     const { currencyExchangeRates } = this.props.exchangeRatesInfo;
-    const isMobile = this.props.location.pathname.indexOf('/mobile') !== -1;
 
     const booking = reservation && reservation.booking.hotelBooking;
     const { currency, currencySign } = this.props.paymentInfo;

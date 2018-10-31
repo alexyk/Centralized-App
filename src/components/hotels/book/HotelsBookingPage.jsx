@@ -9,12 +9,10 @@ import React from 'react';
 import { connect } from 'react-redux';
 import moment from 'moment';
 import queryString from 'query-string';
-import { setCurrency } from '../../../actions/paymentInfo';
 import { withRouter } from 'react-router-dom';
 import BookingSteps from '../../common/utility/BookingSteps';
 import { RoomsXMLCurrency } from '../../../services/utilities/roomsXMLCurrency';
 import LocPrice from '../../common/utility/LocPrice';
-import validator from 'validator';
 import xregexp from 'xregexp';
 
 class HotelsBookingPage extends React.Component {

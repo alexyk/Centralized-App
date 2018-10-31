@@ -1,5 +1,5 @@
 import HotelDetailsReviewBox from './HotelDetailsReviewBox';
-import { LOGIN, EMAIL_VERIFICATION } from '../../../constants/modals.js';
+import { LOGIN } from '../../../constants/modals.js';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
@@ -8,7 +8,6 @@ import { withRouter } from 'react-router-dom';
 import { CurrencyConverter } from '../../../services/utilities/currencyConverter';
 import { RoomsXMLCurrency } from '../../../services/utilities/roomsXMLCurrency';
 import Facilities from './Facilities';
-import requester from '../../../requester';
 import LocPrice from '../../common/utility/LocPrice';
 import Rating from '../../common/rating';
 
@@ -22,15 +21,15 @@ function HotelDetailsInfoSection(props) {
     return total;
   };
 
-  const calculateStars = (ratingNumber) => {
-    let starsElements = [];
-    let rating = Math.round(ratingNumber);
-    for (let i = 0; i < rating; i++) {
-      starsElements.push(<span key={i} className="full-star"></span>);
-    }
+  // const calculateStars = (ratingNumber) => {
+  //   let starsElements = [];
+  //   let rating = Math.round(ratingNumber);
+  //   for (let i = 0; i < rating; i++) {
+  //     starsElements.push(<span key={i} className="full-star"></span>);
+  //   }
 
-    return starsElements;
-  };
+  //   return starsElements;
+  // };
 
   const hangleBookNowClick = (resultIndex) => {
     // requester.getUserInfo().then(res => res.body)
@@ -39,9 +38,9 @@ function HotelDetailsInfoSection(props) {
     //     if (!isEmailVerified) {
     //       props.dispatch(openModal(EMAIL_VERIFICATION));
     //     } else {
-          props.handleBookRoom(roomsResults.slice(resultIndex));
-      //   }
-      // });
+    props.handleBookRoom(roomsResults.slice(resultIndex));
+    //   }
+    // });
   };
 
   const getButton = (resultIndex) => {
