@@ -16,6 +16,30 @@ class PopularItem extends Component {
     return false;
   }
 
+  getValidHomePictures(pictures) {
+    if (!pictures) {
+      pictures = [];
+    }
+
+    if (pictures.length < 1) {
+      pictures.push({ thumbnail: 'listings/images/default.png' });
+    }
+
+    return pictures.map(x => { return { thumbnail: Config.getValue('imgHost') + x.thumbnail }; });
+  }
+
+  getValidHotelPictures(pictures) {
+    if (!pictures) {
+      pictures = [];
+    }
+
+    if (pictures.length < 1) {
+      pictures.push({ url: 'listings/images/default.png' });
+    }
+
+    return pictures.map(x => { return { thumbnail: Config.getValue('imgHost') + x.url }; });
+  }
+
   render() {
     const { item, itemType, itemLink } = this.props;
     let rating;
@@ -27,10 +51,10 @@ class PopularItem extends Component {
 
     if (itemType === 'hotels') {
       rating = item.stars;
-      pictures = pictures.map(x => { return { thumbnail: Config.getValue('imgHost') + x.url }; });
+      pictures = this.getValidHotelPictures(pictures);
     } else if (itemType === 'homes') {
       rating = item.averageRating;
-      pictures = pictures.map(x => { return { thumbnail: Config.getValue('imgHost') + x.thumbnail }; });
+      pictures = this.getValidHomePictures(pictures);
     }
 
     const SlickButton = ({ currentSlide, slideCount, ...arrowProps }) => {
