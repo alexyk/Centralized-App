@@ -3,10 +3,6 @@ import PropTypes from 'prop-types';
 import './style.css';
 
 class DateInput extends React.Component {
-  constructor(props) {
-    super(props);
-  }
-
   render() {
     const { text, date } = this.props;
     const openClass = (this.props.calendar && this.props.calendar.state.open) ? 'opened' : 'closed';

@@ -5,7 +5,6 @@ import { CANCELLATION_NOT_POSSIBLE } from '../../../../constants/warningMessages
 import { Config } from '../../../../config';
 import HotelTripsList from './HotelTripsList';
 import { LONG } from '../../../../constants/notificationDisplayTimes.js';
-import { Link } from 'react-router-dom';
 import { NotificationManager } from 'react-notifications';
 import { PASSWORD_PROMPT } from '../../../../constants/modals.js';
 import Pagination from '../../../common/pagination/Pagination';

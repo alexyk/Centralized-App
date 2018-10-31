@@ -201,7 +201,7 @@ class HotelTripDetails extends React.Component {
           </div>
           <iframe className="address-map no-print" title="location" src={`https://maps.google.com/maps?q=${bookingData.latitude},${bookingData.longitude}&z=15&output=embed`} frameBorder="0" />
           <div className="static-map-container">
-            <img className="static-map-address" src={`https://maps.googleapis.com/maps/api/staticmap?center=${bookingData.latitude},${bookingData.longitude}&zoom=13&size=640x480&markers=${bookingData.latitude},${bookingData.longitude}&key=AIzaSyBLMYRyzRm83mQIUj3hsO-UVz8-yzfAvmU`} />
+            <img className="static-map-address" src={`https://maps.googleapis.com/maps/api/staticmap?center=${bookingData.latitude},${bookingData.longitude}&zoom=13&size=640x480&markers=${bookingData.latitude},${bookingData.longitude}&key=AIzaSyBLMYRyzRm83mQIUj3hsO-UVz8-yzfAvmU`} alt="static-map-address" />
           </div>
           <hr className="no-print" />
           <div className="with-padding">
