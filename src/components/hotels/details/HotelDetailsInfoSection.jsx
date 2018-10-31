@@ -131,11 +131,13 @@ function HotelDetailsInfoSection(props) {
             }
             <div className="clearfix" />
 
-            <div id="rooms">
-              <h2>Available Rooms</h2>
-              {props.loadingRooms
-                ? <div className="loader"></div>
-                : <div>{roomsResults && roomsResults.map((results, resultIndex) => {
+            {props.loadingRooms
+              ? <div className="loader"></div>
+              :
+              roomsResults && roomsResults.length > 0 &&
+              <div id="rooms">
+                <h2>Available Rooms</h2>
+                <div>{roomsResults.map((results, resultIndex) => {
                   return (
                     <div key={resultIndex} className="row room-group">
                       <div className="col col-md-6 parent vertical-block-center">
@@ -172,8 +174,8 @@ function HotelDetailsInfoSection(props) {
                   );
                 })}
                 </div>
-              }
-            </div>
+              </div>
+            }
             <div className="clearfix" />
 
             <div id="map">
