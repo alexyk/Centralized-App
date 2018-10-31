@@ -1,13 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Link } from 'react-router-dom';
 import { NotificationManager } from 'react-notifications';
 import ReCAPTCHA from 'react-google-recaptcha';
 
 import { Config } from '../../../../config';
 import CancellationModal from '../../../common/modals/CancellationModal';
 import Pagination from '../../../common/pagination/Pagination';
-import requester from '../../../../initDependencies';
+import requester from '../../../../requester';
 import HomeTripsList from './HomeTripsList';
 
 import { withRouter } from 'react-router-dom';
@@ -168,10 +167,6 @@ class HomeTripsPage extends React.Component {
               currentPage={this.state.currentPage}
               totalElements={this.state.totalTrips}
             />
-
-            <div className="my-listings">
-              <Link className="btn btn-primary create-listing" to="#">Print this page</Link>
-            </div>
           </div>
         </section>
       </div>

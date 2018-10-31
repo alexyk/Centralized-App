@@ -4,13 +4,13 @@ import { NavLink, withRouter } from 'react-router-dom';
 
 import AdminNav from '../AdminNav';
 import ListItem from './ListItem';
-import NoEntriesMessage from '../../common/NoEntriesMessage';
+import NoEntriesMessage from '../../../common/messages/NoEntriesMessage';
 import { NotificationManager } from 'react-notifications';
 import Pagination from '../../../common/pagination/Pagination';
 import PropTypes from 'prop-types';
 import React from 'react';
 import queryString from 'query-string';
-import requester from '../../../../initDependencies';
+import requester from '../../../../requester';
 
 class VerifiedList extends React.Component {
   constructor(props) {

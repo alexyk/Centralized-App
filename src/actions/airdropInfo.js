@@ -1,6 +1,6 @@
 import {airdropInfo} from './actionTypes';
 
-export function setAirdropInfo(email, facebookProfile, telegramProfile, twitterProfile, redditProfile, refLink, participates, isVerifyEmail,referralCount,isCampaignSuccessfullyCompleted, voteUrl) {
+export function setAirdropInfo(email, facebookProfile, telegramProfile, twitterProfile, redditProfile, refLink, participates, isVerifyEmail, referralCount, isCampaignSuccessfullyCompleted, voteUrl, finalizedStatus) {
   return {
     type: airdropInfo.SET_AIRDROP_INFO,
     email,
@@ -13,7 +13,8 @@ export function setAirdropInfo(email, facebookProfile, telegramProfile, twitterP
     isVerifyEmail,
     referralCount,
     isCampaignSuccessfullyCompleted,
-    voteUrl
+    voteUrl,
+    finalizedStatus
   };
 }
 

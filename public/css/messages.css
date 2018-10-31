@@ -1,50 +1,13 @@
-.message-box {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: #FFFFFF;
-  margin: 20px;
-  text-align: center;
-  border: 1px solid #CCCCCC;
-  border-radius: 3px;
-}
-.message-box .message-body {
-  display: flex;
-  width: 100%;
-  justify-content: center;
-  align-items: center;
-  cursor: pointer;
-  padding: 15px 10px;
-}
-.message-box .message-content {
-  text-align: justify;
-}
-.message-box .message-content p {
-  margin: 0;
-}
-.message-box .user-image span img {
-  border-radius: 50%;
-  width: 55px;
-  height: 55px;
-  margin: 5px 0;
-}
-.message-box .read-flag {
-  cursor: pointer;
-}
-@media screen and (max-width: 768px) {
-  .message-box {
-    flex-direction: column;
-  }
-}
-.unread-messages-box {
+/* .unread-messages-box {
   background: url('../images/mail-unread.png');
   width: 36px;
   height: 26px;
   position: relative;
+  top: -5px;
 }
 .unread-messages-box span {
   font-size: 10px;
-  top: -2px;
+  top: 2px;
   left: 26px;
   position: absolute;
   color: white;
@@ -54,4 +17,5 @@
   background: url('../images/not-mail-unread.png');
   width: 29px;
   height: 21px;
-}
+  top: 0px;
+} */

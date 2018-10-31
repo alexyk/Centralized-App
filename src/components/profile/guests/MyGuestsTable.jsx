@@ -6,19 +6,39 @@ import NoEntriesMessage from '../common/NoEntriesMessage';
 import MyGuestsReservations from './MyGuestsReservations';
 
 function MyGuestsTable(props) {
-  const renderReservations = () => {
-    if (!props.reservations) {
-      return;
-    }
 
-    if (props.reservations.length === 0) {
-      return (
-        <NoEntriesMessage text="There are no reservation requests. If someone requests to book your property, it will appear here." />
-      );
-    }
+  if (!props.reservations) {
+    return;
+  }
 
+  if (props.reservations.length === 0) {
     return (
-      props.reservations.map(reservation => {
+      <NoEntriesMessage text="There are no reservation requests. If someone requests to book your property, it will appear here." />
+    );
+  }
+
+  return (
+    <React.Fragment>
+      <div className="table-header bold">
+        <div className="col-md-1">
+        </div>
+        <div className="col-md-2">
+          <span>Guests</span>
+        </div>
+        <div className="col-md-3">
+          <span>Dates &amp; Location</span>
+        </div>
+        <div className="col-md-2">
+          <span>Price</span>
+        </div>
+        <div className="col-md-2">
+          <span>Actions</span>
+        </div>
+        <div className="col-md-2">
+          <span>Status</span>
+        </div>
+      </div>
+      {props.reservations.map(reservation => {
         return (
           <Fragment key={reservation.id}>
             <div className="row reservation-box">
@@ -62,33 +82,8 @@ function MyGuestsTable(props) {
             /> */}
           </Fragment>
         );
-      })
-    );
-  };
-
-  return (
-    <div className="container">
-      <div className="table-header bold">
-        <div className="col-md-1">
-        </div>
-        <div className="col-md-2">
-          <span>Guests</span>
-        </div>
-        <div className="col-md-3">
-          <span>Dates &amp; Location</span>
-        </div>
-        <div className="col-md-2">
-          <span>Price</span>
-        </div>
-        <div className="col-md-2">
-          <span>Actions</span>
-        </div>
-        <div className="col-md-2">
-          <span>Status</span>
-        </div>
-      </div>
-      {renderReservations()}
-    </div>
+      })}
+    </React.Fragment>
   );
 }
 

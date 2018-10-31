@@ -7,9 +7,6 @@ export const userInfo = {
 // paymentInfo actions
 export const paymentInfo = {
   SET_CURRENCY: 'SET_CURRENCY',
-  SET_LOC_RATE: 'SET_LOC_RATE',
-  SET_LOC_RATE_IN_EUR: 'SET_LOC_RATE_IN_EUR',
-  SET_IS_BOOKING_CONFIRM_PAGE: 'SET_IS_BOOKING_CONFIRM_PAGE',
 };
 
 // paymentInfo actions
@@ -25,7 +22,6 @@ export const airdropInfo = {
 
 // searchInfo actions
 export const searchInfo = {
-  SET_DATES: 'SET_DATES',
   SET_REGION: 'SET_REGION',
   SET_ROOMS_BY_COUNT_OF_ROOMS: 'SET_ROOMS_BY_COUNT_OF_ROOMS',
   SET_ROOMS: 'SET_ROOMS',
@@ -34,7 +30,38 @@ export const searchInfo = {
   SET_SEARCH_INFO: 'SET_SEARCH_INFO'
 };
 
-// bestPrice actions
-export const bookingBestPrice = {
-  SET_BEST_LOC_PRICE: 'SET_BEST_LOC_PRICE',
+// socket actions
+export const exchangerSocketInfo = {
+  SET_LOC_PRICE_WEBSOCKET_CONNECTION: 'SET_LOC_PRICE_WEBSOCKET_CONNECTION'
+};
+
+// locAmounts actions
+export const locAmountsInfo = {
+  UPDATE_LOC_AMOUNTS: 'UPDATE_LOC_AMOUNTS',
+  REMOVE_LOC_AMOUNT: 'REMOVE_LOC_AMOUNT',
+  CLEAR_LOC_AMOUNTS: 'CLEAR_LOC_AMOUNTS'
+};
+
+// currencies exchangeRates actions
+export const exchangeRatesInfo = {
+  SET_CURRENCY_EXCHANGE_RATES: 'SET_CURRENCY_EXCHANGE_RATES',
+  SET_LOC_EUR_RATE: 'SET_LOC_EUR_RATE',
+  SET_LOC_RATE_FIAT_AMOUNT: 'SET_LOC_RATE_FIAT_AMOUNT'
+};
+
+export const locPriceUpdateTimerInfo = {
+  SET_INITIAL_SECONDS: 'SET_INITIAL_SECONDS',
+  SET_SECONDS: 'SET_SECONDS',
+  RESET: 'RESET'
+};
+
+// burger menu actions
+export const burgerMenuInfo = {
+  SET_SHOW_MENU: 'SET_SHOW_MENU'
+};
+
+// search dates actions
+export const searchDatesInfo = {
+  SET_START_DATE: 'SET_START_DATE',
+  SET_END_DATE: 'SET_END_DATE',
 };

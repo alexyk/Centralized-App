@@ -1,6 +1,6 @@
 import '../../../styles/css/components/modals/modal.css';
 
-import { CREATE_WALLET, REGISTER } from '../../../constants/modals.js';
+import { REGISTER } from '../../../constants/modals.js';
 import {
   EMAIL_ALREADY_EXISTS,
   INVALID_EMAIL,
@@ -17,10 +17,11 @@ import { NotificationManager } from 'react-notifications';
 import PropTypes from 'prop-types';
 import React from 'react';
 import StringUtils from '../../../services/utilities/stringUtilities.js';
-import requester from '../../../initDependencies';
+import requester from '../../../requester';
 import validator from 'validator';
 
 function RegisterModal(props) {
+
   const openWalletInfo = () => {
     requester.getEmailFreeResponse(props.signUpEmail).then(res => {
       res.body.then(data => {
@@ -44,15 +45,16 @@ function RegisterModal(props) {
         } else if (!props.signUpPassword.match('^([^\\s]*[a-zA-Z]+.*?[0-9]+[^\\s]*|[^\\s]*[0-9]+.*?[a-zA-Z]+[^\\s]*)$')) {
           NotificationManager.warning(PROFILE_PASSWORD_REQUIREMENTS, '', LONG);
         } else {
-          props.closeModal(REGISTER);
-          props.openModal(CREATE_WALLET);
+          props.handleRegister();
         }
       });
     });
   };
 
+  const countryHasMandatoryState = ['Canada', 'India', 'United States of America'].includes(props.country.name);
+
   return (
-    <div>
+    <React.Fragment>
       <Modal show={props.isActive} onHide={() => props.closeModal(REGISTER)} className="modal fade myModal">
         <Modal.Header>
           <h1>Sign up</h1>
@@ -72,14 +74,25 @@ function RegisterModal(props) {
               <img src={Config.getValue('basePath') + 'images/login-user.png'} className="user-image" alt="user" />
               <input type="text" required="required" name="signUpLastName" value={props.signUpLastName} onChange={props.onChange} className="with-icon" placeholder="Last Name" />
             </div>
-            <div className="input-container">
-              <select name="country" id="country" onChange={props.handleChangeCountry} value={JSON.stringify(props.country)} style={{ padding: '10px', maxWidth: '100%', marginBottom: '10px', minHeight: '50px', paddingLeft: '40px' }} placeholder='Enter your country'>
-                <option value="" disabled selected>Country</option>
+            <div className="input-container select">
+              <img src={Config.getValue('basePath') + 'images/login-user.png'} className="user-image" alt="user" />
+              <select name="country" id="country" onChange={props.handleChangeCountry} value={JSON.stringify(props.country)} style={{ padding: '10px', maxWidth: '100%', marginBottom: '10px', minHeight: '50px', paddingLeft: '40px' }} placeholder='Enter your country' required>
+                <option value="" defaultValue>Country</option>
                 {props.countries && props.countries.map((item, i) => {
                   return <option key={i} value={JSON.stringify(item)} style={{ minWidth: '100%', maxWidth: '0' }}>{StringUtils.shorten(item.name, 30)}</option>;
                 })}
               </select>
             </div>
+            {countryHasMandatoryState &&
+              <div className="input-container select">
+                <img src={Config.getValue('basePath') + 'images/login-user.png'} className="user-image" alt="user" />
+                <select name="countryState" id="countryState" onChange={props.onChange} value={props.countryState} style={{ padding: '10px', maxWidth: '100%', marginBottom: '10px', minHeight: '50px', paddingLeft: '40px' }} required>
+                  <option value="">State</option>
+                  {props.states && props.states.map((item, i) => {
+                    return <option key={i} value={item.id} style={{ minWidth: '100%', maxWidth: '0' }}>{item.name}</option>;
+                  })}
+                </select>
+              </div>}
             <div className="input-container">
               <img src={Config.getValue('basePath') + 'images/login-pass.png'} className="password-image" alt="pass" />
               <input type="password" required="required" name="signUpPassword" value={props.signUpPassword} onChange={props.onChange} className="with-icon" placeholder="Password" />
@@ -92,7 +105,7 @@ function RegisterModal(props) {
           </div>
         </Modal.Body>
       </Modal>
-    </div>
+    </React.Fragment>
   );
 }
 
@@ -104,7 +117,8 @@ RegisterModal.propTypes = {
   onChange: PropTypes.func,
   openModal: PropTypes.func,
   closeModal: PropTypes.func,
-  isActive: PropTypes.bool
+  isActive: PropTypes.bool,
+  handleRegister: PropTypes.func
 };
 
 export default RegisterModal;

@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import moment from 'moment';
 import { withRouter } from 'react-router-dom';
-import requester from '../../initDependencies';
+import requester from '../../requester';
 import HomesSearchBar from '../homes/search/HomesSearchBar';
 import HotelsSearchBar from '../hotels/search/HotelsSearchBar';
 import ListingTypeNav from '../common/listingTypeNav/ListingTypeNav';
@@ -22,8 +22,7 @@ class HeroComponent extends React.Component {
       countries: undefined,
       startDate: startDate,
       endDate: endDate,
-      guests: '2',
-      listings: undefined
+      guests: '2'
     };
 
     this.onChange = this.onChange.bind(this);
@@ -34,12 +33,6 @@ class HeroComponent extends React.Component {
   }
 
   componentDidMount() {
-    requester.getTopListings().then(res => {
-      res.body.then(data => {
-        this.setState({ listings: data.content });
-      });
-    });
-
     requester.getCountries().then(res => {
       res.body.then(data => {
         this.setState({ countries: data });
@@ -82,25 +75,23 @@ class HeroComponent extends React.Component {
   render() {
     return (
       <div className="hero">
-        <div className="container">
-          <div className="hero-content">
-            <h1>Discover your next experience</h1>
-            <h2>Browse for homes &amp; hotels worldwide</h2>
-            <div className="source-data">
-              <ListingTypeNav />
-              {this.props.homePage === 'hotels' ?
-                <HotelsSearchBar redirectToSearchPage={this.redirectToSearchPage} /> :
-                <HomesSearchBar
-                  countryId={this.state.countryId}
-                  countries={this.state.countries}
-                  startDate={this.state.startDate}
-                  endDate={this.state.endDate}
-                  guests={this.state.guests}
-                  onChange={this.onChange}
-                  handleSearch={this.handleSearch}
-                  handleDatePick={this.handleDatePick}
-                />}
-            </div>
+        <div className="hero-content">
+          <h1>Discover your next experience</h1>
+          <h2>Browse for homes &amp; hotels worldwide</h2>
+          <div className="source-data">
+            <ListingTypeNav />
+            {this.props.homePage === 'hotels' ?
+              <HotelsSearchBar redirectToSearchPage={this.redirectToSearchPage} /> :
+              <HomesSearchBar
+                countryId={this.state.countryId}
+                countries={this.state.countries}
+                startDate={this.state.startDate}
+                endDate={this.state.endDate}
+                guests={this.state.guests}
+                onChange={this.onChange}
+                handleSearch={this.handleSearch}
+                handleDatePick={this.handleDatePick}
+              />}
           </div>
         </div>
       </div>

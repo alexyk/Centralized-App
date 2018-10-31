@@ -1,15 +1,16 @@
 import { closeModal, openModal } from '../../../actions/modalsInfo.js';
-import { setAdults, setChildren, setDates, setRegion, setRooms, setRoomsByCountOfRooms } from '../../../actions/searchInfo';
+import { setAdults, setChildren, setRegion, setRooms, setRoomsByCountOfRooms } from '../../../actions/searchInfo';
 
 import { CHILDREN } from '../../../constants/modals';
 import ChildrenModal from '../modals/ChildrenModal';
-import SearchBarDatePicker from '../../common/search/SearchBarDatePicker';
 import PropTypes from 'prop-types';
 import React from 'react';
 import Select from 'react-select';
 import { connect } from 'react-redux';
-import requester from '../../../initDependencies';
+import requester from '../../../requester';
 import { withRouter } from 'react-router-dom';
+import Datepicker from '../../common/datepicker';
+import moment from 'moment';
 
 function HotelsSearchBar(props) {
   if (props.location.pathname.indexOf('/mobile') !== -1) {
@@ -32,8 +33,8 @@ function HotelsSearchBar(props) {
     let queryString = '?';
     queryString += 'region=' + props.searchInfo.region.id;
     queryString += '&currency=' + props.paymentInfo.currency;
-    queryString += '&startDate=' + props.searchInfo.startDate.format('DD/MM/YYYY');
-    queryString += '&endDate=' + props.searchInfo.endDate.format('DD/MM/YYYY');
+    queryString += '&startDate=' + props.searchDatesInfo.startDate.format('DD/MM/YYYY');
+    queryString += '&endDate=' + props.searchDatesInfo.endDate.format('DD/MM/YYYY');
     queryString += '&rooms=' + encodeURI(JSON.stringify(props.searchInfo.rooms));
     return queryString;
   };
@@ -117,23 +118,19 @@ function HotelsSearchBar(props) {
           closeModal={closeChildrenModal}
           handleSubmit={handleSubmitModal}
         />
+        
         <div className="check">
-          <SearchBarDatePicker
-            id='search-bar-date-picker'
-            startDate={props.searchInfo.startDate}
-            endDate={props.searchInfo.endDate}
-            onApply={(e, picker) => props.dispatch(setDates(e, picker))}
-            nights={props.searchInfo.nights} />
+          <Datepicker minDate={moment().add(1, 'days')} enableRanges />
         </div>
 
         <div className="days-of-stay">
           <span className="icon-moon"></span>
-          <span>{props.searchInfo.nights} nights</span>
+          <span>{props.searchDatesInfo.endDate.diff(props.searchDatesInfo.startDate, 'days')} nights</span>
         </div>
       </div>
 
       <div className="guest-wrap guests source-panel-item">
-        <select className="guest-select" name={'rooms'} value={props.searchInfo.rooms.length} onChange={e => props.dispatch(setRoomsByCountOfRooms(e.target.value))}>
+        <select className="guest-select " name={'rooms'} value={props.searchInfo.rooms.length} onChange={e => props.dispatch(setRoomsByCountOfRooms(e.target.value))}>
           <option value="1">1 room</option>
           <option value="2">2 rooms</option>
           <option value="3">3 rooms</option>
@@ -145,7 +142,6 @@ function HotelsSearchBar(props) {
           <option value="9">9 rooms</option>
           <option value="10">10 rooms</option>
         </select>
-
         <select name={'adults'} value={props.searchInfo.adults} onChange={e => props.dispatch(setAdults(e.target.value))}>
           <option value="1">1 adult</option>
           <option value="2">2 adults</option>
@@ -158,7 +154,6 @@ function HotelsSearchBar(props) {
           <option value="9">9 adults</option>
           <option value="10">10 adults</option>
         </select>
-
         <div className="select-children" onClick={() => props.dispatch(setChildren())}>
           <div>
             {!props.searchInfo.hasChildren
@@ -182,14 +177,16 @@ HotelsSearchBar.propTypes = {
   // Redux props
   dispatch: PropTypes.func,
   searchInfo: PropTypes.object,
+  searchDatesInfo: PropTypes.object,
   paymentInfo: PropTypes.object,
   modalsInfo: PropTypes.object
 };
 
 function mapStateToProps(state) {
-  const { searchInfo, paymentInfo, modalsInfo } = state;
+  const { searchInfo, searchDatesInfo, paymentInfo, modalsInfo } = state;
   return {
     searchInfo,
+    searchDatesInfo,
     paymentInfo,
     modalsInfo
   };

@@ -1,8 +1,6 @@
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 
 import BigCalendar from 'react-big-calendar';
-import CalendarAside from './CalendarAside';
-import CalendarAsideStatic from './CalendarAsideStatic';
 import CustomEvent from './CustomEvent';
 import PropTypes from 'prop-types';
 import React from 'react';
@@ -26,8 +24,8 @@ function Calendar(props) {
     return (
       <div className="rbc-toolbar">
         <div className="rbc-btn-group">
-          <button className="btn-back" onClick={goToBack}>&#8249;</button>
-          <button className="btn-next" onClick={goToNext}>&#8250;</button>
+          <button className="btn-back" onClick={goToBack}>&lsaquo;</button>
+          <button className="btn-next" onClick={goToNext}>&rsaquo;</button>
         </div>
 
         <span className="rbc-toolbar-label">{label()}</span>
@@ -36,62 +34,49 @@ function Calendar(props) {
   };
 
   const eventStyleGetter = (event) => {
-    const now = new Date();
-    now.setHours(0, 0, 0, 0);
+    const now = moment();
+    const isPastDate = event.end < now;
 
-    let isPastDate = new Date(event.end).getTime() < now.getTime();
-
-    let styleNotSelected = {};
-
-    let styleSelected = {
+    let reservationEventStyle = {
       color: '#FFFFFF',
       backgroundColor: '#a2c5bf',
       position: 'relative',
       top: '-20px'
     };
 
-    if (isPastDate) {
-      styleNotSelected['opacity'] = '0.5';
-      styleSelected['opacity'] = '0.5';
+    if (isPastDate === true) {
+      reservationEventStyle['opacity'] = '0.5';
     }
 
-    if (!event.isReservation) {
+    if (event.isReservation) {
       return {
-        style: styleNotSelected
+        style: reservationEventStyle
       };
     }
     else {
-      return {
-        style: styleSelected
-      };
+      return {};
     }
   };
 
-  const DateCell = ({ value, children }) => {
-    const now = new Date();
-    const afterDaysConst = 89;
-    now.setHours(0, 0, 0, 0);
+  const DateCell = ({ value }) => {
+    const now = moment().startOf('day');
+    const end = moment().add(365, 'days');
 
-    let dateAfterDays = new Date();
-    dateAfterDays.setHours(0, 0, 0, 0);
-    dateAfterDays.setDate(dateAfterDays.getDate() + afterDaysConst);
-
-    let isPastDate = (new Date(value).getTime() < now.getTime()) || (new Date(value).getTime() > dateAfterDays);
-    let isSelected = value.toString() === props.selectedDate.toString();
+    let isPastDate = (value < now) || (value > end);
+    let isSelected = props.selectedDate !== null && value.toString() === props.selectedDate.toString();
 
     let className = isPastDate ? 'date-in-past' : 'rbc-day-bg';
-    let borderBottom = isSelected ? '3px solid #d77961' : '1px solid #DDD';
+    let borderBottom = isSelected ? '3px solid #d77961' : '1px solid transperant';
 
     return (
       <div
         className={className}
         style={{
+          cursor: 'auto',
           flexBasis: 14.2857 + '%',
           maxWidth: 14.2857 + '%',
-          cursor: 'auto',
           borderBottom
         }}>
-        {children}
       </div>
     );
   };
@@ -110,77 +95,43 @@ function Calendar(props) {
   BigCalendar.momentLocalizer(moment);
 
   return (
-    <div className={(props.selectedDay !== null && props.selectedDay !== '') ? 'calendar dynamic-aside' : 'calendar'}>
-      <div className="col-md-8">
-        {props.calendarLoading ?
-          <div className="loader"></div> :
-          <BigCalendar
-            selectable
-            popup
-            events={props.allEvents}
-            defaultView='month'
-            step={60}
-            defaultDate={new Date()}
-            onSelectSlot={e => {
-              const now = new Date();
-              now.setHours(0, 0, 0, 0);
+    <div>
+      <BigCalendar
+        selectable
+        popup
+        events={props.allEvents}
+        defaultView='month'
+        step={60}
+        defaultDate={moment().toDate()}
+        onSelectSlot={e => {
+          const now = moment().startOf('day');
+          const end = moment().add(365, 'days');
 
-              const afterDaysConst = 89;
+          if ((e.end < now) || (e.end > end)) {
+            return;
+          }
 
-              let dateAfterDays = new Date();
-              dateAfterDays.setHours(0, 0, 0, 0);
-              dateAfterDays.setDate(dateAfterDays.getDate() + afterDaysConst);
-
-              if ((e.end.getTime() < now.getTime()) || (e.end.getTime() > dateAfterDays)) {
-                return;
-              }
-              props.onCancel();
-              props.onSelectSlot(e);
-            }}
-            views={['month']}
-            components={{
-              toolbar: CustomToolbar,
-              dateCellWrapper: DateCell,
-              event: CustomEvent
-            }}
-            formats={formats}
-            eventPropGetter={eventStyleGetter}
-          />
-        }
-      </div>
-
-      {props.selectedDay !== null && props.selectedDay !== '' ?
-        <CalendarAside onCancel={props.onCancel}
-          day={props.selectedDay}
-          date={props.selectedDate}
-          price={props.price}
-          available={props.available}
-          onSubmit={props.onSubmit}
-          onChange={props.onChange}
-          currencySign={props.currencySign} /> :
-        <CalendarAsideStatic
-          currencySign={props.currencySign}
-          defaultDailyPrice={props.defaultDailyPrice}
-          onChange={props.onChange}
-          updateDailyPrice={props.updateDailyPrice} />}
+          props.onCancel();
+          props.onSelectSlot(e);
+        }}
+        views={['month', 'week']}
+        components={{
+          toolbar: CustomToolbar,
+          dateCellWrapper: DateCell,
+          event: CustomEvent
+        }}
+        formats={formats}
+        eventPropGetter={eventStyleGetter}
+      />
     </div>
   );
 }
 
 Calendar.propTypes = {
-  selectedDay: PropTypes.string,
   selectedDate: PropTypes.object,
-  price: PropTypes.number,
-  available: PropTypes.string,
-  onSubmit: PropTypes.func,
-  onChange: PropTypes.func,
-  currencySign: PropTypes.string,
-  defaultDailyPrice: PropTypes.number,
-  updateDailyPrice: PropTypes.func,
   allEvents: PropTypes.array,
   onCancel: PropTypes.func,
-  onSelectSlot: PropTypes.func,
-  calendarLoading: PropTypes.bool
+  onSelectSlot: PropTypes.func
 };
 
 export default Calendar;

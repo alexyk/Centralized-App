@@ -8,7 +8,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import Star from '../../../../styles/images/star.png';
 import moment from 'moment';
-import requester from '../../../../initDependencies';
+import requester from '../../../../requester';
 
 class HotelTripDetails extends React.Component {
   constructor(props) {
@@ -21,8 +21,8 @@ class HotelTripDetails extends React.Component {
         guestsCount: '',
         startDate: '',
         endDate: '',
-        roomType: '',
-        boardType: '',
+        roomType: [],
+        boardType: [],
         bookingId: '',
         hotelAddress: '',
         hotelPhone: '',
@@ -63,8 +63,8 @@ class HotelTripDetails extends React.Component {
   }
 
   extractDatesData(bookingData) {
-    const startDateMoment = moment(bookingData.startDate);
-    const endDateMoment = moment(bookingData.endDate);
+    const startDateMoment = moment(bookingData.startDate).utc();
+    const endDateMoment = moment(bookingData.endDate).utc();
 
     let startDateHour = startDateMoment.hour();
     let endDateHour = endDateMoment.hour();
@@ -113,6 +113,24 @@ class HotelTripDetails extends React.Component {
     );
   }
 
+  renderRoomTypes(roomTypes){
+    if(!Array.isArray(roomTypes)){
+      return (<h5>{roomTypes}</h5>);
+    } else {
+      const types = roomTypes.map((rt) => <h5>{rt}</h5>);
+      return ( <div>{types}</div> );
+    }
+  }
+
+  renderRoomBoards(roomBoards){
+    if(!Array.isArray(roomBoards)){
+      return (<h5>{roomBoards}</h5>);
+    } else {
+      const boards = roomBoards.map((rt) => <h5>{rt}</h5>);
+      return ( <div>{boards}</div> );
+    }
+  }
+
   renderHeading() {
     switch (this.state.bookingData.bookingStatus) {
       case 'PENDING':
@@ -153,7 +171,7 @@ class HotelTripDetails extends React.Component {
             {bookingData.bookingId ?
               <h3 className="reffernce">Booking Reference ID: <span className="refference-id">{bookingData.bookingId}</span></h3>
               : null}
-            <img className="details-background" src={`${bookingData.hotelPhoto}`} alt="details" />
+            <img className="details-background no-print" src={`${bookingData.hotelPhoto}`} alt="details" />
             <h4>{bookingData.hotelName}</h4>
             {this.renderHotelStars(bookingData.hotelScore)}
             <hr />
@@ -172,17 +190,22 @@ class HotelTripDetails extends React.Component {
               <h5 className="guests-content">{bookingData.guestsCount}</h5>
             </div>
             <h3>Room Type</h3>
-            <h5 style={{ marginBottom: '5%' }}>{bookingData.roomType}</h5>
-            <h3>Board Type</h3>
-            <h5>{bookingData.boardType}</h5>
+            {/*<h5 style={{ marginBottom: '5%' }}>{bookingData.roomType}</h5>*/}
+            {this.renderRoomTypes(bookingData.roomType)}
+            <h3 style={{ marginTop: '5%' }}>Board Type</h3>
+            {/*<h5>{bookingData.boardType}</h5>*/}
+            {this.renderRoomBoards(bookingData.boardType)}
             <hr />
             <h3>Address</h3>
             <h5>{bookingData.hotelAddress}</h5>
           </div>
-          <iframe className="address-map" title="location" src={`https://maps.google.com/maps?q=${bookingData.latitude},${bookingData.longitude}&z=15&output=embed`} frameBorder="0" />
-          <hr />
+          <iframe className="address-map no-print" title="location" src={`https://maps.google.com/maps?q=${bookingData.latitude},${bookingData.longitude}&z=15&output=embed`} frameBorder="0" />
+          <div className="static-map-container">
+            <img className="static-map-address" src={`https://maps.googleapis.com/maps/api/staticmap?center=${bookingData.latitude},${bookingData.longitude}&zoom=13&size=640x480&markers=${bookingData.latitude},${bookingData.longitude}&key=AIzaSyBLMYRyzRm83mQIUj3hsO-UVz8-yzfAvmU`} alt="static-map-address" />
+          </div>
+          <hr className="no-print" />
           <div className="with-padding">
-            <h4><a className="directions button-regular" href={`https://www.google.com/maps/dir//${bookingData.hotelAddress}/@${bookingData.latitude},${bookingData.longitude},15z`} target="_blank" rel="noopener noreferrer">Get Directions</a></h4>
+            <h4><a className="directions button-regular no-print" href={`https://www.google.com/maps/dir//${bookingData.hotelAddress}/@${bookingData.latitude},${bookingData.longitude},15z`} target="_blank" rel="noopener noreferrer">Get Directions</a></h4>
             <hr />
             <div className="contact-info">
               <h4>Contact Hotel</h4>
@@ -206,9 +229,9 @@ class HotelTripDetails extends React.Component {
             </div>
           </div>
         </section>
-        <section className="details-buttons-wrapper">
+        <section className="details-buttons-wrapper no-print">
           <Link className="btn button-regular" to="/profile/trips/hotels">Back to Hotels</Link>
-          {/* <Link className="btn button-regular" to="#">Print this page</Link> */}
+          <button className="btn button-regular" onClick={() => window.print()}>Print this page</button>
         </section>
       </div>
     );

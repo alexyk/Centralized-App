@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
 import ReactDOMServer from 'react-dom/server';
-import MarkerInfoWindow from './MarkerInfoWindow';
 import { withRouter } from 'react-router-dom';
+import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
+import MarkerInfoWindow from './MarkerInfoWindow';
 import { CurrencyConverter } from '../../../../services/utilities/currencyConverter';
 import { RoomsXMLCurrency } from '../../../../services/utilities/roomsXMLCurrency';
 
@@ -106,11 +108,11 @@ class MultiMarkerGoogleMap extends Component {
   }
 
   createInfoWindow(hotel) {
-    // console.log(hotel);
-    const { locRate, rates, isLogged, nights } = this.props;
+    const { isLogged, nights } = this.props;
+    const { locEurRate, currencyExchangeRates } = this.props.exchangeRatesInfo;
     const { currency, currencySign } = this.props.paymentInfo;
-    const locPrice = ((hotel.price / locRate) / this.props.nights).toFixed(2);
-    const fiatPrice = rates && ((CurrencyConverter.convert(rates, RoomsXMLCurrency.get(), currency, hotel.price)) / nights).toFixed(2);
+    const locPrice = ((hotel.price / locEurRate) / this.props.nights).toFixed(2);
+    const fiatPrice = currencyExchangeRates && ((CurrencyConverter.convert(currencyExchangeRates, RoomsXMLCurrency.get(), currency, hotel.price)) / nights).toFixed(2);
     const isMobile = this.props.location.pathname.indexOf('/mobile') !== -1;
     const rootUrl = isMobile ? '/mobile/details' : '/hotels/listings';
 
@@ -138,4 +140,29 @@ class MultiMarkerGoogleMap extends Component {
   }
 }
 
-export default withRouter(MultiMarkerGoogleMap);
+MultiMarkerGoogleMap.propTypes = {
+  lat: PropTypes.number,
+  lon: PropTypes.number,
+  mapInfo: PropTypes.array,
+  isLogged: PropTypes.bool,
+  nights: PropTypes.number,
+
+
+  // start Router props
+  location: PropTypes.object,
+
+  // start Redux props
+  paymentInfo: PropTypes.object,
+  exchangeRatesInfo: PropTypes.object,
+};
+
+
+function mapStateToProps(state) {
+  const { paymentInfo, exchangeRatesInfo } = state;
+  return {
+    paymentInfo,
+    exchangeRatesInfo,
+  };
+}
+
+export default withRouter(connect(mapStateToProps)(MultiMarkerGoogleMap));

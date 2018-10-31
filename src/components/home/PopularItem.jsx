@@ -3,8 +3,7 @@ import { Link } from 'react-router-dom';
 import Slider from 'react-slick';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import ListingItemRatingBox from '../common/listing/ListingItemRatingBox';
-import HotelItemRatingBox from '../common/hotel/HotelItemRatingBox';
+import Rating from '../common/rating';
 
 class PopularItem extends Component {
   constructor(props) {
@@ -15,6 +14,30 @@ class PopularItem extends Component {
 
   shouldComponentUpdate() {
     return false;
+  }
+
+  getValidHomePictures(pictures) {
+    if (!pictures) {
+      pictures = [];
+    }
+
+    if (pictures.length < 1) {
+      pictures.push({ thumbnail: 'listings/images/default.png' });
+    }
+
+    return pictures.map(x => { return { thumbnail: Config.getValue('imgHost') + x.thumbnail }; });
+  }
+
+  getValidHotelPictures(pictures) {
+    if (!pictures) {
+      pictures = [];
+    }
+
+    if (pictures.length < 1) {
+      pictures.push({ url: 'listings/images/default.png' });
+    }
+
+    return pictures.map(x => { return { thumbnail: Config.getValue('imgHost') + x.url }; });
   }
 
   render() {
@@ -28,10 +51,10 @@ class PopularItem extends Component {
 
     if (itemType === 'hotels') {
       rating = item.stars;
-      pictures = pictures.map(x => { return { thumbnail: Config.getValue('imgHost') + x.url }; });
+      pictures = this.getValidHotelPictures(pictures);
     } else if (itemType === 'homes') {
       rating = item.averageRating;
-      pictures = pictures.map(x => { return { thumbnail: Config.getValue('imgHost') + x.thumbnail }; });
+      pictures = this.getValidHomePictures(pictures);
     }
 
     const SlickButton = ({ currentSlide, slideCount, ...arrowProps }) => {
@@ -76,14 +99,7 @@ class PopularItem extends Component {
                 <div className="name">
                   {item.name.substr(0, 35)}{item.name.length > 35 ? '...' : ''}
                 </div>
-                {itemType === 'homes' ?
-                  <ListingItemRatingBox
-                    rating={rating}
-                    isHomePage={true}
-                  /> :
-                  <HotelItemRatingBox
-                    rating={rating}
-                  />}
+                <Rating rating={rating}/>
               </div>
               <div className="clearfix">
               </div>

@@ -108,7 +108,7 @@ class HomePage extends React.Component {
                   itemType={itemsType}
                   itemLink={itemLink}
                 />
-                {itemsType === 'homes' && this.props.paymentInfo.locRate && <PopularHomesPrice item={item} />}
+                {itemsType === 'homes' && <PopularHomesPrice item={item} />}
               </div>
             );
           })}
@@ -125,6 +125,7 @@ class HomePage extends React.Component {
 
   render() {
     const { listings, hotels } = this.props;
+    const isHotels = this.props.match.url.indexOf('/hotels') >= 0;
 
     return (
       <div>
@@ -136,13 +137,13 @@ class HomePage extends React.Component {
             text="What are you looking for?"
           >
             <ul className="categories">
-              <li>
+              <li className={isHotels ? 'active' : ''}>
                 <Link to="/hotels">
                   <img src="/images/hotels.jpg" alt="hotels" />
                   <h3>Hotels</h3>
                 </Link>
               </li>
-              <li className="homes">
+              <li className={!isHotels ? 'active homes' : 'homes'}>
                 <Link to="/homes">
                   <img src="/images/homes.jpg" alt="homes" />
                   <h3>Homes</h3>

@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import NoEntriesMessage from '../common/NoEntriesMessage';
+import NoEntriesMessage from '../../common/messages/NoEntriesMessage';
 import ProfileFlexContainer from '../flexContainer/ProfileFlexContainer';
 import DashboardTripRow from './DashboardTripRow';
 import DashboardReservationRow from './DashboardReservationRow';
@@ -65,7 +65,6 @@ function DashboardPending(props) {
     <section id="profile-dashboard-pending">
       <div className="container">
         <h2>Latest Reservation Requests</h2>
-        <hr className="profile-line" />
         <ProfileFlexContainer styleClass="flex-container-header dashboard-flex-reservations-container">
           <div className="tablet-col-1">
             <div className="dashboard-image" />
@@ -75,7 +74,6 @@ function DashboardPending(props) {
             <div className="dashboard-dates">Trip Dates</div>
             <div className="dashboard-nights">Nights</div>
             <div className="dashboard-status">Status</div>
-            <div className="dashboard-date">Date</div>
           </div>
         </ProfileFlexContainer>
         {renderReservations()}
@@ -83,7 +81,6 @@ function DashboardPending(props) {
 
       <div className="container">
         <h2>Latest Trips</h2>
-        <hr className="profile-line" />
         <ProfileFlexContainer styleClass="flex-container-header dashboard-flex-trips-container">
           <div className="dashboard-image" />
           <div className="dashboard-host">Host</div>

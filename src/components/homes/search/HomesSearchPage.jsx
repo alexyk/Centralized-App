@@ -5,8 +5,10 @@ import Pagination from '../../common/pagination/Pagination';
 import PropTypes from 'prop-types';
 import React from 'react';
 import moment from 'moment';
-import requester from '../../../initDependencies';
+import requester from '../../../requester';
 import { withRouter } from 'react-router-dom';
+import { connect } from 'react-redux';
+import { asyncSetStartDate, asyncSetEndDate } from '../../../actions/searchDatesInfo';
 
 class HomesSearchPage extends React.Component {
   constructor(props) {
@@ -14,8 +16,6 @@ class HomesSearchPage extends React.Component {
 
     this.state = {
       countryId: '',
-      startDate: undefined,
-      endDate: undefined,
       guests: undefined,
       cities: [],
       citiesToggled: new Set(),
@@ -47,11 +47,15 @@ class HomesSearchPage extends React.Component {
       const priceValue = this.getPriceValue(searchParams);
       const cities = this.getCities(searchParams);
       const propertyTypes = this.getPropertyTypes(searchParams);
+      const startDate = moment(searchParams.get('startDate'), 'DD/MM/YYYY');
+      const endDate = moment(searchParams.get('endDate'), 'DD/MM/YYYY');
+
+      this.props.dispatch(asyncSetStartDate(startDate));
+      this.props.dispatch(asyncSetEndDate(endDate));
+
       this.setState({
         searchParams: searchParams,
         countryId: searchParams.get('countryId'),
-        startDate: moment(searchParams.get('startDate'), 'DD/MM/YYYY'),
-        endDate: moment(searchParams.get('endDate'), 'DD/MM/YYYY'),
         guests: searchParams.get('guests'),
         citiesToggled: cities,
         propertyTypesToggled: propertyTypes,
@@ -173,10 +177,8 @@ class HomesSearchPage extends React.Component {
   }
 
   handleDatePick(event, picker) {
-    this.setState({
-      startDate: picker.startDate,
-      endDate: picker.endDate,
-    });
+    this.props.dispatch(asyncSetStartDate(picker.startDate));
+    this.props.dispatch(asyncSetEndDate(picker.endDate));
 
     this.updateParamsMap('startDate', picker.startDate.format('DD/MM/YYYY'));
     this.updateParamsMap('endDate', picker.endDate.format('DD/MM/YYYY'));
@@ -312,8 +314,8 @@ class HomesSearchPage extends React.Component {
           <HomesSearchBar
             countryId={this.state.countryId}
             countries={this.props.countries}
-            startDate={this.state.startDate}
-            endDate={this.state.endDate}
+            startDate={this.props.searchDatesInfo.startDate}
+            endDate={this.props.searchDatesInfo.endDate}
             guests={this.state.guests}
             onChange={this.onChange}
             handleSearch={this.handleSearch}
@@ -359,7 +361,18 @@ class HomesSearchPage extends React.Component {
 HomesSearchPage.propTypes = {
   countries: PropTypes.array,
   location: PropTypes.object,
-  history: PropTypes.object
+  history: PropTypes.object,
+
+  dispatch: PropTypes.func,
+  searchDatesInfo: PropTypes.func
 };
 
-export default withRouter(HomesSearchPage);
+const mapStateToProps = (state) => {
+  const { searchDatesInfo } = state;
+
+  return {
+    searchDatesInfo
+  };
+};
+
+export default withRouter(connect(mapStateToProps)(HomesSearchPage));

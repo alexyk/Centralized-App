@@ -41,7 +41,7 @@ function CreateWalletModal(props) {
   };
 
   return (
-    <div>
+    <React.Fragment>
       <Modal show={props.isActive} className="modal fade myModal">
         <Modal.Header>
           <h1>Please setup your personal wallet password</h1>
@@ -65,13 +65,13 @@ function CreateWalletModal(props) {
               <li>contain at least one character</li>
             </ul>
             <hr />
-            <p><span className="important-text">Important:</span> Your LOC wallet is Blockchain based and you are the only person to have access to it. It will not be hosted on our server. When you are adding funds to it, your funds will be in your complete control and possession therefore It is very important not to share your wallet password with anyone. For security reasons we will not store this password and there will be no way for you to recover it through our site.</p>
+            <p><span className="important-text">Important:</span> Your LOC wallet is Blockchain based and you are the only person to have access to it. It will not be hosted on our server. When you are adding funds to it, your funds will be in your complete control and possession therefore It is very important not to share your wallet password with anyone. For security reasons we will not store this password.</p>
             <button type="submit" className="btn btn-primary">Submit password</button>
             <div className="clearfix"></div>
           </form>
         </Modal.Body>
       </Modal>
-    </div>
+    </React.Fragment>
   );
 }
 

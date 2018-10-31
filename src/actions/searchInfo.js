@@ -1,13 +1,5 @@
 import { searchInfo } from './actionTypes';
 
-export function setDates(event, picker) {
-  return {
-    type: searchInfo.SET_DATES,
-    startDate: picker.startDate,
-    endDate: picker.endDate
-  };
-}
-
 export function setRegion(value) {
   return {
     type: searchInfo.SET_REGION,
@@ -42,11 +34,9 @@ export function setChildren() {
   };
 }
 
-export function setSearchInfo(startDate, endDate, region, rooms, adults, hasChildren) {
+export function setSearchInfo(region, rooms, adults, hasChildren) {
   return {
     type: searchInfo.SET_SEARCH_INFO,
-    startDate,
-    endDate,
     region,
     rooms,
     adults,

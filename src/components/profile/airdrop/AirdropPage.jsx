@@ -5,7 +5,7 @@ import {
   AIRDROP_REGISTER,
   LOGIN
 } from '../../../constants/modals.js';
-import { COPIED_TO_CLIPBOARD, VERIFICATION_EMAIL_SENT } from '../../../constants/infoMessages.js';
+import { COPIED_TO_CLIPBOARD, VERIFICATION_EMAIL_SENT, WITHDRAW_REQUEST_SUCCESSFUL } from '../../../constants/infoMessages.js';
 import { EMAIL_VERIFIED, PROFILE_SUCCESSFULLY_UPDATED, VOTE_URL_SUCCESSFULLY_SAVED } from '../../../constants/successMessages.js';
 import { INVALID_URL, SOCIAL_PROFILE_EMPTY } from '../../../constants/errorMessages.js';
 import React, { Component } from 'react';
@@ -15,12 +15,11 @@ import { Config } from '../../../config';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { INVALID_SECURITY_CODE } from '../../../constants/warningMessages.js';
 import { LONG } from '../../../constants/notificationDisplayTimes.js';
-import NavProfile from '../NavProfile';
-import NoEntriesMessage from '../common/NoEntriesMessage';
+import NoEntriesMessage from '../../common/messages/NoEntriesMessage';
 import { NotificationManager } from 'react-notifications';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import requester from '../../../initDependencies';
+import requester from '../../../requester';
 import { setAirdropInfo } from '../../../actions/airdropInfo';
 import { setIsLogged } from '../../../actions/userInfo';
 import validator from 'validator';
@@ -29,6 +28,8 @@ import { withRouter } from 'react-router-dom';
 class AirdropPage extends Component {
   constructor(props) {
     super(props);
+
+    this.transactionHashPollingInterval = null;
 
     this.state = {
       isUserLogged: false,
@@ -41,6 +42,7 @@ class AirdropPage extends Component {
       voteUrl: '',
       userParticipates: false,
       loading: true,
+      withdrawTransactionHash: null
     };
 
     this.openModal = this.openModal.bind(this);
@@ -50,9 +52,24 @@ class AirdropPage extends Component {
     this.handleEditSubmit = this.handleEditSubmit.bind(this);
     this.handleSaveVoteUrl = this.handleSaveVoteUrl.bind(this);
     this.onChange = this.onChange.bind(this);
+    this.getBalanceContainer = this.getBalanceContainer.bind(this);
+    this.requestWithdraw = this.requestWithdraw.bind(this);
+    this.requestCheckIfUserIsVerified = this.requestCheckIfUserIsVerified.bind(this);
+    this.requestCheckIfUserHasIssuedWithdraw = this.requestCheckIfUserHasIssuedWithdraw.bind(this);
+    this.startTransactionHashPolling = this.startTransactionHashPolling.bind(this);
+    this.requestTransactionHash = this.requestTransactionHash.bind(this);
+    this._getVerifiedStatus = this._getVerifiedStatus.bind(this);
+    this._getVerifiedWithIncompleteReferrals = this._getVerifiedWithIncompleteReferrals.bind(this);
+    this._getTooLateVerifiedStatus = this._getTooLateVerifiedStatus.bind(this);
+    this._getUnverifiedStatus = this._getUnverifiedStatus.bind(this);
+    this._getFailedStatus = this._getFailedStatus.bind(this);
+    this._getFailedSocialStatus = this._getFailedSocialStatus.bind(this);
+    this._getIncompleteStatus = this._getIncompleteStatus.bind(this);
   }
 
   componentWillMount() {
+    this.requestCheckIfUserIsVerified();
+    this.requestCheckIfUserHasIssuedWithdraw();
     if (this.props.location.search && this.props.location.search.indexOf('emailtoken') !== -1) {
       requester.verifyUserEmail(this.props.location.search).then(() => {
         // console.log('verifying user email');
@@ -84,6 +101,48 @@ class AirdropPage extends Component {
     if (props.airdropInfo.participates) {
       this.setState({ userParticipates: true });
     }
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.transactionHashPollingInterval);
+  }
+
+  requestCheckIfUserIsVerified() {
+    requester.checkIfAirdropUserIsVerified().then(res => res.body).then(res => {
+      this.setState({ userIsVerified: res.isVerified });
+    });
+  }
+
+  requestCheckIfUserHasIssuedWithdraw() {
+    requester.checkIfAirdropWithdrawHasStarted().then(res => res.body).then(res => {
+      this.setState({ isWithdrawStarted: res.isWithdrawStarted });
+      if (res.isWithdrawStarted && !res.tx) {
+        this.startTransactionHashPolling();
+      } else if (res.tx) {
+        this.setState({ withdrawTransactionHash: res.tx });
+      }
+    });
+  }
+
+  startTransactionHashPolling() {
+    this.transactionHashPollingInterval = setInterval(this.requestTransactionHash, 10000);
+  }
+
+  requestTransactionHash() {
+    requester.checkIfAirdropWithdrawHasStarted().then(res => res.body).then(res => {
+      if (res.tx) {
+        this.setState({ withdrawTransactionHash: res.tx });
+        clearInterval(this.transactionHashPollingInterval);
+      }
+    });
+  }
+
+  requestWithdraw() {
+    requester.withdrawTokensFromAirdrop().then(res => res.body).then(res => {
+      NotificationManager.info(WITHDRAW_REQUEST_SUCCESSFUL, '', LONG);
+      this.requestCheckIfUserHasIssuedWithdraw();
+    });
+    // NotificationManager.info('Distribution will be enabled soon', '', LONG);
   }
 
   // componentDidUpdate(prevState) {
@@ -206,9 +265,8 @@ class AirdropPage extends Component {
     const referralCount = info.referralCount;
     const isCampaignSuccessfullyCompleted = info.isCampaignSuccessfullyCompleted;
     const voteUrl = info.voteUrl ? info.voteUrl : '';
-    this.props.dispatch(setAirdropInfo(email, facebookProfile, telegramProfile, twitterProfile, redditProfile, refLink, participates, isVerifyEmail, referralCount, isCampaignSuccessfullyCompleted, voteUrl));
-    this.props.airdropInfo.referralCount = referralCount;
-    this.props.airdropInfo.isCampaignSuccessfullyCompleted = isCampaignSuccessfullyCompleted;
+    const finalizedStatus = info.finalizedStatus;
+    this.props.dispatch(setAirdropInfo(email, facebookProfile, telegramProfile, twitterProfile, redditProfile, refLink, participates, isVerifyEmail, referralCount, isCampaignSuccessfullyCompleted, voteUrl, finalizedStatus));
     this.setState({ voteUrl: voteUrl, loading: false });
   }
 
@@ -268,6 +326,119 @@ class AirdropPage extends Component {
     this.setState({ [e.target.name]: e.target.value });
   }
 
+  getBalanceContainer() {
+    switch (this.props.airdropInfo.finalizedStatus) {
+      case 'VERIFIED':
+        return this._getVerifiedStatus();
+      case 'VERIFIED_REFERRALS_INCOMPLETE':
+        return this._getVerifiedWithIncompleteReferrals();
+      case 'LATE_VERIFIED':
+        return this._getTooLateVerifiedStatus();
+      case 'FAILED':
+        return this._getFailedStatus();
+      case 'FAILED_SOCIAL':
+        return this._getFailedSocialStatus();
+      case 'INCOMPLETE':
+        return this._getIncompleteStatus();
+      default:
+        return this._getUnverifiedStatus();
+    }
+  }
+
+  _getVerifiedStatus() {
+    return (
+      <React.Fragment>
+        <div className="balance-row__label">
+          {/* <span className="step-check checked" style={{ "margin-top": "-0.4em" }}></span> */}
+          <span className="emphasized-text">Verified Balance</span>
+        </div>
+        <div className="balance-row__content">${Math.max(10, this.props.airdropInfo.referralCount * 5 + 10)}</div>
+        {this.state.userIsVerified && !this.state.isWithdrawStarted && <button className="cla\im-button" onClick={this.requestWithdraw}>Claim</button>}
+        {this.state.isWithdrawStarted && !this.state.withdrawTransactionHash && <button className="claim-button">Your payment is being processed</button>}
+        {this.state.isWithdrawStarted && this.state.withdrawTransactionHash && this.state.withdrawTransactionHash === '0x0' && <button className="claim-button">Your payment is being processed</button>}
+        {/* {this.state.isWithdrawStarted && this.state.withdrawTransactionHash && this.state.withdrawTransactionHash === '0x0' && <a href="mailto:team@locktrip.com?Subject=Customer%20Support" className='etherscan-link' tooltip="Contact Support">Transaction Failed</a>} */}
+        {this.state.isWithdrawStarted && this.state.withdrawTransactionHash && this.state.withdrawTransactionHash !== '0x0' && <a href={`https://etherscan.io/tx/${this.state.withdrawTransactionHash}`} className='etherscan-link' target='_blank'>TxHash: {this.state.withdrawTransactionHash.substring(0, 8)}...</a>}
+      </React.Fragment>
+    );
+  }
+
+  _getVerifiedWithIncompleteReferrals() {
+    return (
+      <React.Fragment>
+        <div className="balance-row__label">
+          <span className="step-check checked" style={{ "margin-top": "3.5em" }}></span>
+          <span className="emphasized-text">Your status has been verified, however your referrals might be subjected to additional verification checks which might affect your final balance.</span>
+        </div>,
+        <div className="balance-row__content centered-balance">${Math.max(10, this.props.airdropInfo.referralCount * 5 + 10)}</div>
+      </React.Fragment>
+    );
+  }
+
+  _getTooLateVerifiedStatus() {
+    return (
+      <React.Fragment>
+        <div className="balance-row__label">
+          <span className="step-check checked" style={{ "margin-top": "3.5em" }}></span>
+          <span className="emphasized-text">Your balance is verified as $0, because the airdrop has been finalized in your country prior to the moment you had joined and  because you have not referred any other people. For more info, <a href="https://medium.com/@LockChainCo/participating-in-the-loc-airdrop-from-a-country-where-the-airdrop-has-been-finalized-621fd7f7a78b" target="_blank" rel='noreferrer noopener' className="referral-url"><u>read this post</u></a>. </span>
+        </div>,
+        <div className="balance-row__content centered-balance">$0</div>
+      </React.Fragment>
+    );
+  }
+
+  _getUnverifiedStatus() {
+    return (
+      <React.Fragment>
+        <div className="balance-row__label"><span className="emphasized-text">Unverified Balance</span></div>
+        <div className="balance-row__content">${this.props.airdropInfo.isCampaignSuccessfullyCompleted ? this.props.airdropInfo.referralCount * 5 + 10 : this.props.airdropInfo.referralCount * 5}</div>
+      </React.Fragment>
+    );
+  }
+
+  _getFailedStatus() {
+    return (
+      <React.Fragment>
+        <div className="balance-row__label">
+          <span className="step-check unchecked" style={{ "margin-top": "1.5em" }}></span>
+          <span className="mandatory">
+            Duplicate accounting/multi accounting has been detected. As a result your balance has been voided.
+          </span>
+        </div>
+        <div className="balance-row__content centered-balance">$0</div>
+      </React.Fragment>
+    );
+  }
+
+  _getFailedSocialStatus() {
+    return (
+      <React.Fragment>
+        <div className="balance-row__label">
+          <span className="step-check unchecked"></span>
+          <span className="mandatory">
+            Your account has failed our social joins verification.
+          </span>
+        </div>
+        <div className="balance-row__content centered-balance">$0</div>
+      </React.Fragment>
+    );
+  }
+
+  _getIncompleteStatus() {
+    return (
+      <React.Fragment>
+        <div className="balance-row__label">
+          <span className="step-check unchecked" style={{ "margin-top": "3.5em" }}></span>
+          <span className="mandatory">
+            Our checks indicate that you have not completed all social joins.
+            Please make sure you have joined our telegram, followed us on Twitter and Facebook.<br />
+            For more info, please <a href="https://medium.com/@LockChainCo/how-to-fix-social-joins-requirement-ea31b6e31801" target="_blank" rel='noreferrer noopener' className="referral-url"><u>read this post</u></a>.
+          </span>
+        </div>,
+        <div className="balance-row__content centered-balance">$0</div>
+      </React.Fragment>
+    );
+  }
+
   render() {
     // if (this.state.loading) {
     //   return <div className="loader"></div>;
@@ -287,7 +458,6 @@ class AirdropPage extends Component {
     if (!this.props.airdropInfo.participates) {
       return (
         <div>
-          <NavProfile />
           <div className="container">
             <NoEntriesMessage text='Participate in our airdrop campaign.'>
               <a href={'https://locktrip.com/airdrop/' + this.props.location.search} className="btn">Participate</a>
@@ -299,17 +469,16 @@ class AirdropPage extends Component {
 
     return (
       <div>
-        <NavProfile />
         <div className="container">
           <div id="airdrop-main">
-            <h4>Personal Dashboard</h4>
+            <h2>Personal Dashboard</h2>
+            <hr />
             <p>You can view your current balance, as well as your unique Referral Link.</p>
             <p>Every Person who completes our airdrop via your unique referral link, will generate $5 for you! <span className="emphasized-text">Make sure you refer as much friends and family as you can!</span></p>
 
             <div className="balance-info">
               <div className="balance-row">
-                <div className="balance-row__label"><span className="emphasized-text">Unverified Balance</span></div>
-                <div className="balance-row__content">${this.props.airdropInfo.isCampaignSuccessfullyCompleted ? this.props.airdropInfo.referralCount * 5 + 10 : this.props.airdropInfo.referralCount * 5}</div>
+                {this.getBalanceContainer()}
               </div>
 
               <div className="balance-row">
@@ -397,30 +566,8 @@ class AirdropPage extends Component {
                     </div>
                   }
                 </div>
-                <hr />
-                {/*<div className="airdrop-row final">*/}
-                {/*<div className="description">*/}
-                {/*<span className="step-check unchecked"></span><span className="airdrop-row__heading">Final Step</span>*/}
-                {/*</div>*/}
-                {/*</div>*/}
               </div>
             </div>
-
-            {/* <div>
-              Email: {this.props.airdropInfo.email}
-            </div>
-            <div>
-              Facebook: {this.props.airdropInfo.facebookProfile}
-            </div>
-            <div>
-              Twitter: {this.props.airdropInfo.twitterProfile}
-            </div>
-            <div>
-              Reddit: {this.props.airdropInfo.redditProfile}
-            </div>
-            <div>
-              telegram: {this.props.airdropInfo.telegramProfile}
-            </div> */}
           </div>
         </div>
       </div>

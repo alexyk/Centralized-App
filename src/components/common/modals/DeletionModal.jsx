@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 
 function DeletionModal(props) {
   return (
-    <div>
+    <React.Fragment>
       <Modal show={props.isActive} onHide={props.onHide} className="modal fade myModal">
         <Modal.Header>
           <h1>Delete Listing</h1>
@@ -25,7 +25,7 @@ function DeletionModal(props) {
           }
         </Modal.Body>
       </Modal>
-    </div>
+    </React.Fragment>
   );
 }
 

@@ -1,6 +1,9 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
+import LocPrice from '../common/utility/LocPrice';
+import { CurrencyConverter } from '../../services/utilities/currencyConverter';
+import { RoomsXMLCurrency } from '../../services/utilities/roomsXMLCurrency';
 
 class PopularHomesPrice extends Component {
 
@@ -12,11 +15,17 @@ class PopularHomesPrice extends Component {
   }
 
   render() {
-    const { paymentInfo, item } = this.props;
-    const price = (item.prices) && paymentInfo.currency === item.currencyCode ? parseInt(item.defaultDailyPrice, 10).toFixed(2) : parseInt(item.prices[paymentInfo.currency], 10).toFixed(2);
+    const { paymentInfo, exchangeRatesInfo, item } = this.props;
+    const { currency } = paymentInfo;
+    const { currencyExchangeRates } = exchangeRatesInfo;
+    const price = (item.prices) && currency === item.currencyCode ? item.defaultDailyPrice : item.prices[RoomsXMLCurrency.get()];
 
     return (
-      <div className="list-property-price">{this.props.userInfo.isLogged && `${paymentInfo.currencySign}${price}`} <span>(LOC {(price / paymentInfo.locRate).toFixed(2)})</span> per night</div>
+      <div className="list-property-price">
+        {this.props.userInfo.isLogged && currencyExchangeRates &&
+          `${paymentInfo.currencySign}${currencyExchangeRates && Number(CurrencyConverter.convert(currencyExchangeRates, RoomsXMLCurrency.get(), currency, price)).toFixed(2)} `}
+        <LocPrice fiat={price} /> per night
+      </div>
     );
   }
 }
@@ -26,14 +35,16 @@ PopularHomesPrice.propTypes = {
 
   // start Redux props
   paymentInfo: PropTypes.object,
-  userInfo: PropTypes.object
+  userInfo: PropTypes.object,
+  exchangeRatesInfo: PropTypes.object,
 };
 
 function mapStateToProps(state) {
-  const { paymentInfo, userInfo } = state;
+  const { paymentInfo, userInfo, exchangeRatesInfo } = state;
   return {
     paymentInfo,
-    userInfo
+    userInfo,
+    exchangeRatesInfo
   };
 }
 

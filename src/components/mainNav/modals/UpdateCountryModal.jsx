@@ -16,7 +16,7 @@ function UpdateCountryModal(props) {
   const countryHasMandatoryState = ['Canada', 'India', 'United States of America'].includes(props.country.name);
 
   return (
-    <div>
+    <React.Fragment>
       <Modal show={props.modalsInfo.isActive[UPDATE_COUNTRY]} onHide={() => props.closeModal(UPDATE_COUNTRY)} className="modal fade myModal">
         <Modal.Header>
           <h1>Where are you from?</h1>
@@ -35,7 +35,6 @@ function UpdateCountryModal(props) {
             </div>
 
             {countryHasMandatoryState === true && <div className="countryState">
-              <label htmlFor="countryState">State</label>
               <div className='select'>
                 <select name="countryState" id="countryState" onChange={props.onChange} value={props.countryState} style={{ padding: '10px', maxWidth: '100%' }}>
                   <option value="">State</option>
@@ -51,7 +50,7 @@ function UpdateCountryModal(props) {
           </form>
         </Modal.Body>
       </Modal>
-    </div>
+    </React.Fragment>
   );
 }
 

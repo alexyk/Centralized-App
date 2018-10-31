@@ -1,5 +1,5 @@
 import HotelDetailsReviewBox from './HotelDetailsReviewBox';
-import { LOGIN, EMAIL_VERIFICATION } from '../../../constants/modals.js';
+import { LOGIN } from '../../../constants/modals.js';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
@@ -8,9 +8,8 @@ import { withRouter } from 'react-router-dom';
 import { CurrencyConverter } from '../../../services/utilities/currencyConverter';
 import { RoomsXMLCurrency } from '../../../services/utilities/roomsXMLCurrency';
 import Facilities from './Facilities';
-import requester from '../../../initDependencies';
-
-const DEFAULT_CRYPTO_CURRENCY = 'EUR';
+import LocPrice from '../../common/utility/LocPrice';
+import Rating from '../../common/rating';
 
 function HotelDetailsInfoSection(props) {
   const getTotalPrice = (room) => {
@@ -22,26 +21,26 @@ function HotelDetailsInfoSection(props) {
     return total;
   };
 
-  const calculateStars = (ratingNumber) => {
-    let starsElements = [];
-    let rating = Math.round(ratingNumber);
-    for (let i = 0; i < rating; i++) {
-      starsElements.push(<span key={i} className="full-star"></span>);
-    }
+  // const calculateStars = (ratingNumber) => {
+  //   let starsElements = [];
+  //   let rating = Math.round(ratingNumber);
+  //   for (let i = 0; i < rating; i++) {
+  //     starsElements.push(<span key={i} className="full-star"></span>);
+  //   }
 
-    return starsElements;
-  };
+  //   return starsElements;
+  // };
 
   const hangleBookNowClick = (resultIndex) => {
-    requester.getUserInfo().then(res => res.body)
-      .then(data => {
-        const { isEmailVerified } = data;
-        if (!isEmailVerified) {
-          props.dispatch(openModal(EMAIL_VERIFICATION));
-        } else {
-          props.handleBookRoom(roomsResults.slice(resultIndex));
-        }
-      });
+    // requester.getUserInfo().then(res => res.body)
+    //   .then(data => {
+    //     const { isEmailVerified } = data;
+    //     if (!isEmailVerified) {
+    //       props.dispatch(openModal(EMAIL_VERIFICATION));
+    //     } else {
+    props.handleBookRoom(roomsResults.slice(resultIndex));
+    //   }
+    // });
   };
 
   const getButton = (resultIndex) => {
@@ -52,8 +51,8 @@ function HotelDetailsInfoSection(props) {
     }
   };
 
-  const { hotelAmenities, city, country, generalDescription } = props.data;
-  const address = props.data.additionalInfo.mainAddress;
+  const { hotelAmenities, city, country, generalDescription } = props.hotel;
+  const address = props.hotel.additionalInfo.mainAddress;
   const rooms = props.hotelRooms;
   let roomsResults = [];
   if (rooms) {
@@ -81,20 +80,22 @@ function HotelDetailsInfoSection(props) {
     roomsResults = roomsResults.sort((x, y) => getTotalPrice(x[0].roomsResults) > getTotalPrice(y[0].roomsResults) ? 1 : -1);
   }
 
-  const currency = props.paymentInfo.currency;
+  const { currency } = props.paymentInfo;
+  const { currencyExchangeRates } = props.exchangeRatesInfo;
   const roomsXMLCurrency = RoomsXMLCurrency.get();
 
   return (
     <section id="hotel-info">
       <div className="container">
         <div className="hotel-content" id="hotel-section">
-          <h2> {props.data.name} </h2>
-          <div className="list-hotel-rating">
+          <h2> {props.hotel.name} </h2>
+          <Rating rating={props.hotel.star} />
+          {/* <div className="list-hotel-rating">
             <div className="list-hotel-rating-stars">
-              {calculateStars(props.data.star)}
+              {calculateStars(props.hotel.star)}
             </div>
-          </div>
-          <div className="clearfix" />
+          </div> */}
+          {/* <div className="clearfix" /> */}
           <p>{address} {city}, {country}</p>
           <div className="list-hotel-description">
             <h2>Description</h2>
@@ -107,16 +108,16 @@ function HotelDetailsInfoSection(props) {
             {props.descriptionsAccessInfo &&
               <div id="hotel-rules">
                 <h2>Access info</h2>
-                <p>{props.data.descriptionsAccessInfo}</p>
+                <p>{props.hotel.descriptionsAccessInfo}</p>
                 <hr />
               </div>
             }
             <div className="clearfix" />
 
-            {props.data.reviews && props.data.reviews.length > 0 &&
+            {props.hotel.reviews && props.hotel.reviews.length > 0 &&
               <div id="reviews">
                 <h2>User Rating &amp; Reviews</h2>
-                {props.data.reviews.map((item, i) => {
+                {props.hotel.reviews.map((item, i) => {
                   return (
                     <HotelDetailsReviewBox
                       key={i}
@@ -130,11 +131,13 @@ function HotelDetailsInfoSection(props) {
             }
             <div className="clearfix" />
 
-            <div id="rooms">
-              <h2>Available Rooms</h2>
-              {props.loadingRooms
-                ? <div className="loader"></div>
-                : <div>{roomsResults && roomsResults.map((results, resultIndex) => {
+            {props.loadingRooms
+              ? <div className="loader"></div>
+              :
+              roomsResults && roomsResults.length > 0 &&
+              <div id="rooms">
+                <h2>Available Rooms</h2>
+                <div>{roomsResults.map((results, resultIndex) => {
                   return (
                     <div key={resultIndex} className="row room-group">
                       <div className="col col-md-6 parent vertical-block-center">
@@ -144,13 +147,10 @@ function HotelDetailsInfoSection(props) {
                               <div key={roomIndex} className="room">
                                 <span>{room.name} ({room.mealType}) - </span>
                                 {props.userInfo.isLogged &&
-                                  <span>{props.currencySign}{props.rates && Number((CurrencyConverter.convert(props.rates, roomsXMLCurrency, currency, room.price)) / props.nights).toFixed(2)} </span>
+                                  <span>{props.currencySign}{currencyExchangeRates && Number((CurrencyConverter.convert(currencyExchangeRates, roomsXMLCurrency, currency, room.price)) / props.nights).toFixed(2)} </span>
                                 }
-                                <span>
-                                  {props.userInfo.isLogged && '('}
-                                  {props.rates && Number((CurrencyConverter.convert(props.rates, roomsXMLCurrency, DEFAULT_CRYPTO_CURRENCY, room.price) / props.nights) / props.locRate).toFixed(2)} LOC
-                              {props.userInfo.isLogged && ')'} / night
-                            </span>
+                                <LocPrice fiat={room.price / props.nights} />
+                                / night
                               </div>
                             );
                           })}
@@ -161,9 +161,9 @@ function HotelDetailsInfoSection(props) {
                           <span className="price-details">
                             <span>{props.nights} {props.nights === 1 ? 'night: ' : 'nights: '}</span>
                             {props.userInfo.isLogged &&
-                              <span>{props.currencySign}{props.rates && Number(CurrencyConverter.convert(props.rates, roomsXMLCurrency, currency, getTotalPrice(results[0].roomsResults))).toFixed(2)} (</span>
+                              <span>{props.currencySign}{currencyExchangeRates && Number(CurrencyConverter.convert(currencyExchangeRates, roomsXMLCurrency, currency, getTotalPrice(results[0].roomsResults))).toFixed(2)} </span>
                             }
-                            <span>{props.rates && Number(CurrencyConverter.convert(props.rates, roomsXMLCurrency, DEFAULT_CRYPTO_CURRENCY, getTotalPrice(results[0].roomsResults)) / props.locRate).toFixed(2)} LOC{props.userInfo.isLogged ? ')' : ''}</span>
+                            <LocPrice fiat={getTotalPrice(results[0].roomsResults)} />
                           </span>
                         </div>
                       </div>
@@ -174,13 +174,13 @@ function HotelDetailsInfoSection(props) {
                   );
                 })}
                 </div>
-              }
-            </div>
+              </div>
+            }
             <div className="clearfix" />
 
             <div id="map">
               <h2>Location</h2>
-              <iframe title="location" src={`https://maps.google.com/maps?q=${props.data.latitude},${props.data.longitude}&z=15&output=embed`}
+              <iframe title="location" src={`https://maps.google.com/maps?q=${props.hotel.latitude},${props.hotel.longitude}&z=15&output=embed`}
                 width="100%" height="400" frameBorder="0" style={{ border: 0 }} />
               <hr />
             </div>
@@ -194,14 +194,12 @@ function HotelDetailsInfoSection(props) {
 }
 
 HotelDetailsInfoSection.propTypes = {
-  data: PropTypes.object,
+  hotel: PropTypes.object,
   hotelRooms: PropTypes.array,
-  locRate: PropTypes.number,
   showLoginModal: PropTypes.bool,
   isLogged: PropTypes.bool,
   userInfo: PropTypes.object,
   nights: PropTypes.number,
-  onApply: PropTypes.func,
   startDate: PropTypes.object,
   endDate: PropTypes.object,
   loading: PropTypes.bool,
@@ -217,18 +215,19 @@ HotelDetailsInfoSection.propTypes = {
   handleBookRoom: PropTypes.func,
   loadingRooms: PropTypes.bool,
   currencySign: PropTypes.string,
-  rates: PropTypes.object,
 
   // Redux props
   paymentInfo: PropTypes.object,
+  exchangeRatesInfo: PropTypes.object,
   dispatch: PropTypes.func,
 };
 
 function mapStateToProps(state) {
-  const { userInfo, paymentInfo } = state;
+  const { userInfo, paymentInfo, exchangeRatesInfo } = state;
   return {
     userInfo,
-    paymentInfo
+    paymentInfo,
+    exchangeRatesInfo
   };
 }
 

@@ -9,7 +9,7 @@ import '../../../styles/css/components/modals/modal.css';
 function SendRecoveryEmailModal(props) {
 
   return (
-    <div>
+    <React.Fragment>
       <Modal show={props.isActive} onHide={e => props.closeModal(SEND_RECOVERY_EMAIL, e)} className="modal fade myModal">
         <Modal.Header>
           <h1>Recover your password</h1>
@@ -31,7 +31,7 @@ function SendRecoveryEmailModal(props) {
           </form>
         </Modal.Body>
       </Modal>
-    </div>
+    </React.Fragment>
   );
 }
 

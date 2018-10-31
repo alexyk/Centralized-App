@@ -1,20 +1,18 @@
-import '../../../styles/css/components/hotels/book/profile-confirm-form.css';
-import '../../../styles/css/components/captcha/captcha-container.css';
-
-import PropTypes from 'prop-types';
 import React from 'react';
 import { withRouter } from 'react-router-dom';
-
-import { Config } from '../../../config.js';
-import requester from '../../../initDependencies';
-import StringUtils from '../../../services/utilities/stringUtilities';
 import ReCAPTCHA from 'react-google-recaptcha';
-import Select from '../../common/google/GooglePlacesAutocomplete';
-import moment from 'moment';
-import queryString from 'query-string';
 import { NotificationManager } from 'react-notifications';
+import PropTypes from 'prop-types';
+import moment from 'moment';
+import { Config } from '../../../config.js';
+import requester from '../../../requester';
 import { LONG } from '../../../constants/notificationDisplayTimes';
+import BookingSteps from '../../common/utility/BookingSteps';
+import Select from '../../common/google/GooglePlacesAutocomplete';
+import StringUtils from '../../../services/utilities/stringUtilities';
 
+import '../../../styles/css/components/hotels/book/profile-confirm-form.css';
+import '../../../styles/css/components/captcha/captcha-container.css';
 
 class ConfirmProfilePage extends React.Component {
   constructor(props) {
@@ -68,6 +66,10 @@ class ConfirmProfilePage extends React.Component {
           this.requestStates(userInfo.country.id);
         }
 
+        if (userInfo.countryState) {
+          userInfo.countryState = userInfo.countryState.id;
+        }
+
         this.setState({ userInfo, loading: false });
       });
   }
@@ -96,34 +98,27 @@ class ConfirmProfilePage extends React.Component {
     form.submit();
   }
 
-  createBackUrl() {
-    const currency = this.props.paymentInfo.currency;
-    const queryParams = queryString.parse(this.props.location.search);
-    const decodeBooking = JSON.parse(decodeURI(queryParams.booking));
-    let rooms = decodeBooking.rooms;
-    rooms.forEach((room) => {
-      room.adults = room.adults.length;
-    });
-
-    const id = this.props.match.params.id;
-    rooms = encodeURI(JSON.stringify(rooms));
-
-    return `hotels/listings/${id}?region=${queryParams.region}&currency=${currency}&startDate=${queryParams.startDate}&endDate=${queryParams.endDate}&rooms=${rooms}`;
-  }
-
   payWithCard() {
-    const { paymentInfo } = this.props.location.state;
-    requester.verifyCreditCardPayment(paymentInfo)
-      .then(res => {
-        res.body.then((data) => {
-          const env = Config.getValue('env');
-          if (env === 'staging' || env === 'development') {
-            window.location.href = data.url;
+    this.props.requestLockOnQuoteId().then(() => {
+      const { paymentInfo } = this.props.location.state;
+      requester.verifyCreditCardPayment(paymentInfo)
+        .then(res => {
+          if (res.success) {
+            res.body.then((data) => {
+              const env = Config.getValue('env');
+              if (env === 'staging' || env === 'development') {
+                window.location.href = data.url;
+              } else {
+                this.payWithCreditCard(data.url);
+              }
+            });
           } else {
-            this.payWithCreditCard(data.url);
+            res.errors.then((error) => {
+              NotificationManager.warning(error.message, '', LONG);
+            });
           }
         });
-      });
+    });
   }
 
   onChange(event) {
@@ -140,11 +135,12 @@ class ConfirmProfilePage extends React.Component {
     const userInfo = { ...this.state.userInfo };
     userInfo.preferredCurrency = userInfo.preferredCurrency ? userInfo.preferredCurrency.id : 1;
     userInfo.country = userInfo.country && userInfo.country.id;
-    userInfo.state = userInfo.state && userInfo.state.id;
+    userInfo.countryState = userInfo.countryState && parseInt(userInfo.countryState, 10);
     requester.updateUserInfo(userInfo, captchaToken).then(res => {
       if (res.success) {
         this.payWithCard();
       } else {
+        res.errors.then(e => console.log(e));
         NotificationManager.error('Invalid user information.', '', LONG);
       }
     });
@@ -162,6 +158,7 @@ class ConfirmProfilePage extends React.Component {
     const userInfo = { ...this.state.userInfo };
     userInfo.country = value;
     userInfo.city = '';
+    userInfo.countryState = '';
 
     this.setState({ userInfo });
   }
@@ -179,12 +176,8 @@ class ConfirmProfilePage extends React.Component {
 
     return (
       <React.Fragment>
-        <div className="booking-steps sm-none">
-          <div className="container">
-            <p>1. Provide Guest Information</p>
-            <p>2. Review Room Details</p>
-            <p>3. Confirm and Pay</p>
-          </div>
+        <div className="sm-none">
+          <BookingSteps steps={['Provide Guest Information', 'Review Room Details', 'Confirm and Pay']} currentStepIndex={2} />
         </div>
 
 
@@ -205,7 +198,7 @@ class ConfirmProfilePage extends React.Component {
 
             <div className="phone">
               <label htmlFor="phone">Phone number <span className="mandatory">*</span><img src={Config.getValue('basePath') + 'images/icon-lock.png'} className="lock" alt="lock-o" /></label>
-              <input id="phone" name="phoneNumber" value={this.state.userInfo.phoneNumber} onChange={this.onChange} type="text" required/>
+              <input id="phone" name="phoneNumber" value={this.state.userInfo.phoneNumber} onChange={this.onChange} type="text" required />
             </div>
 
             <div className="address-city">
@@ -252,12 +245,12 @@ class ConfirmProfilePage extends React.Component {
 
             <div className="address">
               <label htmlFor="address">Address <span className="mandatory">*</span></label>
-              <input id="address" name="address" value={this.state.userInfo.address} onChange={this.onChange} type="text" placeholder='Enter your address' required/>
+              <input id="address" name="address" value={this.state.userInfo.address} onChange={this.onChange} type="text" placeholder='Enter your address' required />
             </div>
 
             <div className="zip-code">
               <label htmlFor="zip-code">Zip Code <span className="mandatory">*</span></label>
-              <input id="zip-code" name="zipCode" value={this.state.userInfo.zipCode} onChange={this.onChange} type="text" placeholder='Enter your zip code' required/>
+              <input id="zip-code" name="zipCode" value={this.state.userInfo.zipCode} onChange={this.onChange} type="text" placeholder='Enter your zip code' required />
             </div>
 
             <p className="text"><span className="mandatory">*</span> Fields mandatory for payment with Credit Card</p>
@@ -283,7 +276,9 @@ ConfirmProfilePage.propTypes = {
 
   // Router
   location: PropTypes.object,
-  match: PropTypes.object
+  match: PropTypes.object,
+
+  requestLockOnQuoteId: PropTypes.func
 };
 
 export default withRouter(ConfirmProfilePage);

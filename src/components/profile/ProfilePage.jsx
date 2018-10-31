@@ -1,4 +1,4 @@
-import { Route, Switch } from 'react-router-dom';
+import { Route, Switch, withRouter } from 'react-router-dom';
 
 import AdminPage from './admin/AdminPage';
 import CalendarPage from './calendar/CalendarPage';
@@ -7,17 +7,20 @@ import MessagesChatPage from './messages/MessagesChatPage';
 import MessagesPage from './messages/MessagesPage';
 import MyGuestsPage from './guests/MyGuestsPage';
 import MyListingsPage from './listings/MyListingsPage';
-import NavProfile from './NavProfile';
-import ProfileMePage from './me/ProfileMePage';
+import ProfileNav from './ProfileNav';
+import ProfileEditPage from './me/ProfileEditPage';
 import PropTypes from 'prop-types';
 import React from 'react';
 import TripsRouter from './trips/TripsRouter';
 import WalletPage from './wallet/WalletIndexPage';
+import AirdropPage from './airdrop/AirdropPage';
+import BuyLocPage from './buyloc/BuyLocPage';
+import { connect } from 'react-redux';
 
 function ProfilePage(props) {
   return (
-    <div>
-      <NavProfile />
+    <React.Fragment>
+      {props.isLogged && <ProfileNav />}
       <Switch>
         <Route exact path="/profile/dashboard" render={() => <DashboardPage />} />
         <Route exact path="/profile/listings" render={() => <MyListingsPage />} />
@@ -26,11 +29,13 @@ function ProfilePage(props) {
         <Route exact path="/profile/messages/chat/:id" render={() => <MessagesChatPage />} />
         <Route path="/profile/trips" render={() => <TripsRouter location={props.location} />} />
         <Route path="/profile/reservations" render={() => <MyGuestsPage />} />
-        <Route path="/profile/me" render={() => <ProfileMePage />} />
+        <Route path="/profile/me" render={() => <ProfileEditPage />} />
         <Route path="/profile/wallet" render={() => <WalletPage />} />
+        <Route path="/airdrop" render={() => <AirdropPage />} />
+        <Route path="/buyloc" render={() => <BuyLocPage />} />
         <Route path="/profile/admin" render={() => <AdminPage />} />
       </Switch>
-    </div>
+    </React.Fragment>
   );
 }
 
@@ -38,4 +43,8 @@ ProfilePage.propTypes = {
   location: PropTypes.object,
 };
 
-export default ProfilePage;
+const mapStateToProps = ({ userInfo }) => ({
+  isLogged: userInfo.isLogged,
+});
+
+export default withRouter(connect(mapStateToProps)(ProfilePage));

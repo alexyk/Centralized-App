@@ -51,6 +51,7 @@ function FilterPanel(props) {
             <h5>Order By</h5>
             <div className='select'>
               <select name={'orderBy'} value={props.orderBy} onChange={props.handleOrderBy}>
+                <option value='rank,desc'>Rank</option>
                 <option value='priceForSort,asc'>Lowest price</option>
                 <option value='priceForSort,desc'>Highest price</option>
               </select>

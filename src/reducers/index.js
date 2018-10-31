@@ -4,7 +4,12 @@ import paymentInfo from './paymentInfo';
 import modalsInfo from './modalsInfo';
 import airdropInfo from './airdropInfo';
 import searchInfo from './searchInfo';
-import bookingBestPrice from './bookingBestPrice';
+import exchangerSocketInfo from './exchangerSocketInfo';
+import locAmountsInfo from './locAmountsInfo';
+import exchangeRatesInfo from './exchangeRatesInfo';
+import locPriceUpdateTimerInfo from './locPriceUpdateTimerInfo';
+import burgerMenuInfo from './burgerMenuInfo';
+import searchDatesInfo from './searchDatesInfo';
 
 const rootReducer = combineReducers({
   userInfo,
@@ -12,7 +17,12 @@ const rootReducer = combineReducers({
   modalsInfo,
   airdropInfo,
   searchInfo,
-  bookingBestPrice,
+  exchangerSocketInfo,
+  locAmountsInfo,
+  exchangeRatesInfo,
+  locPriceUpdateTimerInfo,
+  burgerMenuInfo,
+  searchDatesInfo
 });
 
 export default rootReducer;
