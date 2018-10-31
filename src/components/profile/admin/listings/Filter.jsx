@@ -1,4 +1,4 @@
-import '../../../../styles/css/components/profile/admin_panel/filter.css';
+import '../../../../styles/css/components/profile/admin/filter.css';
 
 import PropTypes from 'prop-types';
 import React from 'react';

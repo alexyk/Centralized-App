@@ -4,7 +4,7 @@ import AdminNav from '../AdminNav';
 import { Config } from '../../../../config.js';
 import { LONG } from '../../../../constants/notificationDisplayTimes.js';
 
-import '../../../../styles/css/components/profile/admin_panel/admin-airdrop.css';
+import '../../../../styles/css/components/profile/admin/airdrop/admin-airdrop.css';
 
 class AdminAirDrop extends Component {
   constructor(props) {
