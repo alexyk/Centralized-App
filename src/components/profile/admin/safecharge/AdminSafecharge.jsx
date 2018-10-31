@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { NotificationManager } from 'react-notifications';
+// import { NotificationManager } from 'react-notifications';
 import AdminNav from '../AdminNav';
-import { LONG } from '../../../../constants/notificationDisplayTimes.js';
+// import { LONG } from '../../../../constants/notificationDisplayTimes.js';
 import { Config } from '../../../../config.js';
 
 import '../../../../styles/css/components/profile/admin/safecharge/admin-safecharge.css';
