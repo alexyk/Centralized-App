@@ -244,11 +244,11 @@ class HotelBookingConfirmPage extends React.Component {
         TEST_FIAT_AMOUNT_IN_EUR / this.props.exchangeRatesInfo.locEurRate;
 
       this.approveQuote();
-      console.log('LOC',locAmounts[DEFAULT_QUOTE_LOC_ID]);
-      console.log('LOC',locAmounts[DEFAULT_QUOTE_LOC_ID].locAmount);
+      // console.log('LOC',locAmounts[DEFAULT_QUOTE_LOC_ID]);
+      // console.log('LOC',locAmounts[DEFAULT_QUOTE_LOC_ID].locAmount);
 
       const wei = (this.tokensToWei(locAmount.toString()));
-      console.log(wei);
+      // console.log(wei);
       const booking = reservation.booking.hotelBooking;
       const endDate = moment.utc(booking[0].arrivalDate, 'YYYY-MM-DD').add(booking[0].nights, 'days');
 
@@ -270,7 +270,7 @@ class HotelBookingConfirmPage extends React.Component {
               wei.toString(),
               endDate.unix().toString(),
             ).then(transaction => {
-              console.log('transaction', transaction);
+              // console.log('transaction', transaction);
               const bookingConfirmObj = {
                 bookingId: preparedBookingId,
                 transactionHash: transaction.hash,
@@ -514,7 +514,7 @@ class HotelBookingConfirmPage extends React.Component {
                   <p className='billing-disclaimer'>The charge will appear on your bill as LockChain Ltd. (team@locktrip.com)</p>
                 </div>
                 <div className="payment-methods">
-                  {locAmounts[DEFAULT_QUOTE_LOC_ID] && locAmounts[DEFAULT_QUOTE_LOC_ID].fundsSufficient && false &&
+                  {locAmounts[DEFAULT_QUOTE_LOC_ID] && locAmounts[DEFAULT_QUOTE_LOC_ID].fundsSufficient &&
                     <div className="payment-methods-card">
                       <div className="details">
                         <p className="booking-card-price">
