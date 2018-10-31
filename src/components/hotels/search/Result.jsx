@@ -106,10 +106,10 @@ class Result extends React.Component {
     let { id, name, generalDescription, star } = this.props.hotel;
     let { price } = this.props;
 
-    const { exchangeRates } = this.props;
+    const { currencyExchangeRates } = this.props.exchangeRatesInfo;
     const { currencySign } = this.props.paymentInfo;
     const isPriceLoaded = !!price;
-    const priceInSelectedCurrency = exchangeRates && ((CurrencyConverter.convert(exchangeRates, RoomsXMLCurrency.get(), this.props.paymentInfo.currency, price)) / this.props.nights).toFixed(2);
+    const priceInSelectedCurrency = currencyExchangeRates && ((CurrencyConverter.convert(currencyExchangeRates, RoomsXMLCurrency.get(), this.props.paymentInfo.currency, price)) / this.props.nights).toFixed(2);
 
     name = name && StringUtils.shorten(name, this.state.titleLength);
     generalDescription = generalDescription && StringUtils.shorten(generalDescription, this.state.descriptionLength);
@@ -230,7 +230,6 @@ class Result extends React.Component {
 Result.propTypes = {
   hotel: PropTypes.object,
   nights: PropTypes.number,
-  exchangeRates: PropTypes.any,
   price: PropTypes.any,
   allElements: PropTypes.bool,
 
@@ -239,14 +238,16 @@ Result.propTypes = {
 
   // Redux props
   paymentInfo: PropTypes.object,
-  userInfo: PropTypes.object
+  userInfo: PropTypes.object,
+  exchangeRatesInfo: PropTypes.object
 };
 
 function mapStateToProps(state) {
-  const { paymentInfo, userInfo } = state;
+  const { paymentInfo, userInfo, exchangeRatesInfo } = state;
   return {
     paymentInfo,
-    userInfo
+    userInfo,
+    exchangeRatesInfo
   };
 }
 

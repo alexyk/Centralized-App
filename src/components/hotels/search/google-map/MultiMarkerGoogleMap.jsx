@@ -108,11 +108,11 @@ class MultiMarkerGoogleMap extends Component {
   }
 
   createInfoWindow(hotel) {
-    const { exchangeRates, isLogged, nights } = this.props;
-    const { locEurRate } = this.props.exchangeRatesInfo;
+    const { isLogged, nights } = this.props;
+    const { locEurRate, currencyExchangeRates } = this.props.exchangeRatesInfo;
     const { currency, currencySign } = this.props.paymentInfo;
     const locPrice = ((hotel.price / locEurRate) / this.props.nights).toFixed(2);
-    const fiatPrice = exchangeRates && ((CurrencyConverter.convert(exchangeRates, RoomsXMLCurrency.get(), currency, hotel.price)) / nights).toFixed(2);
+    const fiatPrice = currencyExchangeRates && ((CurrencyConverter.convert(currencyExchangeRates, RoomsXMLCurrency.get(), currency, hotel.price)) / nights).toFixed(2);
     const isMobile = this.props.location.pathname.indexOf('/mobile') !== -1;
     const rootUrl = isMobile ? '/mobile/details' : '/hotels/listings';
 
@@ -141,7 +141,6 @@ class MultiMarkerGoogleMap extends Component {
 }
 
 MultiMarkerGoogleMap.propTypes = {
-  exchangeRates: PropTypes.object,
   lat: PropTypes.number,
   lon: PropTypes.number,
   mapInfo: PropTypes.array,
