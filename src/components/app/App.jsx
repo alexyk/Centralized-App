@@ -27,18 +27,11 @@ import GooglePlaces from '../common/GooglePlaces';
 import HelpPage from '../static/HelpPage';
 import AboutUsPage from '../static/AboutUsPage';
 
-// if (process.env.NODE_ENV === 'development') {
-//   console.log(process.env.NODE_ENV);
-//   const { whyDidYouUpdate } = require('why-did-you-update');
-//   whyDidYouUpdate(React);
-// }
-
 class App extends React.Component {
   constructor(props) {
     super(props);
-    BigCalendar.setLocalizer(
-      BigCalendar.momentLocalizer(moment)
-    );
+    
+    BigCalendar.setLocalizer(BigCalendar.momentLocalizer(moment.utc()));
   }
 
   componentDidMount() {

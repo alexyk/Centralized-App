@@ -11,7 +11,9 @@ import '../../../styles/css/components/homes/booking/homes-booking-listing-detai
 import Rating from '../../common/rating/Rating';
 import LocPrice from '../../common/utility/LocPrice';
 import { RoomsXMLCurrency } from '../../../services/utilities/roomsXMLCurrency.js';
+
 class HomesBookingListingDetailsInfo extends React.Component {
+  
   render() {
     const { listing, searchParams, calendar } = this.props;
     const { currencyExchangeRates } = this.props.exchangeRatesInfo;
