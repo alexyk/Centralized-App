@@ -158,7 +158,7 @@ class HotelBookingConfirmPage extends React.Component {
 
       for (let j = 0; j < earliestToLatestRoomCancellationFees.length; j++) {
         const cancellation = earliestToLatestRoomCancellationFees[j];
-        let fromDate = moment(cancellation.from);
+        let fromDate = moment(cancellation.from).utc();
 
         const daysBefore = moment(fromDate).diff(creationDate, 'days');
 
