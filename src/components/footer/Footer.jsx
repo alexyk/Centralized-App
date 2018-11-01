@@ -45,10 +45,10 @@ class Footer extends React.Component {
                     <li>
                       <h5>Hosting</h5>
                     </li>
-                    <li><a href="#">Why Host</a></li>
-                    <li><a href="#">Hospitality</a></li>
-                    <li><a href="#">Responsible Hosting</a></li>
-                    <li><a href="#">Community Center</a></li>
+                    <li><a href="# ">Why Host</a></li>
+                    <li><a href="# ">Hospitality</a></li>
+                    <li><a href="# ">Responsible Hosting</a></li>
+                    <li><a href="# ">Community Center</a></li>
                   </ul>
                 </li>
               </ul>
