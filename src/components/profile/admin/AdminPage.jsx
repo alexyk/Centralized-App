@@ -8,7 +8,7 @@ import UnverifiedList from './users/UnverifiedList';
 import VerifiedList from './users/VerifiedList';
 import AdminAirdrop from './airdrop/AdminAirdrop';
 import AdminSafecharge from './safecharge/AdminSafecharge';
-import { Config } from '../../../config.js';
+import requester from '../../../requester';
 
 class AdminPage extends Component {
   constructor(props) {
@@ -26,22 +26,25 @@ class AdminPage extends Component {
   }
 
   requestConfigVars() {
-    fetch(`${Config.getValue('apiHost')}admin/configVars`, {
-      headers: {
-        'Authorization': localStorage.getItem(Config.getValue('domainPrefix') + '.auth.locktrip')
-      }
-    }).then((res) => {
-      res.json().then((data) => {
-        const configVars = {};
-        data.forEach((configVar) => {
-          configVars[configVar.name] = configVar.value;
-        });
+    requester.getConfigVars()
+      .then((res) => {
+        if (res.success) {
+          res.body.then((data) => {
+            const configVars = {};
+            data.forEach((configVar) => {
+              configVars[configVar.name] = configVar.value;
+            });
 
-        this.setState({
-          configVars
-        });
+            this.setState({
+              configVars
+            });
+          });
+        } else {
+          res.errors.then((err) => {
+            console.log(err);
+          });
+        }
       });
-    });
   }
 
   onChangeConfigVars(changedKey, configVars) {
