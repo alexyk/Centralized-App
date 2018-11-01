@@ -29,6 +29,7 @@ const ERROR_MESSAGE_TIME = 20000;
 const DEFAULT_CRYPTO_CURRENCY = 'EUR';
 const TEST_FIAT_AMOUNT_IN_EUR = 15;
 const DEFAULT_QUOTE_LOC_ID = 'quote';
+const SAFECHARGE_VAR = 'SCPaymentModeOn';
 
 class HotelBookingConfirmPage extends React.Component {
   constructor(props) {
@@ -40,7 +41,8 @@ class HotelBookingConfirmPage extends React.Component {
     this.state = {
       password: '',
       isQuoteStopped: false,
-      userConfirmedPaymentWithLOC: false
+      userConfirmedPaymentWithLOC: false,
+      safeChargeMode: false
     };
 
     this.openModal = this.openModal.bind(this);
@@ -48,9 +50,11 @@ class HotelBookingConfirmPage extends React.Component {
     this.onChange = this.onChange.bind(this);
     this.payWithLocSingleWithdrawer = this.payWithLocSingleWithdrawer.bind(this);
     this.createBackUrl = this.createBackUrl.bind(this);
+    this.requestSafechargeMode = this.requestSafechargeMode.bind(this);
   }
 
   componentDidMount() {
+    this.requestSafechargeMode();
     this.props.requestCreateReservation().then(() => {
       const { currencyExchangeRates } = this.props.exchangeRatesInfo;
       const fiatPriceRoomsXML = this.props.reservation.fiatPrice;
@@ -61,6 +65,25 @@ class HotelBookingConfirmPage extends React.Component {
 
   componentWillUnmount() {
     this.props.dispatch(setLocRateFiatAmount(1000));
+  }
+
+  requestSafechargeMode() {
+    requester.getConfigVars()
+      .then((res) => {
+        if (res.success) {
+          res.body.then((data) => {
+            const safeChargeMode = data.filter(configVar => configVar.name === SAFECHARGE_VAR)[0];
+
+            this.setState({
+              safeChargeMode: safeChargeMode.value === 'true'
+            });
+          });
+        } else {
+          res.errors.then((err) => {
+            NotificationManager.warning(err.message, '', LONG);
+          });
+        }
+      });
   }
 
   getEnvironment() {
@@ -457,7 +480,7 @@ class HotelBookingConfirmPage extends React.Component {
     }
 
     const { reservation } = this.props;
-    const { userConfirmedPaymentWithLOC, password, isQuoteStopped } = this.state;
+    const { userConfirmedPaymentWithLOC, password, isQuoteStopped, safeChargeMode } = this.state;
     const hasLocAddress = !!this.props.userInfo.locAddress;
     const { currencyExchangeRates } = this.props.exchangeRatesInfo;
 
@@ -514,7 +537,7 @@ class HotelBookingConfirmPage extends React.Component {
                   <p className='billing-disclaimer'>The charge will appear on your bill as LockChain Ltd. (team@locktrip.com)</p>
                 </div>
                 <div className="payment-methods">
-                  {locAmounts[DEFAULT_QUOTE_LOC_ID] && locAmounts[DEFAULT_QUOTE_LOC_ID].fundsSufficient &&
+                  {locAmounts[DEFAULT_QUOTE_LOC_ID] && locAmounts[DEFAULT_QUOTE_LOC_ID].fundsSufficient && safeChargeMode &&
                     <div className="payment-methods-card">
                       <div className="details">
                         <p className="booking-card-price">
