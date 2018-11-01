@@ -11,7 +11,7 @@ import moment from 'moment';
 const STATUS = {
   DONE: 'COMPLETE',
   CONFIRMED: 'PENDING',
-  FAIL: 'PAYMENT FAILED',
+  FAIL: 'BOOKING FAILED',
   FAILED: 'BOOKING FAILED',
   PENDING: 'PENDING',
   QUEUED: 'PENDING',
@@ -23,7 +23,6 @@ const STATUS = {
 const STATUS_TOOLTIP = {
   'COMPLETE': 'Your reservation is complete',
   'PENDING': 'Contact us if status is still Pending after 30 minutes',
-  'PAYMENT FAILED': 'Your payment failed please contact us',
   'BOOKING FAILED': 'Your booking failed please contact us',
   'CANCELLED': 'You canceled your reservation'
 };
