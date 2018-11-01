@@ -20,8 +20,8 @@ export const airdropInfo = {
   SET_AIRDROP_INFO: 'SET_AIRDROP_INFO'
 };
 
-// searchInfo actions
-export const searchInfo = {
+// hotels searchInfo actions
+export const hotelsSearchInfo = {
   SET_REGION: 'SET_REGION',
   SET_ROOMS_BY_COUNT_OF_ROOMS: 'SET_ROOMS_BY_COUNT_OF_ROOMS',
   SET_ROOMS: 'SET_ROOMS',

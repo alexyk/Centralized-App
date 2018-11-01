@@ -1,4 +1,4 @@
-import { searchInfo } from '../actions/actionTypes';
+import { hotelsSearchInfo } from '../actions/actionTypes';
 
 const initialState = {
   rooms: [{ adults: '2', children: [] }],
@@ -10,28 +10,28 @@ const initialState = {
 
 export default function reducer(state = initialState, action) {
   switch (action.type) {
-    case searchInfo.SET_REGION:
+    case hotelsSearchInfo.SET_REGION:
       return Object.assign({}, state, {
         region: action.region
       });
-    case searchInfo.SET_ROOMS_BY_COUNT_OF_ROOMS:
+    case hotelsSearchInfo.SET_ROOMS_BY_COUNT_OF_ROOMS:
       return Object.assign({}, state, {
         rooms: handleRoomsChange(action.countOfRooms, state.rooms)
       });
-    case searchInfo.SET_ROOMS:
+    case hotelsSearchInfo.SET_ROOMS:
       return Object.assign({}, state, {
         rooms: action.rooms
       });
-    case searchInfo.SET_ADULTS:
+    case hotelsSearchInfo.SET_ADULTS:
       return Object.assign({}, state, {
         adults: action.countOfAdults
       });
-    case searchInfo.SET_CHILDREN:
+    case hotelsSearchInfo.SET_CHILDREN:
       return Object.assign({}, state, {
         hasChildren: !state.hasChildren,
         rooms: handleToggleChildren(state.hasChildren, state.rooms)
       });
-    case searchInfo.SET_SEARCH_INFO:
+    case hotelsSearchInfo.SET_SEARCH_INFO:
       return Object.assign({}, state, {
         region: action.region,
         rooms: action.rooms,

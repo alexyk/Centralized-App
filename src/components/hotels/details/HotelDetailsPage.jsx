@@ -16,7 +16,7 @@ import { connect } from 'react-redux';
 import moment from 'moment';
 import { parse } from 'query-string';
 import requester from '../../../requester';
-import { setSearchInfo } from '../../../actions/searchInfo';
+import { setHotelsSearchInfo } from '../../../actions/hotelsSearchInfo';
 import { asyncSetStartDate, asyncSetEndDate } from '../../../actions/searchDatesInfo';
 import { withRouter } from 'react-router-dom';
 import queryString from 'query-string';
@@ -58,7 +58,7 @@ class HotelDetailsPage extends React.Component {
 
     this.requestHotel = this.requestHotel.bind(this);
     this.requestHotelRooms = this.requestHotelRooms.bind(this);
-    this.setSearchInfoFromURL = this.setSearchInfoFromURL.bind(this);
+    this.setHotelsSearchInfoFromURL = this.setHotelsSearchInfoFromURL.bind(this);
     this.closeLightbox = this.closeLightbox.bind(this);
     this.gotoNext = this.gotoNext.bind(this);
     this.gotoPrevious = this.gotoPrevious.bind(this);
@@ -73,14 +73,14 @@ class HotelDetailsPage extends React.Component {
 
   componentDidMount() {
     if (this.props.location.search) {
-      this.setSearchInfoFromURL();
+      this.setHotelsSearchInfoFromURL();
     }
 
     this.requestHotel();
     this.requestHotelRooms();
   }
 
-  setSearchInfoFromURL() {
+  setHotelsSearchInfoFromURL() {
     const searchParams = this.getSearchParams(this.props.location.search);
     const startDate = moment(searchParams.get('startDate'), 'DD/MM/YYYY');
     const endDate = moment(searchParams.get('endDate'), 'DD/MM/YYYY');
@@ -90,7 +90,7 @@ class HotelDetailsPage extends React.Component {
 
     this.props.dispatch(asyncSetStartDate(startDate));
     this.props.dispatch(asyncSetEndDate(endDate));
-    this.props.dispatch(setSearchInfo(this.props.searchInfo.region, rooms, adults, hasChildren));
+    this.props.dispatch(setHotelsSearchInfo(this.props.hotelsSearchInfo.region, rooms, adults, hasChildren));
   }
 
   requestHotel() {
@@ -232,7 +232,7 @@ class HotelDetailsPage extends React.Component {
   }
 
   // checkAvailability(quoteId) {
-  //   const rooms = this.props.searchInfo.rooms.map((room) => {
+  //   const rooms = this.props.hotelsSearchInfo.rooms.map((room) => {
   //     const adults = [];
   //     const children = room.children;
   //     for (let j = 0; j < room.adults; j++) {
@@ -277,7 +277,7 @@ class HotelDetailsPage extends React.Component {
   handleBookRoom(roomsResults) {
     this.setState({ loadingRooms: true });
     NotificationManager.info(CHECKING_ROOM_AVAILABILITY, '', LONG);
-    const rooms = this.props.searchInfo.rooms.map((room) => {
+    const rooms = this.props.hotelsSearchInfo.rooms.map((room) => {
       const adults = [];
       const children = room.children;
       for (let j = 0; j < room.adults; j++) {
@@ -489,17 +489,17 @@ HotelDetailsPage.propTypes = {
   dispatch: PropTypes.func,
   userInfo: PropTypes.object,
   paymentInfo: PropTypes.object,
-  searchInfo: PropTypes.object,
+  hotelsSearchInfo: PropTypes.object,
   searchDatesInfo: PropTypes.object
 };
 
 function mapStateToProps(state) {
-  const { userInfo, paymentInfo, modalsInfo, searchInfo, searchDatesInfo } = state;
+  const { userInfo, paymentInfo, modalsInfo, hotelsSearchInfo, searchDatesInfo } = state;
   return {
     userInfo,
     paymentInfo,
     modalsInfo,
-    searchInfo,
+    hotelsSearchInfo,
     searchDatesInfo
   };
 }
