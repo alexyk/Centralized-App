@@ -114,8 +114,9 @@ class HomeDetailsPage extends React.Component {
     requester.getCalendarByListingIdAndDateRange(searchTermMap).then(res => {
       res.body.then(data => {
         let calendar = data.content;
+        console.log(calendar);
         calendar = _.sortBy(calendar, function (x) {
-          return new moment(x.date, 'DD/MM/YYYY');
+          return moment(x.date, 'DD/MM/YYYY');
         });
         this.setState({ calendar: calendar });
       });

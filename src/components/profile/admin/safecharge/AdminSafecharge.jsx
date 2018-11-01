@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 // import { NotificationManager } from 'react-notifications';
 import AdminNav from '../AdminNav';
 // import { LONG } from '../../../../constants/notificationDisplayTimes.js';
-import { Config } from '../../../../config.js';
+import requester from '../../../../requester';
 
 import '../../../../styles/css/components/profile/admin/safecharge/admin-safecharge.css';
 
@@ -21,34 +21,36 @@ class AdminSafecharge extends Component {
       e.preventDefault();
     }
 
-    fetch(`${Config.getValue('apiHost')}admin/configVars/changing`, {
-      method: 'post',
-      headers: {
-        'Authorization': localStorage.getItem(Config.getValue('domainPrefix') + '.auth.locktrip'),
-        'content-type': 'application/json'
-      },
-      body: JSON.stringify([{ name: SAFECHARGE_VAR, value: !(this.props.configVars[SAFECHARGE_VAR] === 'true') }])
-    }).then((res) => {
-      res.json().then((data) => {
-        const configVars = {};        
-        data.forEach((configVar) => {
-          configVars[configVar.name] = configVar.value;
+    const configVars = [{ name: SAFECHARGE_VAR, value: !(this.props.configVars[SAFECHARGE_VAR] === 'true') }];
+
+    requester.updateConfigVars(configVars).then((res) => {
+      if (res.success) {
+        res.body.then((data) => {
+          console.log(data);
+          const configVars = {};
+          data.forEach((configVar) => {
+            configVars[configVar.name] = configVar.value;
+          });
+
+          this.props.onChangeConfigVars(SAFECHARGE_VAR, configVars);
+
+          // if (data.is_success) {
+          //   NotificationManager.success('Loc rate is modify successfully.', '', LONG);
+          // } else {
+          //   NotificationManager.warning('Loc rate is not modify, please try again!!!', '', LONG);
+          // }
         });
-
-        this.props.onChangeConfigVars(SAFECHARGE_VAR, configVars);
-
-        // if (data.is_success) {
-        //   NotificationManager.success('Loc rate is modify successfully.', '', LONG);
-        // } else {
-        //   NotificationManager.warning('Loc rate is not modify, please try again!!!', '', LONG);
-        // }
-      });
+      } else {
+        res.errors.then((err) => {
+          console.log(err);
+        });
+      }
     });
   }
 
   render() {
     const isSafechargeEnabled = this.props.configVars[SAFECHARGE_VAR] === 'true';
-  
+
     return (
       <div className="safecharge">
         <AdminNav>

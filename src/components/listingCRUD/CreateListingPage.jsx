@@ -112,7 +112,6 @@ class CreateListingPage extends React.Component {
     this.onImageDrop = this.onImageDrop.bind(this);
     this.handleImageUpload = this.handleImageUpload.bind(this);
     this.removePhoto = this.removePhoto.bind(this);
-    this.updateLocAddress = this.updateLocAddress.bind(this);
     this.createProgress = this.createProgress.bind(this);
     this.updateProgress = this.updateProgress.bind(this);
     this.onSortEnd = this.onSortEnd.bind(this);
@@ -457,29 +456,6 @@ class CreateListingPage extends React.Component {
     this.setState({
       uploadedFilesUrls: arrayMove(this.state.uploadedFilesUrls, oldIndex, newIndex),
       uploadedFilesThumbUrls: arrayMove(this.state.uploadedFilesThumbUrls, oldIndex, newIndex)
-    });
-  }
-
-
-  updateLocAddress(captchaToken) {
-    requester.getUserInfo().then(res => {
-      res.body.then(data => {
-        let userInfo = {
-          firstName: data.firstName,
-          lastName: data.lastName,
-          phoneNumber: data.phoneNumber,
-          preferredLanguage: data.preferredLanguage,
-          preferredCurrency: data.preferredCurrency.id,
-          gender: data.gender,
-          country: data.country.id,
-          city: data.city.id,
-          birthday: moment(data.birthday).format('DD/MM/YYYY'),
-          locAddress: this.state.locAddress
-        };
-        requester.updateUserInfo(userInfo, captchaToken).then(() => {
-          this.componentDidMount();
-        });
-      });
     });
   }
 
