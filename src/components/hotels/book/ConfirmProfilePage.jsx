@@ -99,7 +99,7 @@ class ConfirmProfilePage extends React.Component {
   }
 
   payWithCard() {
-    this.props.requestLockOnQuoteId().then(() => {
+    this.props.requestLockOnQuoteId('safecharge').then(() => {
       const { paymentInfo } = this.props.location.state;
       requester.verifyCreditCardPayment(paymentInfo)
         .then(res => {
