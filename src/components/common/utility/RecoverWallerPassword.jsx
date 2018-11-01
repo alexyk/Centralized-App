@@ -35,7 +35,7 @@ class RecoverWallerPassword extends Component {
     requester.getUserInfo().then(res => {
       res.body.then(data => {
         if (data.birthday !== null) {
-          let birthday = moment.utc(data.birthday);
+          let birthday = moment(data.birthday).utc();
           const day = birthday.add(1, 'days').format('D');
           const month = birthday.format('MM');
           const year = birthday.format('YYYY');
