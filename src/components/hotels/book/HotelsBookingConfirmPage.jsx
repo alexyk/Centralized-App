@@ -70,13 +70,19 @@ class HotelBookingConfirmPage extends React.Component {
   requestSafechargeMode() {
     requester.getConfigVars()
       .then((res) => {
-        res.body.then((data) => {
-          const safeChargeMode = data.filter(configVar => configVar.name === SAFECHARGE_VAR)[0];
+        if (res.success) {
+          res.body.then((data) => {
+            const safeChargeMode = data.filter(configVar => configVar.name === SAFECHARGE_VAR)[0];
 
-          this.setState({
-            safeChargeMode: safeChargeMode.value === 'true'
+            this.setState({
+              safeChargeMode: safeChargeMode.value === 'true'
+            });
           });
-        });
+        } else {
+          res.errors.then((err) => {
+            NotificationManager.warning(err.message, '', LONG);
+          });
+        }
       });
   }
 
