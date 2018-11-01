@@ -19,34 +19,33 @@ function MyGuestsTable(props) {
   }
 
   return (
-    <React.Fragment>
+    <Fragment>
+      <ProfileFlexContainer styleClass="flex-container-header guests-flex-container">
+        <div className="tablet-col-1">
+          <div className="guests-image" />
+          <div className="guests-guest">Guest</div>
+        </div>
+        <div className="tablet-col-2">
+          <div className="guests-date-location">Dates &amp; Location</div>
+          <div className="guests-price">Price</div>
+          <div className="guests-actions">Actions</div>
+          <div className="guests-status">Status</div>
+        </div>
+      </ProfileFlexContainer>
       {props.reservations.map(reservation => {
         return (
-          <Fragment key={reservation.id}>
-            <ProfileFlexContainer styleClass="flex-container-header guests-flex-container">
-              <div className="tablet-col-1">
-                <div className="guests-image" />
-                <div className="guests-guest">Guest</div>
-              </div>
-              <div className="tablet-col-2">
-                <div className="guests-date-location">Dates &amp; Location</div>
-                <div className="guests-price">Price</div>
-                <div className="guests-actions">Actions</div>
-                <div className="guests-status">Status</div>
-              </div>
-            </ProfileFlexContainer>
-            <MyGuestsReservations
-              reservation={reservation}
-              styleClass="guests-flex-container"
-              onReservationSelect={props.onReservationSelect}
-              onReservationAccept={props.onReservationAccept}
-              onReservationReject={props.onReservationReject}
-              onReservationCancel={props.onReservationCancel}
-            />
-          </Fragment>
+          <MyGuestsReservations
+            key={reservation.id}
+            reservation={reservation}
+            styleClass="guests-flex-container"
+            onReservationSelect={props.onReservationSelect}
+            onReservationAccept={props.onReservationAccept}
+            onReservationReject={props.onReservationReject}
+            onReservationCancel={props.onReservationCancel}
+          />
         );
       })}
-    </React.Fragment>
+    </Fragment>
   );
 }
 

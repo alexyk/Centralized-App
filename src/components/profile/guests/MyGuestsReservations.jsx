@@ -5,8 +5,8 @@ import ProfileFlexContainer from '../flexContainer/ProfileFlexContainer';
 
 function MyGuestsReservations(props) {
   const extractDatesData = (reservation) => {
-    const startDateMoment = moment(reservation.startDate);
-    const endDateMoment = moment(reservation.endDate);
+    const startDateMoment = moment(reservation.startDate, 'DD/MM/YYYY');
+    const endDateMoment = moment(reservation.endDate, 'DD/MM/YYYY');
 
     const checkIn = {
       day: startDateMoment.format('D'),
