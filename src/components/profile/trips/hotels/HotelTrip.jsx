@@ -1,7 +1,6 @@
 import '../../../../styles/css/components/profile/trips/hotel-trips-table.css';
 
 import { Config } from '../../../../config';
-import HotelIcon from '../../../../styles/images/icon-hotel.png';
 import { Link } from 'react-router-dom';
 import ProfileFlexContainer from '../../flexContainer/ProfileFlexContainer';
 import PropTypes from 'prop-types';
@@ -75,8 +74,6 @@ class HotelTrip extends React.Component {
 
     const isCompleted = status === 'COMPLETE' && this.isFutureDate(moment().format('YYYY-MM-DD'), this.props.trip.arrival_date);
 
-    // console.log(this.props.trip);
-
     return (
       <ProfileFlexContainer styleClass={`flex-container-row ${this.props.styleClass}`}>
         <div className="tablet-col-1">
@@ -86,7 +83,6 @@ class HotelTrip extends React.Component {
             }
           </div>
           <div className="flex-row-child trips-host">
-            <img className="icon" src={HotelIcon} alt="hotel" />
             <div className="content-row">
               <div className="hostName">{this.getHostName(hotel_name)}</div>
               <div className="email">{hostEmail}</div>
@@ -98,7 +94,7 @@ class HotelTrip extends React.Component {
         <div className="tablet-col-2">
           <div className="flex-row-child trips-location">
             <i className="fa fa-info-circle icon" />
-            <Link className="trips-location-link content-row" to={`/hotels/listings/${this.props.trip.hotel_id}?currency=GBP&startDate=${this.props.tomorrow}&endDate=${this.props.afterTomorrow}&rooms=%5B%7B"adults":2,"children":%5B%5D%7D%5D`}><u>{this.getHostName(this.props.trip.hotel_name)}</u></Link>
+            <Link className="trips-location-link content-row" to={`/hotels/listings/${this.props.trip.hotel_id}?currency=GBP&startDate=${this.props.tomorrow}&endDate=${this.props.afterTomorrow}&rooms=%5B%7B"adults":2,"children":%5B%5D%7D%5D`}>{this.getHostName(this.props.trip.hotel_name)}</Link>
           </div>
           <div className="flex-row-child trips-dates">
             <span className="icon-calendar icon" />
@@ -107,7 +103,7 @@ class HotelTrip extends React.Component {
             </div>
           </div>
           <div className="flex-row-child trips-actions">
-            {status === 'COMPLETE' && this.props.trip.has_details === 1 && <i className="fa fa-bolt icon" />}
+            {(isCompleted || this.props.trip.has_details === 1) && <i className="fa fa-bolt icon" />}
             <div className="content-row">
               {isCompleted &&
                 <button type="submit" onClick={e => { e.preventDefault(); this.props.onTripSelect(this.props.trip.id); this.props.handleCancelReservation(); }}>Cancel Trip</button>
