@@ -42,11 +42,12 @@ const steps = {
   '11': 'price',
 };
 
-let routes;
-
 class EditListingPage extends React.Component {
   constructor(props) {
     super(props);
+
+    const id = this.props.match.params.id;
+    this.routes = this.setPageRoutes(id);
 
     this.state = {
       listingId: 0,
@@ -120,10 +121,62 @@ class EditListingPage extends React.Component {
     this.onSortEnd = this.onSortEnd.bind(this);
     this.finish = this.finish.bind(this);
     this.handleLocationChange = this.handleLocationChange.bind(this);
+    this.mountListing = this.mountListing.bind(this);
+    this.setPageRoutes = this.setPageRoutes.bind(this);
+    this.requestAmenities = this.requestAmenities.bind(this);
+    this.requestPropertyTypes = this.requestPropertyTypes.bind(this);
+    this.requestCurrencies = this.requestCurrencies.bind(this);
   }
 
-  componentWillMount() {
+  componentDidMount() {
     const id = this.props.match.params.id;
+    this.mountListing(id);
+    this.requestAmenities();
+    this.requestPropertyTypes();
+    this.requestCurrencies();
+  }
+
+  requestAmenities() {
+    requester.getAmenitiesByCategory().then(res => {
+      res.body.then(data => {
+        this.setState({ categories: data.content });
+      });
+    });
+  }
+
+  requestPropertyTypes() {
+    requester.getPropertyTypes().then(res => {
+      res.body.then(data => {
+        this.setState({ propertyTypes: data.content });
+      });
+    });
+  }
+
+  requestCurrencies() {
+    requester.getCurrencies().then(res => {
+      res.body.then(data => {
+        this.setState({ currencies: data });
+      });
+    });
+  }
+
+  setPageRoutes(id) {
+    return {
+      landing: '/profile/listings/edit/landing/' + id,
+      placetype: '/profile/listings/edit/placetype/' + id,
+      accommodation: '/profile/listings/edit/accommodation/' + id,
+      facilities: '/profile/listings/edit/facilities/' + id,
+      safetyamenities: '/profile/listings/edit/safetyamenities/' + id,
+      location: '/profile/listings/edit/location/' + id,
+      description: '/profile/listings/edit/description/' + id,
+      photos: '/profile/listings/edit/photos/' + id,
+      houserules: '/profile/listings/edit/houserules/' + id,
+      checking: '/profile/listings/edit/checking/' + id,
+      price: '/profile/listings/edit/price/' + id,
+    };
+  }
+
+  mountListing(id) {
     const search = this.props.location.search;
     if (search) {
       this.setState({ progressId: id, isInProgress: true });
@@ -143,20 +196,6 @@ class EditListingPage extends React.Component {
         });
       });
     }
-
-    routes = {
-      landing: '/profile/listings/edit/landing/' + id,
-      placetype: '/profile/listings/edit/placetype/' + id,
-      accommodation: '/profile/listings/edit/accommodation/' + id,
-      facilities: '/profile/listings/edit/facilities/' + id,
-      safetyamenities: '/profile/listings/edit/safetyamenities/' + id,
-      location: '/profile/listings/edit/location/' + id,
-      description: '/profile/listings/edit/description/' + id,
-      photos: '/profile/listings/edit/photos/' + id,
-      houserules: '/profile/listings/edit/houserules/' + id,
-      checking: '/profile/listings/edit/checking/' + id,
-      price: '/profile/listings/edit/price/' + id,
-    };
   }
 
   setListingData(data) {
@@ -215,26 +254,6 @@ class EditListingPage extends React.Component {
     }
 
     return new Set();
-  }
-
-  componentDidMount() {
-    requester.getAmenitiesByCategory().then(res => {
-      res.body.then(data => {
-        this.setState({ categories: data.content });
-      });
-    });
-
-    requester.getPropertyTypes().then(res => {
-      res.body.then(data => {
-        this.setState({ propertyTypes: data.content });
-      });
-    });
-
-    requester.getCurrencies().then(res => {
-      res.body.then(data => {
-        this.setState({ currencies: data });
-      });
-    });
   }
 
   onChange(event) {
@@ -639,6 +658,7 @@ class EditListingPage extends React.Component {
   }
 
   render() {
+    const routes = this.routes;
     return (
       <div>
         <Switch>
