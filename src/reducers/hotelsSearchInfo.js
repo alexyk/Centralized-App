@@ -31,7 +31,7 @@ export default function reducer(state = initialState, action) {
         hasChildren: !state.hasChildren,
         rooms: handleToggleChildren(state.hasChildren, state.rooms)
       });
-    case hotelsSearchInfo.SET_SEARCH_INFO:
+    case hotelsSearchInfo.SET_HOTELS_SEARCH_INFO:
       return Object.assign({}, state, {
         region: action.region,
         rooms: action.rooms,

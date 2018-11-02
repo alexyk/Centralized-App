@@ -27,7 +27,14 @@ export const hotelsSearchInfo = {
   SET_ROOMS: 'SET_ROOMS',
   SET_ADULTS: 'SET_ADULTS',
   SET_CHILDREN: 'SET_CHILDREN',
-  SET_SEARCH_INFO: 'SET_SEARCH_INFO'
+  SET_HOTELS_SEARCH_INFO: 'SET_HOTELS_SEARCH_INFO'
+};
+
+// homes searchInfo actions
+export const homesSearchInfo = {
+  SET_COUNTRY: 'SET_COUNTRY',
+  SET_GUESTS: 'SET_GUESTS',
+  SET_HOMES_SEARCH_INFO: 'SET_HOMES_SEARCH_INFO'
 };
 
 // socket actions

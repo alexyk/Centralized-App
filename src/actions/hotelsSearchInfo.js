@@ -36,7 +36,7 @@ export function setChildren() {
 
 export function setHotelsSearchInfo(region, rooms, adults, hasChildren) {
   return {
-    type: hotelsSearchInfo.SET_SEARCH_INFO,
+    type: hotelsSearchInfo.SET_HOTELS_SEARCH_INFO,
     region,
     rooms,
     adults,
