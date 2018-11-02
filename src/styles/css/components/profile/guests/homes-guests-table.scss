@@ -1,17 +1,16 @@
 $breakpoints: (
-	'xs-phone': 320px,
-	'phone': 490px,
-	'tablet': 768px,
-	'desktop': 1024px,
-	'widescreen': 1200px
+  'xs-phone': 320px,
+  'phone': 490px,
+  'tablet': 768px,
+  'desktop': 1024px,
+  'widescreen': 1200px
 );
 
 @import '../../../vendors/include-media';
 
 @import '../../../base/mixins';
-@import '../../../base/variables';
 
-.trips-flex-container {
+.guests-flex-container {
   font-size: 18px;
   .icon {
     display: none;
@@ -19,12 +18,13 @@ $breakpoints: (
   .tablet-col-1 {
     width: 32%;
     display: inline-flex;
-    .trips-image {
+    .guests-image {
       width: 25%;
       @include imageHost();
     }
-    .trips-host {
+    .guests-guest {
       width: 75%;
+      word-break: break-all;
       .send-message-icon {
         background: url(../../../../images/icon-mail.png) center center;
         display: inline-block;
@@ -32,80 +32,59 @@ $breakpoints: (
         width: 23px;
         margin-right: 5px;
       }
-      .hostName {
-        font-weight: 400;
+      .host-name,
+      .email,
+      .phone-number,
+      .loc-address {
         margin-bottom: 3%;
+        a:hover {
+          color: #e98b73;
+        }
       }
-      .email, .phoneNumber {
+      .host-name {
+        font-weight: 400;
+      }
+      .email,
+      .phone-number {
         font-size: 19px;
-        margin-bottom: 3%;
+      }
+      .send-message {
+        a:hover {
+          color: #e98b73;
+        }
       }
     }
   }
   .tablet-col-2 {
     width: 68%;
     display: inline-flex;
-    .trips-location {
-      width: 30%;
-    }
-    .trips-dates {
-      width: 35%;
+    .guests-date-location {
+      width: 45%;
       @include checkInCheckoutDates();
+      .dates {
+        margin-bottom: 10px;
+      }
     }
-    .trips-actions {
+    .guests-price {
       width: 20%;
+    }
+    .guests-actions {
+      width: 25%;
       button {
         padding-bottom: 10px;
         padding-left: 0;
-        color: #E98B73;
+        color: #e98b73;
         background: none;
         border: none;
         outline: none;
       }
     }
-    .trips-status {
-      width: 18%;
-      .status {
-        font-weight: 400;
-      }
+    .guests-status {
+      width: 13%;
+      font-weight: 400;
       .icon-question {
         margin: 0 5px;
       }
-    }
-
-     // ICON TOOLTIPS
-    [tooltip]{
-      position:relative;
-    }
-    [tooltip]:hover::after,
-    [tooltip]:hover::before {
-      opacity:1;
-    }
-    [tooltip]::before {
-        content: "\e914";
-        color: #abc3bd;
-    }
-    [tooltip]::after {
-        content: attr(tooltip);
-        position: absolute;
-        left: 50%;
-        top: 6px;
-        transform: translateX(-75%) translateY(-120%);
-        background: rgba(100, 100, 100, 0.7);
-        text-align: center;
-        color: #fff;
-        padding: 10px 20px 10px 20px;
-        // font-size: 12px;
-        min-width: 200px;
-        border-radius: 2px;
-        border: 1px solid black;
-        pointer-events: none;
-        opacity:0;
-        // color: $base-text-color;
-        // background: $base-background-color;
-        font: #{$font-size-base}/#{$line-height-base} $base-font-family;
-        -webkit-font-smoothing: antialiased;
-        -moz-osx-font-smoothing: grayscale;
     }
   }
 
@@ -120,11 +99,11 @@ $breakpoints: (
       width: 30%;
       justify-content: center;
       text-align: center;
-      .trips-image,
-      .trips-host {
+      .guests-image,
+      .guests-guest {
         width: 80%;
       }
-      .trips-host {
+      .guests-guest {
         margin-top: 10%;
       }
     }
@@ -132,33 +111,37 @@ $breakpoints: (
     .tablet-col-2 {
       width: 70%;
       flex-wrap: wrap;
-      @include icon();
-      .trips-location,
-      .trips-dates,
-      .trips-actions {
+      .guests-date-location,
+      .guests-price,
+      .guests-actions {
         margin-bottom: 5%;
       }
-      .trips-location,
-      .trips-dates {
-        @include rowWithIconInMobile(left, 50%);
+      .guests-date-location {
+        @include rowWithIconInMobile(center, 70%);
       }
-      .trips-actions {
-        @include rowWithIconInMobile(left, 100%);
+      .guests-price {
+        @include rowWithIconInMobile(center, 30%);
       }
-      .trips-status {
+      .guests-actions {
+        @include rowWithIconInMobile(center, 100%);
+        .content-row {
+          display: inline-flex;
+          justify-content: space-around;
+        }
+      }
+      .guests-status {
         width: 50%;
         border-top: 0px;
         @include statusRowInMobile();
       }
     }
-
   }
 
   @include media("<=tablet") {
     .tablet-col-1 {
       min-width: 180px;
-      .trips-image,
-      .trips-host {
+      .guests-image,
+      .guests-guest {
         width: 90%;
       }
     }
@@ -167,16 +150,13 @@ $breakpoints: (
       display: flex;
       flex-direction: column;
       justify-content: center;
-      .trips-location {
+      .guests-date-location {
         @include rowWithIconInMobile(center, 100%);
       }
-      .trips-dates {
+      .guests-price {
         @include rowWithIconInMobile(center, 100%);
       }
-      .trips-actions {
-        @include rowWithIconInMobile(center, 100%);
-      }
-      .trips-status {
+      .guests-status {
         width: 100%;
       }
     }
@@ -188,10 +168,10 @@ $breakpoints: (
     .tablet-col-1 {
       display: block;
       width: 100%;
-      .trips-image {
+      .guests-image {
         @include imageHostInMobile();
       }
-      .trips-host {
+      .guests-guest {
         margin-bottom: 5%;
         margin-top: 5%;
         @include rowWithIconInMobile(center, 100%);
@@ -201,14 +181,14 @@ $breakpoints: (
     .tablet-col-2 {
       display: block;
       width: 100%;
-      .trips-location,
-      .trips-dates,
-      .trips-actions {
+      .guests-date-location,
+      .guests-price,
+      .guests-actions {
         .icon {
           display: none;
         }
       }
-      .trips-status {
+      .guests-status {
         @include statusRowInMobile();
       }
     }
@@ -222,5 +202,5 @@ $breakpoints: (
       margin-bottom: 10%;
       padding: 2%;
     }
-  } 
+  }
 }

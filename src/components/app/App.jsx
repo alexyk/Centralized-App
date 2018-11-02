@@ -11,16 +11,12 @@ import CreateListingPage from '../listingCRUD/CreateListingPage';
 import EditListingPage from '../listingCRUD/EditListingPage';
 import Footer from '../footer/Footer';
 import HomeRouterPage from '../home/HomeRouterPage';
-import HotelsBookingConfirmPage from '../hotels/book/HotelsBookingConfirmPage';
-import HotelsBookingPage from '../hotels/book/HotelsBookingPage';
-import HotelDetailsPage from '../hotels/details/HotelDetailsPage';
 import MainNav from '../mainNav/MainNav';
 import LocalizationNav from '../profile/LocalizationNav';
 import { NotificationContainer } from 'react-notifications';
 import ProfilePage from '../profile/ProfilePage';
 import PropTypes from 'prop-types';
 import React from 'react';
-import StaticHotelsSearchPage from '../hotels/search/StaticHotelsSearchPage';
 import { Wallet } from '../../services/blockchain/wallet.js';
 import WorldKuCoinCampaign from '../external/WorldKuCoinCampaign';
 import { connect } from 'react-redux';
@@ -31,18 +27,11 @@ import GooglePlaces from '../common/GooglePlaces';
 import HelpPage from '../static/HelpPage';
 import AboutUsPage from '../static/AboutUsPage';
 
-// if (process.env.NODE_ENV === 'development') {
-//   console.log(process.env.NODE_ENV);
-//   const { whyDidYouUpdate } = require('why-did-you-update');
-//   whyDidYouUpdate(React);
-// }
-
 class App extends React.Component {
   constructor(props) {
     super(props);
-    BigCalendar.setLocalizer(
-      BigCalendar.momentLocalizer(moment)
-    );
+    
+    BigCalendar.setLocalizer(BigCalendar.momentLocalizer(moment.utc()));
   }
 
   componentDidMount() {

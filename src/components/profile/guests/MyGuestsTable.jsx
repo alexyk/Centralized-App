@@ -1,8 +1,10 @@
 import PropTypes from 'prop-types';
-import React from 'react';
-import moment from 'moment';
-import { Config } from '../../../config';
+import React, { Fragment } from 'react';
 import NoEntriesMessage from '../../common/messages/NoEntriesMessage';
+import MyGuestsReservations from './MyGuestsReservations';
+import ProfileFlexContainer from '../flexContainer/ProfileFlexContainer';
+
+import '../../../styles/css/components/profile/guests/homes-guests-table.css';
 
 function MyGuestsTable(props) {
 
@@ -17,62 +19,33 @@ function MyGuestsTable(props) {
   }
 
   return (
-    <React.Fragment>
-      <div className="table-header bold">
-        <div className="col-md-1">
+    <Fragment>
+      <ProfileFlexContainer styleClass="flex-container-header guests-flex-container">
+        <div className="tablet-col-1">
+          <div className="guests-image" />
+          <div className="guests-guest">Guest</div>
         </div>
-        <div className="col-md-2">
-          <span>Guests</span>
+        <div className="tablet-col-2">
+          <div className="guests-date-location">Dates &amp; Location</div>
+          <div className="guests-price">Price</div>
+          <div className="guests-actions">Actions</div>
+          <div className="guests-status">Status</div>
         </div>
-        <div className="col-md-3">
-          <span>Dates &amp; Location</span>
-        </div>
-        <div className="col-md-2">
-          <span>Price</span>
-        </div>
-        <div className="col-md-2">
-          <span>Actions</span>
-        </div>
-        <div className="col-md-2">
-          <span>Status</span>
-        </div>
-      </div>
+      </ProfileFlexContainer>
       {props.reservations.map(reservation => {
         return (
-          <div key={reservation.id} className="row reservation-box">
-            <div className="col-md-12">
-              <div className="col-md-1">
-                <div className="reservation-image-box">
-                  <span className="session-nav-user-thumb"><img src={`${Config.getValue('imgHost')}${reservation.userImage}`} alt="user-profile" /></span>
-                </div>
-              </div>
-              <div className="col-md-2">
-                <div className="bold">{reservation.guestName}</div>
-                <div>{reservation.guestEmail}</div>
-                <div>{reservation.guestPhone}</div>
-                {reservation.guestLocAddress ? <div><a href={`https://etherscan.io/address/${reservation.guestLocAddress}`} target="_blank">Loc Address</a></div> : ''}
-                {reservation.guestEmail ? <div><span className="send-message-icon"></span><a href={`mailto:${reservation.guestEmail}`}>Send Message</a></div> : ''}
-              </div>
-              <div className="col-md-3">
-                <div>{moment(reservation.startDate, 'DD/MM/YYYY').utc().format('DD MMM, YYYY')}<i aria-hidden="true" className="fa fa-long-arrow-right"></i>{moment(reservation.endDate, 'DD/MM/YYYY').utc().format('DD MMM, YYYY')}</div>
-                <div>{reservation.listingName}</div>
-              </div>
-              <div className="col-md-2">
-                <div>{reservation.currencyCode} {reservation.price} total</div>
-              </div>
-              <div className="col-md-2">
-                {!reservation.accepted && <div><button onClick={() => { props.onReservationSelect(reservation.id); props.onReservationAccept(); }}>Accept Reservation</button></div>}
-                {!reservation.accepted && <div><button onClick={() => { props.onReservationSelect(reservation.id); props.onReservationReject(); }}>Delete Reservation</button></div>}
-                {reservation.accepted && <div><button onClick={() => { props.onReservationSelect(reservation.id); props.onReservationCancel(); }}>Cancel Reservation</button></div>}
-              </div>
-              <div className="col-md-2">
-                <div className="reservation-status bold">{reservation.accepted ? 'Accepted' : 'Pending'}</div>
-              </div>
-            </div>
-          </div>
+          <MyGuestsReservations
+            key={reservation.id}
+            reservation={reservation}
+            styleClass="guests-flex-container"
+            onReservationSelect={props.onReservationSelect}
+            onReservationAccept={props.onReservationAccept}
+            onReservationReject={props.onReservationReject}
+            onReservationCancel={props.onReservationCancel}
+          />
         );
       })}
-    </React.Fragment>
+    </Fragment>
   );
 }
 
@@ -80,7 +53,8 @@ MyGuestsTable.propTypes = {
   reservations: PropTypes.array,
   onReservationAccept: PropTypes.func,
   onReservationCancel: PropTypes.func,
-  onReservationReject: PropTypes.func
+  onReservationReject: PropTypes.func,
+  onReservationSelect: PropTypes.func
 };
 
 export default MyGuestsTable;
