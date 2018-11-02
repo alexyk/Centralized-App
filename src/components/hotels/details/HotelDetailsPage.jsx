@@ -72,25 +72,24 @@ class HotelDetailsPage extends React.Component {
   }
 
   componentDidMount() {
-    if (this.props.location.search) {
-      this.setHotelsSearchInfoFromURL();
-    }
-
+    this.setHotelsSearchInfoFromURL();
     this.requestHotel();
     this.requestHotelRooms();
   }
 
   setHotelsSearchInfoFromURL() {
-    const searchParams = this.getSearchParams(this.props.location.search);
-    const startDate = moment(searchParams.get('startDate'), 'DD/MM/YYYY');
-    const endDate = moment(searchParams.get('endDate'), 'DD/MM/YYYY');
-    const rooms = JSON.parse(decodeURI(searchParams.get('rooms')));
-    const adults = this.getAdults(rooms);
-    const hasChildren = this.getHasChildren(rooms);
+    if (this.props.location.search) {
+      const searchParams = this.getSearchParams(this.props.location.search);
+      const startDate = moment(searchParams.get('startDate'), 'DD/MM/YYYY');
+      const endDate = moment(searchParams.get('endDate'), 'DD/MM/YYYY');
+      const rooms = JSON.parse(decodeURI(searchParams.get('rooms')));
+      const adults = this.getAdults(rooms);
+      const hasChildren = this.getHasChildren(rooms);
 
-    this.props.dispatch(asyncSetStartDate(startDate));
-    this.props.dispatch(asyncSetEndDate(endDate));
-    this.props.dispatch(setHotelsSearchInfo(this.props.hotelsSearchInfo.region, rooms, adults, hasChildren));
+      this.props.dispatch(asyncSetStartDate(startDate));
+      this.props.dispatch(asyncSetEndDate(endDate));
+      this.props.dispatch(setHotelsSearchInfo(this.props.hotelsSearchInfo.region, rooms, adults, hasChildren));
+    }
   }
 
   requestHotel() {
@@ -107,7 +106,7 @@ class HotelDetailsPage extends React.Component {
   requestHotelRooms() {
     const id = this.props.match.params.id;
     const searchParams = this.getRequestSearchParams();
-    
+
     requester.getHotelRooms(id, searchParams).then(res => {
       res.body.then(data => {
         this.setState({ hotelRooms: data, loadingRooms: false });
@@ -133,7 +132,7 @@ class HotelDetailsPage extends React.Component {
 
     return null;
   }
-  
+
   search(queryString) {
     this.props.history.push('/hotels/listings' + queryString);
   }
@@ -395,7 +394,7 @@ class HotelDetailsPage extends React.Component {
       ]
     };
 
-    const { searchDatesInfo, paymentInfo } = this.props;
+    const { searchDatesInfo } = this.props;
 
     return (
       <div>
@@ -461,13 +460,10 @@ class HotelDetailsPage extends React.Component {
             </nav>
 
             <HotelDetailsInfoSection
-              nights={searchDatesInfo.endDate.diff(searchDatesInfo.startDate, 'days')}
-              startDate={this.state.calendarStartDate}
-              endDate={this.state.calendarEndDate}
               hotel={this.state.hotel}
               hotelRooms={this.state.hotelRooms}
+              nights={searchDatesInfo.endDate.diff(searchDatesInfo.startDate, 'days')}
               loading={this.state.loading}
-              currencySign={paymentInfo.currencySign}
               handleBookRoom={this.handleBookRoom}
               loadingRooms={this.state.loadingRooms}
             />
