@@ -2,7 +2,6 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import moment from 'moment';
 import { withRouter } from 'react-router-dom';
-import requester from '../../requester';
 import HomesSearchBar from '../homes/search/HomesSearchBar';
 import HotelsSearchBar from '../hotels/search/HotelsSearchBar';
 import ListingTypeNav from '../common/listingTypeNav/ListingTypeNav';
@@ -19,7 +18,6 @@ class HeroComponent extends React.Component {
 
     this.state = {
       countryId: '',
-      countries: undefined,
       startDate: startDate,
       endDate: endDate,
       guests: '2'
@@ -30,14 +28,6 @@ class HeroComponent extends React.Component {
     this.handleDatePick = this.handleDatePick.bind(this);
     this.redirectToSearchPage = this.redirectToSearchPage.bind(this);
     this.handleDestinationPick = this.handleDestinationPick.bind(this);
-  }
-
-  componentDidMount() {
-    requester.getCountries().then(res => {
-      res.body.then(data => {
-        this.setState({ countries: data });
-      });
-    });
   }
 
   onChange(e) {
@@ -84,7 +74,6 @@ class HeroComponent extends React.Component {
               <HotelsSearchBar redirectToSearchPage={this.redirectToSearchPage} /> :
               <HomesSearchBar
                 countryId={this.state.countryId}
-                countries={this.state.countries}
                 startDate={this.state.startDate}
                 endDate={this.state.endDate}
                 guests={this.state.guests}

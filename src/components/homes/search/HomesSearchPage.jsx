@@ -313,7 +313,6 @@ class HomesSearchPage extends React.Component {
         <div className="container">
           <HomesSearchBar
             countryId={this.state.countryId}
-            countries={this.props.countries}
             startDate={this.props.searchDatesInfo.startDate}
             endDate={this.props.searchDatesInfo.endDate}
             guests={this.state.guests}
@@ -359,7 +358,6 @@ class HomesSearchPage extends React.Component {
 }
 
 HomesSearchPage.propTypes = {
-  countries: PropTypes.array,
   location: PropTypes.object,
   history: PropTypes.object,
 
