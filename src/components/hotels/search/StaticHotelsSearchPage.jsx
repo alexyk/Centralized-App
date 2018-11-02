@@ -1,6 +1,6 @@
 import '../../../styles/css/components/hotels_search/sidebar/sidebar.css';
 
-import { setRegion, setSearchInfo } from '../../../actions/searchInfo';
+import { setRegion, setHotelsSearchInfo } from '../../../actions/hotelsSearchInfo';
 import { asyncSetStartDate, asyncSetEndDate } from '../../../actions/searchDatesInfo';
 
 import { Config } from '../../../config';
@@ -70,7 +70,7 @@ class StaticHotelsSearchPage extends React.Component {
     this.getRandomInt = this.getRandomInt.bind(this);
     this.updateMapInfo = this.updateMapInfo.bind(this);
     this.clearIntervals = this.clearIntervals.bind(this);
-    this.redirectToSearchPage = this.redirectToSearchPage.bind(this);
+    this.search = this.search.bind(this);
     this.handleFilterByName = this.handleFilterByName.bind(this);
     this.handleShowUnavailable = this.handleShowUnavailable.bind(this);
     this.isSearchReady = this.isSearchReady.bind(this);
@@ -140,7 +140,7 @@ class StaticHotelsSearchPage extends React.Component {
       
       this.props.dispatch(asyncSetStartDate(startDate));
       this.props.dispatch(asyncSetEndDate(endDate));
-      this.props.dispatch(setSearchInfo(region, rooms, adults, hasChildren));
+      this.props.dispatch(setHotelsSearchInfo(region, rooms, adults, hasChildren));
       if (this.props.location.pathname.indexOf('/mobile') !== -1) {
         const currency = searchParams.currency;
         this.props.dispatch(setCurrency(currency));
@@ -268,7 +268,7 @@ class StaticHotelsSearchPage extends React.Component {
     return false;
   }
 
-  redirectToSearchPage(queryString) {
+  search(queryString) {
     this.unsubscribe();
     this.disconnect();
     this.clearIntervals();
@@ -277,7 +277,7 @@ class StaticHotelsSearchPage extends React.Component {
 
     this.props.history.push('/hotels/listings' + queryString);
 
-    const region = this.props.searchInfo.region.id;
+    const region = this.props.hotelsSearchInfo.region.id;
 
     this.getCityLocation(region);
 
@@ -613,7 +613,7 @@ class StaticHotelsSearchPage extends React.Component {
     return (
       <div>
         <div className="container">
-          <HotelsSearchBar redirectToSearchPage={this.redirectToSearchPage} />
+          <HotelsSearchBar search={this.search} />
         </div>
         <section id="hotel-box">
           <div className="container">
@@ -701,17 +701,17 @@ StaticHotelsSearchPage.propTypes = {
   dispatch: PropTypes.func,
   paymentInfo: PropTypes.object,
   userInfo: PropTypes.object,
-  searchInfo: PropTypes.object,
+  hotelsSearchInfo: PropTypes.object,
   searchDatesInfo: PropTypes.object
 };
 
 
 function mapStateToProps(state) {
-  const { paymentInfo, userInfo, searchInfo, searchDatesInfo } = state;
+  const { paymentInfo, userInfo, hotelsSearchInfo, searchDatesInfo } = state;
   return {
     paymentInfo,
     userInfo,
-    searchInfo,
+    hotelsSearchInfo,
     searchDatesInfo
   };
 }
