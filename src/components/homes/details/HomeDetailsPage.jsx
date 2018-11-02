@@ -1,20 +1,19 @@
-import { Config } from '../../../config';
-import HomeDetailsInfoSection from './HomeDetailsInfoSection';
-import HomesSearchBar from '../search/HomesSearchBar';
-import Lightbox from 'react-images';
-import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import moment from 'moment';
-import { parse } from 'query-string';
-import requester from '../../../requester';
 import { withRouter } from 'react-router-dom';
+import Lightbox from 'react-images';
 import Slider from 'react-slick';
-import '../../../styles/css/components/carousel-component.css';
+import PropTypes from 'prop-types';
+import moment from 'moment';
+import _ from 'lodash';
+import { parse } from 'query-string';
+import { Config } from '../../../config';
+import requester from '../../../requester';
+import HomeDetailsInfoSection from './HomeDetailsInfoSection';
+import HomesSearchBar from '../search/HomesSearchBar';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import ContactHostModal from '../../common/modals/ContactHostModal';
-import _ from 'lodash';
 import {
   openLightbox,
   closeLightbox,
@@ -26,51 +25,36 @@ import {
   previous,
   calculateCheckInOuts
 } from '../common/detailsPageUtils.js';
+import { setHomesSearchInfo } from '../../../actions/homesSearchInfo';
+import { asyncSetStartDate, asyncSetEndDate } from '../../../actions/searchDatesInfo';
+
+import '../../../styles/css/components/carousel-component.css';
 
 class HomeDetailsPage extends React.Component {
   constructor(props) {
     super(props);
 
-    let countryId = '';
-    let guests = '';
-    let startDate = moment();
-    let endDate = moment().add(1, 'day');
+    let startDate, endDate;
 
     if (this.props) {
       let queryParams = parse(this.props.location.search);
-      if (queryParams.guests) {
-        guests = queryParams.guests;
-      }
       if (queryParams.startDate && queryParams.endDate) {
         startDate = moment(queryParams.startDate, 'DD/MM/YYYY');
         endDate = moment(queryParams.endDate, 'DD/MM/YYYY');
       }
-      if (queryParams.countryId) {
-        countryId = queryParams.countryId;
-      }
     }
 
     this.state = {
-      countryId: countryId,
-      searchStartDate: startDate,
-      searchEndDate: endDate,
-      guests: guests,
-
       calendarStartDate: startDate,
       calendarEndDate: endDate,
-
       data: null,
-
       lightboxIsOpen: false,
       currentImage: 0,
       nights: 0,
-
       isShownContactHostModal: false
     };
 
-    this.handleSearch = this.handleSearch.bind(this);
-    this.handleDatePick = this.handleDatePick.bind(this);
-    this.onChange = this.onChange.bind(this);
+    this.search = this.search.bind(this);
 
     this.closeLightbox = closeLightbox.bind(this);
     this.gotoNext = gotoNext.bind(this);
@@ -88,12 +72,13 @@ class HomeDetailsPage extends React.Component {
 
     this.handleChangeStart = this.handleChangeStart.bind(this);
     this.handleChangeEnd = this.handleChangeEnd.bind(this);
-    this.handleGuestsChange = this.handleGuestsChange.bind(this);
 
     this.calculateCheckInOuts = calculateCheckInOuts.bind(this);
   }
 
   componentDidMount() {
+    this.setHomesSearchInfoFromURL();
+
     const DAY_INTERVAL = 365;
 
     requester.getListing(this.props.match.params.id).then(res => {
@@ -132,28 +117,22 @@ class HomeDetailsPage extends React.Component {
     }
   }
 
-  onChange(e) {
-    this.setState({ [e.target.name]: e.target.value });
+  setHomesSearchInfoFromURL() {
+    if (this.props.location.search) {
+      const searchParams = parse(this.props.location.search);
+      const country = searchParams.countryId;
+      const startDate = moment(searchParams.startDate, 'DD/MM/YYYY');
+      const endDate = moment(searchParams.endDate, 'DD/MM/YYYY');
+      const guests = searchParams.guests;
+
+      this.props.dispatch(asyncSetStartDate(startDate));
+      this.props.dispatch(asyncSetEndDate(endDate));
+      this.props.dispatch(setHomesSearchInfo(country, guests));
+    }
   }
 
-  handleSearch(e) {
-    e.preventDefault();
-
-    let queryString = '?';
-
-    queryString += 'countryId=' + this.state.countryId;
-    queryString += '&startDate=' + this.state.searchStartDate.format('DD/MM/YYYY');
-    queryString += '&endDate=' + this.state.searchEndDate.format('DD/MM/YYYY');
-    queryString += '&guests=' + this.state.guests;
-
+  search(queryString) {
     this.props.history.push('/homes/listings' + queryString);
-  }
-
-  handleDatePick(event, picker) {
-    this.setState({
-      searchStartDate: picker.startDate,
-      searchEndDate: picker.endDate,
-    });
   }
 
   calculateNights(startDate, endDate) {
@@ -182,6 +161,7 @@ class HomeDetailsPage extends React.Component {
   openModal() {
     this.setState({ isShownContactHostModal: true });
   }
+
   closeModal() {
     this.setState({ isShownContactHostModal: false });
   }
@@ -206,10 +186,6 @@ class HomeDetailsPage extends React.Component {
     }
   }
 
-  handleGuestsChange(e) {
-    this.setState({guests: Number(e.target.value.split(' ')[0])});
-  }
-
   render() {
     let loading, images;
 
@@ -222,7 +198,6 @@ class HomeDetailsPage extends React.Component {
         });
       }
     }
-
 
     while (images && images.length < 3) {
       images.push(images[0]);
@@ -244,17 +219,12 @@ class HomeDetailsPage extends React.Component {
       ]
     };
 
+    const excludedDates = this.state.calendar && this.state.calendar.filter(item => item.available === false).map(item => moment(item.date, 'DD/MM/YYYY'));
+
     return (
       <div>
         <div className="container">
-          <HomesSearchBar
-            countryId={this.state.countryId}
-            startDate={this.state.searchStartDate}
-            endDate={this.state.searchEndDate}
-            guests={this.state.guests}
-            onChange={this.onChange}
-            handleSearch={this.handleSearch}
-            handleDatePick={this.handleDatePick} />
+          <HomesSearchBar search={this.search} excludedDates={excludedDates} />
         </div>
         <ContactHostModal
           id={this.props.match.params.id}
@@ -327,11 +297,10 @@ class HomeDetailsPage extends React.Component {
               openModal={this.openModal}
               roomDetails={this.state.roomDetails}
               nights={this.state.nights}
-              guests={this.state.guests}
               checks={this.state.checks}
               handleChangeStart={this.handleChangeStart}
               handleChangeEnd={this.handleChangeEnd}
-              handleGuestsChange={this.handleGuestsChange} />
+            />
           </div>
         }
       </div>

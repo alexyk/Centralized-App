@@ -73,7 +73,7 @@ class HomesSearchBar extends Component {
 
         <div className="check-wrap source-panel-item">
           <div className="check">
-            <Datepicker minDate={moment().add(1, 'days')} enableRanges />
+            <Datepicker minDate={moment().add(1, 'days')} enableRanges excludedDates={this.props.excludedDates || []} />
           </div>
 
           <div className="days-of-stay">
@@ -107,6 +107,7 @@ class HomesSearchBar extends Component {
 }
 
 HomesSearchBar.propTypes = {
+  excludedDates: PropTypes.array,
   search: PropTypes.func,
 
   // Redux props
