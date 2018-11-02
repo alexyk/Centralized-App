@@ -10,6 +10,7 @@ import AirTicketsChildrenModal from '../modals/AirTicketsChildrenModal';
 import AirTicketsSearchBarDatePicker from './common/AirTicketsSearchBarDatePicker';
 import AirTicketsSearchBarDatePickerSingle from './common/AirTicketsSearchBarDatePickerSingle';
 // import requester from '../../../requester';
+import { Config } from '../../../config';
 
 import '../../../styles/css/components/airTickets/search/air-tickets-search-bar.css';
 
@@ -24,7 +25,7 @@ function AirTicketsSearchBar(props) {
       return Promise.resolve({ options: [] });
     }
 
-    return fetch(`http://localhost:8088/city/search?query=${param}`, {
+    return fetch(`${Config.getValue('apiHost')}flight/city?query=${param}`, {
       headers: {
         'Content-type': 'application/json'
       }

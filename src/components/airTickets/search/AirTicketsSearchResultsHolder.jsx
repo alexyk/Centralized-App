@@ -1,5 +1,4 @@
 import React from 'react';
-import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import PropTypes from 'prop-types';
 import AirTicketsSearchResult from './AirTicketsSearchResult';
 import NoEntriesMessage from '../../common/messages/NoEntriesMessage';
@@ -32,12 +31,7 @@ function AirTicketsResultsHolder(props) {
 
   return (
     <div className="results-holder">
-      <ReactCSSTransitionGroup
-        transitionName="example"
-        transitionEnterTimeout={500}
-        transitionLeaveTimeout={500}>
-        {results}
-      </ReactCSSTransitionGroup>
+      {results}
     </div>
   );
 }

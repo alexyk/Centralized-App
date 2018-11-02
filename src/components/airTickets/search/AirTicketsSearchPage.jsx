@@ -57,9 +57,9 @@ class AirTicketsSearchPage extends Component {
     if (!localStorage.getItem('uuid')) {
       localStorage.setItem('uuid', `${uuid()}`);
     }
-    const uuid = localStorage.getItem('tickets-uuid');
+    const ticketsId = localStorage.getItem('tickets-uuid');
     const rnd = this.getRandomInt();
-    this.queueId = `${uuid}-${rnd}`;
+    this.queueId = `${ticketsId}-${rnd}`;
 
     this.populateSearchBar();
 
@@ -76,7 +76,7 @@ class AirTicketsSearchPage extends Component {
   }
 
   requestFlightsSearch() {
-    fetch(`http://localhost:8088/flight/search${this.props.location.search}&uuid=${this.queueId}`)
+    fetch(`${Config.getValue('apiHost')}flight/search${this.props.location.search}&uuid=${this.queueId}`)
       .then(res => {
         if (res.ok) {
           this.connectSocket();
