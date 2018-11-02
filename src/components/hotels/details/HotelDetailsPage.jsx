@@ -68,7 +68,7 @@ class HotelDetailsPage extends React.Component {
     this.handleBookRoom = this.handleBookRoom.bind(this);
     this.next = this.next.bind(this);
     this.previous = this.previous.bind(this);
-    this.redirectToSearchPage = this.redirectToSearchPage.bind(this);
+    this.search = this.search.bind(this);
   }
 
   componentDidMount() {
@@ -134,7 +134,7 @@ class HotelDetailsPage extends React.Component {
     return null;
   }
   
-  redirectToSearchPage(queryString) {
+  search(queryString) {
     this.props.history.push('/hotels/listings' + queryString);
   }
 
@@ -400,7 +400,7 @@ class HotelDetailsPage extends React.Component {
     return (
       <div>
         <div className="container sm-none">
-          <HotelsSearchBar redirectToSearchPage={this.redirectToSearchPage} />
+          <HotelsSearchBar search={this.handleSearch} />
         </div>
         {loading ?
           <div className="loader"></div> :

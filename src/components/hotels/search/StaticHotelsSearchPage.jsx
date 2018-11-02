@@ -70,7 +70,7 @@ class StaticHotelsSearchPage extends React.Component {
     this.getRandomInt = this.getRandomInt.bind(this);
     this.updateMapInfo = this.updateMapInfo.bind(this);
     this.clearIntervals = this.clearIntervals.bind(this);
-    this.redirectToSearchPage = this.redirectToSearchPage.bind(this);
+    this.search = this.search.bind(this);
     this.handleFilterByName = this.handleFilterByName.bind(this);
     this.handleShowUnavailable = this.handleShowUnavailable.bind(this);
     this.isSearchReady = this.isSearchReady.bind(this);
@@ -268,7 +268,7 @@ class StaticHotelsSearchPage extends React.Component {
     return false;
   }
 
-  redirectToSearchPage(queryString) {
+  search(queryString) {
     this.unsubscribe();
     this.disconnect();
     this.clearIntervals();
@@ -613,7 +613,7 @@ class StaticHotelsSearchPage extends React.Component {
     return (
       <div>
         <div className="container">
-          <HotelsSearchBar redirectToSearchPage={this.redirectToSearchPage} />
+          <HotelsSearchBar search={this.search} />
         </div>
         <section id="hotel-box">
           <div className="container">

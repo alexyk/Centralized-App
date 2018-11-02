@@ -4,6 +4,7 @@ import paymentInfo from './paymentInfo';
 import modalsInfo from './modalsInfo';
 import airdropInfo from './airdropInfo';
 import hotelsSearchInfo from './hotelsSearchInfo';
+import homesSearchInfo from './homesSearchInfo';
 import exchangerSocketInfo from './exchangerSocketInfo';
 import locAmountsInfo from './locAmountsInfo';
 import exchangeRatesInfo from './exchangeRatesInfo';
@@ -17,6 +18,7 @@ const rootReducer = combineReducers({
   modalsInfo,
   airdropInfo,
   hotelsSearchInfo,
+  homesSearchInfo,
   exchangerSocketInfo,
   locAmountsInfo,
   exchangeRatesInfo,

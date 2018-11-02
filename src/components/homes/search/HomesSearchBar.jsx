@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import moment from 'moment';
 import StringUtils from '../../../services/utilities/stringUtilities.js';
 import Datepicker from '../../common/datepicker';
-import { setGuests } from '../../../actions/homesSearchInfo';
+import { setCountry, setGuests } from '../../../actions/homesSearchInfo';
 import requester from '../../../requester';
 
 class HomesSearchBar extends Component {
@@ -15,12 +15,13 @@ class HomesSearchBar extends Component {
     this.state = {
       countries: ''
     };
+
+    this.handleSearch = this.handleSearch.bind(this);
   }
 
   componentDidMount() {
     this.requestCountries();
   }
-
 
   requestCountries() {
     requester.getCountries().then(res => {
@@ -30,17 +31,35 @@ class HomesSearchBar extends Component {
     });
   }
 
+  getQueryString() {
+    let queryString = '?';
+
+    queryString += 'countryId=' + this.props.homesSearchInfo.country;
+    queryString += '&startDate=' + this.props.searchDatesInfo.startDate.format('DD/MM/YYYY');
+    queryString += '&endDate=' + this.props.searchDatesInfo.endDate.format('DD/MM/YYYY');
+    queryString += '&guests=' + this.props.homesSearchInfo.guests;
+
+    return queryString;
+  }
+
+  handleSearch(e) {
+    if (e) {
+      e.preventDefault();
+    }
+
+    this.props.search(this.getQueryString());
+  }
+
   render() {
     const { countries } = this.state;
     const { searchDatesInfo, homesSearchInfo } = this.props;
 
     return (
-      <form className="source-panel" onSubmit={this.props.handleSearch}>
+      <form className="source-panel" onSubmit={this.handleSearch}>
         <div className="source-panel-select source-panel-item">
           {countries &&
-            <select onChange={this.props.onChange}
+            <select onChange={e => this.props.dispatch(setCountry(e.target.value))}
               value={homesSearchInfo.country}
-              // className="form-control"
               id="location-select"
               name="countryId"
               required="required">
@@ -88,7 +107,7 @@ class HomesSearchBar extends Component {
 }
 
 HomesSearchBar.propTypes = {
-  redirectToSearchPage: PropTypes.func,
+  search: PropTypes.func,
 
   // Redux props
   dispatch: PropTypes.func,

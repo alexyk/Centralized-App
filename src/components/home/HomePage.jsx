@@ -28,16 +28,11 @@ class HomePage extends React.Component {
     this.sliderListings = null;
 
     this.handleDestinationPick = this.handleDestinationPick.bind(this);
-    this.redirectToSearchPage = this.redirectToSearchPage.bind(this);
   }
 
   handleDestinationPick(region, searchUrl) {
     this.props.dispatch(setRegion(region));
     this.props.history.push(searchUrl);
-  }
-
-  redirectToSearchPage(queryString) {
-    this.props.history.push('/hotels/listings' + queryString);
   }
 
   next(slider) {
