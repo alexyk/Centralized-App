@@ -1,21 +1,22 @@
+import React from 'react';
+import { connect } from 'react-redux';
+import { withRouter, Link } from 'react-router-dom';
+import PropTypes from 'prop-types';
 import { openModal } from '../../../actions/modalsInfo.js';
+import { setGuests } from '../../../actions/homesSearchInfo';
 import { LOGIN } from '../../../constants/modals.js';
 import DatePickerPreview from './DatePickerPreview';
 import { CurrencyConverter } from '../../../services/utilities/currencyConverter';
-import LocPrice from '../../common/utility/LocPrice';
-import { Link } from 'react-router-dom';
 import { RoomsXMLCurrency } from '../../../services/utilities/roomsXMLCurrency';
-import { connect } from 'react-redux';
-import React from 'react';
-import { withRouter } from 'react-router-dom';
+import LocPrice from '../../common/utility/LocPrice';
 import { isInvalidRange, getPriceForPeriod } from '../common/detailsPageUtils.js';
-import PropTypes from 'prop-types';
 import { initStickyElements } from '../common/detailsPageUtils.js';
+
 class HomeDetailsBookingPanel extends React.Component {
   componentDidMount() {
-
     initStickyElements();
   }
+
   render() {
     const { currencyExchangeRates } = this.props.exchangeRatesInfo;
     if (!currencyExchangeRates || !this.props.calendar) {
@@ -69,9 +70,12 @@ class HomeDetailsBookingPanel extends React.Component {
           </div>
         </div>
         <div className="booking-guests">
-          <select onChange={this.props.handleGuestsChange}>
+          <select
+            value={this.props.homesSearchInfo.guests}
+            onChange={e => this.props.dispatch(setGuests(e.target.value))}
+          >
             {this.props.guestArray.map((item, i) => {
-              return <option key={i}>{`${item} Guests`}</option>;
+              return <option key={i} value={item}>{`${item} Guests`}</option>;
             })}
           </select>
         </div>
@@ -106,37 +110,41 @@ class HomeDetailsBookingPanel extends React.Component {
           </div>
         </div>
         {this.props.userInfo.isLogged ?
-          <Link to={`/homes/listings/book/${this.props.match.params.id}?startDate=${this.props.startDate.format('DD/MM/YYYY')}&endDate=${this.props.endDate.format('DD/MM/YYYY')}&guests=${this.props.guests}`} onClick={e => invalidRange && e.preventDefault()} className={[invalidRange ? 'disabled' : null, "pay-in"].join(' ')}>Request Booking in LOC</Link> :
+          <Link to={`/homes/listings/book/${this.props.match.params.id}?startDate=${this.props.startDate.format('DD/MM/YYYY')}&endDate=${this.props.endDate.format('DD/MM/YYYY')}&guests=${this.props.homesSearchInfo.guests}`} onClick={e => invalidRange && e.preventDefault()} className={[invalidRange ? 'disabled' : null, 'pay-in'].join(' ')}>Request Booking in LOC</Link> :
           <button className="pay-in" onClick={(e) => this.props.dispatch(openModal(LOGIN, e))}>Login</button>}
-        <p className="booking-helper">You won't be charged yet</p>
+        <p className="booking-helper">You won&#39;t be charged yet</p>
       </div>
     </div>);
   }
 }
 
 HomeDetailsBookingPanel.propTypes = {
-  exchangeRatesInfo: PropTypes.object,
-  userInfo: PropTypes.object,
-  paymentInfo: PropTypes.object,
-  dispatch: PropTypes.func,
-  calendar: PropTypes.array,
-  nights: PropTypes.number,
   startDate: PropTypes.any,
   endDate: PropTypes.any,
-  currencyCode: PropTypes.string,
-  cleaningFee: PropTypes.number,
   handleChangeStart: PropTypes.func,
   handleChangeEnd: PropTypes.func,
+  calendar: PropTypes.array,
+  nights: PropTypes.number,
   guestArray: PropTypes.array,
-  guests: PropTypes.number
+  cleaningFee: PropTypes.number,
+  currencyCode: PropTypes.string,
+  match: PropTypes.object,
+
+  // Redux props
+  dispatch: PropTypes.func,
+  paymentInfo: PropTypes.object,
+  exchangeRatesInfo: PropTypes.object,
+  userInfo: PropTypes.object,
+  homesSearchInfo: PropTypes.object
 };
 
 function mapStateToProps(state) {
-  const { paymentInfo, exchangeRatesInfo, userInfo } = state;
+  const { paymentInfo, exchangeRatesInfo, userInfo, homesSearchInfo } = state;
   return {
     paymentInfo,
     exchangeRatesInfo,
-    userInfo
+    userInfo,
+    homesSearchInfo
   };
 }
 
