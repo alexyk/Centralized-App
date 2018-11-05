@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import React, { Fragment } from 'react';
 import Slider from 'react-slick';
 import { connect } from 'react-redux';
-import { setRegion } from '../../actions/searchInfo';
+import { setRegion } from '../../actions/hotelsSearchInfo';
 import { withRouter, Link } from 'react-router-dom';
 import HomePageContentItem from './HomePageContentItem';
 import moment from 'moment';

@@ -1,44 +1,42 @@
+import React from 'react';
+import { withRouter } from 'react-router-dom';
+import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
+import moment from 'moment';
+import querystring from 'query-string';
 import FilterPanel from './filter/FilterPanel';
 import HomeResult from './HomeResult';
 import HomesSearchBar from './HomesSearchBar';
 import Pagination from '../../common/pagination/Pagination';
-import PropTypes from 'prop-types';
-import React from 'react';
-import moment from 'moment';
 import requester from '../../../requester';
-import { withRouter } from 'react-router-dom';
-import { connect } from 'react-redux';
 import { asyncSetStartDate, asyncSetEndDate } from '../../../actions/searchDatesInfo';
+import { setHomesSearchInfo } from '../../../actions/homesSearchInfo';
 
 class HomesSearchPage extends React.Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      countryId: '',
-      guests: undefined,
       cities: [],
-      citiesToggled: new Set(),
-      priceValue: [1, 5000],
       propertyTypes: [],
-      propertyTypesToggled: new Set(),
-      searchParams: undefined,
-      listings: undefined,
+      filters: {
+        minPriceValue: 0,
+        maxPriceValue: 5000,
+        cities: new Set(),
+        propertyTypes: new Set()
+      },
+      listings: '',
       loading: true,
       totalItems: 0,
-      currentPage: 1,
+      currentPage: 0,
     };
 
-    this.updateParamsMap = this.updateParamsMap.bind(this);
-    this.onChange = this.onChange.bind(this);
-    this.handleSearch = this.handleSearch.bind(this);
+    this.search = this.search.bind(this);
     this.handleFilter = this.handleFilter.bind(this);
-    this.handleDatePick = this.handleDatePick.bind(this);
     this.toggleFilter = this.toggleFilter.bind(this);
-    this.onPageChange = this.onPageChange.bind(this);
+    this.setFilterPriceValue = this.setFilterPriceValue.bind(this);
     this.clearFilters = this.clearFilters.bind(this);
-    this.setPriceValue = this.setPriceValue.bind(this);
-    this.getPriceValue = this.getPriceValue.bind(this);
+    this.onPageChange = this.onPageChange.bind(this);
     this.requestListings = this.requestListings.bind(this);
     this.distributeSearchParameters = this.distributeSearchParameters.bind(this);
   }
@@ -52,15 +50,14 @@ class HomesSearchPage extends React.Component {
     this.setState({
       listings: null,
       loading: true,
-      currentPage: 1,
+      currentPage: 0,
       totalItems: 0
     });
   }
 
   requestListings() {
-    const searchParams = this.getSearchParams(this.props.location.search);
-    let searchTerms = this.getSearchTerms(searchParams);
-    searchTerms.push(`page=${this.state.currentPage - 1}`);
+    let searchTerms = this.getSearchTerms(this.props.location.search);
+    searchTerms.push(`page=${this.state.currentPage}`);
     requester.getListingsByFilter(searchTerms).then(res => {
       res.body.then(data => {
         this.setState({
@@ -76,60 +73,74 @@ class HomesSearchPage extends React.Component {
 
   distributeSearchParameters() {
     if (this.props.location.search) {
-      const searchParams = this.getSearchParams(this.props.location.search);
-      const priceValue = this.getPriceValue(searchParams);
-      const cities = this.getCities(searchParams);
-      const propertyTypes = this.getPropertyTypes(searchParams);
-      const startDate = moment(searchParams.get('startDate'), 'DD/MM/YYYY');
-      const endDate = moment(searchParams.get('endDate'), 'DD/MM/YYYY');
+      const searchParams = querystring.parse(this.props.location.search);
+      const country = searchParams.countryId;
+      const startDate = moment(searchParams.startDate, 'DD/MM/YYYY');
+      const endDate = moment(searchParams.endDate, 'DD/MM/YYYY');
+      const guests = searchParams.guests;
+
+      const filters = {};
+      filters.minPriceValue = searchParams.priceMin && Number(searchParams.priceMin) > 1 ? Number(searchParams.priceMin) : 1;
+      filters.maxPriceValue = searchParams.priceMax && Number(searchParams.priceMax) < 5000 ? Number(searchParams.priceMax) : 5000;
+      filters.cities = this.getCities(searchParams);
+      filters.propertyTypes = this.getPropertyTypes(searchParams);
 
       this.props.dispatch(asyncSetStartDate(startDate));
       this.props.dispatch(asyncSetEndDate(endDate));
+      this.props.dispatch(setHomesSearchInfo(country, guests));
 
       this.setState({
-        searchParams: searchParams,
-        countryId: searchParams.get('countryId'),
-        guests: searchParams.get('guests'),
-        citiesToggled: cities,
-        propertyTypesToggled: propertyTypes,
-        priceValue: priceValue,
+        filters,
       });
     }
   }
 
-  onChange(e) {
-    this.setState({ [e.target.name]: e.target.value });
-    if (this.updateParamsMap) {
-      this.updateParamsMap(e.target.name, e.target.value);
+  getCities(searchParams) {
+    const cities = new Set();
+    if (searchParams.cities) {
+      searchParams.cities.split(',').forEach(city => {
+        cities.add(city);
+      });
     }
+
+    return cities;
   }
 
-  handleSearch(e) {
-    if (e) {
-      e.preventDefault();
+  getPropertyTypes(searchParams) {
+    const propertyTypes = new Set();
+    if (searchParams.propertyTypes) {
+      searchParams.propertyTypes.split(',').forEach(propertyType => {
+        propertyTypes.add(propertyType);
+      });
     }
 
+    return propertyTypes;
+  }
+
+  search(queryString) {
     this.setState({
       listings: null,
-      loading: true
+      loading: true,
+      totalItems: 0,
+      cities: [],
+      propertyTypes: []
     });
 
-    this.clearFilters(e);
-    let searchTerms = this.getSearchTerms(this.state.searchParams);
+    this.clearFilters();
+    const searchTerms = this.getSearchTerms(queryString);
     requester.getListingsByFilter(searchTerms).then(res => {
       res.body.then(data => {
         this.setState({
           listings: data.filteredListings.content,
           loading: false,
           totalItems: data.filteredListings.totalElements,
-          countryId: this.getSearchParams().get('countryId'),
           cities: data.cities,
           propertyTypes: data.types
         });
       });
     });
-    const url = `/homes/listings/?${searchTerms.join('&')}`;
-    this.props.history.push(url);
+
+    this.props.history.push('/homes/listings' + queryString);
   }
 
   handleFilter(e) {
@@ -142,14 +153,13 @@ class HomesSearchPage extends React.Component {
       loading: true
     });
 
-    let searchTerms = this.getSearchTerms(this.state.searchParams);
+    let searchTerms = this.getSearchTerms(this.props.location.search);
     requester.getListingsByFilter(searchTerms).then(res => {
       res.body.then(data => {
         this.setState({
           listings: data.filteredListings.content,
           loading: false,
-          totalItems: data.filteredListings.totalElements,
-          countryId: this.getSearchParams().get('countryId'),
+          totalItems: data.filteredListings.totalElements
         });
       });
     });
@@ -157,49 +167,51 @@ class HomesSearchPage extends React.Component {
     this.props.history.push(url);
   }
 
-  clearFilters(e) {
-    this.setState({
-      priceValue: [1, 5000],
-      citiesToggled: new Set(),
-      propertyTypesToggled: new Set(),
-    });
+  clearFilters() {
+    const filters = Object.assign({}, this.state.filters);
 
-    this.updateParamsMap('priceMin', '1');
-    this.updateParamsMap('priceMax', '5000');
-    this.updateParamsMap('cities', '');
-    this.updateParamsMap('propertyTypes', '');
-    this.handleFilter(e);
+    filters.minPriceValue = 1;
+    filters.maxPriceValue = 5000;
+    filters.cities = new Set();
+    filters.propertyTypes = new Set();
+
+    this.setState({
+      filters,
+    }, () => this.handleFilter());
   }
 
   toggleFilter(key, value) {
-    const stateKey = key + 'Toggled';
-    const set = new Set(this.state[stateKey]);
-    if (set.has(value)) {
-      set.delete(value);
+    const filters = Object.assign({}, this.state.filters);
+    if (filters[key].has(value)) {
+      filters[key].delete(value);
     } else {
-      set.add(value);
+      filters[key].add(value);
     }
 
-    this.setState({ [stateKey]: set });
-    this.updateParamsMap(key, Array.from(set).join(','));
+    this.setState({ filters });
   }
 
-  handleDatePick(event, picker) {
-    this.props.dispatch(asyncSetStartDate(picker.startDate));
-    this.props.dispatch(asyncSetEndDate(picker.endDate));
+  setFilterPriceValue(e) {
+    const filters = Object.assign({}, this.state.filters);
 
-    this.updateParamsMap('startDate', picker.startDate.format('DD/MM/YYYY'));
-    this.updateParamsMap('endDate', picker.endDate.format('DD/MM/YYYY'));
+    const minPrice = e.target.value[0];
+    const maxPrice = e.target.value[1];
+    filters.minPriceValue = minPrice;
+    filters.maxPriceValue = maxPrice;
+
+    this.setState({
+      filters
+    });
   }
 
   onPageChange(page) {
     window.scrollTo(0, 0);
     this.setState({
-      currentPage: page,
+      currentPage: page - 1,
       loading: true
     });
 
-    let searchTerms = this.getSearchTerms(this.state.searchParams);
+    let searchTerms = this.getSearchTerms(this.props.location.search);
     searchTerms.push(`page=${page - 1}`);
     requester.getListingsByFilter(searchTerms).then(res => {
       res.body.then(data => {
@@ -212,95 +224,29 @@ class HomesSearchPage extends React.Component {
     });
   }
 
-  getSearchTerms(searchParams) {
-    let keys = Array.from(searchParams.keys());
+  getSearchTerms(queryString) {
+    const { filters } = this.state;
+    const searchParams = querystring.parse(queryString);
+
     let pairs = [];
-    for (let i = 0; i < keys.length; i++) {
-      pairs.push(keys[i] + '=' + this.createParam(searchParams.get(keys[i])));
+    pairs.push(`countryId=${searchParams.countryId}`);
+    pairs.push(`startDate=${searchParams.startDate}`);
+    pairs.push(`endDate=${searchParams.endDate}`);
+    pairs.push(`guests=${searchParams.guests}`);
+    pairs.push(`priceMin=${filters.minPriceValue}`);
+    pairs.push(`priceMax=${filters.maxPriceValue}`);
+    if (filters.cities.size > 0) {
+      pairs.push(`cities=${Array.from(filters.cities).join(',')}`);
+    }
+    if (filters.propertyTypes.size > 0) {
+      pairs.push(`propertyTypes=${Array.from(filters.propertyTypes).join(',')}`);
     }
 
     return pairs;
   }
 
-  getSearchParams() {
-    const map = new Map();
-    const pairs = this.props.location.search.substr(1).split('&');
-    for (let i = 0; i < pairs.length; i++) {
-      let pair = pairs[i].split('=');
-      map.set(pair[0], this.parseParam(pair[1]));
-    }
-
-    if (!map.has('priceMin')) {
-      map.set('priceMin', '1');
-    }
-
-    if (!map.has('priceMax')) {
-      map.set('priceMax', '5000');
-    }
-
-    return map;
-  }
-
-  updateParamsMap(key, value) {
-    if (!value || value === '') {
-      this.state.searchParams.delete(key);
-    } else {
-      this.state.searchParams.set(key, this.createParam(value));
-    }
-    if (key === 'countryId') {
-      this.state.searchParams.delete('cities');
-    }
-  }
-
-  parseParam(param) {
-    return param.split('%20').join(' ');
-  }
-
-  createParam(param) {
-    return param.split(' ').join('%20');
-  }
-
-  setPriceValue(e) {
-    let min = e.target.value[0].toString();
-    let max = e.target.value[1].toString();
-
-    this.updateParamsMap('priceMin', min);
-    this.updateParamsMap('priceMax', max);
-    this.setState({
-      priceValue: e.target.value
-    });
-  }
-
-  getPriceValue(searchParams) {
-    let min = Number(searchParams.get('priceMin')) > 1 ? Number(searchParams.get('priceMin')) : 1;
-    let max = Number(searchParams.get('priceMax')) < 5000 ? Number(searchParams.get('priceMax')) : 5000;
-    return [min, max];
-  }
-
-  getCities(searchParams) {
-    const cities = new Set();
-    if (searchParams.get('cities')) {
-      searchParams.get('cities').split(',').forEach(city => {
-        cities.add(city);
-      });
-    }
-
-    return cities;
-  }
-
-  getPropertyTypes(searchParams) {
-    const propertyTypes = new Set();
-    if (searchParams.get('propertyTypes')) {
-      searchParams.get('propertyTypes').split(',').forEach(propertyType => {
-        propertyTypes.add(propertyType);
-      });
-    }
-
-    return propertyTypes;
-  }
-
   render() {
-    const listings = this.state.listings;
+    const { listings } = this.state;
     const hasLoadedListings = listings ? true : false;
     const hasListings = hasLoadedListings && listings.length > 0 && listings[0].hasOwnProperty('defaultDailyPrice');
 
@@ -319,15 +265,7 @@ class HomesSearchPage extends React.Component {
     return (
       <React.Fragment>
         <div className="container">
-          <HomesSearchBar
-            countryId={this.state.countryId}
-            countries={this.props.countries}
-            startDate={this.props.searchDatesInfo.startDate}
-            endDate={this.props.searchDatesInfo.endDate}
-            guests={this.state.guests}
-            onChange={this.onChange}
-            handleSearch={this.handleSearch}
-            handleDatePick={this.handleDatePick} />
+          <HomesSearchBar search={this.search} />
         </div>
 
         <section id="hotel-box">
@@ -336,12 +274,12 @@ class HomesSearchPage extends React.Component {
               <div className="col-md-3">
                 <FilterPanel
                   cities={this.state.cities}
-                  citiesToggled={this.state.citiesToggled}
+                  citiesToggled={this.state.filters.cities}
                   propertyTypes={this.state.propertyTypes}
-                  propertyTypesToggled={this.state.propertyTypesToggled}
-                  priceValue={this.state.priceValue}
-                  setPriceValue={this.setPriceValue}
-                  countryId={this.state.countryId}
+                  propertyTypesToggled={this.state.filters.propertyTypes}
+                  priceValue={[this.state.filters.minPriceValue, this.state.filters.maxPriceValue]}
+                  setPriceValue={this.setFilterPriceValue}
+                  countryId={this.props.homesSearchInfo.country}
                   handleSearch={this.handleFilter}
                   toggleFilter={this.toggleFilter}
                   clearFilters={this.clearFilters} />
@@ -353,7 +291,7 @@ class HomesSearchPage extends React.Component {
                   <Pagination
                     loading={this.state.totalItems === 0}
                     onPageChange={this.onPageChange}
-                    currentPage={this.state.currentPage}
+                    currentPage={this.state.currentPage + 1}
                     totalElements={this.state.totalItems}
                   />
                 </div>
@@ -367,18 +305,19 @@ class HomesSearchPage extends React.Component {
 }
 
 HomesSearchPage.propTypes = {
-  countries: PropTypes.array,
   location: PropTypes.object,
   history: PropTypes.object,
 
   dispatch: PropTypes.func,
-  searchDatesInfo: PropTypes.func
+  homesSearchInfo: PropTypes.object,
+  searchDatesInfo: PropTypes.object
 };
 
 const mapStateToProps = (state) => {
-  const { searchDatesInfo } = state;
+  const { homesSearchInfo, searchDatesInfo } = state;
 
   return {
+    homesSearchInfo,
     searchDatesInfo
   };
 };
