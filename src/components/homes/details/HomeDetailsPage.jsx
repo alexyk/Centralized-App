@@ -9,7 +9,7 @@ import moment from 'moment';
 import { parse } from 'query-string';
 import requester from '../../../requester';
 import { withRouter } from 'react-router-dom';
-import Slider from 'react-slick';
+import SlickCarousel from 'react-slick';
 import '../../../styles/css/components/carousel-component.css';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
@@ -26,6 +26,22 @@ import {
   previous,
   calculateCheckInOuts
 } from '../common/detailsPageUtils.js';
+
+const CAROUSEL_SETTINGS = {
+  infinite: true,
+  accessibility: false,
+  speed: 500,
+  slidesToShow: 3,
+  slidesToScroll: 1,
+  responsive: [
+    {
+      breakpoint: 1024,
+      settings: {
+        slidesToShow: 1,
+      }
+    }
+  ]
+};
 
 class HomeDetailsPage extends React.Component {
   constructor(props) {
@@ -114,7 +130,6 @@ class HomeDetailsPage extends React.Component {
     requester.getCalendarByListingIdAndDateRange(searchTermMap).then(res => {
       res.body.then(data => {
         let calendar = data.content;
-        console.log(calendar);
         calendar = _.sortBy(calendar, function (x) {
           return moment(x.date, 'DD/MM/YYYY');
         });
@@ -182,6 +197,7 @@ class HomeDetailsPage extends React.Component {
   openModal() {
     this.setState({ isShownContactHostModal: true });
   }
+
   closeModal() {
     this.setState({ isShownContactHostModal: false });
   }
@@ -210,39 +226,26 @@ class HomeDetailsPage extends React.Component {
     this.setState({guests: Number(e.target.value.split(' ')[0])});
   }
 
+  getValidPictures(pictures) {
+    if (!pictures) {
+      pictures = [];
+    }
+
+    while (pictures.length < 3) {
+      pictures.push({ thumbnail: '/listings/images/default.png' });
+    }
+
+    return pictures.map(picture => { return { src: Config.getValue('imgHost') + picture.thumbnail }; });
+  }
+
   render() {
     let loading, images;
 
-    if (this.state.data === null || this.state.calendar === null) {
+    if (!this.state.data || !this.state.calendar) {
       loading = true;
     } else {
-      if (this.state.data.pictures !== undefined) {
-        images = this.state.data.pictures.map((x, index) => {
-          return { src: Config.getValue('imgHost') + x.thumbnail, index };
-        });
-      }
+      images = this.state.data.pictures && this.getValidPictures(this.state.data.pictures);
     }
-
-
-    while (images && images.length < 3) {
-      images.push(images[0]);
-    }
-
-    const settings = {
-      infinite: true,
-      accessibility: false,
-      speed: 500,
-      slidesToShow: 3,
-      slidesToScroll: 1,
-      responsive: [
-        {
-          breakpoint: 1024,
-          settings: {
-            slidesToShow: 1,
-          }
-        }
-      ]
-    };
 
     return (
       <div>
@@ -267,7 +270,7 @@ class HomeDetailsPage extends React.Component {
           <div className="loader"></div> :
           <div className="home-details-container">
             <section className="hotel-gallery">
-              {images !== null && <Lightbox
+              {images && <Lightbox
                 currentImage={this.state.currentImage}
                 images={images}
                 isOpen={this.state.lightboxIsOpen}
@@ -278,9 +281,9 @@ class HomeDetailsPage extends React.Component {
                 onClose={this.closeLightbox}
               />}
               <div className='hotel-details-carousel'>
-                <Slider
+                <SlickCarousel
                   ref={c => (this.slider = c)}
-                  {...settings}>
+                  {...CAROUSEL_SETTINGS}>
                   {images && images.map((image, index) => {
                     return (
                       <div key={index} onClick={(e) => this.openLightbox(e, image.index)}>
@@ -288,7 +291,7 @@ class HomeDetailsPage extends React.Component {
                       </div>
                     );
                   })}
-                </Slider>
+                </SlickCarousel>
               </div>
               <div className="main-carousel">
                 <div className="carousel-nav">
