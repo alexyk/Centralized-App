@@ -19,7 +19,12 @@ class HomesSearchPage extends React.Component {
     this.state = {
       cities: [],
       propertyTypes: [],
-      filters: '',
+      filters: {
+        minPriceValue: 0,
+        maxPriceValue: 5000,
+        cities: new Set(),
+        propertyTypes: new Set()
+      },
       listings: '',
       loading: true,
       totalItems: 0,
