@@ -80,6 +80,7 @@ class StaticHotelsSearchPage extends React.Component {
     this.getSearchString = this.getSearchString.bind(this);
     this.getFilterString = this.getFilterString.bind(this);
     this.removeAll = this.removeAll.bind(this);
+    this.distributeSearchParameters = this.distributeSearchParameters.bind(this);
 
     // SOCKET BINDINGS
     this.handleReceiveMessage = this.handleReceiveMessage.bind(this);
@@ -89,44 +90,38 @@ class StaticHotelsSearchPage extends React.Component {
     this.disconnect = this.disconnect.bind(this);
 
     // WINDOW WIDTH BINGINGS
-    this.updateWindowWidth = this.updateWindowWidth.bind(this);
+    this.updateWindowWidth = _.throttle(this.updateWindowWidth.bind(this), DEBOUNCE_INTERVAL);
   }
 
   componentDidMount() {
     const query = this.props.location.search;
     const queryParams = queryString.parse(query);
 
+    this.distributeSearchParameters();
+
     if (!this.props.paymentInfo.currency) {
       this.props.dispatch(setCurrency(queryParams.currency));
     }
-
-    const { region } = queryParams;
 
     if (this.isSearchReady()) {
       this.populateFilters();
     }
 
-    requester.getStaticHotels(region).then(res => {
-      res.body.then(data => {
-        const { content } = data;
-        content.forEach(l => {
-          if (this.hotelInfoById[l.id]) {
-            l.price = this.hotelInfoById[l.id];
-          }
-        });
-
-        const hotels = content;
-        this.setState({ hotels, totalElements: data.totalElements, loading: false }, () => {
-          this.connectSocket();
-        });
-      });
-    });
+    this.requestStaticHotels(queryParams);
 
     this.updateWindowWidth();
     window.addEventListener('resize', this.updateWindowWidth);
   }
 
-  componentWillMount() {
+  componentWillUnmount() {
+    this.unsubscribe();
+    this.disconnect();
+    this.clearIntervals();
+    this.hotelInfo = [];
+    this.hotelInfoById = {};
+  }
+
+  distributeSearchParameters() {
     if (this.props.location.search) {
       const searchParams = queryString.parse(this.props.location.search);
       const rooms = JSON.parse(decodeURI(searchParams.rooms));
@@ -154,12 +149,23 @@ class StaticHotelsSearchPage extends React.Component {
     }
   }
 
-  componentWillUnmount() {
-    this.unsubscribe();
-    this.disconnect();
-    this.clearIntervals();
-    this.hotelInfo = [];
-    this.hotelInfoById = {};
+  requestStaticHotels(queryParams) {
+    const { region } = queryParams;
+    requester.getStaticHotels(region).then(res => {
+      res.body.then(data => {
+        const { content } = data;
+        content.forEach(l => {
+          if (this.hotelInfoById[l.id]) {
+            l.price = this.hotelInfoById[l.id];
+          }
+        });
+
+        const hotels = content;
+        this.setState({ hotels, totalElements: data.totalElements, loading: false }, () => {
+          this.connectSocket();
+        });
+      });
+    });
   }
 
   updateWindowWidth() {

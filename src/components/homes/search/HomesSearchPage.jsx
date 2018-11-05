@@ -39,9 +39,42 @@ class HomesSearchPage extends React.Component {
     this.clearFilters = this.clearFilters.bind(this);
     this.setPriceValue = this.setPriceValue.bind(this);
     this.getPriceValue = this.getPriceValue.bind(this);
+    this.requestListings = this.requestListings.bind(this);
+    this.distributeSearchParameters = this.distributeSearchParameters.bind(this);
   }
 
-  componentWillMount() {
+  componentDidMount() {
+    this.distributeSearchParameters();
+    this.requestListings();
+  }
+
+  componentWillUnmount() {
+    this.setState({
+      listings: null,
+      loading: true,
+      currentPage: 1,
+      totalItems: 0
+    });
+  }
+
+  requestListings() {
+    const searchParams = this.getSearchParams(this.props.location.search);
+    let searchTerms = this.getSearchTerms(searchParams);
+    searchTerms.push(`page=${this.state.currentPage - 1}`);
+    requester.getListingsByFilter(searchTerms).then(res => {
+      res.body.then(data => {
+        this.setState({
+          listings: data.filteredListings.content,
+          totalItems: data.filteredListings.totalElements,
+          loading: false,
+          cities: data.cities,
+          propertyTypes: data.types
+        });
+      });
+    });
+  }
+
+  distributeSearchParameters() {
     if (this.props.location.search) {
       const searchParams = this.getSearchParams(this.props.location.search);
       const priceValue = this.getPriceValue(searchParams);
@@ -62,31 +95,6 @@ class HomesSearchPage extends React.Component {
         priceValue: priceValue,
       });
     }
-  }
-
-  componentDidMount() {
-    let searchTerms = this.getSearchTerms(this.state.searchParams);
-    searchTerms.push(`page=${this.state.currentPage - 1}`);
-    requester.getListingsByFilter(searchTerms).then(res => {
-      res.body.then(data => {
-        this.setState({
-          listings: data.filteredListings.content,
-          totalItems: data.filteredListings.totalElements,
-          loading: false,
-          cities: data.cities,
-          propertyTypes: data.types
-        });
-      });
-    });
-  }
-
-  componentWillUnmount() {
-    this.setState({
-      listings: null,
-      loading: true,
-      currentPage: 1,
-      totalItems: 0
-    });
   }
 
   onChange(e) {
