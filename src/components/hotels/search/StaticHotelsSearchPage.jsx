@@ -1,6 +1,6 @@
 import '../../../styles/css/components/hotels_search/sidebar/sidebar.css';
 
-import { setRegion, setSearchInfo } from '../../../actions/searchInfo';
+import { setRegion, setHotelsSearchInfo } from '../../../actions/hotelsSearchInfo';
 import { asyncSetStartDate, asyncSetEndDate } from '../../../actions/searchDatesInfo';
 
 import { Config } from '../../../config';
@@ -70,7 +70,7 @@ class StaticHotelsSearchPage extends React.Component {
     this.getRandomInt = this.getRandomInt.bind(this);
     this.updateMapInfo = this.updateMapInfo.bind(this);
     this.clearIntervals = this.clearIntervals.bind(this);
-    this.redirectToSearchPage = this.redirectToSearchPage.bind(this);
+    this.search = this.search.bind(this);
     this.handleFilterByName = this.handleFilterByName.bind(this);
     this.handleShowUnavailable = this.handleShowUnavailable.bind(this);
     this.isSearchReady = this.isSearchReady.bind(this);
@@ -80,6 +80,7 @@ class StaticHotelsSearchPage extends React.Component {
     this.getSearchString = this.getSearchString.bind(this);
     this.getFilterString = this.getFilterString.bind(this);
     this.removeAll = this.removeAll.bind(this);
+    this.distributeSearchParameters = this.distributeSearchParameters.bind(this);
 
     // SOCKET BINDINGS
     this.handleReceiveMessage = this.handleReceiveMessage.bind(this);
@@ -89,23 +90,67 @@ class StaticHotelsSearchPage extends React.Component {
     this.disconnect = this.disconnect.bind(this);
 
     // WINDOW WIDTH BINGINGS
-    this.updateWindowWidth = this.updateWindowWidth.bind(this);
+    this.updateWindowWidth = _.throttle(this.updateWindowWidth.bind(this), DEBOUNCE_INTERVAL);
   }
 
   componentDidMount() {
     const query = this.props.location.search;
     const queryParams = queryString.parse(query);
 
+    this.distributeSearchParameters();
+
     if (!this.props.paymentInfo.currency) {
       this.props.dispatch(setCurrency(queryParams.currency));
     }
-
-    const { region } = queryParams;
 
     if (this.isSearchReady()) {
       this.populateFilters();
     }
 
+    this.requestStaticHotels(queryParams);
+
+    this.updateWindowWidth();
+    window.addEventListener('resize', this.updateWindowWidth);
+  }
+
+  componentWillUnmount() {
+    this.unsubscribe();
+    this.disconnect();
+    this.clearIntervals();
+    this.hotelInfo = [];
+    this.hotelInfoById = {};
+  }
+
+  distributeSearchParameters() {
+    if (this.props.location.search) {
+      const searchParams = queryString.parse(this.props.location.search);
+      const rooms = JSON.parse(decodeURI(searchParams.rooms));
+      const adults = this.getAdults(rooms);
+      const hasChildren = this.getHasChildren(rooms);
+      const startDate = moment(searchParams.startDate, 'DD/MM/YYYY');
+      const endDate = moment(searchParams.endDate, 'DD/MM/YYYY');
+      const regionId = searchParams.region;
+      const region = { id: regionId };
+      const page = searchParams.page;
+      
+      this.props.dispatch(asyncSetStartDate(startDate));
+      this.props.dispatch(asyncSetEndDate(endDate));
+      this.props.dispatch(setHotelsSearchInfo(region, rooms, adults, hasChildren));
+      if (this.props.location.pathname.indexOf('/mobile') !== -1) {
+        const currency = searchParams.currency;
+        this.props.dispatch(setCurrency(currency));
+      }
+
+      this.setState({
+        page: page ? Number(page) : 0,
+      });
+
+      this.getCityLocation(regionId);
+    }
+  }
+
+  requestStaticHotels(queryParams) {
+    const { region } = queryParams;
     requester.getStaticHotels(region).then(res => {
       res.body.then(data => {
         const { content } = data;
@@ -121,45 +166,6 @@ class StaticHotelsSearchPage extends React.Component {
         });
       });
     });
-
-    this.updateWindowWidth();
-    window.addEventListener('resize', this.updateWindowWidth);
-  }
-
-  componentWillMount() {
-    if (this.props.location.search) {
-      const searchParams = queryString.parse(this.props.location.search);
-      const rooms = JSON.parse(decodeURI(searchParams.rooms));
-      const adults = this.getAdults(rooms);
-      const hasChildren = this.getHasChildren(rooms);
-      const startDate = moment(searchParams.startDate, 'DD/MM/YYYY');
-      const endDate = moment(searchParams.endDate, 'DD/MM/YYYY');
-      const regionId = searchParams.region;
-      const region = { id: regionId };
-      const page = searchParams.page;
-      
-      this.props.dispatch(asyncSetStartDate(startDate));
-      this.props.dispatch(asyncSetEndDate(endDate));
-      this.props.dispatch(setSearchInfo(region, rooms, adults, hasChildren));
-      if (this.props.location.pathname.indexOf('/mobile') !== -1) {
-        const currency = searchParams.currency;
-        this.props.dispatch(setCurrency(currency));
-      }
-
-      this.setState({
-        page: page ? Number(page) : 0,
-      });
-
-      this.getCityLocation(regionId);
-    }
-  }
-
-  componentWillUnmount() {
-    this.unsubscribe();
-    this.disconnect();
-    this.clearIntervals();
-    this.hotelInfo = [];
-    this.hotelInfoById = {};
   }
 
   updateWindowWidth() {
@@ -268,7 +274,7 @@ class StaticHotelsSearchPage extends React.Component {
     return false;
   }
 
-  redirectToSearchPage(queryString) {
+  search(queryString) {
     this.unsubscribe();
     this.disconnect();
     this.clearIntervals();
@@ -277,7 +283,7 @@ class StaticHotelsSearchPage extends React.Component {
 
     this.props.history.push('/hotels/listings' + queryString);
 
-    const region = this.props.searchInfo.region.id;
+    const region = this.props.hotelsSearchInfo.region.id;
 
     this.getCityLocation(region);
 
@@ -613,7 +619,7 @@ class StaticHotelsSearchPage extends React.Component {
     return (
       <div>
         <div className="container">
-          <HotelsSearchBar redirectToSearchPage={this.redirectToSearchPage} />
+          <HotelsSearchBar search={this.search} />
         </div>
         <section id="hotel-box">
           <div className="container">
@@ -701,17 +707,17 @@ StaticHotelsSearchPage.propTypes = {
   dispatch: PropTypes.func,
   paymentInfo: PropTypes.object,
   userInfo: PropTypes.object,
-  searchInfo: PropTypes.object,
+  hotelsSearchInfo: PropTypes.object,
   searchDatesInfo: PropTypes.object
 };
 
 
 function mapStateToProps(state) {
-  const { paymentInfo, userInfo, searchInfo, searchDatesInfo } = state;
+  const { paymentInfo, userInfo, hotelsSearchInfo, searchDatesInfo } = state;
   return {
     paymentInfo,
     userInfo,
-    searchInfo,
+    hotelsSearchInfo,
     searchDatesInfo
   };
 }
