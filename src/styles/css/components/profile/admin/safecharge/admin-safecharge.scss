@@ -1,0 +1,17 @@
+@import '../../../../vendors/include-media';
+
+.safecharge {
+  margin-top: 20px;
+  margin-bottom: 30px;
+
+  .button-holder {
+    @include media('<tablet') {
+      display: flex;
+      justify-content: space-around;
+    }
+    button {
+      height: 60px;
+      width: 200px;
+    }
+  }
+}

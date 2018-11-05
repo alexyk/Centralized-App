@@ -114,8 +114,9 @@ class HomeDetailsPage extends React.Component {
     requester.getCalendarByListingIdAndDateRange(searchTermMap).then(res => {
       res.body.then(data => {
         let calendar = data.content;
+        console.log(calendar);
         calendar = _.sortBy(calendar, function (x) {
-          return new moment(x.date, 'DD/MM/YYYY');
+          return moment(x.date, 'DD/MM/YYYY');
         });
         this.setState({ calendar: calendar });
       });
@@ -309,8 +310,8 @@ class HomeDetailsPage extends React.Component {
                   </ul>
                 </div>
                 <div className="share-box">
-                  <p><img alt="share" src={`${Config.getValue("basePath")}/images/icon-share.png`} /> Share</p>
-                  <p><img alt="save" src={`${Config.getValue("basePath")}/images/icon-heart.png`} /> Save</p>
+                  <p><img alt="share" src={`${Config.getValue('basePath')}/images/icon-share.png`} /> Share</p>
+                  <p><img alt="save" src={`${Config.getValue('basePath')}/images/icon-heart.png`} /> Save</p>
                 </div>
                 <div className="contact-box">
                   <button onClick={this.openModal}>Contact Host</button>

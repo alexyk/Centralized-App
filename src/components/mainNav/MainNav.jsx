@@ -29,7 +29,6 @@ import {
   EMAIL_VERIFIED
 } from '../../constants/successMessages.js';
 import { Link, withRouter } from 'react-router-dom';
-import { MenuItem, Nav, NavDropdown, NavItem, Navbar } from 'react-bootstrap/lib';
 import { NOT_FOUND } from '../../constants/errorMessages';
 import { closeModal, openModal } from '../../actions/modalsInfo';
 import { setIsLogged, setUserInfo } from '../../actions/userInfo';

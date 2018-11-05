@@ -1,11 +1,8 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import './style.css';
 
 class DateInput extends React.Component {
-  constructor(props) {
-    super(props);
-  }
-
   render() {
     const { text, date } = this.props;
     const openClass = (this.props.calendar && this.props.calendar.state.open) ? 'opened' : 'closed';
@@ -27,5 +24,12 @@ class DateInput extends React.Component {
     );
   }
 }
+
+DateInput.propTypes = {
+  text: PropTypes.string,
+  date: PropTypes.object,
+  calendar: PropTypes.object,
+  onClick: PropTypes.func
+};
 
 export default DateInput;

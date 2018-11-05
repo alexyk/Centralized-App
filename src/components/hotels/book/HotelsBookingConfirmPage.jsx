@@ -19,7 +19,6 @@ import LocPrice from '../../common/utility/LocPrice';
 import QuoteLocPrice from '../../common/utility/QuoteLocPrice';
 import LocPriceUpdateTimer from '../../common/utility/LocPriceUpdateTimer';
 import { closeModal, openModal } from '../../../actions/modalsInfo.js';
-import { setCurrency } from '../../../actions/paymentInfo';
 import { setLocRateFiatAmount } from '../../../actions/exchangeRatesInfo.js';
 import RecoverWallerPassword from '../../common/utility/RecoverWallerPassword';
 import { Websocket } from '../../../services/socket/exchangerWebsocket';
@@ -30,6 +29,7 @@ const ERROR_MESSAGE_TIME = 20000;
 const DEFAULT_CRYPTO_CURRENCY = 'EUR';
 const TEST_FIAT_AMOUNT_IN_EUR = 15;
 const DEFAULT_QUOTE_LOC_ID = 'quote';
+const SAFECHARGE_VAR = 'SCPaymentModeOn';
 
 class HotelBookingConfirmPage extends React.Component {
   constructor(props) {
@@ -41,7 +41,8 @@ class HotelBookingConfirmPage extends React.Component {
     this.state = {
       password: '',
       isQuoteStopped: false,
-      userConfirmedPaymentWithLOC: false
+      userConfirmedPaymentWithLOC: false,
+      safeChargeMode: false
     };
 
     this.openModal = this.openModal.bind(this);
@@ -49,9 +50,11 @@ class HotelBookingConfirmPage extends React.Component {
     this.onChange = this.onChange.bind(this);
     this.payWithLocSingleWithdrawer = this.payWithLocSingleWithdrawer.bind(this);
     this.createBackUrl = this.createBackUrl.bind(this);
+    this.requestSafechargeMode = this.requestSafechargeMode.bind(this);
   }
 
   componentDidMount() {
+    this.requestSafechargeMode();
     this.props.requestCreateReservation().then(() => {
       const { currencyExchangeRates } = this.props.exchangeRatesInfo;
       const fiatPriceRoomsXML = this.props.reservation.fiatPrice;
@@ -62,6 +65,23 @@ class HotelBookingConfirmPage extends React.Component {
 
   componentWillUnmount() {
     this.props.dispatch(setLocRateFiatAmount(1000));
+  }
+
+  requestSafechargeMode() {
+    requester.getConfigVarByName(SAFECHARGE_VAR)
+      .then((res) => {
+        if (res.success) {
+          res.body.then((data) => {
+            this.setState({
+              safeChargeMode: data.value === 'true'
+            });
+          });
+        } else {
+          res.errors.then((err) => {
+            console.log(err);
+          });
+        }
+      });
   }
 
   getEnvironment() {
@@ -159,7 +179,7 @@ class HotelBookingConfirmPage extends React.Component {
 
       for (let j = 0; j < earliestToLatestRoomCancellationFees.length; j++) {
         const cancellation = earliestToLatestRoomCancellationFees[j];
-        let fromDate = moment(cancellation.from);
+        let fromDate = moment(cancellation.from).utc();
 
         const daysBefore = moment(fromDate).diff(creationDate, 'days');
 
@@ -245,11 +265,11 @@ class HotelBookingConfirmPage extends React.Component {
         TEST_FIAT_AMOUNT_IN_EUR / this.props.exchangeRatesInfo.locEurRate;
 
       this.approveQuote();
-      console.log('LOC',locAmounts[DEFAULT_QUOTE_LOC_ID]);
-      console.log('LOC',locAmounts[DEFAULT_QUOTE_LOC_ID].locAmount);
+      // console.log('LOC',locAmounts[DEFAULT_QUOTE_LOC_ID]);
+      // console.log('LOC',locAmounts[DEFAULT_QUOTE_LOC_ID].locAmount);
 
       const wei = (this.tokensToWei(locAmount.toString()));
-      console.log(wei);
+      // console.log(wei);
       const booking = reservation.booking.hotelBooking;
       const endDate = moment.utc(booking[0].arrivalDate, 'YYYY-MM-DD').add(booking[0].nights, 'days');
 
@@ -271,7 +291,7 @@ class HotelBookingConfirmPage extends React.Component {
               wei.toString(),
               endDate.unix().toString(),
             ).then(transaction => {
-              console.log('transaction', transaction);
+              // console.log('transaction', transaction);
               const bookingConfirmObj = {
                 bookingId: preparedBookingId,
                 transactionHash: transaction.hash,
@@ -458,10 +478,9 @@ class HotelBookingConfirmPage extends React.Component {
     }
 
     const { reservation } = this.props;
-    const { userConfirmedPaymentWithLOC, password, isQuoteStopped } = this.state;
+    const { userConfirmedPaymentWithLOC, password, isQuoteStopped, safeChargeMode } = this.state;
     const hasLocAddress = !!this.props.userInfo.locAddress;
     const { currencyExchangeRates } = this.props.exchangeRatesInfo;
-    const isMobile = this.props.location.pathname.indexOf('/mobile') !== -1;
 
     const booking = reservation && reservation.booking.hotelBooking;
     const { currency, currencySign } = this.props.paymentInfo;
@@ -516,7 +535,7 @@ class HotelBookingConfirmPage extends React.Component {
                   <p className='billing-disclaimer'>The charge will appear on your bill as LockChain Ltd. (team@locktrip.com)</p>
                 </div>
                 <div className="payment-methods">
-                  {locAmounts[DEFAULT_QUOTE_LOC_ID] && locAmounts[DEFAULT_QUOTE_LOC_ID].fundsSufficient && false &&
+                  {locAmounts[DEFAULT_QUOTE_LOC_ID] && locAmounts[DEFAULT_QUOTE_LOC_ID].fundsSufficient && safeChargeMode &&
                     <div className="payment-methods-card">
                       <div className="details">
                         <p className="booking-card-price">
