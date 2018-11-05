@@ -105,7 +105,7 @@ function HotelDetailsInfoSection(props) {
           <Facilities facilities={hotelAmenities} />
 
           <div className="hotel-extras">
-            {props.descriptionsAccessInfo &&
+            {props.hotel.descriptionsAccessInfo &&
               <div id="hotel-rules">
                 <h2>Access info</h2>
                 <p>{props.hotel.descriptionsAccessInfo}</p>
@@ -147,7 +147,7 @@ function HotelDetailsInfoSection(props) {
                               <div key={roomIndex} className="room">
                                 <span>{room.name} ({room.mealType}) - </span>
                                 {props.userInfo.isLogged &&
-                                  <span>{props.currencySign}{currencyExchangeRates && Number((CurrencyConverter.convert(currencyExchangeRates, roomsXMLCurrency, currency, room.price)) / props.nights).toFixed(2)} </span>
+                                  <span>{props.paymentInfo.currencySign}{currencyExchangeRates && Number((CurrencyConverter.convert(currencyExchangeRates, roomsXMLCurrency, currency, room.price)) / props.nights).toFixed(2)} </span>
                                 }
                                 <LocPrice fiat={room.price / props.nights} />
                                 / night
@@ -161,7 +161,7 @@ function HotelDetailsInfoSection(props) {
                           <span className="price-details">
                             <span>{props.nights} {props.nights === 1 ? 'night: ' : 'nights: '}</span>
                             {props.userInfo.isLogged &&
-                              <span>{props.currencySign}{currencyExchangeRates && Number(CurrencyConverter.convert(currencyExchangeRates, roomsXMLCurrency, currency, getTotalPrice(results[0].roomsResults))).toFixed(2)} </span>
+                              <span>{props.paymentInfo.currencySign}{currencyExchangeRates && Number(CurrencyConverter.convert(currencyExchangeRates, roomsXMLCurrency, currency, getTotalPrice(results[0].roomsResults))).toFixed(2)} </span>
                             }
                             <LocPrice fiat={getTotalPrice(results[0].roomsResults)} />
                           </span>
@@ -196,30 +196,16 @@ function HotelDetailsInfoSection(props) {
 HotelDetailsInfoSection.propTypes = {
   hotel: PropTypes.object,
   hotelRooms: PropTypes.array,
-  showLoginModal: PropTypes.bool,
-  isLogged: PropTypes.bool,
-  userInfo: PropTypes.object,
   nights: PropTypes.number,
-  startDate: PropTypes.object,
-  endDate: PropTypes.object,
   loading: PropTypes.bool,
-  descriptionsAccessInfo: PropTypes.string,
-  match: PropTypes.object,
-  isShownContactHostModal: PropTypes.bool,
-  closeModal: PropTypes.func,
-  sendMessageToHost: PropTypes.func,
-  allEvents: PropTypes.array,
-  prices: PropTypes.array,
-  openModal: PropTypes.func,
-  descriptionText: PropTypes.string,
   handleBookRoom: PropTypes.func,
   loadingRooms: PropTypes.bool,
-  currencySign: PropTypes.string,
 
   // Redux props
+  dispatch: PropTypes.func,
+  userInfo: PropTypes.object,
   paymentInfo: PropTypes.object,
   exchangeRatesInfo: PropTypes.object,
-  dispatch: PropTypes.func,
 };
 
 function mapStateToProps(state) {

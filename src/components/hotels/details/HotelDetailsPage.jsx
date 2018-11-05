@@ -16,7 +16,7 @@ import { connect } from 'react-redux';
 import moment from 'moment';
 import { parse } from 'query-string';
 import requester from '../../../requester';
-import { setSearchInfo } from '../../../actions/searchInfo';
+import { setHotelsSearchInfo } from '../../../actions/hotelsSearchInfo';
 import { asyncSetStartDate, asyncSetEndDate } from '../../../actions/searchDatesInfo';
 import { withRouter } from 'react-router-dom';
 import queryString from 'query-string';
@@ -58,7 +58,7 @@ class HotelDetailsPage extends React.Component {
 
     this.requestHotel = this.requestHotel.bind(this);
     this.requestHotelRooms = this.requestHotelRooms.bind(this);
-    this.setSearchInfoFromURL = this.setSearchInfoFromURL.bind(this);
+    this.setHotelsSearchInfoFromURL = this.setHotelsSearchInfoFromURL.bind(this);
     this.closeLightbox = this.closeLightbox.bind(this);
     this.gotoNext = this.gotoNext.bind(this);
     this.gotoPrevious = this.gotoPrevious.bind(this);
@@ -68,29 +68,28 @@ class HotelDetailsPage extends React.Component {
     this.handleBookRoom = this.handleBookRoom.bind(this);
     this.next = this.next.bind(this);
     this.previous = this.previous.bind(this);
-    this.redirectToSearchPage = this.redirectToSearchPage.bind(this);
+    this.search = this.search.bind(this);
   }
 
   componentDidMount() {
-    if (this.props.location.search) {
-      this.setSearchInfoFromURL();
-    }
-
+    this.setHotelsSearchInfoFromURL();
     this.requestHotel();
     this.requestHotelRooms();
   }
 
-  setSearchInfoFromURL() {
-    const searchParams = this.getSearchParams(this.props.location.search);
-    const startDate = moment(searchParams.get('startDate'), 'DD/MM/YYYY');
-    const endDate = moment(searchParams.get('endDate'), 'DD/MM/YYYY');
-    const rooms = JSON.parse(decodeURI(searchParams.get('rooms')));
-    const adults = this.getAdults(rooms);
-    const hasChildren = this.getHasChildren(rooms);
+  setHotelsSearchInfoFromURL() {
+    if (this.props.location.search) {
+      const searchParams = this.getSearchParams(this.props.location.search);
+      const startDate = moment(searchParams.get('startDate'), 'DD/MM/YYYY');
+      const endDate = moment(searchParams.get('endDate'), 'DD/MM/YYYY');
+      const rooms = JSON.parse(decodeURI(searchParams.get('rooms')));
+      const adults = this.getAdults(rooms);
+      const hasChildren = this.getHasChildren(rooms);
 
-    this.props.dispatch(asyncSetStartDate(startDate));
-    this.props.dispatch(asyncSetEndDate(endDate));
-    this.props.dispatch(setSearchInfo(this.props.searchInfo.region, rooms, adults, hasChildren));
+      this.props.dispatch(asyncSetStartDate(startDate));
+      this.props.dispatch(asyncSetEndDate(endDate));
+      this.props.dispatch(setHotelsSearchInfo(this.props.hotelsSearchInfo.region, rooms, adults, hasChildren));
+    }
   }
 
   requestHotel() {
@@ -107,7 +106,7 @@ class HotelDetailsPage extends React.Component {
   requestHotelRooms() {
     const id = this.props.match.params.id;
     const searchParams = this.getRequestSearchParams();
-    
+
     requester.getHotelRooms(id, searchParams).then(res => {
       res.body.then(data => {
         this.setState({ hotelRooms: data, loadingRooms: false });
@@ -133,8 +132,8 @@ class HotelDetailsPage extends React.Component {
 
     return null;
   }
-  
-  redirectToSearchPage(queryString) {
+
+  search(queryString) {
     this.props.history.push('/hotels/listings' + queryString);
   }
 
@@ -232,7 +231,7 @@ class HotelDetailsPage extends React.Component {
   }
 
   // checkAvailability(quoteId) {
-  //   const rooms = this.props.searchInfo.rooms.map((room) => {
+  //   const rooms = this.props.hotelsSearchInfo.rooms.map((room) => {
   //     const adults = [];
   //     const children = room.children;
   //     for (let j = 0; j < room.adults; j++) {
@@ -277,7 +276,7 @@ class HotelDetailsPage extends React.Component {
   handleBookRoom(roomsResults) {
     this.setState({ loadingRooms: true });
     NotificationManager.info(CHECKING_ROOM_AVAILABILITY, '', LONG);
-    const rooms = this.props.searchInfo.rooms.map((room) => {
+    const rooms = this.props.hotelsSearchInfo.rooms.map((room) => {
       const adults = [];
       const children = room.children;
       for (let j = 0; j < room.adults; j++) {
@@ -395,12 +394,12 @@ class HotelDetailsPage extends React.Component {
       ]
     };
 
-    const { searchDatesInfo, paymentInfo } = this.props;
+    const { searchDatesInfo } = this.props;
 
     return (
       <div>
         <div className="container sm-none">
-          <HotelsSearchBar redirectToSearchPage={this.redirectToSearchPage} />
+          <HotelsSearchBar search={this.handleSearch} />
         </div>
         {loading ?
           <div className="loader"></div> :
@@ -461,13 +460,10 @@ class HotelDetailsPage extends React.Component {
             </nav>
 
             <HotelDetailsInfoSection
-              nights={searchDatesInfo.endDate.diff(searchDatesInfo.startDate, 'days')}
-              startDate={this.state.calendarStartDate}
-              endDate={this.state.calendarEndDate}
               hotel={this.state.hotel}
               hotelRooms={this.state.hotelRooms}
+              nights={searchDatesInfo.endDate.diff(searchDatesInfo.startDate, 'days')}
               loading={this.state.loading}
-              currencySign={paymentInfo.currencySign}
               handleBookRoom={this.handleBookRoom}
               loadingRooms={this.state.loadingRooms}
             />
@@ -489,17 +485,17 @@ HotelDetailsPage.propTypes = {
   dispatch: PropTypes.func,
   userInfo: PropTypes.object,
   paymentInfo: PropTypes.object,
-  searchInfo: PropTypes.object,
+  hotelsSearchInfo: PropTypes.object,
   searchDatesInfo: PropTypes.object
 };
 
 function mapStateToProps(state) {
-  const { userInfo, paymentInfo, modalsInfo, searchInfo, searchDatesInfo } = state;
+  const { userInfo, paymentInfo, modalsInfo, hotelsSearchInfo, searchDatesInfo } = state;
   return {
     userInfo,
     paymentInfo,
     modalsInfo,
-    searchInfo,
+    hotelsSearchInfo,
     searchDatesInfo
   };
 }

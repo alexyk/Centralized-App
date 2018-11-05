@@ -1,8 +1,6 @@
-import PropTypes from 'prop-types';
 import React from 'react';
-import moment from 'moment';
 import { withRouter } from 'react-router-dom';
-import requester from '../../requester';
+import PropTypes from 'prop-types';
 import HomesSearchBar from '../homes/search/HomesSearchBar';
 import HotelsSearchBar from '../hotels/search/HotelsSearchBar';
 import ListingTypeNav from '../common/listingTypeNav/ListingTypeNav';
@@ -14,62 +12,16 @@ class HeroComponent extends React.Component {
   constructor(props) {
     super(props);
 
-    let startDate = moment().add(1, 'day');
-    let endDate = moment().add(2, 'day');
-
-    this.state = {
-      countryId: '',
-      countries: undefined,
-      startDate: startDate,
-      endDate: endDate,
-      guests: '2'
-    };
-
-    this.onChange = this.onChange.bind(this);
-    this.handleSearch = this.handleSearch.bind(this);
-    this.handleDatePick = this.handleDatePick.bind(this);
-    this.redirectToSearchPage = this.redirectToSearchPage.bind(this);
-    this.handleDestinationPick = this.handleDestinationPick.bind(this);
+    this.searchHotels = this.searchHotels.bind(this);
+    this.searchHomes = this.searchHomes.bind(this);
   }
 
-  componentDidMount() {
-    requester.getCountries().then(res => {
-      res.body.then(data => {
-        this.setState({ countries: data });
-      });
-    });
-  }
-
-  onChange(e) {
-    this.setState({ [e.target.name]: e.target.value });
-  }
-
-  handleSearch(e) {
-    e.preventDefault();
-    let queryString = '?';
-
-    queryString += 'countryId=' + this.state.countryId;
-    queryString += '&startDate=' + this.state.startDate.format('DD/MM/YYYY');
-    queryString += '&endDate=' + this.state.endDate.format('DD/MM/YYYY');
-    queryString += '&guests=' + this.state.guests;
-
-    this.props.history.push('/homes/listings' + queryString);
-  }
-
-  handleDatePick(event, picker) {
-    this.setState({
-      startDate: picker.startDate,
-      endDate: picker.endDate,
-    });
-  }
-
-  handleDestinationPick(region) {
-    this.setState({ countryId: region.countryId.toString() });
-    document.getElementsByName('stay')[0].click();
-  }
-
-  redirectToSearchPage(queryString) {
+  searchHotels(queryString) {
     this.props.history.push('/hotels/listings' + queryString);
+  }
+
+  searchHomes(queryString) {
+    this.props.history.push('/homes/listings' + queryString);
   }
 
   render() {
@@ -81,17 +33,8 @@ class HeroComponent extends React.Component {
           <div className="source-data">
             <ListingTypeNav />
             {this.props.homePage === 'hotels' ?
-              <HotelsSearchBar redirectToSearchPage={this.redirectToSearchPage} /> :
-              <HomesSearchBar
-                countryId={this.state.countryId}
-                countries={this.state.countries}
-                startDate={this.state.startDate}
-                endDate={this.state.endDate}
-                guests={this.state.guests}
-                onChange={this.onChange}
-                handleSearch={this.handleSearch}
-                handleDatePick={this.handleDatePick}
-              />}
+              <HotelsSearchBar search={this.searchHotels} /> :
+              <HomesSearchBar search={this.searchHomes} />}
           </div>
         </div>
       </div>
