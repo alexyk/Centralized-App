@@ -5,7 +5,7 @@ import {
   AIRDROP_REGISTER,
   LOGIN
 } from '../../../constants/modals.js';
-import { COPIED_TO_CLIPBOARD, VERIFICATION_EMAIL_SENT } from '../../../constants/infoMessages.js';
+import { COPIED_TO_CLIPBOARD, VERIFICATION_EMAIL_SENT, WITHDRAW_REQUEST_SUCCESSFUL } from '../../../constants/infoMessages.js';
 import { EMAIL_VERIFIED, PROFILE_SUCCESSFULLY_UPDATED, VOTE_URL_SUCCESSFULLY_SAVED } from '../../../constants/successMessages.js';
 import { INVALID_URL, SOCIAL_PROFILE_EMPTY } from '../../../constants/errorMessages.js';
 import React, { Component } from 'react';
@@ -29,6 +29,8 @@ class AirdropPage extends Component {
   constructor(props) {
     super(props);
 
+    this.transactionHashPollingInterval = null;
+
     this.state = {
       isUserLogged: false,
       isAirdropUser: false,
@@ -40,6 +42,7 @@ class AirdropPage extends Component {
       voteUrl: '',
       userParticipates: false,
       loading: true,
+      withdrawTransactionHash: null
     };
 
     this.openModal = this.openModal.bind(this);
@@ -50,15 +53,23 @@ class AirdropPage extends Component {
     this.handleSaveVoteUrl = this.handleSaveVoteUrl.bind(this);
     this.onChange = this.onChange.bind(this);
     this.getBalanceContainer = this.getBalanceContainer.bind(this);
+    this.requestWithdraw = this.requestWithdraw.bind(this);
+    this.requestCheckIfUserIsVerified = this.requestCheckIfUserIsVerified.bind(this);
+    this.requestCheckIfUserHasIssuedWithdraw = this.requestCheckIfUserHasIssuedWithdraw.bind(this);
+    this.startTransactionHashPolling = this.startTransactionHashPolling.bind(this);
+    this.requestTransactionHash = this.requestTransactionHash.bind(this);
     this._getVerifiedStatus = this._getVerifiedStatus.bind(this);
     this._getVerifiedWithIncompleteReferrals = this._getVerifiedWithIncompleteReferrals.bind(this);
     this._getTooLateVerifiedStatus = this._getTooLateVerifiedStatus.bind(this);
     this._getUnverifiedStatus = this._getUnverifiedStatus.bind(this);
     this._getFailedStatus = this._getFailedStatus.bind(this);
+    this._getFailedSocialStatus = this._getFailedSocialStatus.bind(this);
     this._getIncompleteStatus = this._getIncompleteStatus.bind(this);
   }
 
-  componentWillMount() {
+  componentDidMount() {
+    this.requestCheckIfUserIsVerified();
+    this.requestCheckIfUserHasIssuedWithdraw();
     if (this.props.location.search && this.props.location.search.indexOf('emailtoken') !== -1) {
       requester.verifyUserEmail(this.props.location.search).then(() => {
         // console.log('verifying user email');
@@ -92,14 +103,46 @@ class AirdropPage extends Component {
     }
   }
 
-  // componentDidUpdate(prevState) {
-  //   const { isUserLogged, didPostUserInfo } = this.state;
-  //   if (!prevState.isUserLogged && isUserLogged) {
-  //     getUserAirdropInfo().then(json => {
-  //       this.setState({ userAirdropInfo: json });
-  //     });
-  //   }
-  // }
+  componentWillUnmount() {
+    clearInterval(this.transactionHashPollingInterval);
+  }
+
+  requestCheckIfUserIsVerified() {
+    requester.checkIfAirdropUserIsVerified().then(res => res.body).then(res => {
+      this.setState({ userIsVerified: res.isVerified });
+    });
+  }
+
+  requestCheckIfUserHasIssuedWithdraw() {
+    requester.checkIfAirdropWithdrawHasStarted().then(res => res.body).then(res => {
+      this.setState({ isWithdrawStarted: res.isWithdrawStarted });
+      if (res.isWithdrawStarted && !res.tx) {
+        this.startTransactionHashPolling();
+      } else if (res.tx) {
+        this.setState({ withdrawTransactionHash: res.tx });
+      }
+    });
+  }
+
+  startTransactionHashPolling() {
+    this.transactionHashPollingInterval = setInterval(this.requestTransactionHash, 10000);
+  }
+
+  requestTransactionHash() {
+    requester.checkIfAirdropWithdrawHasStarted().then(res => res.body).then(res => {
+      if (res.tx) {
+        this.setState({ withdrawTransactionHash: res.tx });
+        clearInterval(this.transactionHashPollingInterval);
+      }
+    });
+  }
+
+  requestWithdraw() {
+    requester.withdrawTokensFromAirdrop().then(res => res.body).then(res => {
+      NotificationManager.info(WITHDRAW_REQUEST_SUCCESSFUL, '', LONG);
+      this.requestCheckIfUserHasIssuedWithdraw();
+    });
+  }
 
   openModal(modal, e) {
     if (e) {
@@ -214,8 +257,6 @@ class AirdropPage extends Component {
     const voteUrl = info.voteUrl ? info.voteUrl : '';
     const finalizedStatus = info.finalizedStatus;
     this.props.dispatch(setAirdropInfo(email, facebookProfile, telegramProfile, twitterProfile, redditProfile, refLink, participates, isVerifyEmail, referralCount, isCampaignSuccessfullyCompleted, voteUrl, finalizedStatus));
-    this.props.airdropInfo.referralCount = referralCount;
-    this.props.airdropInfo.isCampaignSuccessfullyCompleted = isCampaignSuccessfullyCompleted;
     this.setState({ voteUrl: voteUrl, loading: false });
   }
 
@@ -285,6 +326,8 @@ class AirdropPage extends Component {
         return this._getTooLateVerifiedStatus();
       case 'FAILED':
         return this._getFailedStatus();
+      case 'FAILED_SOCIAL':
+        return this._getFailedSocialStatus();
       case 'INCOMPLETE':
         return this._getIncompleteStatus();
       default:
@@ -296,10 +339,15 @@ class AirdropPage extends Component {
     return (
       <React.Fragment>
         <div className="balance-row__label">
-          <span className="step-check checked" style={{ "margin-top": "-0.4em" }}></span>
+          {/* <span className="step-check checked" style={{ "margin-top": "-0.4em" }}></span> */}
           <span className="emphasized-text">Verified Balance</span>
-        </div>,
+        </div>
         <div className="balance-row__content">${Math.max(10, this.props.airdropInfo.referralCount * 5 + 10)}</div>
+        {this.state.userIsVerified && !this.state.isWithdrawStarted && <button className="cla\im-button" onClick={this.requestWithdraw}>Claim</button>}
+        {this.state.isWithdrawStarted && !this.state.withdrawTransactionHash && <button className="claim-button">Your payment is being processed</button>}
+        {this.state.isWithdrawStarted && this.state.withdrawTransactionHash && this.state.withdrawTransactionHash === '0x0' && <button className="claim-button">Your payment is being processed</button>}
+        {/* {this.state.isWithdrawStarted && this.state.withdrawTransactionHash && this.state.withdrawTransactionHash === '0x0' && <a href="mailto:team@locktrip.com?Subject=Customer%20Support" className='etherscan-link' tooltip="Contact Support">Transaction Failed</a>} */}
+        {this.state.isWithdrawStarted && this.state.withdrawTransactionHash && this.state.withdrawTransactionHash !== '0x0' && <a href={`https://etherscan.io/tx/${this.state.withdrawTransactionHash}`} className='etherscan-link' target='_blank'>TxHash: {this.state.withdrawTransactionHash.substring(0, 8)}...</a>}
       </React.Fragment>
     );
   }
@@ -345,7 +393,21 @@ class AirdropPage extends Component {
           <span className="mandatory">
             Duplicate accounting/multi accounting has been detected. As a result your balance has been voided.
           </span>
-        </div>,
+        </div>
+        <div className="balance-row__content centered-balance">$0</div>
+      </React.Fragment>
+    );
+  }
+
+  _getFailedSocialStatus() {
+    return (
+      <React.Fragment>
+        <div className="balance-row__label">
+          <span className="step-check unchecked"></span>
+          <span className="mandatory">
+            Your account has failed our social joins verification.
+          </span>
+        </div>
         <div className="balance-row__content centered-balance">$0</div>
       </React.Fragment>
     );
@@ -358,7 +420,7 @@ class AirdropPage extends Component {
           <span className="step-check unchecked" style={{ "margin-top": "3.5em" }}></span>
           <span className="mandatory">
             Our checks indicate that you have not completed all social joins.
-          Please make sure you have joined our telegram, followed us on Twitter and Facebook.<br />
+            Please make sure you have joined our telegram, followed us on Twitter and Facebook.<br />
             For more info, please <a href="https://medium.com/@LockChainCo/how-to-fix-social-joins-requirement-ea31b6e31801" target="_blank" rel='noreferrer noopener' className="referral-url"><u>read this post</u></a>.
           </span>
         </div>,

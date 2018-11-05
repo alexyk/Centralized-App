@@ -1,10 +1,6 @@
-import { searchInfo } from '../actions/actionTypes';
-import moment from 'moment';
+import { hotelsSearchInfo } from '../actions/actionTypes';
 
 const initialState = {
-  startDate: moment().add(1, 'day'),
-  endDate: moment().add(2, 'day'),
-  nights: 1,
   rooms: [{ adults: '2', children: [] }],
   adults: '2',
   hasChildren: false,
@@ -14,41 +10,29 @@ const initialState = {
 
 export default function reducer(state = initialState, action) {
   switch (action.type) {
-    case searchInfo.SET_DATES:
-      if (!action.startDate || !action.endDate) {
-        return state;
-      }
-      return Object.assign({}, state, {
-        startDate: action.startDate,
-        endDate: action.endDate.diff(action.startDate, 'days') === 0 ? action.endDate.add(1, 'day') : action.endDate,
-        nights: calculateNights(action.startDate, action.endDate)
-      });
-    case searchInfo.SET_REGION:
+    case hotelsSearchInfo.SET_REGION:
       return Object.assign({}, state, {
         region: action.region
       });
-    case searchInfo.SET_ROOMS_BY_COUNT_OF_ROOMS:
+    case hotelsSearchInfo.SET_ROOMS_BY_COUNT_OF_ROOMS:
       return Object.assign({}, state, {
         rooms: handleRoomsChange(action.countOfRooms, state.rooms)
       });
-    case searchInfo.SET_ROOMS:
+    case hotelsSearchInfo.SET_ROOMS:
       return Object.assign({}, state, {
         rooms: action.rooms
       });
-    case searchInfo.SET_ADULTS:
+    case hotelsSearchInfo.SET_ADULTS:
       return Object.assign({}, state, {
         adults: action.countOfAdults
       });
-    case searchInfo.SET_CHILDREN:
+    case hotelsSearchInfo.SET_CHILDREN:
       return Object.assign({}, state, {
         hasChildren: !state.hasChildren,
         rooms: handleToggleChildren(state.hasChildren, state.rooms)
       });
-    case searchInfo.SET_SEARCH_INFO:
+    case hotelsSearchInfo.SET_HOTELS_SEARCH_INFO:
       return Object.assign({}, state, {
-        startDate: action.startDate,
-        endDate: action.endDate.diff(action.startDate, 'days') === 0 ? action.endDate.add(1, 'day') : action.endDate,
-        nights: calculateNights(action.startDate, action.endDate),
         region: action.region,
         rooms: action.rooms,
         adults: action.adults,
@@ -81,10 +65,4 @@ function handleRoomsChange(countOfRooms, rooms) {
   }
 
   return cloneRooms;
-}
-
-function calculateNights(startDate, endDate) {
-  const checkIn = moment(startDate, 'DD/MM/YYYY');
-  const checkOut = moment(endDate, 'DD/MM/YYYY');
-  return (checkOut > checkIn) ? checkOut.diff(checkIn, 'days') : 0;
 }

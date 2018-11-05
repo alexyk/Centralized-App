@@ -77,7 +77,7 @@ class AirTicketsSearchPage extends Component {
   }
 
   requestFlightsSearch() {
-    fetch(`http://localhost:8088/flight/search${this.props.location.search}&uuid=${this.queueId}`)
+    fetch(`${Config.getValue('apiHost')}flight/search${this.props.location.search}&uuid=${this.queueId}`)
       .then(res => {
         if (res.ok) {
           this.connectSocket();

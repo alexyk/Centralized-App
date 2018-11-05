@@ -3,12 +3,12 @@ import {Modal} from 'react-bootstrap';
 import PropTypes from 'prop-types';
 import React from 'react';
 import {connect} from 'react-redux';
-import {setRooms} from '../../../actions/searchInfo';
+import {setRooms} from '../../../actions/hotelsSearchInfo';
 
 function ChildrenModal(props) {
 
   const areChildrenAgesValid = () => {
-    const rooms = props.searchInfo.rooms;
+    const rooms = props.hotelsSearchInfo.rooms;
     for (let i = 0; i < rooms.length; i++) {
       const children = rooms[i].children;
       for (let j = 0; j < children.length; j++) {
@@ -24,7 +24,7 @@ function ChildrenModal(props) {
 
   const handleChildrenChange = (event, roomIndex) => {
     let value = event.target.value;
-    let rooms = props.searchInfo.rooms.slice();
+    let rooms = props.hotelsSearchInfo.rooms.slice();
     let children = rooms[roomIndex].children;
     if (children.length < value) {
       while (children.length < value) {
@@ -40,20 +40,20 @@ function ChildrenModal(props) {
 
   const handleChildAgeChange = (event, roomIndex, childIndex) => {
     const value = event.target.value;
-    const rooms = props.searchInfo.rooms.slice();
+    const rooms = props.hotelsSearchInfo.rooms.slice();
     rooms[roomIndex].children[childIndex].age = value;
     props.dispatch(setRooms(rooms));
   };
 
   return (
-    <div>
+    <React.Fragment>
       <Modal show={props.isActive} onHide={e => props.closeModal(CHILDREN, e)} className="modal fade myModal">
         <Modal.Header>
           <h1>Children</h1>
           <button type="button" className="close" onClick={(e) => props.closeModal(CHILDREN, e)}>&times;</button>
         </Modal.Header>
         <Modal.Body>
-          {props.searchInfo.rooms && props.searchInfo.rooms.map((room, roomIndex) => {
+          {props.hotelsSearchInfo.rooms && props.hotelsSearchInfo.rooms.map((room, roomIndex) => {
             return (
               <div key={roomIndex}>
                 <div className="children-modal">
@@ -117,7 +117,7 @@ function ChildrenModal(props) {
           }
         </Modal.Body>
       </Modal>
-    </div>
+    </React.Fragment>
   );
 }
 
@@ -128,13 +128,13 @@ ChildrenModal.propTypes = {
 
   // Redux props
   dispatch: PropTypes.func,
-  searchInfo: PropTypes.object
+  hotelsSearchInfo: PropTypes.object
 };
 
 function mapStateToProps(state) {
-  const {searchInfo} = state;
+  const {hotelsSearchInfo} = state;
   return {
-    searchInfo
+    hotelsSearchInfo
   };
 }
 

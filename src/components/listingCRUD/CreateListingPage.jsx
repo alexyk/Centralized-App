@@ -97,6 +97,7 @@ class CreateListingPage extends React.Component {
     };
 
     this.onChange = this.onChange.bind(this);
+    this.onNumberChange = this.onNumberChange.bind(this);
     this.onSelect = this.onSelect.bind(this);
     this.toggleCheckbox = this.toggleCheckbox.bind(this);
     this.updateCounter = this.updateCounter.bind(this);
@@ -111,7 +112,6 @@ class CreateListingPage extends React.Component {
     this.onImageDrop = this.onImageDrop.bind(this);
     this.handleImageUpload = this.handleImageUpload.bind(this);
     this.removePhoto = this.removePhoto.bind(this);
-    this.updateLocAddress = this.updateLocAddress.bind(this);
     this.createProgress = this.createProgress.bind(this);
     this.updateProgress = this.updateProgress.bind(this);
     this.onSortEnd = this.onSortEnd.bind(this);
@@ -143,6 +143,14 @@ class CreateListingPage extends React.Component {
     this.setState({
       [event.target.name]: event.target.value,
     });
+  }
+
+  onNumberChange(event) {
+    const pattern = /^[1-9]+\d*$/;
+    const number = event.target.value;
+    if ((!number || pattern.test(number)) && number.length < 5) {
+      this.setState({ [event.target.name]: number });
+    }
   }
 
   toggleCheckbox(event) {
@@ -451,29 +459,6 @@ class CreateListingPage extends React.Component {
     });
   }
 
-
-  updateLocAddress(captchaToken) {
-    requester.getUserInfo().then(res => {
-      res.body.then(data => {
-        let userInfo = {
-          firstName: data.firstName,
-          lastName: data.lastName,
-          phoneNumber: data.phoneNumber,
-          preferredLanguage: data.preferredLanguage,
-          preferredCurrency: data.preferredCurrency.id,
-          gender: data.gender,
-          country: data.country.id,
-          city: data.city.id,
-          birthday: moment(data.birthday).format('DD/MM/YYYY'),
-          locAddress: this.state.locAddress
-        };
-        requester.updateUserInfo(userInfo, captchaToken).then(() => {
-          this.componentDidMount();
-        });
-      });
-    });
-  }
-
   convertGoogleApiAddressComponents(place) {
     let addressComponents = place.address_components;
     let addressComponentsArr = [];
@@ -564,6 +549,7 @@ class CreateListingPage extends React.Component {
             values={this.state}
             toggleCheckbox={this.toggleCheckbox}
             onChange={this.onChange}
+            onNumberChange={this.onNumberChange}
             updateProgress={this.updateProgress}
             routes={routes}
             prev={routes.landing}
@@ -671,8 +657,13 @@ const routes = {
 };
 
 CreateListingPage.propTypes = {
+  // Router props
   location: PropTypes.object,
-  history: PropTypes.object
+  history: PropTypes.object,
+
+  // Redux props
+  dispatch: PropTypes.func,
+  userInfo: PropTypes.object
 };
 
 const mapStateToProps = ({ userInfo }) => ({ userInfo });

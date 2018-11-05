@@ -28,7 +28,7 @@ class ContactHostModal extends React.Component {
 
   render() {
     return (
-      <div>
+      <React.Fragment>
         <Modal show={this.props.isActive} onHide={e => this.props.closeModal(modal.current, e)} className="modal fade myModal">
           <Modal.Header>
             <h1>Contact Host</h1>
@@ -52,7 +52,7 @@ class ContactHostModal extends React.Component {
             </form>
           </Modal.Body>
         </Modal>
-      </div>
+      </React.Fragment>
     );
   }
 }

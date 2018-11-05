@@ -9,12 +9,11 @@ import React from 'react';
 import { connect } from 'react-redux';
 import moment from 'moment';
 import queryString from 'query-string';
-import { setCurrency } from '../../../actions/paymentInfo';
 import { withRouter } from 'react-router-dom';
 import BookingSteps from '../../common/utility/BookingSteps';
 import { RoomsXMLCurrency } from '../../../services/utilities/roomsXMLCurrency';
 import LocPrice from '../../common/utility/LocPrice';
-import validator from 'validator';
+import xregexp from 'xregexp';
 
 class HotelsBookingPage extends React.Component {
   constructor(props) {
@@ -50,7 +49,7 @@ class HotelsBookingPage extends React.Component {
       const id = this.props.match.params.id;
       const query = this.getQueryString(queryParams);
       const isWebView = this.props.location.pathname.indexOf('/mobile') !== -1;
-      const rootURL = !isWebView ? `/hotels/listings/book/${id}/confirm` : '/mobile/book/confirm';
+      const rootURL = !isWebView ? `/hotels/listings/book/${id}/confirm` : `/mobile/hotels/listings/book/${id}/confirm`;
       this.props.history.push(`${rootURL}${query}`);
     }
   }
@@ -67,14 +66,14 @@ class HotelsBookingPage extends React.Component {
   }
 
   isValidNames() {
-    const regexp = /^([A-Za-z]{2,}([-\s][A-Za-z]{2,})?)$/;
     const rooms = this.props.guests;
+    const regexp = xregexp('^\\pL+([- \']?\\pL*)?([- \']?\\pL*)$');
     for (let i = 0; i < rooms.length; i++) {
       const adults = rooms[i].adults;
       for (let j = 0; j < adults.length; j++) {
         const first = adults[j].firstName;
         const last = adults[j].lastName;
-        if (!(validator.matches(first, regexp) && validator.matches(last, regexp))) {
+        if (!(regexp.test(first) && regexp.test(last))) {
           return false;
         }
       }
@@ -107,7 +106,7 @@ class HotelsBookingPage extends React.Component {
       return (<div className="loader"></div>);
     }
 
-    if (!this.props.exchangeRates) {
+    if (!this.props.exchangeRatesInfo.currencyExchangeRates) {
       return (<div className="loader"></div>);
     }
 
@@ -115,14 +114,15 @@ class HotelsBookingPage extends React.Component {
       return (<div className="loader"></div>);
     }
 
-    const { hotel, rooms, guests, exchangeRates } = this.props;
+    const { hotel, rooms, guests } = this.props;
     const { handleAdultChange, handleChildAgeChange } = this.props;
     const { currency, currencySign } = this.props.paymentInfo;
+    const { currencyExchangeRates } = this.props.exchangeRatesInfo;
     const city = hotel.city;
     const address = hotel.additionalInfo.mainAddress;
     const roomsTotalPrice = this.calculateRoomsTotalPrice(rooms);
     const hotelPicUrl = hotel.hotelPhotos && hotel.hotelPhotos.length > 0 ? hotel.hotelPhotos[0].url : '/listings/images/default.png';
-    const priceInSelectedCurrency = Number(CurrencyConverter.convert(exchangeRates, RoomsXMLCurrency.get(), currency, roomsTotalPrice)).toFixed(2);
+    const priceInSelectedCurrency = Number(CurrencyConverter.convert(currencyExchangeRates, RoomsXMLCurrency.get(), currency, roomsTotalPrice)).toFixed(2);
     const nights = this.calculateReservationTotalNights(this.props.location.search);
 
     return (
@@ -143,7 +143,7 @@ class HotelsBookingPage extends React.Component {
                   {rooms.map((room, index) => {
                     return (
                       <h6 key={index}>
-                        {room.name}, {nights} nights: {currencySign}{exchangeRates && (CurrencyConverter.convert(exchangeRates , RoomsXMLCurrency.get(), currency, room.price)).toFixed(2)} <LocPrice fiat={room.price} />
+                        {room.name}, {nights} nights: {currencySign}{currencyExchangeRates && (CurrencyConverter.convert(currencyExchangeRates , RoomsXMLCurrency.get(), currency, room.price)).toFixed(2)} <LocPrice fiat={room.price} />
                       </h6>
                     );
                   })}
@@ -207,23 +207,6 @@ class HotelsBookingPage extends React.Component {
               <div className="col col-md-12" style={{ 'padding': '0', 'margin': '10px 0' }}>
                 <button className="btn btn-primary btn-book" onClick={this.handleSubmit}>Proceed</button>
               </div>
-              {this.props.location.pathname.indexOf('/mobile') !== -1 &&
-                <div>
-                  <div className="col col-md-12" style={{ 'padding': '0', 'margin': '10px 0' }}>
-                    <button className="btn btn-primary btn-book" onClick={() => this.props.history.goBack()}>Back</button>
-                  </div>
-                  <select
-                    className="currency"
-                    value={currency}
-                    style={{ 'height': '40px', 'marginBottom': '10px', 'textAlignLast': 'right', 'paddingRight': '45%', 'direction': 'rtl' }}
-                    onChange={(e) => this.props.dispatch(setCurrency(e.target.value))}
-                  >
-                    <option value="EUR">EUR</option>
-                    <option value="USD">USD</option>
-                    <option value="GBP">GBP</option>
-                  </select>
-                </div>
-              }
             </div>
           </section>
         </div>
@@ -236,7 +219,6 @@ HotelsBookingPage.propTypes = {
   hotel: PropTypes.object,
   rooms: PropTypes.array,
   guests: PropTypes.array,
-  exchangeRates: PropTypes.object,
   handleAdultChange: PropTypes.func,
   handleChildAgeChange: PropTypes.func,
 
@@ -247,13 +229,15 @@ HotelsBookingPage.propTypes = {
 
   // start Redux props
   dispatch: PropTypes.func,
-  paymentInfo: PropTypes.object
+  paymentInfo: PropTypes.object,
+  exchangeRatesInfo: PropTypes.object
 };
 
 function mapStateToProps(state) {
-  const { paymentInfo } = state;
+  const { paymentInfo, exchangeRatesInfo } = state;
   return {
-    paymentInfo
+    paymentInfo,
+    exchangeRatesInfo
   };
 }
 

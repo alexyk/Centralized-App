@@ -34,7 +34,6 @@ class HotelsBookingRouterPage extends React.Component {
 
     this.requestHotel = this.requestHotel.bind(this);
     this.requestUserInfo = this.requestUserInfo.bind(this);
-    this.requestCurrencyExchangeRates = this.requestCurrencyExchangeRates.bind(this);
     this.requestCreateReservation = this.requestCreateReservation.bind(this);
 
     this.setQuoteIdPollingInterval = this.setQuoteIdPollingInterval.bind(this);
@@ -55,7 +54,6 @@ class HotelsBookingRouterPage extends React.Component {
     });
     this.setQuoteIdPollingInterval();
     this.requestUpdateOnQuoteId();
-    this.requestCurrencyExchangeRates();
     this.getGuestsFromSearchString().then(() => {
       this.requestUserInfo();
     });
@@ -167,14 +165,6 @@ class HotelsBookingRouterPage extends React.Component {
     });
   }
 
-  requestCurrencyExchangeRates() {
-    requester.getCurrencyRates().then(res => {
-      res.body.then(exchangeRates => {
-        this.setState({ exchangeRates });
-      });
-    });
-  }
-
   findQuoteIdByRoomSearchQuote(roomSearchQuote, availableHotelRooms) {
     const searchRoom = roomSearchQuote.map(room => {
       return `${room.name} ${room.mealType} ${room.price.toFixed()}`;
@@ -263,10 +253,10 @@ class HotelsBookingRouterPage extends React.Component {
     }
   }
 
-  requestLockOnQuoteId() {
+  requestLockOnQuoteId(paymentMethod) {
     if (this.state) {
       const quoteId = this.state.quoteId;
-      const body = { quoteId: quoteId };
+      const body = { quoteId, paymentMethod };
       return requester.markQuoteIdAsLocked(quoteId, body).then(res => res.body).then(res => {
         return new Promise((resolve, reject) => {
           if (res.success) {
@@ -283,7 +273,7 @@ class HotelsBookingRouterPage extends React.Component {
   redirectToHotelDetailsPage() {
     NotificationManager.warning(ROOM_NO_LONGER_AVAILABLE, '', LONG);
     const id = this.props.match.params.id;
-    const pathname = this.props.location.pathname.indexOf('/mobile') !== -1 ? '/mobile/details' : '/hotels/listings';
+    const pathname = this.props.location.pathname.indexOf('/mobile') !== -1 ? '/mobile/hotels/listings' : '/hotels/listings';
     const search = this.getCleanQueryString(queryString.parse(this.props.location.search));
     this.props.history.push(`${pathname}/${id}${search}`);
   }
@@ -396,13 +386,20 @@ class HotelsBookingRouterPage extends React.Component {
   }
 
   render() {
-    const { hotel, rooms, guests, quoteId, userInfo, exchangeRates, reservation } = this.state;
+    const { hotel, rooms, guests, quoteId, userInfo, reservation } = this.state;
+
     return (
       <Fragment>
         <Switch>
           <Route exact path="/hotels/listings/book/:id/profile" render={() => <ConfirmProfilePage requestLockOnQuoteId={this.requestLockOnQuoteId} preparedBookingId={this.state.reservation && this.state.reservation.preparedBookingId} />} />
           <Route exact path="/hotels/listings/book/:id/confirm" render={() => <HotelsBookingConfirmPage reservation={reservation} userInfo={userInfo} isQuoteLocValid={this.state.isQuoteLocValid} requestLockOnQuoteId={this.requestLockOnQuoteId} requestCreateReservation={this.requestCreateReservation} invalidateQuoteLoc={this.invalidateQuoteLoc} redirectToHotelDetailsPage={this.redirectToHotelDetailsPage} />} />
-          <Route exact path="/hotels/listings/book/:id" render={() => <HotelsBookingPage hotel={hotel} rooms={rooms} quoteId={quoteId} guests={guests} exchangeRates={exchangeRates} handleAdultChange={this.handleAdultChange} handleChildAgeChange={this.handleChildAgeChange} />} />
+          <Route exact path="/hotels/listings/book/:id" render={() => <HotelsBookingPage hotel={hotel} rooms={rooms} quoteId={quoteId} guests={guests} handleAdultChange={this.handleAdultChange} handleChildAgeChange={this.handleChildAgeChange} />} />
+
+          {/* MOBILE ONLY START */}
+          <Route exact path="/mobile/hotels/listings/book/:id/profile" render={() => <ConfirmProfilePage requestLockOnQuoteId={this.requestLockOnQuoteId} preparedBookingId={this.state.reservation && this.state.reservation.preparedBookingId} />} />
+          <Route exact path="/mobile/hotels/listings/book/:id/confirm" render={() => <HotelsBookingConfirmPage reservation={reservation} userInfo={userInfo} isQuoteLocValid={this.state.isQuoteLocValid} requestLockOnQuoteId={this.requestLockOnQuoteId} requestCreateReservation={this.requestCreateReservation} invalidateQuoteLoc={this.invalidateQuoteLoc} redirectToHotelDetailsPage={this.redirectToHotelDetailsPage} />} />
+          <Route path="/mobile/hotels/listings/book/:id" render={() => <HotelsBookingPage hotel={hotel} rooms={rooms} quoteId={quoteId} guests={guests} handleAdultChange={this.handleAdultChange} handleChildAgeChange={this.handleChildAgeChange} />} />
+          {/* MOBILE ONLY END */}
         </Switch>
       </Fragment>
     );
@@ -410,9 +407,11 @@ class HotelsBookingRouterPage extends React.Component {
 }
 
 HotelsBookingRouterPage.propTypes = {
+  match: PropTypes.object,
+
+  // Router props
   location: PropTypes.object,
   history: PropTypes.object,
-  match: PropTypes.object,
 
   // Redux props
   paymentInfo: PropTypes.object

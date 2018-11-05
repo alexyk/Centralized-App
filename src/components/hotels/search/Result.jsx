@@ -32,13 +32,13 @@ const BREAKPOINTS = {
 const DESCRIPTION_LENGTH = {
   SMALL: 50,
   MEDIUM: 100,
-  LARGE: 500,
+  LARGE: 200,
 };
 
 const TITLE_LENGTH = {
   SMALL: 20,
   MEDIUM: 40,
-  LARGE: 200,
+  LARGE: 100,
 };
 
 class Result extends React.Component {
@@ -54,15 +54,22 @@ class Result extends React.Component {
       titleLength: this.getTitleLength(screenSize),
       descriptionLength: this.getDescriptionLength(screenSize),
       pictures: photoUrl ? [{ url: photoUrl }, { url: photoUrl }] : [],
-      loadedPictures: true
+      loadedPictures: true,
+      ready: false
     };
 
     this.updateWindowDimensions = _.debounce(this.updateWindowDimensions.bind(this), 500);
+    this.setReady = this.setReady;
   }
 
   componentDidMount() {
     this.updateWindowDimensions();
     window.addEventListener('resize', this.updateWindowDimensions);
+    setTimeout(this.setReady(), 10);
+  }
+
+  setReady() {
+    this.setState({ ready: true });
   }
 
   componentWillUnmount() {
@@ -99,10 +106,10 @@ class Result extends React.Component {
     let { id, name, generalDescription, star } = this.props.hotel;
     let { price } = this.props;
 
-    const { exchangeRates } = this.props;
+    const { currencyExchangeRates } = this.props.exchangeRatesInfo;
     const { currencySign } = this.props.paymentInfo;
     const isPriceLoaded = !!price;
-    const priceInSelectedCurrency = exchangeRates && ((CurrencyConverter.convert(exchangeRates, RoomsXMLCurrency.get(), this.props.paymentInfo.currency, price)) / this.props.nights).toFixed(2);
+    const priceInSelectedCurrency = currencyExchangeRates && ((CurrencyConverter.convert(currencyExchangeRates, RoomsXMLCurrency.get(), this.props.paymentInfo.currency, price)) / this.props.nights).toFixed(2);
 
     name = name && StringUtils.shorten(name, this.state.titleLength);
     generalDescription = generalDescription && StringUtils.shorten(generalDescription, this.state.descriptionLength);
@@ -157,13 +164,13 @@ class Result extends React.Component {
 
     const redirectURL = this.props.location.pathname.indexOf('mobile') === -1
       ? '/hotels/listings'
-      : '/mobile/details';
+      : '/mobile/hotels/listings';
 
     const search = this.props.location.search;
     const endOfSearch = search.indexOf('&filters=') !== -1 ? search.indexOf('&filters=') : search.length;
 
     return (
-      <div className="result" >
+      <div className={`${this.state.ready === true ? 'ready' : ''} result`}>
         <div className="result-images">
           {this.state.pictures && this.state.loadedPictures === true ?
             <Slider
@@ -172,7 +179,7 @@ class Result extends React.Component {
               {this.state.pictures.map((picture, i) => {
                 return (
                   <div key={i}>
-                    <Link target={isMobile === false ? '_blank' : '_self'} to={`${redirectURL}/${id}${search.substr(0, endOfSearch)}`} key={i}>
+                    <Link target={isMobile === false ? '_blank' : ''} to={`${redirectURL}/${id}${search.substr(0, endOfSearch)}`} key={i}>
                       <div style={{ backgroundImage: 'url(' + Config.getValue('imgHost') + picture.url + ')' }}>
                       </div>
                     </Link>
@@ -184,7 +191,7 @@ class Result extends React.Component {
         </div>
         <div className="result-content">
           <div>
-            <h4><Link target={isMobile === false ? '_blank' : '_self'} to={`${redirectURL}/${id}${search.substr(0, endOfSearch)}`}>{name}</Link></h4>
+            <h4><Link target={isMobile === false ? '_blank' : ''} to={`${redirectURL}/${id}${search.substr(0, endOfSearch)}`}>{name}</Link></h4>
             <Rating rating={star} />
           </div>
           <div className="result-description">{generalDescription && ReactHtmlParser(generalDescription)}</div>
@@ -197,7 +204,7 @@ class Result extends React.Component {
             <div>
               {!isPriceLoaded && this.props.allElements
                 ? <button disabled className="mobile-pricing-button">Unavailable</button>
-                : <Link target={isMobile === false ? '_blank' : '_self'} className="mobile-pricing-button" to={`${redirectURL}/${id}${search.substr(0, endOfSearch)}`}>Book now</Link>
+                : <Link target={isMobile === false ? '_blank' : ''} className="mobile-pricing-button" to={`${redirectURL}/${id}${search.substr(0, endOfSearch)}`}>Book now</Link>
               }
             </div>
           </div>
@@ -212,7 +219,7 @@ class Result extends React.Component {
           {isPriceLoaded && <LocPrice fiat={price / this.props.nights} />}
           {!isPriceLoaded && this.props.allElements
             ? <button disabled className="btn">Unavailable</button>
-            : <Link target={isMobile === false ? '_blank' : '_self'} className="btn" to={`${redirectURL}/${id}${search.substr(0, endOfSearch)}`}>Book now</Link>
+            : <Link target={isMobile === false ? '_blank' : ''} className="btn" to={`${redirectURL}/${id}${search.substr(0, endOfSearch)}`}>Book now</Link>
           }
         </div>
       </div>
@@ -223,7 +230,6 @@ class Result extends React.Component {
 Result.propTypes = {
   hotel: PropTypes.object,
   nights: PropTypes.number,
-  exchangeRates: PropTypes.any,
   price: PropTypes.any,
   allElements: PropTypes.bool,
 
@@ -232,14 +238,16 @@ Result.propTypes = {
 
   // Redux props
   paymentInfo: PropTypes.object,
-  userInfo: PropTypes.object
+  userInfo: PropTypes.object,
+  exchangeRatesInfo: PropTypes.object
 };
 
 function mapStateToProps(state) {
-  const { paymentInfo, userInfo } = state;
+  const { paymentInfo, userInfo, exchangeRatesInfo } = state;
   return {
     paymentInfo,
-    userInfo
+    userInfo,
+    exchangeRatesInfo
   };
 }
 

@@ -141,10 +141,6 @@ header form button {
     display: none;
 }
 
-#main-nav {
-    background: #fff;
-}
-
 .session-nav-user-thumb img {
     display: inline-block;
     vertical-align: middle;
@@ -154,24 +150,7 @@ header form button {
     margin-right: -15px;
 }
 
-#main-nav .navbar-nav a {
-    font-size: 18px;
-    border-radius: 0;
-}
 
-#main-nav .navbar-nav .first-nav-button a {
-    border-radius: 0;
-    border-left: 1px solid #f0f1f3;
-    border-right: 1px solid #f0f1f3;
-    margin-left: 0;
-    padding: 25px 25px;
-}
-
-#main-nav .navbar-nav .first-nav-button a i {
-    float: left;
-    margin-top: -6px;
-    margin-right: 10px;
-}
 
 #second-nav {
     background: none;
@@ -284,18 +263,6 @@ header form button {
     border: 1px solid #cccccc;
     border-radius: 4px;
     padding: 10px;
-}
-
-.navbar {
-    border-radius: 0;
-    border: 0;
-    margin-bottom: 0;
-    background-color: #fff;
-    border-bottom: 0.1px solid #ccc;
-}
-
-.navbar-brand {
-    margin-top: 0;
 }
 
 /* .form-control {
@@ -659,44 +626,6 @@ footer .currency-switcher {
     padding-bottom: 0;
 }
 
-#main-nav.home_page {
-    background: transparent url(../images/bgr-home-new.jpg) no-repeat top center;
-    background-size: cover;
-    min-height: 500px;
-}
-
-
-#main-nav #second-nav {
-    background-color: transparent;
-}
-
-#main-nav #second-nav .navbar-nav a {
-    font-size: 18px;
-    border-radius: 0;
-    font-weight: 300;
-    border-bottom: 4px solid transparent !important;
-    background-color: transparent;
-    color: #fff;
-    padding: 15px 25px;
-}
-
-#main-nav #second-nav .navbar-nav a:hover,
-#main-nav #second-nav .navbar-nav li a.active {
-    font-size: 18px;
-    border-radius: 0;
-    /* font-weight: 400; */
-    color: #fff;
-    border-bottom: 4px solid #d87a61 !important;
-    background-color: transparent;
-    padding: 15px 25px;
-}
-
-#main-nav .absolute_box {
-    bottom: 0;
-    margin-bottom: 100px;
-    position: absolute;
-}
-
 #search-bar {
   max-width: 1170px;
   background: #fff;
@@ -705,12 +634,6 @@ footer .currency-switcher {
   border-radius: 5px;
   margin: 0 auto;
   /* box-shadow: 0 0 40px #223843; */
-}
-
-#main-nav #search-bar .form-group {
-    margin-bottom: 0;
-    margin-right: 5px;
-    flex-grow: 1;
 }
 
 /* #localization-nav div.container {
@@ -2026,9 +1949,6 @@ li.dropdown {
     .home_page h2.home_title {
         font-size: 22px;
     }
-    #main-nav #second-nav .navbar-nav a {
-        padding-bottom: 2px;
-    }
 }
 
 #popular-hotels-box {
@@ -2926,6 +2846,10 @@ h3 {
     pointer-events: none;
     opacity:0;
 } */
-.slick-prev:before, .slick-next:before {
+/* .slick-prev:before, .slick-next:before {
   color: #d87a61!important;
+} */
+
+select::-ms-expand {
+    display: none;
 }

@@ -127,7 +127,7 @@ function ListingPlaceType(props) {
                   <div className="form-group">
                     <label htmlFor="property-size">Please enter the size of your property</label>
                     <div className="input-group">
-                      <input onChange={(e) => props.onChange(e)} type="number" id="property-size" name="propertySize" value={propertySize} />
+                      <input onChange={(e) => props.onNumberChange(e)} type="text" id="property-size" name="propertySize" className='propertySize' value={propertySize} placeholder='Property size' />
                       <span className="input-group-addon">m&sup2;</span>
                     </div>
                   </div>

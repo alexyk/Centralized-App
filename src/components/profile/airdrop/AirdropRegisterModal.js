@@ -51,7 +51,7 @@ function AirdropRegisterModal(props) {
   };
 
   return (
-    <div>
+    <React.Fragment>
       <Modal show={props.isActive} onHide={() => console.log('First register in Locktrip')} className="modal fade myModal">
         <Modal.Header>
           <h1>Sign up</h1>
@@ -84,7 +84,7 @@ function AirdropRegisterModal(props) {
           </div>
         </Modal.Body>
       </Modal>
-    </div>
+    </React.Fragment>
   );
 }
 

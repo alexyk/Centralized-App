@@ -11,9 +11,9 @@ import Rating from '../../common/rating';
 
 function HomeResult(props) {
   const { currency, currencySign } = props.paymentInfo;
-  const { cityName, countryName, prices, currency_code, defaultDailyPrice, id, name, reviewsCount, averageRating, description } = props.listing;
+  const { cityName, countryName, prices, currency_code, defaultDailyPrice, id, name, averageRating, description } = props.listing;
   let { pictures } = props.listing;
-  const listingPrice = prices && currency === currency_code ? parseInt(defaultDailyPrice, 10).toFixed() : parseInt(prices[currency], 10).toFixed(2);
+  const listingPrice = prices && currency === currency_code ? parseFloat(defaultDailyPrice, 10).toFixed() : parseFloat(prices[currency], 10).toFixed(2);
   const listingPriceInRoomsCurrency = prices && prices[RoomsXMLCurrency.get()];
 
   if (typeof pictures === 'string') {

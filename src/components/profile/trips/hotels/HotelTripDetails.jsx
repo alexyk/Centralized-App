@@ -21,8 +21,8 @@ class HotelTripDetails extends React.Component {
         guestsCount: '',
         startDate: '',
         endDate: '',
-        roomType: '',
-        boardType: '',
+        roomType: [],
+        boardType: [],
         bookingId: '',
         hotelAddress: '',
         hotelPhone: '',
@@ -63,8 +63,8 @@ class HotelTripDetails extends React.Component {
   }
 
   extractDatesData(bookingData) {
-    const startDateMoment = moment(bookingData.startDate);
-    const endDateMoment = moment(bookingData.endDate);
+    const startDateMoment = moment(bookingData.startDate).utc();
+    const endDateMoment = moment(bookingData.endDate).utc();
 
     let startDateHour = startDateMoment.hour();
     let endDateHour = endDateMoment.hour();
@@ -111,6 +111,24 @@ class HotelTripDetails extends React.Component {
         })}
       </div>
     );
+  }
+
+  renderRoomTypes(roomTypes){
+    if(!Array.isArray(roomTypes)){
+      return (<h5>{roomTypes}</h5>);
+    } else {
+      const types = roomTypes.map((rt) => <h5>{rt}</h5>);
+      return ( <div>{types}</div> );
+    }
+  }
+
+  renderRoomBoards(roomBoards){
+    if(!Array.isArray(roomBoards)){
+      return (<h5>{roomBoards}</h5>);
+    } else {
+      const boards = roomBoards.map((rt) => <h5>{rt}</h5>);
+      return ( <div>{boards}</div> );
+    }
   }
 
   renderHeading() {
@@ -172,16 +190,18 @@ class HotelTripDetails extends React.Component {
               <h5 className="guests-content">{bookingData.guestsCount}</h5>
             </div>
             <h3>Room Type</h3>
-            <h5 style={{ marginBottom: '5%' }}>{bookingData.roomType}</h5>
-            <h3>Board Type</h3>
-            <h5>{bookingData.boardType}</h5>
+            {/*<h5 style={{ marginBottom: '5%' }}>{bookingData.roomType}</h5>*/}
+            {this.renderRoomTypes(bookingData.roomType)}
+            <h3 style={{ marginTop: '5%' }}>Board Type</h3>
+            {/*<h5>{bookingData.boardType}</h5>*/}
+            {this.renderRoomBoards(bookingData.boardType)}
             <hr />
             <h3>Address</h3>
             <h5>{bookingData.hotelAddress}</h5>
           </div>
           <iframe className="address-map no-print" title="location" src={`https://maps.google.com/maps?q=${bookingData.latitude},${bookingData.longitude}&z=15&output=embed`} frameBorder="0" />
           <div className="static-map-container">
-            <img className="static-map-address" src={`https://maps.googleapis.com/maps/api/staticmap?center=${bookingData.latitude},${bookingData.longitude}&zoom=13&size=640x480&markers=${bookingData.latitude},${bookingData.longitude}&key=AIzaSyBLMYRyzRm83mQIUj3hsO-UVz8-yzfAvmU`} />
+            <img className="static-map-address" src={`https://maps.googleapis.com/maps/api/staticmap?center=${bookingData.latitude},${bookingData.longitude}&zoom=13&size=640x480&markers=${bookingData.latitude},${bookingData.longitude}&key=AIzaSyBLMYRyzRm83mQIUj3hsO-UVz8-yzfAvmU`} alt="static-map-address" />
           </div>
           <hr className="no-print" />
           <div className="with-padding">
