@@ -32,9 +32,41 @@ class HomesSearchPage extends React.Component {
     this.setFilterPriceValue = this.setFilterPriceValue.bind(this);
     this.clearFilters = this.clearFilters.bind(this);
     this.onPageChange = this.onPageChange.bind(this);
+    this.requestListings = this.requestListings.bind(this);
+    this.distributeSearchParameters = this.distributeSearchParameters.bind(this);
   }
 
-  componentWillMount() {
+  componentDidMount() {
+    this.distributeSearchParameters();
+    this.requestListings();
+  }
+
+  componentWillUnmount() {
+    this.setState({
+      listings: null,
+      loading: true,
+      currentPage: 0,
+      totalItems: 0
+    });
+  }
+
+  requestListings() {
+    let searchTerms = this.getSearchTerms(this.props.location.search);
+    searchTerms.push(`page=${this.state.currentPage}`);
+    requester.getListingsByFilter(searchTerms).then(res => {
+      res.body.then(data => {
+        this.setState({
+          listings: data.filteredListings.content,
+          totalItems: data.filteredListings.totalElements,
+          loading: false,
+          cities: data.cities,
+          propertyTypes: data.types
+        });
+      });
+    });
+  }
+
+  distributeSearchParameters() {
     if (this.props.location.search) {
       const searchParams = querystring.parse(this.props.location.search);
       const country = searchParams.countryId;
@@ -56,31 +88,6 @@ class HomesSearchPage extends React.Component {
         filters,
       });
     }
-  }
-
-  componentDidMount() {
-    let searchTerms = this.getSearchTerms(this.props.location.search);
-    searchTerms.push(`page=${this.state.currentPage}`);
-    requester.getListingsByFilter(searchTerms).then(res => {
-      res.body.then(data => {
-        this.setState({
-          listings: data.filteredListings.content,
-          totalItems: data.filteredListings.totalElements,
-          loading: false,
-          cities: data.cities,
-          propertyTypes: data.types
-        });
-      });
-    });
-  }
-
-  componentWillUnmount() {
-    this.setState({
-      listings: null,
-      loading: true,
-      currentPage: 0,
-      totalItems: 0
-    });
   }
 
   getCities(searchParams) {

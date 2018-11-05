@@ -67,7 +67,7 @@ class AirdropPage extends Component {
     this._getIncompleteStatus = this._getIncompleteStatus.bind(this);
   }
 
-  componentWillMount() {
+  componentDidMount() {
     this.requestCheckIfUserIsVerified();
     this.requestCheckIfUserHasIssuedWithdraw();
     if (this.props.location.search && this.props.location.search.indexOf('emailtoken') !== -1) {
@@ -142,17 +142,7 @@ class AirdropPage extends Component {
       NotificationManager.info(WITHDRAW_REQUEST_SUCCESSFUL, '', LONG);
       this.requestCheckIfUserHasIssuedWithdraw();
     });
-    // NotificationManager.info('Distribution will be enabled soon', '', LONG);
   }
-
-  // componentDidUpdate(prevState) {
-  //   const { isUserLogged, didPostUserInfo } = this.state;
-  //   if (!prevState.isUserLogged && isUserLogged) {
-  //     getUserAirdropInfo().then(json => {
-  //       this.setState({ userAirdropInfo: json });
-  //     });
-  //   }
-  // }
 
   openModal(modal, e) {
     if (e) {
