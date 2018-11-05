@@ -9,8 +9,7 @@ import Select from 'react-select';
 import { connect } from 'react-redux';
 import requester from '../../../requester';
 import { withRouter } from 'react-router-dom';
-import Datepicker from '../../common/datepicker';
-import moment from 'moment';
+import HotelsDatepickerWrapper from './HotelsDatepickerWrapper';
 
 function HotelsSearchBar(props) {
   if (props.location.pathname.indexOf('/mobile') !== -1) {
@@ -120,7 +119,7 @@ function HotelsSearchBar(props) {
         />
         
         <div className="check">
-          <Datepicker minDate={moment().add(1, 'days')} enableRanges />
+          <HotelsDatepickerWrapper />
         </div>
 
         <div className="days-of-stay">

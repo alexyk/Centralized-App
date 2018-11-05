@@ -8,7 +8,7 @@ import { setFlightClass, setStops, setDepartureTime, setOrigin, setDestination, 
 import { AIR_TICKETS_CHILDREN } from '../../../constants/modals';
 import AirTicketsChildrenModal from '../modals/AirTicketsChildrenModal';
 import SelectFlex from '../../common/select';
-import AirTicketsDatepickerWrapper from './common/AirTicketsDatepickerWrapper';
+import AirTicketsDatepickerWrapper from './AirTicketsDatepickerWrapper';
 import { Config } from '../../../config';
 
 import '../../../styles/css/components/airTickets/search/air-tickets-search-bar.css';
