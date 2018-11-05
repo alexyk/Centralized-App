@@ -96,14 +96,6 @@ function AirTicketsSearchBar(props) {
     }
   };
 
-  const departureTimes = (() => {
-    const departureTimes = [];
-    for (let i = 0; i < 24; i++) {
-      departureTimes.push(i.toString());
-    }
-    return departureTimes;
-  })();
-
   return (
     <div className="air-tickets">
       <form className="air-tickets-form" onSubmit={handleSearch}>
@@ -143,7 +135,7 @@ function AirTicketsSearchBar(props) {
           </div>
         </div>
         <div className="air-tickets-form-guest-wrap guests">
-          <SelectFlex placeholder="Adults" className="select-adults" onChange={(value) => props.dispatch(setAdults(value))}>
+          <SelectFlex placeholder="Adults" className="select-adults" onChange={(value) => props.dispatch(setAdults(value))} value={props.airTicketsSearchInfo.adultsCount}>
             <select name={'adults'}>
               <option value="1">1 adult</option>
               <option value="2">2 adults</option>
@@ -166,14 +158,36 @@ function AirTicketsSearchBar(props) {
             </div>
           </div>
         </div>
-        <SelectFlex placeholder="Departure time" className="air-tickets-form-departure-time" onChange={(value) => props.dispatch(setDepartureTime(value))}>
+        <SelectFlex placeholder="Departure time" className="air-tickets-form-departure-time" onChange={(value) => props.dispatch(setDepartureTime(value))} value={props.airTicketsSearchInfo.departureTime}>
           <select name="departureTime">
-            {departureTimes.map((time) => {
-              return <option value={time} key={time}>{time.padStart(2, 0)}:00</option>;
-            })}
+            <option value="">any</option>
+            <option value="0">00:00</option>
+            <option value="1">01:00</option>
+            <option value="2">02:00</option>
+            <option value="3">03:00</option>
+            <option value="4">04:00</option>
+            <option value="5">05:00</option>
+            <option value="6">06:00</option>
+            <option value="7">07:00</option>
+            <option value="8">08:00</option>
+            <option value="9">09:00</option>
+            <option value="10">10:00</option>
+            <option value="11">11:00</option>
+            <option value="12">12:00</option>
+            <option value="13">13:00</option>
+            <option value="14">14:00</option>
+            <option value="15">15:00</option>
+            <option value="16">16:00</option>
+            <option value="17">17:00</option>
+            <option value="18">18:00</option>
+            <option value="19">19:00</option>
+            <option value="20">20:00</option>
+            <option value="21">21:00</option>
+            <option value="22">22:00</option>
+            <option value="23">23:00</option>
           </select>
         </SelectFlex>
-        <SelectFlex placeholder="Flight stops" className="air-tickets-form-flight-stops" onChange={(value) => props.dispatch(setStops(value))}>
+        <SelectFlex placeholder="Flight stops" className="air-tickets-form-flight-stops" onChange={(value) => props.dispatch(setStops(value))} value={props.airTicketsSearchInfo.stops}>
           <select name="flightStops">
             <option value="-1">any</option>
             <option value="0">direct flight</option>
@@ -181,7 +195,7 @@ function AirTicketsSearchBar(props) {
             <option value="2">more stops</option>
           </select>
         </SelectFlex>
-        <SelectFlex placeholder="Flight class" className="air-tickets-form-flight-class" onChange={(value) => props.dispatch(setFlightClass(value))}>
+        <SelectFlex placeholder="Flight class" className="air-tickets-form-flight-class" onChange={(value) => props.dispatch(setFlightClass(value))} value={props.airTicketsSearchInfo.flightClass}>
           <select name="flightClass">
             <option value="0">any</option>
             <option value="Y">economy</option>

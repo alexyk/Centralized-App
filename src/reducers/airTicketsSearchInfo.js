@@ -7,7 +7,7 @@ const initialState = {
   departureTime: '',
   origin: null,
   destination: null,
-  adultsCount: 1,
+  adultsCount: '1',
   children: [],
   infants: 0,
   hasChildren: false
