@@ -29,11 +29,7 @@ function AirTicketsResultsHolder(props) {
       allElements={props.allElements} />;
   });
 
-  return (
-    <div className="results-holder">
-      {results}
-    </div>
-  );
+  return results;
 }
 
 AirTicketsResultsHolder.propTypes = {
