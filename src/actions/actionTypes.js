@@ -56,8 +56,9 @@ export const locPriceUpdateTimerInfo = {
   RESET: 'RESET'
 };
 
+// air tickets search info actions
 export const airTicketsSearchInfo = {
-  SET_ROUTING: 'SET_ROUTING',
+  SET_FLIGHT_ROUTING: 'SET_FLIGHT_ROUTING',
   SET_FLIGHT_CLASS: 'SET_FLIGHT_CLASS',
   SET_STOPS: 'SET_STOPS',
   SET_DEPARTURE_TIME: 'SET_DEPARTURE_TIME',

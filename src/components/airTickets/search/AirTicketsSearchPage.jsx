@@ -10,6 +10,7 @@ import Stomp from 'stompjs';
 import Pagination from '../../common/pagination/Pagination';
 import AirTicketsSearchBar from './AirTicketsSearchBar';
 import { setOrigin, setDestination, setAirTicketsSearchInfo } from '../../../actions/airTicketsSearchInfo';
+import { asyncSetStartDate, asyncSetEndDate } from '../../../actions/searchDatesInfo';
 import { Config } from '../../../config';
 import AirTicketsResultsHolder from './AirTicketsSearchResultsHolder';
 import AirTicketsSearchFilterPanel from './filter/AirTicketsSearchFilterPanel';
@@ -78,7 +79,7 @@ class AirTicketsSearchPage extends Component {
   requestFlightsSearch() {
     fetch(`${Config.getValue('apiHost')}flight/search${this.props.location.search}&uuid=${this.queueId}`)
       .then(res => {
-        if (res.success) {
+        if (res.ok) {
           this.connectSocket();
         }
       })
@@ -92,7 +93,7 @@ class AirTicketsSearchPage extends Component {
   }
 
   requestAirportInfo(airportCode) {
-    return fetch(`http://localhost:8088/city/code?iata=${airportCode}`, {
+    return fetch(`${Config.getValue('apiHost')}flight/city/search/${airportCode}`, {
       headers: {
         'Content-type': 'application/json'
       }
@@ -133,15 +134,15 @@ class AirTicketsSearchPage extends Component {
   populateSearchBar() {
     if (this.props.location.search) {
       const searchParams = queryString.parse(this.props.location.search);
-      const routing = searchParams.routing;
+      const flightRouting = searchParams.routing;
       const flightClass = searchParams.flightClass;
       const stops = searchParams.stops;
       const departureTime = searchParams.departureTime ? searchParams.departureTime : '';
       const origin = { id: searchParams.origin };
       const destination = { id: searchParams.destination };
       const departureDate = moment(searchParams.departureDate, 'DD/MM/YYYY');
-      let arrivalDate = null;
-      if (routing === '2') {
+      let arrivalDate = moment(departureDate).add(1, 'days');
+      if (flightRouting === '2') {
         arrivalDate = moment(searchParams.arrivalDate, 'DD/MM/YYYY');
       }
       const adultsCount = searchParams.adults;
@@ -150,7 +151,9 @@ class AirTicketsSearchPage extends Component {
       const hasChildren = children.length !== 0 || infants > 0;
       const page = searchParams.page;
 
-      this.props.dispatch(setAirTicketsSearchInfo(routing, flightClass, stops, departureTime, origin, destination, departureDate, arrivalDate, adultsCount, children, infants, hasChildren));
+      this.props.dispatch(asyncSetStartDate(departureDate));
+      this.props.dispatch(asyncSetEndDate(arrivalDate));
+      this.props.dispatch(setAirTicketsSearchInfo(flightRouting, flightClass, stops, departureTime, origin, destination, adultsCount, children, infants, hasChildren));
 
       this.populateLocations(searchParams.origin, searchParams.destination);
 
@@ -178,7 +181,6 @@ class AirTicketsSearchPage extends Component {
   }
 
   connectSocket() {
-
     this.flightsResultsInterval = setInterval(() => {
       console.log('');
     }, 1000);
