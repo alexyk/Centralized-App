@@ -2,9 +2,8 @@ import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import moment from 'moment';
 import StringUtils from '../../../services/utilities/stringUtilities.js';
-import Datepicker from '../../common/datepicker';
+import HomesDatepickerWrapper from './HomesDatepickerWrapper';
 import { setCountry, setGuests } from '../../../actions/homesSearchInfo';
 import requester from '../../../requester';
 
@@ -73,7 +72,7 @@ class HomesSearchBar extends Component {
 
         <div className="check-wrap source-panel-item">
           <div className="check">
-            <Datepicker minDate={moment().add(1, 'days')} enableRanges excludedDates={this.props.excludedDates || []} />
+            <HomesDatepickerWrapper />
           </div>
 
           <div className="days-of-stay">
