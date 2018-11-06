@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import moment from 'moment';
 import DatePicker from '../../common/datepicker';
-import { asyncSetStartDate, asyncSetEndDate } from '../../../actions/searchDatesInfo';
+import { asyncSetEndDate } from '../../../actions/searchDatesInfo';
 import { setFlightRouting } from '../../../actions/airTicketsSearchInfo';
 
 class AirTicketsDatepickerWrapper extends Component {
@@ -14,8 +14,14 @@ class AirTicketsDatepickerWrapper extends Component {
   }
 
   componentDidMount() {
-    this.props.dispatch(asyncSetStartDate(moment()));
-    this.props.dispatch(asyncSetEndDate(moment().add(1, 'days')));
+    this.validateDates();
+  }
+
+  validateDates() {
+    const { startDate, endDate } = this.props.searchDatesInfo;
+    if (endDate.isBefore(startDate, 'day')) {
+      this.props.dispatch(asyncSetEndDate(moment(startDate)));
+    }
   }
 
   changeFlightRouting(flightRouting) {
@@ -53,14 +59,16 @@ class AirTicketsDatepickerWrapper extends Component {
 AirTicketsDatepickerWrapper.propTypes = {
   // Redux props
   dispatch: PropTypes.func,
-  airTicketsSearchInfo: PropTypes.object
+  airTicketsSearchInfo: PropTypes.object,
+  searchDatesInfo: PropTypes.object
 };
 
 const mapStateToProps = (state) => {
-  const { airTicketsSearchInfo } = state;
+  const { airTicketsSearchInfo, searchDatesInfo } = state;
 
   return {
-    airTicketsSearchInfo
+    airTicketsSearchInfo,
+    searchDatesInfo
   };
 };
 

@@ -3,12 +3,18 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import moment from 'moment';
 import DatePicker from '../../common/datepicker';
-import { asyncSetStartDate, asyncSetEndDate } from '../../../actions/searchDatesInfo';
+import { asyncSetEndDate } from '../../../actions/searchDatesInfo';
 
 class HomesDatepickerWrapper extends Component {
   componentDidMount() {
-    this.props.dispatch(asyncSetStartDate(moment().add(1, 'days')));
-    this.props.dispatch(asyncSetEndDate(moment().add(2, 'days')));
+    this.validateDates();
+  }
+
+  validateDates() {
+    const { startDate, endDate } = this.props.searchDatesInfo;
+    if (endDate.isSameOrBefore(startDate, 'day')) {
+      this.props.dispatch(asyncSetEndDate(moment(startDate).add(1, 'days')));
+    }
   }
 
   render() {
@@ -23,7 +29,16 @@ class HomesDatepickerWrapper extends Component {
 
 HomesDatepickerWrapper.propTypes = {
   // Redux props
-  dispatch: PropTypes.func
+  dispatch: PropTypes.func,
+  searchDatesInfo: PropTypes.object
 };
 
-export default connect()(HomesDatepickerWrapper);
+const mapStateToProps = (state) => {
+  const { searchDatesInfo } = state;
+
+  return {
+    searchDatesInfo
+  };
+};
+
+export default connect(mapStateToProps)(HomesDatepickerWrapper);
