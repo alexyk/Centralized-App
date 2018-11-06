@@ -25,6 +25,7 @@ class LocalizationNav extends PureComponent {
           <div className="info">
             {this.props.location.pathname !== '/hotels'
               && this.props.location.pathname !== '/homes'
+              && this.props.location.pathname !== '/tickets'
               && (this.props.location.pathname.indexOf('/hotels/listings/book') === -1
               && this.props.location.pathname.indexOf('/homes/listings/book') === -1
               && this.props.location.pathname.indexOf('/profile') === -1)

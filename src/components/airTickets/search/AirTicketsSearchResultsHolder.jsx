@@ -21,7 +21,7 @@ function AirTicketsResultsHolder(props) {
   const results = props.results && props.results.map((result) => {
     return <AirTicketsSearchResult
       key={result.id}
-      result={result.receiveResultItem}
+      result={result}
       id={result.id}
       exchangeRatesInfo={props.exchangeRatesInfo}
       paymentInfo={props.paymentInfo}
