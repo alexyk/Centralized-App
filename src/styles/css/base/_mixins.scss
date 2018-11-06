@@ -1,3 +1,5 @@
+@import './variables';
+
 // vertical align el inside parent with fixed height/min-height
 // usage
 // html - .parent>.child
@@ -328,6 +330,39 @@ $animation-speed: .3s !default;
           color: #d87a61;
         }
     }
+}
+
+@mixin dashboardTooltip {
+   [tooltip]{
+    position:relative;
+  }
+  [tooltip]:hover::after,
+  [tooltip]:hover::before {
+    opacity:1;
+  }
+  [tooltip]::before {
+      content: "\e914";
+      color: #abc3bd;
+  }
+  [tooltip]::after {
+      content: attr(tooltip);
+      position: absolute;
+      left: 50%;
+      top: 6px;
+      transform: translateX(-75%) translateY(-120%);
+      background: rgba(100, 100, 100, 0.7);
+      text-align: center;
+      color: #fff;
+      padding: 10px 20px 10px 20px;
+      min-width: 200px;
+      border-radius: 2px;
+      border: 1px solid black;
+      pointer-events: none;
+      opacity:0;
+      font: #{$font-size-base}/#{$line-height-base} $base-font-family;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+  }
 }
 
 
