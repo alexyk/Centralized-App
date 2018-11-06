@@ -1,25 +1,25 @@
-import React, { Component } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 
 import './style.css';
 
-class Loader extends Component {
-  constructor(props) {
-    super(props);
-  }
+const Loader = ({ minWidth, minHeight }) => {
 
-  render() {
-    const { minWidth, minHeight } = this.props;
-    return (
-      <div className="container-loader-wrapper" style={{ minWidth, minHeight }}>
-        <div className="container-loader"></div>
-      </div>
-    );
-  }
-}
+  return (
+    <div className="container-loader-wrapper" style={{ minWidth, minHeight }}>
+      <div className="container-loader"></div>
+    </div>
+  );
+};
 
 Loader.defaultProps = {
   minWidth: '150px',
   minHeight: '0',
+};
+
+Loader.propTypes = {
+  minWidth: PropTypes.string,
+  minHeight: PropTypes.string,
 };
 
 export default Loader;
