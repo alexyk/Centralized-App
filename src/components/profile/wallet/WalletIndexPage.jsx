@@ -132,6 +132,7 @@ class WalletIndexPage extends React.Component {
         <section id="wallet-index">
           <div id="profile-edit-form">
             <h2>Your Wallet</h2>
+            <a href={etherscanUrl} target="_blank" rel="noopener noreferrer" className="wallet-link">Reset wallet password</a>
             <hr />
             <div className="loc-address">
               <label htmlFor="loc-address">Your ETH/LOC address <img src={Config.getValue('basePath') + 'images/icon-lock.png'} className="lock" alt="lock-o" /></label>
@@ -161,8 +162,8 @@ class WalletIndexPage extends React.Component {
               </div>
               <div>
                 {this.state.canProceed ? <button className="btn btn-primary" type="submit">Send Tokens</button> : <button className="btn btn-primary" disabled="disabled">Send Tokens</button>}
-                <div className="button-wallet-link"><a href={etherscanUrl} target="_blank" className="wallet-link">Check your transactions</a></div>
-                {this.state.latestTxHash && <div className="button-wallet-link"><a href={etherscanLatestTxUrl} target="_blank" className="wallet-link">Latest transaction status</a></div>}
+                <div className="button-wallet-link"><a href={etherscanUrl} target="_blank" rel="noopener noreferrer" className="wallet-link">Check your transactions</a></div>
+                {this.state.latestTxHash && <div className="button-wallet-link"><a href={etherscanLatestTxUrl} target="_blank" rel="noopener noreferrer" className="wallet-link">Latest transaction status</a></div>}
               </div>
             </form>
           </div>
