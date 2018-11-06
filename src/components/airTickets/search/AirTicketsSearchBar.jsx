@@ -25,7 +25,7 @@ function AirTicketsSearchBar(props) {
       return Promise.resolve({ options: [] });
     }
 
-    return fetch(`${Config.getValue('apiHost')}flight/city?query=${param}`, {
+    return fetch(`${Config.getValue('apiHost')}flight/city/search?query=${param}`, {
       headers: {
         'Content-type': 'application/json'
       }

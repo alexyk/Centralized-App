@@ -26,6 +26,12 @@ class AirTicketsDetailsPage extends React.Component {
   }
 
   componentDidMount() {
+    fetch(`http://localhost:8080/flight/selectFlight?flightId=${this.props.match.params.id}`)
+      .then(res => {
+        res.json().then((data) => {
+          console.log(data);
+        });
+      });
     this.populateSearchBar();
     this.setState({
       result: this.props.location.state.result
@@ -37,7 +43,7 @@ class AirTicketsDetailsPage extends React.Component {
   }
 
   getAirportInfo(airportCode) {
-    return fetch(`http://localhost:8088/city/code?iata=${airportCode}`, {
+    return fetch(`http://localhost:8080/flight/city/search/${airportCode}`, {
       headers: {
         'Content-type': 'application/json'
       }

@@ -90,7 +90,7 @@ class AirTicketsSearchPage extends Component {
   }
 
   getAirportInfo(airportCode) {
-    return fetch(`http://localhost:8088/city/code?iata=${airportCode}`, {
+    return fetch(`http://localhost:8080/flight/city/search/${airportCode}`, {
       headers: {
         'Content-type': 'application/json'
       }
