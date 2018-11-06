@@ -10,7 +10,7 @@ import { connect } from 'react-redux';
 import moment from 'moment';
 import queryString from 'query-string';
 import { withRouter } from 'react-router-dom';
-import BookingSteps from '../../common/utility/BookingSteps';
+import BookingSteps from '../../common/bookingSteps';
 import { RoomsXMLCurrency } from '../../../services/utilities/roomsXMLCurrency';
 import LocPrice from '../../common/utility/LocPrice';
 import xregexp from 'xregexp';

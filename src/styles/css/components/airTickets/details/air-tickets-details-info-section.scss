@@ -67,6 +67,15 @@ $media-expressions: (
           cursor: pointer;
         }
       }
+      .farerules {
+        .icon-arrow-right {
+          font-size: 0.6em;
+          margin: 0 10px 0 5px;
+        }
+        .rule {
+          margin-bottom: 10px;
+        }
+      }
     }
     .air-tickets-details-booking-panel {
       @include media("<=desktop") {

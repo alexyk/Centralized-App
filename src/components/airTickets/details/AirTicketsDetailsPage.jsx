@@ -9,6 +9,7 @@ import { setOrigin, setDestination, setAirTicketsSearchInfo } from '../../../act
 import { asyncSetStartDate, asyncSetEndDate } from '../../../actions/searchDatesInfo';
 import AirTicketsDetailsInfoSection from './AirTicketsDetailsInfoSection';
 import AirTicketsSearchBar from '../search/AirTicketsSearchBar';
+import BookingSteps from '../../common/bookingSteps';
 
 import '../../../styles/css/components/carousel-component.css';
 import 'slick-carousel/slick/slick.css';
@@ -19,7 +20,8 @@ class AirTicketsDetailsPage extends React.Component {
     super(props);
 
     this.state = {
-      result: null
+      result: null,
+      fareRules: null
     };
 
     this.searchAirTickets = this.searchAirTickets.bind(this);
@@ -31,6 +33,14 @@ class AirTicketsDetailsPage extends React.Component {
         res.json().then((data) => {
           this.setState({
             result: data
+          });
+        });
+      });
+    fetch(`${Config.getValue('apiHost')}flight/fareRules?flightId=${this.props.match.params.id}`)
+      .then(res => {
+        res.json().then((data) => {
+          this.setState({
+            fareRules: data
           });
         });
       });
@@ -118,28 +128,32 @@ class AirTicketsDetailsPage extends React.Component {
       <div>
         <div className="container">
           <AirTicketsSearchBar search={this.searchAirTickets} />
+          <BookingSteps steps={['Search', 'Details', 'User data', 'Confirm & Pay']} currentStepIndex={1} />
         </div>
 
         {!loading ?
           <div className="loader"></div> :
           <div className="home-details-container">
-            <nav className="hotel-nav" id="hotel-nav">
-              <div className="hotel-nav-box">
-                <div className="nav-box">
-                  <ul className="nav navbar-nav">
-                    <li><a href="#overview">Overview</a></li>
-                    <li><a href="#facilities">Facilities</a></li>
-                    <li><a href="#reviews">User Reviews</a></li>
-                    <li><a href="#location">Location</a></li>
-                  </ul>
+            <div className="container">
+              <nav className="hotel-nav" id="hotel-nav">
+                <div className="hotel-nav-box">
+                  <div className="nav-box">
+                    <ul className="nav navbar-nav">
+                      <li><a href="#overview">Overview</a></li>
+                      <li><a href="#facilities">Facilities</a></li>
+                      <li><a href="#reviews">User Reviews</a></li>
+                      <li><a href="#location">Location</a></li>
+                    </ul>
+                  </div>
                 </div>
-              </div>
-            </nav>
+              </nav>
+            </div>
 
             <AirTicketsDetailsInfoSection
               isLogged={this.props.userInfo.isLogged}
               openModal={this.openModal}
               result={this.state.result}
+              fareRules={this.state.fareRules}
             />
           </div>
         }

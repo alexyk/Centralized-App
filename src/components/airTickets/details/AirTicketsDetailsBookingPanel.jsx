@@ -16,25 +16,22 @@ class AirTicketsDetailsBookingPanel extends React.Component {
       return <div className="loader"></div>;
     }
 
-    const currencyCode = 'EUR';
-    const cleaningFee = 10;
+    const { result } = this.props;
+    const { currency, currencySign } = this.props.paymentInfo;
 
-    const { currency,
-      currencySign } = this.props.paymentInfo;
+    const currencyCode = result.summary.currency;
+    const price = result.summary.totalPrice;
+    const taxPrice = result.summary.taxPrice;
 
-    const price = 300;
+    const fiatPriceInCurrentCurrency = CurrencyConverter.convert(currencyExchangeRates, currencyCode, currency, price);
+    const fiatPriceInRoomsXMLCurrency = CurrencyConverter.convert(currencyExchangeRates, currencyCode, RoomsXMLCurrency.get(), price);
 
-    let defaultDailyPrice = CurrencyConverter.convert(currencyExchangeRates, currencyCode, currency, price);
-    let fiatPriceInRoomsXMLCurrency = CurrencyConverter.convert(currencyExchangeRates, currencyCode, RoomsXMLCurrency.get(), price);
-
-    let defaultCleaningFee = CurrencyConverter.convert(currencyExchangeRates, currencyCode, currency, cleaningFee);
-    let fiatCleaningFeePriceInRoomsXMLCurrency = CurrencyConverter.convert(currencyExchangeRates, currencyCode, RoomsXMLCurrency.get(), cleaningFee);
-
-    const invalidRange = true;
+    const taxPriceInCurrentCurrency = CurrencyConverter.convert(currencyExchangeRates, currencyCode, currency, taxPrice);
+    const taxPriceInRoomsXMLCurrency = CurrencyConverter.convert(currencyExchangeRates, currencyCode, RoomsXMLCurrency.get(), taxPrice);
 
     return (<div className="air-tickets-details-booking-panel">
       <div className="box" id="test">
-        <p className="default-price"><span className="main-fiat">{currencySign}{defaultDailyPrice.toFixed(3)}</span> <LocPrice fiat={fiatPriceInRoomsXMLCurrency} /> /per night</p>
+        <p className="default-price"><span className="main-fiat">{currencySign}{fiatPriceInCurrentCurrency.toFixed(2)}</span> <LocPrice fiat={fiatPriceInRoomsXMLCurrency} /> /per 1 adult</p>
         <div className="booking-dates">
           <div className="air-tickets-form-check-wrap">
             <AirTicketsDatepickerWrapper />
@@ -50,36 +47,38 @@ class AirTicketsDetailsBookingPanel extends React.Component {
         </div>
         <div className="fiat-price-box">
           <div className="without-fees">
-            <p>{currencySign}{defaultDailyPrice.toFixed(3)}  x {this.props.nights} nights</p>
-            <p>{currencySign}{(defaultDailyPrice * this.props.nights).toFixed(3)}</p>
+            <p>Passengers</p>
+            <p>{currencySign}{(fiatPriceInCurrentCurrency - taxPriceInCurrentCurrency).toFixed(2)}</p>
           </div>
           <div className="cleaning-fee">
-            <p>Cleaning fee</p>
-            <p>{currencySign}{defaultCleaningFee.toFixed(3)}</p>
+            <p>Taxes and fees</p>
+            <p>{currencySign}{taxPriceInCurrentCurrency.toFixed(2)}</p>
           </div>
           <div className="total">
             <p>Total</p>
-            <p>{currencySign}{((defaultDailyPrice * this.props.nights) + defaultCleaningFee).toFixed(3)}</p>
-          </div>
-        </div>
-        <hr />
-        <div className="loc-price-box">
-          <div className="without-fees">
-            <p><LocPrice fiat={fiatPriceInRoomsXMLCurrency} brackets={false} /> x {this.props.nights} nights</p>
-            <p><LocPrice fiat={fiatPriceInRoomsXMLCurrency * this.props.nights} brackets={false} /></p>
-          </div>
-          <div className="cleaning-fee">
-            <p>Cleaning fee</p>
-            <p><LocPrice fiat={fiatCleaningFeePriceInRoomsXMLCurrency} brackets={false} /></p>
-          </div>
-          <div className="total">
-            <p>Total</p>
-            <p><LocPrice fiat={(fiatPriceInRoomsXMLCurrency * this.props.nights) + fiatCleaningFeePriceInRoomsXMLCurrency} brackets={false} /></p>
+            <p>{currencySign}{(fiatPriceInCurrentCurrency).toFixed(2)}</p>
           </div>
         </div>
         {this.props.userInfo.isLogged ?
-          // onClick={e => invalidRange && e.preventDefault()} className={[invalidRange ? 'disabled' : null, 'pay-in'].join(' ')}
-          <Link to={`/homes/listings/book/${this.props.match.params.id}${this.props.location.search}`} className={[invalidRange ? 'disabled' : null, 'pay-in'].join(' ')}>Request Booking in LOC</Link> :
+          <Link to={`/homes/listings/book/${this.props.match.params.id}${this.props.location.search}`} className="pay-in">Request Booking in FIAT</Link> :
+          <button className="pay-in" onClick={(e) => this.props.dispatch(openModal(LOGIN, e))}>Login</button>}
+        <hr />
+        <div className="loc-price-box">
+          <div className="without-fees">
+            <p>Passengers</p>
+            <p><LocPrice fiat={fiatPriceInRoomsXMLCurrency - taxPriceInRoomsXMLCurrency} brackets={false} /></p>
+          </div>
+          <div className="cleaning-fee">
+            <p>Taxes and fees</p>
+            <p><LocPrice fiat={taxPriceInRoomsXMLCurrency} brackets={false} /></p>
+          </div>
+          <div className="total">
+            <p>Total</p>
+            <p><LocPrice fiat={fiatPriceInRoomsXMLCurrency} brackets={false} /></p>
+          </div>
+        </div>
+        {this.props.userInfo.isLogged ?
+          <Link to={`/homes/listings/book/${this.props.match.params.id}${this.props.location.search}`} className="pay-in">Request Booking in LOC</Link> :
           <button className="pay-in" onClick={(e) => this.props.dispatch(openModal(LOGIN, e))}>Login</button>}
         <p className="booking-helper">You won&#39;t be charged yet</p>
       </div>
@@ -89,15 +88,7 @@ class AirTicketsDetailsBookingPanel extends React.Component {
 
 AirTicketsDetailsBookingPanel.propTypes = {
   match: PropTypes.object,
-  calendar: PropTypes.array,
-  nights: PropTypes.number,
-  startDate: PropTypes.any,
-  endDate: PropTypes.any,
-  currencyCode: PropTypes.string,
-  cleaningFee: PropTypes.number,
-  handleChangeStart: PropTypes.func,
-  handleChangeEnd: PropTypes.func,
-  guestArray: PropTypes.array,
+  result: PropTypes.object,
 
   // Router props
   location: PropTypes.object,
@@ -106,17 +97,15 @@ AirTicketsDetailsBookingPanel.propTypes = {
   exchangeRatesInfo: PropTypes.object,
   paymentInfo: PropTypes.object,
   userInfo: PropTypes.object,
-  dispatch: PropTypes.func,
-  searchDatesInfo: PropTypes.object
+  dispatch: PropTypes.func
 };
 
 function mapStateToProps(state) {
-  const { paymentInfo, exchangeRatesInfo, userInfo, searchDatesInfo } = state;
+  const { paymentInfo, exchangeRatesInfo, userInfo } = state;
   return {
     paymentInfo,
     exchangeRatesInfo,
-    userInfo,
-    searchDatesInfo
+    userInfo
   };
 }
 

@@ -1,0 +1,17 @@
+.booking-steps {
+  background-color: rgb(34, 56, 67);
+  margin-bottom: 40px;
+  .step {
+    float: none;
+    display: inline-flex;
+    font-size: 18px;
+    margin: 15px 30px 15px 0;
+    color: #CCCCCC;
+    &.active {
+      color: #fff;
+    }
+  }
+  .arrow {
+    margin: 19px 30px 11px 0;
+  }
+}

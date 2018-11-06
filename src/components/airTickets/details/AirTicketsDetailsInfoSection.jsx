@@ -12,7 +12,6 @@ import PowerIcon from '../../../styles/images/power-icon.png';
 
 import '../../../styles/css/components/airTickets/search/air-tickets-search-result.css';
 import '../../../styles/css/components/airTickets/details/air-tickets-details-info-section.css';
-import moment from 'moment';
 
 
 class AirTicketsDetailsInfoSection extends React.Component {
@@ -46,9 +45,10 @@ class AirTicketsDetailsInfoSection extends React.Component {
   }
 
   render() {
-    const { result } = this.props;
+    const { result, fareRules } = this.props;
+    console.log(result);
+    console.log(fareRules);
     const item = result.items[0];
-    console.log(item);
 
     const departureTime = item.segments[0].originInfo.flightTime;
     const arrivalTime = item.segments[item.segments.length - 1].destinationInfo.flightTime;
@@ -149,17 +149,29 @@ class AirTicketsDetailsInfoSection extends React.Component {
               <h2>Stop</h2>
               <hr />
             </div>
-            <div className="">
+            <div className="farerules">
               <h2>Fare Rules</h2>
               <hr />
+              {fareRules.segments.map((segment, segmentIndex) => {
+                const rules = segment.rules.map((rule, ruleIndex) => {
+                  return (
+                    <div key={ruleIndex} className="rule">
+                      <div>{rule.ruleTitle}</div>
+                      <div>{rule.ruleText}</div>
+                    </div>
+                  );
+                });
+                return (
+                  <Fragment key={segmentIndex}>
+                    <h3>{segment.origin.name} <span className="icon-arrow-right arrow"></span> {segment.destination.name}</h3>
+                    {rules}
+                    <hr />
+                  </Fragment>
+                );
+              })}
             </div>
           </div>
-          <AirTicketsDetailsBookingPanel
-            startDate={moment()}
-            endDate={moment()}
-            handleChangeStart={this.props.handleChangeStart}
-            handleChangeEnd={this.props.handleChangeEnd}
-          />
+          <AirTicketsDetailsBookingPanel result={result} />
         </div>
       </section >
     );
@@ -167,7 +179,8 @@ class AirTicketsDetailsInfoSection extends React.Component {
 }
 
 AirTicketsDetailsInfoSection.propTypes = {
-  result: PropTypes.object
+  result: PropTypes.object,
+  fareRules: PropTypes.object
 };
 
 

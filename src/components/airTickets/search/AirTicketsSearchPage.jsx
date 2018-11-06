@@ -8,6 +8,7 @@ import moment from 'moment';
 import uuid from 'uuid';
 import Stomp from 'stompjs';
 import Pagination from '../../common/pagination/Pagination';
+import BookingSteps from '../../common/bookingSteps';
 import AirTicketsSearchBar from './AirTicketsSearchBar';
 import { setOrigin, setDestination, setAirTicketsSearchInfo } from '../../../actions/airTicketsSearchInfo';
 import { asyncSetStartDate, asyncSetEndDate } from '../../../actions/searchDatesInfo';
@@ -279,6 +280,7 @@ class AirTicketsSearchPage extends Component {
     return (
       <div className="container">
         <AirTicketsSearchBar search={this.searchAirTickets} />
+        <BookingSteps steps={['Search', 'Details', 'User data', 'Confirm & Pay']} currentStepIndex={0} />
         <div className="air-tickets-search-results">
           <div className="air-tickets-search-filter-panel">
             <AirTicketsSearchFilterPanel
