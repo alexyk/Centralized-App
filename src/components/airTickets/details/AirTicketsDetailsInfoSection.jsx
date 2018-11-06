@@ -20,14 +20,14 @@ class AirTicketsDetailsInfoSection extends React.Component {
     initStickyElements();
   }
 
-  middleStops(solution) {
+  middleStops(item) {
     let middleStopsBulets = [];
-    for (let i = 0; i < solution.segments.length - 1; i++) {
+    for (let i = 0; i < item.segments.length - 1; i++) {
       middleStopsBulets.push(
         <Fragment key={i}>
           <div key={i} className="bulet-container"><span className="bulet"></span></div>
           <hr className="line" />
-          <div className="middle-stop" style={{ left: `${(i * 60) + 40}px` }}>{solution.segments[i].destination.code}</div>
+          <div className="middle-stop" style={{ left: `${(i * 60) + 40}px` }}>{item.segments[i].destinationInfo.airportIATACode}</div>
         </Fragment>
       );
     }
@@ -47,11 +47,12 @@ class AirTicketsDetailsInfoSection extends React.Component {
 
   render() {
     const { result } = this.props;
-    const solution = result.solutions[0];
+    const item = result.items[0];
+    console.log(item);
 
-    const departureTime = solution.segments[0].origin.time;
-    const arrivalTime = solution.segments[solution.segments.length - 1].destination.time;
-    const carrierName = solution.segments[0].carrierName;
+    const departureTime = item.segments[0].originInfo.flightTime;
+    const arrivalTime = item.segments[item.segments.length - 1].destinationInfo.flightTime;
+    const carrierName = item.segments[0].carrierInfo.carrierName;
 
     return (
       <section className="air-tickets-details-container">
@@ -64,9 +65,9 @@ class AirTicketsDetailsInfoSection extends React.Component {
                   <h5 className="carrier">{carrierName}</h5>
                   <div className="duration">
                     <img width="20" src={TimeIcon} alt="time" />
-                    {this.extractFlightFullDurationFromMinutes(solution.segments[solution.segments.length - 1].journeyTime)}
+                    {this.extractFlightFullDurationFromMinutes(item.segments[item.segments.length - 1].journeyTime)}
                   </div>
-                  <div className="stops-count">{solution.segments.length - 1} stops</div>
+                  <div className="stops-count">{item.segments.length - 1} stops</div>
                 </div>
                 <div className="solution-flight">
                   <div className="flight">
@@ -78,14 +79,14 @@ class AirTicketsDetailsInfoSection extends React.Component {
                       {arrivalTime}
                     </div>
                     <div className="item flight-stops">
-                      <div className="stop">{solution.segments[0].origin.code}</div>
+                      <div className="stop">{item.segments[0].originInfo.airportIATACode}</div>
                       <div className="stops-container horizontal">
                         <div className="bulet-container"><span className="bulet"></span></div>
                         <hr className="line" />
-                        {solution.segments.length === 1 ? null : this.middleStops(solution)}
+                        {item.segments.length === 1 ? null : this.middleStops(item)}
                         <div className="bulet-container"><span className="bulet"></span></div>
                       </div>
-                      <div className="stop">{solution.segments[solution.segments.length - 1].destination.code}</div>
+                      <div className="stop">{item.segments[item.segments.length - 1].destinationInfo.airportIATACode}</div>
                     </div>
                     <div className="item flight-icons">
                       <div className="icon">

@@ -3,10 +3,10 @@ import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import moment from 'moment';
-import _ from 'lodash';
 import queryString from 'query-string';
 import { Config } from '../../../config';
 import { setOrigin, setDestination, setAirTicketsSearchInfo } from '../../../actions/airTicketsSearchInfo';
+import { asyncSetStartDate, asyncSetEndDate } from '../../../actions/searchDatesInfo';
 import AirTicketsDetailsInfoSection from './AirTicketsDetailsInfoSection';
 import AirTicketsSearchBar from '../search/AirTicketsSearchBar';
 
@@ -22,28 +22,27 @@ class AirTicketsDetailsPage extends React.Component {
       result: null
     };
 
-    this.redirectToSearchPage = this.redirectToSearchPage.bind(this);
+    this.searchAirTickets = this.searchAirTickets.bind(this);
   }
 
   componentDidMount() {
-    fetch(`http://localhost:8080/flight/selectFlight?flightId=${this.props.match.params.id}`)
+    fetch(`${Config.getValue('apiHost')}flight/selectFlight?flightId=${this.props.match.params.id}`)
       .then(res => {
         res.json().then((data) => {
-          console.log(data);
+          this.setState({
+            result: data
+          });
         });
       });
     this.populateSearchBar();
-    this.setState({
-      result: this.props.location.state.result
-    }, () => console.log(this.state.result));
   }
 
-  redirectToSearchPage(queryString) {
+  searchAirTickets(queryString) {
     this.props.history.push('/tickets/results' + queryString);
   }
 
-  getAirportInfo(airportCode) {
-    return fetch(`http://localhost:8080/flight/city/search/${airportCode}`, {
+  requestAirportInfo(airportCode) {
+    return fetch(`${Config.getValue('apiHost')}flight/city/search/${airportCode}`, {
       headers: {
         'Content-type': 'application/json'
       }
@@ -63,13 +62,13 @@ class AirTicketsDetailsPage extends React.Component {
   }
 
   populateAirports(origin, destination) {
-    this.getAirportInfo(origin)
+    this.requestAirportInfo(origin)
       .then((data) => {
         this.props.dispatch(setOrigin({ code: origin, name: `${data.cityName}, ${data.cityState ? data.cityState + ', ' : ''}${data.countryName}, ${origin} airport` }));
       });
 
 
-    this.getAirportInfo(destination)
+    this.requestAirportInfo(destination)
       .then((data) => {
         this.props.dispatch(setDestination({ code: destination, name: `${data.cityName}, ${data.cityState ? data.cityState + ', ' : ''}${data.countryName}, ${destination} airport` }));
       });
@@ -85,7 +84,7 @@ class AirTicketsDetailsPage extends React.Component {
       const origin = { id: searchParams.origin };
       const destination = { id: searchParams.destination };
       const departureDate = moment(searchParams.departureDate, 'DD/MM/YYYY');
-      let arrivalDate = null;
+      let arrivalDate = moment(departureDate);
       if (routing === '2') {
         arrivalDate = moment(searchParams.arrivalDate, 'DD/MM/YYYY');
       }
@@ -95,7 +94,9 @@ class AirTicketsDetailsPage extends React.Component {
       const hasChildren = children.length !== 0 || infants > 0;
       const page = searchParams.page;
 
-      this.props.dispatch(setAirTicketsSearchInfo(routing, flightClass, stops, departureTime, origin, destination, departureDate, arrivalDate, adultsCount, children, infants, hasChildren));
+      this.props.dispatch(asyncSetStartDate(departureDate));
+      this.props.dispatch(asyncSetEndDate(arrivalDate));
+      this.props.dispatch(setAirTicketsSearchInfo(routing, flightClass, stops, departureTime, origin, destination, adultsCount, children, infants, hasChildren));
 
       this.populateAirports(searchParams.origin, searchParams.destination);
 
@@ -116,7 +117,7 @@ class AirTicketsDetailsPage extends React.Component {
     return (
       <div>
         <div className="container">
-          <AirTicketsSearchBar redirectToSearchPage={this.redirectToSearchPage} />
+          <AirTicketsSearchBar search={this.searchAirTickets} />
         </div>
 
         {!loading ?
@@ -161,7 +162,7 @@ AirTicketsDetailsPage.propTypes = {
 };
 
 function mapStateToProps(state) {
-  const { userInfo, paymentInfo, airTickets } = state;
+  const { userInfo, paymentInfo } = state;
   return {
     userInfo,
     paymentInfo

@@ -2,8 +2,7 @@ import React from 'react';
 import { withRouter, Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import moment from 'moment';
-import DatePickerPreview from './DatePickerPreview';
+import AirTicketsDatepickerWrapper from '../search/AirTicketsDatepickerWrapper';
 import LocPrice from '../../common/utility/LocPrice';
 import { CurrencyConverter } from '../../../services/utilities/currencyConverter';
 import { RoomsXMLCurrency } from '../../../services/utilities/roomsXMLCurrency';
@@ -37,11 +36,8 @@ class AirTicketsDetailsBookingPanel extends React.Component {
       <div className="box" id="test">
         <p className="default-price"><span className="main-fiat">{currencySign}{defaultDailyPrice.toFixed(3)}</span> <LocPrice fiat={fiatPriceInRoomsXMLCurrency} /> /per night</p>
         <div className="booking-dates">
-          <div className="datepicker">
-            <DatePickerPreview
-              startDate={this.props.airTicketsSearchInfo.departureDate}
-              endDate={this.props.airTicketsSearchInfo.arrivalDate || moment(this.props.airTicketsSearchInfo.departureDate).add(1, 'days')}
-            />
+          <div className="air-tickets-form-check-wrap">
+            <AirTicketsDatepickerWrapper />
           </div>
         </div>
         <div className="booking-guests">
@@ -111,16 +107,16 @@ AirTicketsDetailsBookingPanel.propTypes = {
   paymentInfo: PropTypes.object,
   userInfo: PropTypes.object,
   dispatch: PropTypes.func,
-  airTicketsSearchInfo: PropTypes.object
+  searchDatesInfo: PropTypes.object
 };
 
 function mapStateToProps(state) {
-  const { paymentInfo, exchangeRatesInfo, userInfo, airTicketsSearchInfo } = state;
+  const { paymentInfo, exchangeRatesInfo, userInfo, searchDatesInfo } = state;
   return {
     paymentInfo,
     exchangeRatesInfo,
     userInfo,
-    airTicketsSearchInfo
+    searchDatesInfo
   };
 }
 

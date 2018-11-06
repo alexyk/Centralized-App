@@ -42,7 +42,7 @@ class AirTicketsSearchPage extends Component {
     };
 
     this.onPageChange = this.onPageChange.bind(this);
-    this.redirectToSearchPage = this.redirectToSearchPage.bind(this);
+    this.searchAirTickets = this.searchAirTickets.bind(this);
 
     // SOCKET BINDINGS
     this.handleReceiveMessage = this.handleReceiveMessage.bind(this);
@@ -113,7 +113,7 @@ class AirTicketsSearchPage extends Component {
     });
   }
 
-  populateLocations(origin, destination) {
+  populateAirports(origin, destination) {
     this.requestAirportInfo(origin)
       .then((data) => {
         this.props.dispatch(setOrigin({ code: origin, name: `${data.cityName}, ${data.cityState ? data.cityState + ', ' : ''}${data.countryName}, ${origin} airport` }));
@@ -142,7 +142,7 @@ class AirTicketsSearchPage extends Component {
       const origin = { id: searchParams.origin };
       const destination = { id: searchParams.destination };
       const departureDate = moment(searchParams.departureDate, 'DD/MM/YYYY');
-      let arrivalDate = moment(departureDate).add(1, 'days');
+      let arrivalDate = moment(departureDate);
       if (flightRouting === '2') {
         arrivalDate = moment(searchParams.arrivalDate, 'DD/MM/YYYY');
       }
@@ -257,7 +257,7 @@ class AirTicketsSearchPage extends Component {
     }
   }
 
-  redirectToSearchPage(queryString) {
+  searchAirTickets(queryString) {
     this.unsubscribe();
     this.disconnect();
     this.clearIntervals();
@@ -278,7 +278,7 @@ class AirTicketsSearchPage extends Component {
 
     return (
       <div className="container">
-        <AirTicketsSearchBar redirectToSearchPage={this.redirectToSearchPage} />
+        <AirTicketsSearchBar search={this.searchAirTickets} />
         <div className="air-tickets-search-results">
           <div className="air-tickets-search-filter-panel">
             <AirTicketsSearchFilterPanel

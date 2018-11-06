@@ -1,0 +1,97 @@
+$breakpoints: (
+  "xs-phone": 320px,
+  "phone": 480px,
+  "tablet": 768px,
+  "desktop": 1024px,
+  "widescreen": 1200px
+);
+
+// keywords
+$media-expressions: (
+  "screen": "screen",
+  "print": "print",
+  "handheld": "handheld",
+  "landscape": "(orientation: landscape)",
+  "portrait": "(orientation: portrait)",
+  "retina2x": "(-webkit-min-device-pixel-ratio: 1.5), (min-resolution: 144dpi)",
+  "retina3x": "(-webkit-min-device-pixel-ratio: 2.5), (min-resolution: 240dpi)"
+);
+
+// ligatured operators ≥ ≤
+
+@import "../../../vendors/include-media";
+
+@import "../../../base/functions";
+@import "../../../base/variables";
+@import "../../../base/mixins";
+@import "../../../base/helpers";
+
+.check {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 10px;
+  @include media("<=widescreen") {
+    border: none;
+  }
+  @include media("<=phone") {
+    width: 85%;
+  }
+  .choose-roundtrip {
+    display: flex;
+    align-items: center;
+    &.hide-single {
+      display: none;
+    }
+    .roundtrip {
+      padding: 5px;
+      width: 130px;
+      display: inline-flex;
+      justify-content: center;
+      border-bottom: 2px solid #fff;
+      &:hover {
+        border-bottom: 2px solid #d87a61;
+      }
+      .icon-calendar {
+        display: flex;
+        align-items: center;
+        margin-left: 6px;
+        margin-right: 9px;
+        font-size: 0.9em;
+        color: #898c8d;
+      }
+      .choose-roundtrip-content {
+        margin: 0;
+        .text {
+          text-align: left;
+          min-width: 80px;
+          font-size: 16px;
+          text-align: left;
+        }
+      }
+    }
+  }
+  .close-roundtrip-holder {
+    position: relative;
+    .close-roundtrip-button {
+      position: absolute;
+      top: -30px;
+      right: 0px;
+      color: #d87a61;
+      font-size: 1.2em;
+      &.hide-close-roundtrip {
+        display: none;
+      }
+      cursor: pointer;
+      &:before {
+        content: "\00d7";
+      }
+    }
+  }
+  .icon-arrow-right {
+    display: flex;
+    align-items: center;
+    font-size: 0.8em;
+    margin: 0 10px 0 5px;
+  }
+}
