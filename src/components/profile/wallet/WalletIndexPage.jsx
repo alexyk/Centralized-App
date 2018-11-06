@@ -1,6 +1,6 @@
 import 'react-notifications/lib/notifications.css';
 import '../../../styles/css/components/profile/wallet/wallet-index-page.css';
-import { CREATE_WALLET } from '../../../constants/modals.js';
+import { CREATE_WALLET, RECOVER_WALLET } from '../../../constants/modals.js';
 import { Config } from '../../../config';
 import { LONG } from '../../../constants/notificationDisplayTimes.js';
 import { NotificationManager } from 'react-notifications';
@@ -13,6 +13,7 @@ import { connect } from 'react-redux';
 import { closeModal, openModal } from '../../../actions/modalsInfo';
 import NoEntriesMessage from '../../common/messages/NoEntriesMessage';
 import requester from '../../../requester';
+import RecoverWallerPassword from '../../common/utility/RecoverWallerPassword';
 
 class WalletIndexPage extends React.Component {
   constructor(props) {
@@ -132,7 +133,7 @@ class WalletIndexPage extends React.Component {
         <section id="wallet-index">
           <div id="profile-edit-form">
             <h2>Your Wallet</h2>
-            <a href={etherscanUrl} target="_blank" rel="noopener noreferrer" className="wallet-link">Reset wallet password</a>
+            <div onClick={() => this.openModal(RECOVER_WALLET)} className="wallet-link">Forgot your password?</div>
             <hr />
             <div className="loc-address">
               <label htmlFor="loc-address">Your ETH/LOC address <img src={Config.getValue('basePath') + 'images/icon-lock.png'} className="lock" alt="lock-o" /></label>
@@ -169,6 +170,7 @@ class WalletIndexPage extends React.Component {
           </div>
           <div className="before-footer clear-both" />
         </section>
+        <RecoverWallerPassword/>
       </div>
     );
   }
