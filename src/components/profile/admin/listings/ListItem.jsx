@@ -4,15 +4,16 @@ import { Config } from '../../../../config.js';
 import PropTypes from 'prop-types';
 import React from 'react';
 import Slider from 'react-slick';
+import { DEFAULT_LISTING_IMAGE_URL } from '../../../../constants/images';
 
 function ListItem(props) {
   const { id, name, lastModify, descriptionText, pictures, currencyCode, defaultDailyPrice, state } = props.item;
   const thumbnails = pictures.map((p, i) => { return { thumbnail: `${Config.getValue('imgHost')}${p.thumbnail}`, index: i }; });
   if (thumbnails.length < 1) {
-    pictures.push({ thumbnail: `${Config.getValue('imgHost')}/listings/images/default.png` });
+    pictures.push({ thumbnail: `${Config.getValue('imgHost')}${DEFAULT_LISTING_IMAGE_URL}` });
   }
 
-  const SlickButton = ({ currentSlide, slideCount, ...props }) => (
+  const SlickButton = ({ ...props }) => (
     <button {...props} />
   );
 
