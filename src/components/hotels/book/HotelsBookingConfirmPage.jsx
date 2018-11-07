@@ -14,7 +14,7 @@ import { RoomsXMLCurrency } from '../../../services/utilities/roomsXMLCurrency';
 import { CurrencyConverter } from '../../../services/utilities/currencyConverter';
 import requester from '../../../requester';
 import WalletPasswordModal from '../../common/modals/WalletPasswordModal';
-import BookingSteps from '../../common/utility/BookingSteps';
+import BookingSteps from '../../common/bookingSteps';
 import LocPrice from '../../common/utility/LocPrice';
 import QuoteLocPrice from '../../common/utility/QuoteLocPrice';
 import LocPriceUpdateTimer from '../../common/utility/LocPriceUpdateTimer';

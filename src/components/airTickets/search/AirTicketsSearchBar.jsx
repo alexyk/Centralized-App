@@ -49,7 +49,7 @@ function AirTicketsSearchBar(props) {
     queryString += '&destination=' + props.airTicketsSearchInfo.destination.code;
     queryString += '&departureDate=' + props.searchDatesInfo.startDate.format('DD/MM/YYYY');
     if (props.airTicketsSearchInfo.flightRouting === '2') {
-      queryString += '&arrivalDate=' + props.searchDatesInfo.endDate.format('DD/MM/YYYY');
+      queryString += '&returnDate=' + props.searchDatesInfo.endDate.format('DD/MM/YYYY');
     }
     queryString += '&adults=' + props.airTicketsSearchInfo.adultsCount;
     queryString += '&children=' + encodeURI(JSON.stringify(props.airTicketsSearchInfo.children));
@@ -65,7 +65,7 @@ function AirTicketsSearchBar(props) {
   };
 
   const handleSubmitModal = () => {
-    props.redirectToSearchPage(getQueryString());
+    props.search(getQueryString());
   };
 
   const openChildrenModal = (modal, e) => {
@@ -92,7 +92,7 @@ function AirTicketsSearchBar(props) {
     if (props.airTicketsSearchInfo.hasChildren) {
       openChildrenModal(AIR_TICKETS_CHILDREN);
     } else {
-      props.redirectToSearchPage(getQueryString(), e);
+      props.search(getQueryString(), e);
     }
   };
 
@@ -130,9 +130,7 @@ function AirTicketsSearchBar(props) {
           />
         </div>
         <div className="air-tickets-form-check-wrap">
-          <div className="check">
-            <AirTicketsDatepickerWrapper />
-          </div>
+          <AirTicketsDatepickerWrapper />
         </div>
         <div className="air-tickets-form-guest-wrap guests">
           <SelectFlex placeholder="Adults" className="select-adults" onChange={(value) => props.dispatch(setAdults(value))} value={props.airTicketsSearchInfo.adultsCount}>
@@ -211,12 +209,12 @@ function AirTicketsSearchBar(props) {
         closeModal={closeChildrenModal}
         handleSubmit={handleSubmitModal}
       />
-    </div>
+    </div >
   );
 }
 
 AirTicketsSearchBar.propTypes = {
-  redirectToSearchPage: PropTypes.func,
+  search: PropTypes.func,
 
   // start Router props
   location: PropTypes.object,

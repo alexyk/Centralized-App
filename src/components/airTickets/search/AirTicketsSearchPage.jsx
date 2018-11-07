@@ -8,6 +8,7 @@ import moment from 'moment';
 import uuid from 'uuid';
 import Stomp from 'stompjs';
 import Pagination from '../../common/pagination/Pagination';
+import BookingSteps from '../../common/bookingSteps';
 import AirTicketsSearchBar from './AirTicketsSearchBar';
 import { setOrigin, setDestination, setAirTicketsSearchInfo } from '../../../actions/airTicketsSearchInfo';
 import { asyncSetStartDate, asyncSetEndDate } from '../../../actions/searchDatesInfo';
@@ -42,7 +43,7 @@ class AirTicketsSearchPage extends Component {
     };
 
     this.onPageChange = this.onPageChange.bind(this);
-    this.redirectToSearchPage = this.redirectToSearchPage.bind(this);
+    this.searchAirTickets = this.searchAirTickets.bind(this);
 
     // SOCKET BINDINGS
     this.handleReceiveMessage = this.handleReceiveMessage.bind(this);
@@ -113,7 +114,7 @@ class AirTicketsSearchPage extends Component {
     });
   }
 
-  populateLocations(origin, destination) {
+  populateAirports(origin, destination) {
     this.requestAirportInfo(origin)
       .then((data) => {
         this.props.dispatch(setOrigin({ code: origin, name: `${data.cityName}, ${data.cityState ? data.cityState + ', ' : ''}${data.countryName}, ${origin} airport` }));
@@ -142,9 +143,9 @@ class AirTicketsSearchPage extends Component {
       const origin = { id: searchParams.origin };
       const destination = { id: searchParams.destination };
       const departureDate = moment(searchParams.departureDate, 'DD/MM/YYYY');
-      let arrivalDate = moment(departureDate).add(1, 'days');
+      let returnDate = moment(departureDate);
       if (flightRouting === '2') {
-        arrivalDate = moment(searchParams.arrivalDate, 'DD/MM/YYYY');
+        returnDate = moment(searchParams.returnDate, 'DD/MM/YYYY');
       }
       const adultsCount = searchParams.adults;
       const children = JSON.parse(searchParams.children);
@@ -153,7 +154,7 @@ class AirTicketsSearchPage extends Component {
       const page = searchParams.page;
 
       this.props.dispatch(asyncSetStartDate(departureDate));
-      this.props.dispatch(asyncSetEndDate(arrivalDate));
+      this.props.dispatch(asyncSetEndDate(returnDate));
       this.props.dispatch(setAirTicketsSearchInfo(flightRouting, flightClass, stops, departureTime, origin, destination, adultsCount, children, infants, hasChildren));
 
       this.populateAirports(searchParams.origin, searchParams.destination);
@@ -257,7 +258,7 @@ class AirTicketsSearchPage extends Component {
     }
   }
 
-  redirectToSearchPage(queryString) {
+  searchAirTickets(queryString) {
     this.unsubscribe();
     this.disconnect();
     this.clearIntervals();
@@ -278,7 +279,8 @@ class AirTicketsSearchPage extends Component {
 
     return (
       <div className="container">
-        <AirTicketsSearchBar redirectToSearchPage={this.redirectToSearchPage} />
+        <AirTicketsSearchBar search={this.searchAirTickets} />
+        <BookingSteps steps={['Search', 'Details', 'Prepare Booking', 'Confirm & Pay']} currentStepIndex={0} />
         <div className="air-tickets-search-results">
           <div className="air-tickets-search-filter-panel">
             <AirTicketsSearchFilterPanel

@@ -13,9 +13,9 @@ class HeroComponent extends React.Component {
   constructor(props) {
     super(props);
 
-    this.redirectToAirTicketsSearchPage = this.redirectToAirTicketsSearchPage.bind(this);
     this.searchHotels = this.searchHotels.bind(this);
     this.searchHomes = this.searchHomes.bind(this);
+    this.searchAirTickets = this.searchAirTickets.bind(this);
   }
 
   searchHotels(queryString) {
@@ -26,7 +26,7 @@ class HeroComponent extends React.Component {
     this.props.history.push('/homes/listings' + queryString);
   }
 
-  redirectToAirTicketsSearchPage(queryString) {
+  searchAirTickets(queryString) {
     this.props.history.push('/tickets/results' + queryString);
   }
 
@@ -37,9 +37,9 @@ class HeroComponent extends React.Component {
           <HomesSearchBar search={this.searchHomes} />
         );
       case 'tickets':
-        return <AirTicketsSearchBar redirectToSearchPage={this.redirectToAirTicketsSearchPage} />;
+        return <AirTicketsSearchBar search={this.searchAirTickets} />;
       default:
-        return <HotelsSearchBar search={this.redirectToHotelsSearchPage} />;
+        return <HotelsSearchBar search={this.searchHotels} />;
     }
   }
 

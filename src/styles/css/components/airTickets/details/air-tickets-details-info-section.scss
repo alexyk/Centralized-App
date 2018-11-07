@@ -32,39 +32,46 @@ $media-expressions: (
     grid-template-columns: 60% 35%;
     grid-gap: 5%;
     .air-tickets-details-content {
-      .facilities {
-        display: flex;
-        flex-wrap: wrap;
-        .facility {
-          margin-right: 20px;
-          margin-bottom: 20px;
-          span {
+      &-item {
+        margin-bottom: 40px;
+      }
+      .flight-details {
+        font-size: 18px;
+      }
+      .farerules {
+        .flight-rule-title {
+          margin-bottom: 0.5em;
+          display: flex;
+          align-items: center;
+          h5 {
             display: flex;
-            -ms-flex-pack: center;
-            justify-content: center;
-            -ms-flex-align: center;
+            width: 95%;
+            margin: 0;
             align-items: center;
-            width: 70px;
-            height: 70px;
-            background-color: #fff;
-            border: 1px solid #cccccc;
-            border-radius: 2px;
-            img {
-              width: 60%;
-              height: 60%;
+            .flight-rule-origin,
+            .flight-rule-destination {
+              width: 30%;
+            }
+            .icon-arrow-right {
+              font-size: 0.6em;
+              margin: 0 20px;
+            }
+          }
+          .toggle {
+            width: 5%;
+            font-size: 25px;
+            span {
+              cursor: pointer;
             }
           }
         }
-        .more-facilities {
-          font-size: 24px;
-          letter-spacing: 1px;
-          color: #d97a61;
-          text-align: center;
-          display: -ms-flexbox;
-          display: flex;
-          -ms-flex-align: center;
-          align-items: center;
-          cursor: pointer;
+        .flight-rules {
+          .rule {
+            margin-bottom: 10px;
+            h5 {
+              font-weight: 400;
+            }
+          }
         }
       }
     }
@@ -88,38 +95,15 @@ $media-expressions: (
         }
         .booking-dates {
           margin: 10px 0;
-          > div {
-            border: 1px solid #cccccc99;
-            border-radius: 4px;
-            padding: 10px 5px;
-          }
-          .datepicker {
+          display: flex;
+          border: 1px solid #cccccc99;
+          border-radius: 4px;
+          padding: 10px 5px;
+          .air-tickets-form-check-wrap {
             display: flex;
-            .search-bar-date-picker-hide-preview {
-              width: 100%;
-              
-            }
-          }
-          .days-of-stay {
-            display: flex;
-            flex-direction: column;
+            align-items: center;
             justify-content: center;
-            text-align: center;
-            padding: 3px 9px;
-            margin-bottom: 10px;
-            border: 1px solid #cccccc99;
-            border-radius: 4px;
-            margin-bottom: 0;
-            @include media("<=desktop") {
-              display: none;
-            }
-            span {
-              font-size: 12px;
-            }
-            .icon-moon {
-              font-size: 18px;
-              margin-bottom: 5px;
-            }
+            width: 100%;
           }
         }
         .booking-guests {
@@ -166,7 +150,45 @@ $media-expressions: (
           font-weight: normal;
         }
         .without-fees,
-        .cleaning-fee,
+        .cleaning-fee {
+          display: grid;
+          grid-template-columns: 40% 10% 50%;
+          margin: 10px 0;
+          .icon-question {
+            position: relative;
+            &:hover {
+              &::before,
+              &::after {
+                opacity: 1;
+              }
+            }
+            &::before {
+              content: "\E914";
+              color: #abc3bd;
+            }
+            &::after {
+              content: attr(tooltip);
+              position: absolute;
+              left: 270%;
+              top: 6px;
+              -webkit-transform: translateX(-75%) translateY(-120%);
+              -ms-transform: translateX(-75%) translateY(-120%);
+              transform: translateX(-75%) translateY(-120%);
+              background: rgba(100, 100, 100, 0.7);
+              text-align: center;
+              color: #fff;
+              padding: 10px 20px 10px 20px;
+              min-width: 200px;
+              border-radius: 2px;
+              border: 1px solid black;
+              pointer-events: none;
+              opacity: 0;
+              font: 16px/1.2 "Futura", "Arial", "Helvetica Neue", "Helvetica",
+                sans-serif;
+              -webkit-font-smoothing: antialiased;
+            }
+          }
+        }
         .total {
           display: grid;
           grid-template-columns: 70% 30%;
