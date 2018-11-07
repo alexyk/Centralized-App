@@ -48,10 +48,12 @@ class AirTicketsDetailsBookingPanel extends React.Component {
         <div className="fiat-price-box">
           <div className="without-fees">
             <p>Passengers</p>
+            <span className="icon-question" tooltip={'Some message'}></span>
             <p>{currencySign}{(fiatPriceInCurrentCurrency - taxPriceInCurrentCurrency).toFixed(2)}</p>
           </div>
           <div className="cleaning-fee">
             <p>Taxes and fees</p>
+            <span className="icon-question" tooltip={'Some message'}></span>
             <p>{currencySign}{taxPriceInCurrentCurrency.toFixed(2)}</p>
           </div>
           <div className="total">
@@ -66,10 +68,12 @@ class AirTicketsDetailsBookingPanel extends React.Component {
         <div className="loc-price-box">
           <div className="without-fees">
             <p>Passengers</p>
+            <span className="icon-question" tooltip={'Some message'}></span>
             <p><LocPrice fiat={fiatPriceInRoomsXMLCurrency - taxPriceInRoomsXMLCurrency} brackets={false} /></p>
           </div>
           <div className="cleaning-fee">
             <p>Taxes and fees</p>
+            <span className="icon-question" tooltip={'Some message'}></span>
             <p><LocPrice fiat={taxPriceInRoomsXMLCurrency} brackets={false} /></p>
           </div>
           <div className="total">

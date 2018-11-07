@@ -37,7 +37,7 @@ class AirTicketsDatepickerWrapper extends Component {
           minDate={moment()}
           enableRanges={this.props.airTicketsSearchInfo.flightRouting === '2'}
           intervalStartText="Departure"
-          intervalEndText="Arrival"
+          intervalEndText="Return"
           enableSameDates
         />
         <div className={`choose-roundtrip${this.props.airTicketsSearchInfo.flightRouting === '2' ? ' hide-single' : ''}`}>

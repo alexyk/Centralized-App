@@ -68,12 +68,36 @@ $media-expressions: (
         }
       }
       .farerules {
-        .icon-arrow-right {
-          font-size: 0.6em;
-          margin: 0 10px 0 5px;
+        .flight-rule-title {
+          margin-bottom: 0.5em;
+          display: flex;
+          align-items: center;
+          h4 {
+            display: flex;
+            width: 95%;
+            margin: 0;
+            align-items: center;
+            .flight-rule-origin,
+            .flight-rule-origin {
+              width: 30%;
+            }
+            .icon-arrow-right {
+              font-size: 0.6em;
+              margin: 0 20px;
+            }
+          }
+          .toggle {
+            width: 5%;
+            font-size: 25px;
+            span {
+              cursor: pointer;
+            }
+          }
         }
-        .rule {
-          margin-bottom: 10px;
+        .flight-rules {
+          .rule {
+            margin-bottom: 10px;
+          }
         }
       }
     }
@@ -152,7 +176,45 @@ $media-expressions: (
           font-weight: normal;
         }
         .without-fees,
-        .cleaning-fee,
+        .cleaning-fee {
+          display: grid;
+          grid-template-columns: 40% 10% 50%;
+          margin: 10px 0;
+          .icon-question {
+            position: relative;
+            &:hover {
+              &::before,
+              &::after {
+                opacity: 1;
+              }
+            }
+            &::before {
+              content: "\E914";
+              color: #abc3bd;
+            }
+            &::after {
+              content: attr(tooltip);
+              position: absolute;
+              left: 270%;
+              top: 6px;
+              -webkit-transform: translateX(-75%) translateY(-120%);
+              -ms-transform: translateX(-75%) translateY(-120%);
+              transform: translateX(-75%) translateY(-120%);
+              background: rgba(100, 100, 100, 0.7);
+              text-align: center;
+              color: #fff;
+              padding: 10px 20px 10px 20px;
+              min-width: 200px;
+              border-radius: 2px;
+              border: 1px solid black;
+              pointer-events: none;
+              opacity: 0;
+              font: 16px/1.2 "Futura", "Arial", "Helvetica Neue", "Helvetica",
+                sans-serif;
+              -webkit-font-smoothing: antialiased;
+            }
+          }
+        }
         .total {
           display: grid;
           grid-template-columns: 70% 30%;

@@ -49,7 +49,7 @@ function AirTicketsSearchBar(props) {
     queryString += '&destination=' + props.airTicketsSearchInfo.destination.code;
     queryString += '&departureDate=' + props.searchDatesInfo.startDate.format('DD/MM/YYYY');
     if (props.airTicketsSearchInfo.flightRouting === '2') {
-      queryString += '&arrivalDate=' + props.searchDatesInfo.endDate.format('DD/MM/YYYY');
+      queryString += '&returnDate=' + props.searchDatesInfo.endDate.format('DD/MM/YYYY');
     }
     queryString += '&adults=' + props.airTicketsSearchInfo.adultsCount;
     queryString += '&children=' + encodeURI(JSON.stringify(props.airTicketsSearchInfo.children));

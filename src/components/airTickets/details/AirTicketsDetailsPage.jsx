@@ -30,19 +30,28 @@ class AirTicketsDetailsPage extends React.Component {
   componentDidMount() {
     fetch(`${Config.getValue('apiHost')}flight/selectFlight?flightId=${this.props.match.params.id}`)
       .then(res => {
-        res.json().then((data) => {
-          this.setState({
-            result: data
+        if (res.ok) {
+          res.json().then((data) => {
+            this.setState({
+              result: data
+            });
           });
-        });
+        } else {
+          this.searchAirTickets(this.props.location.search);
+        }
       });
     fetch(`${Config.getValue('apiHost')}flight/fareRules?flightId=${this.props.match.params.id}`)
       .then(res => {
-        res.json().then((data) => {
-          this.setState({
-            fareRules: data
+        if (res.ok) {
+          res.json().then((data) => {
+            this.setState({
+              fareRules: data
+            });
           });
-        });
+        } else {
+          this.searchAirTickets(this.props.location.search);
+        }
+
       });
     this.populateSearchBar();
   }
@@ -94,9 +103,9 @@ class AirTicketsDetailsPage extends React.Component {
       const origin = { id: searchParams.origin };
       const destination = { id: searchParams.destination };
       const departureDate = moment(searchParams.departureDate, 'DD/MM/YYYY');
-      let arrivalDate = moment(departureDate);
+      let returnDate = moment(departureDate);
       if (routing === '2') {
-        arrivalDate = moment(searchParams.arrivalDate, 'DD/MM/YYYY');
+        returnDate = moment(searchParams.returnDate, 'DD/MM/YYYY');
       }
       const adultsCount = searchParams.adults;
       const children = JSON.parse(searchParams.children);
@@ -105,7 +114,7 @@ class AirTicketsDetailsPage extends React.Component {
       const page = searchParams.page;
 
       this.props.dispatch(asyncSetStartDate(departureDate));
-      this.props.dispatch(asyncSetEndDate(arrivalDate));
+      this.props.dispatch(asyncSetEndDate(returnDate));
       this.props.dispatch(setAirTicketsSearchInfo(routing, flightClass, stops, departureTime, origin, destination, adultsCount, children, infants, hasChildren));
 
       this.populateAirports(searchParams.origin, searchParams.destination);

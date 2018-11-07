@@ -22,7 +22,6 @@ function AirTicketsResultsHolder(props) {
     return <AirTicketsSearchResult
       key={result.id}
       result={result}
-      id={result.id}
       exchangeRatesInfo={props.exchangeRatesInfo}
       paymentInfo={props.paymentInfo}
       userInfo={props.userInfo}

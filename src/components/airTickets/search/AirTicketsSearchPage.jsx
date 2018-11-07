@@ -143,9 +143,9 @@ class AirTicketsSearchPage extends Component {
       const origin = { id: searchParams.origin };
       const destination = { id: searchParams.destination };
       const departureDate = moment(searchParams.departureDate, 'DD/MM/YYYY');
-      let arrivalDate = moment(departureDate);
+      let returnDate = moment(departureDate);
       if (flightRouting === '2') {
-        arrivalDate = moment(searchParams.arrivalDate, 'DD/MM/YYYY');
+        returnDate = moment(searchParams.returnDate, 'DD/MM/YYYY');
       }
       const adultsCount = searchParams.adults;
       const children = JSON.parse(searchParams.children);
@@ -154,7 +154,7 @@ class AirTicketsSearchPage extends Component {
       const page = searchParams.page;
 
       this.props.dispatch(asyncSetStartDate(departureDate));
-      this.props.dispatch(asyncSetEndDate(arrivalDate));
+      this.props.dispatch(asyncSetEndDate(returnDate));
       this.props.dispatch(setAirTicketsSearchInfo(flightRouting, flightClass, stops, departureTime, origin, destination, adultsCount, children, infants, hasChildren));
 
       this.populateAirports(searchParams.origin, searchParams.destination);

@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react';
+import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import AirTicketsDetailsBookingPanel from './AirTicketsDetailsBookingPanel';
 import { initStickyElements } from '../common/detailsPageUtils';
@@ -14,7 +14,17 @@ import '../../../styles/css/components/airTickets/search/air-tickets-search-resu
 import '../../../styles/css/components/airTickets/details/air-tickets-details-info-section.css';
 
 
-class AirTicketsDetailsInfoSection extends React.Component {
+class AirTicketsDetailsInfoSection extends Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      fareRulesIndex: -1
+    };
+
+    this.toggleFareRule = this.toggleFareRule.bind(this);
+  }
+
   componentDidMount() {
     initStickyElements();
   }
@@ -41,18 +51,157 @@ class AirTicketsDetailsInfoSection extends React.Component {
   }
 
   toggleShowAllFacilities() {
-    
+
+  }
+
+  getDepartureInfo(departureInfo) {
+    if (departureInfo.length === 0) {
+      return;
+    }
+
+    const departureTime = departureInfo[0].originInfo.flightTime;
+    const arrivalTime = departureInfo[departureInfo.length - 1].destinationInfo.flightTime;
+    const carrierName = departureInfo[0].carrierInfo.carrierName;
+    let middleStopsBulets = [];
+    for (let i = 0; i < departureInfo.length - 1; i++) {
+      middleStopsBulets.push(
+        <Fragment key={i}>
+          <div key={i} className="bulet-container"><span className="bulet"></span></div>
+          <hr className="line" />
+          <div className="middle-stop" style={{ left: `${(i * 60) + 40}px` }}>{departureInfo[i].destinationInfo.airportIATACode}</div>
+        </Fragment>
+      );
+    }
+
+    return (
+      <Fragment>
+        <div className="solution-main-info">
+          <h5 className="departure">Departure</h5>
+          <h5 className="carrier">{carrierName}</h5>
+          <div className="duration">
+            <img width="20" src={TimeIcon} alt="time" />
+            {this.extractFlightFullDurationFromMinutes(departureInfo[departureInfo.length - 1].journeyTime)}
+          </div>
+          <div className="stops-count">{departureInfo.length - 1 === 0 ? 'direct flight' : `${departureInfo.length - 1} stops`}</div>
+        </div>
+        <div className="solution-flight">
+          <div className="flight">
+            <div className="item flight-times">
+              {departureTime}
+              <div className="arrow-icon-container">
+                <img src="/images/icon-arrow.png" alt="icon-arrow" />
+              </div>
+              {arrivalTime}
+            </div>
+            <div className="item flight-stops">
+              <div className="stop">{departureInfo[0].originInfo.airportIATACode}</div>
+              <div className="stops-container horizontal">
+                <div className="bulet-container"><span className="bulet"></span></div>
+                <hr className="line" />
+                {departureInfo.length === 1 ? null : middleStopsBulets}
+                <div className="bulet-container"><span className="bulet"></span></div>
+              </div>
+              <div className="stop">{departureInfo[departureInfo.length - 1].destinationInfo.airportIATACode}</div>
+            </div>
+            <div className="item flight-icons">
+              <div className="icon">
+                <img src={MealIcon} alt="meal" />
+              </div>
+              <div className="icon">
+                <img src={BagIcon} alt="bag" />
+              </div>
+              <div className="icon wi-fi">
+                <img src={WirelessIcon} alt="bag" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </Fragment >
+    );
+  }
+
+  getReturnInfo(returnInfo) {
+    if (returnInfo.length === 0) {
+      return;
+    }
+
+    const departureTime = returnInfo[0].originInfo.flightTime;
+    const arrivalTime = returnInfo[returnInfo.length - 1].destinationInfo.flightTime;
+    const carrierName = returnInfo[0].carrierInfo.carrierName;
+    let middleStopsBulets = [];
+    for (let i = 0; i < returnInfo.length - 1; i++) {
+      middleStopsBulets.push(
+        <Fragment key={i}>
+          <div key={i} className="bulet-container"><span className="bulet"></span></div>
+          <hr className="line" />
+          <div className="middle-stop" style={{ left: `${(i * 60) + 40}px` }}>{returnInfo[i].destinationInfo.airportIATACode}</div>
+        </Fragment>
+      );
+    }
+
+    return (
+      <Fragment>
+        <div className="solution-main-info">
+          <h5 className="departure">Return</h5>
+          <h5 className="carrier">{carrierName}</h5>
+          <div className="duration">
+            <img width="20" src={TimeIcon} alt="time" />
+            {this.extractFlightFullDurationFromMinutes(returnInfo[returnInfo.length - 1].journeyTime)}
+          </div>
+          <div className="stops-count">{returnInfo.length - 1 === 0 ? 'direct flight' : `${returnInfo.length - 1} stops`}</div>
+        </div>
+        <div className="solution-flight">
+          <div className="flight">
+            <div className="item flight-times">
+              {departureTime}
+              <div className="arrow-icon-container">
+                <img src="/images/icon-arrow.png" alt="icon-arrow" />
+              </div>
+              {arrivalTime}
+            </div>
+            <div className="item flight-stops">
+              <div className="stop">{returnInfo[0].originInfo.airportIATACode}</div>
+              <div className="stops-container horizontal">
+                <div className="bulet-container"><span className="bulet"></span></div>
+                <hr className="line" />
+                {returnInfo.length === 1 ? null : middleStopsBulets}
+                <div className="bulet-container"><span className="bulet"></span></div>
+              </div>
+              <div className="stop">{returnInfo[returnInfo.length - 1].destinationInfo.airportIATACode}</div>
+            </div>
+            <div className="item flight-icons">
+              <div className="icon">
+                <img src={MealIcon} alt="meal" />
+              </div>
+              <div className="icon">
+                <img src={BagIcon} alt="bag" />
+              </div>
+              <div className="icon wi-fi">
+                <img src={WirelessIcon} alt="bag" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </Fragment >
+    );
+  }
+
+  toggleFareRule(fareRulesIndex) {
+    this.setState({
+      fareRulesIndex: fareRulesIndex
+    });
   }
 
   render() {
     const { result, fareRules } = this.props;
     console.log(result);
-    console.log(fareRules);
+    const { fareRulesIndex } = this.state;
     const item = result.items[0];
+    console.log(item);
+    console.log(fareRules);
 
-    const departureTime = item.segments[0].originInfo.flightTime;
-    const arrivalTime = item.segments[item.segments.length - 1].destinationInfo.flightTime;
-    const carrierName = item.segments[0].carrierInfo.carrierName;
+    const departureInfo = this.getDepartureInfo(item.departureInfo);
+    const returnInfo = this.getReturnInfo(item.returnInfo);
 
     return (
       <section className="air-tickets-details-container">
@@ -60,47 +209,8 @@ class AirTicketsDetailsInfoSection extends React.Component {
           <div className="air-tickets-details-content">
             <div className="air-tickets-details-result">
               <div className="air-tickets-result-content">
-                <div className="solution-main-info">
-                  <h5 className="departure">Departure</h5>
-                  <h5 className="carrier">{carrierName}</h5>
-                  <div className="duration">
-                    <img width="20" src={TimeIcon} alt="time" />
-                    {this.extractFlightFullDurationFromMinutes(item.segments[item.segments.length - 1].journeyTime)}
-                  </div>
-                  <div className="stops-count">{item.segments.length - 1} stops</div>
-                </div>
-                <div className="solution-flight">
-                  <div className="flight">
-                    <div className="item flight-times">
-                      {departureTime}
-                      <div className="arrow-icon-container">
-                        <img src="/images/icon-arrow.png" alt="icon-arrow" />
-                      </div>
-                      {arrivalTime}
-                    </div>
-                    <div className="item flight-stops">
-                      <div className="stop">{item.segments[0].originInfo.airportIATACode}</div>
-                      <div className="stops-container horizontal">
-                        <div className="bulet-container"><span className="bulet"></span></div>
-                        <hr className="line" />
-                        {item.segments.length === 1 ? null : this.middleStops(item)}
-                        <div className="bulet-container"><span className="bulet"></span></div>
-                      </div>
-                      <div className="stop">{item.segments[item.segments.length - 1].destinationInfo.airportIATACode}</div>
-                    </div>
-                    <div className="item flight-icons">
-                      <div className="icon">
-                        <img src={MealIcon} alt="meal" />
-                      </div>
-                      <div className="icon">
-                        <img src={BagIcon} alt="bag" />
-                      </div>
-                      <div className="icon wi-fi">
-                        <img src={WirelessIcon} alt="bag" />
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                {departureInfo}
+                {returnInfo}
               </div>
             </div>
             <div className="air-tickets-details-content-item">
@@ -163,9 +273,14 @@ class AirTicketsDetailsInfoSection extends React.Component {
                 });
                 return (
                   <Fragment key={segmentIndex}>
-                    <h3>{segment.origin.name} <span className="icon-arrow-right arrow"></span> {segment.destination.name}</h3>
-                    {rules}
-                    <hr />
+                    <div className="flight-rule-title">
+                      <h4><div className="flight-rule-origin">{segment.origin.name}</div> <span className="icon-arrow-right arrow"></span> <div className="flight-rule-destination">{segment.destination.name}</div></h4>
+                      {fareRulesIndex === segmentIndex ? <div className="toggle"><span className="fa fa-angle-down" onClick={() => this.toggleFareRule(-1)} /></div> : <div className="toggle"><span className="fa fa-angle-right" onClick={() => this.toggleFareRule(segmentIndex)} /></div>}
+                    </div>
+                    {fareRulesIndex === segmentIndex &&
+                      <div className="flight-rules">
+                        {rules}
+                      </div>}
                   </Fragment>
                 );
               })}
