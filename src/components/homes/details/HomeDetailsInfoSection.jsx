@@ -13,12 +13,10 @@ import MyMapComponent from './MyMapComponent';
 import '../../../styles/css/components/homes/booking/homes-booking-page.css';
 
 import HomeDetailsRatingBox from './HomeDetailsRatingBox';
-import { setCheckInOutHours, initStickyElements } from '../common/detailsPageUtils.js';
-import Rating from '../../common/rating/Rating';
+import { setCheckInOutHours } from '../common/detailsPageUtils.js';
 
 class HomeDetailsInfoSection extends React.Component {
   componentDidMount() {
-    initStickyElements();
     setCheckInOutHours(this.props.checks);
   }
 
@@ -59,8 +57,7 @@ class HomeDetailsInfoSection extends React.Component {
       for (let i = 1; i <= guests; i++) {
         guestArray.push(i);
       }
-    }
-    else {
+    } else {
       for (let i = 1; i <= 10; i++) {
         guestArray.push(i);
       }
@@ -151,24 +148,20 @@ class HomeDetailsInfoSection extends React.Component {
 }
 
 HomeDetailsInfoSection.propTypes = {
-  data: PropTypes.object,
-  checks: PropTypes.object,
-  roomDetails: PropTypes.object,
-  isLogged: PropTypes.bool,
+  calendar: PropTypes.array,
   startDate: PropTypes.object,
   endDate: PropTypes.object,
-  nights: PropTypes.number,
-  match: PropTypes.object,
+  data: PropTypes.object,
+  isLogged: PropTypes.bool,
   openModal: PropTypes.func,
-  calendar: PropTypes.array,
+  roomDetails: PropTypes.object,
+  nights: PropTypes.number,
+  checks: PropTypes.object,
   handleChangeStart: PropTypes.func,
   handleChangeEnd: PropTypes.func,
 
-  // start Router props
+  // Router props
   location: PropTypes.object,
-
 };
-
-
 
 export default withRouter(HomeDetailsInfoSection);

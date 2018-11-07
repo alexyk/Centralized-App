@@ -20,15 +20,21 @@ export const airdropInfo = {
   SET_AIRDROP_INFO: 'SET_AIRDROP_INFO'
 };
 
-// searchInfo actions
-export const searchInfo = {
-  SET_DATES: 'SET_DATES',
+// hotels searchInfo actions
+export const hotelsSearchInfo = {
   SET_REGION: 'SET_REGION',
   SET_ROOMS_BY_COUNT_OF_ROOMS: 'SET_ROOMS_BY_COUNT_OF_ROOMS',
   SET_ROOMS: 'SET_ROOMS',
   SET_ADULTS: 'SET_ADULTS',
   SET_CHILDREN: 'SET_CHILDREN',
-  SET_SEARCH_INFO: 'SET_SEARCH_INFO'
+  SET_HOTELS_SEARCH_INFO: 'SET_HOTELS_SEARCH_INFO'
+};
+
+// homes searchInfo actions
+export const homesSearchInfo = {
+  SET_COUNTRY: 'SET_COUNTRY',
+  SET_GUESTS: 'SET_GUESTS',
+  SET_HOMES_SEARCH_INFO: 'SET_HOMES_SEARCH_INFO'
 };
 
 // socket actions
@@ -57,14 +63,9 @@ export const locPriceUpdateTimerInfo = {
   RESET: 'RESET'
 };
 
-// burger menu actions
-export const burgerMenuInfo = {
-  SET_SHOW_MENU: 'SET_SHOW_MENU'
-};
-
 // air tickets search info actions
 export const airTicketsSearchInfo = {
-  SET_ROUTING: 'SET_ROUTING',
+  SET_FLIGHT_ROUTING: 'SET_FLIGHT_ROUTING',
   SET_FLIGHT_CLASS: 'SET_FLIGHT_CLASS',
   SET_STOPS: 'SET_STOPS',
   SET_DEPARTURE_TIME: 'SET_DEPARTURE_TIME',
@@ -76,4 +77,15 @@ export const airTicketsSearchInfo = {
   SET_CHILDREN: 'SET_CHILDREN',
   SET_INFANTS: 'SET_INFANTS',
   SET_AIR_TICKETS_SEARCH_INFO: 'SET_AIR_TICKETS_SEARCH_INFO'
+};
+
+// burger menu actions
+export const burgerMenuInfo = {
+  SET_SHOW_MENU: 'SET_SHOW_MENU'
+};
+
+// search dates actions
+export const searchDatesInfo = {
+  SET_START_DATE: 'SET_START_DATE',
+  SET_END_DATE: 'SET_END_DATE',
 };

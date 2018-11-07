@@ -221,13 +221,16 @@ $breakpoints: (
     }
     .total {
       justify-content: flex-end;
-      span {
+      flex-wrap: wrap;
+      margin-top: 10px;
+
+      .value {
         color: #000;
-        margin-left: 3%;
-        font-size: 28px;
-        @include media("<=tablet") {
-          font-size: 18px;
-        }
+        font-size: 1.1em;
+        flex-wrap: nowrap;
+        // @include media("<=tablet") {
+        //   font-size: 18px;
+        // }
       }
     }
   }

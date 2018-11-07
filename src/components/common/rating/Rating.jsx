@@ -13,6 +13,7 @@ function Rating(props) {
       case 2: return `Sufficient ${rating}/5`;
       case 1: return `Weak ${rating}/5`;
       case 0: return 'No reviews';
+      default: return;
     }
   };
 

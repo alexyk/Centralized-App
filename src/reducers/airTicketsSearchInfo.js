@@ -1,16 +1,13 @@
 import { airTicketsSearchInfo } from '../actions/actionTypes';
-import moment from 'moment';
 
 const initialState = {
-  routing: null,
+  flightRouting: '1',
   flightClass: '0',
   stops: '-1',
   departureTime: '',
   origin: null,
   destination: null,
-  departureDate: moment(),
-  arrivalDate: moment().add(1, 'day'),
-  adultsCount: 1,
+  adultsCount: '1',
   children: [],
   infants: 0,
   hasChildren: false
@@ -18,10 +15,9 @@ const initialState = {
 
 export default function reducer(state = initialState, action) {
   switch (action.type) {
-    case airTicketsSearchInfo.SET_ROUTING:
+    case airTicketsSearchInfo.SET_FLIGHT_ROUTING:
       return Object.assign({}, state, {
-        routing: action.routing,
-        arrivalDate: setArrivalDate(action.routing, state.departureDate, state.arrivalDate)
+        flightRouting: action.flightRouting
       });
     case airTicketsSearchInfo.SET_FLIGHT_CLASS:
       return Object.assign({}, state, {
@@ -43,11 +39,6 @@ export default function reducer(state = initialState, action) {
       return Object.assign({}, state, {
         destination: action.destination
       });
-    case airTicketsSearchInfo.SET_DATES:
-      return Object.assign({}, state, {
-        departureDate: action.departureDate,
-        arrivalDate: setArrivalDate(state.routing, action.departureDate, action.arrivalDate)
-      });
     case airTicketsSearchInfo.SET_ADULTS:
       return Object.assign({}, state, {
         adultsCount: action.adultsCount,
@@ -66,14 +57,12 @@ export default function reducer(state = initialState, action) {
       });
     case airTicketsSearchInfo.SET_AIR_TICKETS_SEARCH_INFO:
       return Object.assign({}, state, {
-        routing: action.routing,
+        flightRouting: action.flightRouting,
         flightClass: action.flightClass,
         stops: action.stops,
         departureTime: action.departureTime,
         origin: action.origin,
         destination: action.destination,
-        departureDate: action.departureDate,
-        arrivalDate: setArrivalDate(action.routing, action.departureDate, action.arrivalDate),
         adultsCount: action.adultsCount,
         hasChildren: action.hasChildren,
         children: action.children,
@@ -82,16 +71,4 @@ export default function reducer(state = initialState, action) {
     default:
       return state;
   }
-}
-
-function setArrivalDate(routing, departureDate, arrivalDate) {
-  if (routing === '2') {
-    if (arrivalDate && arrivalDate.diff(departureDate, 'days') !== 0) {
-      return arrivalDate;
-    }
-
-    return moment(departureDate).add(1, 'day');
-  }
-
-  return null;
 }

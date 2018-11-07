@@ -9,13 +9,12 @@ import React from 'react';
 import { connect } from 'react-redux';
 import moment from 'moment';
 import queryString from 'query-string';
-import { setCurrency } from '../../../actions/paymentInfo';
 import { withRouter } from 'react-router-dom';
 import BookingSteps from '../../common/utility/BookingSteps';
 import { RoomsXMLCurrency } from '../../../services/utilities/roomsXMLCurrency';
 import LocPrice from '../../common/utility/LocPrice';
-import validator from 'validator';
 import xregexp from 'xregexp';
+import { DEFAULT_LISTING_IMAGE_URL } from '../../../constants/images';
 
 class HotelsBookingPage extends React.Component {
   constructor(props) {
@@ -108,7 +107,7 @@ class HotelsBookingPage extends React.Component {
       return (<div className="loader"></div>);
     }
 
-    if (!this.props.exchangeRates) {
+    if (!this.props.exchangeRatesInfo.currencyExchangeRates) {
       return (<div className="loader"></div>);
     }
 
@@ -116,14 +115,15 @@ class HotelsBookingPage extends React.Component {
       return (<div className="loader"></div>);
     }
 
-    const { hotel, rooms, guests, exchangeRates } = this.props;
+    const { hotel, rooms, guests } = this.props;
     const { handleAdultChange, handleChildAgeChange } = this.props;
     const { currency, currencySign } = this.props.paymentInfo;
+    const { currencyExchangeRates } = this.props.exchangeRatesInfo;
     const city = hotel.city;
     const address = hotel.additionalInfo.mainAddress;
     const roomsTotalPrice = this.calculateRoomsTotalPrice(rooms);
-    const hotelPicUrl = hotel.hotelPhotos && hotel.hotelPhotos.length > 0 ? hotel.hotelPhotos[0].url : '/listings/images/default.png';
-    const priceInSelectedCurrency = Number(CurrencyConverter.convert(exchangeRates, RoomsXMLCurrency.get(), currency, roomsTotalPrice)).toFixed(2);
+    const hotelPicUrl = hotel.hotelPhotos && hotel.hotelPhotos.length > 0 ? hotel.hotelPhotos[0].url : DEFAULT_LISTING_IMAGE_URL;
+    const priceInSelectedCurrency = Number(CurrencyConverter.convert(currencyExchangeRates, RoomsXMLCurrency.get(), currency, roomsTotalPrice)).toFixed(2);
     const nights = this.calculateReservationTotalNights(this.props.location.search);
 
     return (
@@ -144,7 +144,7 @@ class HotelsBookingPage extends React.Component {
                   {rooms.map((room, index) => {
                     return (
                       <h6 key={index}>
-                        {room.name}, {nights} nights: {currencySign}{exchangeRates && (CurrencyConverter.convert(exchangeRates , RoomsXMLCurrency.get(), currency, room.price)).toFixed(2)} <LocPrice fiat={room.price} />
+                        {room.name}, {nights} nights: {currencySign}{currencyExchangeRates && (CurrencyConverter.convert(currencyExchangeRates , RoomsXMLCurrency.get(), currency, room.price)).toFixed(2)} <LocPrice fiat={room.price} />
                       </h6>
                     );
                   })}
@@ -220,7 +220,6 @@ HotelsBookingPage.propTypes = {
   hotel: PropTypes.object,
   rooms: PropTypes.array,
   guests: PropTypes.array,
-  exchangeRates: PropTypes.object,
   handleAdultChange: PropTypes.func,
   handleChildAgeChange: PropTypes.func,
 
@@ -231,13 +230,15 @@ HotelsBookingPage.propTypes = {
 
   // start Redux props
   dispatch: PropTypes.func,
-  paymentInfo: PropTypes.object
+  paymentInfo: PropTypes.object,
+  exchangeRatesInfo: PropTypes.object
 };
 
 function mapStateToProps(state) {
-  const { paymentInfo } = state;
+  const { paymentInfo, exchangeRatesInfo } = state;
   return {
-    paymentInfo
+    paymentInfo,
+    exchangeRatesInfo
   };
 }
 

@@ -10,8 +10,7 @@ class SelectFlex extends Component {
     super(props);
 
     this.state = {
-      isSelectToggle: false,
-      optionName: this.props.placeholder
+      isSelectToggle: false
     };
 
     this.closeAllSelect = this.closeAllSelect.bind(this);
@@ -27,6 +26,14 @@ class SelectFlex extends Component {
     document.removeEventListener('click', this.closeAllSelect);
   }
 
+  getSelectedValue() {
+    const selectElement = this.props.children;
+    const options = selectElement.props.children;
+    const selectedOption = options.filter(option => option.props.value === this.props.value)[0];
+
+    return selectedOption && selectedOption.props.children;
+  }
+
   toggleSelect(e) {
     e.preventDefault();
     const { isSelectToggle } = this.state;
@@ -37,16 +44,15 @@ class SelectFlex extends Component {
   }
 
   handleOnChange(e) {
-    this.props.onChange(e.target.innerHTML);
+    this.props.onChange(e.target.dataset.value);
 
     this.setState({
-      isSelectToggle: !this.state.isSelectToggle,
-      optionName: e.target.innerHTML
+      isSelectToggle: !this.state.isSelectToggle
     });
   }
 
   closeAllSelect(e) {
-    if (e.target.innerHTML !== this.state.optionName) {
+    if (e.target.dataset.value !== this.props.value) {
       this.setState({
         isSelectToggle: false
       });
@@ -56,22 +62,19 @@ class SelectFlex extends Component {
   render() {
     const selectElement = this.props.children;
     const { placeholder } = this.props;
-    const { isSelectToggle, optionName,  } = this.state;
+    const { isSelectToggle } = this.state;
+
+    const selectedValue = this.getSelectedValue();
 
     return (
       <div className={`${this.props.className ? this.props.className + ' ' : ''}custom-select`}>
-        <div className={`select-selected${isSelectToggle ? ' select-arrow-active' : ''}`} onClick={this.toggleSelect}>
-          {optionName}
+        <div className={`select-selected${isSelectToggle ? ' select-arrow-active' : ''}`} onClick={this.toggleSelect} data-value={this.props.value}>
+          {selectedValue}
         </div>
         <div className={`select-items${isSelectToggle ? '' : ' select-hide'}`}>
           <div className="placeholder">{placeholder || DEFAULT_PLACEHOLDER}</div>
           {selectElement.props.children.map((option, i) => {
-            if (option.length && option.length > 0) {
-              return option.map((element, j) => {
-                return <div className="option" key={j} onClick={this.handleOnChange}>{element.props.children}</div>;
-              });
-            }
-            return <div className="option" key={i} onClick={this.handleOnChange}>{option.props.children}</div>;
+            return <div className="option" key={i} onClick={this.handleOnChange} data-value={option.props.value}>{option.props.children}</div>;
           })}
         </div>
       </div >
@@ -83,6 +86,7 @@ SelectFlex.propTypes = {
   children: PropTypes.object,
   className: PropTypes.string,
   placeholder: PropTypes.string,
+  value: PropTypes.string,
   onChange: PropTypes.func
 };
 

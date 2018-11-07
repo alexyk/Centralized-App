@@ -4,6 +4,7 @@ import Slider from 'react-slick';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import Rating from '../common/rating';
+import { DEFAULT_LISTING_IMAGE_URL } from '../../constants/images';
 
 class PopularItem extends Component {
   constructor(props) {
@@ -14,6 +15,30 @@ class PopularItem extends Component {
 
   shouldComponentUpdate() {
     return false;
+  }
+
+  getValidHomePictures(pictures) {
+    if (!pictures) {
+      pictures = [];
+    }
+
+    if (pictures.length < 1) {
+      pictures.push({ thumbnail: DEFAULT_LISTING_IMAGE_URL });
+    }
+
+    return pictures.map(x => { return { thumbnail: Config.getValue('imgHost') + x.thumbnail }; });
+  }
+
+  getValidHotelPictures(pictures) {
+    if (!pictures) {
+      pictures = [];
+    }
+
+    if (pictures.length < 1) {
+      pictures.push({ url: DEFAULT_LISTING_IMAGE_URL });
+    }
+
+    return pictures.map(x => { return { thumbnail: Config.getValue('imgHost') + x.url }; });
   }
 
   render() {
@@ -27,10 +52,10 @@ class PopularItem extends Component {
 
     if (itemType === 'hotels') {
       rating = item.stars;
-      pictures = pictures.map(x => { return { thumbnail: Config.getValue('imgHost') + x.url }; });
+      pictures = this.getValidHotelPictures(pictures);
     } else if (itemType === 'homes') {
       rating = item.averageRating;
-      pictures = pictures.map(x => { return { thumbnail: Config.getValue('imgHost') + x.thumbnail }; });
+      pictures = this.getValidHomePictures(pictures);
     }
 
     const SlickButton = ({ currentSlide, slideCount, ...arrowProps }) => {

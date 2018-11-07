@@ -1,15 +1,15 @@
 import { closeModal, openModal } from '../../../actions/modalsInfo.js';
-import { setAdults, setChildren, setDates, setRegion, setRooms, setRoomsByCountOfRooms } from '../../../actions/searchInfo';
+import { setAdults, setChildren, setRegion, setRooms, setRoomsByCountOfRooms } from '../../../actions/hotelsSearchInfo';
 
 import { CHILDREN } from '../../../constants/modals';
 import ChildrenModal from '../modals/ChildrenModal';
-import SearchBarDatePicker from '../../common/search/SearchBarDatePicker';
 import PropTypes from 'prop-types';
 import React from 'react';
 import Select from 'react-select';
 import { connect } from 'react-redux';
 import requester from '../../../requester';
 import { withRouter } from 'react-router-dom';
+import HotelsDatepickerWrapper from './HotelsDatepickerWrapper';
 
 function HotelsSearchBar(props) {
   if (props.location.pathname.indexOf('/mobile') !== -1) {
@@ -30,21 +30,21 @@ function HotelsSearchBar(props) {
 
   const getQueryString = () => {
     let queryString = '?';
-    queryString += 'region=' + props.searchInfo.region.id;
+    queryString += 'region=' + props.hotelsSearchInfo.region.id;
     queryString += '&currency=' + props.paymentInfo.currency;
-    queryString += '&startDate=' + props.searchInfo.startDate.format('DD/MM/YYYY');
-    queryString += '&endDate=' + props.searchInfo.endDate.format('DD/MM/YYYY');
-    queryString += '&rooms=' + encodeURI(JSON.stringify(props.searchInfo.rooms));
+    queryString += '&startDate=' + props.searchDatesInfo.startDate.format('DD/MM/YYYY');
+    queryString += '&endDate=' + props.searchDatesInfo.endDate.format('DD/MM/YYYY');
+    queryString += '&rooms=' + encodeURI(JSON.stringify(props.hotelsSearchInfo.rooms));
     return queryString;
   };
 
   const handleSubmitModal = () => {
-    props.redirectToSearchPage(getQueryString());
+    props.search(getQueryString());
   };
 
   const distributeAdults = async () => {
-    let adults = Number(props.searchInfo.adults);
-    let rooms = props.searchInfo.rooms.slice(0);
+    let adults = Number(props.hotelsSearchInfo.adults);
+    let rooms = props.hotelsSearchInfo.rooms.slice(0);
     if (adults < rooms.length) {
       rooms = rooms.slice(0, adults);
     }
@@ -85,10 +85,10 @@ function HotelsSearchBar(props) {
     }
 
     distributeAdults().then((rooms) => {
-      if (props.searchInfo.hasChildren) {
+      if (props.hotelsSearchInfo.hasChildren) {
         openChildrenModal(CHILDREN);
       } else {
-        props.redirectToSearchPage(getQueryString(rooms), e);
+        props.search(getQueryString(rooms), e);
       }
     });
   };
@@ -100,7 +100,7 @@ function HotelsSearchBar(props) {
           placeholder="Choose a location"
           required
           style={{ boxShadow: 'none', border: 'none' }}
-          value={props.searchInfo.region}
+          value={props.hotelsSearchInfo.region}
           onChange={value => props.dispatch(setRegion(value))}
           valueKey={'id'}
           labelKey={'query'}
@@ -117,23 +117,19 @@ function HotelsSearchBar(props) {
           closeModal={closeChildrenModal}
           handleSubmit={handleSubmitModal}
         />
+        
         <div className="check">
-          <SearchBarDatePicker
-            id='search-bar-date-picker'
-            startDate={props.searchInfo.startDate}
-            endDate={props.searchInfo.endDate}
-            onApply={(e, picker) => props.dispatch(setDates(e, picker))}
-            nights={props.searchInfo.nights} />
+          <HotelsDatepickerWrapper />
         </div>
 
         <div className="days-of-stay">
           <span className="icon-moon"></span>
-          <span>{props.searchInfo.nights} nights</span>
+          <span>{props.searchDatesInfo.endDate.diff(props.searchDatesInfo.startDate, 'days')} nights</span>
         </div>
       </div>
 
       <div className="guest-wrap guests source-panel-item">
-        <select className="guest-select" name={'rooms'} value={props.searchInfo.rooms.length} onChange={e => props.dispatch(setRoomsByCountOfRooms(e.target.value))}>
+        <select className="guest-select " name={'rooms'} value={props.hotelsSearchInfo.rooms.length} onChange={e => props.dispatch(setRoomsByCountOfRooms(e.target.value))}>
           <option value="1">1 room</option>
           <option value="2">2 rooms</option>
           <option value="3">3 rooms</option>
@@ -145,8 +141,7 @@ function HotelsSearchBar(props) {
           <option value="9">9 rooms</option>
           <option value="10">10 rooms</option>
         </select>
-
-        <select name={'adults'} value={props.searchInfo.adults} onChange={e => props.dispatch(setAdults(e.target.value))}>
+        <select name={'adults'} value={props.hotelsSearchInfo.adults} onChange={e => props.dispatch(setAdults(e.target.value))}>
           <option value="1">1 adult</option>
           <option value="2">2 adults</option>
           <option value="3">3 adults</option>
@@ -158,10 +153,9 @@ function HotelsSearchBar(props) {
           <option value="9">9 adults</option>
           <option value="10">10 adults</option>
         </select>
-
         <div className="select-children" onClick={() => props.dispatch(setChildren())}>
           <div>
-            {!props.searchInfo.hasChildren
+            {!props.hotelsSearchInfo.hasChildren
               ? 'No children'
               : 'With children'
             }
@@ -174,22 +168,24 @@ function HotelsSearchBar(props) {
 }
 
 HotelsSearchBar.propTypes = {
-  redirectToSearchPage: PropTypes.func,
+  search: PropTypes.func,
 
   // start Router props
   location: PropTypes.object,
 
   // Redux props
   dispatch: PropTypes.func,
-  searchInfo: PropTypes.object,
+  hotelsSearchInfo: PropTypes.object,
+  searchDatesInfo: PropTypes.object,
   paymentInfo: PropTypes.object,
   modalsInfo: PropTypes.object
 };
 
 function mapStateToProps(state) {
-  const { searchInfo, paymentInfo, modalsInfo } = state;
+  const { hotelsSearchInfo, searchDatesInfo, paymentInfo, modalsInfo } = state;
   return {
-    searchInfo,
+    hotelsSearchInfo,
+    searchDatesInfo,
     paymentInfo,
     modalsInfo
   };

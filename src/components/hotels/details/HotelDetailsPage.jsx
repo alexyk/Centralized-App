@@ -16,15 +16,16 @@ import { connect } from 'react-redux';
 import moment from 'moment';
 import { parse } from 'query-string';
 import requester from '../../../requester';
-import { setCurrency } from '../../../actions/paymentInfo';
-import { setSearchInfo } from '../../../actions/searchInfo';
+import { setHotelsSearchInfo } from '../../../actions/hotelsSearchInfo';
+import { asyncSetStartDate, asyncSetEndDate } from '../../../actions/searchDatesInfo';
 import { withRouter } from 'react-router-dom';
 import queryString from 'query-string';
 
 import { CHECKING_ROOM_AVAILABILITY, SIMILAR_ROOM_GIVEN } from '../../../constants/infoMessages.js';
 import { ROOM_IS_NO_LONGER_AVAILABLE } from '../../../constants/errorMessages.js';
-import { INVALID_SEARCH_DATE, ALL_ROOMS_TAKEN } from '../../../constants/warningMessages.js';
+import { ALL_ROOMS_TAKEN } from '../../../constants/warningMessages.js';
 import { LONG } from '../../../constants/notificationDisplayTimes.js';
+import { DEFAULT_LISTING_IMAGE_URL } from '../../../constants/images';
 
 class HotelDetailsPage extends React.Component {
   constructor(props) {
@@ -58,9 +59,7 @@ class HotelDetailsPage extends React.Component {
 
     this.requestHotel = this.requestHotel.bind(this);
     this.requestHotelRooms = this.requestHotelRooms.bind(this);
-    this.requestCurrencyExchangeRates = this.requestCurrencyExchangeRates.bind(this);
-    this.setSearchInfoFromURL = this.setSearchInfoFromURL.bind(this);
-    this.handleApply = this.handleApply.bind(this);
+    this.setHotelsSearchInfoFromURL = this.setHotelsSearchInfoFromURL.bind(this);
     this.closeLightbox = this.closeLightbox.bind(this);
     this.gotoNext = this.gotoNext.bind(this);
     this.gotoPrevious = this.gotoPrevious.bind(this);
@@ -70,32 +69,28 @@ class HotelDetailsPage extends React.Component {
     this.handleBookRoom = this.handleBookRoom.bind(this);
     this.next = this.next.bind(this);
     this.previous = this.previous.bind(this);
-    this.redirectToSearchPage = this.redirectToSearchPage.bind(this);
+    this.search = this.search.bind(this);
   }
 
   componentDidMount() {
-    if (this.props.location.search) {
-      this.setSearchInfoFromURL();
-    }
-
+    this.setHotelsSearchInfoFromURL();
     this.requestHotel();
     this.requestHotelRooms();
-    this.requestCurrencyExchangeRates();
   }
 
-  setSearchInfoFromURL() {
-    const searchParams = this.getSearchParams(this.props.location.search);
-    const startDate = moment(searchParams.get('startDate'), 'DD/MM/YYYY');
-    const endDate = moment(searchParams.get('endDate'), 'DD/MM/YYYY');
-    const rooms = JSON.parse(decodeURI(searchParams.get('rooms')));
-    const adults = this.getAdults(rooms);
-    const hasChildren = this.getHasChildren(rooms);
+  setHotelsSearchInfoFromURL() {
+    if (this.props.location.search) {
+      const searchParams = this.getSearchParams(this.props.location.search);
+      const startDate = moment(searchParams.get('startDate'), 'DD/MM/YYYY');
+      const endDate = moment(searchParams.get('endDate'), 'DD/MM/YYYY');
+      const rooms = JSON.parse(decodeURI(searchParams.get('rooms')));
+      const adults = this.getAdults(rooms);
+      const hasChildren = this.getHasChildren(rooms);
 
-    this.props.dispatch(setSearchInfo(startDate, endDate, this.props.searchInfo.region, rooms, adults, hasChildren));
-
-    this.setState({
-      nights: endDate.diff(startDate, 'days'),
-    });
+      this.props.dispatch(asyncSetStartDate(startDate));
+      this.props.dispatch(asyncSetEndDate(endDate));
+      this.props.dispatch(setHotelsSearchInfo(this.props.hotelsSearchInfo.region, rooms, adults, hasChildren));
+    }
   }
 
   requestHotel() {
@@ -112,7 +107,7 @@ class HotelDetailsPage extends React.Component {
   requestHotelRooms() {
     const id = this.props.match.params.id;
     const searchParams = this.getRequestSearchParams();
-    
+
     requester.getHotelRooms(id, searchParams).then(res => {
       res.body.then(data => {
         this.setState({ hotelRooms: data, loadingRooms: false });
@@ -139,15 +134,7 @@ class HotelDetailsPage extends React.Component {
     return null;
   }
 
-  requestCurrencyExchangeRates() {
-    requester.getCurrencyRates().then(res => {
-      res.body.then(data => {
-        this.setState({ exchangeRates: data });
-      });
-    });
-  }
-  
-  redirectToSearchPage(queryString) {
+  search(queryString) {
     this.props.history.push('/hotels/listings' + queryString);
   }
 
@@ -206,25 +193,6 @@ class HotelDetailsPage extends React.Component {
     return param.split(' ').join('%20');
   }
 
-  handleApply(event, picker) {
-    const { startDate, endDate } = picker;
-    const prices = this.state.prices;
-    const range = prices.filter(x => x.start >= startDate && x.end < endDate);
-    const isInvalidRange = range.filter(x => !x.available).length > 0;
-    if (isInvalidRange) {
-      NotificationManager.warning(INVALID_SEARCH_DATE, 'Calendar Operations', LONG);
-      this.setState({ calendarStartDate: undefined, calendarEndDate: undefined });
-    }
-    else {
-      this.setState({
-        calendarStartDate: startDate,
-        calendarEndDate: endDate,
-      });
-
-      this.calculateNights(startDate, endDate);
-    }
-  }
-
   openLightbox(event, index) {
     event.preventDefault();
     this.setState({
@@ -263,22 +231,8 @@ class HotelDetailsPage extends React.Component {
     this.gotoNext();
   }
 
-  calculateNights(startDate, endDate) {
-    let checkIn = moment(startDate, 'DD/MM/YYYY');
-    let checkOut = moment(endDate, 'DD/MM/YYYY');
-
-    let diffDays = checkOut.diff(checkIn, 'days');
-
-    if (checkOut > checkIn) {
-      return diffDays;
-    }
-    else {
-      return 0;
-    }
-  }
-
   // checkAvailability(quoteId) {
-  //   const rooms = this.props.searchInfo.rooms.map((room) => {
+  //   const rooms = this.props.hotelsSearchInfo.rooms.map((room) => {
   //     const adults = [];
   //     const children = room.children;
   //     for (let j = 0; j < room.adults; j++) {
@@ -323,7 +277,7 @@ class HotelDetailsPage extends React.Component {
   handleBookRoom(roomsResults) {
     this.setState({ loadingRooms: true });
     NotificationManager.info(CHECKING_ROOM_AVAILABILITY, '', LONG);
-    const rooms = this.props.searchInfo.rooms.map((room) => {
+    const rooms = this.props.hotelsSearchInfo.rooms.map((room) => {
       const adults = [];
       const children = room.children;
       for (let j = 0; j < room.adults; j++) {
@@ -421,7 +375,7 @@ class HotelDetailsPage extends React.Component {
 
     if (images && images.length < 3) {
       while (images.length < 3) {
-        images.push({ src: Config.getValue('imgHost') + '/listings/images/default.png' });
+        images.push({ src: Config.getValue('imgHost') + DEFAULT_LISTING_IMAGE_URL });
       }
     }
 
@@ -441,10 +395,12 @@ class HotelDetailsPage extends React.Component {
       ]
     };
 
+    const { searchDatesInfo } = this.props;
+
     return (
       <div>
         <div className="container sm-none">
-          <HotelsSearchBar redirectToSearchPage={this.redirectToSearchPage} />
+          <HotelsSearchBar search={this.handleSearch} />
         </div>
         {loading ?
           <div className="loader"></div> :
@@ -505,15 +461,10 @@ class HotelDetailsPage extends React.Component {
             </nav>
 
             <HotelDetailsInfoSection
-              nights={this.state.nights}
-              onApply={this.handleApply}
-              startDate={this.state.calendarStartDate}
-              endDate={this.state.calendarEndDate}
               hotel={this.state.hotel}
               hotelRooms={this.state.hotelRooms}
-              exchangeRates={this.state.exchangeRates}
+              nights={searchDatesInfo.endDate.diff(searchDatesInfo.startDate, 'days')}
               loading={this.state.loading}
-              currencySign={this.props.paymentInfo.currencySign}
               handleBookRoom={this.handleBookRoom}
               loadingRooms={this.state.loadingRooms}
             />
@@ -535,16 +486,18 @@ HotelDetailsPage.propTypes = {
   dispatch: PropTypes.func,
   userInfo: PropTypes.object,
   paymentInfo: PropTypes.object,
-  searchInfo: PropTypes.object
+  hotelsSearchInfo: PropTypes.object,
+  searchDatesInfo: PropTypes.object
 };
 
 function mapStateToProps(state) {
-  const { userInfo, paymentInfo, modalsInfo, searchInfo } = state;
+  const { userInfo, paymentInfo, modalsInfo, hotelsSearchInfo, searchDatesInfo } = state;
   return {
     userInfo,
     paymentInfo,
     modalsInfo,
-    searchInfo
+    hotelsSearchInfo,
+    searchDatesInfo
   };
 }
 

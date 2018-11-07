@@ -1,13 +1,17 @@
 import React, { Fragment } from 'react';
-import { withRouter } from 'react-router-dom';
-import PropTypes from 'prop-types';
-import { parse } from 'query-string';
+import { withRouter, Route, Switch } from 'react-router-dom';
+import HomesBookingConfirmPage from './HomesBookingConfirmPage';
 import BookingSteps from '../../common/utility/BookingSteps';
-import HomesBookingRoomDetailsInfo from './HomesBookingRoomDetailsInfo';
 import HomesBookingListingDetailsInfo from './HomesBookingListingDetailsInfo';
+import _ from 'lodash';
+import { parse } from 'query-string';
+import PropTypes from 'prop-types';
+import HomesBookingRoomDetailsInfo from './HomesBookingRoomDetailsInfo';
 import requester from '../../../requester';
-
+import { setCheckInOutHours, calculateCheckInOuts } from '../common/detailsPageUtils.js';
+import moment from 'moment';
 import '../../../styles/css/components/homes/booking/homes-booking-page.css';
+import { connect } from 'react-redux';
 
 class HomesBookingPage extends React.Component {
   constructor(props) {
@@ -15,33 +19,23 @@ class HomesBookingPage extends React.Component {
 
     this.state = {
       listing: null,
-      checkInStart: null,
-      checkInEnd: null,
-      checkOutStart: null,
-      checkOutEnd: null,
+      calendar: null,
+      checks: null,
+      stepsNumber: 1
     };
 
     this.handleSubmit = this.handleSubmit.bind(this);
+
+    this.setCheckInOutHours = setCheckInOutHours.bind(this);
+    this.calculateCheckInOuts = calculateCheckInOuts.bind(this);
   }
 
   componentDidMount() {
+    const DAY_INTERVAL = 365;
     requester.getListing(this.props.match.params.id).then(res => {
       res.body.then((listing) => {
-        let checkInStart = listing.checkinStart && Number(listing.checkinStart.substring(0, 2));
-        let checkInEnd = listing.checkinEnd && Number(listing.checkinEnd.substring(0, 2));
-        checkInEnd = checkInEnd && checkInStart < checkInEnd ? checkInEnd : 24;  
-
-        let checkOutStart = listing.checkoutStart && Number(listing.checkoutStart.substring(0, 2));
-        let checkOutEnd = listing.checkoutEnd && Number(listing.checkoutEnd.substring(0, 2));
-        checkOutStart = checkOutStart && checkOutStart < checkOutEnd ? checkOutStart : 0;
-
-        this.setState({
-          listing,
-          checkInStart,
-          checkInEnd,
-          checkOutStart,
-          checkOutEnd,
-        }, () => this.setCheckInOutHours());
+        const checks = this.calculateCheckInOuts(listing);
+        this.setState({ listing: listing, checks });
       });
     });
 
@@ -49,88 +43,79 @@ class HomesBookingPage extends React.Component {
       this.setState({ roomDetails });
     });
 
-    requester.getCurrencyRates().then(res => {
+    const searchTermMap = [
+      `listing=${this.props.match.params.id}`,
+      `startDate=${moment().format('DD/MM/YYYY')}`,
+      `endDate=${moment().add(DAY_INTERVAL, 'days').format('DD/MM/YYYY')}`,
+      `page=${0}`,
+      `toCode=${this.props.paymentInfo.currency}`,
+      `size=${DAY_INTERVAL}`];
+
+    requester.getCalendarByListingIdAndDateRange(searchTermMap).then(res => {
       res.body.then(data => {
-        this.setState({ exchangeRates: data });
+        let calendar = data.content;
+        calendar = _.sortBy(calendar, function (x) {
+          return new moment(x.date, 'DD/MM/YYYY');
+        });
+        console.log(calendar);
+        this.setState({ calendar: calendar });
       });
     });
-  }
-
-  componentWillUnmount() {
-    clearTimeout(this.timerCheckInOut);
-  }
-
-  setCheckInOutHours() {
-    const { checkInStart, checkInEnd, checkOutStart, checkOutEnd } = this.state;
-    const checkInBeforeStartWidth = ((100 / 24) * (checkInStart));
-    const checkInAfterEndWidth = ((100 / 24) * (24 - checkInEnd));
-    const checkInLength = ((100 / 24) * (checkInEnd - checkInStart));
-    const checkOutBeforeStartWidth = ((100 / 24) * (checkOutStart));
-    const checkOutAfterEndWidth = ((100 / 24) * (24 - checkOutEnd));
-    const checkOutLength = (100 / 24) * (checkOutEnd - checkOutStart);
-
-    this.timerCheckInOut = setTimeout(() => {
-      document.getElementById('check_in_hour').style.width = `calc(${checkInBeforeStartWidth}% + 40px)`;
-      document.getElementById('check_out_hour').style.width = `calc(${checkOutBeforeStartWidth + checkOutLength}% + 40px)`;
-
-      document.getElementById('check_in_line_1').style.width = `${checkInBeforeStartWidth}%`;
-      document.getElementById('check_in_line_2').style.width = `${checkInLength}%`;
-      document.getElementById('check_in_line_3').style.width = `${checkInAfterEndWidth}%`;
-      document.getElementById('check_out_line_1').style.width = `${checkOutBeforeStartWidth}%`;
-      document.getElementById('check_out_line_2').style.width = `${checkOutLength}%`;
-      document.getElementById('check_out_line_3').style.width = `${checkOutAfterEndWidth}%`;
-
-      document.getElementById('check_in_tooltip').style.marginLeft = `calc(${checkInBeforeStartWidth}% - 95px)`;
-      document.getElementById('check_out_tooltip').style.marginLeft = `calc(${checkOutBeforeStartWidth + checkOutLength}% - 95px)`;
-    }, 100);
   }
 
   handleSubmit() {
     const id = this.props.match.params.id;
     const isWebView = this.props.location.pathname.indexOf('/mobile') !== -1;
-    const rootURL = !isWebView ? '/homes/listings/book/confirm' : '/mobile/book/confirm';
-    this.props.history.push(`${rootURL}/${id}${this.props.location.search}`);
+    const rootURL = !isWebView ? '/homes/listings/book' : '/mobile/book';
+    this.props.history.push(`${rootURL}/${id}/confirm${this.props.location.search}`);
+    this.setState({ stepsNumber: 2 });
   }
 
   render() {
-    const { listing, roomDetails, checkInStart, checkInEnd, checkOutStart, checkOutEnd, exchangeRates } = this.state;
+    let { listing, calendar, roomDetails, checks } = this.state;
 
-    if (!listing) {
+    if (!listing || !calendar) {
       return <div className="loader"></div>;
     }
 
     return (
       <Fragment>
-        <BookingSteps steps={['Select your Room', 'Review Room Details', 'Confirm & Pay']} currentStepIndex={1} />
-        <div id="homes-booking-page-container">
+        <BookingSteps steps={['Select your Room', 'Review Room Details', 'Confirm & Pay']} currentStepIndex={this.state.stepsNumber} />
+        <div id={`${this.props.location.pathname.indexOf('/confirm') !== -1 ? 'homes-booking-confirm-page-container' : 'homes-booking-page-container'}`}>
           <div className="container">
             <HomesBookingListingDetailsInfo
               listing={listing}
               searchParams={parse(this.props.location.search)}
-              exchangeRates={exchangeRates}
+              calendar={calendar}
             />
-            <HomesBookingRoomDetailsInfo
-              listing={listing}
-              roomDetails={roomDetails}
-              checkInStart={checkInStart}
-              checkInEnd={checkInEnd}
-              checkOutStart={checkOutStart}
-              checkOutEnd={checkOutEnd}
-              handleSubmit={this.handleSubmit}
-            />
+            <Switch>
+              <Route path="/homes/listings/book/:id/confirm" render={() => <HomesBookingConfirmPage listing={listing} />} />
+              <Route path="/homes/listings/book/:id" render={() => <HomesBookingRoomDetailsInfo
+                listing={listing}
+                roomDetails={roomDetails}
+                checks={checks}
+                handleSubmit={this.handleSubmit} />} />
+            </Switch>
           </div>
         </div>
+
       </Fragment>
     );
   }
 }
 
 HomesBookingPage.propTypes = {
-  match: PropTypes.object,
-  
-  // Router props
   location: PropTypes.object,
+  match: PropTypes.object,
   history: PropTypes.object,
+  paymentInfo: PropTypes.object
 };
 
-export default withRouter(HomesBookingPage);
+function mapStateToProps(state) {
+  const { paymentInfo } = state;
+  return {
+    paymentInfo
+  };
+}
+
+export default withRouter(connect(mapStateToProps)(HomesBookingPage));
