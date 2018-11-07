@@ -6,9 +6,6 @@ import BagIcon from '../../../styles/images/bag-icon.png';
 import MealIcon from '../../../styles/images/meal-icon.png';
 import WirelessIcon from '../../../styles/images/icon-wireless_internet.png';
 import TimeIcon from '../../../styles/images/time-icon.png';
-import CoffeeIcon from '../../../styles/images/coffe-icon.png';
-import SuitcaseIcon from '../../../styles/images/suitcase-icon.png';
-import PowerIcon from '../../../styles/images/power-icon.png';
 
 import '../../../styles/css/components/airTickets/search/air-tickets-search-result.css';
 import '../../../styles/css/components/airTickets/details/air-tickets-details-info-section.css';
@@ -48,10 +45,6 @@ class AirTicketsDetailsInfoSection extends Component {
     const remainingMinutes = minutes % 60;
 
     return `${hours}h ${remainingMinutes}min`;
-  }
-
-  toggleShowAllFacilities() {
-
   }
 
   getDepartureInfo(departureInfo) {
@@ -214,76 +207,47 @@ class AirTicketsDetailsInfoSection extends Component {
               </div>
             </div>
             <div className="air-tickets-details-content-item">
-              <div className="">
-                <h2>Baggage</h2>
-                <hr />
-              </div>
-              <h2>Facilities</h2>
-              <hr />
-              <div className="facilities">
-                <div className="facility" tooltip="Wireless">
-                  <span>
-                    <img src={WirelessIcon} alt="Wireless" />
-                  </span>
-                </div>
-                <div className="facility" tooltip="Meal">
-                  <span>
-                    <img src={MealIcon} alt="Meal" />
-                  </span>
-                </div>
-                <div className="facility" tooltip="Coffee">
-                  <span>
-                    <img src={CoffeeIcon} alt="Coffee" />
-                  </span>
-                </div>
-                <div className="facility" tooltip="Baggage">
-                  <span>
-                    <img src={SuitcaseIcon} alt="Baggage" />
-                  </span>
-                </div>
-                <div className="facility" tooltip="Power">
-                  <span>
-                    <img src={PowerIcon} alt="Power" />
-                  </span>
-                </div>
-                <div onClick={this.toggleShowAllFacilities} className="more-facilities">
-                  <p>+{23}</p>
-                </div>
-              </div>
-            </div>
-            <div className="">
               <h2>Flight details</h2>
               <hr />
+              <div className="flight-details">
+                <div>Airline: </div>
+                <div>Flight number: </div>
+                <div>Service class: </div>
+                <div>Stop time: </div>
+                <div>Total trip duration: </div>
+              </div>
             </div>
-            <div className="">
-              <h2>Stop</h2>
-              <hr />
-            </div>
-            <div className="farerules">
+            <div className="air-tickets-details-content-item">
               <h2>Fare Rules</h2>
               <hr />
-              {fareRules.segments.map((segment, segmentIndex) => {
-                const rules = segment.rules.map((rule, ruleIndex) => {
+              <div className="farerules">
+                {fareRules.segments.map((segment, segmentIndex) => {
+                  const rules = segment.rules.map((rule, ruleIndex) => {
+                    return (
+                      <div key={ruleIndex} className="rule">
+                        <h5>{rule.ruleTitle}</h5>
+                        <h6>{rule.ruleText}</h6>
+                      </div>
+                    );
+                  });
                   return (
-                    <div key={ruleIndex} className="rule">
-                      <div>{rule.ruleTitle}</div>
-                      <div>{rule.ruleText}</div>
-                    </div>
+                    <Fragment key={segmentIndex}>
+                      <div className="flight-rule-title">
+                        <h5><div className="flight-rule-origin">{segment.origin.name}</div> <span className="icon-arrow-right arrow"></span> <div className="flight-rule-destination">{segment.destination.name}</div></h5>
+                        {fareRulesIndex === segmentIndex ? <div className="toggle"><span className="fa fa-angle-down" onClick={() => this.toggleFareRule(-1)} /></div> : <div className="toggle"><span className="fa fa-angle-right" onClick={() => this.toggleFareRule(segmentIndex)} /></div>}
+                      </div>
+                      {fareRulesIndex === segmentIndex &&
+                        <div className="flight-rules">
+                          {rules}
+                        </div>}
+                    </Fragment>
                   );
-                });
-                return (
-                  <Fragment key={segmentIndex}>
-                    <div className="flight-rule-title">
-                      <h4><div className="flight-rule-origin">{segment.origin.name}</div> <span className="icon-arrow-right arrow"></span> <div className="flight-rule-destination">{segment.destination.name}</div></h4>
-                      {fareRulesIndex === segmentIndex ? <div className="toggle"><span className="fa fa-angle-down" onClick={() => this.toggleFareRule(-1)} /></div> : <div className="toggle"><span className="fa fa-angle-right" onClick={() => this.toggleFareRule(segmentIndex)} /></div>}
-                    </div>
-                    {fareRulesIndex === segmentIndex &&
-                      <div className="flight-rules">
-                        {rules}
-                      </div>}
-                  </Fragment>
-                );
-              })}
+                })}
+              </div>
+            </div>
+            <div className="air-tickets-details-content-item">
+              <h2>Services</h2>
+              <hr />
             </div>
           </div>
           <AirTicketsDetailsBookingPanel result={result} />

@@ -32,53 +32,24 @@ $media-expressions: (
     grid-template-columns: 60% 35%;
     grid-gap: 5%;
     .air-tickets-details-content {
-      .facilities {
-        display: flex;
-        flex-wrap: wrap;
-        .facility {
-          margin-right: 20px;
-          margin-bottom: 20px;
-          span {
-            display: flex;
-            -ms-flex-pack: center;
-            justify-content: center;
-            -ms-flex-align: center;
-            align-items: center;
-            width: 70px;
-            height: 70px;
-            background-color: #fff;
-            border: 1px solid #cccccc;
-            border-radius: 2px;
-            img {
-              width: 60%;
-              height: 60%;
-            }
-          }
-        }
-        .more-facilities {
-          font-size: 24px;
-          letter-spacing: 1px;
-          color: #d97a61;
-          text-align: center;
-          display: -ms-flexbox;
-          display: flex;
-          -ms-flex-align: center;
-          align-items: center;
-          cursor: pointer;
-        }
+      &-item {
+        margin-bottom: 40px;
+      }
+      .flight-details {
+        font-size: 18px;
       }
       .farerules {
         .flight-rule-title {
           margin-bottom: 0.5em;
           display: flex;
           align-items: center;
-          h4 {
+          h5 {
             display: flex;
             width: 95%;
             margin: 0;
             align-items: center;
             .flight-rule-origin,
-            .flight-rule-origin {
+            .flight-rule-destination {
               width: 30%;
             }
             .icon-arrow-right {
@@ -97,6 +68,9 @@ $media-expressions: (
         .flight-rules {
           .rule {
             margin-bottom: 10px;
+            h5 {
+              font-weight: 400;
+            }
           }
         }
       }

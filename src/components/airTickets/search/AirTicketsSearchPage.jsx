@@ -280,7 +280,7 @@ class AirTicketsSearchPage extends Component {
     return (
       <div className="container">
         <AirTicketsSearchBar search={this.searchAirTickets} />
-        <BookingSteps steps={['Search', 'Details', 'User data', 'Confirm & Pay']} currentStepIndex={0} />
+        <BookingSteps steps={['Search', 'Details', 'Prepare Booking', 'Confirm & Pay']} currentStepIndex={0} />
         <div className="air-tickets-search-results">
           <div className="air-tickets-search-filter-panel">
             <AirTicketsSearchFilterPanel

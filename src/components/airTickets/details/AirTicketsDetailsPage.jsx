@@ -137,7 +137,7 @@ class AirTicketsDetailsPage extends React.Component {
       <div>
         <div className="container">
           <AirTicketsSearchBar search={this.searchAirTickets} />
-          <BookingSteps steps={['Search', 'Details', 'User data', 'Confirm & Pay']} currentStepIndex={1} />
+          <BookingSteps steps={['Search', 'Details', 'Prepare Booking', 'Confirm & Pay']} currentStepIndex={1} />
         </div>
 
         {!loading ?
