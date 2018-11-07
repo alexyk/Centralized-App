@@ -4,6 +4,7 @@ import Slider from 'react-slick';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import Rating from '../common/rating';
+import { DEFAULT_LISTING_IMAGE_URL } from '../../constants/images';
 
 class PopularItem extends Component {
   constructor(props) {
@@ -22,7 +23,7 @@ class PopularItem extends Component {
     }
 
     if (pictures.length < 1) {
-      pictures.push({ thumbnail: 'listings/images/default.png' });
+      pictures.push({ thumbnail: DEFAULT_LISTING_IMAGE_URL });
     }
 
     return pictures.map(x => { return { thumbnail: Config.getValue('imgHost') + x.thumbnail }; });
@@ -34,7 +35,7 @@ class PopularItem extends Component {
     }
 
     if (pictures.length < 1) {
-      pictures.push({ url: 'listings/images/default.png' });
+      pictures.push({ url: DEFAULT_LISTING_IMAGE_URL });
     }
 
     return pictures.map(x => { return { thumbnail: Config.getValue('imgHost') + x.url }; });

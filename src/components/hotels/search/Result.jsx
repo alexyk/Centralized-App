@@ -18,6 +18,7 @@ import { connect } from 'react-redux';
 import requester from '../../../requester';
 import LocPrice from '../../common/utility/LocPrice';
 import Rating from '../../common/rating';
+import { DEFAULT_LISTING_IMAGE_URL } from '../../../constants/images';
 
 const SCREEN_SIZE_SMALL = 'SMALL';
 const SCREEN_SIZE_MEDIUM = 'MEDIUM';
@@ -114,11 +115,13 @@ class Result extends React.Component {
     name = name && StringUtils.shorten(name, this.state.titleLength);
     generalDescription = generalDescription && StringUtils.shorten(generalDescription, this.state.descriptionLength);
 
-    if (this.state.pictures && this.state.pictures.length < 1) {
-      this.state.pictures.push({ thumbnail: `${Config.getValue('imgHost')}/listings/images/default.png` });
+    const pictures = this.state.pictures || [];
+    const { loadedPictures } = this.state;
+    if (pictures.length < 1) {
+      pictures.push({ url: DEFAULT_LISTING_IMAGE_URL });
     }
 
-    const SlickButtonLoad = ({ currentSlide, slideCount, ...props }) => (
+    const SlickButtonLoad = ({ ...props }) => (
       <button {...props} onClick={() => {
         this.setState({ loadedPictures: false });
         requester.getHotelPictures(this.props.hotel.id).then(res => {
@@ -133,7 +136,7 @@ class Result extends React.Component {
       }} />
     );
 
-    const SlickButton = ({ currentSlide, slideCount, ...props }) => (
+    const SlickButton = ({ ...props }) => (
       <button {...props} />
     );
 
@@ -144,8 +147,7 @@ class Result extends React.Component {
       slidesToScroll: 1,
       nextArrow: this.state.calledBackendForAllImages === true ? <SlickButton /> : <SlickButtonLoad />,
       prevArrow: this.state.calledBackendForAllImages === true ? <SlickButton /> : <SlickButtonLoad />,
-      beforeChange: (current, next) => {
-        // console.log(event, slick);
+      beforeChange: () => {
         if (!this.state.calledBackendForAllImages) {
           this.setState({ loadedPictures: false });
           requester.getHotelPictures(this.props.hotel.id).then(res => {
@@ -172,11 +174,11 @@ class Result extends React.Component {
     return (
       <div className={`${this.state.ready === true ? 'ready' : ''} result`}>
         <div className="result-images">
-          {this.state.pictures && this.state.loadedPictures === true ?
+          {loadedPictures ?
             <Slider
               ref={c => (this.slider = c)}
               {...settings}>
-              {this.state.pictures.map((picture, i) => {
+              {pictures.map((picture, i) => {
                 return (
                   <div key={i}>
                     <Link target={isMobile === false ? '_blank' : ''} to={`${redirectURL}/${id}${search.substr(0, endOfSearch)}`} key={i}>

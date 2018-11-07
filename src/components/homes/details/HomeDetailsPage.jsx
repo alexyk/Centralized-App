@@ -28,6 +28,7 @@ import {
 } from '../common/detailsPageUtils.js';
 import { setHomesSearchInfo } from '../../../actions/homesSearchInfo';
 import { asyncSetStartDate, asyncSetEndDate } from '../../../actions/searchDatesInfo';
+import { DEFAULT_LISTING_IMAGE_URL } from '../../../constants/images';
 
 import '../../../styles/css/components/carousel-component.css';
 import Loader from '../../common/loader';
@@ -213,7 +214,7 @@ class HomeDetailsPage extends React.Component {
     }
 
     while (pictures.length < 3) {
-      pictures.push({ thumbnail: '/listings/images/default.png' });
+      pictures.push({ thumbnail: DEFAULT_LISTING_IMAGE_URL });
     }
 
     return pictures.map(picture => ({

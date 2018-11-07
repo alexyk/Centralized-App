@@ -14,6 +14,7 @@ import BookingSteps from '../../common/utility/BookingSteps';
 import { RoomsXMLCurrency } from '../../../services/utilities/roomsXMLCurrency';
 import LocPrice from '../../common/utility/LocPrice';
 import xregexp from 'xregexp';
+import { DEFAULT_LISTING_IMAGE_URL } from '../../../constants/images';
 
 class HotelsBookingPage extends React.Component {
   constructor(props) {
@@ -121,7 +122,7 @@ class HotelsBookingPage extends React.Component {
     const city = hotel.city;
     const address = hotel.additionalInfo.mainAddress;
     const roomsTotalPrice = this.calculateRoomsTotalPrice(rooms);
-    const hotelPicUrl = hotel.hotelPhotos && hotel.hotelPhotos.length > 0 ? hotel.hotelPhotos[0].url : '/listings/images/default.png';
+    const hotelPicUrl = hotel.hotelPhotos && hotel.hotelPhotos.length > 0 ? hotel.hotelPhotos[0].url : DEFAULT_LISTING_IMAGE_URL;
     const priceInSelectedCurrency = Number(CurrencyConverter.convert(currencyExchangeRates, RoomsXMLCurrency.get(), currency, roomsTotalPrice)).toFixed(2);
     const nights = this.calculateReservationTotalNights(this.props.location.search);
 

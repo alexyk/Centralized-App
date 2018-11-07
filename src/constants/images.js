@@ -1,0 +1,1 @@
+export const DEFAULT_LISTING_IMAGE_URL = 'listings/images/default.png';
