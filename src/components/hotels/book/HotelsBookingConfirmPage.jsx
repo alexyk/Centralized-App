@@ -8,6 +8,7 @@ import queryString from 'query-string';
 import { Config } from '../../../config.js';
 import { PASSWORD_PROMPT, CREATE_WALLET, PENDING_BOOKING_LOC, PENDING_BOOKING_FIAT } from '../../../constants/modals.js';
 import { PROCESSING_TRANSACTION } from '../../../constants/infoMessages.js';
+import { SERVICE_UNAVAILABLE } from '../../../constants/errorMessages';
 import { LONG } from '../../../constants/notificationDisplayTimes.js';
 import { HotelReservation } from '../../../services/blockchain/hotelReservation';
 import { RoomsXMLCurrency } from '../../../services/utilities/roomsXMLCurrency';
@@ -133,6 +134,8 @@ class HotelBookingConfirmPage extends React.Component {
         } else {
           this.payWithCard(roundedFiatPrice);
         }
+      }).catch(() => {
+        NotificationManager.error(SERVICE_UNAVAILABLE);
       });
   }
 
@@ -275,8 +278,8 @@ class HotelBookingConfirmPage extends React.Component {
           this.stopQuote();
           this.openModal(PASSWORD_PROMPT);
         }
-      }).catch(error => {
-        console.log(error);
+      }).catch(() => {
+        NotificationManager.error(SERVICE_UNAVAILABLE);
       });
   }
 
