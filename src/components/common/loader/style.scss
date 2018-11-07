@@ -1,0 +1,14 @@
+
+.container-loader-wrapper {
+  display: flex;
+  flex: 1 1 150px;
+  justify-content: center;
+  align-items: center;
+  .container-loader {
+    content: '\200b';
+    flex: 1 1 auto;
+    min-height: 16px;
+    background: url('/images/loader.gif') no-repeat center;
+    background-size: 2em;
+  }
+}
