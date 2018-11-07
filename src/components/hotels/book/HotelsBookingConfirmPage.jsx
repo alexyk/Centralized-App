@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import moment from 'moment';
 import queryString from 'query-string';
 import { Config } from '../../../config.js';
-import { PASSWORD_PROMPT, CREATE_WALLET } from '../../../constants/modals.js';
+import { PASSWORD_PROMPT, CREATE_WALLET, PENDING_BOOKING_LOC, PENDING_BOOKING_FIAT } from '../../../constants/modals.js';
 import { PROCESSING_TRANSACTION } from '../../../constants/infoMessages.js';
 import { LONG } from '../../../constants/notificationDisplayTimes.js';
 import { HotelReservation } from '../../../services/blockchain/hotelReservation';
@@ -24,6 +24,8 @@ import RecoverWallerPassword from '../../common/utility/RecoverWallerPassword';
 import { Websocket } from '../../../services/socket/exchangerWebsocket';
 
 import '../../../styles/css/components/hotels/book/hotel-booking-confirm-page.css';
+import PendingBookingLocModal from '../modals/PendingBookingLocModal';
+import PendingBookingFiatModal from '../modals/PendingBookingFiatModal';
 
 const ERROR_MESSAGE_TIME = 20000;
 const DEFAULT_CRYPTO_CURRENCY = 'EUR';
@@ -51,6 +53,7 @@ class HotelBookingConfirmPage extends React.Component {
     this.payWithLocSingleWithdrawer = this.payWithLocSingleWithdrawer.bind(this);
     this.createBackUrl = this.createBackUrl.bind(this);
     this.requestSafechargeMode = this.requestSafechargeMode.bind(this);
+    this.handlePayWithLOC = this.handlePayWithLOC.bind(this);
   }
 
   componentDidMount() {
@@ -120,6 +123,17 @@ class HotelBookingConfirmPage extends React.Component {
     this.setState({
       isQuoteStopped: false
     });
+  }
+
+  handlePayWithCard(roundedFiatPrice) {
+    requester.getUserHasPendingBooking()
+      .then(res => res.json()).then(data => {
+        if (data.userHasPendingBooking) {
+          this.openModal(PENDING_BOOKING_FIAT);
+        } else {
+          this.payWithCard(roundedFiatPrice);
+        }
+      });
   }
 
   payWithCard(roundedFiatPrice) {
@@ -250,6 +264,20 @@ class HotelBookingConfirmPage extends React.Component {
   showLeavePagePromt(e) {
     e.preventDefault();
     e.returnValue = 'You have a pending transaction. Are you sure you want to leave the page?';
+  }
+
+  handlePayWithLOC() {
+    requester.getUserHasPendingBooking()
+      .then(res => res.json()).then(data => {
+        if (data.userHasPendingBooking) {
+          this.openModal(PENDING_BOOKING_LOC);
+        } else {
+          this.stopQuote();
+          this.openModal(PASSWORD_PROMPT);
+        }
+      }).catch(error => {
+        console.log(error);
+      });
   }
 
   payWithLocSingleWithdrawer() {
@@ -477,7 +505,7 @@ class HotelBookingConfirmPage extends React.Component {
       return <div className="loader"></div>;
     }
 
-    const { reservation } = this.props;
+    const { reservation, modalsInfo } = this.props;
     const { userConfirmedPaymentWithLOC, password, isQuoteStopped, safeChargeMode } = this.state;
     const hasLocAddress = !!this.props.userInfo.locAddress;
     const { currencyExchangeRates } = this.props.exchangeRatesInfo;
@@ -545,7 +573,7 @@ class HotelBookingConfirmPage extends React.Component {
                           {!isQuoteStopped ? <span>Market Price will update in <i className="fa fa-clock-o" aria-hidden="true"></i>&nbsp;{this.props.locPriceUpdateTimerInfo.seconds} sec &nbsp;</span> : 'Processing payment...'}
                         </div>
                         <div>
-                          <button className="btn btn-primary" disabled={!roundedFiatPrice} onClick={() => this.payWithCard(roundedFiatPrice)}>Pay with Credit Card</button>
+                          <button className="btn btn-primary" disabled={!roundedFiatPrice} onClick={() => this.handlePayWithCard(roundedFiatPrice)}>Pay with Credit Card</button>
                         </div>
                       </div>
                       <div className="logos">
@@ -574,7 +602,7 @@ class HotelBookingConfirmPage extends React.Component {
                       {userConfirmedPaymentWithLOC
                         ? <button className="btn btn-primary" disabled>Processing Payment...</button>
                         : hasLocAddress
-                          ? <button className="btn btn-primary" onClick={(e) => { this.stopQuote(); this.openModal(PASSWORD_PROMPT, e); }}>Pay with LOC Tokens</button>
+                          ? <button className="btn btn-primary" onClick={this.handlePayWithLOC}>Pay with LOC Tokens</button>
                           : <button className="btn btn-primary" onClick={(e) => this.openModal(CREATE_WALLET, e)}>Create Wallet</button>
                       }
                     </div>
@@ -589,7 +617,7 @@ class HotelBookingConfirmPage extends React.Component {
             </div>
           </div>
           <WalletPasswordModal
-            isActive={this.props.modalsInfo.isActive[PASSWORD_PROMPT]}
+            isActive={modalsInfo.isActive[PASSWORD_PROMPT]}
             text={'Enter your wallet password'}
             placeholder={'Wallet password'}
             handleSubmit={() => this.payWithLocSingleWithdrawer()}
@@ -599,6 +627,8 @@ class HotelBookingConfirmPage extends React.Component {
             onChange={this.onChange}
           />
           <RecoverWallerPassword />
+          <PendingBookingLocModal isActive={modalsInfo.isActive[PENDING_BOOKING_LOC]} openModal={this.openModal} closeModal={this.closeModal} />
+          <PendingBookingFiatModal isActive={modalsInfo.isActive[PENDING_BOOKING_FIAT]} openModal={this.openModal} closeModal={this.closeModal} handleSubmit={() => this.payWithCard(roundedFiatPrice)} />
         </div>
       </React.Fragment>
     );
