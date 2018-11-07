@@ -8,17 +8,23 @@ import { connect } from 'react-redux';
 import { RoomsXMLCurrency } from '../../../services/utilities/roomsXMLCurrency';
 import LocPrice from '../../common/utility/LocPrice';
 import Rating from '../../common/rating';
+import { DEFAULT_LISTING_IMAGE_URL } from '../../../constants/images';
 
 function HomeResult(props) {
   const { currency, currencySign } = props.paymentInfo;
   const { cityName, countryName, prices, currency_code, defaultDailyPrice, id, name, averageRating, description } = props.listing;
-  let { pictures } = props.listing;
   const listingPrice = prices && currency === currency_code ? parseFloat(defaultDailyPrice, 10).toFixed() : parseFloat(prices[currency], 10).toFixed(2);
   const listingPriceInRoomsCurrency = prices && prices[RoomsXMLCurrency.get()];
-
+  
+  let pictures = props.listing.pictures || [];
   if (typeof pictures === 'string') {
     pictures = JSON.parse(pictures).map(img => { return { thumbnail: Config.getValue('imgHost') + img.thumbnail }; });
   }
+
+  if (pictures.length < 1) {
+    pictures.push({ thumbnail: Config.getValue('imgHost') + DEFAULT_LISTING_IMAGE_URL });
+  }
+
   return (
     <div className="list-hotel">
       <div className="list-image">

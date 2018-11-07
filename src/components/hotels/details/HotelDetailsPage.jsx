@@ -25,6 +25,7 @@ import { CHECKING_ROOM_AVAILABILITY, SIMILAR_ROOM_GIVEN } from '../../../constan
 import { ROOM_IS_NO_LONGER_AVAILABLE } from '../../../constants/errorMessages.js';
 import { ALL_ROOMS_TAKEN } from '../../../constants/warningMessages.js';
 import { LONG } from '../../../constants/notificationDisplayTimes.js';
+import { DEFAULT_LISTING_IMAGE_URL } from '../../../constants/images';
 
 class HotelDetailsPage extends React.Component {
   constructor(props) {
@@ -374,7 +375,7 @@ class HotelDetailsPage extends React.Component {
 
     if (images && images.length < 3) {
       while (images.length < 3) {
-        images.push({ src: Config.getValue('imgHost') + '/listings/images/default.png' });
+        images.push({ src: Config.getValue('imgHost') + DEFAULT_LISTING_IMAGE_URL });
       }
     }
 
