@@ -40,6 +40,11 @@ $breakpoints: (
     .status {
       font-weight: 400;
     }
+    .icon-question {
+      margin: 0 5px;
+    }
+
+    @include dashboardTooltip();
   }
 
   @include media("<=phone") {

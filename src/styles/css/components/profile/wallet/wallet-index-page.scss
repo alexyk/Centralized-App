@@ -1,6 +1,12 @@
 @import '../../../vendors/include-media';
 @import '../../../base/variables';
 #wallet-index {
+  h2 {
+    display: inline-block;
+    @include media('<tablet') {
+      display: block;
+    }
+  }
   .disable-input {
     background-color: lightgrey !important;
   }
@@ -18,12 +24,6 @@
     }
     .button-wallet-link {
       display: inline-block;
-      .wallet-link {
-        color: $moderate-red;
-        text-decoration: underline $moderate-red;
-        display: inline-block;
-        padding: 10px;
-      }
     }
   }
   .btn {
@@ -34,5 +34,12 @@
       margin: 20px 0;
       font-size: 16px;
     }
+  }
+  .wallet-link {
+    color: $moderate-red;
+    text-decoration: underline $moderate-red;
+    display: inline-block;
+    padding: 10px;
+    cursor: pointer;
   }
 }
