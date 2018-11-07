@@ -49,7 +49,6 @@ class AirTicketsSearchResult extends Component {
     };
 
     this.updateWindowDimensions = _.debounce(this.updateWindowDimensions.bind(this), 500);
-    this.handleFlightChange = this.handleFlightChange.bind(this);
   }
 
   componentDidMount() {
