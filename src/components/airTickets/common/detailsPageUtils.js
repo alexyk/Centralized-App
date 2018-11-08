@@ -1,53 +1,5 @@
 import $ from 'jquery';
 
-export function openLightbox(event, index) {
-  event.preventDefault();
-  this.setState({
-    lightboxIsOpen: true,
-    currentImage: index,
-  });
-}
-
-export function closeLightbox() {
-  this.setState({
-    currentImage: 0,
-    lightboxIsOpen: false,
-  });
-}
-
-export function gotoPrevious() {
-  this.setState({
-    currentImage: this.state.currentImage - 1,
-  });
-}
-
-export function gotoNext() {
-  this.setState({
-    currentImage: this.state.currentImage + 1,
-  });
-}
-
-export function gotoImage(index) {
-  this.setState({
-    currentImage: index,
-  });
-}
-
-export function handleClickImage() {
-  if (this.state.currentImage === this.state.data.pictures.length - 1) {
-    this.closeLightbox();
-    return;
-  }
-  this.gotoNext();
-}
-
-export function next() {
-  this.slider.slickNext();
-}
-export function previous() {
-  this.slider.slickPrev();
-}
-
 export function initStickyElements() {
   $(document).ready(() => {
     window.onscroll = function () { sticky(); };
