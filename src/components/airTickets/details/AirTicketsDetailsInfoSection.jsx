@@ -2,6 +2,7 @@ import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import AirTicketsDetailsBookingPanel from './AirTicketsDetailsBookingPanel';
 import { initStickyElements } from '../common/detailsPageUtils';
+import Loader from '../../common/loader';
 import BagIcon from '../../../styles/images/bag-icon.png';
 import MealIcon from '../../../styles/images/meal-icon.png';
 import WirelessIcon from '../../../styles/images/icon-wireless_internet.png';
@@ -198,9 +199,13 @@ class AirTicketsDetailsInfoSection extends Component {
     console.log(item);
     console.log(fareRules);
 
+    if (!item || !fareRules) {
+      return <Loader minHeight={'50vh'} />;
+    }
+
     const departureInfo = this.getDepartureInfo(item.departureInfo);
     const returnInfo = this.getReturnInfo(item.returnInfo);
-    const isFlightServices = item.services.filter(service => service.servicePerPax === false).length > 0;
+    const isFlightServices = item.services && item.services.filter(service => service.servicePerPax === false).length > 0;
 
     return (
       <section className="air-tickets-details-container">
