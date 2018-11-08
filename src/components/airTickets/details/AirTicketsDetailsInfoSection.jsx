@@ -10,7 +10,6 @@ import TimeIcon from '../../../styles/images/time-icon.png';
 import '../../../styles/css/components/airTickets/search/air-tickets-search-result.css';
 import '../../../styles/css/components/airTickets/details/air-tickets-details-info-section.css';
 
-
 class AirTicketsDetailsInfoSection extends Component {
   constructor(props) {
     super(props);
@@ -20,6 +19,7 @@ class AirTicketsDetailsInfoSection extends Component {
     };
 
     this.toggleFareRule = this.toggleFareRule.bind(this);
+    this.parseFlightServiceName = this.parseFlightServiceName.bind(this);
   }
 
   componentDidMount() {
@@ -40,7 +40,7 @@ class AirTicketsDetailsInfoSection extends Component {
     return middleStopsBulets;
   }
 
-  extractFlightFullDurationFromMinutes(minutes) {
+  convertMinutesToTime(minutes) {
     const hours = Math.floor(minutes / 60);
     const remainingMinutes = minutes % 60;
 
@@ -73,7 +73,7 @@ class AirTicketsDetailsInfoSection extends Component {
           <h5 className="carrier">{carrierName}</h5>
           <div className="duration">
             <img width="20" src={TimeIcon} alt="time" />
-            {this.extractFlightFullDurationFromMinutes(departureInfo[departureInfo.length - 1].journeyTime)}
+            {this.convertMinutesToTime(departureInfo[departureInfo.length - 1].journeyTime)}
           </div>
           <div className="stops-count">{departureInfo.length - 1 === 0 ? 'direct flight' : `${departureInfo.length - 1} stops`}</div>
         </div>
@@ -139,7 +139,7 @@ class AirTicketsDetailsInfoSection extends Component {
           <h5 className="carrier">{carrierName}</h5>
           <div className="duration">
             <img width="20" src={TimeIcon} alt="time" />
-            {this.extractFlightFullDurationFromMinutes(returnInfo[returnInfo.length - 1].journeyTime)}
+            {this.convertMinutesToTime(returnInfo[returnInfo.length - 1].journeyTime)}
           </div>
           <div className="stops-count">{returnInfo.length - 1 === 0 ? 'direct flight' : `${returnInfo.length - 1} stops`}</div>
         </div>
@@ -185,6 +185,11 @@ class AirTicketsDetailsInfoSection extends Component {
     });
   }
 
+  parseFlightServiceName(serviceName) {
+    const lowerCaseServiceName = serviceName.match(/[A-Z][a-z]+/g).filter(word => word !== 'options').map(word => word.toLowerCase()).join(' ');
+    return lowerCaseServiceName.charAt(0).toUpperCase() + lowerCaseServiceName.substring(1);
+  }
+
   render() {
     const { result, fareRules } = this.props;
     console.log(result);
@@ -195,6 +200,7 @@ class AirTicketsDetailsInfoSection extends Component {
 
     const departureInfo = this.getDepartureInfo(item.departureInfo);
     const returnInfo = this.getReturnInfo(item.returnInfo);
+    const isFlightServices = item.services.filter(service => service.servicePerPax === false).length > 0;
 
     return (
       <section className="air-tickets-details-container">
@@ -210,11 +216,79 @@ class AirTicketsDetailsInfoSection extends Component {
               <h2>Flight details</h2>
               <hr />
               <div className="flight-details">
-                <div>Airline: </div>
-                <div>Flight number: </div>
-                <div>Service class: </div>
-                <div>Stop time: </div>
-                <div>Total trip duration: </div>
+                <div className="departure">
+                  <h5>Departure</h5>
+                  {item.departureInfo.map((segment, index) => {
+                    return (
+                      <div className="departure-segment" key={index}>
+                        <h6>{segment.originInfo.airportName} <span className="icon-arrow-right arrow"></span> {segment.destinationInfo.airportName}</h6>
+                        <div className="departure-segment-item">
+                          <div>Flight number:</div>
+                          <div>{segment.carrierInfo.flightNumber}</div>
+                        </div>
+                        <div className="departure-segment-item">
+                          <div>Distance:</div>
+                          <div>{segment.distance} km</div>
+                        </div>
+                        <div className="departure-segment-item">
+                          <div>Service class:</div>
+                          <div>{segment.flightClass.className}</div>
+                        </div>
+                        <div className="departure-segment-item">
+                          <div>Flight time:</div>
+                          <div>{this.convertMinutesToTime(segment.flightTime)}</div>
+                        </div>
+                        {segment.techStop !== 0 &&
+                          <div className="departure-segment-item">
+                            <div>Tech stops:</div>
+                            <div>{segment.techStop}</div>
+                          </div>}
+                        {segment.waitTime &&
+                          <div className="departure-segment-item">
+                            <div>Wait time:</div>
+                            <div>{this.convertMinutesToTime(segment.waitTime)}</div>
+                          </div>}
+                      </div>
+                    );
+                  })}
+                </div>
+                {item.returnInfo &&
+                  <div className="return">
+                    <h5>Return</h5>
+                    {item.returnInfo.map((segment, index) => {
+                      return (
+                        <div className="departure-segment" key={index}>
+                          <h6>{segment.originInfo.airportName} <span className="icon-arrow-right arrow"></span> {segment.destinationInfo.airportName}</h6>
+                          <div className="departure-segment-item">
+                            <div>Flight number:</div>
+                            <div>{segment.carrierInfo.flightNumber}</div>
+                          </div>
+                          <div className="departure-segment-item">
+                            <div>Distance:</div>
+                            <div>{segment.distance} km</div>
+                          </div>
+                          <div className="departure-segment-item">
+                            <div>Service class:</div>
+                            <div>{segment.flightClass.className}</div>
+                          </div>
+                          <div className="departure-segment-item">
+                            <div>Flight time:</div>
+                            <div>{this.convertMinutesToTime(segment.flightTime)}</div>
+                          </div>
+                          {segment.techStop !== 0 &&
+                            <div className="departure-segment-item">
+                              <div>Tech stops:</div>
+                              <div>{segment.techStop}</div>
+                            </div>}
+                          {segment.waitTime &&
+                            <div className="departure-segment-item">
+                              <div>Wait time:</div>
+                              <div>{this.convertMinutesToTime(segment.waitTime)}</div>
+                            </div>}
+                        </div>
+                      );
+                    })}
+                  </div>}
               </div>
             </div>
             <div className="air-tickets-details-content-item">
@@ -248,7 +322,42 @@ class AirTicketsDetailsInfoSection extends Component {
             <div className="air-tickets-details-content-item">
               <h2>Services</h2>
               <hr />
+              <div className="flight-services">
+                <div className="flight-service">
+                  <div className="flight-service-name">{this.parseFlightServiceName('OutwardLuggageOptions')}</div>
+                  <div className="flight-service-options">
+                    <select name="services">
+                      <option value="1">10kg 29.5</option>
+                      <option value="2">20kg 59.5</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
             </div>
+            {item.services && isFlightServices &&
+              <div className="air-tickets-details-content-item">
+                <h2>Services</h2>
+                <hr />
+                <div className="flight-services">
+                  {item.services.map((service, serviceIndex) => {
+                    if (service.servicePerPax === false) {
+                      return (
+                        <div className="flight-service" key={serviceIndex}>
+                          <div className="flight-service-name">{this.parseFlightServiceName(service.serviceId)}</div>
+                          <div className="flight-service-options">
+                            <select name="services">
+                              {service.serviceSelections.map((option, optionIndex) => {
+                                return <option value={option.value} key={optionIndex}>{option.key}</option>;
+                              })}
+                            </select>
+                          </div>
+                        </div>
+                      );
+                    }
+                    return null;
+                  })}
+                </div>
+              </div>}
           </div>
           <AirTicketsDetailsBookingPanel result={result} />
         </div>

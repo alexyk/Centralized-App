@@ -36,7 +36,32 @@ $media-expressions: (
         margin-bottom: 40px;
       }
       .flight-details {
-        font-size: 18px;
+        display: flex;
+        justify-content: space-between;
+        .departure,
+        .return {
+          h5 {
+            font-weight: 400;
+            margin-bottom: 20px;
+          }
+          h6 {
+            margin-bottom: 10px;
+            .icon-arrow-right {
+              font-size: 0.6em;
+              margin: 0 10px;
+            }
+          }
+          .departure-segment {
+            margin-bottom: 20px;
+            .departure-segment-item {
+              display: flex;
+              justify-content: space-between;
+            }
+          }
+        }
+        div {
+          margin-bottom: 5px;
+        }
       }
       .farerules {
         .flight-rule-title {
@@ -70,6 +95,22 @@ $media-expressions: (
             margin-bottom: 10px;
             h5 {
               font-weight: 400;
+            }
+          }
+        }
+      }
+      .flight-services {
+        .flight-service {
+          display: flex;
+          margin-bottom: 10px;
+          .flight-service-name {
+            width: 50%;
+          }
+          .flight-service-options {
+            width: 50%;
+            select {
+              width: 50%;
+              text-align: center;
             }
           }
         }
