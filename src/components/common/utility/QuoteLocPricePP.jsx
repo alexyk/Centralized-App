@@ -9,10 +9,10 @@ import { removeLocAmount } from '../../../actions/locAmountsInfo';
 import { LONG } from '../../../constants/notificationDisplayTimes.js';
 
 const DEFAULT_CRYPTO_CURRENCY = 'EUR';
-const DEFAULT_QUOTE_LOC_ID = 'quote';
+const DEFAULT_QUOTE_LOC_ID = 'quote-PP';
 const DEFAULT_QUOTE_LOC_METHOD = 'quoteLoc';
 
-class QuoteLocPrice extends PureComponent {
+class QuoteLocPricePP extends PureComponent {
   constructor(props) {
     super(props);
 
@@ -38,6 +38,7 @@ class QuoteLocPrice extends PureComponent {
   }
 
   sendWebsocketMessage(id, method, params) {
+    console.log(params);
     Websocket.sendMessage(id || DEFAULT_QUOTE_LOC_ID, method || DEFAULT_QUOTE_LOC_METHOD, params);
   }
 
@@ -80,12 +81,12 @@ class QuoteLocPrice extends PureComponent {
   }
 }
 
-QuoteLocPrice.defaultProps = {
+QuoteLocPricePP.defaultProps = {
   params: {},
   brackets: true
 };
 
-QuoteLocPrice.propTypes = {
+QuoteLocPricePP.propTypes = {
   brackets: PropTypes.bool,
   method: PropTypes.string,
   params: PropTypes.object,
@@ -123,4 +124,4 @@ function mapStateToProps(state, ownProps) {
   };
 }
 
-export default connect(mapStateToProps)(QuoteLocPrice);
+export default connect(mapStateToProps)(QuoteLocPricePP);

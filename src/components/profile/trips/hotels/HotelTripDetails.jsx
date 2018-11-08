@@ -43,6 +43,7 @@ class HotelTripDetails extends React.Component {
 
   componentDidMount() {
     const bookingId = this.props.match.params.id;
+    console.log(this.props.location.search);
     if (bookingId === 'error_url') {
       this.setState({
         safeChargeError: true,
@@ -240,6 +241,9 @@ class HotelTripDetails extends React.Component {
 
 HotelTripDetails.propTypes = {
   match: PropTypes.object,
+
+  //Router props
+  location: PropTypes.object
 };
 
 export default withRouter(HotelTripDetails);
