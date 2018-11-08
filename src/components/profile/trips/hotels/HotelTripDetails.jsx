@@ -160,7 +160,7 @@ class HotelTripDetails extends React.Component {
     if (safeChargeMode === 'success') {
       return (
         <section className="details-view safecharge-success" id="details">
-          <h2>Thank you! Your payment has been successfully receieved.</h2>
+          <h2>Thank you! Your payment has been successfully received.</h2>
           <p>Your reservation has been initiated to the hotel and is pending confirmation. </p>
           <p>Confirmation usually takes few minutes but in some rare occasions could take up to several hours.</p>
           <p>You can monitor the status of your booking in your Dashboard under <Link to="/profile/trips/hotels">My Trips</Link> tab.</p>
