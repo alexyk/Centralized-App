@@ -1,7 +1,7 @@
 import React, { Fragment } from 'react';
 import { withRouter, Route, Switch } from 'react-router-dom';
 import HomesBookingConfirmPage from './HomesBookingConfirmPage';
-import BookingSteps from '../../common/utility/BookingSteps';
+import BookingSteps from '../../common/bookingSteps';
 import HomesBookingListingDetailsInfo from './HomesBookingListingDetailsInfo';
 import _ from 'lodash';
 import { parse } from 'query-string';

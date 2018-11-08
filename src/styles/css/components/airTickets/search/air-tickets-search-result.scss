@@ -23,7 +23,8 @@ $media-expressions: ('screen': 'screen',
 @import '../../../base/mixins';
 @import '../../../base/helpers';
 
-.air-tickets-result {
+.air-tickets-result,
+.air-tickets-details-result {
   background: $white;
   border-radius: 3px;
   overflow: hidden;
@@ -81,6 +82,7 @@ $media-expressions: ('screen': 'screen',
 
     .solution-flight {
       background-color: #f0f1f3;
+      margin-bottom: 20px;
 
       .flight {
         padding: 10px 10px;

@@ -49,7 +49,6 @@ $media-expressions: (
       position: relative;
       padding: 7px 0;
       width: 13%;
-      border-right: 1px solid $gray;
       min-width: 180px;
       background: $white;
       @include media("<=widescreen") {
@@ -195,17 +194,14 @@ $media-expressions: (
         }
       }
     }
-    &-check-wrap {
+    .air-tickets-form-check-wrap {
       display: flex;
       align-items: center;
       justify-content: center;
       width: 29%;
-      padding: 0 10px;
-      border-right: 1px solid $gray;
       background: $white;
       @include media("<=widescreen") {
         width: 33%;
-        border-right: none;
       }
       @include media("<=desktop") {
         width: 100%;
@@ -213,69 +209,8 @@ $media-expressions: (
         padding: 7px 0;
       }
       .check {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        @include media("<=phone") {
-          width: 85%;
-        }
-        .icon-arrow-right {
-          display: flex;
-          align-items: center;
-          font-size: 0.8em;
-          margin: 0 10px 0 5px;
-        }
-        .choose-roundtrip {
-          display: flex;
-          align-items: center;
-          &.hide-single {
-            display: none;
-          }
-          .roundtrip {
-            padding: 5px;
-            width: 130px;
-            display: inline-flex;
-            justify-content: center;
-            border-bottom: 2px solid #fff;
-            &:hover {
-              border-bottom: 2px solid #d87a61;
-            }
-            .icon-calendar {
-              display: flex;
-              align-items: center;
-              margin-left: 6px;
-              margin-right: 9px;
-              font-size: 0.9em;
-              color: #898c8d;
-            }
-            .content {
-              margin: 0;
-              .text {
-                text-align: left;
-                min-width: 80px;
-                font-size: 16px;
-                text-align: left;
-              }
-            }
-          }
-        }
-        .close-roundtrip-holder {
-          position: relative;
-          .close-roundtrip-button {
-            position: absolute;
-            top: -30px;
-            right: 0px;
-            color: #d87a61;
-            font-size: 1.2em;
-            &.hide-close-roundtrip {
-              display: none;
-            }
-            cursor: pointer;
-            &:before {
-              content: "\00d7";
-            }
-          }
-        }
+        border-left: 1px solid $gray;
+        border-right: 1px solid $gray;
       }
     }
     .air-tickets-form-guest-wrap {
@@ -283,7 +218,6 @@ $media-expressions: (
       display: flex;
       justify-content: center;
       align-items: center;
-      border-right: 1px solid $gray;
       background: $white;
       @include media("<=widescreen") {
         width: 30%;
@@ -311,7 +245,6 @@ $media-expressions: (
     .air-tickets-form-flight-stops,
     .air-tickets-form-departure-time {
       background: $white;
-      border-right: 1px solid $gray;
       display: flex;
       justify-content: center;
       align-items: center;

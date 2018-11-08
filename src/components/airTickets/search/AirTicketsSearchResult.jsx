@@ -49,7 +49,6 @@ class AirTicketsSearchResult extends Component {
     };
 
     this.updateWindowDimensions = _.debounce(this.updateWindowDimensions.bind(this), 500);
-    this.handleFlightChange = this.handleFlightChange.bind(this);
   }
 
   componentDidMount() {
@@ -87,12 +86,6 @@ class AirTicketsSearchResult extends Component {
     return TITLE_LENGTH[screenSize];
   }
 
-  handleFlightChange(e) {
-    this.setState({
-      flightSolutionIndex: Number(e.target.value)
-    });
-  }
-
   extractFlightFullDurationFromMinutes(minutes) {
     const hours = Math.floor(minutes / 60);
     const remainingMinutes = minutes % 60;
@@ -100,8 +93,140 @@ class AirTicketsSearchResult extends Component {
     return `${hours}h ${remainingMinutes}min`;
   }
 
+  getDepartureInfo(departureInfo) {
+    if (departureInfo.length === 0) {
+      return;
+    }
+
+    const departureTime = departureInfo[0].origin.time;
+    const arrivalTime = departureInfo[departureInfo.length - 1].destination.time;
+    const carrierName = departureInfo[0].carrierName;
+    let middleStopsBulets = [];
+    for (let i = 0; i < departureInfo.length - 1; i++) {
+      middleStopsBulets.push(
+        <Fragment key={i}>
+          <div key={i} className="bulet-container"><span className="bulet"></span></div>
+          <hr className="line" />
+          <div className="middle-stop" style={{ left: `${(i * 60) + 40}px` }}>{departureInfo[i].destination.code}</div>
+        </Fragment>
+      );
+    }
+
+    return (
+      <Fragment>
+        <div className="solution-main-info">
+          <h5 className="departure">Departure</h5>
+          <h5 className="carrier">{carrierName}</h5>
+          <div className="duration">
+            <img width="20" src={TimeIcon} alt="time" />
+            {this.extractFlightFullDurationFromMinutes(departureInfo[departureInfo.length - 1].journeyTime)}
+          </div>
+          <div className="stops-count">{departureInfo.length - 1 === 0 ? 'direct flight' : `${departureInfo.length - 1} stops`}</div>
+        </div>
+        <div className="solution-flight">
+          <div className="flight">
+            <div className="item flight-times">
+              {departureTime}
+              <div className="arrow-icon-container">
+                <img src="/images/icon-arrow.png" alt="icon-arrow" />
+              </div>
+              {arrivalTime}
+            </div>
+            <div className="item flight-stops">
+              <div className="stop">{departureInfo[0].origin.code}</div>
+              <div className="stops-container horizontal">
+                <div className="bulet-container"><span className="bulet"></span></div>
+                <hr className="line" />
+                {departureInfo.length === 1 ? null : middleStopsBulets}
+                <div className="bulet-container"><span className="bulet"></span></div>
+              </div>
+              <div className="stop">{departureInfo[departureInfo.length - 1].destination.code}</div>
+            </div>
+            <div className="item flight-icons">
+              <div className="icon">
+                <img src={MealIcon} alt="meal" />
+              </div>
+              <div className="icon">
+                <img src={BagIcon} alt="bag" />
+              </div>
+              <div className="icon wi-fi">
+                <img src={WirelessIcon} alt="bag" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </Fragment >
+    );
+  }
+
+  getReturnInfo(returnInfo) {
+    if (returnInfo.length === 0) {
+      return;
+    }
+
+    const departureTime = returnInfo[0].origin.time;
+    const arrivalTime = returnInfo[returnInfo.length - 1].destination.time;
+    const carrierName = returnInfo[0].carrierName;
+    let middleStopsBulets = [];
+    for (let i = 0; i < returnInfo.length - 1; i++) {
+      middleStopsBulets.push(
+        <Fragment key={i}>
+          <div key={i} className="bulet-container"><span className="bulet"></span></div>
+          <hr className="line" />
+          <div className="middle-stop" style={{ left: `${(i * 60) + 40}px` }}>{returnInfo[i].destination.code}</div>
+        </Fragment>
+      );
+    }
+
+    return (
+      <Fragment>
+        <div className="solution-main-info">
+          <h5 className="departure">Return</h5>
+          <h5 className="carrier">{carrierName}</h5>
+          <div className="duration">
+            <img width="20" src={TimeIcon} alt="time" />
+            {this.extractFlightFullDurationFromMinutes(returnInfo[returnInfo.length - 1].journeyTime)}
+          </div>
+          <div className="stops-count">{returnInfo.length - 1 === 0 ? 'direct flight' : `${returnInfo.length - 1} stops`}</div>
+        </div>
+        <div className="solution-flight">
+          <div className="flight">
+            <div className="item flight-times">
+              {departureTime}
+              <div className="arrow-icon-container">
+                <img src="/images/icon-arrow.png" alt="icon-arrow" />
+              </div>
+              {arrivalTime}
+            </div>
+            <div className="item flight-stops">
+              <div className="stop">{returnInfo[0].origin.code}</div>
+              <div className="stops-container horizontal">
+                <div className="bulet-container"><span className="bulet"></span></div>
+                <hr className="line" />
+                {returnInfo.length === 1 ? null : middleStopsBulets}
+                <div className="bulet-container"><span className="bulet"></span></div>
+              </div>
+              <div className="stop">{returnInfo[returnInfo.length - 1].destination.code}</div>
+            </div>
+            <div className="item flight-icons">
+              <div className="icon">
+                <img src={MealIcon} alt="meal" />
+              </div>
+              <div className="icon">
+                <img src={BagIcon} alt="bag" />
+              </div>
+              <div className="icon wi-fi">
+                <img src={WirelessIcon} alt="bag" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </Fragment >
+    );
+  }
+
   render() {
-    const { exchangeRatesInfo, paymentInfo, userInfo, result, allElements, id } = this.props;
+    const { exchangeRatesInfo, paymentInfo, userInfo, result, allElements } = this.props;
     const { flightSolutionIndex } = this.state;
 
     const { priceInfo } = result.solutions[flightSolutionIndex];
@@ -114,7 +239,7 @@ class AirTicketsSearchResult extends Component {
     const isMobile = this.props.location.pathname.indexOf('mobile') !== -1;
 
     // TODO: add redirect path for mobile
-    const redirectURL = this.props.location.pathname.indexOf('mobile') === -1
+    const redirectURL = isMobile
       ? '/tickets/results'
       : '/tickets/results';
 
@@ -125,64 +250,13 @@ class AirTicketsSearchResult extends Component {
       <div className="air-tickets-result" >
         <form className="air-tickets-result-content">
           {result.solutions.map((solution, solutionIndex) => {
-            const departureTime = solution.segments[0].origin.time;
-            const arrivalTime = solution.segments[solution.segments.length - 1].destination.time;
-            const carrierName = solution.segments[0].carrierName;
-            let middleStopsBulets = [];
-            for (let i = 0; i < solution.segments.length - 1; i++) {
-              middleStopsBulets.push(
-                <Fragment key={i}>
-                  <div key={i} className="bulet-container"><span className="bulet"></span></div>
-                  <hr className="line" />
-                  <div className="middle-stop" style={{ left: `${(i * 60) + 40}px` }}>{solution.segments[i].destination.code}</div>
-                </Fragment>
-              );
-            }
+            const departureInfo = this.getDepartureInfo(solution.departureInfo);
+            const returnInfo = this.getReturnInfo(solution.returnInfo);
 
             return (
               <Fragment key={solutionIndex}>
-                <div className="solution-main-info">
-                  <h5 className="departure">Departure</h5>
-                  <h5 className="carrier">{carrierName}</h5>
-                  <div className="duration">
-                    <img width="20" src={TimeIcon} alt="time" />
-                    {this.extractFlightFullDurationFromMinutes(solution.segments[solution.segments.length - 1].journeyTime)}
-                  </div>
-                  <div className="stops-count">{solution.segments.length - 1} stops</div>
-                </div>
-                <div className="solution-flight">
-                  <div className="flight">
-                    <input className="item" type="radio" name="flight" value={solutionIndex} onClick={this.handleFlightChange} defaultChecked={flightSolutionIndex === solutionIndex} />
-                    <div className="item flight-times">
-                      {departureTime}
-                      <div className="arrow-icon-container">
-                        <img src="/images/icon-arrow.png" alt="icon-arrow" />
-                      </div>
-                      {arrivalTime}
-                    </div>
-                    <div className="item flight-stops">
-                      <div className="stop">{solution.segments[0].origin.code}</div>
-                      <div className="stops-container horizontal">
-                        <div className="bulet-container"><span className="bulet"></span></div>
-                        <hr className="line" />
-                        {solution.segments.length === 1 ? null : middleStopsBulets}
-                        <div className="bulet-container"><span className="bulet"></span></div>
-                      </div>
-                      <div className="stop">{solution.segments[solution.segments.length - 1].destination.code}</div>
-                    </div>
-                    <div className="item flight-icons">
-                      <div className="icon">
-                        <img src={MealIcon} alt="meal" />
-                      </div>
-                      <div className="icon">
-                        <img src={BagIcon} alt="bag" />
-                      </div>
-                      <div className="icon wi-fi">
-                        <img src={WirelessIcon} alt="bag" />
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                {departureInfo}
+                {returnInfo}
               </Fragment>
             );
           })}
@@ -195,7 +269,7 @@ class AirTicketsSearchResult extends Component {
             <div>
               {!isPriceLoaded && allElements
                 ? <button disabled className="mobile-pricing-button">Unavailable</button>
-                : <Link target={isMobile === false ? '_blank' : '_self'} className="mobile-pricing-button" to={`${redirectURL}/${id}${search.substr(0, endOfSearch)}`}>Book now</Link>
+                : <Link target={isMobile === false ? '_blank' : '_self'} className="mobile-pricing-button" to={`${redirectURL}/${result.id}${search.substr(0, endOfSearch)}`}>Book now</Link>
               }
             </div>
           </div>
@@ -213,7 +287,7 @@ class AirTicketsSearchResult extends Component {
           {isPriceLoaded && <LocPrice fiat={priceForLoc} />}
           {!isPriceLoaded && allElements
             ? <button disabled className="btn">Unavailable</button>
-            : <Link target={isMobile === false ? '_blank' : '_self'} className="btn" to={`${redirectURL}/${id}${search.substr(0, endOfSearch)}`}>Book now</Link>
+            : <Link className="btn" to={`${redirectURL}/${result.id}${search.substr(0, endOfSearch)}`}>Book now</Link>
           }
         </div>
       </div>
@@ -222,7 +296,6 @@ class AirTicketsSearchResult extends Component {
 }
 
 AirTicketsSearchResult.propTypes = {
-  id: PropTypes.string,
   result: PropTypes.object,
   price: PropTypes.any,
   allElements: PropTypes.bool,

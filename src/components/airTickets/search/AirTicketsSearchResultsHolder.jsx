@@ -10,11 +10,12 @@ function AirTicketsResultsHolder(props) {
   if (!props.results) {
     return;
   }
-  if (props.results && props.results.length === 0 && props.loading) {
+
+  if (props.results.length === 0 && props.loading) {
     return <div className="text-center"><h2 style={{ margin: '80px 0' }}>Looking for the best offers...</h2></div>;
   }
 
-  if (props.results && props.results.length === 0 && !props.loading) {
+  if (props.results.length === 0 && !props.loading) {
     return <NoEntriesMessage text='No Results' />;
   }
 
@@ -22,7 +23,6 @@ function AirTicketsResultsHolder(props) {
     return <AirTicketsSearchResult
       key={result.id}
       result={result}
-      id={result.id}
       exchangeRatesInfo={props.exchangeRatesInfo}
       paymentInfo={props.paymentInfo}
       userInfo={props.userInfo}

@@ -1,10 +1,12 @@
-import React, { Component, Fragment } from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import moment from 'moment';
 import DatePicker from '../../common/datepicker';
 import { asyncSetEndDate } from '../../../actions/searchDatesInfo';
 import { setFlightRouting } from '../../../actions/airTicketsSearchInfo';
+
+import '../../../styles/css/components/airTickets/search/air-tickets-datepicker-wrapper.css';
 
 class AirTicketsDatepickerWrapper extends Component {
   constructor(props) {
@@ -30,19 +32,19 @@ class AirTicketsDatepickerWrapper extends Component {
 
   render() {
     return (
-      <Fragment>
+      <div className="check">
         <DatePicker
           minDate={moment()}
           enableRanges={this.props.airTicketsSearchInfo.flightRouting === '2'}
           intervalStartText="Departure"
-          intervalEndText="Arrival"
+          intervalEndText="Return"
           enableSameDates
         />
         <div className={`choose-roundtrip${this.props.airTicketsSearchInfo.flightRouting === '2' ? ' hide-single' : ''}`}>
           <span className="icon-arrow-right arrow"></span>
           <div className="roundtrip" onClick={() => this.changeFlightRouting('2')}>
             <span className='icon-calendar'></span>
-            <div className="content">
+            <div className="choose-roundtrip-content">
               <div className="text">Choose</div>
               <div className="text">roundtrip</div>
             </div>
@@ -51,7 +53,7 @@ class AirTicketsDatepickerWrapper extends Component {
         <div className="close-roundtrip-holder">
           <span className={`close-roundtrip-button${this.props.airTicketsSearchInfo.flightRouting === '1' ? ' hide-close-roundtrip' : ''}`} onClick={() => this.changeFlightRouting('1')} />
         </div>
-      </Fragment>
+      </div>
     );
   }
 }
