@@ -7,7 +7,7 @@ function AirTicketsBookingProfileEditNav() {
   return (
     <Fragment>
       <div className="host-step"><NavLink exact activeClassName="active" to="/tickets/results/:id/profile">Profile</NavLink></div>
-      <div className="host-step"><NavLink exact activeClassName="active" to="/tickets/results/:id/profile/additional-info">Invoice</NavLink></div>
+      <div className="host-step"><NavLink exact activeClassName="active" to="/tickets/results/:id/profile/invoice">Invoice</NavLink></div>
       <div className="host-step"><NavLink exact activeClassName="active" to="/tickets/results/:id/profile/photos">Services</NavLink></div>
       <div className="host-step"><NavLink exact activeClassName="active" to="/tickets/results/:id/profile/verification">Passengers</NavLink></div>
     </Fragment>

@@ -2,7 +2,7 @@ import React, { Component, Fragment } from 'react';
 import { Route, Switch, withRouter } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import AirTicketsDetailsPage from './details/AirTicketsDetailsPage';
-import AirTicketsBookingPage from './book/AirTicketsBookingPage';
+import AirTicketsBookingProfileRouterPage from './book/AirTicketsBookingProfileRouterPage';
 import { Config } from '../../../config';
 
 class AirTicketsRouterPage extends Component {
@@ -66,7 +66,7 @@ class AirTicketsRouterPage extends Component {
       <Fragment>
         <Switch>
           <Route exact path="/tickets/results/:id/details" render={() => <AirTicketsDetailsPage result={result} fareRules={fareRules} />} />
-          <Route exact path="/tickets/results/:id/profile" render={() => <AirTicketsBookingPage />} />
+          <Route path="/tickets/results/:id/profile" render={() => <AirTicketsBookingProfileRouterPage />} />
         </Switch>
       </Fragment>
     );
