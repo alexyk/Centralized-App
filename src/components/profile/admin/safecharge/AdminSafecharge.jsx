@@ -26,7 +26,6 @@ class AdminSafecharge extends Component {
     requester.updateConfigVars(configVars).then((res) => {
       if (res.success) {
         res.body.then((data) => {
-          console.log(data);
           const configVars = {};
           data.forEach((configVar) => {
             configVars[configVar.name] = configVar.value;

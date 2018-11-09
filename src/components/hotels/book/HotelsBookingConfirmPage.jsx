@@ -29,10 +29,10 @@ import '../../../styles/css/components/hotels/book/hotel-booking-confirm-page.cs
 const ERROR_MESSAGE_TIME = 20000;
 const DEFAULT_CRYPTO_CURRENCY = 'EUR';
 const TEST_FIAT_AMOUNT_IN_EUR = 15;
-const DEFAULT_QUOTE_LOC_ID = 'quote';
-const DEFAULT_QUOTE_LOC_PP_ID = 'quote-PP';
-const SAFECHARGE_VAR = 'SCPaymentModeOn';
 const PAYMENT_PROCESSOR_IDENTIFICATOR = '-PP';
+const DEFAULT_QUOTE_LOC_ID = 'quote';
+const DEFAULT_QUOTE_LOC_PP_ID = DEFAULT_QUOTE_LOC_ID + PAYMENT_PROCESSOR_IDENTIFICATOR;
+const SAFECHARGE_VAR = 'SCPaymentModeOn';
 
 class HotelBookingConfirmPage extends React.Component {
   constructor(props) {
@@ -551,7 +551,7 @@ class HotelBookingConfirmPage extends React.Component {
                     {this.props.isQuoteLocValid &&
                       <QuoteLocPricePP fiat={reservation.fiatPrice} params={{ bookingId: reservation.preparedBookingId + PAYMENT_PROCESSOR_IDENTIFICATOR }} brackets={false} invalidateQuoteLoc={this.props.invalidateQuoteLoc} redirectToHotelDetailsPage={this.props.redirectToHotelDetailsPage} />}
                   </div>
-                  {locAmounts[DEFAULT_QUOTE_LOC_PP_ID] && safeChargeMode &&
+                  {locAmounts[DEFAULT_QUOTE_LOC_PP_ID] && locAmounts[DEFAULT_QUOTE_LOC_PP_ID].fundsSufficient && safeChargeMode &&
                     <div className="payment-methods-card">
                       <div className="details">
                         <p className="booking-card-price">

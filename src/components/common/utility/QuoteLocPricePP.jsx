@@ -38,7 +38,6 @@ class QuoteLocPricePP extends PureComponent {
   }
 
   sendWebsocketMessage(id, method, params) {
-    console.log(params);
     Websocket.sendMessage(id || DEFAULT_QUOTE_LOC_ID, method || DEFAULT_QUOTE_LOC_METHOD, params);
   }
 
