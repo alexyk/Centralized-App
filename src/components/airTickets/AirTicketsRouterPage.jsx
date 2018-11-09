@@ -3,7 +3,7 @@ import { Route, Switch } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import HomePage from '../home/HomePage';
 import AirTicketsSearchPage from './search/AirTicketsSearchPage';
-import AirTicketsDetailsPage from './details/AirTicketsDetailsPage';
+import AirTicketsInitBookingRouterPage from './initBook/AirTicketsInitBookingRouterPage';
 
 function AirTicketsRouterPage(props) {
   return (
@@ -11,7 +11,7 @@ function AirTicketsRouterPage(props) {
       <Switch>
         <Route exact path="/tickets" render={() => <HomePage homePage="tickets" listings={props.listings} hotels={props.hotels} />} />
         <Route exact path="/tickets/results" render={() => <AirTicketsSearchPage />} />
-        <Route exact path="/tickets/results/:id" render={() => <AirTicketsDetailsPage />} />
+        <Route path="/tickets/results/:id" render={() => <AirTicketsInitBookingRouterPage />} />
       </Switch>
     </Fragment>
   );

@@ -1,15 +1,15 @@
 import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import AirTicketsDetailsBookingPanel from './AirTicketsDetailsBookingPanel';
-import { initStickyElements } from '../common/detailsPageUtils';
-import Loader from '../../common/loader';
-import BagIcon from '../../../styles/images/bag-icon.png';
-import MealIcon from '../../../styles/images/meal-icon.png';
-import WirelessIcon from '../../../styles/images/icon-wireless_internet.png';
-import TimeIcon from '../../../styles/images/time-icon.png';
+import { initStickyElements } from '../../common/detailsPageUtils';
+import Loader from '../../../common/loader';
+import BagIcon from '../../../../styles/images/bag-icon.png';
+import MealIcon from '../../../../styles/images/meal-icon.png';
+import WirelessIcon from '../../../../styles/images/icon-wireless_internet.png';
+import TimeIcon from '../../../../styles/images/time-icon.png';
 
-import '../../../styles/css/components/airTickets/search/air-tickets-search-result.css';
-import '../../../styles/css/components/airTickets/details/air-tickets-details-info-section.css';
+import '../../../../styles/css/components/airTickets/search/air-tickets-search-result.css';
+import '../../../../styles/css/components/airTickets/details/air-tickets-details-info-section.css';
 
 class AirTicketsDetailsInfoSection extends Component {
   constructor(props) {
@@ -324,7 +324,7 @@ class AirTicketsDetailsInfoSection extends Component {
                 })}
               </div>
             </div>
-            <div className="air-tickets-details-content-item">
+            {/* <div className="air-tickets-details-content-item">
               <h2>Services</h2>
               <hr />
               <div className="flight-services">
@@ -338,7 +338,7 @@ class AirTicketsDetailsInfoSection extends Component {
                   </div>
                 </div>
               </div>
-            </div>
+            </div> */}
             {item.services && isFlightServices &&
               <div className="air-tickets-details-content-item">
                 <h2>Services</h2>

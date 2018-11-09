@@ -1,63 +1,24 @@
-import React from 'react';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import moment from 'moment';
 import queryString from 'query-string';
-import { Config } from '../../../config';
-import { setOrigin, setDestination, setAirTicketsSearchInfo } from '../../../actions/airTicketsSearchInfo';
-import { asyncSetStartDate, asyncSetEndDate } from '../../../actions/searchDatesInfo';
+import { Config } from '../../../../config';
+import { setOrigin, setDestination, setAirTicketsSearchInfo } from '../../../../actions/airTicketsSearchInfo';
+import { asyncSetStartDate, asyncSetEndDate } from '../../../../actions/searchDatesInfo';
 import AirTicketsDetailsInfoSection from './AirTicketsDetailsInfoSection';
-import AirTicketsSearchBar from '../search/AirTicketsSearchBar';
-import BookingSteps from '../../common/bookingSteps';
+import AirTicketsSearchBar from '../../search/AirTicketsSearchBar';
+import BookingSteps from '../../../common/bookingSteps';
 
-import '../../../styles/css/components/carousel-component.css';
+import '../../../../styles/css/components/carousel-component.css';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 
-class AirTicketsDetailsPage extends React.Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      result: null,
-      fareRules: null
-    };
-
-    this.searchAirTickets = this.searchAirTickets.bind(this);
-  }
-
+class AirTicketsDetailsPage extends Component {
+  
   componentDidMount() {
-    fetch(`${Config.getValue('apiHost')}flight/selectFlight?flightId=${this.props.match.params.id}`)
-      .then(res => {
-        if (res.ok) {
-          res.json().then((data) => {
-            this.setState({
-              result: data
-            });
-          });
-        } else {
-          this.searchAirTickets(this.props.location.search);
-        }
-      });
-    fetch(`${Config.getValue('apiHost')}flight/fareRules?flightId=${this.props.match.params.id}`)
-      .then(res => {
-        if (res.ok) {
-          res.json().then((data) => {
-            this.setState({
-              fareRules: data
-            });
-          });
-        } else {
-          this.searchAirTickets(this.props.location.search);
-        }
-
-      });
     this.populateSearchBar();
-  }
-
-  searchAirTickets(queryString) {
-    this.props.history.push('/tickets/results' + queryString);
   }
 
   requestAirportInfo(airportCode) {
@@ -85,7 +46,6 @@ class AirTicketsDetailsPage extends React.Component {
       .then((data) => {
         this.props.dispatch(setOrigin({ code: origin, name: `${data.cityName}, ${data.cityState ? data.cityState + ', ' : ''}${data.countryName}, ${origin} airport` }));
       });
-
 
     this.requestAirportInfo(destination)
       .then((data) => {
@@ -127,9 +87,9 @@ class AirTicketsDetailsPage extends React.Component {
 
   render() {
     let loading;
-    const { result } = this.state;
+    const { result, fareRules } = this.props;
 
-    if (result) {
+    if (result && fareRules) {
       loading = true;
     }
 
@@ -161,8 +121,8 @@ class AirTicketsDetailsPage extends React.Component {
             <AirTicketsDetailsInfoSection
               isLogged={this.props.userInfo.isLogged}
               openModal={this.openModal}
-              result={this.state.result}
-              fareRules={this.state.fareRules}
+              result={result}
+              fareRules={fareRules}
             />
           </div>
         }
@@ -173,6 +133,8 @@ class AirTicketsDetailsPage extends React.Component {
 
 AirTicketsDetailsPage.propTypes = {
   match: PropTypes.object,
+  result: PropTypes.object,
+  fareRules: PropTypes.object,
 
   // start Router props
   history: PropTypes.object,

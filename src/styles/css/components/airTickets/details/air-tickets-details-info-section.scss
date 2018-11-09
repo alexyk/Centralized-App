@@ -40,12 +40,14 @@ $media-expressions: (
         justify-content: space-between;
         .departure,
         .return {
+          width: 40%;
           h5 {
             font-weight: 400;
             margin-bottom: 20px;
           }
           h6 {
             margin-bottom: 10px;
+            font-size: 17px;
             .icon-arrow-right {
               font-size: 0.6em;
               margin: 0 10px;
@@ -232,7 +234,7 @@ $media-expressions: (
         }
         .total {
           display: grid;
-          grid-template-columns: 70% 30%;
+          grid-template-columns: 40% 60%;
           margin: 10px 0;
         }
         .pay-in {

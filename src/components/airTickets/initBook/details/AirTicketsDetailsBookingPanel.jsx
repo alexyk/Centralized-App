@@ -2,12 +2,12 @@ import React from 'react';
 import { withRouter, Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import AirTicketsDatepickerWrapper from '../search/AirTicketsDatepickerWrapper';
-import LocPrice from '../../common/utility/LocPrice';
-import { CurrencyConverter } from '../../../services/utilities/currencyConverter';
-import { RoomsXMLCurrency } from '../../../services/utilities/roomsXMLCurrency';
-import { openModal } from '../../../actions/modalsInfo.js';
-import { LOGIN } from '../../../constants/modals.js';
+import AirTicketsDatepickerWrapper from '../../search/AirTicketsDatepickerWrapper';
+import LocPrice from '../../../common/utility/LocPrice';
+import { CurrencyConverter } from '../../../../services/utilities/currencyConverter';
+import { RoomsXMLCurrency } from '../../../../services/utilities/roomsXMLCurrency';
+import { openModal } from '../../../../actions/modalsInfo.js';
+import { LOGIN } from '../../../../constants/modals.js';
 
 class AirTicketsDetailsBookingPanel extends React.Component {
   render() {
@@ -16,8 +16,8 @@ class AirTicketsDetailsBookingPanel extends React.Component {
       return <div className="loader"></div>;
     }
 
-    const { result } = this.props;
-    const { currency, currencySign } = this.props.paymentInfo;
+    const { result, userInfo, paymentInfo } = this.props;
+    const { currency, currencySign } = paymentInfo;
 
     const currencyCode = result.summary.currency;
     const price = result.summary.totalPrice;
@@ -49,41 +49,22 @@ class AirTicketsDetailsBookingPanel extends React.Component {
           <div className="without-fees">
             <p>Passengers</p>
             <span className="icon-question" tooltip={'Some message'}></span>
-            <p>{currencySign}{(fiatPriceInCurrentCurrency - taxPriceInCurrentCurrency).toFixed(2)}</p>
+            <p>{userInfo.isLogged && `${currencySign} ${(fiatPriceInCurrentCurrency - taxPriceInCurrentCurrency).toFixed(2)}`} <LocPrice fiat={fiatPriceInRoomsXMLCurrency - taxPriceInRoomsXMLCurrency} /></p>
           </div>
           <div className="cleaning-fee">
             <p>Taxes and fees</p>
             <span className="icon-question" tooltip={'Some message'}></span>
-            <p>{currencySign}{taxPriceInCurrentCurrency.toFixed(2)}</p>
+            <p>{userInfo.isLogged && `${currencySign} ${(taxPriceInCurrentCurrency.toFixed(2))}`} <LocPrice fiat={taxPriceInRoomsXMLCurrency} /></p>
           </div>
           <div className="total">
             <p>Total</p>
-            <p>{currencySign}{(fiatPriceInCurrentCurrency).toFixed(2)}</p>
+            <p>{userInfo.isLogged && `${currencySign} ${(fiatPriceInCurrentCurrency.toFixed(2))}`} <LocPrice fiat={fiatPriceInRoomsXMLCurrency} /></p>
           </div>
         </div>
-        {this.props.userInfo.isLogged ?
-          <Link to={`/homes/listings/book/${this.props.match.params.id}${this.props.location.search}`} className="pay-in">Request Booking in FIAT</Link> :
+        {userInfo.isLogged ?
+          <Link to={`/tickets/results/${this.props.match.params.id}/profile${this.props.location.search}`} className="pay-in">Request Booking</Link> :
           <button className="pay-in" onClick={(e) => this.props.dispatch(openModal(LOGIN, e))}>Login</button>}
         <hr />
-        <div className="loc-price-box">
-          <div className="without-fees">
-            <p>Passengers</p>
-            <span className="icon-question" tooltip={'Some message'}></span>
-            <p><LocPrice fiat={fiatPriceInRoomsXMLCurrency - taxPriceInRoomsXMLCurrency} brackets={false} /></p>
-          </div>
-          <div className="cleaning-fee">
-            <p>Taxes and fees</p>
-            <span className="icon-question" tooltip={'Some message'}></span>
-            <p><LocPrice fiat={taxPriceInRoomsXMLCurrency} brackets={false} /></p>
-          </div>
-          <div className="total">
-            <p>Total</p>
-            <p><LocPrice fiat={fiatPriceInRoomsXMLCurrency} brackets={false} /></p>
-          </div>
-        </div>
-        {this.props.userInfo.isLogged ?
-          <Link to={`/homes/listings/book/${this.props.match.params.id}${this.props.location.search}`} className="pay-in">Request Booking in LOC</Link> :
-          <button className="pay-in" onClick={(e) => this.props.dispatch(openModal(LOGIN, e))}>Login</button>}
         <p className="booking-helper">You won&#39;t be charged yet</p>
       </div>
     </div>);

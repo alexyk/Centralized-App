@@ -287,7 +287,7 @@ class AirTicketsSearchResult extends Component {
           {isPriceLoaded && <LocPrice fiat={priceForLoc} />}
           {!isPriceLoaded && allElements
             ? <button disabled className="btn">Unavailable</button>
-            : <Link className="btn" to={`${redirectURL}/${result.id}${search.substr(0, endOfSearch)}`}>Book now</Link>
+            : <Link className="btn" to={`${redirectURL}/${result.id}/details${search.substr(0, endOfSearch)}`}>Book now</Link>
           }
         </div>
       </div>
