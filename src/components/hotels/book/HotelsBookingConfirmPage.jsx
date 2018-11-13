@@ -142,7 +142,7 @@ class HotelBookingConfirmPage extends React.Component {
 
   handlePayWithCard(fiatAmount) {
     requester.getUserHasPendingBooking()
-      .then(res => res.json()).then(data => {
+      .then(res => res.body).then(data => {
         if (data.userHasPendingBooking) {
           this.openModal(PENDING_BOOKING_FIAT);
         } else {
@@ -283,14 +283,15 @@ class HotelBookingConfirmPage extends React.Component {
 
   handlePayWithLOC() {
     requester.getUserHasPendingBooking()
-      .then(res => res.json()).then(data => {
+      .then(res => res.body).then(data => {
         if (data.userHasPendingBooking) {
           this.openModal(PENDING_BOOKING_LOC);
         } else {
           this.stopQuote();
           this.openModal(PASSWORD_PROMPT);
         }
-      }).catch(() => {
+      }).catch((e) => {
+        console.log(e);
         NotificationManager.error(SERVICE_UNAVAILABLE);
       });
   }
