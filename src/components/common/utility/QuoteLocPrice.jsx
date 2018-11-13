@@ -86,7 +86,6 @@ QuoteLocPrice.defaultProps = {
 };
 
 QuoteLocPrice.propTypes = {
-  fiat: PropTypes.number,
   brackets: PropTypes.bool,
   method: PropTypes.string,
   params: PropTypes.object,

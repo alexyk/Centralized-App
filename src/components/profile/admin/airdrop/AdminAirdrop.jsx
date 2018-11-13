@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 import { NotificationManager } from 'react-notifications';
 import AdminNav from '../AdminNav';
-import { Config } from '../../../../config.js';
+import requester from '../../../../requester';
 import { LONG } from '../../../../constants/notificationDisplayTimes.js';
 
-import '../../../../styles/css/components/profile/admin_panel/admin-airdrop.css';
+import '../../../../styles/css/components/profile/admin/airdrop/admin-airdrop.css';
 
 class AdminAirDrop extends Component {
   constructor(props) {
@@ -24,18 +24,21 @@ class AdminAirDrop extends Component {
   }
 
   requestAirdropLocRate() {
-    fetch(`${Config.getValue('apiHost')}admin/loc/rate`, {
-      headers: {
-        'Authorization': localStorage.getItem(Config.getValue('domainPrefix') + '.auth.locktrip')
-      }
-    }).then((res) => {
-      res.json().then((data) => {
-        this.setState({
-          currentLocRate: data.loc_rate,
-          locRate: data.loc_rate
-        });
+    requester.getAirdropLocRate()
+      .then((res) => {
+        if (res.success) {
+          res.body.then((data) => {
+            this.setState({
+              currentLocRate: data.loc_rate,
+              locRate: data.loc_rate
+            });
+          });
+        } else {
+          res.errors.then((err) => {
+            console.log(err);
+          });
+        }
       });
-    });
   }
 
   onChange(e) {
@@ -49,23 +52,25 @@ class AdminAirDrop extends Component {
       e.preventDefault();
     }
 
-    fetch(`${Config.getValue('apiHost')}admin/loc/rate`, {
-      method: 'post',
-      headers: {
-        'Authorization': localStorage.getItem(Config.getValue('domainPrefix') + '.auth.locktrip'),
-        'content-type': 'application/json'
-      },
-      body: JSON.stringify({ loc_rate: this.state.locRate })
-    }).then((res) => {
-      res.json().then((data) => {
-        this.requestAirdropLocRate();
-        if (data.is_success) {
-          NotificationManager.success('Loc rate is modify successfully.', '', LONG);
+    const locRate = { loc_rate: this.state.locRate };
+
+    requester.updateAirdropLocRate(locRate)
+      .then((res) => {
+        if (res.success) {
+          res.body.then((data) => {
+            this.requestAirdropLocRate();
+            if (data.is_success) {
+              NotificationManager.success('Loc rate is modify successfully.', '', LONG);
+            } else {
+              NotificationManager.warning('Loc rate is not modify, please try again!!!', '', LONG);
+            }
+          });
         } else {
-          NotificationManager.warning('Loc rate is not modify, please try again!!!', '', LONG);
+          res.errors.then((err) => {
+            console.log(err);
+          });
         }
       });
-    });
   }
 
   render() {

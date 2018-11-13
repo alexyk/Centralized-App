@@ -73,40 +73,7 @@ $breakpoints: (
       }
     }
 
-     // ICON TOOLTIPS
-    [tooltip]{
-      position:relative;
-    }
-    [tooltip]:hover::after,
-    [tooltip]:hover::before {
-      opacity:1;
-    }
-    [tooltip]::before {
-        content: "\e914";
-        color: #abc3bd;
-    }
-    [tooltip]::after {
-        content: attr(tooltip);
-        position: absolute;
-        left: 50%;
-        top: 6px;
-        transform: translateX(-75%) translateY(-120%);
-        background: rgba(100, 100, 100, 0.7);
-        text-align: center;
-        color: #fff;
-        padding: 10px 20px 10px 20px;
-        // font-size: 12px;
-        min-width: 200px;
-        border-radius: 2px;
-        border: 1px solid black;
-        pointer-events: none;
-        opacity:0;
-        // color: $base-text-color;
-        // background: $base-background-color;
-        font: #{$font-size-base}/#{$line-height-base} $base-font-family;
-        -webkit-font-smoothing: antialiased;
-        -moz-osx-font-smoothing: grayscale;
-    }
+    @include dashboardTooltip();
   }
 
   @include media("<=desktop") {
@@ -201,6 +168,13 @@ $breakpoints: (
     .tablet-col-2 {
       display: block;
       width: 100%;
+      .trips-location,
+      .trips-dates,
+      .trips-actions {
+        .icon {
+          display: none;
+        }
+      }
       .trips-status {
         @include statusRowInMobile();
       }

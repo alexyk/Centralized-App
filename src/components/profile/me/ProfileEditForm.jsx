@@ -62,8 +62,8 @@ class ProfileEditForm extends React.Component {
         let year = '';
 
         if (data.birthday !== null) {
-          let birthday = moment.utc(data.birthday);
-          day = birthday.add(1, 'days').format('D');
+          let birthday = moment(data.birthday).utc();
+          day = birthday.format('D');
           month = birthday.format('MM');
           year = birthday.format('YYYY');
         }

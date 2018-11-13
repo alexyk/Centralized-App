@@ -107,6 +107,12 @@ $breakpoints: (
     .tablet-col-2 {
       display: flex;
       width: 100%;
+      .dashboard-dates,
+      .dashboard-nights {
+        .icon {
+          display: none;
+        }
+      }
       .dashboard-dates {
         margin-top: 5%;
       }
