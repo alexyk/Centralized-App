@@ -57,7 +57,6 @@ class HomesBookingPage extends React.Component {
         calendar = _.sortBy(calendar, function (x) {
           return new moment(x.date, 'DD/MM/YYYY');
         });
-        console.log(calendar);
         this.setState({ calendar: calendar });
       });
     });
