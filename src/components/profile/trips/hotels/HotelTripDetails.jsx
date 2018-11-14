@@ -36,16 +36,21 @@ class HotelTripDetails extends React.Component {
         longitude: '',
         checkIn: '',
         checkOut: '',
-        safeChargeError: '',
+        safeChargeMode: '',
       }
     };
   }
 
   componentDidMount() {
     const bookingId = this.props.match.params.id;
+    console.log(this.props.location.search);
     if (bookingId === 'error_url') {
       this.setState({
-        safeChargeError: true,
+        safeChargeMode: 'error'
+      });
+    } else if (bookingId === 'success') {
+      this.setState({
+        safeChargeMode: 'success'
       });
     } else {
       requester.getHotelBookingDetails(bookingId).then(res => {
@@ -148,11 +153,26 @@ class HotelTripDetails extends React.Component {
   }
 
   render() {
-    const { bookingData, safeChargeError } = this.state;
+    const { bookingData, safeChargeMode } = this.state;
     const checkInData = bookingData.checkIn;
     const checkOutData = bookingData.checkOut;
 
-    if (safeChargeError) {
+    if (safeChargeMode === 'success') {
+      return (
+        <section className="details-view safecharge-success" id="details">
+          <h2>Thank you! Your payment has been successfully received.</h2>
+          <p>Your reservation has been initiated to the hotel and is pending confirmation. </p>
+          <p>Confirmation usually takes few minutes but in some rare occasions could take up to several hours.</p>
+          <p>You can monitor the status of your booking in your Dashboard under <Link to="/profile/trips/hotels">My Trips</Link> tab.</p>
+          <p>As soon as the booking is confirmed by the hotel, we will immediately notify you via email.</p>
+          <div className="button-holder">
+            <Link className="btn button-regular" to="/profile/trips/hotels">Go to My Trips</Link>
+          </div>
+        </section>
+      );
+    }
+
+    if (safeChargeMode === 'error') {
       return (
         <section className="details-view safecharge-error" id="details">
           <h2>Something wrong with your credit card payment request!</h2>
@@ -240,6 +260,9 @@ class HotelTripDetails extends React.Component {
 
 HotelTripDetails.propTypes = {
   match: PropTypes.object,
+
+  //Router props
+  location: PropTypes.object
 };
 
 export default withRouter(HotelTripDetails);

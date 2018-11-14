@@ -91,10 +91,10 @@
             display: flex;
             margin: 0 auto;
             justify-content: space-around;
-            width: 30%;
+            width: 50%;
             max-height: 50px;
             @include media("<=tablet") {
-              width: 50%;
+              width: 80%;
             }
           }
           .logo {
