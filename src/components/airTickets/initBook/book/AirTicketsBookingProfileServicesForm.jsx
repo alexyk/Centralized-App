@@ -15,13 +15,35 @@ class AirTicketsBookingProfileServicesForm extends Component {
   }
 
   render() {
+    const { services, servicesInfo } = this.props;
+    console.log(services);
+
     return (
       <div className="air-tickets-services-form">
         <h2>Services</h2>
         <hr />
         <form onSubmit={(e) => { e.preventDefault(); this.props.enableNextSection('passengers'); }}>
-          
+
           <div className="buttons-wrapper">
+            <div>
+              {/* <div className="country-code">
+                <label htmlFor="countryCode">Country <span className="mandatory">*</span></label>
+                <div className="select">
+                  <select id="country-code" name="companyCountryCode" value={companyCountryCode} onChange={this.onChange} required>
+                    <option defaultValue="" disabled hidden></option>
+                    {countries && countries.map((country, countryIndex) => {
+                      return <option key={countryIndex} value={country.code} onChange={this.onChange}>{country.name}</option>;
+                    })}
+                  </select>
+                </div>
+              </div>
+              <div className="zip-code">
+                <label htmlFor="zipCode">Zip Code <span className="mandatory">*</span></label>
+                <div>
+                  <input id="zipCode" name="companyCityZipCode" value={companyCityZipCode} onChange={this.onChange} type="number" required />
+                </div>
+              </div> */}
+            </div>
             <button type="submit" className="btn">Next</button>
           </div>
         </form>
@@ -31,7 +53,8 @@ class AirTicketsBookingProfileServicesForm extends Component {
 }
 
 AirTicketsBookingProfileServicesForm.propTypes = {
-  servicesInfo: PropTypes.object,
+  services: PropTypes.array,
+  servicesInfo: PropTypes.array,
   onChange: PropTypes.func,
   enableNextSection: PropTypes.func
 };

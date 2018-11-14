@@ -26,6 +26,7 @@ import requester from '../../requester';
 import GooglePlaces from '../common/GooglePlaces';
 import HelpPage from '../static/HelpPage';
 import AboutUsPage from '../static/AboutUsPage';
+import { hot } from 'react-hot-loader';
 
 class App extends React.Component {
   constructor(props) {
@@ -185,4 +186,4 @@ function mapStateToProps(state) {
   };
 }
 
-export default withRouter(connect(mapStateToProps)(App));
+export default hot(module)(withRouter(connect(mapStateToProps)(App)));

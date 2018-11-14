@@ -11,10 +11,6 @@ import AirTicketsDetailsInfoSection from './AirTicketsDetailsInfoSection';
 import AirTicketsSearchBar from '../../search/AirTicketsSearchBar';
 import BookingSteps from '../../../common/bookingSteps';
 
-import '../../../../styles/css/components/carousel-component.css';
-import 'slick-carousel/slick/slick.css';
-import 'slick-carousel/slick/slick-theme.css';
-
 class AirTicketsDetailsPage extends Component {
   
   componentDidMount() {
@@ -103,21 +99,6 @@ class AirTicketsDetailsPage extends Component {
         {!loading ?
           <div className="loader"></div> :
           <div className="home-details-container">
-            <div className="container">
-              <nav className="hotel-nav" id="hotel-nav">
-                <div className="hotel-nav-box">
-                  <div className="nav-box">
-                    <ul className="nav navbar-nav">
-                      <li><a href="#overview">Overview</a></li>
-                      <li><a href="#facilities">Facilities</a></li>
-                      <li><a href="#reviews">User Reviews</a></li>
-                      <li><a href="#location">Location</a></li>
-                    </ul>
-                  </div>
-                </div>
-              </nav>
-            </div>
-
             <AirTicketsDetailsInfoSection
               isLogged={this.props.userInfo.isLogged}
               openModal={this.openModal}

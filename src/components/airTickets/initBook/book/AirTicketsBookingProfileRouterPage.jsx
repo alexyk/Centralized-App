@@ -36,9 +36,7 @@ class AirTicketsBookingProfileRouterPage extends Component {
         companyAddress: 'Krasno selo 212',
         companyCityZipCode: '1000'
       },
-      servicesInfo: {
-
-      },
+      servicesInfo: [],
       passengersInfo: {
 
       },
@@ -94,6 +92,21 @@ class AirTicketsBookingProfileRouterPage extends Component {
     }));
   }
 
+  onChangeServiceInfo(name, value) {
+    var index = this.state.servicesInfo.findIndex(x => x.serviceCode === name);
+    if (index === -1) {
+      // handle error
+    } else {
+      this.setState({
+        items: [
+          ...this.state.servicesInfo.slice(0, index),
+          Object.assign({}, this.state.servicesInfo[index], { [name]: value }),
+          ...this.state.servicesInfo.slice(index + 1)
+        ]
+      });
+    }
+  }
+
   enableNextSection(section) {
     this.setState(prevState => ({
       confirmInfo: {
@@ -103,9 +116,22 @@ class AirTicketsBookingProfileRouterPage extends Component {
     }), () => this.props.history.push(`/tickets/results/${this.props.match.params.id}/profile/${section}${this.props.location.search}`));
   }
 
+  parseFlightServiceName(serviceName) {
+    const lowerCaseServiceName = serviceName.match(/[A-Z][a-z]+/g).filter(word => word !== 'options').map(word => word.toLowerCase()).join(' ');
+    return lowerCaseServiceName.charAt(0).toUpperCase() + lowerCaseServiceName.substring(1);
+  }
+
   render() {
+    const { result } = this.props;
     const { confirmInfo, contactInfo, invoiceInfo, servicesInfo, passengersInfo, countries } = this.state;
-    console.log(this.props.result);
+
+    let isFlightServices;
+    let services = [];
+    if (result && result.items && result.items[0].services) {
+      services = result.items[0].services;
+      isFlightServices = services && services.filter(service => service.servicePerPax === false).length > 0;
+    }
+    console.log(isFlightServices);
 
     return (
       <div>
@@ -114,7 +140,7 @@ class AirTicketsBookingProfileRouterPage extends Component {
           <section>
             <div className="air-tickets-profile">
               <div className="air-tickets-profile-nav">
-                <AirTicketsBookingProfileEditNav confirmInfo={confirmInfo} />
+                <AirTicketsBookingProfileEditNav confirmInfo={confirmInfo} isFlightServices={isFlightServices} />
               </div>
               <div className="air-tickets-profile-content">
                 <Switch>
@@ -147,7 +173,7 @@ class AirTicketsBookingProfileRouterPage extends Component {
                         );
                       }}
                     /> : <Redirect to={{ pathname: '/tickets/results/:id/profile', search: this.props.location.search }} />}
-                  {confirmInfo.services ?
+                  {!isFlightServices && confirmInfo.services ?
                     <Route
                       exact
                       path="/tickets/results/:id/profile/services"
@@ -155,6 +181,7 @@ class AirTicketsBookingProfileRouterPage extends Component {
                         return (
                           <AirTicketsBookingProfileServicesForm
                             servicesInfo={servicesInfo}
+                            services={services}
                             onChange={this.onChangeInvoiceInfo}
                             enableNextSection={this.enableNextSection}
                           />

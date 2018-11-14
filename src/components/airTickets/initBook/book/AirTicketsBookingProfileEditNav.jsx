@@ -12,9 +12,10 @@ function AirTicketsBookingProfileEditNav(props) {
         <div className="host-step"><NavLink exact activeClassName="active" to={{ pathname: `/tickets/results/${props.match.params.id}/profile/invoice`, search: props.location.search }}>Invoice</NavLink></div> :
         <div className="host-step"><div className="disable-link">Invoice</div></div>
       }
-      {props.confirmInfo.services ?
-        <div className="host-step"><NavLink exact activeClassName="active" to={{ pathname: `/tickets/results/${props.match.params.id}/profile/services`, search: props.location.search }}>Services</NavLink></div> :
-        <div className="host-step"><div className="disable-link">Services</div></div>
+      {!props.isFlightServices &&
+        (props.confirmInfo.services ?
+          <div className="host-step"><NavLink exact activeClassName="active" to={{ pathname: `/tickets/results/${props.match.params.id}/profile/services`, search: props.location.search }}>Services</NavLink></div> :
+          <div className="host-step"><div className="disable-link">Services</div></div>)
       }
       {props.confirmInfo.passengers ?
         <div className="host-step"><NavLink exact activeClassName="active" to={{ pathname: `/tickets/results/${props.match.params.id}/profile/passengers`, search: props.location.search }}>Passengers</NavLink></div> :
@@ -26,6 +27,7 @@ function AirTicketsBookingProfileEditNav(props) {
 
 AirTicketsBookingProfileEditNav.propTypes = {
   confirmInfo: PropTypes.object,
+  isFlightServices: PropTypes.bool,
 
   // Router props
   match: PropTypes.object,

@@ -101,22 +101,6 @@ $media-expressions: (
           }
         }
       }
-      .flight-services {
-        .flight-service {
-          display: flex;
-          margin-bottom: 10px;
-          .flight-service-name {
-            width: 50%;
-          }
-          .flight-service-options {
-            width: 50%;
-            select {
-              width: 50%;
-              text-align: center;
-            }
-          }
-        }
-      }
     }
     .air-tickets-details-booking-panel {
       @include media("<=desktop") {
