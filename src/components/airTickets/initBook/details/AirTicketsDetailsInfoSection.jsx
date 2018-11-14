@@ -193,9 +193,9 @@ class AirTicketsDetailsInfoSection extends Component {
 
   render() {
     const { result, fareRules } = this.props;
-    console.log(result);
+    console.log(result.items && result.items[0]);
     const { fareRulesIndex } = this.state;
-    const item = result.items[0];
+    const item = result.items && result.items[0];
     console.log(item);
     console.log(fareRules);
 

@@ -3,39 +3,6 @@
 
 .air-tickets-contact-edit-form {
   width: 100%;
-  select {
-    border: 1px solid #cfcfcf;
-    border-radius: 5px;
-    background-color: white;
-    padding: 15px;
-    width: 100%;
-  }
-  h2 {
-    margin: 0;
-  }
-  hr {
-    margin-top: 10px;
-    border-top: 1px solid #cfcfcf;
-  }
-  label {
-    display: block;
-    margin: 10px 0 5px 5px;
-  }
-  input {
-    border: 1px solid #cfcfcf;
-    border-radius: 5px;
-    background-color: white;
-    padding: 15px;
-    width: 100%;
-  }
-  .mandatory {
-    color: $moderate-red;
-    font-weight: 700;
-  }
-  form > div {
-    clear: both;
-    margin-bottom: 20px;
-  }
   .contact-name-wrapper {
     display: flex;
     justify-content: space-between;
@@ -71,17 +38,6 @@
       .country-code,
       .zip-code,
       .city {
-        width: 100%;
-      }
-    }
-  }
-  .buttons-wrapper {
-    display: flex;
-    justify-content: flex-end;
-    .btn {
-      padding: 15px 70px;
-      margin: 20px 0;
-      @include media("<tablet") {
         width: 100%;
       }
     }

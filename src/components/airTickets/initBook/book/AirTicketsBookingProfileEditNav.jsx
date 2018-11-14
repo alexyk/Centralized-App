@@ -1,17 +1,35 @@
 import React, { Fragment } from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, withRouter } from 'react-router-dom';
+import PropTypes from 'prop-types';
 
 import '../../../../styles/css/components/profile/me/profile-edit-nav.css';
 
-function AirTicketsBookingProfileEditNav() {
+function AirTicketsBookingProfileEditNav(props) {
   return (
     <Fragment>
-      <div className="host-step"><NavLink exact activeClassName="active" to="/tickets/results/:id/profile">Profile</NavLink></div>
-      <div className="host-step"><NavLink exact activeClassName="active" to="/tickets/results/:id/profile/invoice">Invoice</NavLink></div>
-      <div className="host-step"><NavLink exact activeClassName="active" to="/tickets/results/:id/profile/photos">Services</NavLink></div>
-      <div className="host-step"><NavLink exact activeClassName="active" to="/tickets/results/:id/profile/verification">Passengers</NavLink></div>
+      <div className="host-step"><NavLink exact activeClassName="active" to={{ pathname: `/tickets/results/${props.match.params.id}/profile`, search: props.location.search }}>Profile</NavLink></div>
+      {props.confirmInfo.invoice ?
+        <div className="host-step"><NavLink exact activeClassName="active" to={{ pathname: `/tickets/results/${props.match.params.id}/profile/invoice`, search: props.location.search }}>Invoice</NavLink></div> :
+        <div className="host-step"><div className="disable-link">Invoice</div></div>
+      }
+      {props.confirmInfo.services ?
+        <div className="host-step"><NavLink exact activeClassName="active" to={{ pathname: `/tickets/results/${props.match.params.id}/profile/services`, search: props.location.search }}>Services</NavLink></div> :
+        <div className="host-step"><div className="disable-link">Services</div></div>
+      }
+      {props.confirmInfo.passengers ?
+        <div className="host-step"><NavLink exact activeClassName="active" to={{ pathname: `/tickets/results/${props.match.params.id}/profile/passengers`, search: props.location.search }}>Passengers</NavLink></div> :
+        <div className="host-step"><div className="disable-link">Passengers</div></div>
+      }
     </Fragment>
   );
 }
 
-export default AirTicketsBookingProfileEditNav;
+AirTicketsBookingProfileEditNav.propTypes = {
+  confirmInfo: PropTypes.object,
+
+  // Router props
+  match: PropTypes.object,
+  location: PropTypes.object
+};
+
+export default withRouter(AirTicketsBookingProfileEditNav);

@@ -1,93 +1,42 @@
-import React from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Select from '../../../common/google/GooglePlacesAutocomplete';
-import { Config } from '../../../../config';
 
 import '../../../../styles/css/components/airTickets/initBook/book/air-tickets-booking-profile-edit-form.css';
 
-class AirTicketsBookingProfileEditForm extends React.Component {
+class AirTicketsBookingProfileEditForm extends Component {
   constructor(props) {
     super(props);
 
-    this.state = {
-      contactTitle: '',
-      firstName: '',
-      lastName: '',
-      email: '',
-      phoneNumber: '',
-      countryCode: '',
-      zipCode: '',
-      cityName: '',
-      address: '',
-      countries: ''
-    };
-
     this.onChange = this.onChange.bind(this);
     this.handleCitySelect = this.handleCitySelect.bind(this);
-    this.handleNext = this.handleNext.bind(this);
-  }
-
-  componentDidMount() {
-    fetch(`${Config.getValue('apiHost')}flight/country/all`)
-      .then((res) => {
-        if (res.ok) {
-          res.json().then((data) => {
-            this.setState({
-              countries: data
-            });
-          });
-        } else {
-          console.log(res);
-        }
-      });
   }
 
   onChange(e) {
-    this.setState({ [e.target.name]: e.target.value });
+    this.props.onChange(e.target.name, e.target.value);
   }
 
   handleCitySelect(place) {
-    this.setState({ cityName: place.formatted_address });
-  }
-
-  handleNext(e) {
-    if (e) {
-      e.preventDefault();
-    }
-
-    const { contactTitle, firstName, lastName, email, phoneNumber, countryCode, zipCode, cityName, address } = this.state;
-
-    const contactInfo = {
-      contactTitle,
-      firstName,
-      lastName,
-      email,
-      phoneNumber,
-      countryCode,
-      zipCode,
-      cityName,
-      address
-    };
-
-    this.props.saveContactInfo(contactInfo);
+    this.props.onChange('cityName', place.formatted_address);
   }
 
   render() {
-    const { contactTitle, firstName, lastName, email, phoneNumber, countryCode, zipCode, cityName, address, countries } = this.state;
+    const { contactInfo, countries } = this.props;
+    const { contactTitle, firstName, lastName, email, phoneNumber, countryCode, zipCode, cityName, address } = contactInfo;
 
     return (
       <div className="air-tickets-contact-edit-form">
         <h2>Profile</h2>
         <hr />
-        <form onSubmit={this.handleNext}>
+        <form onSubmit={(e) => { e.preventDefault(); this.props.enableNextSection('invoice'); }}>
           <div className="contact-name-wrapper">
             <div className="contact-title">
               <label htmlFor="title">Title <span className="mandatory">*</span></label>
               <div className="select">
                 <select id="title" name="contactTitle" value={contactTitle} onChange={this.onChange}>
-                  <option value="" selected disabled hidden></option>
-                  <option value="Mr">Mr</option>
-                  <option value="Mrs">Mrs</option>
+                  <option defaultValue="" disabled hidden></option>
+                  <option value="Mr" onChange={this.onChange}>Mr</option>
+                  <option value="Mrs" onChange={this.onChange}>Mrs</option>
                 </select>
               </div>
             </div>
@@ -113,9 +62,9 @@ class AirTicketsBookingProfileEditForm extends React.Component {
               <label htmlFor="countryCode">Country <span className="mandatory">*</span></label>
               <div className="select">
                 <select id="country-code" name="countryCode" value={countryCode} onChange={this.onChange}>
-                  <option value="" selected disabled hidden></option>
+                  <option defaultValue="" disabled hidden></option>
                   {countries && countries.map((country, countryIndex) => {
-                    return <option key={countryIndex} value={country.code}>{country.name}</option>;
+                    return <option key={countryIndex} value={country.code} onChange={this.onChange}>{country.name}</option>;
                   })}
                 </select>
               </div>
@@ -134,9 +83,10 @@ class AirTicketsBookingProfileEditForm extends React.Component {
                 name="cityName"
                 onPlaceSelected={this.handleCitySelect}
                 types={['(cities)']}
-                componentRestrictions={{ country: this.state.countryCode.toLowerCase() }}
+                componentRestrictions={{ country: countryCode.toLowerCase() }}
                 disabled={!countryCode}
                 placeholder=""
+                required
               />
             </div>
           </div>
@@ -154,7 +104,10 @@ class AirTicketsBookingProfileEditForm extends React.Component {
 }
 
 AirTicketsBookingProfileEditForm.propTypes = {
-  saveContactInfo: PropTypes.func
+  contactInfo: PropTypes.object,
+  countries: PropTypes.array,
+  onChange: PropTypes.func,
+  enableNextSection: PropTypes.func
 };
 
 export default AirTicketsBookingProfileEditForm;

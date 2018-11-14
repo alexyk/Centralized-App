@@ -1,0 +1,26 @@
+@import "../../../../vendors/include-media";
+@import "../../../../base/variables";
+
+.air-tickets-invoice-form {
+  width: 100%;
+  .company-city {
+    display: flex;
+    justify-content: space-between;
+    .country-code,
+    .zip-code {
+      width: 25%;
+    }
+    .city-name {
+      width: 44.5%;
+    }
+    @include media("<tablet") {
+      flex-direction: column;
+      margin-bottom: 0;
+      .country-code,
+      .zip-code,
+      .city-name {
+        width: 100%;
+      }
+    }
+  }
+}

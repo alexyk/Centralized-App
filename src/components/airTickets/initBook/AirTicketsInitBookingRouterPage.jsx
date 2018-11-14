@@ -51,7 +51,6 @@ class AirTicketsRouterPage extends Component {
         } else {
           this.searchAirTickets(this.props.location.search);
         }
-
       });
   }
 
@@ -66,7 +65,7 @@ class AirTicketsRouterPage extends Component {
       <Fragment>
         <Switch>
           <Route exact path="/tickets/results/:id/details" render={() => <AirTicketsDetailsPage result={result} fareRules={fareRules} />} />
-          <Route path="/tickets/results/:id/profile" render={() => <AirTicketsBookingProfileRouterPage />} />
+          <Route path="/tickets/results/:id/profile" render={() => <AirTicketsBookingProfileRouterPage result={result} />} />
         </Switch>
       </Fragment>
     );
@@ -74,9 +73,8 @@ class AirTicketsRouterPage extends Component {
 }
 
 AirTicketsRouterPage.propTypes = {
-  match: PropTypes.object,
-
   // Router props
+  match: PropTypes.object,
   location: PropTypes.object,
   history: PropTypes.object
 };
