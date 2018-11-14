@@ -1,7 +1,7 @@
 import React, { PureComponent, Fragment } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { Websocket } from '../../../services/socket/exchangerWebsocket';
+import { ExchangerWebsocket } from '../../../services/socket/exchangerWebsocket';
 import { CurrencyConverter } from '../../../services/utilities/currencyConverter';
 
 const DEFAULT_CRYPTO_CURRENCY = 'EUR';
@@ -14,17 +14,17 @@ class LocRate extends PureComponent {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (!nextProps.exchangerSocketInfo.isLocPriceWebsocketConnected && this.isSendMessage) {
+    if (!nextProps.exchangerSocketInfo.isExchangerWebsocketConnected && this.isSendMessage) {
       this.isSendMessage = false;
     }
-    if (nextProps.exchangerSocketInfo.isLocPriceWebsocketConnected && !this.isSendMessage) {
+    if (nextProps.exchangerSocketInfo.isExchangerWebsocketConnected && !this.isSendMessage) {
       this.isSendMessage = true;
-      Websocket.sendMessage(this.props.exchangeRatesInfo.locRateFiatAmount, null, { fiatAmount: this.props.exchangeRatesInfo.locRateFiatAmount });
+      ExchangerWebsocket.sendMessage(this.props.exchangeRatesInfo.locRateFiatAmount, 'getLocPrice', { fiatAmount: this.props.exchangeRatesInfo.locRateFiatAmount });
     }
   }
 
   componentWillUnmount() {
-    Websocket.sendMessage(this.props.exchangeRatesInfo.locRateFiatAmount, 'unsubscribe');
+    ExchangerWebsocket.sendMessage(this.props.exchangeRatesInfo.locRateFiatAmount, 'unsubscribe');
   }
 
   render() {
