@@ -261,8 +261,6 @@ class MainNav extends React.Component {
       this.setState({ isUpdatingCountry: false, country: '', countryState: '' });
     }
 
-    console.log(captchaToken)
-
     requester.login(user, captchaToken).then(res => {
       if (res.success) {
         res.body.then(data => {
