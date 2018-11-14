@@ -52,21 +52,21 @@ class LocRate extends PureComponent {
 }
 
 LocRate.propTypes = {
-  paymentInfo: PropTypes.object,
-
   // Redux props
+  paymentInfo: PropTypes.object,
   exchangerSocketInfo: PropTypes.object,
   exchangeRatesInfo: PropTypes.object,
   locAmountsInfo: PropTypes.object
 };
 
 function mapStateToProps(state) {
-  const { exchangerSocketInfo, exchangeRatesInfo, locAmountsInfo } = state;
+  const { exchangerSocketInfo, exchangeRatesInfo, locAmountsInfo, paymentInfo } = state;
 
   return {
     exchangerSocketInfo,
     exchangeRatesInfo,
-    locAmountsInfo
+    locAmountsInfo,
+    paymentInfo
   };
 }
 
