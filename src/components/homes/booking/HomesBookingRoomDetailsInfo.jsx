@@ -1,14 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import RoomSpaceInformationBox from '../common/RoomSpaceInformationBox';
-import { setCheckInOutHours } from '../common/detailsPageUtils.js';
 import '../../../styles/css/components/homes/booking/homes-booking-room-details-info.css';
 import RoomAccommodationBox from '../common/RoomAccommodationBox';
 
 class HomesBookingRoomDetailsInfo extends React.Component {
-  componentDidMount() {
-    setCheckInOutHours(this.props.checks);
-  }
   render() {
     const renderBedIcons = (bedCount, bedType) => {
       const bedIcons = [];
@@ -123,6 +119,7 @@ class HomesBookingRoomDetailsInfo extends React.Component {
 
 HomesBookingRoomDetailsInfo.propTypes = {
   listing: PropTypes.object,
+  checks: PropTypes.object,
   roomDetails: PropTypes.object,
   checkInStart: PropTypes.number,
   checkInEnd: PropTypes.number,

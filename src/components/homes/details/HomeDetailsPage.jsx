@@ -10,7 +10,6 @@ import { Config } from '../../../config';
 import requester from '../../../requester';
 import SlickCarousel from 'react-slick';
 import '../../../styles/css/components/carousel-component.css';
-import HomeDetailsInfoSection from './HomeDetailsInfoSection';
 import HomesSearchBar from '../search/HomesSearchBar';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
@@ -29,6 +28,15 @@ import {
 import { setHomesSearchInfo } from '../../../actions/homesSearchInfo';
 import { asyncSetStartDate, asyncSetEndDate } from '../../../actions/searchDatesInfo';
 import { DEFAULT_LISTING_IMAGE_URL } from '../../../constants/images';
+import '../../../styles/css/components/home/details/home-details-info-section.css';
+import Facilities from '../../hotels/details/Facilities';
+
+import HomeDetailsBookingPanel from './HomeDetailsBookingPanel';
+import RoomSpaceInformationBox from '../common/RoomSpaceInformationBox';
+import RoomAccommodationBox from '../common/RoomAccommodationBox';
+import HomeDetailsRatingBox from './HomeDetailsRatingBox';
+import HomeDetailsReviewBox from './HomeDetailsReviewBox';
+import MyMapComponent from './MyMapComponent';
 
 import '../../../styles/css/components/carousel-component.css';
 import Loader from '../../common/loader';
@@ -53,20 +61,9 @@ class HomeDetailsPage extends React.Component {
   constructor(props) {
     super(props);
 
-    let startDate, endDate;
-
-    if (this.props) {
-      let queryParams = parse(this.props.location.search);
-      if (queryParams.startDate && queryParams.endDate) {
-        startDate = moment(queryParams.startDate, 'DD/MM/YYYY');
-        endDate = moment(queryParams.endDate, 'DD/MM/YYYY');
-      }
-    }
-
     this.state = {
-      calendarStartDate: startDate,
-      calendarEndDate: endDate,
-      data: null,
+      listing: null,
+      roomDetails: null,
       lightboxIsOpen: false,
       currentImage: 0,
       nights: 0,
@@ -89,9 +86,6 @@ class HomeDetailsPage extends React.Component {
     this.next = next.bind(this);
     this.previous = previous.bind(this);
 
-    this.handleChangeStart = this.handleChangeStart.bind(this);
-    this.handleChangeEnd = this.handleChangeEnd.bind(this);
-
     this.calculateCheckInOuts = calculateCheckInOuts.bind(this);
   }
 
@@ -103,11 +97,11 @@ class HomeDetailsPage extends React.Component {
     requester.getListing(this.props.match.params.id).then(res => {
       res.body.then(listing => {
         const checks = this.calculateCheckInOuts(listing);
-        this.setState({ data: listing, checks });
+        this.setState({ listing, checks });
       });
     });
 
-    const searchTermMap = [
+    const calendarByListingRequestParams = [
       `listing=${this.props.match.params.id}`,
       `startDate=${moment().format('DD/MM/YYYY')}`,
       `endDate=${moment().add(DAY_INTERVAL, 'days').format('DD/MM/YYYY')}`,
@@ -115,24 +109,19 @@ class HomeDetailsPage extends React.Component {
       `toCode=${this.props.paymentInfo.currency}`,
       `size=${DAY_INTERVAL}`];
 
-    requester.getCalendarByListingIdAndDateRange(searchTermMap).then(res => {
+    requester.getCalendarByListingIdAndDateRange(calendarByListingRequestParams).then(res => {
       res.body.then(data => {
         let calendar = data.content;
         calendar = _.sortBy(calendar, function (x) {
           return moment(x.date, 'DD/MM/YYYY');
         });
-        this.setState({ calendar: calendar });
+        this.setState({ calendar });
       });
     });
 
     requester.getHomeBookingDetails(this.props.match.params.id).then(res => res.body).then(roomDetails => {
       this.setState({ roomDetails });
     });
-
-    const { calendarStartDate, calendarEndDate } = this.state;
-    if (calendarStartDate && calendarEndDate) {
-      this.calculateNights(calendarStartDate, calendarEndDate);
-    }
   }
 
   setHomesSearchInfoFromURL() {
@@ -153,17 +142,6 @@ class HomeDetailsPage extends React.Component {
     this.props.history.push('/homes/listings' + queryString);
   }
 
-  calculateNights(startDate, endDate) {
-    let diffDays = endDate.startOf('day').diff(startDate.startOf('day'), 'days');
-
-    if (endDate > startDate) {
-      this.setState({ nights: diffDays });
-    }
-    else {
-      this.setState({ nights: 0 });
-    }
-  }
-
   sendMessageToHost(id, message, captchaToken) {
     let contactHostObj = {
       message: message
@@ -182,30 +160,6 @@ class HomeDetailsPage extends React.Component {
 
   closeModal() {
     this.setState({ isShownContactHostModal: false });
-  }
-
-  handleChangeStart(date) {
-    this.setState({
-      calendarStartDate: date,
-      calendarEndDate: date
-    });
-    this.calculateNights(date, date);
-  }
-
-  handleChangeEnd(date) {
-    if (this.state.calendarStartDate.isAfter(date)) {
-      this.handleChangeStart(date);
-    }
-    else {
-      this.setState({
-        calendarEndDate: date
-      });
-      this.calculateNights(this.state.calendarStartDate, date);
-    }
-  }
-
-  handleGuestsChange(e) {
-    this.setState({ guests: Number(e.target.value.split(' ')[0]) });
   }
 
   getValidPictures(pictures) {
@@ -230,13 +184,55 @@ class HomeDetailsPage extends React.Component {
 
   render() {
 
-    if (!this.state.data || !this.state.calendar) {
+    if (!this.state.listing || !this.state.calendar) {
       return (
         <Loader minHeight={'50vh'} />
       );
     }
 
-    const images = this.state.data.pictures && this.getValidPictures(this.state.data.pictures);
+    const images = this.state.listing.pictures && this.getValidPictures(this.state.listing.pictures);
+    const { 
+      property_type,
+      guests,
+      size,
+      bathroom,
+      bedrooms,
+      eventsAllowed,
+      smokingAllowed,
+      suitableForPets,
+      suitableForInfants,
+      house_rules } = this.state.roomDetails;
+
+    const { 
+      averageRating,
+      city,
+      country,
+      amenities,
+      name,
+      descriptionText,
+      reviews,
+      latitude,
+      currencyCode,
+      cleaningFee,
+      longitude } = this.state.listing;
+
+    const hasSpaceDetails = property_type || guests || size || bathroom || bedrooms;
+    const hasHouseRules = eventsAllowed || smokingAllowed || suitableForPets || suitableForInfants || house_rules;
+    const houseRules = house_rules && house_rules.split('\r\n');
+
+    const { roomDetails, checks, calendar } = this.state;
+    const { startDate, endDate } = this.props.searchDatesInfo;
+
+    const guestArray = [];
+    if (guests) {
+      for (let i = 1; i <= guests; i++) {
+        guestArray.push(i);
+      }
+    } else {
+      for (let i = 1; i <= 10; i++) {
+        guestArray.push(i);
+      }
+    }
 
     return (
       <React.Fragment>
@@ -287,7 +283,7 @@ class HomeDetailsPage extends React.Component {
                 <ul className="nav navbar-nav">
                   <li><a href="#overview">Overview</a></li>
                   <li><a href="#facilities">Facilities</a></li>
-                  {this.state.data.reviews && this.state.data.reviews.length > 0 &&
+                  {reviews && reviews.length > 0 &&
                     <li><a href="#reviews">User Reviews</a></li>
                   }
                   <li><a href="#location">Location</a></li>
@@ -303,19 +299,86 @@ class HomeDetailsPage extends React.Component {
             </div>
           </nav>
 
-          <HomeDetailsInfoSection
-            calendar={this.state.calendar}
-            startDate={this.state.calendarStartDate}
-            endDate={this.state.calendarEndDate}
-            data={this.state.data}
-            isLogged={this.props.userInfo.isLogged}
-            openModal={this.openModal}
-            roomDetails={this.state.roomDetails}
-            nights={this.state.nights}
-            checks={this.state.checks}
-            handleChangeStart={this.handleChangeStart}
-            handleChangeEnd={this.handleChangeEnd}
-          />
+          {(!roomDetails || !checks)
+            ? <div className="loader"></div>
+            : <section className="home-container">
+              <div className="home-box" id="home-box">
+                <div className="home-content" id="overview">
+                  <p className="location">{city.name} &bull; {country.name}</p>
+                  <h1>{name}</h1>
+                  {averageRating > 0 && <HomeDetailsRatingBox rating={averageRating} reviewsCount={0} />}
+
+                  {hasSpaceDetails &&
+                    <RoomSpaceInformationBox
+                      property_type={property_type}
+                      guests={guests}
+                      size={size}
+                      bathroom={bathroom}
+                      bedrooms={bedrooms} />
+                  }
+
+                  <div className="list-hotel-description">
+                    <h2>Description</h2>
+                    <hr />
+                    {descriptionText}
+                  </div>
+
+                  <Facilities facilities={amenities} />
+
+                  {hasHouseRules &&
+                    <div className="hotel-rules-container">
+                      <h2>House Rules</h2>
+                      <hr />
+                      {eventsAllowed && <p>Events allowed</p>}
+                      {smokingAllowed && <p>Smoking allowed</p>}
+                      {suitableForInfants && <p>Suitable for infants</p>}
+                      {suitableForPets && <p>Suitable for pets</p>}
+                      {houseRules && houseRules.map((rule, index) => {
+                        return (<p key={index}>{rule}</p>);
+                      })}
+                    </div>
+                  }
+
+                  <RoomAccommodationBox
+                    checkInStart={checks.checkInStart}
+                    checkInEnd={checks.checkInEnd}
+                    checkOutStart={checks.checkOutStart}
+                    checkOutEnd={checks.checkOutEnd} />
+
+                  {reviews && reviews.length > 0 &&
+                    <div id="reviews">
+                      <h2>User Rating &amp; Reviews</h2>
+                      {reviews.map((item, i) => {
+                        return (
+                          <HomeDetailsReviewBox
+                            key={i}
+                            rating={item.average}
+                            reviewText={item.comments}
+                          />
+                        );
+                      })}
+                      <hr />
+                    </div>
+                  }
+
+                  <div id="location">
+                    <h2>Location</h2>
+                    <hr />
+                    <MyMapComponent key="map" latitude={latitude} longitude={longitude} />
+                  </div>
+                </div>
+
+                <HomeDetailsBookingPanel
+                  startDate={startDate}
+                  endDate={endDate}
+                  calendar={calendar}
+                  guestArray={guestArray}
+                  cleaningFee={cleaningFee}
+                  currencyCode={currencyCode}
+                />
+              </div>
+            </section>
+          }
         </div>
       </React.Fragment>
     );
@@ -332,14 +395,16 @@ HomeDetailsPage.propTypes = {
   // start Redux props
   dispatch: PropTypes.func,
   userInfo: PropTypes.object,
-  paymentInfo: PropTypes.object
+  paymentInfo: PropTypes.object,
+  searchDatesInfo: PropTypes.object
 };
 
 function mapStateToProps(state) {
-  const { userInfo, paymentInfo } = state;
+  const { userInfo, paymentInfo, searchDatesInfo } = state;
   return {
     userInfo,
-    paymentInfo
+    paymentInfo,
+    searchDatesInfo
   };
 }
 

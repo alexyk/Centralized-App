@@ -8,7 +8,7 @@ import { parse } from 'query-string';
 import PropTypes from 'prop-types';
 import HomesBookingRoomDetailsInfo from './HomesBookingRoomDetailsInfo';
 import requester from '../../../requester';
-import { setCheckInOutHours, calculateCheckInOuts } from '../common/detailsPageUtils.js';
+import { calculateCheckInOuts } from '../common/detailsPageUtils.js';
 import moment from 'moment';
 import '../../../styles/css/components/homes/booking/homes-booking-page.css';
 import { connect } from 'react-redux';
@@ -25,8 +25,6 @@ class HomesBookingPage extends React.Component {
     };
 
     this.handleSubmit = this.handleSubmit.bind(this);
-
-    this.setCheckInOutHours = setCheckInOutHours.bind(this);
     this.calculateCheckInOuts = calculateCheckInOuts.bind(this);
   }
 

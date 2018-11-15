@@ -5,7 +5,6 @@ import PropTypes from 'prop-types';
 import { openModal } from '../../../actions/modalsInfo.js';
 import { setGuests } from '../../../actions/homesSearchInfo';
 import { LOGIN } from '../../../constants/modals.js';
-import DatePickerPreview from './DatePickerPreview';
 import Datepicker from '../../common/datepicker';
 import moment from 'moment';
 import { CurrencyConverter } from '../../../services/utilities/currencyConverter';
@@ -43,7 +42,6 @@ class HomeDetailsBookingPanel extends React.Component {
     const nights = this.calculateNights(startDate, endDate);
     const price = getPriceForPeriod(startDate, nights, calendar);
     const excludedDates = calendar && this.getExcludedDates(calendar);
-    console.log(nights, price);
 
     let defaultDailyPrice = CurrencyConverter.convert(currencyExchangeRates, currencyCode, currency, price);
     let fiatPriceInRoomsXMLCurrency = CurrencyConverter.convert(currencyExchangeRates, currencyCode, RoomsXMLCurrency.get(), price);
@@ -97,7 +95,7 @@ class HomeDetailsBookingPanel extends React.Component {
         </div>
         <hr />
         {this.props.userInfo.isLogged ?
-          <Link to={`/homes/listings/book/${this.props.match.params.id}?startDate=${startDate.format('DD/MM/YYYY')}&endDate=${endDate.format('DD/MM/YYYY')}&guests=${this.props.homesSearchInfo.guests}`} onClick={e => invalidRange && e.preventDefault()} className={[invalidRange ? 'disabled' : null, 'pay-in'].join(' ')}>Request Booking in LOC</Link> :
+          <Link to={`/homes/listings/book/${this.props.match.params.id}?startDate=${startDate.format('DD/MM/YYYY')}&endDate=${endDate.format('DD/MM/YYYY')}&guests=${this.props.homesSearchInfo.guests}`} onClick={e => invalidRange && e.preventDefault()} className={[invalidRange ? 'disabled' : null, 'pay-in'].join(' ')}>Request Booking</Link> :
           <button className="pay-in" onClick={(e) => this.props.dispatch(openModal(LOGIN, e))}>Login</button>}
         <p className="booking-helper">You won&#39;t be charged yet</p>
       </div>
