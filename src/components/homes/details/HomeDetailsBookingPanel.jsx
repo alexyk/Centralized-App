@@ -6,6 +6,8 @@ import { openModal } from '../../../actions/modalsInfo.js';
 import { setGuests } from '../../../actions/homesSearchInfo';
 import { LOGIN } from '../../../constants/modals.js';
 import DatePickerPreview from './DatePickerPreview';
+import Datepicker from '../../common/datepicker';
+import moment from 'moment';
 import { CurrencyConverter } from '../../../services/utilities/currencyConverter';
 import { RoomsXMLCurrency } from '../../../services/utilities/roomsXMLCurrency';
 import LocPrice from '../../common/utility/LocPrice';
@@ -17,24 +19,31 @@ class HomeDetailsBookingPanel extends React.Component {
     initStickyElements();
   }
 
+  getExcludedDates(calendar) {
+    return calendar
+      .filter(item => item.available === false)
+      .map(item => moment(item.date, 'DD/MM/YYYY'));
+  }  
+  
+  calculateNights(startDate, endDate) {
+    let diffDays = endDate.startOf('day').diff(startDate.startOf('day'), 'days');
+    return endDate > startDate ? diffDays : 0;
+  }
+
   render() {
     const { currencyExchangeRates } = this.props.exchangeRatesInfo;
     if (!currencyExchangeRates || !this.props.calendar) {
       return <div className="loader"></div>;
     }
 
-    const {
-      calendar,
-      nights,
-      startDate,
-      currencyCode,
-      cleaningFee,
-    } = this.props;
-
-    const { currency,
-      currencySign } = this.props.paymentInfo;
-
+    const { calendar, currencyCode, cleaningFee } = this.props;
+    const { startDate, endDate } = this.props.searchDatesInfo;
+    const { currency, currencySign } = this.props.paymentInfo;
+    
+    const nights = this.calculateNights(startDate, endDate);
     const price = getPriceForPeriod(startDate, nights, calendar);
+    const excludedDates = calendar && this.getExcludedDates(calendar);
+    console.log(nights, price);
 
     let defaultDailyPrice = CurrencyConverter.convert(currencyExchangeRates, currencyCode, currency, price);
     let fiatPriceInRoomsXMLCurrency = CurrencyConverter.convert(currencyExchangeRates, currencyCode, RoomsXMLCurrency.get(), price);
@@ -43,6 +52,7 @@ class HomeDetailsBookingPanel extends React.Component {
     let fiatCleaningFeePriceInRoomsXMLCurrency = CurrencyConverter.convert(currencyExchangeRates, currencyCode, RoomsXMLCurrency.get(), cleaningFee);
 
     const invalidRange = isInvalidRange(startDate, nights, calendar);
+
 
     if (invalidRange === true) {
       defaultDailyPrice = 0;
@@ -53,20 +63,12 @@ class HomeDetailsBookingPanel extends React.Component {
 
     return (<div className="home-booking-panel">
       <div className="box" id="test">
-        <p className="default-price"><span className="main-fiat">{currencySign}{defaultDailyPrice.toFixed(3)}</span> <LocPrice fiat={fiatPriceInRoomsXMLCurrency} /> /per night</p>
+        <div className="default-price"><span className="main-fiat">{currencySign}{defaultDailyPrice.toFixed(3)}</span> <LocPrice fiat={fiatPriceInRoomsXMLCurrency} /> / night</div>
         <div className="booking-dates">
-          <div className="datepicker">
-            <DatePickerPreview
-              startDate={this.props.startDate}
-              endDate={this.props.endDate}
-              handleChangeStart={this.props.handleChangeStart}
-              handleChangeEnd={this.props.handleChangeEnd}
-              calendar={this.props.calendar}
-            />
-          </div>
+          <Datepicker minDate={moment().add(1, 'days')} enableRanges monthsToShow={1} excludedDates={excludedDates}/>
           <div className="days-of-stay">
             <span className="icon-moon"></span>
-            <span>{this.props.nights} nights</span>
+            <span>{nights} nights</span>
           </div>
         </div>
         <div className="booking-guests">
@@ -81,36 +83,21 @@ class HomeDetailsBookingPanel extends React.Component {
         </div>
         <div className="fiat-price-box">
           <div className="without-fees">
-            <p>{currencySign}{defaultDailyPrice.toFixed(3)}  x {this.props.nights} nights</p>
-            <p>{currencySign}{(defaultDailyPrice * this.props.nights).toFixed(3)}</p>
+            <div>{nights} nights</div>
+            <div>{currencySign}{(defaultDailyPrice * nights).toFixed(3)} <LocPrice fiat={fiatPriceInRoomsXMLCurrency * nights} /></div>
           </div>
           <div className="cleaning-fee">
-            <p>Cleaning fee</p>
-            <p>{currencySign}{defaultCleaningFee.toFixed(3)}</p>
+            <div>Cleaning fee</div>
+            <div>{currencySign}{defaultCleaningFee.toFixed(3)} <LocPrice fiat={fiatCleaningFeePriceInRoomsXMLCurrency}/></div>
           </div>
           <div className="total">
-            <p>Total</p>
-            <p>{currencySign}{((defaultDailyPrice * this.props.nights) + defaultCleaningFee).toFixed(3)}</p>
+            <div>Total</div>
+            <div>{currencySign}{((defaultDailyPrice * nights) + defaultCleaningFee).toFixed(3)} <LocPrice fiat={(fiatPriceInRoomsXMLCurrency * nights) + fiatCleaningFeePriceInRoomsXMLCurrency} /></div>
           </div>
         </div>
-        {/* <button className="pay-in">Request Booking in FIAT</button> */}
         <hr />
-        <div className="loc-price-box">
-          <div className="without-fees">
-            <p><LocPrice fiat={fiatPriceInRoomsXMLCurrency} brackets={false} /> x {this.props.nights} nights</p>
-            <p><LocPrice fiat={fiatPriceInRoomsXMLCurrency * this.props.nights} brackets={false} /></p>
-          </div>
-          <div className="cleaning-fee">
-            <p>Cleaning fee</p>
-            <p><LocPrice fiat={fiatCleaningFeePriceInRoomsXMLCurrency} brackets={false} /></p>
-          </div>
-          <div className="total">
-            <p>Total</p>
-            <p><LocPrice fiat={(fiatPriceInRoomsXMLCurrency * this.props.nights) + fiatCleaningFeePriceInRoomsXMLCurrency} brackets={false} /></p>
-          </div>
-        </div>
         {this.props.userInfo.isLogged ?
-          <Link to={`/homes/listings/book/${this.props.match.params.id}?startDate=${this.props.startDate.format('DD/MM/YYYY')}&endDate=${this.props.endDate.format('DD/MM/YYYY')}&guests=${this.props.homesSearchInfo.guests}`} onClick={e => invalidRange && e.preventDefault()} className={[invalidRange ? 'disabled' : null, 'pay-in'].join(' ')}>Request Booking in LOC</Link> :
+          <Link to={`/homes/listings/book/${this.props.match.params.id}?startDate=${startDate.format('DD/MM/YYYY')}&endDate=${endDate.format('DD/MM/YYYY')}&guests=${this.props.homesSearchInfo.guests}`} onClick={e => invalidRange && e.preventDefault()} className={[invalidRange ? 'disabled' : null, 'pay-in'].join(' ')}>Request Booking in LOC</Link> :
           <button className="pay-in" onClick={(e) => this.props.dispatch(openModal(LOGIN, e))}>Login</button>}
         <p className="booking-helper">You won&#39;t be charged yet</p>
       </div>
@@ -135,16 +122,18 @@ HomeDetailsBookingPanel.propTypes = {
   paymentInfo: PropTypes.object,
   exchangeRatesInfo: PropTypes.object,
   userInfo: PropTypes.object,
-  homesSearchInfo: PropTypes.object
+  homesSearchInfo: PropTypes.object,
+  searchDatesInfo: PropTypes.object
 };
 
 function mapStateToProps(state) {
-  const { paymentInfo, exchangeRatesInfo, userInfo, homesSearchInfo } = state;
+  const { paymentInfo, exchangeRatesInfo, userInfo, homesSearchInfo, searchDatesInfo } = state;
   return {
     paymentInfo,
     exchangeRatesInfo,
     userInfo,
-    homesSearchInfo
+    homesSearchInfo,
+    searchDatesInfo
   };
 }
 

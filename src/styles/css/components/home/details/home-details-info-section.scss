@@ -158,31 +158,39 @@
             }
           }
         }
-        .without-fees p,
-        .cleaning-fee p,
-        .total p {
+        .common-datepicker {
+          .check-in, .check-in:hover {
+            border: none;
+          }
+          .check-in-popper {
+            margin-left: 0;
+          }
+          .check-out-popper {
+            left: -153px !important;
+          }
+        }
+        .without-fees div,
+        .cleaning-fee div,
+        .total div {
           display: inline-block;
           margin: 0;
           font-size: 18px;
           color: #1f2427;
           font-weight: 300;
         }
-        .without-fees p:last-of-type,
-        .cleaning-fee p:last-of-type,
-        .total p:last-of-type {
-          text-align: right;
+        .without-fees div:last-of-type,
+        .cleaning-fee div:last-of-type,
+        .total div:last-of-type {
+          margin-left: auto;
         }
-        .total p {
+        .total div {
           font-weight: normal;
         }
         .without-fees,
         .cleaning-fee,
         .total {
-          display: grid;
-          display: -ms-grid;
-          grid-template-columns: 70% 30%;
-          -ms-grid-columns: 70% 30%;
-          margin: 10px 0;
+          display: flex;
+          margin: 15px 0;
         }
         .pay-in {
           display: block;
@@ -206,10 +214,8 @@
           margin: 0;
           color: #898c8d;
         }
-        .fiat-price-box > div  p:last-of-type,
-        .loc-price-box > div  p:last-of-type {
-          -ms-grid-column: 2;
-          grid-column: 2;
+        .fiat-price-box > div  p:last-of-type {
+          
         }
       }
     }

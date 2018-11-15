@@ -237,12 +237,11 @@ class HomeDetailsPage extends React.Component {
     }
 
     const images = this.state.data.pictures && this.getValidPictures(this.state.data.pictures);
-    const excludedDates = this.state.calendar && this.getExcludedDates(this.state.calendar);
 
     return (
       <React.Fragment>
         <div className="container">
-          <HomesSearchBar search={this.search} excludedDates={excludedDates} />
+          <HomesSearchBar search={this.search} />
         </div>
         <ContactHostModal
           id={this.props.match.params.id}
