@@ -19,9 +19,9 @@ class AirTicketsDetailsBookingPanel extends React.Component {
     const { result, userInfo, paymentInfo } = this.props;
     const { currency, currencySign } = paymentInfo;
 
-    const currencyCode = result.summary.currency;
-    const price = result.summary.totalPrice;
-    const taxPrice = result.summary.taxPrice;
+    const currencyCode = result.price.currency;
+    const price = result.price.total;
+    const taxPrice = result.price.tax;
 
     const fiatPriceInCurrentCurrency = CurrencyConverter.convert(currencyExchangeRates, currencyCode, currency, price);
     const fiatPriceInRoomsXMLCurrency = CurrencyConverter.convert(currencyExchangeRates, currencyCode, RoomsXMLCurrency.get(), price);
@@ -36,14 +36,6 @@ class AirTicketsDetailsBookingPanel extends React.Component {
           <div className="air-tickets-form-check-wrap">
             <AirTicketsDatepickerWrapper />
           </div>
-        </div>
-        <div className="booking-guests">
-          <select>
-            <option>No child</option>
-            {/* {this.props.guestArray.map((item, i) => {
-              return <option key={i}>{`${item} Guests`}</option>;
-            })} */}
-          </select>
         </div>
         <div className="fiat-price-box">
           <div className="without-fees">

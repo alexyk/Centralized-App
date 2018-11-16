@@ -1,7 +1,6 @@
 import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import AirTicketsDetailsBookingPanel from './AirTicketsDetailsBookingPanel';
-import Loader from '../../../common/loader';
 import BagIcon from '../../../../styles/images/bag-icon.png';
 import MealIcon from '../../../../styles/images/meal-icon.png';
 import WirelessIcon from '../../../../styles/images/icon-wireless_internet.png';
@@ -47,16 +46,16 @@ class AirTicketsDetailsInfoSection extends Component {
       return;
     }
 
-    const departureTime = departureInfo[0].originInfo.flightTime;
-    const arrivalTime = departureInfo[departureInfo.length - 1].destinationInfo.flightTime;
-    const carrierName = departureInfo[0].carrierInfo.carrierName;
+    const departureTime = departureInfo[0].origin.time;
+    const arrivalTime = departureInfo[departureInfo.length - 1].destination.time;
+    const carrierName = departureInfo[0].carrier.name;
     let middleStopsBulets = [];
     for (let i = 0; i < departureInfo.length - 1; i++) {
       middleStopsBulets.push(
         <Fragment key={i}>
           <div key={i} className="bulet-container"><span className="bulet"></span></div>
           <hr className="line" />
-          <div className="middle-stop" style={{ left: `${(i * 60) + 40}px` }}>{departureInfo[i].destinationInfo.airportIATACode}</div>
+          <div className="middle-stop" style={{ left: `${(i * 60) + 40}px` }}>{departureInfo[i].destination.code}</div>
         </Fragment>
       );
     }
@@ -82,14 +81,14 @@ class AirTicketsDetailsInfoSection extends Component {
               {arrivalTime}
             </div>
             <div className="item flight-stops">
-              <div className="stop">{departureInfo[0].originInfo.airportIATACode}</div>
+              <div className="stop">{departureInfo[0].origin.code}</div>
               <div className="stops-container horizontal">
                 <div className="bulet-container"><span className="bulet"></span></div>
                 <hr className="line" />
                 {departureInfo.length === 1 ? null : middleStopsBulets}
                 <div className="bulet-container"><span className="bulet"></span></div>
               </div>
-              <div className="stop">{departureInfo[departureInfo.length - 1].destinationInfo.airportIATACode}</div>
+              <div className="stop">{departureInfo[departureInfo.length - 1].destination.code}</div>
             </div>
             <div className="item flight-icons">
               <div className="icon">
@@ -113,16 +112,16 @@ class AirTicketsDetailsInfoSection extends Component {
       return;
     }
 
-    const departureTime = returnInfo[0].originInfo.flightTime;
-    const arrivalTime = returnInfo[returnInfo.length - 1].destinationInfo.flightTime;
-    const carrierName = returnInfo[0].carrierInfo.carrierName;
+    const departureTime = returnInfo[0].origin.time;
+    const arrivalTime = returnInfo[returnInfo.length - 1].destination.time;
+    const carrierName = returnInfo[0].carrier.name;
     let middleStopsBulets = [];
     for (let i = 0; i < returnInfo.length - 1; i++) {
       middleStopsBulets.push(
         <Fragment key={i}>
           <div key={i} className="bulet-container"><span className="bulet"></span></div>
           <hr className="line" />
-          <div className="middle-stop" style={{ left: `${(i * 60) + 40}px` }}>{returnInfo[i].destinationInfo.airportIATACode}</div>
+          <div className="middle-stop" style={{ left: `${(i * 60) + 40}px` }}>{returnInfo[i].destination.code}</div>
         </Fragment>
       );
     }
@@ -148,14 +147,14 @@ class AirTicketsDetailsInfoSection extends Component {
               {arrivalTime}
             </div>
             <div className="item flight-stops">
-              <div className="stop">{returnInfo[0].originInfo.airportIATACode}</div>
+              <div className="stop">{returnInfo[0].origin.code}</div>
               <div className="stops-container horizontal">
                 <div className="bulet-container"><span className="bulet"></span></div>
                 <hr className="line" />
                 {returnInfo.length === 1 ? null : middleStopsBulets}
                 <div className="bulet-container"><span className="bulet"></span></div>
               </div>
-              <div className="stop">{returnInfo[returnInfo.length - 1].destinationInfo.airportIATACode}</div>
+              <div className="stop">{returnInfo[returnInfo.length - 1].destination.code}</div>
             </div>
             <div className="item flight-icons">
               <div className="icon">
@@ -181,19 +180,19 @@ class AirTicketsDetailsInfoSection extends Component {
   }
 
   render() {
-    const { result, fareRules } = this.props;
-    const { fareRulesIndex } = this.state;
-    const item = result.items && result.items[0];
-    console.log(item);
-    console.log(fareRules);
+    const { result } = this.props;
 
-    if (!item || !fareRules) {
-      return <Loader minHeight={'50vh'} />;
+    if (!result) {
+      return <div className="loader"></div>;
     }
 
-    const departureInfo = this.getDepartureInfo(item.departureInfo);
-    const returnInfo = this.getReturnInfo(item.returnInfo);
-    
+    const { rules } = result;
+    const { fareRulesIndex } = this.state;
+    console.log(result);
+
+    const departureInfo = this.getDepartureInfo(result.departureInfo);
+    const returnInfo = this.getReturnInfo(result.returnInfo);
+
     return (
       <section className="air-tickets-details-container">
         <div className="air-tickets-details-box" id="air-tickets-details-box">
@@ -210,30 +209,26 @@ class AirTicketsDetailsInfoSection extends Component {
               <div className="flight-details">
                 <div className="departure">
                   <h5>Departure</h5>
-                  {item.departureInfo.map((segment, index) => {
+                  {result.departureInfo.map((segment, index) => {
                     return (
                       <div className="departure-segment" key={index}>
-                        <h6>{segment.originInfo.airportName} <span className="icon-arrow-right arrow"></span> {segment.destinationInfo.airportName}</h6>
+                        <h6>{segment.origin.name} <span className="icon-arrow-right arrow"></span> {segment.destination.name}</h6>
                         <div className="departure-segment-item">
                           <div>Flight number:</div>
-                          <div>{segment.carrierInfo.flightNumber}</div>
-                        </div>
-                        <div className="departure-segment-item">
-                          <div>Distance:</div>
-                          <div>{segment.distance} km</div>
+                          <div>{segment.carrier.flightNumber}</div>
                         </div>
                         <div className="departure-segment-item">
                           <div>Service class:</div>
-                          <div>{segment.flightClass.className}</div>
+                          <div>{segment.classFlightInfo.name}</div>
                         </div>
                         <div className="departure-segment-item">
                           <div>Flight time:</div>
                           <div>{this.convertMinutesToTime(segment.flightTime)}</div>
                         </div>
-                        {segment.techStop !== 0 &&
+                        {segment.techStops !== 0 &&
                           <div className="departure-segment-item">
                             <div>Tech stops:</div>
-                            <div>{segment.techStop}</div>
+                            <div>{segment.techStops}</div>
                           </div>}
                         {segment.waitTime &&
                           <div className="departure-segment-item">
@@ -244,33 +239,29 @@ class AirTicketsDetailsInfoSection extends Component {
                     );
                   })}
                 </div>
-                {item.returnInfo &&
+                {result.returnInfo &&
                   <div className="return">
                     <h5>Return</h5>
-                    {item.returnInfo.map((segment, index) => {
+                    {result.returnInfo.map((segment, index) => {
                       return (
                         <div className="departure-segment" key={index}>
-                          <h6>{segment.originInfo.airportName} <span className="icon-arrow-right arrow"></span> {segment.destinationInfo.airportName}</h6>
+                          <h6>{segment.origin.name} <span className="icon-arrow-right arrow"></span> {segment.destination.name}</h6>
                           <div className="departure-segment-item">
                             <div>Flight number:</div>
-                            <div>{segment.carrierInfo.flightNumber}</div>
-                          </div>
-                          <div className="departure-segment-item">
-                            <div>Distance:</div>
-                            <div>{segment.distance} km</div>
+                            <div>{segment.carrier.flightNumber}</div>
                           </div>
                           <div className="departure-segment-item">
                             <div>Service class:</div>
-                            <div>{segment.flightClass.className}</div>
+                            <div>{segment.classFlightInfo.name}</div>
                           </div>
                           <div className="departure-segment-item">
                             <div>Flight time:</div>
                             <div>{this.convertMinutesToTime(segment.flightTime)}</div>
                           </div>
-                          {segment.techStop !== 0 &&
+                          {segment.techStops !== 0 &&
                             <div className="departure-segment-item">
                               <div>Tech stops:</div>
-                              <div>{segment.techStop}</div>
+                              <div>{segment.techStops}</div>
                             </div>}
                           {segment.waitTime &&
                             <div className="departure-segment-item">
@@ -287,12 +278,12 @@ class AirTicketsDetailsInfoSection extends Component {
               <h2>Fare Rules</h2>
               <hr />
               <div className="farerules">
-                {fareRules.segments.map((segment, segmentIndex) => {
-                  const rules = segment.rules.map((rule, ruleIndex) => {
+                {rules.segments.map((segment, segmentIndex) => {
+                  const rules = segment.fareRules.map((rule, ruleIndex) => {
                     return (
                       <div key={ruleIndex} className="rule">
-                        <h5>{rule.ruleTitle}</h5>
-                        <h6>{rule.ruleText}</h6>
+                        <h5>{rule.title}</h5>
+                        <h6>{rule.text}</h6>
                       </div>
                     );
                   });
@@ -320,8 +311,7 @@ class AirTicketsDetailsInfoSection extends Component {
 }
 
 AirTicketsDetailsInfoSection.propTypes = {
-  result: PropTypes.object,
-  fareRules: PropTypes.object
+  result: PropTypes.object
 };
 
 
