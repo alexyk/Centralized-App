@@ -17,7 +17,7 @@ class AirTicketsDetailsPage extends Component {
 
     this.searchAirTickets = this.searchAirTickets.bind(this);
   }
-  
+
   componentDidMount() {
     this.populateSearchBar();
   }
@@ -91,12 +91,7 @@ class AirTicketsDetailsPage extends Component {
   }
 
   render() {
-    let loading;
-    const { result, fareRules } = this.props;
-
-    if (result && fareRules) {
-      loading = true;
-    }
+    const { result } = this.props;
 
     return (
       <div>
@@ -104,28 +99,23 @@ class AirTicketsDetailsPage extends Component {
           <AirTicketsSearchBar search={this.searchAirTickets} />
         </div>
         <BookingSteps steps={['Search', 'Details', 'Prepare Booking', 'Confirm & Pay']} currentStepIndex={1} />
-        {!loading ?
-          <div className="loader"></div> :
-          <div className="home-details-container">
-            <AirTicketsDetailsInfoSection
-              isLogged={this.props.userInfo.isLogged}
-              openModal={this.openModal}
-              result={result}
-              fareRules={fareRules}
-            />
-          </div>
-        }
+        <div className="home-details-container">
+          <AirTicketsDetailsInfoSection
+            isLogged={this.props.userInfo.isLogged}
+            openModal={this.openModal}
+            result={result}
+          />
+        </div>
       </div>
     );
   }
 }
 
 AirTicketsDetailsPage.propTypes = {
-  match: PropTypes.object,
   result: PropTypes.object,
-  fareRules: PropTypes.object,
 
   // start Router props
+  match: PropTypes.object,
   history: PropTypes.object,
   location: PropTypes.object,
 

@@ -1,27 +1,26 @@
 import React, { Component, Fragment } from 'react';
 import { Route, Switch, withRouter } from 'react-router-dom';
+import { NotificationManager } from 'react-notifications';
 import PropTypes from 'prop-types';
 import AirTicketsDetailsPage from './details/AirTicketsDetailsPage';
 import AirTicketsBookingProfileRouterPage from './bookProfile/AirTicketsBookingProfileRouterPage';
 import { Config } from '../../../config';
+import { LONG } from '../../../constants/notificationDisplayTimes';
 
 class AirTicketsRouterPage extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      result: null,
-      fareRules: null
+      result: null
     };
 
     this.searchAirTickets = this.searchAirTickets.bind(this);
     this.requestSelectFlight = this.requestSelectFlight.bind(this);
-    this.requestFareRules = this.requestFareRules.bind(this);
   }
 
   componentDidMount() {
     this.requestSelectFlight();
-    this.requestFareRules();
   }
 
   requestSelectFlight() {
@@ -29,24 +28,14 @@ class AirTicketsRouterPage extends Component {
       .then(res => {
         if (res.ok) {
           res.json().then((data) => {
-            this.setState({
-              result: data
-            });
-          });
-        } else {
-          this.searchAirTickets(this.props.location.search);
-        }
-      });
-  }
-
-  requestFareRules() {
-    fetch(`${Config.getValue('apiHost')}flight/fareRules?flightId=${this.props.match.params.id}`)
-      .then(res => {
-        if (res.ok) {
-          res.json().then((data) => {
-            this.setState({
-              fareRules: data
-            });
+            if (data.success === false) {
+              NotificationManager.warning(data.message, '', LONG);
+              this.searchAirTickets(this.props.location.search);
+            } else {
+              this.setState({
+                result: data
+              });
+            }
           });
         } else {
           this.searchAirTickets(this.props.location.search);
@@ -59,12 +48,12 @@ class AirTicketsRouterPage extends Component {
   }
 
   render() {
-    const { result, fareRules } = this.state;
+    const { result } = this.state;
 
     return (
       <Fragment>
         <Switch>
-          <Route exact path="/tickets/results/initBook/:id/details" render={() => <AirTicketsDetailsPage result={result} fareRules={fareRules} />} />
+          <Route exact path="/tickets/results/initBook/:id/details" render={() => <AirTicketsDetailsPage result={result} />} />
           <Route path="/tickets/results/initBook/:id/profile" render={() => <AirTicketsBookingProfileRouterPage result={result} />} />
         </Switch>
       </Fragment>
