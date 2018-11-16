@@ -240,8 +240,8 @@ class AirTicketsSearchResult extends Component {
 
     // TODO: add redirect path for mobile
     const redirectURL = isMobile
-      ? '/tickets/results'
-      : '/tickets/results';
+      ? '/tickets/results/initBook'
+      : '/tickets/results/initBook';
 
     const search = this.props.location.search;
     const endOfSearch = search.indexOf('&filters=') !== -1 ? search.indexOf('&filters=') : search.length;
@@ -287,7 +287,7 @@ class AirTicketsSearchResult extends Component {
           {isPriceLoaded && <LocPrice fiat={priceForLoc} />}
           {!isPriceLoaded && allElements
             ? <button disabled className="btn">Unavailable</button>
-            : <Link className="btn" to={`${redirectURL}/${result.id}${search.substr(0, endOfSearch)}`}>Book now</Link>
+            : <Link className="btn" to={`${redirectURL}/${result.id}/details${search.substr(0, endOfSearch)}`}>Book now</Link>
           }
         </div>
       </div>

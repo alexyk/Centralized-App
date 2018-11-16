@@ -1,15 +1,14 @@
 import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import AirTicketsDetailsBookingPanel from './AirTicketsDetailsBookingPanel';
-import { initStickyElements } from '../common/detailsPageUtils';
-import Loader from '../../common/loader';
-import BagIcon from '../../../styles/images/bag-icon.png';
-import MealIcon from '../../../styles/images/meal-icon.png';
-import WirelessIcon from '../../../styles/images/icon-wireless_internet.png';
-import TimeIcon from '../../../styles/images/time-icon.png';
+import Loader from '../../../common/loader';
+import BagIcon from '../../../../styles/images/bag-icon.png';
+import MealIcon from '../../../../styles/images/meal-icon.png';
+import WirelessIcon from '../../../../styles/images/icon-wireless_internet.png';
+import TimeIcon from '../../../../styles/images/time-icon.png';
 
-import '../../../styles/css/components/airTickets/search/air-tickets-search-result.css';
-import '../../../styles/css/components/airTickets/details/air-tickets-details-info-section.css';
+import '../../../../styles/css/components/airTickets/search/air-tickets-search-result.css';
+import '../../../../styles/css/components/airTickets/initBook/details/air-tickets-details-info-section.css';
 
 class AirTicketsDetailsInfoSection extends Component {
   constructor(props) {
@@ -20,11 +19,6 @@ class AirTicketsDetailsInfoSection extends Component {
     };
 
     this.toggleFareRule = this.toggleFareRule.bind(this);
-    this.parseFlightServiceName = this.parseFlightServiceName.bind(this);
-  }
-
-  componentDidMount() {
-    initStickyElements();
   }
 
   middleStops(item) {
@@ -186,16 +180,10 @@ class AirTicketsDetailsInfoSection extends Component {
     });
   }
 
-  parseFlightServiceName(serviceName) {
-    const lowerCaseServiceName = serviceName.match(/[A-Z][a-z]+/g).filter(word => word !== 'options').map(word => word.toLowerCase()).join(' ');
-    return lowerCaseServiceName.charAt(0).toUpperCase() + lowerCaseServiceName.substring(1);
-  }
-
   render() {
     const { result, fareRules } = this.props;
-    console.log(result);
     const { fareRulesIndex } = this.state;
-    const item = result.items[0];
+    const item = result.items && result.items[0];
     console.log(item);
     console.log(fareRules);
 
@@ -205,8 +193,7 @@ class AirTicketsDetailsInfoSection extends Component {
 
     const departureInfo = this.getDepartureInfo(item.departureInfo);
     const returnInfo = this.getReturnInfo(item.returnInfo);
-    const isFlightServices = item.services && item.services.filter(service => service.servicePerPax === false).length > 0;
-
+    
     return (
       <section className="air-tickets-details-container">
         <div className="air-tickets-details-box" id="air-tickets-details-box">
@@ -324,45 +311,6 @@ class AirTicketsDetailsInfoSection extends Component {
                 })}
               </div>
             </div>
-            <div className="air-tickets-details-content-item">
-              <h2>Services</h2>
-              <hr />
-              <div className="flight-services">
-                <div className="flight-service">
-                  <div className="flight-service-name">{this.parseFlightServiceName('OutwardLuggageOptions')}</div>
-                  <div className="flight-service-options">
-                    <select name="services">
-                      <option value="1">10kg 29.5</option>
-                      <option value="2">20kg 59.5</option>
-                    </select>
-                  </div>
-                </div>
-              </div>
-            </div>
-            {item.services && isFlightServices &&
-              <div className="air-tickets-details-content-item">
-                <h2>Services</h2>
-                <hr />
-                <div className="flight-services">
-                  {item.services.map((service, serviceIndex) => {
-                    if (service.servicePerPax === false) {
-                      return (
-                        <div className="flight-service" key={serviceIndex}>
-                          <div className="flight-service-name">{this.parseFlightServiceName(service.serviceId)}</div>
-                          <div className="flight-service-options">
-                            <select name="services">
-                              {service.serviceSelections.map((option, optionIndex) => {
-                                return <option value={option.value} key={optionIndex}>{option.key}</option>;
-                              })}
-                            </select>
-                          </div>
-                        </div>
-                      );
-                    }
-                    return null;
-                  })}
-                </div>
-              </div>}
           </div>
           <AirTicketsDetailsBookingPanel result={result} />
         </div>

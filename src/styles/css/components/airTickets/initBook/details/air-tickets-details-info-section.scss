@@ -19,7 +19,7 @@ $media-expressions: (
 
 // ligatured operators ≥ ≤
 
-@import "../../../vendors/include-media";
+@import "../../../../vendors/include-media";
 
 .air-tickets-details-container {
   padding: 20px 0;
@@ -40,12 +40,14 @@ $media-expressions: (
         justify-content: space-between;
         .departure,
         .return {
+          width: 40%;
           h5 {
             font-weight: 400;
             margin-bottom: 20px;
           }
           h6 {
             margin-bottom: 10px;
+            font-size: 17px;
             .icon-arrow-right {
               font-size: 0.6em;
               margin: 0 10px;
@@ -95,22 +97,6 @@ $media-expressions: (
             margin-bottom: 10px;
             h5 {
               font-weight: 400;
-            }
-          }
-        }
-      }
-      .flight-services {
-        .flight-service {
-          display: flex;
-          margin-bottom: 10px;
-          .flight-service-name {
-            width: 50%;
-          }
-          .flight-service-options {
-            width: 50%;
-            select {
-              width: 50%;
-              text-align: center;
             }
           }
         }
@@ -193,7 +179,7 @@ $media-expressions: (
         .without-fees,
         .cleaning-fee {
           display: grid;
-          grid-template-columns: 40% 10% 50%;
+          grid-template-columns: 35% 5% 60%;
           margin: 10px 0;
           .icon-question {
             position: relative;
@@ -232,7 +218,7 @@ $media-expressions: (
         }
         .total {
           display: grid;
-          grid-template-columns: 70% 30%;
+          grid-template-columns: 40% 60%;
           margin: 10px 0;
         }
         .pay-in {
