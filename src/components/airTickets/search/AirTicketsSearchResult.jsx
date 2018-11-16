@@ -43,7 +43,6 @@ class AirTicketsSearchResult extends Component {
 
     this.state = {
       screenWidth: screenWidth,
-      flightSolutionIndex: 0,
       titleLength: this.getTitleLength(screenSize),
       descriptionLength: this.getDescriptionLength(screenSize)
     };
@@ -100,7 +99,7 @@ class AirTicketsSearchResult extends Component {
 
     const departureTime = departureInfo[0].origin.time;
     const arrivalTime = departureInfo[departureInfo.length - 1].destination.time;
-    const carrierName = departureInfo[0].carrierName;
+    const carrierName = departureInfo[0].carrier.name;
     let middleStopsBulets = [];
     for (let i = 0; i < departureInfo.length - 1; i++) {
       middleStopsBulets.push(
@@ -166,7 +165,7 @@ class AirTicketsSearchResult extends Component {
 
     const departureTime = returnInfo[0].origin.time;
     const arrivalTime = returnInfo[returnInfo.length - 1].destination.time;
-    const carrierName = returnInfo[0].carrierName;
+    const carrierName = returnInfo[0].carrier.name;
     let middleStopsBulets = [];
     for (let i = 0; i < returnInfo.length - 1; i++) {
       middleStopsBulets.push(
@@ -227,10 +226,9 @@ class AirTicketsSearchResult extends Component {
 
   render() {
     const { exchangeRatesInfo, paymentInfo, userInfo, result, allElements } = this.props;
-    const { flightSolutionIndex } = this.state;
 
-    const { priceInfo } = result.solutions[flightSolutionIndex];
-    const price = priceInfo.totalPrice;
+    const priceInfo = result.price;
+    const price = priceInfo.total;
 
     const isPriceLoaded = !!price;
     const priceForLoc = exchangeRatesInfo.currencyExchangeRates && CurrencyConverter.convert(exchangeRatesInfo.currencyExchangeRates, priceInfo.currency, RoomsXMLCurrency.get(), price);
@@ -249,17 +247,8 @@ class AirTicketsSearchResult extends Component {
     return (
       <div className="air-tickets-result" >
         <form className="air-tickets-result-content">
-          {result.solutions.map((solution, solutionIndex) => {
-            const departureInfo = this.getDepartureInfo(solution.departureInfo);
-            const returnInfo = this.getReturnInfo(solution.returnInfo);
-
-            return (
-              <Fragment key={solutionIndex}>
-                {departureInfo}
-                {returnInfo}
-              </Fragment>
-            );
-          })}
+          {this.getDepartureInfo(result.departureInfo)}
+          {this.getReturnInfo(result.returnInfo)}
           <div className="air-tickets-result-mobile-pricing">
             {!isPriceLoaded
               ? (!allElements ? <div className="price">Loading price...</div> : <div></div>)
