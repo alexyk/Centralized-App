@@ -92,6 +92,16 @@ class Datepicker extends Component {
           excludeDates={this.props.excludedDates}
           withPortal={isMobile}
           monthsShown={monthsToShow}
+          fixedHeight
+          renderCustomHeader={({
+            date,
+            changeYear,
+            changeMonth,
+            decreaseMonth,
+            increaseMonth,
+            prevMonthButtonDisabled,
+            nextMonthButtonDisabled
+          }) => { }}
           {...this.props}
         />
 
@@ -110,6 +120,16 @@ class Datepicker extends Component {
             excludeDates={excludedDates}
             withPortal={isMobile}
             monthsShown={monthsToShow}
+            fixedHeight
+            renderCustomHeader={({
+              date,
+              changeYear,
+              changeMonth,
+              decreaseMonth,
+              increaseMonth,
+              prevMonthButtonDisabled,
+              nextMonthButtonDisabled
+            }) => { }}
             {...this.props}
           />
         }

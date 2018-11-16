@@ -58,17 +58,6 @@
 .react-datepicker__month {
   margin: 1rem 4.9rem 3rem 4.9rem;
 }
-.react-datepicker__navigation--previous::before {
-  content: "\E901";
-  font-family: "icomoon", sans-serif;
-}
-.react-datepicker__navigation--next {
-  right: 53px;
-}
-.react-datepicker__navigation--next::before {
-  content: "\E902";
-  font-family: "icomoon", sans-serif;
-}
 .react-datepicker__day--selected,
 .react-datepicker__day--in-range {
   background-color: #d77961 !important;
@@ -87,18 +76,16 @@
   z-index: 3;
 }
 .react-datepicker__navigation {
-  text-indent: unset;
-  overflow: unset;
-  visibility: collapse;
-  top: 17px;
-}
-.react-datepicker__navigation::before {
-  visibility: visible;
-  font-size: 12px;
-  padding: 10px;
-  border: 1px solid lightgray;
-  color: lightgray;
-  border-radius: 5px;
+  border: 1rem solid transparent;
+  top: 20px;
+  &--previous {
+    border-right-color: #ccc;
+    left: 50px;
+  }
+  &--next {
+    border-left-color: #ccc;
+    right: 50px;
+  }
 }
 .react-datepicker-popper-custom {
   left: 76px!important;
