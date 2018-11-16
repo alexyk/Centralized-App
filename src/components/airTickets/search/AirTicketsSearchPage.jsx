@@ -243,7 +243,7 @@ class AirTicketsSearchPage extends Component {
     console.log(messageBody);
     if (messageBody.allElements) {
       let results = this.state.results.slice();
-      results = results.sort((r1, r2) => r1.solutions[0].priceInfo.totalPrice - r2.solutions[0].priceInfo.totalPrice);
+      results = results.sort((r1, r2) => r1.price.total - r2.price.total);
       this.setState({ allElements: messageBody.allElements, results, loading: false });
       this.unsubscribe();
       this.clearIntervals();
@@ -252,7 +252,7 @@ class AirTicketsSearchPage extends Component {
       this.clearIntervals();
       NotificationManager.warning(messageBody.message, '', LONG);
     } else {
-      if (messageBody.solutions) {
+      if (messageBody.id) {
         this.setState({ results: [...this.state.results, messageBody] });
       }
     }
