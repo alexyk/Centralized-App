@@ -65,15 +65,15 @@ class AirTicketsBookingProfileRouterPage extends Component {
     const passengersInfo = [...this.state.passengersInfo];
 
     for (let i = 0; i < adults; i++) {
-      passengersInfo.push({ passengerType: PASSENGER_TYPES_CODES.adult, passengerServices: [] });
+      passengersInfo.push({ type: PASSENGER_TYPES_CODES.adult, options: [] });
     }
 
     for (let i = 0; i < children.length; i++) {
-      passengersInfo.push({ passengerType: PASSENGER_TYPES_CODES.child, passengerAge: children[i].age, passengerServices: [] });
+      passengersInfo.push({ type: PASSENGER_TYPES_CODES.child, age: children[i].age, options: [] });
     }
 
     for (let i = 0; i < infants; i++) {
-      passengersInfo.push({ passengerType: PASSENGER_TYPES_CODES.infant, passengerServices: [] });
+      passengersInfo.push({ type: PASSENGER_TYPES_CODES.infant, options: [] });
     }
 
     this.setState({
@@ -114,17 +114,17 @@ class AirTicketsBookingProfileRouterPage extends Component {
     }));
   }
 
-  onChangeServiceInfo(code, value) {
-    const index = this.state.servicesInfo.findIndex(x => x.serviceCode === code);
+  onChangeServiceInfo(id, value) {
+    const index = this.state.servicesInfo.findIndex(x => x.id === id);
     if (index === -1) {
       this.setState(prevState => ({
-        servicesInfo: [...prevState.servicesInfo, { serviceCode: code, serviceValue: value }]
+        servicesInfo: [...prevState.servicesInfo, { id, value }]
       }));
     } else {
       this.setState({
         servicesInfo: [
           ...this.state.servicesInfo.slice(0, index),
-          Object.assign({}, this.state.servicesInfo[index], { serviceCode: code, serviceValue: value }),
+          Object.assign({}, this.state.servicesInfo[index], { id, value }),
           ...this.state.servicesInfo.slice(index + 1)
         ]
       });
@@ -141,23 +141,23 @@ class AirTicketsBookingProfileRouterPage extends Component {
     });
   }
 
-  onChangePassengerServices(passengerIndex, code, value) {
+  onChangePassengerServices(passengerIndex, id, value) {
     const passengerInfo = this.state.passengersInfo;
-    const passengerServiceIndex = passengerInfo[passengerIndex].passengerServices.findIndex(s => s.serviceCode === code);
+    const passengerServiceIndex = passengerInfo[passengerIndex].passengerServices.findIndex(s => s.id === id);
     let updatedPassengersInfo;
     if (passengerServiceIndex === -1) {
       updatedPassengersInfo = update(passengerInfo, {
         [passengerIndex]: {
-          passengerServices: { $push: [{ serviceCode: code, serviceValue: value }] }
+          options: { $push: [{ id, value }] }
         }
       });
     } else {
       updatedPassengersInfo = update(passengerInfo, {
         [passengerIndex]: {
-          passengerServices: {
+          options: {
             [passengerServiceIndex]: {
-              serviceCode: { $set: code },
-              serviceValue: { $set: value }
+              id: { $set: id },
+              value: { $set: value }
             }
           }
         }
@@ -184,18 +184,19 @@ class AirTicketsBookingProfileRouterPage extends Component {
     for (let i = 0; i < passengersInfo.length; i++) {
       const passengerInfo = passengersInfo[i];
       passengers.push({
-        passengerBirthDate: `${passengerInfo.birthdateYear}-${passengerInfo.birthdateMonth}-${passengerInfo.birthdateDay}`,
-        passengerAge: passengerInfo.passengerAge,
-        passengerFirstName: passengerInfo.passengerFirstName,
-        passengerLastName: passengerInfo.passengerLastName,
-        passengerNationality: passengerInfo.passengerNationality,
-        passengerPassportCountry: passengerInfo.passengerPassportCountry,
-        passengerPassportNumber: passengerInfo.passengerPassportNumber,
-        passengerTitle: passengerInfo.passengerTitle,
-        passengerType: passengerInfo.passengerType,
-        passengerPassportIssued: `${passengerInfo.passportIssuedYear}-${passengerInfo.passportIssuedMonth}-${passengerInfo.passportIssuedDay}`,
-        passengerPassportExp: `${passengerInfo.passportExpYear}-${passengerInfo.passportExpMonth}-${passengerInfo.passportExpDay}`,
-        passengerServices: passengerInfo.passengerServices
+        birthDate: `${passengerInfo.birthdateYear}-${passengerInfo.birthdateMonth}-${passengerInfo.birthdateDay}`,
+        firstName: passengerInfo.firstName,
+        lastName: passengerInfo.lastName,
+        type: passengerInfo.type,
+        title: passengerInfo.title,
+        nationality: passengerInfo.nationality,
+        passport: {
+          type: 'P',
+          number: passengerInfo.passportNumber,
+          issueCountry: passengerInfo.passportIssueCountry,
+          expiry: `${passengerInfo.passportExpYear}-${passengerInfo.passportExpMonth}-${passengerInfo.passportExpDay}`
+        },
+        options: passengerInfo.options
       });
     }
 
@@ -203,11 +204,11 @@ class AirTicketsBookingProfileRouterPage extends Component {
       flightId: this.props.match.params.id,
       contact: contactInfo,
       invoice: invoiceInfo,
-      services: servicesInfo,
+      options: servicesInfo,
       passengers
     };
 
-    fetch(`${Config.getValue('apiHost')}flight/initBooking`, {
+    fetch(`${Config.getValue('apiHost')}flight/prepareBooking`, {
       method: 'POST',
       headers: {
         'Content-type': 'application/json'
@@ -217,10 +218,10 @@ class AirTicketsBookingProfileRouterPage extends Component {
       .then((res) => {
         if (res.ok) {
           res.json().then((data) => {
-            if (data.success) {
-              this.props.history.push({ pathname: `/tickets/results/book/${this.props.match.params.id}${this.props.location.search}`, state: data });
+            if (data.success === false) {
+              NotificationManager.warning(data.message, '', LONG);
             } else {
-              NotificationManager.warning('', data.message, LONG);
+              this.props.history.push({ pathname: `/tickets/results/book/${this.props.match.params.id}${this.props.location.search}`, state: data });
             }
           });
         } else {

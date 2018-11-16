@@ -18,12 +18,12 @@ class AirTicketsBookingProfileInvoiceForm extends Component {
   }
 
   handleCitySelect(place) {
-    this.props.onChange('invoiceCompanyCity', place.formatted_address);
+    this.props.onChange('city', place.formatted_address);
   }
 
   render() {
     const { invoiceInfo, countries, isFlightServices } = this.props;
-    const { invoiceCompanyName, invoiceCompanyCountry, invoiceCompanyCity, invoiceCompanyAddress, invoiceCompanyZip } = invoiceInfo;
+    const { name, country, city, address, zip } = invoiceInfo;
 
     return (
       <div className="air-tickets-invoice-form">
@@ -32,13 +32,13 @@ class AirTicketsBookingProfileInvoiceForm extends Component {
         <form onSubmit={(e) => { e.preventDefault(); this.props.enableNextSection(isFlightServices ? 'services' : 'passengers'); }}>
           <div className="company-name">
             <label htmlFor="invoiceCompanyName">Company name</label>
-            <input id="invoiceCompanyName" name="invoiceCompanyName" value={invoiceCompanyName || ''} onChange={this.onChange} type="text" />
+            <input id="invoiceCompanyName" name="name" value={name || ''} onChange={this.onChange} type="text" />
           </div>
           <div className="company-city">
             <div className="country-code">
               <label htmlFor="invoiceCompanyCountry">Country</label>
               <div className="select">
-                <select id="invoiceCompanyCountry" name="invoiceCompanyCountry" value={invoiceCompanyCountry || ''} onChange={this.onChange}>
+                <select id="invoiceCompanyCountry" name="country" value={country || ''} onChange={this.onChange}>
                   <option defaultValue="" disabled hidden></option>
                   {countries && countries.map((country, countryIndex) => {
                     return <option key={countryIndex} value={country.code} onChange={this.onChange}>{country.name}</option>;
@@ -49,26 +49,26 @@ class AirTicketsBookingProfileInvoiceForm extends Component {
             <div className="zip-code">
               <label htmlFor="invoiceCompanyZip">Zip Code</label>
               <div>
-                <input id="invoiceCompanyZip" name="invoiceCompanyZip" value={invoiceCompanyZip || ''} onChange={this.onChange} type="number" />
+                <input id="invoiceCompanyZip" name="zip" value={zip || ''} onChange={this.onChange} type="number" />
               </div>
             </div>
             <div className="city-name">
               <label htmlFor="invoiceCompanyCity">Which city</label>
               <Select
-                value={invoiceCompanyCity || ''}
+                value={city || ''}
                 onChange={this.onChange}
-                name="invoiceCompanyCity"
+                name="city"
                 onPlaceSelected={this.handleCitySelect}
                 types={['(cities)']}
-                componentRestrictions={{ country: (invoiceCompanyCountry && invoiceCompanyCountry.toLowerCase()) || '' }}
-                disabled={!invoiceCompanyCountry}
+                componentRestrictions={{ country: (country && country.toLowerCase()) || '' }}
+                disabled={!country}
                 placeholder=""
               />
             </div>
           </div>
           <div className="company-address">
             <label htmlFor="invoiceCompanyAddress">Company address</label>
-            <input id="invoiceCompanyAddress" name="invoiceCompanyAddress" value={invoiceCompanyAddress || ''} onChange={this.onChange} type="text" />
+            <input id="invoiceCompanyAddress" name="address" value={address || ''} onChange={this.onChange} type="text" />
           </div>
           <div className="buttons-wrapper">
             <NavLink to={{ pathname: `/tickets/results/initBook/${this.props.match.params.id}/profile`, search: this.props.location.search }} className="btn-back" id="btn-continue">

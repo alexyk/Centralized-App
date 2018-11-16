@@ -47,24 +47,20 @@
         flex-direction: column;
       }
       .birthdate-month {
-        width: 23%;
+        width: 27%;
       }
       .birthdate-day {
         width: 15%;
       }
       .birthdate-year {
-        width: 17%;
-      }
-      .passenger-age {
-        width: 14%;
+        width: 21%;
       }
       .passenger-type {
-        width: 20%;
+        width: 28%;
       }
       .birthdate-month,
       .birthdate-day,
       .birthdate-year,
-      .passenger-age,
       .passenger-type {
         @include media("<tablet") {
           width: 100%;
@@ -92,14 +88,13 @@
         }
       }
     }
-    .passport-issued,
     .passport-exp {
       display: flex;
       @include media("<tablet") {
         flex-direction: column;
       }
       &-month {
-        width: 23%;
+        width: 27%;
         margin-right: 2.7%;
       }
       &-day {
@@ -107,7 +102,7 @@
         margin-right: 2.7%;
       }
       &-year {
-        width: 17%;
+        width: 21%;
       }
       &-month,
       &-day,

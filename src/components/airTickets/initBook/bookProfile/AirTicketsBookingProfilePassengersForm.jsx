@@ -98,7 +98,7 @@ class AirTicketsBookingProfilePassengersForm extends Component {
                       <div className="passenger-title">
                         <label htmlFor="title">Title <span className="mandatory">*</span></label>
                         <div className="select">
-                          <select id="title" name="passengerTitle" value={passenger.passengerTitle || ''} onChange={this.onChange}>
+                          <select id="title" name="title" value={passenger.title || ''} onChange={this.onChange}>
                             <option defaultValue="" disabled hidden></option>
                             <option value="Mr" onChange={this.onChange}>Mr</option>
                             <option value="Mrs" onChange={this.onChange}>Mrs</option>
@@ -107,11 +107,11 @@ class AirTicketsBookingProfilePassengersForm extends Component {
                       </div>
                       <div className="passenger-name">
                         <label htmlFor="firstName">First name <span className="mandatory">*</span></label>
-                        <input id="firstName" name="passengerFirstName" value={passenger.passengerFirstName || ''} onChange={this.onChange} type="text" required />
+                        <input id="firstName" name="firstName" value={passenger.firstName || ''} onChange={this.onChange} type="text" required />
                       </div>
                       <div className="passenger-name">
                         <label htmlFor="lastName">Last name <span className="mandatory">*</span></label>
-                        <input id="lastName" name="passengerLastName" value={passenger.passengerLastName || ''} onChange={this.onChange} type="text" required />
+                        <input id="lastName" name="lastName" value={passenger.lastName || ''} onChange={this.onChange} type="text" required />
                       </div>
                     </div>
                     <div className="birthdate">
@@ -141,7 +141,7 @@ class AirTicketsBookingProfilePassengersForm extends Component {
                           <select name="birthdateDay" id="birthdateDay" onChange={this.onChange} value={passenger.birthdateDay || ''} required>
                             <option disabled value="">Day</option>
                             {Array.apply(null, Array(32)).map(function (item, i) {
-                              return i > 0 && <option key={i} value={i}>{i}</option>;
+                              return i > 0 && <option key={i} value={i < 10 ? `0${i}` : i}>{i}</option>;
                             })}
                           </select>
                         </div>
@@ -155,14 +155,10 @@ class AirTicketsBookingProfilePassengersForm extends Component {
                           </select>
                         </div>
                       </div>
-                      <div className="passenger-age">
-                        <label htmlFor="age">Age <span className="mandatory">*</span></label>
-                        <input id="age" name="passengerAge" value={(passenger.passengerAge && Number(passenger.passengerAge)) || ''} onChange={this.onChange} type="number" required />
-                      </div>
                       <div className="passenger-type">
                         <label htmlFor="passengerType">Type <span className="mandatory">*</span></label>
                         <div className='select'>
-                          <select name="passengerType" id="passengerType" onChange={this.onChange} value={passenger.passengerType || ''} required>
+                          <select name="type" id="passengerType" onChange={this.onChange} value={passenger.type || ''} required>
                             <option defaultValue="" disabled hidden></option>
                             <option value={PASSENGER_TYPES_CODES.adult}>Adult</option>
                             <option value={PASSENGER_TYPES_CODES.child}>Child</option>
@@ -175,7 +171,7 @@ class AirTicketsBookingProfilePassengersForm extends Component {
                       <div className="nationality-code">
                         <label htmlFor="nationalityCode">Nationality <span className="mandatory">*</span></label>
                         <div className="select">
-                          <select id="nationalityCode" name="passengerNationality" value={passenger.passengerNationality || ''} onChange={this.onChange} required>
+                          <select id="nationalityCode" name="nationality" value={passenger.nationality || ''} onChange={this.onChange} required>
                             <option defaultValue="" disabled hidden></option>
                             {countries && countries.map((country, countryIndex) => {
                               return <option key={countryIndex} value={country.code} onChange={this.onChange}>{country.name}</option>;
@@ -185,58 +181,16 @@ class AirTicketsBookingProfilePassengersForm extends Component {
                       </div>
                       <div className="passport-number">
                         <label htmlFor="passportNumber">Passport No <span className="mandatory">*</span></label>
-                        <input id="passportNumber" name="passengerPassportNumber" value={passenger.passengerPassportNumber || ''} onChange={this.onChange} type="text" required />
+                        <input id="passportNumber" name="passportNumber" value={passenger.passportNumber || ''} onChange={this.onChange} type="text" required />
                       </div>
                       <div className="country-code">
                         <label htmlFor="countryCode">Passport Country <span className="mandatory">*</span></label>
                         <div className="select">
-                          <select id="countryCode" name="passengerPassportCountry" value={passenger.passengerPassportCountry || ''} onChange={this.onChange} required>
+                          <select id="countryCode" name="passportIssueCountry" value={passenger.passportIssueCountry || ''} onChange={this.onChange} required>
                             <option defaultValue="" disabled hidden></option>
                             {countries && countries.map((country, countryIndex) => {
                               return <option key={countryIndex} value={country.code} onChange={this.onChange}>{country.name}</option>;
                             })}
-                          </select>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="passport-issued">
-                      <div className="passport-issued-month">
-                        <label htmlFor="passportIssuedMonth">Passport issued <span className="mandatory">*</span></label>
-                        <div className='select'>
-                          <select name="passportIssuedMonth" id="passportIssuedMonth" onChange={this.onChange} value={passenger.passportIssuedMonth || ''} required>
-                            <option disabled value="">Month</option>
-                            <option value="01">January</option>
-                            <option value="02">February</option>
-                            <option value="03">March</option>
-                            <option value="04">April</option>
-                            <option value="05">May</option>
-                            <option value="06">June</option>
-                            <option value="07">July</option>
-                            <option value="08">August</option>
-                            <option value="09">September</option>
-                            <option value="10">October</option>
-                            <option value="11">November</option>
-                            <option value="12">December</option>
-                          </select>
-                        </div>
-                      </div>
-                      <div className="passport-issued-day">
-                        <label htmlFor="passportIssuedDay">&nbsp;</label>
-                        <div className='select'>
-                          <select name="passportIssuedDay" id="passportIssuedDay" onChange={this.onChange} value={passenger.passportIssuedDay || ''} required>
-                            <option disabled value="">Day</option>
-                            {Array.apply(null, Array(32)).map(function (item, i) {
-                              return i > 0 && <option key={i} value={i}>{i}</option>;
-                            })}
-                          </select>
-                        </div>
-                      </div>
-                      <div className="passport-issued-year">
-                        <label htmlFor="passportIssuedYear">&nbsp;</label>
-                        <div className='select'>
-                          <select name="passportIssuedYear" id="passportIssuedYear" onChange={this.onChange} value={passenger.passportIssuedYear || ''} required>
-                            <option disabled value="">Year</option>
-                            {years}
                           </select>
                         </div>
                       </div>
@@ -287,7 +241,7 @@ class AirTicketsBookingProfilePassengersForm extends Component {
                       <div className="services">
                         <h5>Services</h5>
                         {passengersServices.map((service, serviceIndex) => {
-                          const selectedService = passenger.passengerServices.filter(x => x.serviceCode === service.serviceId)[0];
+                          const selectedService = passenger.options.filter(x => x.id === service.serviceId)[0];
                           const selectedServiceValue = selectedService ? selectedService.serviceValue : '';
                           return (
                             <div key={serviceIndex} className="service">
