@@ -51,7 +51,7 @@ class AirTicketsBookingProfileServicesForm extends Component {
         <hr />
         <form onSubmit={(e) => { e.preventDefault(); this.props.enableNextSection('passengers'); }}>
           {services.map((service, serviceIndex) => {
-            const selectedService = servicesInfo.filter(x => x.serviceCode === service.serviceId)[0];
+            const selectedService = servicesInfo.filter(x => x.id === service.serviceId)[0];
             const selectedServiceValue = selectedService ? selectedService.serviceValue : '';
             return (
               <div key={serviceIndex} className="service">
