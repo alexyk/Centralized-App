@@ -12,6 +12,11 @@ import AirTicketsSearchBar from '../../search/AirTicketsSearchBar';
 import BookingSteps from '../../../common/bookingSteps';
 
 class AirTicketsDetailsPage extends Component {
+  constructor(props) {
+    super(props);
+
+    this.searchAirTickets = this.searchAirTickets.bind(this);
+  }
   
   componentDidMount() {
     this.populateSearchBar();
@@ -81,6 +86,10 @@ class AirTicketsDetailsPage extends Component {
     }
   }
 
+  searchAirTickets(queryString) {
+    this.props.history.push('/tickets/results' + queryString);
+  }
+
   render() {
     let loading;
     const { result, fareRules } = this.props;
@@ -93,9 +102,8 @@ class AirTicketsDetailsPage extends Component {
       <div>
         <div className="container">
           <AirTicketsSearchBar search={this.searchAirTickets} />
-          <BookingSteps steps={['Search', 'Details', 'Prepare Booking', 'Confirm & Pay']} currentStepIndex={1} />
         </div>
-
+        <BookingSteps steps={['Search', 'Details', 'Prepare Booking', 'Confirm & Pay']} currentStepIndex={1} />
         {!loading ?
           <div className="loader"></div> :
           <div className="home-details-container">

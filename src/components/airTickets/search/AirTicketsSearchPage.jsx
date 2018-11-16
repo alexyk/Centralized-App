@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { NotificationManager } from 'react-notifications';
@@ -278,36 +278,40 @@ class AirTicketsSearchPage extends Component {
     const { results, allElements, loading } = this.state;
 
     return (
-      <div className="container">
-        <AirTicketsSearchBar search={this.searchAirTickets} />
+      <Fragment>
+        <div className="container">
+          <AirTicketsSearchBar search={this.searchAirTickets} />
+        </div>
         <BookingSteps steps={['Search', 'Details', 'Prepare Booking', 'Confirm & Pay']} currentStepIndex={0} />
-        <div className="air-tickets-search-results">
-          <div className="air-tickets-search-filter-panel">
-            <AirTicketsSearchFilterPanel
-              isSearchReady={allElements}
-            />
-          </div>
-          <div className="air-tickets-search-results-holder">
-            <AirTicketsResultsHolder
-              results={results.filter((el, index) => index >= (this.state.page * DEFAULT_PAGE_SIZE) && index < (this.state.page * DEFAULT_PAGE_SIZE) + DEFAULT_PAGE_SIZE)}
-              exchangeRatesInfo={exchangeRatesInfo}
-              paymentInfo={paymentInfo}
-              userInfo={userInfo}
-              allElements={allElements}
-              loading={loading}
-            />
-            {!this.state.loading &&
-              <Pagination
-                loading={this.state.loading}
-                onPageChange={this.onPageChange}
-                currentPage={this.state.page + 1}
-                pageSize={DEFAULT_PAGE_SIZE}
-                totalElements={results.length}
+        <div className="container">
+          <div className="air-tickets-search-results">
+            <div className="air-tickets-search-filter-panel">
+              <AirTicketsSearchFilterPanel
+                isSearchReady={allElements}
               />
-            }
+            </div>
+            <div className="air-tickets-search-results-holder">
+              <AirTicketsResultsHolder
+                results={results.filter((el, index) => index >= (this.state.page * DEFAULT_PAGE_SIZE) && index < (this.state.page * DEFAULT_PAGE_SIZE) + DEFAULT_PAGE_SIZE)}
+                exchangeRatesInfo={exchangeRatesInfo}
+                paymentInfo={paymentInfo}
+                userInfo={userInfo}
+                allElements={allElements}
+                loading={loading}
+              />
+              {!this.state.loading &&
+                <Pagination
+                  loading={this.state.loading}
+                  onPageChange={this.onPageChange}
+                  currentPage={this.state.page + 1}
+                  pageSize={DEFAULT_PAGE_SIZE}
+                  totalElements={results.length}
+                />
+              }
+            </div>
           </div>
         </div>
-      </div>
+      </Fragment>
     );
   }
 }

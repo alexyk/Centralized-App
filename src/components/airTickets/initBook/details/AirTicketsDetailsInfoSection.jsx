@@ -8,7 +8,7 @@ import WirelessIcon from '../../../../styles/images/icon-wireless_internet.png';
 import TimeIcon from '../../../../styles/images/time-icon.png';
 
 import '../../../../styles/css/components/airTickets/search/air-tickets-search-result.css';
-import '../../../../styles/css/components/airTickets/details/air-tickets-details-info-section.css';
+import '../../../../styles/css/components/airTickets/initBook/details/air-tickets-details-info-section.css';
 
 class AirTicketsDetailsInfoSection extends Component {
   constructor(props) {

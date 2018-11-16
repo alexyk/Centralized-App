@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Select from '../../../common/google/GooglePlacesAutocomplete';
 
-import '../../../../styles/css/components/airTickets/initBook/book/air-tickets-booking-profile-edit-form.css';
+import '../../../../styles/css/components/airTickets/initBook/bookProfile/air-tickets-booking-profile-edit-form.css';
 
 class AirTicketsBookingProfileEditForm extends Component {
   constructor(props) {
@@ -17,12 +17,12 @@ class AirTicketsBookingProfileEditForm extends Component {
   }
 
   handleCitySelect(place) {
-    this.props.onChange('cityName', place.formatted_address);
+    this.props.onChange('contactCityName', place.formatted_address);
   }
 
   render() {
     const { contactInfo, countries } = this.props;
-    const { contactTitle, firstName, lastName, email, phoneNumber, countryCode, zipCode, cityName, address } = contactInfo;
+    const { contactTitle, firstName, lastName, contactEmail, contactPhone, contactCountryCode, contactZip, contactCityName, contactAddress } = contactInfo;
 
     return (
       <div className="air-tickets-contact-edit-form">
@@ -33,7 +33,7 @@ class AirTicketsBookingProfileEditForm extends Component {
             <div className="contact-title">
               <label htmlFor="title">Title <span className="mandatory">*</span></label>
               <div className="select">
-                <select id="title" name="contactTitle" value={contactTitle} onChange={this.onChange}>
+                <select id="title" name="contactTitle" value={contactTitle || ''} onChange={this.onChange}>
                   <option defaultValue="" disabled hidden></option>
                   <option value="Mr" onChange={this.onChange}>Mr</option>
                   <option value="Mrs" onChange={this.onChange}>Mrs</option>
@@ -42,26 +42,26 @@ class AirTicketsBookingProfileEditForm extends Component {
             </div>
             <div className="contact-name">
               <label htmlFor="firstName">First name <span className="mandatory">*</span></label>
-              <input id="firstName" name="firstName" value={firstName} onChange={this.onChange} type="text" required />
+              <input id="firstName" name="firstName" value={firstName || ''} onChange={this.onChange} type="text" required />
             </div>
             <div className="contact-name">
               <label htmlFor="lastName">Last name <span className="mandatory">*</span></label>
-              <input id="lastName" name="lastName" value={lastName} onChange={this.onChange} type="text" required />
+              <input id="lastName" name="lastName" value={lastName || ''} onChange={this.onChange} type="text" required />
             </div>
           </div>
           <div className="email">
-            <label htmlFor="email">Email <span className="mandatory">*</span></label>
-            <input id="email" name="email" value={email} onChange={this.onChange} type="email" required />
+            <label htmlFor="contactEmail">Email <span className="mandatory">*</span></label>
+            <input id="contactEmail" name="contactEmail" value={contactEmail || ''} onChange={this.onChange} type="email" required />
           </div>
           <div className="phone-number">
-            <label htmlFor="phoneNumber">Phone Number <span className="mandatory">*</span></label>
-            <input id="phoneNumber" name="phoneNumber" value={phoneNumber} onChange={this.onChange} type="number" required />
+            <label htmlFor="contactPhone">Phone Number <span className="mandatory">*</span></label>
+            <input id="contactPhone" name="contactPhone" value={contactPhone || ''} onChange={this.onChange} type="number" required />
           </div>
           <div className="address-info">
             <div className="country-code">
-              <label htmlFor="countryCode">Country <span className="mandatory">*</span></label>
+              <label htmlFor="contactCountryCode">Country <span className="mandatory">*</span></label>
               <div className="select">
-                <select id="country-code" name="countryCode" value={countryCode} onChange={this.onChange}>
+                <select id="contactCountryCode" name="contactCountryCode" value={contactCountryCode || ''} onChange={this.onChange}>
                   <option defaultValue="" disabled hidden></option>
                   {countries && countries.map((country, countryIndex) => {
                     return <option key={countryIndex} value={country.code} onChange={this.onChange}>{country.name}</option>;
@@ -70,29 +70,29 @@ class AirTicketsBookingProfileEditForm extends Component {
               </div>
             </div>
             <div className="zip-code">
-              <label htmlFor="zipCode">Zip Code <span className="mandatory">*</span></label>
+              <label htmlFor="contactZip">Zip Code <span className="mandatory">*</span></label>
               <div>
-                <input id="zipCode" name="zipCode" value={zipCode} onChange={this.onChange} type="number" required />
+                <input id="contactZip" name="contactZip" value={contactZip || ''} onChange={this.onChange} type="number" required />
               </div>
             </div>
             <div className="city">
               <label htmlFor="cityName">Which city <span className="mandatory">*</span></label>
               <Select
-                value={cityName}
+                value={contactCityName || ''}
                 onChange={this.onChange}
-                name="cityName"
+                name="contactCityName"
                 onPlaceSelected={this.handleCitySelect}
                 types={['(cities)']}
-                componentRestrictions={{ country: countryCode.toLowerCase() }}
-                disabled={!countryCode}
+                componentRestrictions={{ country: (contactCountryCode && contactCountryCode.toLowerCase()) || '' }}
+                disabled={!contactCountryCode}
                 placeholder=""
                 required
               />
             </div>
           </div>
           <div className="address">
-            <label htmlFor="address">Address <span className="mandatory">*</span></label>
-            <input id="address" name="address" value={address} onChange={this.onChange} type="text" />
+            <label htmlFor="contactAddress">Address <span className="mandatory">*</span></label>
+            <input id="contactAddress" name="contactAddress" value={contactAddress || ''} onChange={this.onChange} type="text" />
           </div>
           <div className="buttons-wrapper">
             <button type="submit" className="btn">Next</button>

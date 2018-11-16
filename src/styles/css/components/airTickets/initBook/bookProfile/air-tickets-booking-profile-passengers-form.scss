@@ -1,0 +1,132 @@
+@import "../../../../vendors/include-media";
+@import "../../../../base/variables";
+
+.air-tickets-passengers-form {
+  width: 100%;
+  .passenger-form-title {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0;
+    h4 {
+      display: flex;
+      align-items: center;
+      margin-bottom: 0;
+    }
+    .toggle {
+      font-size: 20px;
+    }
+  }
+  .passenger > div {
+    clear: both;
+    margin-bottom: 20px;
+  }
+  .passenger {
+    .passenger-name-wrapper {
+      display: flex;
+      justify-content: space-between;
+      @include media("<tablet") {
+        flex-direction: column;
+      }
+      .passenger-title {
+        width: 15%;
+      }
+      .passenger-name {
+        width: 40%;
+      }
+      .passenger-title,
+      .passenger-name {
+        @include media("<tablet") {
+          width: 100%;
+        }
+      }
+    }
+    .birthdate {
+      display: flex;
+      justify-content: space-between;
+      @include media("<tablet") {
+        flex-direction: column;
+      }
+      .birthdate-month {
+        width: 23%;
+      }
+      .birthdate-day {
+        width: 15%;
+      }
+      .birthdate-year {
+        width: 17%;
+      }
+      .passenger-age {
+        width: 14%;
+      }
+      .passenger-type {
+        width: 20%;
+      }
+      .birthdate-month,
+      .birthdate-day,
+      .birthdate-year,
+      .passenger-age,
+      .passenger-type {
+        @include media("<tablet") {
+          width: 100%;
+        }
+      }
+    }
+    .passport-number-wrapper {
+      display: flex;
+      justify-content: space-between;
+      @include media("<tablet") {
+        flex-direction: column;
+      }
+      .nationality-code,
+      .country-code {
+        width: 32%;
+      }
+      .passport-number {
+        width: 30%;
+      }
+      .nationality-code,
+      .passport-number,
+      .country-code {
+        @include media("<tablet") {
+          width: 100%;
+        }
+      }
+    }
+    .passport-issued,
+    .passport-exp {
+      display: flex;
+      @include media("<tablet") {
+        flex-direction: column;
+      }
+      &-month {
+        width: 23%;
+        margin-right: 2.7%;
+      }
+      &-day {
+        width: 15%;
+        margin-right: 2.7%;
+      }
+      &-year {
+        width: 17%;
+      }
+      &-month,
+      &-day,
+      &-year {
+        @include media("<tablet") {
+          width: 100%;
+        }
+      }
+    }
+  }
+  .service {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+    .service-title {
+      width: 50%;
+    }
+    .select {
+      width: 50%;
+    }
+  }
+}
