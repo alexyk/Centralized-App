@@ -196,9 +196,9 @@ function AirTicketsSearchBar(props) {
         <SelectFlex placeholder="Flight class" className="air-tickets-form-flight-class" onChange={(value) => props.dispatch(setFlightClass(value))} value={props.airTicketsSearchInfo.flightClass}>
           <select name="flightClass">
             <option value="0">any</option>
-            <option value="Y">economy</option>
-            <option value="J">premium economy</option>
-            <option value="C">business</option>
+            <option value="E">economy</option>
+            <option value="P">premium economy</option>
+            <option value="B">business</option>
             <option value="F">first</option>
           </select>
         </SelectFlex>
