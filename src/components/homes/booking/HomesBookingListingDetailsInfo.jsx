@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import moment from 'moment';
 import { Config } from '../../../config.js';
-import SearchBarDatePickerHidePreview from '../../common/search/SearchBarDatePickerHidePreview';
+import DatePreview from './datePreview';
 import { CurrencyConverter } from '../../../services/utilities/currencyConverter.js';
 import { getPriceForPeriod } from '../common/detailsPageUtils.js';
 import '../../../styles/css/components/homes/booking/homes-booking-listing-details-info.css';
@@ -25,15 +25,6 @@ class HomesBookingListingDetailsInfo extends React.Component {
     const pictures = listing.pictures.filter(x => x.thumbnail !== null);
     const startDate = moment(searchParams.startDate, 'DD/MM/YYYY');
     const endDate = moment(searchParams.endDate, 'DD/MM/YYYY');
-
-    const datesDetails = {
-      startDateDay: startDate.format('DD'),
-      startDateMonth: startDate.format('MMM').toUpperCase(),
-      startDateDayOfWeek: startDate.format('ddd').toUpperCase(),
-      endDateDay: endDate.format('DD'),
-      endDateMonth: endDate.format('MMM').toUpperCase(),
-      endDateDayOfWeek: endDate.format('ddd').toUpperCase()
-    };
 
     const SlickButton = ({ currentSlide, slideCount, ...arrowProps }) => {
       return (
@@ -96,13 +87,7 @@ class HomesBookingListingDetailsInfo extends React.Component {
             </div>
             <p> {searchParams.guests} Guests</p>
           </div>
-          <SearchBarDatePickerHidePreview datesDetails={datesDetails} />
-          <div className="border-nights-container">
-            <div className="border-nights">
-              <img src="/images/icon-moon.png" alt="icon-moon" />
-              <p>{nights} nights</p>
-            </div>
-          </div>
+          <DatePreview checkin={startDate} checkout={endDate} />
         </div>
         <div className="price-container">
           <div className="price">
