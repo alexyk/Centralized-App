@@ -8,7 +8,7 @@ import UnverifiedList from './users/UnverifiedList';
 import VerifiedList from './users/VerifiedList';
 import AdminAirdrop from './airdrop/AdminAirdrop';
 import AdminSafecharge from './safecharge/AdminSafecharge';
-import AdminReservationsTable from './reservations/AdminReservationsTable';
+import AdminReservationsRouter from './reservations/AdminReservationsRouter';
 import requester from '../../../requester';
 
 class AdminPage extends Component {
@@ -71,7 +71,7 @@ class AdminPage extends Component {
           <Route exact path="/profile/admin/users/unverified" render={() => <UnverifiedList />} />
           <Route exact path="/profile/admin/airdrop" render={() => <AdminAirdrop />} />
           <Route exact path="/profile/admin/safecharge" render={() => <AdminSafecharge configVars={configVars} onChangeConfigVars={this.onChangeConfigVars} />} />
-          <Route exact path="/profile/admin/reservation/booking/all" render={() => <AdminReservationsTable />} />
+          <Route path="/profile/admin/reservation/booking" render={() => <AdminReservationsRouter />} />
         </Switch>
       </div>
     );
