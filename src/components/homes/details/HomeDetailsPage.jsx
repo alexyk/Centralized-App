@@ -236,7 +236,7 @@ class HomeDetailsPage extends React.Component {
       );
     }
 
-    const images = this.state.data.pictures && this.getValidPictures(this.state.data.pictures);
+    const images = this.getValidPictures(this.state.data.pictures);
     const excludedDates = this.state.calendar && this.getExcludedDates(this.state.calendar);
 
     return (
