@@ -102,7 +102,7 @@ class AdminReservationsEditForm extends Component {
             <div className="select">
               <select name="bookingStatus" className="select" id="status" onChange={this.onChange} value={booking.bookingStatus}>
                 <option disabled value="">------------------</option>
-                <option value="">DONE</option>
+                <option value="DONE">DONE</option>
                 <option value="FAILED">FAILED</option>
                 <option value="FAIL">FAIL</option>
                 <option value="PENDING">PENDING</option>
