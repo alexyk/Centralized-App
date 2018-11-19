@@ -190,7 +190,6 @@ class HomeDetailsPage extends React.Component {
       );
     }
 
-    const images = this.state.listing.pictures && this.getValidPictures(this.state.listing.pictures);
     const { 
       property_type,
       guests,
@@ -233,6 +232,8 @@ class HomeDetailsPage extends React.Component {
         guestArray.push(i);
       }
     }
+
+    const images = this.getValidPictures(this.state.listing.pictures);
 
     return (
       <React.Fragment>

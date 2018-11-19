@@ -63,7 +63,7 @@ class HomeDetailsBookingPanel extends React.Component {
       <div className="box" id="test">
         <div className="default-price"><span className="main-fiat">{currencySign}{defaultDailyPrice.toFixed(3)}</span> <LocPrice fiat={fiatPriceInRoomsXMLCurrency} /> / night</div>
         <div className="booking-dates">
-          <Datepicker minDate={moment().add(1, 'days')} enableRanges monthsToShow={1} excludedDates={excludedDates}/>
+          <Datepicker minDate={moment()} enableRanges monthsToShow={1} excludedDates={excludedDates}/>
           <div className="days-of-stay">
             <span className="icon-moon"></span>
             <span>{nights} nights</span>
