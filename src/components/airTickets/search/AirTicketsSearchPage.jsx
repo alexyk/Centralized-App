@@ -33,6 +33,8 @@ class AirTicketsSearchPage extends Component {
     this.subscription = null;
     this.results = [];
 
+    this.searchId = null;
+
     this.flightsResultsInterval = null;
 
     this.state = {
@@ -40,6 +42,7 @@ class AirTicketsSearchPage extends Component {
       allElements: false,
       loading: true,
       page: !queryParams.page ? 0 : Number(queryParams.page),
+      filters: null
     };
 
     this.onPageChange = this.onPageChange.bind(this);
@@ -83,6 +86,22 @@ class AirTicketsSearchPage extends Component {
       .then(res => {
         if (res.ok) {
           this.connectSocket();
+        }
+      })
+      .catch(res => {
+        console.log(res);
+      });
+  }
+
+  requestFilters() {
+    fetch(`${Config.getValue('apiHost')}flight/search/filter/data?searchId=${this.searchId}`)
+      .then(res => {
+        if (res.ok) {
+          res.json().then((data) => {
+            this.setState({
+              filters: JSON.parse(data)
+            });
+          });
         }
       })
       .catch(res => {
@@ -251,10 +270,12 @@ class AirTicketsSearchPage extends Component {
       this.setState({ loading: false });
       this.clearIntervals();
       NotificationManager.warning(messageBody.message, '', LONG);
-    } else {
-      if (messageBody.id) {
-        this.setState({ results: [...this.state.results, messageBody] });
+    } else if (messageBody.id) {
+      if (!this.searchId) {
+        this.searchId = messageBody.searchId;
+        this.requestFilters();
       }
+      this.setState({ results: [...this.state.results, messageBody] });
     }
   }
 
@@ -275,7 +296,7 @@ class AirTicketsSearchPage extends Component {
 
   render() {
     const { exchangeRatesInfo, paymentInfo, userInfo } = this.props;
-    const { results, allElements, loading } = this.state;
+    const { results, allElements, loading, filters } = this.state;
 
     return (
       <Fragment>
@@ -288,6 +309,7 @@ class AirTicketsSearchPage extends Component {
             <div className="air-tickets-search-filter-panel">
               <AirTicketsSearchFilterPanel
                 isSearchReady={allElements}
+                filters={filters}
               />
             </div>
             <div className="air-tickets-search-results-holder">
