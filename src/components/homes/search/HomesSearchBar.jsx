@@ -73,7 +73,7 @@ class HomesSearchBar extends Component {
 
         <div className="check-wrap source-panel-item">
           <div className="check">
-            <Datepicker minDate={moment().add(1, 'days')} enableRanges excludedDates={this.props.excludedDates || []} />
+            <Datepicker minDate={moment()} enableRanges excludedDates={this.props.excludedDates || []} />
           </div>
 
           <div className="days-of-stay">
