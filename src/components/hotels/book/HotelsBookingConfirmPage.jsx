@@ -480,7 +480,7 @@ class HotelBookingConfirmPage extends React.Component {
           rows.push(
             <tr key={3 * 1000 + feeIndex + 1}>
               <td>
-                {`Canceling on or after ${date} will cost you`}
+                {`Cancelling on or after ${date} will cost you`}
               </td>
               <td>
                 <span className="booking-price">
@@ -501,7 +501,7 @@ class HotelBookingConfirmPage extends React.Component {
       <table>
         <thead>
           <tr>
-            <th>Cancelation condition</th>
+            <th>Cancellation condition</th>
             <th>Price</th>
           </tr>
         </thead>
@@ -573,7 +573,7 @@ class HotelBookingConfirmPage extends React.Component {
                   </div>
                   <hr className="table-splitter" />
                   <div className="confirm-and-pay-table">
-                    <h4>Cancelation Details</h4>
+                    <h4>Cancellation Details</h4>
                     {this.getRoomFees(reservation)}
                   </div>
                   <p className='billing-disclaimer'>The charge will appear on your bill as LockChain Ltd. (team@locktrip.com)</p>
