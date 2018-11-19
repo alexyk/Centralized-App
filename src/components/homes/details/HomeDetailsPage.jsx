@@ -4,8 +4,6 @@ import { withRouter } from 'react-router-dom';
 import Lightbox from 'react-images';
 import PropTypes from 'prop-types';
 import moment from 'moment';
-import _ from 'lodash';
-import { parse } from 'query-string';
 import { Config } from '../../../config';
 import requester from '../../../requester';
 import SlickCarousel from 'react-slick';
@@ -25,8 +23,6 @@ import {
   previous,
   calculateCheckInOuts
 } from '../common/detailsPageUtils.js';
-import { setHomesSearchInfo } from '../../../actions/homesSearchInfo';
-import { asyncSetStartDate, asyncSetEndDate } from '../../../actions/searchDatesInfo';
 import { DEFAULT_LISTING_IMAGE_URL } from '../../../constants/images';
 import '../../../styles/css/components/home/details/home-details-info-section.css';
 import Facilities from '../../hotels/details/Facilities';
@@ -89,55 +85,6 @@ class HomeDetailsPage extends React.Component {
     this.calculateCheckInOuts = calculateCheckInOuts.bind(this);
   }
 
-  componentDidMount() {
-    this.setHomesSearchInfoFromURL();
-
-    const DAY_INTERVAL = 365;
-
-    requester.getListing(this.props.match.params.id).then(res => {
-      res.body.then(listing => {
-        const checks = this.calculateCheckInOuts(listing);
-        this.setState({ listing, checks });
-      });
-    });
-
-    const calendarByListingRequestParams = [
-      `listing=${this.props.match.params.id}`,
-      `startDate=${moment().format('DD/MM/YYYY')}`,
-      `endDate=${moment().add(DAY_INTERVAL, 'days').format('DD/MM/YYYY')}`,
-      `page=${0}`,
-      `toCode=${this.props.paymentInfo.currency}`,
-      `size=${DAY_INTERVAL}`];
-
-    requester.getCalendarByListingIdAndDateRange(calendarByListingRequestParams).then(res => {
-      res.body.then(data => {
-        let calendar = data.content;
-        calendar = _.sortBy(calendar, function (x) {
-          return moment(x.date, 'DD/MM/YYYY');
-        });
-        this.setState({ calendar });
-      });
-    });
-
-    requester.getHomeBookingDetails(this.props.match.params.id).then(res => res.body).then(roomDetails => {
-      this.setState({ roomDetails });
-    });
-  }
-
-  setHomesSearchInfoFromURL() {
-    if (this.props.location.search) {
-      const searchParams = parse(this.props.location.search);
-      const country = searchParams.countryId;
-      const startDate = moment(searchParams.startDate, 'DD/MM/YYYY');
-      const endDate = moment(searchParams.endDate, 'DD/MM/YYYY');
-      const guests = searchParams.guests;
-
-      this.props.dispatch(asyncSetStartDate(startDate));
-      this.props.dispatch(asyncSetEndDate(endDate));
-      this.props.dispatch(setHomesSearchInfo(country, guests));
-    }
-  }
-
   search(queryString) {
     this.props.history.push('/homes/listings' + queryString);
   }
@@ -184,11 +131,13 @@ class HomeDetailsPage extends React.Component {
 
   render() {
 
-    if (!this.state.listing || !this.state.calendar) {
+    if (!this.props.listing || !this.props.calendar) {
       return (
         <Loader minHeight={'50vh'} />
       );
     }
+
+    const { listing, calendar, bookingDetails } = this.props;
 
     const { 
       property_type,
@@ -200,7 +149,7 @@ class HomeDetailsPage extends React.Component {
       smokingAllowed,
       suitableForPets,
       suitableForInfants,
-      house_rules } = this.state.roomDetails;
+      house_rules } = bookingDetails;
 
     const { 
       averageRating,
@@ -213,14 +162,14 @@ class HomeDetailsPage extends React.Component {
       latitude,
       currencyCode,
       cleaningFee,
-      longitude } = this.state.listing;
+      longitude } = listing;
 
     const hasSpaceDetails = property_type || guests || size || bathroom || bedrooms;
     const hasHouseRules = eventsAllowed || smokingAllowed || suitableForPets || suitableForInfants || house_rules;
     const houseRules = house_rules && house_rules.split('\r\n');
 
-    const { roomDetails, checks, calendar } = this.state;
     const { startDate, endDate } = this.props.searchDatesInfo;
+    const checks = this.calculateCheckInOuts(listing);
 
     const guestArray = [];
     if (guests) {
@@ -233,7 +182,7 @@ class HomeDetailsPage extends React.Component {
       }
     }
 
-    const images = this.getValidPictures(this.state.listing.pictures);
+    const images = this.getValidPictures(listing.pictures);
 
     return (
       <React.Fragment>
@@ -300,7 +249,7 @@ class HomeDetailsPage extends React.Component {
             </div>
           </nav>
 
-          {(!roomDetails || !checks)
+          {(!bookingDetails || !checks)
             ? <div className="loader"></div>
             : <section className="home-container">
               <div className="home-box" id="home-box">

@@ -9,6 +9,8 @@ import requester from '../../../requester';
 import { Config } from '../../../config';
 import { LONG } from '../../../constants/notificationDisplayTimes.js';
 import { MISSING_NAMES } from '../../../constants/warningMessages.js';
+import HomesBookingAside from './aside/HomesBookingAside';
+import BookingSteps from '../../common/utility/BookingSteps';
 
 import '../../../styles/css/components/homes/booking/homes-booking-confirm-page.css';
 
@@ -96,52 +98,70 @@ class HomesBookingConfirmPage extends React.Component {
   }
 
   render() {
+
+    const { listing, calendar } = this.props;
+
     return (
-      <div className="confirm-and-pay-details">
-        {this.state.sending === false ?
-          <Fragment>
-            <h2 className="title">Request Booking</h2>
-            <hr />
-            <form onSubmit={(e) => {
-              e.preventDefault(); this.captcha.execute();
-            }}
-            >
-              <div className="customer-first-name">
-                <label>First name</label>
-                <input type="text" name="firstName" value={this.state.firstName} onChange={this.handleChange} required />
-              </div>
-              <div className="customer-last-name">
-                <label>Last name</label>
-                <input type="text" name="lastName" value={this.state.lastName} onChange={this.handleChange} required />
-              </div>
-              <div className="customer-phone">
-                <label>Phone number</label>
-                <input type="text" name="phoneNumber" value={this.state.phoneNumber} onChange={this.handleChange} required />
-              </div>
-              <div className="customer-email">
-                <label>Email</label>
-                <input type="email" name="email" value={this.state.email} onChange={this.handleChange} required />
-              </div>
-              <button type="submit" className="btn">Request Booking</button>
-              <ReCAPTCHA
-                ref={el => this.captcha = el}
-                size="invisible"
-                sitekey={Config.getValue('recaptchaKey')}
-                onChange={token => { this.handleSubmit(token); this.captcha.reset(); }}
-              />
-            </form>
-          </Fragment> : <div className="loader"></div>}
-      </div>
+      <Fragment>
+        <BookingSteps steps={['Select your Room', 'Review Room Details', 'Confirm & Pay']} currentStepIndex={1} />
+        <div id={`${this.props.location.pathname.indexOf('/confirm') !== -1 ? 'homes-booking-confirm-page-container' : 'homes-booking-page-container'}`}>
+          <div className="container">
+            <HomesBookingAside
+              listing={listing}
+              searchParams={parse(this.props.location.search)}
+              calendar={calendar}
+            />
+
+            <div className="confirm-and-pay-details">
+              {this.state.sending === false ?
+                <Fragment>
+                  <h2 className="title">Request Booking</h2>
+                  <hr />
+                  <form onSubmit={(e) => {
+                    e.preventDefault(); this.captcha.execute();
+                  }}
+                  >
+                    <div className="customer-first-name">
+                      <label>First name</label>
+                      <input type="text" name="firstName" value={this.state.firstName} onChange={this.handleChange} required />
+                    </div>
+                    <div className="customer-last-name">
+                      <label>Last name</label>
+                      <input type="text" name="lastName" value={this.state.lastName} onChange={this.handleChange} required />
+                    </div>
+                    <div className="customer-phone">
+                      <label>Phone number</label>
+                      <input type="text" name="phoneNumber" value={this.state.phoneNumber} onChange={this.handleChange} required />
+                    </div>
+                    <div className="customer-email">
+                      <label>Email</label>
+                      <input type="email" name="email" value={this.state.email} onChange={this.handleChange} required />
+                    </div>
+                    <button type="submit" className="btn">Request Booking</button>
+                    <ReCAPTCHA
+                      ref={el => this.captcha = el}
+                      size="invisible"
+                      sitekey={Config.getValue('recaptchaKey')}
+                      onChange={token => { this.handleSubmit(token); this.captcha.reset(); }}
+                    />
+                  </form>
+                </Fragment> : <div className="loader"></div>}
+            </div>
+          </div>
+        </div>
+      </Fragment>
     );
   }
 }
 
 HomesBookingConfirmPage.propTypes = {
-  match: PropTypes.object,
   listing: PropTypes.object,
+  calendar: PropTypes.array,
+
   // Router props
   location: PropTypes.object,
   history: PropTypes.object,
+  match: PropTypes.object,
 
   // Redux props
   userInfo: PropTypes.object,
