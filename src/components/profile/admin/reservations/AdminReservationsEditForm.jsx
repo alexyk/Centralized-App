@@ -3,7 +3,7 @@ import { withRouter } from 'react-router-dom';
 import { NotificationManager } from 'react-notifications';
 import PropTypes from 'prop-types';
 import moment from 'moment';
-import { Config } from '../../../../config';
+import requester from '../../../../requester';
 import { LONG } from '../../../../constants/notificationDisplayTimes.js';
 import { BOOKING_UPDATED } from '../../../../constants/successMessages';
 
@@ -37,14 +37,10 @@ class AdminReservationsEditForm extends Component {
   }
 
   requestBookingById(id) {
-    fetch(`${Config.getValue('apiHost')}admin/panel/booking/${id}`, {
-      headers: {
-        Authorization: localStorage.getItem(Config.getValue('domainPrefix') + '.auth.locktrip'),
-      }
-    })
+    requester.getBookingWithTransactionHashById(id)
       .then((res) => {
-        if (res.ok) {
-          res.json().then((data) => {
+        if (res.success) {
+          res.body.then((data) => {
             this.setState({
               booking: data
             });
@@ -68,17 +64,10 @@ class AdminReservationsEditForm extends Component {
       provider: booking.provider
     };
 
-    fetch(`${Config.getValue('apiHost')}admin/panel/booking/${this.props.match.params.id}`, {
-      method: 'POST',
-      headers: {
-        Authorization: localStorage.getItem(Config.getValue('domainPrefix') + '.auth.locktrip'),
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(updatedBooking)
-    })
+    requester.updateBookingWithTransaction(this.props.match.params.id, updatedBooking)
       .then((res) => {
-        if (res.ok) {
-          res.json().then((data) => {
+        if (res.success) {
+          res.body.then((data) => {
             if (data.success) {
               NotificationManager.success(BOOKING_UPDATED, '', LONG);
               this.props.history.push('/profile/admin/reservation/booking/all');

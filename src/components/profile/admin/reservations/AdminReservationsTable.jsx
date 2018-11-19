@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import moment from 'moment';
 import queryString from 'query-string';
 import AdminNav from '../AdminNav';
-import { Config } from '../../../../config';
+import requester from '../../../../requester';
 import Pagination from '../../../common/pagination/Pagination';
 
 import '../../../../styles/css/components/profile/admin/reservations/admin-reservations-table.css';
@@ -32,14 +32,10 @@ class AdminReservationsTable extends Component {
   }
 
   requestBookings(page) {
-    fetch(`${Config.getValue('apiHost')}admin/panel/booking/all?page=${page}`, {
-      headers: {
-        Authorization: localStorage.getItem(Config.getValue('domainPrefix') + '.auth.locktrip'),
-      }
-    })
+    requester.getAllBookingsWithTransactionHash([`page=${page}`])
       .then((res) => {
-        if (res.ok) {
-          res.json().then((data) => {
+        if (res.success) {
+          res.body.then((data) => {
             this.setState({
               loading: false,
               bookings: data.content,
