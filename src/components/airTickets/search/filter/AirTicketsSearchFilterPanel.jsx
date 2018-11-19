@@ -51,9 +51,9 @@ class AirTicketsSearchFilterPanel extends Component {
   }
 
   render() {
-    const { isSearchReady, filters } = this.props;
+    const { loading, filters } = this.props;
 
-    if (!isSearchReady) {
+    if (loading) {
       return (
         <div className="filter-box">
           <div className="form-group">
@@ -87,7 +87,6 @@ class AirTicketsSearchFilterPanel extends Component {
 
     return (
       <div className="filter-box">
-        {isSearchReady}
         <div>
           <div className="filter airlines-filter">
             <h5>Airlines</h5>
@@ -182,7 +181,7 @@ class AirTicketsSearchFilterPanel extends Component {
 }
 
 AirTicketsSearchFilterPanel.propTypes = {
-  isSearchReady: PropTypes.bool,
+  loading: PropTypes.bool,
   filters: PropTypes.object
 };
 

@@ -259,17 +259,17 @@ class AirTicketsSearchPage extends Component {
 
   handleReceiveMessage(message) {
     const messageBody = JSON.parse(message.body);
-    console.log(messageBody);
+    // console.log(messageBody);
     if (messageBody.allElements) {
       let results = this.state.results.slice();
       results = results.sort((r1, r2) => r1.price.total - r2.price.total);
       this.setState({ allElements: messageBody.allElements, results, loading: false });
       this.unsubscribe();
       this.clearIntervals();
-    } else if (messageBody.success === false) {
+    } else if (messageBody.success === false || messageBody.errorMessage) {
       this.setState({ loading: false });
       this.clearIntervals();
-      NotificationManager.warning(messageBody.message, '', LONG);
+      NotificationManager.warning(messageBody.message || messageBody.errorMessage, '', LONG);
     } else if (messageBody.id) {
       if (!this.searchId) {
         this.searchId = messageBody.searchId;
@@ -308,7 +308,7 @@ class AirTicketsSearchPage extends Component {
           <div className="air-tickets-search-results">
             <div className="air-tickets-search-filter-panel">
               <AirTicketsSearchFilterPanel
-                isSearchReady={allElements}
+                loading={loading}
                 filters={filters}
               />
             </div>
