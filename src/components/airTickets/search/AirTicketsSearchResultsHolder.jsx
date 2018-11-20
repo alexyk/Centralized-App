@@ -7,8 +7,6 @@ import '../../../styles/css/components/search-result-component.css';
 
 function AirTicketsResultsHolder(props) {
 
-  console.log(props.results);
-
   if (props.loading) {
     return <div className="text-center"><h2 style={{ margin: '80px 0' }}>Looking for the best offers...</h2></div>;
   }

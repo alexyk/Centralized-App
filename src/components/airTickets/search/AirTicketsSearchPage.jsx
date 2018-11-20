@@ -2,6 +2,7 @@ import React, { Component, Fragment } from 'react';
 import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { NotificationManager } from 'react-notifications';
+import update from 'react-addons-update';
 import PropTypes from 'prop-types';
 import queryString from 'query-string';
 import moment from 'moment';
@@ -36,6 +37,7 @@ class AirTicketsSearchPage extends Component {
     this.subscriptionFilters = null;
 
     this.searchId = null;
+    this.results = [];
 
     this.flightsResultsIntervalSearch = null;
     this.flightsResultsIntervalFilters = null;
@@ -366,33 +368,14 @@ class AirTicketsSearchPage extends Component {
 
   handleReceiveMessageSearch(message) {
     const messageBody = JSON.parse(message.body);
-    // console.log(messageBody);
+    console.log(messageBody);
     if (messageBody.allElements) {
-      let results = this.state.results.slice();
-      results = results.sort((r1, r2) => r1.price.total - r2.price.total);
-      this.setState({ allElements: messageBody.allElements, results, loading: false });
+      const results = this.state.results.slice();
+      let updatedResults = update(results, { $push: this.results });
+      updatedResults = updatedResults.sort((r1, r2) => r1.price.total - r2.price.total);
+      this.setState({ allElements: messageBody.allElements, results: updatedResults });
+      this.results = [];
       this.unsubscribeSearch();
-      this.clearIntervals();
-    } else if (messageBody.success === false || messageBody.errorMessage) {
-      this.setState({ loading: false });
-      this.clearIntervals();
-      NotificationManager.warning(messageBody.message || messageBody.errorMessage, '', LONG);
-    } else if (messageBody.id) {
-      if (!this.searchId) {
-        this.searchId = messageBody.searchId;
-        this.requestFilters();
-      }
-      this.setState({ results: [...this.state.results, messageBody] });
-    }
-  }
-
-  handleReceiveMessageFilters(message) {
-    const messageBody = JSON.parse(message.body);
-    // console.log(messageBody);
-    if (messageBody.allElements) {
-      let results = this.state.results.slice();
-      results = results.sort((r1, r2) => r1.price.total - r2.price.total);
-      this.setState({ allElements: messageBody.allElements, results, loading: false });
       this.unsubscribeFilters();
       this.clearIntervals();
     } else if (messageBody.success === false || messageBody.errorMessage) {
@@ -404,7 +387,42 @@ class AirTicketsSearchPage extends Component {
         this.searchId = messageBody.searchId;
         this.requestFilters();
       }
-      this.setState({ results: [...this.state.results, messageBody] });
+      this.results.push(messageBody);
+    } else {
+      const results = [...this.state.results];
+      const updatedResults = update(results, { $push: this.results });
+      this.setState({ results: updatedResults, loading: false });
+      this.results = [];
+    }
+  }
+
+  handleReceiveMessageFilters(message) {
+    const messageBody = JSON.parse(message.body);
+    console.log(messageBody);
+    if (messageBody.allElements) {
+      let results = this.state.results.slice();
+      let updatedResults = update(results, { $push: this.results });
+      updatedResults = updatedResults.sort((r1, r2) => r1.price.total - r2.price.total);
+      this.setState({ allElements: messageBody.allElements, results: updatedResults });
+      this.results = [];
+      this.unsubscribeSearch();
+      this.unsubscribeFilters();
+      this.clearIntervals();
+    } else if (messageBody.success === false || messageBody.errorMessage) {
+      this.setState({ loading: false });
+      this.clearIntervals();
+      NotificationManager.warning(messageBody.message || messageBody.errorMessage, '', LONG);
+    } else if (messageBody.id) {
+      if (!this.searchId) {
+        this.searchId = messageBody.searchId;
+        this.requestFilters();
+      }
+      this.results.push(messageBody);
+    } else {
+      const results = [...this.state.results];
+      const updatedResults = update(results, { $push: this.results });
+      this.setState({ results: updatedResults, loading: false });
+      this.results = [];
     }
   }
 
@@ -429,8 +447,6 @@ class AirTicketsSearchPage extends Component {
     const { exchangeRatesInfo, paymentInfo, userInfo } = this.props;
     const { results, allElements, loading, filters } = this.state;
 
-    console.log(results);
-
     return (
       <Fragment>
         <div className="container">
@@ -441,7 +457,7 @@ class AirTicketsSearchPage extends Component {
           <div className="air-tickets-search-results">
             <div className="air-tickets-search-filter-panel">
               <AirTicketsSearchFilterPanel
-                loading={loading}
+                loading={!allElements}
                 filters={filters}
                 applyFilters={this.applyFilters}
               />
