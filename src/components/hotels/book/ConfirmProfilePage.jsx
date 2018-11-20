@@ -1,6 +1,5 @@
 import React from 'react';
 import { withRouter } from 'react-router-dom';
-import ReCAPTCHA from 'react-google-recaptcha';
 import { NotificationManager } from 'react-notifications';
 import PropTypes from 'prop-types';
 import moment from 'moment';
@@ -12,7 +11,6 @@ import Select from '../../common/google/GooglePlacesAutocomplete';
 import StringUtils from '../../../services/utilities/stringUtilities';
 
 import '../../../styles/css/components/hotels/book/profile-confirm-form.css';
-import '../../../styles/css/components/captcha/captcha-container.css';
 
 class ConfirmProfilePage extends React.Component {
   constructor(props) {
@@ -42,7 +40,6 @@ class ConfirmProfilePage extends React.Component {
     this.requestUserInfo = this.requestUserInfo.bind(this);
     this.requestCountries = this.requestCountries.bind(this);
     this.requestStates = this.requestStates.bind(this);
-    this.executeCaptcha = this.executeCaptcha.bind(this);
   }
 
   componentDidMount() {
@@ -127,16 +124,12 @@ class ConfirmProfilePage extends React.Component {
     this.setState({ userInfo });
   }
 
-  executeCaptcha() {
-    this.captcha.execute();
-  }
-
-  updateUserProfile(captchaToken) {
+  updateUserProfile() {
     const userInfo = { ...this.state.userInfo };
     userInfo.preferredCurrency = userInfo.preferredCurrency ? userInfo.preferredCurrency.id : 1;
     userInfo.country = userInfo.country && userInfo.country.id;
     userInfo.countryState = userInfo.countryState && parseInt(userInfo.countryState, 10);
-    requester.updateUserInfo(userInfo, captchaToken).then(res => {
+    requester.updateUserInfo(userInfo).then(res => {
       if (res.success) {
         this.payWithCard();
       } else {
@@ -183,7 +176,7 @@ class ConfirmProfilePage extends React.Component {
 
         <div className="container" id="booking-profile-confirm">
           <h2>Review Billing Information</h2>
-          <form onSubmit={(e) => { e.preventDefault(); this.captcha.execute(); }}>
+          <form onSubmit={(e) => { e.preventDefault(); this.updateUserProfile(); }}>
             <div className="name">
               <div className="first">
                 <label htmlFor="fname">First name <span className="mandatory">*</span></label>
@@ -254,14 +247,6 @@ class ConfirmProfilePage extends React.Component {
             </div>
 
             <p className="text"><span className="mandatory">*</span> Fields mandatory for payment with Credit Card</p>
-            <div className="captcha-container">
-              <ReCAPTCHA
-                ref={el => this.captcha = el}
-                size="invisible"
-                sitekey={Config.getValue('recaptchaKey')}
-                onChange={token => { this.updateUserProfile(token); this.captcha.reset(); }}
-              />
-            </div>
             <button type="submit" className="btn">Proceed</button>
           </form>
         </div>

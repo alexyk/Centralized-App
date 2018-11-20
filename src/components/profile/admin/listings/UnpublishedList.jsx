@@ -1,5 +1,3 @@
-import '../../../../styles/css/components/captcha/captcha-container.css';
-
 import { LISTING_APPROVED, LISTING_DELETED, LISTING_DENIED } from '../../../../constants/successMessages.js';
 import { NavLink, withRouter } from 'react-router-dom';
 import { PROPERTY_CANNOT_BE_DELETED } from '../../../../constants/errorMessages.js';
@@ -17,7 +15,6 @@ import NoEntriesMessage from '../../../common/messages/NoEntriesMessage';
 import { NotificationManager } from 'react-notifications';
 import Pagination from '../../../common/pagination/Pagination';
 import PropTypes from 'prop-types';
-import ReCAPTCHA from 'react-google-recaptcha';
 import React from 'react';
 import filterListings from '../../../../actions/filterListings';
 import queryString from 'query-string';
@@ -27,7 +24,6 @@ class UnpublishedList extends React.Component {
   constructor(props) {
     super(props);
 
-    this.captcha = null;
     let searchMap = queryString.parse(this.props.location.search);
     this.state = {
       listings: [],
@@ -61,7 +57,6 @@ class UnpublishedList extends React.Component {
     this.handleOpenDeleteListingModal = this.handleOpenDeleteListingModal.bind(this);
     this.handleCloseDeleteListing = this.handleCloseDeleteListing.bind(this);
     this.filterListings = filterListings.bind(this);
-    this.executeCaptcha = this.executeCaptcha.bind(this);
     this.handleExpandListing = this.handleExpandListing.bind(this);
     this.handleShrinkListing = this.handleShrinkListing.bind(this);
     this.closeLightbox = this.closeLightbox.bind(this);
@@ -144,10 +139,6 @@ class UnpublishedList extends React.Component {
     this.setState({
       [e.target.name]: e.target.value
     });
-  }
-
-  executeCaptcha() {
-    this.captcha.execute();
   }
 
   handleSelectCountry(option) {
@@ -242,12 +233,12 @@ class UnpublishedList extends React.Component {
     });
   }
 
-  handleContactHost(id, message, captchaToken) {
+  handleContactHost(id, message) {
     let contactHostObj = {
       message: message
     };
 
-    requester.contactHost(id, contactHostObj, captchaToken).then(() => {
+    requester.contactHost(id, contactHostObj).then(() => {
       NotificationManager.info(MESSAGE_SENT, '', LONG);
       this.closeContactHostModal();
     });
@@ -277,10 +268,10 @@ class UnpublishedList extends React.Component {
     });
   }
 
-  handleDeleteListing(token) {
+  handleDeleteListing() {
     this.setState({ isDeleting: true });
     const { deletingId } = this.state;
-    requester.deleteListing(deletingId, token)
+    requester.deleteListing(deletingId)
       .then(res => {
         if (res.success) {
           const allListings = this.state.listings;
@@ -296,7 +287,6 @@ class UnpublishedList extends React.Component {
         }
         this.handleCloseDeleteListing();
       }).catch(e => {
-        // console.log(e);
         this.handleCloseDeleteListing();
       });
   }
@@ -421,8 +411,7 @@ class UnpublishedList extends React.Component {
                 isActive={this.state.isShownDeleteListingModal}
                 deletingName={this.state.deletingName}
                 isDeleting={this.state.isDeleting}
-                // filterListings={this.filterListings}
-                handleDeleteListing={this.executeCaptcha}
+                handleDeleteListing={this.handleDeleteListing}
                 deletingId={this.state.deletingId}
                 onHide={this.handleCloseDeleteListing}
               />
@@ -471,15 +460,6 @@ class UnpublishedList extends React.Component {
               onClose={this.closeLightbox}
             />
           }
-
-          <div className='captcha-container'>
-            <ReCAPTCHA
-              ref={el => this.captcha = el}
-              size="invisible"
-              sitekey={Config.getValue('recaptchaKey')}
-              onChange={token => { this.handleDeleteListing(token); this.captcha.reset(); }}
-            />
-          </div>
         </div>
       </div>
     );

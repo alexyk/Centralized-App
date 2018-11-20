@@ -17,7 +17,6 @@ import ListingPrice from './steps/ListingPrice';
 import ListingSafetyFacilities from './steps/ListingSafetyFacilities';
 import { NotificationManager } from 'react-notifications';
 import PropTypes from 'prop-types';
-import ReCAPTCHA from 'react-google-recaptcha';
 import React from 'react';
 import { arrayMove } from 'react-sortable-hoc';
 import moment from 'moment';
@@ -119,7 +118,6 @@ class EditListingPage extends React.Component {
     this.populateFileThumbUrls = this.populateFileThumbUrls.bind(this);
     this.updateProgress = this.updateProgress.bind(this);
     this.onSortEnd = this.onSortEnd.bind(this);
-    this.finish = this.finish.bind(this);
     this.handleLocationChange = this.handleLocationChange.bind(this);
     this.mountListing = this.mountListing.bind(this);
     this.setPageRoutes = this.setPageRoutes.bind(this);
@@ -422,19 +420,15 @@ class EditListingPage extends React.Component {
     return fileThumbUrls;
   }
 
-  finish() {
-    this.editCaptcha.execute();
-  }
-
   handleLocationChange({ position, address }) {
     this.setState({ lat: position.lat, lng: position.lng, mapAddress: address });
   }
 
-  editListing(captchaToken) {
+  editListing() {
     this.setState({ loading: true });
     let listing = this.createListingObject();
     if (this.state.isInProgress) {
-      requester.createListing(listing, captchaToken).then(res => {
+      requester.createListing(listing).then(res => {
         if (res.success) {
           this.setState({ loading: false });
           res.body.then(data => {
@@ -456,7 +450,7 @@ class EditListingPage extends React.Component {
         }
       });
     } else {
-      requester.editListing(this.state.listingId, listing, captchaToken).then(res => {
+      requester.editListing(this.state.listingId, listing).then(res => {
         if (res.success) {
           this.setState({ loading: false });
           this.props.history.push('/profile/listings');
@@ -747,17 +741,10 @@ class EditListingPage extends React.Component {
           <Route exact path={routes.price} render={() => <ListingPrice
             values={this.state}
             onChange={this.onChange}
-            finish={this.finish}
+            finish={this.editListing}
             routes={routes}
             prev={routes.checking} />} />
         </Switch>
-
-        <ReCAPTCHA
-          ref={(el) => this.editCaptcha = el}
-          size="invisible"
-          sitekey={Config.getValue('recaptchaKey')}
-          onChange={token => { this.editListing(token); this.editCaptcha.reset(); }}
-        />
       </div>
     );
   }

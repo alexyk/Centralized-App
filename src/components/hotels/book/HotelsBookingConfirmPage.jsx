@@ -41,7 +41,6 @@ class HotelBookingConfirmPage extends React.Component {
   constructor(props) {
     super(props);
 
-    this.captcha = null;
     this.isQuoteApproved = false;
 
     this.state = {

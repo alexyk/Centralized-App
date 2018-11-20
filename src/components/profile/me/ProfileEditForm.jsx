@@ -6,7 +6,6 @@ import { LONG } from '../../../constants/notificationDisplayTimes.js';
 import { NotificationManager } from 'react-notifications';
 import { PROFILE_SUCCESSFULLY_UPDATED } from '../../../constants/successMessages.js';
 import { PROFILE_UPDATE_ERROR } from '../../../constants/errorMessages.js';
-import ReCAPTCHA from 'react-google-recaptcha';
 import React from 'react';
 import Select from '../../common/google/GooglePlacesAutocomplete';
 import moment from 'moment';
@@ -107,7 +106,11 @@ class ProfileEditForm extends React.Component {
     this.setState({ [stateKey]: event.target.innerText });
   }
 
-  updateUser(captchaToken) {
+  updateUser(e) {
+    if (e) {
+      e.preventDefault();
+    }
+
     let birthday = `${this.state.day}/${this.state.month}/${this.state.year}`;
     let userInfo = {
       firstName: this.state.firstName,
@@ -128,7 +131,7 @@ class ProfileEditForm extends React.Component {
 
     Object.keys(userInfo).forEach((key) => (userInfo[key] === null || userInfo[key] === '') && delete userInfo[key]);
 
-    requester.updateUserInfo(userInfo, captchaToken).then(res => {
+    requester.updateUserInfo(userInfo).then(res => {
       if (res.success) {
         NotificationManager.success(PROFILE_SUCCESSFULLY_UPDATED, '', LONG);
         this.componentDidMount();
@@ -159,7 +162,6 @@ class ProfileEditForm extends React.Component {
   }
 
   handleCitySelect(place) {
-    // console.log(place);
     this.setState({ city: place.formatted_address });
   }
 
@@ -173,12 +175,12 @@ class ProfileEditForm extends React.Component {
     for (let i = (new Date()).getFullYear(); i >= 1940; i--) {
       years.push(<option key={i} value={i}>{i}</option>);
     }
-    // console.log(this.state.country);
+
     return (
       <div id="my-profile-edit-form">
         <h2>Edit Profile</h2>
         <hr />
-        <form onSubmit={(e) => { e.preventDefault(); this.captcha.execute(); }}>
+        <form onSubmit={(e) => { this.updateUser(e); }}>
           <div className="name">
             <div className="first">
               <label htmlFor="fname">First name <span className="mandatory">*</span></label>
@@ -333,13 +335,6 @@ class ProfileEditForm extends React.Component {
           </div>
 
           <p className="text"><span className="mandatory">*</span> Fields mandatory for payment with Credit Card</p>
-
-          <ReCAPTCHA
-            ref={el => this.captcha = el}
-            size="invisible"
-            sitekey={Config.getValue('recaptchaKey')}
-            onChange={token => { this.updateUser(token); this.captcha.reset(); }}
-          />
 
           <button type="submit" className="btn">Save</button>
         </form>

@@ -164,12 +164,12 @@ class HomeDetailsPage extends React.Component {
     }
   }
 
-  sendMessageToHost(id, message, captchaToken) {
+  sendMessageToHost(id, message) {
     let contactHostObj = {
       message: message
     };
 
-    requester.contactHost(id, contactHostObj, captchaToken).then(res => {
+    requester.contactHost(id, contactHostObj).then(res => {
       res.body.then(data => {
         this.props.history.push(`/profile/messages/chat/${data.conversation}`);
       });
