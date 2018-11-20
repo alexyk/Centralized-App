@@ -29,13 +29,16 @@ class AirTicketsSearchPage extends Component {
     let queryParams = queryString.parse(this.props.location.search);
 
     this.queueId = null;
-    this.client = null;
-    this.subscription = null;
-    this.results = [];
+    this.filtersQueueId = null;
+    this.clientSearch = null;
+    this.clientFilters = null;
+    this.subscriptionSearch = null;
+    this.subscriptionFilters = null;
 
     this.searchId = null;
 
-    this.flightsResultsInterval = null;
+    this.flightsResultsIntervalSearch = null;
+    this.flightsResultsIntervalFilters = null;
 
     this.state = {
       results: [],
@@ -47,25 +50,35 @@ class AirTicketsSearchPage extends Component {
 
     this.onPageChange = this.onPageChange.bind(this);
     this.searchAirTickets = this.searchAirTickets.bind(this);
+    this.applyFilters = this.applyFilters.bind(this);
 
     // SOCKET BINDINGS
-    this.handleReceiveMessage = this.handleReceiveMessage.bind(this);
-    this.connectSocket = this.connectSocket.bind(this);
-    this.subscribe = this.subscribe.bind(this);
-    this.unsubscribe = this.unsubscribe.bind(this);
-    this.disconnect = this.disconnect.bind(this);
+    this.handleReceiveMessageSearch = this.handleReceiveMessageSearch.bind(this);
+    this.connectSocketSearch = this.connectSocketSearch.bind(this);
+    this.subscribeSearch = this.subscribeSearch.bind(this);
+    this.unsubscribeSearch = this.unsubscribeSearch.bind(this);
+    this.disconnectSearch = this.disconnectSearch.bind(this);
+    this.handleReceiveMessageFilters = this.handleReceiveMessageFilters.bind(this);
+    this.connectSocketFilters = this.connectSocketFilters.bind(this);
+    this.subscribeFilters = this.subscribeFilters.bind(this);
+    this.unsubscribeFilters = this.unsubscribeFilters.bind(this);
+    this.disconnectFilters = this.disconnectFilters.bind(this);
 
     // WINDOW WIDTH BINGINGS
     this.updateWindowWidth = this.updateWindowWidth.bind(this);
   }
 
   componentDidMount() {
-    if (!localStorage.getItem('uuid')) {
-      localStorage.setItem('uuid', `${uuid()}`);
+    if (!localStorage.getItem('tickets-uuid')) {
+      localStorage.setItem('tickets-uuid', `${uuid()}`);
     }
     const ticketsUUID = localStorage.getItem('tickets-uuid');
     const rnd = this.getRandomInt();
     this.queueId = `${ticketsUUID}-${rnd}`;
+
+    const filtersUUID = localStorage.getItem('tickets-uuid');
+    const rndFilters = this.getRandomInt();
+    this.filtersQueueId = `${filtersUUID}-${rndFilters}`;
 
     this.populateSearchBar();
 
@@ -76,8 +89,10 @@ class AirTicketsSearchPage extends Component {
   }
 
   componentWillUnmount() {
-    this.unsubscribe();
-    this.disconnect();
+    this.unsubscribeSearch();
+    this.unsubscribeFilters();
+    this.disconnectSearch();
+    this.disconnectFilters();
     this.clearIntervals();
   }
 
@@ -85,7 +100,7 @@ class AirTicketsSearchPage extends Component {
     fetch(`${Config.getValue('apiHost')}flight/search${this.props.location.search}&uuid=${this.queueId}`)
       .then(res => {
         if (res.ok) {
-          this.connectSocket();
+          this.connectSocketSearch();
         }
       })
       .catch(res => {
@@ -99,8 +114,51 @@ class AirTicketsSearchPage extends Component {
         if (res.ok) {
           res.json().then((data) => {
             this.setState({
-              filters: JSON.parse(data)
+              filters: data
             });
+          });
+        }
+      })
+      .catch(res => {
+        console.log(res);
+      });
+  }
+
+  applyFilters(filtersObject) {
+    const filters = {
+      airlines: filtersObject.airlines.map(a => a.id).join(',') || null,
+      stops: filtersObject.stops.map(a => a.id).join(',') || null,
+      minPrice: filtersObject.priceRange && filtersObject.priceRange[0],
+      maxPrice: filtersObject.priceRange && filtersObject.priceRange[1],
+      minWaitTime: filtersObject.waitingTimeRange && filtersObject.waitingTimeRange[0],
+      maxWaitTime: filtersObject.waitingTimeRange && filtersObject.waitingTimeRange[1],
+      airportsDeparture: filtersObject.airportsDeparture.map(a => a.id).join(',') || null,
+      airportsArrival: filtersObject.airportsArrival.map(a => a.id).join(',') || null,
+      airportsTransfer: filtersObject.airportsTransfer.map(a => a.id).join(',') || null,
+      searchId: this.searchId,
+      uuid: this.filtersQueueId
+    };
+
+    console.log(filters);
+
+    fetch(`${Config.getValue('apiHost')}flight/search/filter`, {
+      method: 'POST',
+      headers: {
+        'Content-type': 'application/json'
+      },
+      body: JSON.stringify(filters)
+    })
+      .then(res => {
+        if (res.ok) {
+          res.json().then(() => {
+            this.setState({
+              loading: true,
+              results: []
+            }, () => this.connectSocketFilters());
+          });
+        } else {
+          res.json().then((data) => {
+            console.log(data);
           });
         }
       })
@@ -192,38 +250,49 @@ class AirTicketsSearchPage extends Component {
     window.scrollTo(0, 0);
   }
 
-  isSearchReady() {
-    return this.props.location.search.indexOf('&filters=') !== -1;
-  }
-
   getRandomInt() {
     const MAX = 999999999999;
     return Math.floor(Math.random() * Math.floor(MAX));
   }
 
-  connectSocket() {
-    this.flightsResultsInterval = setInterval(() => {
+  connectSocketSearch() {
+    this.flightsResultsIntervalSearch = setInterval(() => {
       console.log('');
     }, 1000);
 
     const url = Config.getValue('socketHost');
-    this.client = Stomp.client(url);
+    this.clientSearch = Stomp.client(url);
 
     if (!DEBUG_SOCKET) {
-      this.client.debug = () => { };
+      this.clientSearch.debug = () => { };
     }
 
-    this.client.connect(null, null, this.subscribe);
+    this.clientSearch.connect(null, null, this.subscribeSearch);
   }
 
-  subscribe() {
-    const search = this.props.location.search;
-    const endOfSearch = search.indexOf('&filters=') !== -1 ? search.indexOf('&filters=') : search.length;
-    const destination = 'flight/' + this.queueId;
-    const client = this.client;
-    const handleReceiveTicketsResults = this.handleReceiveMessage;
+  connectSocketFilters() {
+    this.flightsResultsIntervalFilters = setInterval(() => {
+      console.log('');
+    }, 1000);
 
-    this.subscription = client.subscribe(destination, handleReceiveTicketsResults);
+    const url = Config.getValue('socketHost');
+    this.clientFilters = Stomp.client(url);
+
+    if (!DEBUG_SOCKET) {
+      this.clientFilters.debug = () => { };
+    }
+
+    this.clientFilters.connect(null, null, this.subscribeFilters);
+  }
+
+  subscribeSearch() {
+    const search = this.props.location.search;
+    const endOfSearch = search.length;
+    const destination = 'flight/' + this.queueId;
+    const client = this.clientSearch;
+    const handleReceiveTicketsResults = this.handleReceiveMessageSearch;
+
+    this.subscriptionSearch = client.subscribe(destination, handleReceiveTicketsResults);
 
     const msgObject = {
       uuid: this.queueId,
@@ -240,31 +309,91 @@ class AirTicketsSearchPage extends Component {
     client.send(sendDestination, headers, msg);
   }
 
-  unsubscribe() {
-    if (this.subscription) {
-      this.subscription.unsubscribe();
-      this.subscription = null;
+  subscribeFilters() {
+    const search = this.props.location.search;
+    const endOfSearch = search.length;
+    const destination = 'flight/' + this.filtersQueueId;
+    const client = this.clientFilters;
+    const handleReceiveTicketsResults = this.handleReceiveMessageFilters;
+
+    this.subscriptionFilters = client.subscribe(destination, handleReceiveTicketsResults);
+
+    const msgObject = {
+      uuid: this.filtersQueueId,
+      query: search.substr(0, endOfSearch),
+    };
+
+    const msg = JSON.stringify(msgObject);
+
+    const sendDestination = 'flight';
+    const headers = {
+      'content-length': false
+    };
+
+    client.send(sendDestination, headers, msg);
+  }
+
+  unsubscribeSearch() {
+    if (this.subscriptionSearch) {
+      this.subscriptionSearch.unsubscribe();
+      this.subscriptionSearch = null;
     }
   }
 
-  disconnect() {
-    if (this.client) {
-      this.client.disconnect();
+  unsubscribeFilters() {
+    if (this.subscriptionFilters) {
+      this.subscriptionFilters.unsubscribe();
+      this.subscriptionFilters = null;
+    }
+  }
+
+  disconnectSearch() {
+    if (this.clientSearch) {
+      this.clientSearch.disconnect();
+    }
+  }
+
+  disconnectFilters() {
+    if (this.clientFilters) {
+      this.clientFilters.disconnect();
     }
   }
 
   clearIntervals() {
-    clearInterval(this.flightsResultsInterval);
+    clearInterval(this.flightsResultsIntervalSearch);
+    clearInterval(this.flightsResultsIntervalFilters);
   }
 
-  handleReceiveMessage(message) {
+  handleReceiveMessageSearch(message) {
     const messageBody = JSON.parse(message.body);
     // console.log(messageBody);
     if (messageBody.allElements) {
       let results = this.state.results.slice();
       results = results.sort((r1, r2) => r1.price.total - r2.price.total);
       this.setState({ allElements: messageBody.allElements, results, loading: false });
-      this.unsubscribe();
+      this.unsubscribeSearch();
+      this.clearIntervals();
+    } else if (messageBody.success === false || messageBody.errorMessage) {
+      this.setState({ loading: false });
+      this.clearIntervals();
+      NotificationManager.warning(messageBody.message || messageBody.errorMessage, '', LONG);
+    } else if (messageBody.id) {
+      if (!this.searchId) {
+        this.searchId = messageBody.searchId;
+        this.requestFilters();
+      }
+      this.setState({ results: [...this.state.results, messageBody] });
+    }
+  }
+
+  handleReceiveMessageFilters(message) {
+    const messageBody = JSON.parse(message.body);
+    // console.log(messageBody);
+    if (messageBody.allElements) {
+      let results = this.state.results.slice();
+      results = results.sort((r1, r2) => r1.price.total - r2.price.total);
+      this.setState({ allElements: messageBody.allElements, results, loading: false });
+      this.unsubscribeFilters();
       this.clearIntervals();
     } else if (messageBody.success === false || messageBody.errorMessage) {
       this.setState({ loading: false });
@@ -280,8 +409,10 @@ class AirTicketsSearchPage extends Component {
   }
 
   searchAirTickets(queryString) {
-    this.unsubscribe();
-    this.disconnect();
+    this.unsubscribeSearch();
+    this.unsubscribeFilters();
+    this.disconnectSearch();
+    this.disconnectFilters();
     this.clearIntervals();
 
     this.props.history.push('/tickets/results' + queryString);
@@ -298,6 +429,8 @@ class AirTicketsSearchPage extends Component {
     const { exchangeRatesInfo, paymentInfo, userInfo } = this.props;
     const { results, allElements, loading, filters } = this.state;
 
+    console.log(results);
+
     return (
       <Fragment>
         <div className="container">
@@ -310,6 +443,7 @@ class AirTicketsSearchPage extends Component {
               <AirTicketsSearchFilterPanel
                 loading={loading}
                 filters={filters}
+                applyFilters={this.applyFilters}
               />
             </div>
             <div className="air-tickets-search-results-holder">

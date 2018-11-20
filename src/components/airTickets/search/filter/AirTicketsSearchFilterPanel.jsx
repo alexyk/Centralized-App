@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import ReactBootstrapSlider from 'react-bootstrap-slider';
+import Select from 'react-select';
 import PropTypes from 'prop-types';
 
 import '../../../../styles/css/components/airTickets/search/filter/air-tickets-search-filter-panel.css';
@@ -9,24 +10,25 @@ class AirTicketsSearchFilterPanel extends Component {
     super(props);
 
     this.state = {
-      airline: '',
-      change: '',
+      airlines: [],
+      stops: [],
+      airportsDeparture: [],
+      airportsArrival: [],
+      airportsTransfer: [],
       priceRange: '',
       waitingTimeRange: '',
-      arrivals: '',
-      departures: '',
-      transfers: ''
     };
 
     this.onChange = this.onChange.bind(this);
     this.handlePriceRangeSelect = this.handlePriceRangeSelect.bind(this);
     this.handleWaitingRangeSelect = this.handleWaitingRangeSelect.bind(this);
+    this.clearFilters = this.clearFilters.bind(this);
   }
 
-  onChange(e) {
+  onChange(name, option) {
     this.setState({
-      [e.target.name]: e.target.value
-    }, () => console.log(this.state));
+      [name]: option
+    });
   }
 
   getCurrencySign(currency) {
@@ -40,14 +42,26 @@ class AirTicketsSearchFilterPanel extends Component {
     const priceRange = event.target.value;
     this.setState({
       priceRange
-    }, () => { console.log(this.state); });
+    });
   }
 
   handleWaitingRangeSelect(event) {
     const waitingTimeRange = event.target.value;
     this.setState({
       waitingTimeRange
-    }, () => { console.log(this.state); });
+    });
+  }
+
+  clearFilters() {
+    this.setState({
+      airlines: [],
+      stops: [],
+      airportsDeparture: [],
+      airportsArrival: [],
+      airportsTransfer: [],
+      priceRange: '',
+      waitingTimeRange: '',
+    }, () => this.props.applyFilters(this.state));
   }
 
   render() {
@@ -73,9 +87,7 @@ class AirTicketsSearchFilterPanel extends Component {
       );
     }
 
-    console.log(filters);
-
-    const { airline, change, priceRange, waitingTimeRange, arrivals, departures, transfers } = this.state;
+    const { airlines, stops, priceRange, waitingTimeRange, airportsArrival, airportsDeparture, airportsTransfer } = this.state;
 
     // if (props.windowWidth <= 991 && !props.showFiltersMobile) {
     //   return (
@@ -87,59 +99,87 @@ class AirTicketsSearchFilterPanel extends Component {
 
     return (
       <div className="filter-box">
-        <div>
-          <div className="filter airlines-filter">
-            <h5>Airlines</h5>
-            <div className="select">
-              <select name="airline" value={airline} onChange={this.onChange} multiple>
-                <option defaultValue="" disabled hidden></option>
-                {filters.airlines.map((airline, airlineIndex) => {
-                  return <option key={airlineIndex} value={airline.id}>{airline.value}</option>;
-                })}
-              </select>
-            </div>
-          </div>
+        <div className="filter airlines-filter">
+          <h5>Airlines</h5>
+          <Select
+            name="airlines"
+            placeholder=""
+            value={airlines}
+            valueKey={'id'}
+            labelKey={'value'}
+            options={filters.airlines}
+            onChange={(option) => this.onChange('airlines', option)}
+            multi
+          />
         </div>
-        <div className="filter changes-filter">
-          <h5>Changes</h5>
-          <div className="select">
-            <select name="change" value={change} onChange={this.onChange} multiple>
-              <option defaultValue="" disabled hidden></option>
-              {filters.changes.map((change, changeIndex) => {
-                return <option key={changeIndex} value={change.id}>{change.value}</option>;
-              })}
-            </select>
-          </div>
+        <div className="filter stops-filter">
+          <h5>Stops</h5>
+          <Select
+            name="stops"
+            placeholder=""
+            value={stops}
+            valueKey={'id'}
+            labelKey={'value'}
+            options={filters.changes}
+            onChange={(option) => this.onChange('stops', option)}
+            multi
+          />
         </div>
         <div className="filter airports-filter">
           <h5>Airports</h5>
-          <h6>Arrivals</h6>
-          <div className="select">
-            <select name="arrivals" value={arrivals} onChange={this.onChange} multiple>
-              <option defaultValue="" disabled hidden></option>
-              {filters.airports.arrivals.map((arrivalAirport, arrivalAirportIndex) => {
-                return <option key={arrivalAirportIndex} value={arrivalAirport.id}>{arrivalAirport.value}</option>;
-              })}
-            </select>
+          <div className="arrivals">
+            <h6>Arrivals</h6>
+            <Select
+              name="airportsArrival"
+              placeholder=""
+              value={airportsArrival}
+              valueKey={'id'}
+              labelKey={'value'}
+              options={filters.airports.arrivals}
+              onChange={(option) => this.onChange('airportsArrival', option)}
+              multi
+            />
           </div>
-          <h6>Departures</h6>
-          <div className="select">
-            <select name="departures" value={departures} onChange={this.onChange} multiple>
-              <option defaultValue="" disabled hidden></option>
-              {filters.airports.departures.map((departureAirport, departureAirportIndex) => {
-                return <option key={departureAirportIndex} value={departureAirport.id}>{departureAirport.value}</option>;
-              })}
-            </select>
+          <div className="departures">
+            <h6>Departures</h6>
+            <Select
+              name="airportsDeparture"
+              placeholder=""
+              value={airportsDeparture}
+              valueKey={'id'}
+              labelKey={'value'}
+              options={filters.airports.departures}
+              onChange={(option) => this.onChange('airportsDeparture', option)}
+              multi
+            />
           </div>
-          <h6>Transfers</h6>
-          <div className="select">
-            <select name="transfers" value={transfers} onChange={this.onChange} multiple>
-              <option defaultValue="" disabled hidden></option>
-              {filters.airports.transfers.map((transferAirport, transferAirportIndex) => {
-                return <option key={transferAirportIndex} value={transferAirport.id}>{transferAirport.value}</option>;
-              })}
-            </select>
+          <div className="transfers">
+            <h6>Transfers</h6>
+            <Select
+              name="airportsTransfer"
+              placeholder=""
+              value={airportsTransfer}
+              valueKey={'id'}
+              labelKey={'value'}
+              options={filters.airports.transfers}
+              onChange={(option) => this.onChange('airportsTransfer', option)}
+              multi
+            />
           </div>
+        </div>
+        <div className="filter departure-filter">
+          <h5>Return</h5>
+          <h6>Landing</h6>
+          {/* TODO */}
+          <h6>Takeoff</h6>
+          {/* TODO */}
+        </div>
+        <div className="filter departure-filter">
+          <h5>Departure</h5>
+          <h6>Landing</h6>
+          {/* TODO */}
+          <h6>Takeoff</h6>
+          {/* TODO */}
         </div>
         {filters.price.max && filters.price.min &&
           <div className="price-range-filters">
@@ -157,7 +197,7 @@ class AirTicketsSearchFilterPanel extends Component {
               <label>{this.getCurrencySign(filters.price.currency)} {(filters.price.max).toFixed(3)}</label>
             </div>
           </div>}
-        {filters.waiting.max && filters.waiting.min &&
+        {filters.waiting && filters.waiting.max && filters.waiting.min &&
           <div className="waiting-range-filters">
             <h5>Waiting time</h5>
             <ReactBootstrapSlider
@@ -173,8 +213,10 @@ class AirTicketsSearchFilterPanel extends Component {
               <label>{`${filters.waiting.max} min`}</label>
             </div>
           </div>}
-        <button onClick={this.applyFilters} className="btn btn">Apply Filters</button>
-        <button onClick={this.clearFilters} className="btn btn">Clear Filters</button>
+        <div className="buttons-holder">
+          <button onClick={() => this.props.applyFilters(this.state)} className="btn btn">Apply Filters</button>
+          <button onClick={this.clearFilters} className="btn btn">Clear Filters</button>
+        </div>
       </div>
     );
   }
@@ -182,7 +224,8 @@ class AirTicketsSearchFilterPanel extends Component {
 
 AirTicketsSearchFilterPanel.propTypes = {
   loading: PropTypes.bool,
-  filters: PropTypes.object
+  filters: PropTypes.object,
+  applyFilters: PropTypes.func
 };
 
 export default AirTicketsSearchFilterPanel;

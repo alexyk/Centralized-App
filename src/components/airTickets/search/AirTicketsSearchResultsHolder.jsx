@@ -7,19 +7,17 @@ import '../../../styles/css/components/search-result-component.css';
 
 function AirTicketsResultsHolder(props) {
 
-  if (!props.results) {
-    return;
-  }
+  console.log(props.results);
 
-  if (props.results.length === 0 && props.loading) {
+  if (props.loading) {
     return <div className="text-center"><h2 style={{ margin: '80px 0' }}>Looking for the best offers...</h2></div>;
   }
 
-  if (props.results.length === 0 && !props.loading) {
+  if (props.results.length === 0) {
     return <NoEntriesMessage text='No Results' />;
   }
 
-  const results = props.results && props.results.map((result) => {
+  const results = props.results.map((result) => {
     return <AirTicketsSearchResult
       key={result.id}
       result={result}
