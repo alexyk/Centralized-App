@@ -47,6 +47,9 @@ class RecoverWallerPassword extends Component {
         if (data.preferredCurrency) {
           data.preferredCurrency = data.preferredCurrency.id;
         }
+        if (data.countryState) {
+          data.countryState = data.countryState.id;
+        }
         this.setState({
           userInfo: data
         });
