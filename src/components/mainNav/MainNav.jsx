@@ -17,10 +17,6 @@ import BurgerMenu from './burger-menu';
 import DropdownMenu from './dropdown-menu';
 import ListMenu from './list-menu';
 import { setShowMenu } from '../../actions/burgerMenuInfo.js';
-import LoginManager from '../authentication/LoginManager';
-import RegisterManager from '../authentication/RegisterManager';
-import WalletCreationManager from '../authentication/WalletCreationManager';
-import PasswordRecoveryManager from '../authentication/PasswordRecoveryManager';
 
 class MainNav extends React.Component {
   constructor(props) {
@@ -105,19 +101,11 @@ class MainNav extends React.Component {
     const { unreadMessages } = this.state;
     return (
       <nav id="main-nav" className="navbar">
-
-        <LoginManager />
-        <RegisterManager />
-        <WalletCreationManager />
-        <PasswordRecoveryManager />
-
         <div className="container">
           <div className="nav-container">
-
             <Link className="navbar-logo" to="/">
               <img src={Config.getValue('basePath') + 'images/locktrip_logo.svg'} alt='logo' />
             </Link>
-            
             {localStorage[Config.getValue('domainPrefix') + '.auth.locktrip']
               ? <ListMenu>
                 <Link className="list-menu-item" to="/profile/reservations">Hosting</Link>

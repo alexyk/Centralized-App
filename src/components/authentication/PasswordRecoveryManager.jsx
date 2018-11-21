@@ -33,14 +33,15 @@ class PasswordRecoveryManager extends React.Component {
   constructor(props) {
     super(props);
 
-    this.captcha = null;
-    this.updateCountryCaptcha = null;
+    this.submitEmailCaptcha = null;
+    this.submitPasswordCaptcha = null;
 
     this.state = {
       loginEmail: '',
       loginPassword: '',
-      country: '',
-      countryState: ''
+      newPassword: '',
+      confirmNewPassword: '',
+      recoveryToken: ''
     };
 
     this.onChange = this.onChange.bind(this);
@@ -104,7 +105,7 @@ class PasswordRecoveryManager extends React.Component {
     } else if (!newPassword.match('^([^\\s]*[a-zA-Z]+.*?[0-9]+[^\\s]*|[^\\s]*[0-9]+.*?[a-zA-Z]+[^\\s]*)$')) {
       NotificationManager.warning(PROFILE_PASSWORD_REQUIREMENTS, '', LONG);
     } else {
-      this.executeReCaptcha('changePassword');
+      this.submitPasswordCaptcha.execute();
     }
   }
 
@@ -128,17 +129,48 @@ class PasswordRecoveryManager extends React.Component {
   render() {
     return (
       <React.Fragment>
-        <SendRecoveryEmailModal isActive={this.props.modalsInfo.isActive[SEND_RECOVERY_EMAIL]} openModal={this.openModal} closeModal={this.closeModal} recoveryEmail={this.state.recoveryEmail} handleSubmitRecoveryEmail={() => this.captcha.execute()} onChange={this.onChange} />
-        <EnterRecoveryTokenModal isActive={this.props.modalsInfo.isActive[ENTER_RECOVERY_TOKEN]} openModal={this.openModal} closeModal={this.closeModal} onChange={this.onChange} recoveryToken={this.state.recoveryToken} handleSubmitRecoveryToken={this.handleSubmitRecoveryToken} />
-        <ChangePasswordModal isActive={this.props.modalsInfo.isActive[CHANGE_PASSWORD]} openModal={this.openModal} closeModal={this.closeModal} newPassword={this.state.newPassword} confirmNewPassword={this.state.confirmNewPassword} onChange={this.onChange} handlePasswordChange={this.verifyUserPassword} />
+        <SendRecoveryEmailModal 
+          isActive={this.props.modalsInfo.isActive[SEND_RECOVERY_EMAIL]} 
+          openModal={this.openModal}
+          closeModal={this.closeModal} 
+          recoveryEmail={this.state.recoveryEmail} 
+          handleSubmitRecoveryEmail={() => this.submitEmailCaptcha.execute()} 
+          onChange={this.onChange} 
+        />
+        <EnterRecoveryTokenModal 
+          isActive={this.props.modalsInfo.isActive[ENTER_RECOVERY_TOKEN]} 
+          openModal={this.openModal} 
+          closeModal={this.closeModal} 
+          onChange={this.onChange} 
+          recoveryToken={this.state.recoveryToken} 
+          handleSubmitRecoveryToken={this.handleSubmitRecoveryToken} 
+        />
+        <ChangePasswordModal 
+          isActive={this.props.modalsInfo.isActive[CHANGE_PASSWORD]}
+          openModal={this.openModal} 
+          closeModal={this.closeModal} 
+          newPassword={this.state.newPassword} 
+          confirmNewPassword={this.state.confirmNewPassword} 
+          onChange={this.onChange} 
+          handlePasswordChange={this.verifyUserPassword} 
+        />
 
         <ReCAPTCHA
-          ref={el => this.captcha = el}
+          ref={el => this.submitEmailCaptcha = el}
           size="invisible"
           sitekey={Config.getValue('recaptchaKey')}
           onChange={(token) => {
             this.handleSubmitRecoveryEmail(token);
-            this.captcha.reset();
+            this.submitEmailCaptcha.reset();
+          }}
+        />
+        <ReCAPTCHA
+          ref={el => this.submitPasswordCaptcha = el}
+          size="invisible"
+          sitekey={Config.getValue('recaptchaKey')}
+          onChange={(token) => {
+            this.handlePasswordChange(token);
+            this.submitPasswordCaptcha.reset();
           }}
         />
       </React.Fragment>

@@ -57,9 +57,9 @@ function UpdateCountryModal(props) {
 
 UpdateCountryModal.propTypes = {
   countries: PropTypes.array,
-  country: PropTypes.object,
+  country: PropTypes.string,
   states: PropTypes.array,
-  countryState: PropTypes.number,
+  countryState: PropTypes.string,
   onChange: PropTypes.func,
   openModal: PropTypes.func,
   closeModal: PropTypes.func,

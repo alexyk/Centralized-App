@@ -33,7 +33,8 @@ class RegisterManager extends React.Component {
       signUpPassword: '',
       signUpLocAddress: '',
       country: '',
-      countries: null
+      countries: [],
+      states: []
     };
 
     this.onChange = this.onChange.bind(this);
@@ -47,7 +48,6 @@ class RegisterManager extends React.Component {
 
   componentDidMount() {
     this.requestCountries();
-    this.requestStates();
   }
 
   requestCountries() {
@@ -70,8 +70,11 @@ class RegisterManager extends React.Component {
     if (!e.target.value) {
       this.setState({ country: '' });
     } else {
-      this.requestStates(JSON.parse(e.target.value).id);
+      const countryHasMandatoryState = ['Canada', 'India', 'United States of America'].includes(JSON.parse(e.target.value).name);
       this.setState({ country: JSON.parse(e.target.value) });
+      if (countryHasMandatoryState) {
+        this.requestStates(JSON.parse(e.target.value).id);
+      }
     }
   }
 

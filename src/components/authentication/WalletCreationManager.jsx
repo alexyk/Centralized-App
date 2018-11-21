@@ -139,9 +139,35 @@ class WalletCreationManager extends React.Component {
   render() {
     return (
       <React.Fragment>
-        <CreateWalletModal setUserInfo={this.setUserInfo} userToken={this.state.userToken} userName={this.state.userName} walletPassword={this.state.walletPassword} repeatWalletPassword={this.state.repeatWalletPassword} isActive={this.props.modalsInfo.isActive[CREATE_WALLET]} openModal={this.openModal} closeModal={this.closeModal} onChange={this.onChange} />
-        <SaveWalletModal setUserInfo={this.setUserInfo} userToken={this.state.userToken} userName={this.state.userName} isActive={this.props.modalsInfo.isActive[SAVE_WALLET]} openModal={this.openModal} closeModal={this.closeModal} onChange={this.onChange} />
-        <ConfirmWalletModal isActive={this.props.modalsInfo.isActive[CONFIRM_WALLET]} openModal={this.openModal} closeModal={this.closeModal} handleMnemonicWordsChange={this.handleMnemonicWordsChange} mnemonicWords={this.state.mnemonicWords} handleCreateWallet={() => this.captcha.execute()} confirmedRegistration={this.state.confirmedRegistration} />
+        <CreateWalletModal 
+          setUserInfo={this.setUserInfo} 
+          userToken={this.state.userToken} 
+          userName={this.state.userName} 
+          walletPassword={this.state.walletPassword} 
+          repeatWalletPassword={this.state.repeatWalletPassword} 
+          isActive={this.props.modalsInfo.isActive[CREATE_WALLET]} 
+          openModal={this.openModal} 
+          closeModal={this.closeModal} 
+          onChange={this.onChange} 
+        />
+        <SaveWalletModal 
+          setUserInfo={this.setUserInfo} 
+          userToken={this.state.userToken} 
+          userName={this.state.userName} 
+          isActive={this.props.modalsInfo.isActive[SAVE_WALLET]} 
+          openModal={this.openModal} 
+          closeModal={this.closeModal} 
+          onChange={this.onChange} 
+        />
+        <ConfirmWalletModal 
+          isActive={this.props.modalsInfo.isActive[CONFIRM_WALLET]} 
+          openModal={this.openModal} 
+          closeModal={this.closeModal} 
+          handleMnemonicWordsChange={this.handleMnemonicWordsChange} 
+          mnemonicWords={this.state.mnemonicWords} 
+          handleCreateWallet={() => this.captcha.execute()} 
+          confirmedRegistration={this.state.confirmedRegistration} 
+        />
         <ReCAPTCHA
           ref={el => this.captcha = el}
           size="invisible"

@@ -44,8 +44,12 @@ class LoginManager extends React.Component {
     this.state = {
       loginEmail: '',
       loginPassword: '',
+      countries: [],
       country: '',
-      countryState: ''
+      states: [],
+      countryState: '',
+      recoveryToken: '',
+      isUpdatingCountry: false
     };
 
     this.onChange = this.onChange.bind(this);
@@ -163,9 +167,6 @@ class LoginManager extends React.Component {
           this.setUserInfo();
           this.closeModal(LOGIN);
           this.setState({ loginEmail: '', loginPassword: '' });
-          // if (this.props.location.pathname.indexOf('/airdrop') !== -1) {
-          //   this.handleAirdropUser();
-          // }
         });
       } else {
         this.handleLoginErrors(res);

@@ -115,7 +115,7 @@ RegisterModal.propTypes = {
   signUpLastName: PropTypes.string,
   signUpPassword: PropTypes.string,
   countries: PropTypes.array,
-  country: PropTypes.object,
+  country: PropTypes.string,
   states: PropTypes.array,
   countryState: PropTypes.number,
   onChange: PropTypes.func,
