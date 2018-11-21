@@ -2,7 +2,6 @@ import React, { Component, Fragment } from 'react';
 import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { NotificationManager } from 'react-notifications';
-import update from 'react-addons-update';
 import PropTypes from 'prop-types';
 import queryString from 'query-string';
 import moment from 'moment';
@@ -27,25 +26,14 @@ class AirTicketsSearchPage extends Component {
   constructor(props) {
     super(props);
 
-    let queryParams = queryString.parse(this.props.location.search);
-
-    this.queueId = null;
-    this.filtersQueueId = null;
-    this.clientSearch = null;
-    this.clientFilters = null;
-    this.subscriptionSearch = null;
-    this.subscriptionFilters = null;
-
-    this.searchId = null;
-    this.results = [];
-
-    this.flightsResultsIntervalSearch = null;
-    this.flightsResultsIntervalFilters = null;
+    const queryParams = queryString.parse(this.props.location.search);
 
     this.state = {
-      results: [],
+      currentPageResults: '',
       allElements: false,
+      allResults: '',
       loading: true,
+      totalElements: 0,
       page: !queryParams.page ? 0 : Number(queryParams.page),
       filters: null
     };
@@ -53,6 +41,7 @@ class AirTicketsSearchPage extends Component {
     this.onPageChange = this.onPageChange.bind(this);
     this.searchAirTickets = this.searchAirTickets.bind(this);
     this.applyFilters = this.applyFilters.bind(this);
+    this.initAirTicketsSearchPage = this.initAirTicketsSearchPage.bind(this);
 
     // SOCKET BINDINGS
     this.handleReceiveMessageSearch = this.handleReceiveMessageSearch.bind(this);
@@ -71,6 +60,56 @@ class AirTicketsSearchPage extends Component {
   }
 
   componentDidMount() {
+    this.props.initSearchAirTicketsSetTimeout(this.initAirTicketsSearchPage);
+  }
+
+  componentWillUnmount() {
+    this.unsubscribeSearch();
+    this.unsubscribeFilters();
+    this.disconnectSearch();
+    this.disconnectFilters();
+    this.clearIntervals();
+  }
+
+  initAirTicketsSearchPage() {
+    const queryParams = queryString.parse(this.props.location.search);
+
+    this.setState({
+      currentPageResults: '',
+      allElements: false,
+      allResults: '',
+      loading: true,
+      totalElements: 0,
+      page: !queryParams.page ? 0 : Number(queryParams.page),
+      filters: null
+    });
+
+    this.unsubscribeSearch();
+    this.unsubscribeFilters();
+    this.clearIntervals();
+
+    this.queueId = null;
+    this.filtersQueueId = null;
+    this.clientSearch = null;
+    this.clientFilters = null;
+    this.subscriptionSearch = null;
+    this.subscriptionFilters = null;
+
+    this.searchId = null;
+    this.results = {};
+    this.totalElements = 0;
+
+    this.flightsResultsIntervalSearch = null;
+    this.flightsResultsIntervalFilters = null;
+
+    this.initUUIDs();
+    this.populateSearchBar();
+    this.requestFlightsSearch();
+    this.updateWindowWidth();
+    window.addEventListener('resize', this.updateWindowWidth);
+  }
+
+  initUUIDs() {
     if (!localStorage.getItem('tickets-uuid')) {
       localStorage.setItem('tickets-uuid', `${uuid()}`);
     }
@@ -81,21 +120,6 @@ class AirTicketsSearchPage extends Component {
     const filtersUUID = localStorage.getItem('tickets-uuid');
     const rndFilters = this.getRandomInt();
     this.filtersQueueId = `${filtersUUID}-${rndFilters}`;
-
-    this.populateSearchBar();
-
-    this.requestFlightsSearch();
-
-    this.updateWindowWidth();
-    window.addEventListener('resize', this.updateWindowWidth);
-  }
-
-  componentWillUnmount() {
-    this.unsubscribeSearch();
-    this.unsubscribeFilters();
-    this.disconnectSearch();
-    this.disconnectFilters();
-    this.clearIntervals();
   }
 
   requestFlightsSearch() {
@@ -141,8 +165,6 @@ class AirTicketsSearchPage extends Component {
       uuid: this.filtersQueueId
     };
 
-    console.log(filters);
-
     fetch(`${Config.getValue('apiHost')}flight/search/filter`, {
       method: 'POST',
       headers: {
@@ -155,7 +177,9 @@ class AirTicketsSearchPage extends Component {
           res.json().then(() => {
             this.setState({
               loading: true,
-              results: []
+              page: 0,
+              currentPageResults: '',
+              allElements: false
             }, () => this.connectSocketFilters());
           });
         } else {
@@ -245,8 +269,13 @@ class AirTicketsSearchPage extends Component {
   }
 
   onPageChange(page) {
+    const { allElements, allResults } = this.state;
+    const currentPage = page - 1;
+    const startResultsIndex = currentPage * 10;
+    const endResultsIndex = (currentPage * 10) + 10;
     this.setState({
-      page: page - 1
+      page: currentPage,
+      currentPageResults: allElements ? allResults.slice(startResultsIndex, endResultsIndex) : Object.values(this.results).slice(startResultsIndex, endResultsIndex)
     });
 
     window.scrollTo(0, 0);
@@ -368,13 +397,14 @@ class AirTicketsSearchPage extends Component {
 
   handleReceiveMessageSearch(message) {
     const messageBody = JSON.parse(message.body);
-    console.log(messageBody);
+    // console.log(messageBody);
     if (messageBody.allElements) {
-      const results = this.state.results.slice();
-      let updatedResults = update(results, { $push: this.results });
-      updatedResults = updatedResults.sort((r1, r2) => r1.price.total - r2.price.total);
-      this.setState({ allElements: messageBody.allElements, results: updatedResults });
-      this.results = [];
+      let allResults = Object.values(this.results);
+      allResults = allResults.sort((r1, r2) => r1.price.total - r2.price.total);
+      this.setState({ allElements: messageBody.allElements, allResults, currentPageResults: allResults.slice(0, 10), loading: false, totalElements: this.totalElements });
+      this.results = {};
+      this.totalElements = 0;
+      this.requestFilters();
       this.unsubscribeSearch();
       this.unsubscribeFilters();
       this.clearIntervals();
@@ -385,26 +415,28 @@ class AirTicketsSearchPage extends Component {
     } else if (messageBody.id) {
       if (!this.searchId) {
         this.searchId = messageBody.searchId;
-        this.requestFilters();
       }
-      this.results.push(messageBody);
-    } else {
-      const results = [...this.state.results];
-      const updatedResults = update(results, { $push: this.results });
-      this.setState({ results: updatedResults, loading: false });
-      this.results = [];
+      if (!this.results.hasOwnProperty(messageBody.id)) {
+        this.totalElements += 1;
+      }
+      this.results[messageBody.id] = messageBody;
+      if (this.totalElements === 10) {
+        this.setState({ currentPageResults: Object.values(this.results), totalElements: this.totalElements, loading: false });
+      } else if (this.totalElements % 10 === 0) {
+        this.setState({ totalElements: this.totalElements });
+      }
     }
   }
 
   handleReceiveMessageFilters(message) {
     const messageBody = JSON.parse(message.body);
-    console.log(messageBody);
+    // console.log(messageBody);
     if (messageBody.allElements) {
-      let results = this.state.results.slice();
-      let updatedResults = update(results, { $push: this.results });
-      updatedResults = updatedResults.sort((r1, r2) => r1.price.total - r2.price.total);
-      this.setState({ allElements: messageBody.allElements, results: updatedResults });
-      this.results = [];
+      let allResults = Object.values(this.results);
+      allResults = allResults.sort((r1, r2) => r1.price.total - r2.price.total);
+      this.setState({ allElements: messageBody.allElements, allResults, currentPageResults: allResults.slice(0, 10), loading: false, totalElements: this.totalElements });
+      this.results = {};
+      this.totalElements = 0;
       this.unsubscribeSearch();
       this.unsubscribeFilters();
       this.clearIntervals();
@@ -415,14 +447,16 @@ class AirTicketsSearchPage extends Component {
     } else if (messageBody.id) {
       if (!this.searchId) {
         this.searchId = messageBody.searchId;
-        this.requestFilters();
       }
-      this.results.push(messageBody);
-    } else {
-      const results = [...this.state.results];
-      const updatedResults = update(results, { $push: this.results });
-      this.setState({ results: updatedResults, loading: false });
-      this.results = [];
+      if (!this.results.hasOwnProperty(messageBody.id)) {
+        this.totalElements += 1;
+      }
+      this.results[messageBody.id] = messageBody;
+      if (this.totalElements === 10) {
+        this.setState({ currentPageResults: Object.values(this.results), totalElements: this.totalElements, loading: false });
+      } else if (this.totalElements % 10 === 0) {
+        this.setState({ totalElements: this.totalElements });
+      }
     }
   }
 
@@ -438,14 +472,13 @@ class AirTicketsSearchPage extends Component {
     this.setState({
       loading: true,
       page: 0,
-      results: [],
+      currentPageResults: '',
       allElements: false,
     }, () => this.requestFlightsSearch());
   }
 
   render() {
-    const { exchangeRatesInfo, paymentInfo, userInfo } = this.props;
-    const { results, allElements, loading, filters } = this.state;
+    const { currentPageResults, allElements, loading, filters, totalElements, page } = this.state;
 
     return (
       <Fragment>
@@ -464,20 +497,16 @@ class AirTicketsSearchPage extends Component {
             </div>
             <div className="air-tickets-search-results-holder">
               <AirTicketsResultsHolder
-                results={results.filter((el, index) => index >= (this.state.page * DEFAULT_PAGE_SIZE) && index < (this.state.page * DEFAULT_PAGE_SIZE) + DEFAULT_PAGE_SIZE)}
-                exchangeRatesInfo={exchangeRatesInfo}
-                paymentInfo={paymentInfo}
-                userInfo={userInfo}
+                results={currentPageResults}
                 allElements={allElements}
                 loading={loading}
               />
-              {!this.state.loading &&
+              {!loading &&
                 <Pagination
-                  loading={this.state.loading}
                   onPageChange={this.onPageChange}
-                  currentPage={this.state.page + 1}
+                  currentPage={page + 1}
                   pageSize={DEFAULT_PAGE_SIZE}
-                  totalElements={results.length}
+                  totalElements={totalElements}
                 />
               }
             </div>
@@ -489,26 +518,14 @@ class AirTicketsSearchPage extends Component {
 }
 
 AirTicketsSearchPage.propTypes = {
+  initSearchAirTicketsSetTimeout: PropTypes.func,
+
   // Router props
   location: PropTypes.object,
   history: PropTypes.object,
 
-  // Redux props
-  dispatch: PropTypes.func,
-  exchangeRatesInfo: PropTypes.object,
-  paymentInfo: PropTypes.object,
-  userInfo: PropTypes.object
+  //Redux props
+  dispatch: PropTypes.func
 };
 
-const mapStateToProps = (state) => {
-  const { exchangeRatesInfo, paymentInfo, userInfo, airTicketsSearchInfo } = state;
-
-  return {
-    exchangeRatesInfo,
-    paymentInfo,
-    userInfo,
-    airTicketsSearchInfo
-  };
-};
-
-export default withRouter(connect(mapStateToProps)(AirTicketsSearchPage));
+export default withRouter(connect()(AirTicketsSearchPage));

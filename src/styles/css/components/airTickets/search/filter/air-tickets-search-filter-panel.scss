@@ -62,21 +62,54 @@ $white: #fff;
     .select {
       margin-bottom: 9px;
     }
-	}
-	
-	.airports-filter {
-		.arrivals,
-		.departures,
-		.transfers {
-			h6 {
-				padding-left: 20px;
-			}
-			margin-bottom: 10px;
-		}
-	}
+  }
 
-	.price-range-filters,
-	.waiting-range-filters {
+  .airports-filter {
+    .arrivals,
+    .departures,
+    .transfers {
+      h6 {
+        padding-left: 20px;
+      }
+      margin-bottom: 10px;
+    }
+  }
+
+	.departure-filter,
+	.arrival-filter {
+    display: flex;
+    justify-content: space-between;
+    .departure-landing-time,
+		.departure-takeoff-time,
+		.arrival-landing-time,
+    .arrival-takeoff-time {
+      display: flex;
+      width: 45%;
+      flex-wrap: wrap;
+      justify-content: space-around;
+      h6 {
+        width: 100%;
+        padding-left: 20px;
+      }
+      .departure-landing-time-hours,
+      .departure-landing-time-minutes,
+      .departure-takeoff-time-hours,
+			.departure-takeoff-time-minutes,
+			.arrival-landing-time-hours,
+      .arrival-landing-time-minutes,
+      .arrival-takeoff-time-hours,
+      .arrival-takeoff-time-minutes {
+				width: 40%;
+				select {
+					border-radius: 4px;
+					padding: 8px;
+				}
+      }
+    }
+  }
+
+  .price-range-filters,
+  .waiting-range-filters {
     margin-bottom: 25px;
     input {
       margin-bottom: 12px;
@@ -98,8 +131,8 @@ $white: #fff;
     width: 100%;
     button {
       width: 100%;
-			height: 100%;
-			margin-bottom: 20px;
+      height: 100%;
+      margin-bottom: 20px;
     }
   }
 

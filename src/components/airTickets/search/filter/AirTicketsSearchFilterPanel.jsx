@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import ReactBootstrapSlider from 'react-bootstrap-slider';
 import Select from 'react-select';
 import PropTypes from 'prop-types';
+import moment from 'moment';
 
 import '../../../../styles/css/components/airTickets/search/filter/air-tickets-search-filter-panel.css';
 
@@ -87,6 +88,26 @@ class AirTicketsSearchFilterPanel extends Component {
       );
     }
 
+    const departureDate = filters.departure.date.min;
+    const departureLandingMinTime = filters.departure.landing.min;
+    const departureLandingMaxTime = filters.departure.landing.max;
+    const departureTakeoffMinTime = filters.departure.takeoff.min;
+    const departureTakeoffMaxTime = filters.departure.takeoff.max;
+    const departureMomentLandingMin = moment(`${departureDate} ${departureLandingMinTime}`);
+    const departureMomentLandingMax = moment(`${departureDate} ${departureLandingMaxTime}`);
+    const departureMomentTakeoffMin = moment(`${departureDate} ${departureTakeoffMinTime}`);
+    const departureMomentTakeoffMax = moment(`${departureDate} ${departureTakeoffMaxTime}`);
+
+    const arrivalDate = filters.arrival.date.min;
+    const arrivalLandingMinTime = filters.arrival.landing.min;
+    const arrivalLandingMaxTime = filters.arrival.landing.max;
+    const arrivalTakeoffMinTime = filters.arrival.takeoff.min;
+    const arrivalTakeoffMaxTime = filters.arrival.takeoff.max;
+    const arrivalMomentLandingMin = moment(`${arrivalDate} ${arrivalLandingMinTime}`);
+    const arrivalMomentLandingMax = moment(`${arrivalDate} ${arrivalLandingMaxTime}`);
+    const arrivalMomentTakeoffMin = moment(`${arrivalDate} ${arrivalTakeoffMinTime}`);
+    const arrivalMomentTakeoffMax = moment(`${arrivalDate} ${arrivalTakeoffMaxTime}`);
+
     const { airlines, stops, priceRange, waitingTimeRange, airportsArrival, airportsDeparture, airportsTransfer } = this.state;
 
     // if (props.windowWidth <= 991 && !props.showFiltersMobile) {
@@ -167,19 +188,83 @@ class AirTicketsSearchFilterPanel extends Component {
             />
           </div>
         </div>
-        <div className="filter departure-filter">
-          <h5>Return</h5>
-          <h6>Landing</h6>
-          {/* TODO */}
-          <h6>Takeoff</h6>
-          {/* TODO */}
-        </div>
-        <div className="filter departure-filter">
+        <div className="filter hide">
           <h5>Departure</h5>
-          <h6>Landing</h6>
-          {/* TODO */}
-          <h6>Takeoff</h6>
-          {/* TODO */}
+          <div className="departure-filter">
+            <div className="departure-landing-time">
+              <h6>Landing time</h6>
+              <div className="departure-landing-time-hours">
+                <select name="hour" id="hour" onChange={this.onChange} value={''}>
+                  {Array.apply(null, { length: departureMomentLandingMin.hours() + 1 }).map(Number.call, Number).slice(departureMomentLandingMax.hours()).map(function (item, i) {
+                    return i > 0 && <option key={i} value={i}>{i}</option>;
+                  })}
+                </select>
+              </div>
+              <div className="departure-landing-time-minutes">
+                <select name="minutes" id="minutes" onChange={this.onChange} value={''}>
+                  {Array.apply(null, { length: departureMomentLandingMin.minutes() + 1 }).map(Number.call, Number).slice(departureMomentLandingMin.minutes()).map(function (item, i) {
+                    return i > 0 && <option key={i} value={i}>{i}</option>;
+                  })}
+                </select>
+              </div>
+            </div>
+            <div className="departure-takeoff-time">
+              <h6>Takeoff time</h6>
+              <div className="departure-takeoff-time-hours">
+                <select name="hour" id="hour" onChange={this.onChange} value={''}>
+                  {Array.apply(null, { length: departureMomentTakeoffMin.hours() + 1 }).map(Number.call, Number).slice(departureMomentTakeoffMin.hours()).map(function (item, i) {
+                    return i > 0 && <option key={i} value={i}>{i}</option>;
+                  })}
+                </select>
+              </div>
+              <div className="departure-takeoff-time-minutes">
+                <select name="minutes" id="minutes" onChange={this.onChange} value={''}>
+                  {Array.apply(null, { length: departureMomentTakeoffMin.minutes() + 1 }).map(Number.call, Number).slice(departureMomentTakeoffMax.minutes()).map(function (item, i) {
+                    return i > 0 && <option key={i} value={i}>{i}</option>;
+                  })}
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className="filter hide">
+          <h5>Return</h5>
+          <div className="arrival-filter">
+            <div className="arrival-landing-time">
+              <h6>Landing time</h6>
+              <div className="arrival-landing-time-hours">
+                <select name="hour" id="hour" onChange={this.onChange} value={''}>
+                  {Array.apply(null, { length: arrivalMomentLandingMax.hours() + 1 }).map(Number.call, Number).slice(arrivalMomentLandingMin.hours()).map(function (item, i) {
+                    return i > 0 && <option key={i} value={i}>{i}</option>;
+                  })}
+                </select>
+              </div>
+              <div className="arrival-landing-time-minutes">
+                <select name="minutes" id="minutes" onChange={this.onChange} value={''}>
+                  {Array.apply(null, { length: arrivalMomentLandingMax.minutes() + 1 }).map(Number.call, Number).slice(arrivalMomentLandingMin.minutes()).map(function (item, i) {
+                    return i > 0 && <option key={i} value={i}>{i}</option>;
+                  })}
+                </select>
+              </div>
+            </div>
+            <div className="arrival-takeoff-time">
+              <h6>Takeoff time</h6>
+              <div className="arrival-takeoff-time-hours">
+                <select name="hour" id="hour" onChange={this.onChange} value={''}>
+                  {Array.apply(null, { length: arrivalMomentTakeoffMax.hours() + 1 }).map(Number.call, Number).slice(arrivalMomentTakeoffMin.hours()).map(function (item, i) {
+                    return i > 0 && <option key={i} value={i}>{i}</option>;
+                  })}
+                </select>
+              </div>
+              <div className="arrival-takeoff-time-minutes">
+                <select name="minutes" id="minutes" onChange={this.onChange} value={''}>
+                  {Array.apply(null, { length: arrivalMomentTakeoffMax.minutes() + 1 }).map(Number.call, Number).slice(arrivalMomentTakeoffMax.minutes()).map(function (item, i) {
+                    return i > 0 && <option key={i} value={i}>{i}</option>;
+                  })}
+                </select>
+              </div>
+            </div>
+          </div>
         </div>
         {filters.price.max && filters.price.min &&
           <div className="price-range-filters">

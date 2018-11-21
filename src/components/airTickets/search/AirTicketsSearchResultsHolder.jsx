@@ -19,9 +19,6 @@ function AirTicketsResultsHolder(props) {
     return <AirTicketsSearchResult
       key={result.id}
       result={result}
-      exchangeRatesInfo={props.exchangeRatesInfo}
-      paymentInfo={props.paymentInfo}
-      userInfo={props.userInfo}
       allElements={props.allElements} />;
   });
 
@@ -31,10 +28,7 @@ function AirTicketsResultsHolder(props) {
 AirTicketsResultsHolder.propTypes = {
   results: PropTypes.any,
   loading: PropTypes.bool,
-  allElements: PropTypes.bool,
-  exchangeRatesInfo: PropTypes.object,
-  paymentInfo: PropTypes.object,
-  userInfo: PropTypes.object
+  allElements: PropTypes.bool
 };
 
 export default AirTicketsResultsHolder;
