@@ -1,6 +1,5 @@
 import '../../../styles/css/components/profile/listings/my-listings-page.css';
 
-import { Config } from '../../../config';
 import DeletionModal from '../../common/modals/DeletionModal';
 import { LISTING_DELETED } from '../../../constants/successMessages.js';
 import { LONG } from '../../../constants/notificationDisplayTimes.js';
@@ -9,7 +8,6 @@ import MyListingsInProgressItem from './MyListingsInProgressItem';
 import MyListingsItemRow from './MyListingsItemRow';
 import { NotificationManager } from 'react-notifications';
 import { PROPERTY_CANNOT_BE_DELETED } from '../../../constants/errorMessages.js';
-import ReCAPTCHA from 'react-google-recaptcha';
 import React from 'react';
 import filterListings from '../../../actions/filterListings';
 import requester from '../../../requester';
@@ -35,7 +33,6 @@ class MyListingsPage extends React.Component {
     this.handleOpenDeleteListingModal = this.handleOpenDeleteListingModal.bind(this);
     this.handleDeleteListing = this.handleDeleteListing.bind(this);
     this.handleCloseDeleteListing = this.handleCloseDeleteListing.bind(this);
-    this.executeCaptcha = this.executeCaptcha.bind(this);
   }
 
   componentDidMount() {
@@ -133,11 +130,6 @@ class MyListingsPage extends React.Component {
     );
   }
 
-  executeCaptcha() {
-    this.captcha.execute();
-  }
-
-
   render() {
     if (this.state.loading && this.state.listingsInProgress !== null) {
       return <div className="loader"></div>;
@@ -215,17 +207,9 @@ class MyListingsPage extends React.Component {
           isActive={this.state.isShownDeleteListingModal}
           deletingName={this.state.deletingName}
           isDeleting={this.state.isDeleting}
-          // filterListings={this.filterListings}
-          handleDeleteListing={this.executeCaptcha}
+          handleDeleteListing={this.handleDeleteListing}
           deletingId={this.state.deletingId}
           onHide={this.handleCloseDeleteListing}
-        />
-
-        <ReCAPTCHA
-          ref={el => this.captcha = el}
-          size="invisible"
-          sitekey={Config.getValue('recaptchaKey')}
-          onChange={token => { this.handleDeleteListing(token); this.captcha.reset(); }}
         />
       </div>
     );

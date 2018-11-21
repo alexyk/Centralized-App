@@ -1,4 +1,5 @@
 import '../../styles/css/main.css';
+import '../../styles/css/components/captcha/captcha-container.css';
 
 import { Redirect, Route, Switch, withRouter } from 'react-router-dom';
 import { setIsLogged, setUserInfo } from '../../actions/userInfo';

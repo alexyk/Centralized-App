@@ -1,12 +1,10 @@
 import React, { Fragment } from 'react';
 import { withRouter } from 'react-router-dom';
-import ReCAPTCHA from 'react-google-recaptcha';
 import { NotificationManager } from 'react-notifications';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { parse } from 'query-string';
 import requester from '../../../requester';
-import { Config } from '../../../config';
 import { LONG } from '../../../constants/notificationDisplayTimes.js';
 import { MISSING_NAMES } from '../../../constants/warningMessages.js';
 
@@ -47,7 +45,11 @@ class HomesBookingConfirmPage extends React.Component {
     });
   }
 
-  handleSubmit(captchaToken) {
+  handleSubmit(e) {
+    if (e) {
+      e.preventDefault();
+    }
+
     this.setState({ sending: true });
     if (!this.isValidNames()) {
       return;
@@ -66,7 +68,7 @@ class HomesBookingConfirmPage extends React.Component {
       phone: phoneNumber,
     };
 
-    requester.requestBooking(requestInfo, captchaToken).then(res => {
+    requester.requestBooking(requestInfo).then(res => {
       if (!res.success) {
         res.errors.then(e => {
           NotificationManager.warning(e.message, '', LONG);
@@ -102,9 +104,7 @@ class HomesBookingConfirmPage extends React.Component {
           <Fragment>
             <h2 className="title">Request Booking</h2>
             <hr />
-            <form onSubmit={(e) => {
-              e.preventDefault(); this.captcha.execute();
-            }}
+            <form onSubmit={(e) => { this.handleSubmit(e); }}
             >
               <div className="customer-first-name">
                 <label>First name</label>
@@ -123,12 +123,6 @@ class HomesBookingConfirmPage extends React.Component {
                 <input type="email" name="email" value={this.state.email} onChange={this.handleChange} required />
               </div>
               <button type="submit" className="btn">Request Booking</button>
-              <ReCAPTCHA
-                ref={el => this.captcha = el}
-                size="invisible"
-                sitekey={Config.getValue('recaptchaKey')}
-                onChange={token => { this.handleSubmit(token); this.captcha.reset(); }}
-              />
             </form>
           </Fragment> : <div className="loader"></div>}
       </div>

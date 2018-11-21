@@ -1,14 +1,8 @@
-import { NotificationManager } from 'react-notifications';
-
 import { Config } from '../../../config';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
-import ReCAPTCHA from 'react-google-recaptcha';
 import React from 'react';
-import requester from '../../../requester';
 
-import { PROPERTY_CANNOT_BE_DELETED } from '../../../constants/errorMessages.js';
-import { LONG } from '../../../constants/notificationDisplayTimes.js';
 
 class MyListingsInProgressItemAdditionalContent extends React.Component {
   constructor(props) {
@@ -53,47 +47,6 @@ class MyListingsInProgressItemAdditionalContent extends React.Component {
         }
       ]
     };
-
-    // this.onHide = this.onHide.bind(this);
-    // this.onOpen = this.onOpen.bind(this);
-    this.deleteSelected = this.deleteSelected.bind(this);
-  }
-
-  // onHide() {
-  //   this.setState(
-  //     {
-  //       isDeleting: false,
-  //       deletingId: -1,
-  //       deletingName: ''
-  //     }
-  //   );
-  // }
-
-  // onOpen(id, name) {
-  //   this.setState(
-  //     {
-  //       isDeleting: true,
-  //       deletingId: id,
-  //       deletingName: name
-  //     }
-  //   );
-  // }
-
-  deleteSelected(token) {
-    if (!this.state.isDeleting) {
-      return;
-    }
-
-    this.setState({ sending: true });
-
-    requester.deleteListing(this.state.deletingId, token).then(res => {
-      if (res.success) {
-        this.props.filterListings(this.state.deletingId);
-      } else {
-        NotificationManager.error(PROPERTY_CANNOT_BE_DELETED, 'Listing Operations', LONG);
-      }
-      this.setState({ sending: false });
-    });
   }
 
   calculateProgressPercentage(progressNumber) {
@@ -165,12 +118,6 @@ class MyListingsInProgressItemAdditionalContent extends React.Component {
         <div className="progress-image">
           <img src={Config.getValue('basePath') + 'images/' + this.calculateProgressImage(this.props.step)} alt="progress-thumbnail" />
         </div>
-        <ReCAPTCHA
-          ref={el => this.captcha = el}
-          size="invisible"
-          sitekey={Config.getValue('recaptchaKey')}
-          onChange={token => { this.deleteSelected(token); this.captcha.reset(); }}
-        />
       </div>
     );
   }
