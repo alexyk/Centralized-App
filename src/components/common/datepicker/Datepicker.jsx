@@ -76,7 +76,7 @@ class Datepicker extends Component {
     const { startDate, endDate, intervalStartText, intervalEndText, enableRanges } = this.props;
     const excludedDates = this.getExcludedDates();
     const isMobile = window.innerWidth < 1024;
-    const monthsToShow = isMobile ? 1 : 2;
+    const monthsToShow = this.props.monthsToShow ? this.props.monthsToShow : (isMobile ? 1 : 2);
 
     return (
       <div className="common-datepicker">
@@ -92,6 +92,7 @@ class Datepicker extends Component {
           excludeDates={this.props.excludedDates}
           withPortal={isMobile}
           monthsShown={monthsToShow}
+          fixedHeight
           {...this.props}
         />
 
@@ -110,6 +111,7 @@ class Datepicker extends Component {
             excludeDates={excludedDates}
             withPortal={isMobile}
             monthsShown={monthsToShow}
+            fixedHeight
             {...this.props}
           />
         }

@@ -48,32 +48,6 @@ export function previous() {
   this.slider.slickPrev();
 }
 
-export function setCheckInOutHours(checks) {
-  const { checkInStart, checkInEnd, checkOutStart, checkOutEnd } = checks;
-  const checkInBeforeStartWidth = ((100 / 24) * (checkInStart));
-  const checkInAfterEndWidth = ((100 / 24) * (24 - checkInEnd));
-  const checkInLength = ((100 / 24) * (checkInEnd - checkInStart));
-  const checkOutBeforeStartWidth = ((100 / 24) * (checkOutStart));
-  const checkOutAfterEndWidth = ((100 / 24) * (24 - checkOutEnd));
-  const checkOutLength = (100 / 24) * (checkOutEnd - checkOutStart);
-
-
-  setTimeout(() => {
-    document.getElementById('check_in_hour').style.width = `calc(${checkInBeforeStartWidth}% + 40px)`;
-    document.getElementById('check_out_hour').style.width = `calc(${checkOutBeforeStartWidth + checkOutLength}% + 20px)`;
-
-    document.getElementById('check_in_line_1').style.width = `${checkInBeforeStartWidth}%`;
-    document.getElementById('check_in_line_2').style.width = `${checkInLength}%`;
-    document.getElementById('check_in_line_3').style.width = `${checkInAfterEndWidth}%`;
-    document.getElementById('check_out_line_1').style.width = `${checkOutBeforeStartWidth}%`;
-    document.getElementById('check_out_line_2').style.width = `${checkOutLength}%`;
-    document.getElementById('check_out_line_3').style.width = `${checkOutAfterEndWidth}%`;
-
-    document.getElementById('check_in_tooltip').style.marginLeft = `calc(${checkInBeforeStartWidth}% - 95px)`;
-    document.getElementById('check_out_tooltip').style.marginLeft = `calc(${checkOutBeforeStartWidth + checkOutLength}% - 95px)`;
-  }, 100);
-}
-
 export function calculateCheckInOuts(listing) {
   let checkInStart = listing.checkinStart && Number(listing.checkinStart.substring(0, 2));
   let checkInEnd = listing.checkinEnd && Number(listing.checkinEnd.substring(0, 2));

@@ -1,120 +1,162 @@
 import React, { Fragment } from 'react';
-import { withRouter, Route, Switch } from 'react-router-dom';
-import HomesBookingConfirmPage from './HomesBookingConfirmPage';
+import { withRouter } from 'react-router-dom';
 import BookingSteps from '../../common/utility/BookingSteps';
-import HomesBookingListingDetailsInfo from './HomesBookingListingDetailsInfo';
-import _ from 'lodash';
+import HomesBookingAside from './aside/HomesBookingAside';
 import { parse } from 'query-string';
 import PropTypes from 'prop-types';
-import HomesBookingRoomDetailsInfo from './HomesBookingRoomDetailsInfo';
-import requester from '../../../requester';
-import { setCheckInOutHours, calculateCheckInOuts } from '../common/detailsPageUtils.js';
-import moment from 'moment';
+import { calculateCheckInOuts } from '../common/detailsPageUtils.js';
 import '../../../styles/css/components/homes/booking/homes-booking-page.css';
-import { connect } from 'react-redux';
+import '../../../styles/css/components/homes/booking/homes-booking-room-details-info.css';
+import RoomAccommodationBox from '../common/RoomAccommodationBox';
+import RoomSpaceInformationBox from '../common/RoomSpaceInformationBox';
 
-class HomesBookingPage extends React.Component {
-  constructor(props) {
-    super(props);
+function HomesBookingPage(props) {
 
-    this.state = {
-      listing: null,
-      calendar: null,
-      checks: null,
-      stepsNumber: 1
-    };
-
-    this.handleSubmit = this.handleSubmit.bind(this);
-
-    this.setCheckInOutHours = setCheckInOutHours.bind(this);
-    this.calculateCheckInOuts = calculateCheckInOuts.bind(this);
-  }
-
-  componentDidMount() {
-    const DAY_INTERVAL = 365;
-    requester.getListing(this.props.match.params.id).then(res => {
-      res.body.then((listing) => {
-        const checks = this.calculateCheckInOuts(listing);
-        this.setState({ listing: listing, checks });
-      });
-    });
-
-    requester.getHomeBookingDetails(this.props.match.params.id).then(res => res.body).then(roomDetails => {
-      this.setState({ roomDetails });
-    });
-
-    const searchTermMap = [
-      `listing=${this.props.match.params.id}`,
-      `startDate=${moment().format('DD/MM/YYYY')}`,
-      `endDate=${moment().add(DAY_INTERVAL, 'days').format('DD/MM/YYYY')}`,
-      `page=${0}`,
-      `toCode=${this.props.paymentInfo.currency}`,
-      `size=${DAY_INTERVAL}`];
-
-    requester.getCalendarByListingIdAndDateRange(searchTermMap).then(res => {
-      res.body.then(data => {
-        let calendar = data.content;
-        calendar = _.sortBy(calendar, function (x) {
-          return new moment(x.date, 'DD/MM/YYYY');
-        });
-        this.setState({ calendar: calendar });
-      });
-    });
-  }
-
-  handleSubmit() {
-    const id = this.props.match.params.id;
-    const isWebView = this.props.location.pathname.indexOf('/mobile') !== -1;
-    const rootURL = !isWebView ? '/homes/listings/book' : '/mobile/book';
-    this.props.history.push(`${rootURL}/${id}/confirm${this.props.location.search}`);
-    this.setState({ stepsNumber: 2 });
-  }
-
-  render() {
-    let { listing, calendar, roomDetails, checks } = this.state;
-
-    if (!listing || !calendar) {
-      return <div className="loader"></div>;
+  const renderBedIcons = (bedCount, bedType) => {
+    const bedIcons = [];
+    let icon = null;
+    switch (bedType) {
+      case 'single':
+        icon = <img src="/images/icon-review/icon-bedroom.png" alt="icon-bedroom" title="Single Bed" />;
+        break;
+      case 'double':
+        icon = <img src="/images/icon-review/icon-bed-room.png" alt="icon-bedroom" title="Double Bed" />;
+        break;
+      case 'king':
+        icon = <img src="/images/icon-review/icon-kingbed.jpg" alt="icon-kingbed" title="King Bed" />;
+        break;
+      default:
+        icon = <img src="" alt="" title="" />;
+        break;
     }
 
-    return (
-      <Fragment>
-        <BookingSteps steps={['Select your Room', 'Review Room Details', 'Confirm & Pay']} currentStepIndex={this.state.stepsNumber} />
-        <div id={`${this.props.location.pathname.indexOf('/confirm') !== -1 ? 'homes-booking-confirm-page-container' : 'homes-booking-page-container'}`}>
-          <div className="container">
-            <HomesBookingListingDetailsInfo
-              listing={listing}
-              searchParams={parse(this.props.location.search)}
-              calendar={calendar}
-            />
-            <Switch>
-              <Route path="/homes/listings/book/:id/confirm" render={() => <HomesBookingConfirmPage listing={listing} />} />
-              <Route path="/homes/listings/book/:id" render={() => <HomesBookingRoomDetailsInfo
-                listing={listing}
-                roomDetails={roomDetails}
-                checks={checks}
-                handleSubmit={this.handleSubmit} />} />
-            </Switch>
+    for (let i = 0; i < bedCount; i++) {
+      bedIcons.push(icon);
+    }
+
+    return bedIcons;
+  };
+
+  const hasSleepingArangementDetails = (rooms) => {
+    if (rooms && rooms.length > 0) {
+      for (let i = 0; i < rooms.length; i++) {
+        const { single_bed_count, double_bed_count, king_bed_count } = rooms[i];
+        if (single_bed_count || double_bed_count || king_bed_count) {
+          return true;
+        }
+      }
+    }
+
+    return false;
+  };
+
+
+  const handleSubmit = () => {
+    const id = props.match.params.id;
+    const rootURL = '/homes/listings';
+    props.history.push(`${rootURL}/${id}/confirm${props.location.search}`);
+  };
+
+  const { listing, calendar, bookingDetails } = props;
+  
+  if (!listing || !calendar) {
+    return <div className="loader"></div>;
+  }
+  
+  const { property_type, guests, size, bathroom, bedrooms, rooms } = bookingDetails;
+  const { eventsAllowed, smokingAllowed, suitableForPets, suitableForInfants, house_rules } = bookingDetails;
+  const houseRules = house_rules && house_rules.split('\r\n');
+  
+  const hasSpaceDetails = property_type || guests || size || bathroom || bedrooms;
+  const hasHouseRules = eventsAllowed || smokingAllowed || suitableForPets || suitableForInfants || house_rules;
+  const checks = calculateCheckInOuts(listing);
+  
+  return (
+    <Fragment>
+      <BookingSteps steps={['Select your Room', 'Review Room Details', 'Confirm & Pay']} currentStepIndex={1} />
+      <div id={`${props.location.pathname.indexOf('/confirm') !== -1 ? 'homes-booking-confirm-page-container' : 'homes-booking-page-container'}`}>
+        <div className="container">
+          <HomesBookingAside
+            listing={listing}
+            searchParams={parse(props.location.search)}
+            calendar={calendar}
+          />
+
+          <div className="right-part">
+            <h2>Review Room Details</h2>
+            {hasSpaceDetails &&
+              <div>
+                <h3>The Space</h3>
+                <RoomSpaceInformationBox
+                  property_type={property_type}
+                  guests={guests}
+                  size={size}
+                  bathroom={bathroom}
+                  bedrooms={bedrooms} />
+              </div>
+            }
+
+            {hasSleepingArangementDetails() &&
+              <div>
+                <h3>Sleeping Arrangements</h3>
+                <div className="arrangements-container">
+                  {rooms.map((room, index) => {
+                    const { single_bed_count, double_bed_count, king_bed_count } = room;
+                    const hasBedInfo = single_bed_count || double_bed_count || king_bed_count;
+                    if (hasBedInfo) {
+                      return (
+                        <div key={index + 1}>
+                          <p><span>Bedroom {index + 1} </span></p>
+                          {single_bed_count && renderBedIcons(single_bed_count, 'single')}
+                          {double_bed_count && renderBedIcons(single_bed_count, 'double')}
+                          {king_bed_count && renderBedIcons(single_bed_count, 'king')}
+                        </div>
+                      );
+                    } else {
+                      return null;
+                    }
+                  })}
+                </div>
+              </div>
+            }
+
+            {hasHouseRules &&
+              <div className="hotel-rules-container">
+                <h3>House Rules</h3>
+                {eventsAllowed && <p>Events allowed</p>}
+                {smokingAllowed && <p>Smoking allowed</p>}
+                {suitableForInfants && <p>Suitable for infants</p>}
+                {suitableForPets && <p>Suitable for pets</p>}
+                {houseRules && houseRules.map((rule, index) => {
+                  return (<p key={index}>{rule}</p>);
+                })}
+              </div>
+            }
+
+            <RoomAccommodationBox
+              checkInStart={checks.checkInStart}
+              checkInEnd={checks.checkInEnd}
+              checkOutStart={checks.checkOutStart}
+              checkOutEnd={checks.checkOutEnd} />
+
+            <button className="btn" onClick={handleSubmit}>Agree &amp; Continue</button>
           </div>
         </div>
+      </div>
 
-      </Fragment>
-    );
-  }
+    </Fragment>
+  );
 }
 
 HomesBookingPage.propTypes = {
+  listing: PropTypes.object,
+  calendar: PropTypes.array,
+  bookingDetails: PropTypes.object,
+
+  // Router props
   location: PropTypes.object,
   match: PropTypes.object,
   history: PropTypes.object,
-  paymentInfo: PropTypes.object
 };
 
-function mapStateToProps(state) {
-  const { paymentInfo } = state;
-  return {
-    paymentInfo
-  };
-}
-
-export default withRouter(connect(mapStateToProps)(HomesBookingPage));
+export default withRouter(HomesBookingPage);

@@ -341,23 +341,6 @@ $media-expressions: (
       color: $moderate-red;
     }
   }
-  .icon-calendar {
-    margin-right: 5px;
-    font-size: 12px;
-    @include media(">=tablet") {
-      margin-right: 16px;
-      font-size: 20px;
-    }
-  }
-  .icon-arrow-right {
-    display: none;
-    font-size: 0.8em;
-    @include media(">=tablet") {
-      display: flex;
-      align-items: center;
-      margin: 0 10px 0 5px;
-    }
-  }
   &-select {
     position: relative;
     min-width: 200px;

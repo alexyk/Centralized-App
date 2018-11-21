@@ -1,18 +1,12 @@
-import 'react-select/dist/react-select.css';
-
 import { NotificationManager } from 'react-notifications';
 
-import { Config } from '../../../config';
 import BasicsAside from '../aside/BasicsAside';
 import ListingCrudNav from '../navigation/ListingCrudNav';
 import PropTypes from 'prop-types';
-import ReCAPTCHA from 'react-google-recaptcha';
 import React from 'react';
 
 import { INVALID_LOC_ADDRESS } from '../../../constants/warningMessages.js';
 import { LONG } from '../../../constants/notificationDisplayTimes.js';
-
-let captcha;
 
 function ListingLocAddress(props) {
   const { locAddress } = props.values;
@@ -45,18 +39,11 @@ function ListingLocAddress(props) {
       <div className="col-md-3">
       </div>
       <div className="col-md-7">
-        <form onSubmit={(e) => { e.preventDefault(); captcha.execute(); }}>
+        <form onSubmit={(e) => { e.preventDefault(); props.updateLocAddress(); }}>
           {validateInput(props.values)
             ? <button type="submit" className="btn btn-primary btn-next">Next</button>
             : <button type="button" className="btn btn-primary btn-next disabled" onClick={() => showErrors(props.values)}>Next</button>
           }
-
-          <ReCAPTCHA
-            ref={el => captcha = el}
-            size="invisible"
-            sitekey={Config.getValue('recaptchaKey')}
-            onChange={token => { props.updateLocAddress(token); captcha.reset(); }}
-          />
         </form>
       </div>
     </div>

@@ -6,35 +6,35 @@ function RoomSpaceInformationBox(props) {
   const { property_type, guests, size, bathroom, bedrooms } = props;
   return (
     <div className="icons-container-space">
-      {property_type &&
+      {!!property_type &&
         <div>
           <img src="/images/icon-review/icon-home.png" alt="icon-home" />
           <p>{property_type}</p>
         </div>
       }
 
-      {guests &&
+      {!!guests &&
         <div>
           <img src="/images/icon-review/icon-guest.png" alt="icon-guest" />
           <p>Guests x{guests}</p>
         </div>
       }
 
-      {size &&
+      {!!size &&
         <div>
           <img src="/images/icon-review/icon-size.png" alt="icon-size" />
           <p>{size} m2</p>
         </div>
       }
 
-      {bathroom && bathroom.toString() &&
+      {!!bathroom &&
         <div>
           <img src="/images/icon-review/icon-bathroom.png" alt="icon-bathroom" />
           <p>{bathroom} {bathroom === 1 ? 'Bathroom' : 'Bathrooms'}</p>
         </div>
       }
 
-      {bedrooms && bedrooms.toString() &&
+      {!!bedrooms &&
         <div>
           <img src="/images/icon-review/icon-bedrooms.png" alt="icon-bedrooms" />
           <p>{bedrooms} {bedrooms === 1 ? 'Bedroom' : 'Bedrooms'}</p>

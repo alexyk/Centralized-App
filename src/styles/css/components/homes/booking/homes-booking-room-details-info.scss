@@ -1,7 +1,8 @@
 @import "../../../vendors/include-media";
 
 .right-part {
-  width: 50%;
+  width: 60%;
+  margin-left: auto;
   @include media("<=tablet") {
     width: 100%;
   }

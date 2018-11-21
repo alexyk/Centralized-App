@@ -25,7 +25,6 @@ import ListingPrice from './steps/ListingPrice';
 import ListingSafetyFacilities from './steps/ListingSafetyFacilities';
 import { NotificationManager } from 'react-notifications';
 import PropTypes from 'prop-types';
-import ReCAPTCHA from 'react-google-recaptcha';
 import React from 'react';
 import { arrayMove } from 'react-sortable-hoc';
 import moment from 'moment';
@@ -305,12 +304,12 @@ class CreateListingPage extends React.Component {
     this.setState({ lat: position.lat, lng: position.lng, mapAddress: address });
   }
 
-  createListing(captchaToken) {
+  createListing() {
 
     let listing = this.createListingObject();
     this.setState({ loading: true });
 
-    requester.createListing(listing, captchaToken).then(res => {
+    requester.createListing(listing).then(res => {
       if (res.success) {
         this.setState({ loading: false });
         res.body.then(data => {
@@ -499,7 +498,7 @@ class CreateListingPage extends React.Component {
       NotificationManager.warning(MISSING_PICTURE, '', LONG);
       this.props.history.push('/profile/listings/create/photos/');
     } else {
-      this.captcha.execute();
+      this.createListing();
     }
   }
 
@@ -629,13 +628,6 @@ class CreateListingPage extends React.Component {
             routes={routes}
             prev={routes.checking} />} />
         </Switch>
-
-        <ReCAPTCHA
-          ref={(el) => this.captcha = el}
-          size="invisible"
-          sitekey={Config.getValue('recaptchaKey')}
-          onChange={token => { this.createListing(token); this.captcha.reset(); }}
-        />
       </div>
     );
   }
