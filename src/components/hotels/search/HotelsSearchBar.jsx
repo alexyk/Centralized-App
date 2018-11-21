@@ -119,11 +119,7 @@ function HotelsSearchBar(props) {
         />
         
         <div className="check">
-<<<<<<< HEAD
           <HotelsDatepickerWrapper />
-=======
-          <Datepicker minDate={moment()} enableRanges />
->>>>>>> 782b0737183c9ef29a2e4c762a37a2da1b0a6dd2
         </div>
 
         <div className="days-of-stay">
