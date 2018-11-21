@@ -3,37 +3,29 @@ import Slider from 'react-slick';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import moment from 'moment';
-import { Config } from '../../../config.js';
-import SearchBarDatePickerHidePreview from '../../common/search/SearchBarDatePickerHidePreview';
-import { CurrencyConverter } from '../../../services/utilities/currencyConverter.js';
-import { getPriceForPeriod } from '../common/detailsPageUtils.js';
-import '../../../styles/css/components/homes/booking/homes-booking-listing-details-info.css';
-import Rating from '../../common/rating/Rating';
-import LocPrice from '../../common/utility/LocPrice';
-import { RoomsXMLCurrency } from '../../../services/utilities/roomsXMLCurrency.js';
+import { Config } from '../../../../config.js';
+import DatePreview from '../datePreview';
+import { CurrencyConverter } from '../../../../services/utilities/currencyConverter.js';
+import { getPriceForPeriod } from '../../common/detailsPageUtils.js';
+import './style.css';
+import Rating from '../../../common/rating/Rating';
+import LocPrice from '../../../common/utility/LocPrice';
+import { RoomsXMLCurrency } from '../../../../services/utilities/roomsXMLCurrency.js';
+import Loader from '../../../common/loader/index.js';
 
-class HomesBookingListingDetailsInfo extends React.Component {
+class HomesBookingAside extends React.Component {
   
   render() {
     const { listing, searchParams, calendar } = this.props;
     const { currencyExchangeRates } = this.props.exchangeRatesInfo;
 
     if (!currencyExchangeRates || !calendar || !listing) {
-      return <div className="loader"></div>;
+      return (<Loader />);
     }
 
     const pictures = listing.pictures.filter(x => x.thumbnail !== null);
     const startDate = moment(searchParams.startDate, 'DD/MM/YYYY');
     const endDate = moment(searchParams.endDate, 'DD/MM/YYYY');
-
-    const datesDetails = {
-      startDateDay: startDate.format('DD'),
-      startDateMonth: startDate.format('MMM').toUpperCase(),
-      startDateDayOfWeek: startDate.format('ddd').toUpperCase(),
-      endDateDay: endDate.format('DD'),
-      endDateMonth: endDate.format('MMM').toUpperCase(),
-      endDateDayOfWeek: endDate.format('ddd').toUpperCase()
-    };
 
     const SlickButton = ({ currentSlide, slideCount, ...arrowProps }) => {
       return (
@@ -96,13 +88,7 @@ class HomesBookingListingDetailsInfo extends React.Component {
             </div>
             <p> {searchParams.guests} Guests</p>
           </div>
-          <SearchBarDatePickerHidePreview datesDetails={datesDetails} />
-          <div className="border-nights-container">
-            <div className="border-nights">
-              <img src="/images/icon-moon.png" alt="icon-moon" />
-              <p>{nights} nights</p>
-            </div>
-          </div>
+          <DatePreview checkin={startDate} checkout={endDate} />
         </div>
         <div className="price-container">
           <div className="price">
@@ -114,10 +100,6 @@ class HomesBookingListingDetailsInfo extends React.Component {
           <div className="total">
             <span>total price <span className="value">{currencySign}{(totalPrice).toFixed(3)} <LocPrice fiat={totalPriceRoomsXMLCurrency} /></span></span>
           </div>
-
-          {/* <div className="price"><LocPrice fiat={fiatPriceInRoomsXMLCurrency} brackets={false} /> x {nights} nights</div>
-          <div className="price"><LocPrice fiat={fiatCleaningFeePriceInRoomsXMLCurrency} brackets={false} /> cleaning fee</div>
-          <div className="total">total price <LocPrice fiat={totalPriceRoomsXMLCurrency} brackets={false} /></div> */}
         </div>
         <div className="image-dot">
           <img src="/images/dot-bgr.png" alt="dot-bgr" />
@@ -127,7 +109,7 @@ class HomesBookingListingDetailsInfo extends React.Component {
   }
 }
 
-HomesBookingListingDetailsInfo.propTypes = {
+HomesBookingAside.propTypes = {
   listing: PropTypes.object,
   searchParams: PropTypes.object,
 
@@ -143,4 +125,4 @@ function mapStateToProps(state) {
   };
 }
 
-export default connect(mapStateToProps)(HomesBookingListingDetailsInfo);
+export default connect(mapStateToProps)(HomesBookingAside);

@@ -163,7 +163,7 @@ class HomesSearchPage extends React.Component {
         });
       });
     });
-    let url = `/homes/listings/?${searchTerms.join('&')}`;
+    let url = `/homes/listings?${searchTerms.join('&')}`;
     this.props.history.push(url);
   }
 
