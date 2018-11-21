@@ -1,4 +1,3 @@
-import '../../styles/css/components/captcha/captcha-container.css';
 import '../../styles/css/components/main_nav/main_nav.css';
 
 import {

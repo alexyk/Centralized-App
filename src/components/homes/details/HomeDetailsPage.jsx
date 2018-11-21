@@ -89,12 +89,23 @@ class HomeDetailsPage extends React.Component {
     this.props.history.push('/homes/listings' + queryString);
   }
 
-  sendMessageToHost(id, message, captchaToken) {
+  calculateNights(startDate, endDate) {
+    let diffDays = endDate.startOf('day').diff(startDate.startOf('day'), 'days');
+
+    if (endDate > startDate) {
+      this.setState({ nights: diffDays });
+    }
+    else {
+      this.setState({ nights: 0 });
+    }
+  }
+
+  sendMessageToHost(id, message) {
     let contactHostObj = {
       message: message
     };
 
-    requester.contactHost(id, contactHostObj, captchaToken).then(res => {
+    requester.contactHost(id, contactHostObj).then(res => {
       res.body.then(data => {
         this.props.history.push(`/profile/messages/chat/${data.conversation}`);
       });
@@ -139,7 +150,7 @@ class HomeDetailsPage extends React.Component {
 
     const { listing, calendar, bookingDetails } = this.props;
 
-    const { 
+    const {
       property_type,
       guests,
       size,
@@ -151,7 +162,7 @@ class HomeDetailsPage extends React.Component {
       suitableForInfants,
       house_rules } = bookingDetails;
 
-    const { 
+    const {
       averageRating,
       city,
       country,

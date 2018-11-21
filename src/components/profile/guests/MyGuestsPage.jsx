@@ -1,11 +1,9 @@
 import CancellationModal from '../../common/modals/CancellationModal';
-import { Config } from '../../../config';
 import { Link } from 'react-router-dom';
 import MyGuestsTable from './MyGuestsTable';
 import { NotificationManager } from 'react-notifications';
 import Pagination from '../../common/pagination/Pagination';
 import PropTypes from 'prop-types';
-import ReCAPTCHA from 'react-google-recaptcha';
 import React from 'react';
 import requester from '../../../requester';
 import { withRouter } from 'react-router-dom';
@@ -24,7 +22,6 @@ class MyGuestsPage extends React.Component {
       currentPage: 1,
       selectedReservationId: 0,
       showRejectReservationModal: false,
-      currentReCaptcha: '',
     };
 
     this.onPageChange = this.onPageChange.bind(this);
@@ -32,9 +29,6 @@ class MyGuestsPage extends React.Component {
     this.openModal = this.openModal.bind(this);
     this.closeModal = this.closeModal.bind(this);
     this.onReservationSelect = this.onReservationSelect.bind(this);
-
-    this.executeReCaptcha = this.executeReCaptcha.bind(this);
-    this.getReCaptchaFunction = this.getReCaptchaFunction.bind(this);
 
     this.acceptReservation = this.acceptReservation.bind(this);
     this.cancelReservation = this.cancelReservation.bind(this);
@@ -57,16 +51,9 @@ class MyGuestsPage extends React.Component {
     });
   }
 
-  executeReCaptcha(currentReCaptcha) {
-    this.setState({
-      currentReCaptcha
-    }, () => this.captcha.execute());
-  }
-
-  acceptReservation(captchaToken) {
+  acceptReservation() {
     const id = this.state.selectedReservationId;
-    requester.acceptReservation(id, captchaToken).then(res => {
-      // console.log(res);
+    requester.acceptReservation(id).then(res => {
       if (res.success) {
         this.setReservationIsAccepted(id, true);
         NotificationManager.success(RESERVATION_ACCEPTED, 'Reservation Operations', LONG);
@@ -78,9 +65,9 @@ class MyGuestsPage extends React.Component {
     });
   }
 
-  cancelReservation(captchaToken) {
+  cancelReservation() {
     const id = this.state.selectedReservationId;
-    requester.cancelReservation(id, captchaToken).then(res => {
+    requester.cancelReservation(id).then(res => {
       if (res.success) {
         this.setReservationIsAccepted(id, false);
         NotificationManager.success(RESERVATION_CANCELLED, 'Reservation Operations', LONG);
@@ -92,11 +79,11 @@ class MyGuestsPage extends React.Component {
     });
   }
 
-  rejectReservation(captchaToken) {
+  rejectReservation() {
     const id = this.state.selectedReservationId;
     const message = this.state.cancellationText;
     let messageObj = { message: message };
-    requester.cancelTrip(id, messageObj, captchaToken).then(res => {
+    requester.cancelTrip(id, messageObj).then(res => {
       if (res.success) {
         this.deleteReservationFromState(id);
         NotificationManager.success(RESERVATION_DELETED, 'Reservation Operations', LONG);
@@ -156,21 +143,7 @@ class MyGuestsPage extends React.Component {
     this.setState({ selectedReservationId: id });
   }
 
-  getReCaptchaFunction(currentReCaptcha) {
-    switch (currentReCaptcha) {
-      case 'accept':
-        return this.acceptReservation;
-      case 'cancel':
-        return this.cancelReservation;
-      case 'reject':
-        return this.rejectReservation;
-      default:
-        return null;
-    }
-  }
-
   render() {
-    const { currentReCaptcha } = this.state;
 
     if (this.state.loading) {
       return <div className="loader"></div>;
@@ -178,27 +151,6 @@ class MyGuestsPage extends React.Component {
 
     return (
       <div className="my-reservations">
-
-        {
-          currentReCaptcha && (
-            <ReCAPTCHA
-              ref={el => this.captcha = el}
-              size="invisible"
-              sitekey={Config.getValue('recaptchaKey')}
-              onChange={(token) => {
-                const reCaptchaFunc = this.getReCaptchaFunction(currentReCaptcha);
-
-                reCaptchaFunc(token);
-
-                this.captcha.reset();
-
-                this.setState({
-                  currentReCaptcha: ''
-                });
-              }}
-            />
-          )
-        }
 
         <CancellationModal
           name={'showRejectReservationModal'}
@@ -208,7 +160,7 @@ class MyGuestsPage extends React.Component {
           onChange={this.onChange}
           isActive={this.state.showRejectReservationModal}
           onClose={this.closeModal}
-          onSubmit={() => { this.executeReCaptcha('reject'); }} />
+          onSubmit={this.rejectReservation} />
 
         <section id="profile-my-reservations">
           <div className="container">
@@ -216,8 +168,8 @@ class MyGuestsPage extends React.Component {
             <hr />
             <MyGuestsTable
               reservations={this.state.reservations}
-              onReservationAccept={() => this.executeReCaptcha('accept')}
-              onReservationCancel={() => this.executeReCaptcha('cancel')}
+              onReservationAccept={this.acceptReservation}
+              onReservationCancel={this.cancelReservation}
               onReservationSelect={this.onReservationSelect}
               onReservationReject={() => { this.openModal('showRejectReservationModal'); }} />
 
