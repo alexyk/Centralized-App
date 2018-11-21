@@ -114,11 +114,16 @@ RegisterModal.propTypes = {
   signUpFirstName: PropTypes.string,
   signUpLastName: PropTypes.string,
   signUpPassword: PropTypes.string,
+  countries: PropTypes.array,
+  country: PropTypes.object,
+  states: PropTypes.array,
+  countryState: PropTypes.number,
   onChange: PropTypes.func,
   openModal: PropTypes.func,
   closeModal: PropTypes.func,
   isActive: PropTypes.bool,
-  handleRegister: PropTypes.func
+  handleRegister: PropTypes.func,
+  handleChangeCountry: PropTypes.func,
 };
 
 export default RegisterModal;

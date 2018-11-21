@@ -13,19 +13,22 @@ import { setIsLogged, setUserInfo } from '../../actions/userInfo';
 import { Wallet } from '../../services/blockchain/wallet.js';
 import { VERIFICATION_EMAIL_SENT } from '../../constants/infoMessages.js';
 import UpdateCountryModal from './modals/UpdateCountryModal';
-import { setAirdropInfo } from '../../actions/airdropInfo';
 import EmailVerificationModal from './modals/EmailVerificationModal';
 import EnterEmailVerificationTokenModal from './modals/EnterEmailVerificationTokenModal';
+import queryString from 'query-string';
 import {
   EMAIL_VERIFICATION,
+  ENTER_RECOVERY_TOKEN,
 } from '../../constants/modals.js';
 import {
-  INVALID_SECURITY_CODE, MISSING_AIRDROP_INFO
+  INVALID_SECURITY_CODE
 } from '../../constants/warningMessages';
 import {
   ENTER_EMAIL_VERIFICATION_SECURITY_TOKEN,
 } from '../../constants/modals.js';
-
+import {
+  EMAIL_VERIFIED
+} from '../../constants/successMessages.js';
 import {
   LOGIN,
   UPDATE_COUNTRY
@@ -53,6 +56,43 @@ class LoginManager extends React.Component {
     this.handleUpdateCountry = this.handleUpdateCountry.bind(this);
     this.requestCountries = this.requestCountries.bind(this);
     this.requestStates = this.requestStates.bind(this);
+  }
+
+  componentDidMount() {
+    if (
+      localStorage[Config.getValue('domainPrefix') + '.auth.locktrip'] &&
+      localStorage[Config.getValue('domainPrefix') + '.auth.username']
+    ) {
+      this.setUserInfo();
+    }
+
+    const queryParams = queryString.parse(this.props.location.search);
+    if (queryParams.token) {
+      this.setState({ recoveryToken: queryParams.token });
+      this.openModal(ENTER_RECOVERY_TOKEN);
+    }
+
+    if (queryParams.emailVerificationSecurityCode) {
+      const { emailVerificationSecurityCode } = queryParams;
+      requester.verifyEmailSecurityCode({ emailVerificationSecurityCode })
+        .then(res => res.body)
+        .then(data => {
+          if (data.isEmailVerified) {
+            NotificationManager.success(EMAIL_VERIFIED, '', LONG);
+            this.setUserInfo();
+          }
+        });
+
+      this.removeVerificationCodeFromURL();
+    }
+  }
+
+  removeVerificationCodeFromURL() {
+    const path = this.props.location.pathname;
+    const search = this.props.location.search;
+    const indexOfSecurityCode = search.indexOf('&emailVerificationSecurityCode=');
+    const pushURL = path + search.substring(0, indexOfSecurityCode);
+    this.props.history.push(pushURL);
   }
 
   requestCountries() {
@@ -118,12 +158,14 @@ class LoginManager extends React.Component {
     requester.login(user, captchaToken).then(res => {
       if (res.success) {
         res.body.then(data => {
-          this.setUserInfo(user, data);
+          localStorage[Config.getValue('domainPrefix') + '.auth.locktrip'] = data.Authorization;
+          localStorage[Config.getValue('domainPrefix') + '.auth.username'] = user.email;
+          this.setUserInfo();
           this.closeModal(LOGIN);
           this.setState({ loginEmail: '', loginPassword: '' });
-          if (this.props.location.pathname.indexOf('/airdrop') !== -1) {
-            this.handleAirdropUser();
-          }
+          // if (this.props.location.pathname.indexOf('/airdrop') !== -1) {
+          //   this.handleAirdropUser();
+          // }
         });
       } else {
         this.handleLoginErrors(res);
@@ -159,58 +201,6 @@ class LoginManager extends React.Component {
     });
   }
 
-  handleAirdropUser() {
-    requester.getUserAirdropInfo().then(res => {
-      res.body.then(data => {
-        if (data.participates) {
-          this.dispatchAirdropInfo(data);
-        } else {
-          // console.log('user not yet moved from temp to main');
-          const token = this.props.location.search.split('=')[1];
-          requester.checkIfAirdropUserExists(token).then(res => {
-            res.body.then(user => {
-              const currentEmail = localStorage[Config.getValue('domainPrefix') + '.auth.username'];
-              if (user.email === currentEmail && user.exists) {
-                // console.log('users match');
-                requester.verifyUserAirdropInfo(token).then(() => {
-                  // console.log('user moved from temp to main');
-                  NotificationManager.info(VERIFICATION_EMAIL_SENT, '', LONG);
-                  requester.getUserAirdropInfo().then(res => {
-                    res.body.then(data => {
-                      this.dispatchAirdropInfo(data);
-                    });
-                  });
-                });
-              } else {
-                // console.log('users dont match', user.email, currentEmail);
-              }
-            });
-          });
-        }
-      }).catch(() => {
-        NotificationManager.warning(MISSING_AIRDROP_INFO, '', LONG);
-        this.props.history.push('/airdrop');
-      });
-    });
-  }
-
-  dispatchAirdropInfo(info) {
-    const email = info.user;
-    const facebookProfile = info.facebookProfile;
-    const telegramProfile = info.telegramProfile;
-    const twitterProfile = info.twitterProfile;
-    const redditProfile = info.redditProfile;
-    const refLink = info.refLink;
-    const participates = info.participates;
-    const isVerifyEmail = info.isVerifyEmail;
-    const referralCount = info.referralCount;
-    const isCampaignSuccessfullyCompleted = info.isCampaignSuccessfullyCompleted;
-    const voteUrl = info.voteUrl ? info.voteUrl : '';
-    const finalizedStatus = info.finalizedStatus;
-    this.props.dispatch(setAirdropInfo(email, facebookProfile, telegramProfile, twitterProfile, redditProfile, refLink, participates, isVerifyEmail, referralCount, isCampaignSuccessfullyCompleted, voteUrl, finalizedStatus));
-    this.setState({ voteUrl: voteUrl, loading: false });
-  }
-
   handleUpdateCountry() {
     if (this.state.country) {
       if (['Canada', 'India', 'United States of America'].includes(this.state.country.name) && !this.state.countryState) {
@@ -224,10 +214,7 @@ class LoginManager extends React.Component {
     }
   }
 
-  setUserInfo(user, data) {
-    localStorage[Config.getValue('domainPrefix') + '.auth.locktrip'] = data.Authorization;
-    localStorage[Config.getValue('domainPrefix') + '.auth.username'] = user.email;
-
+  setUserInfo() {
     this.props.dispatch(setIsLogged(true));
     requester.getUserInfo().then(res => {
       res.body.then(data => {
@@ -307,6 +294,7 @@ class LoginManager extends React.Component {
           handleLogin={() => this.executeReCaptcha('login')} 
           emailVerificationToken={this.state.emailVerificationToken} 
         />
+        {/* <AirdropLoginModal isActive={this.props.modalsInfo.isActive[AIRDROP_LOGIN]} openModal={this.openModal} closeModal={this.closeModal} loginEmail={this.state.loginEmail} loginPassword={this.state.loginPassword} onChange={this.onChange} handleLogin={this.handleAirdropLogin} /> */}
         <ReCAPTCHA
           ref={el => this.captcha = el}
           size="invisible"
