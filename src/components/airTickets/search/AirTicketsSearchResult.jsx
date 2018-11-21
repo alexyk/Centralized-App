@@ -1,5 +1,6 @@
 import React, { Component, Fragment } from 'react';
 import { Link, withRouter } from 'react-router-dom';
+import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 import { CurrencyConverter } from '../../../services/utilities/currencyConverter';
@@ -288,12 +289,24 @@ AirTicketsSearchResult.propTypes = {
   result: PropTypes.object,
   price: PropTypes.any,
   allElements: PropTypes.bool,
-  exchangeRatesInfo: PropTypes.object,
-  paymentInfo: PropTypes.object,
-  userInfo: PropTypes.object,
 
   // Router props
   location: PropTypes.object,
+
+  // Redux props
+  exchangeRatesInfo: PropTypes.object,
+  paymentInfo: PropTypes.object,
+  userInfo: PropTypes.object
 };
 
-export default withRouter(AirTicketsSearchResult);
+const mapStateToProps = (state) => {
+  const { exchangeRatesInfo, paymentInfo, userInfo } = state;
+
+  return {
+    exchangeRatesInfo,
+    paymentInfo,
+    userInfo
+  };
+};
+
+export default withRouter(connect(mapStateToProps)(AirTicketsSearchResult));
