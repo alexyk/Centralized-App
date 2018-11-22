@@ -1,0 +1,27 @@
+@import '../../../vendors/include-media';
+
+.navigation-tab {
+  display: flex;
+	justify-content: space-around;
+  @include media('>=tablet') {
+    // margin: 0 0 20px 0;
+    justify-content: flex-start;
+  }
+  >div {
+    display: inherit;
+  }
+  li {
+    list-style-type: none;
+    display: flex;
+    text-align: center;
+
+    a h2 {
+      padding: 15px;
+    }
+  }
+}
+
+.navigation-tab li>a.active>h2 {
+    // margin-bottom: 0;
+    border-bottom: 4px solid #A0C5BE;
+}

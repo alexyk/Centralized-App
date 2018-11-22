@@ -1,6 +1,5 @@
 import React from 'react';
 import { Modal } from 'react-bootstrap';
-import ReCAPTCHA from 'react-google-recaptcha';
 import { NotificationManager } from 'react-notifications';
 import PropTypes from 'prop-types';
 import validator from 'validator';
@@ -13,8 +12,6 @@ import '../../../styles/css/components/modals/modal.css';
 
 function ChangeWalletPasswordModal(props) {
 
-  let captcha;
-
   const submitPassword = () => {
     if (props.walletPassword !== props.repeatWalletPassword) {
       NotificationManager.warning('Passwords do not match.', '', LONG);
@@ -25,12 +22,12 @@ function ChangeWalletPasswordModal(props) {
     } else if (!validator.matches(props.walletPassword, /[@$!%*#?&]+/)) {
       NotificationManager.warning('Passwords should contain at least one special character.', '', LONG);
     } else {
-      captcha.execute();
+      props.updateWalletJson();
     }
   };
 
   return (
-    <div>
+    <React.Fragment>
       <Modal show={props.isActive} className="modal fade myModal">
         <Modal.Header>
           <h1>Recover your password (2)</h1>
@@ -57,17 +54,9 @@ function ChangeWalletPasswordModal(props) {
             <button type="submit" className="btn btn-primary">Save Password</button>
             <div className="clearfix"></div>
           </form>
-
-          <ReCAPTCHA
-            ref={el => captcha = el}
-            size="invisible"
-            sitekey={Config.getValue('recaptchaKey')}
-            onChange={token => { props.updateWalletJson(token); captcha.reset(); }}
-          />
-
         </Modal.Body>
       </Modal>
-    </div>
+    </React.Fragment>
   );
 }
 

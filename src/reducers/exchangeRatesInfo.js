@@ -3,7 +3,7 @@ import { exchangeRatesInfo } from '../actions/actionTypes';
 const initialState = {
   currencyExchangeRates: null,
   locEurRate: null,
-  locRateFiatAmount: 1000
+  locRateFiatAmount: 300
 };
 
 export default function reducer(state = initialState, action) {

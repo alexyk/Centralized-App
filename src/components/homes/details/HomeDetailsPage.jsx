@@ -1,203 +1,98 @@
-import { Config } from '../../../config';
-import HomeDetailsInfoSection from './HomeDetailsInfoSection';
-import HomesSearchBar from '../search/HomesSearchBar';
-import Lightbox from 'react-images';
-import { NotificationManager } from 'react-notifications';
-import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import moment from 'moment';
-import { parse } from 'query-string';
-import requester from '../../../requester';
 import { withRouter } from 'react-router-dom';
+import Lightbox from 'react-images';
+import PropTypes from 'prop-types';
+import moment from 'moment';
+import { Config } from '../../../config';
+import requester from '../../../requester';
+import SlickCarousel from 'react-slick';
+import '../../../styles/css/components/carousel-component.css';
+import HomesSearchBar from '../search/HomesSearchBar';
+import 'slick-carousel/slick/slick.css';
+import 'slick-carousel/slick/slick-theme.css';
+import ContactHostModal from '../../common/modals/ContactHostModal';
+import {
+  openLightbox,
+  closeLightbox,
+  gotoNext,
+  gotoPrevious,
+  gotoImage,
+  handleClickImage,
+  next,
+  previous,
+  calculateCheckInOuts
+} from '../common/detailsPageUtils.js';
+import { DEFAULT_LISTING_IMAGE_URL } from '../../../constants/images';
+import '../../../styles/css/components/home/details/home-details-info-section.css';
+import Facilities from '../../hotels/details/Facilities';
 
-import { INVALID_SEARCH_DATE } from '../../../constants/warningMessages.js';
-import { LONG } from '../../../constants/notificationDisplayTimes.js';
+import HomeDetailsBookingPanel from './HomeDetailsBookingPanel';
+import RoomSpaceInformationBox from '../common/RoomSpaceInformationBox';
+import RoomAccommodationBox from '../common/RoomAccommodationBox';
+import HomeDetailsRatingBox from './HomeDetailsRatingBox';
+import HomeDetailsReviewBox from './HomeDetailsReviewBox';
+import MyMapComponent from './MyMapComponent';
+
+import '../../../styles/css/components/carousel-component.css';
+import Loader from '../../common/loader';
+
+const CAROUSEL_SETTINGS = {
+  infinite: true,
+  accessibility: false,
+  speed: 500,
+  slidesToShow: 3,
+  slidesToScroll: 1,
+  responsive: [
+    {
+      breakpoint: 1024,
+      settings: {
+        slidesToShow: 1,
+      }
+    }
+  ]
+};
 
 class HomeDetailsPage extends React.Component {
   constructor(props) {
     super(props);
 
-    let countryId = '';
-    let guests = '';
-    let startDate = moment();
-    let endDate = moment().add(1, 'day');
-
-    if (this.props) {
-      let queryParams = parse(this.props.location.search);
-      if (queryParams.guests) {
-        guests = queryParams.guests;
-      }
-      if (queryParams.startDate && queryParams.endDate) {
-        startDate = moment(queryParams.startDate, 'DD/MM/YYYY');
-        endDate = moment(queryParams.endDate, 'DD/MM/YYYY');
-      }
-      if (queryParams.countryId) {
-        countryId = queryParams.countryId;
-      }
-    }
-
-    let nights = this.calculateNights(startDate, endDate);
-
     this.state = {
-      countryId: countryId,
-      searchStartDate: startDate,
-      searchEndDate: endDate,
-      calendarStartDate: startDate,
-      calendarEndDate: endDate,
-      nigths: nights,
-      guests: guests,
-      data: null,
+      listing: null,
+      roomDetails: null,
       lightboxIsOpen: false,
       currentImage: 0,
-      prices: null,
-      oldCurrency: this.props.paymentInfo.currency,
-      loaded: false,
-      userInfo: null,
-      loading: true,
+      nights: 0,
       isShownContactHostModal: false
     };
 
-    this.handleApply = this.handleApply.bind(this);
-    this.handleSearch = this.handleSearch.bind(this);
-    this.handleDatePick = this.handleDatePick.bind(this);
-    this.onChange = this.onChange.bind(this);
-    this.closeLightbox = this.closeLightbox.bind(this);
-    this.gotoNext = this.gotoNext.bind(this);
-    this.gotoPrevious = this.gotoPrevious.bind(this);
-    this.gotoImage = this.gotoImage.bind(this);
-    this.handleClickImage = this.handleClickImage.bind(this);
-    this.openLightbox = this.openLightbox.bind(this);
-    this.initializeCalendar = this.initializeCalendar.bind(this);
-    this.getUserInfo = this.getUserInfo.bind(this);
+    this.search = this.search.bind(this);
+
+    this.closeLightbox = closeLightbox.bind(this);
+    this.gotoNext = gotoNext.bind(this);
+    this.gotoPrevious = gotoPrevious.bind(this);
+    this.gotoImage = gotoImage.bind(this);
+    this.handleClickImage = handleClickImage.bind(this);
+    this.openLightbox = openLightbox.bind(this);
+
     this.openModal = this.openModal.bind(this);
     this.closeModal = this.closeModal.bind(this);
     this.sendMessageToHost = this.sendMessageToHost.bind(this);
+
+    this.next = next.bind(this);
+    this.previous = previous.bind(this);
+
+    this.calculateCheckInOuts = calculateCheckInOuts.bind(this);
   }
 
-  componentWillReceiveProps(nextProps) {
-    this.setState({ loading: true });
-    this.getUserInfo();
-  }
-
-  componentDidMount() {
-    this.initializeCalendar();
-
-    const { searchStartDate, searchEndDate } = this.state;
-    if (searchStartDate && searchEndDate) {
-      this.calculateNights(searchStartDate, searchEndDate);
-    }
-
-    this.getUserInfo();
-  }
-
-  onChange(e) {
-    this.setState({ [e.target.name]: e.target.value });
-    if (this.updateParamsMap) {
-      this.updateParamsMap(e.target.name, e.target.value);
-    }
-  }
-
-  handleSearch(e) {
-    e.preventDefault();
-
-    let queryString = '?';
-
-    queryString += 'countryId=' + this.state.countryId;
-    queryString += '&startDate=' + this.state.searchStartDate.format('DD/MM/YYYY');
-    queryString += '&endDate=' + this.state.searchEndDate.format('DD/MM/YYYY');
-    queryString += '&guests=' + this.state.guests;
-
+  search(queryString) {
     this.props.history.push('/homes/listings' + queryString);
   }
 
-  getUserInfo() {
-    if (localStorage.getItem(Config.getValue('domainPrefix') + '.auth.locktrip')) {
-      requester.getUserInfo().then(res => {
-        res.body.then(data => {
-          this.setState({
-            loaded: true,
-            userInfo: data,
-            loading: false
-          });
-        });
-      });
-    }
-    else {
-      this.setState({ loaded: true, loading: false });
-    }
-  }
-
-  handleApply(event, picker) {
-    const { startDate, endDate } = picker;
-    const prices = this.state.prices;
-    const range = prices.filter(x => x.start >= startDate && x.end < endDate);
-    const isInvalidRange = range.filter(x => !x.available).length > 0;
-    if (isInvalidRange) {
-      NotificationManager.warning(INVALID_SEARCH_DATE, 'Calendar Operations', LONG);
-      this.setState({ calendarStartDate: undefined, calendarEndDate: undefined });
-    }
-    else {
-      this.setState({
-        calendarStartDate: startDate,
-        calendarEndDate: endDate,
-      });
-
-      this.calculateNights(startDate, endDate);
-    }
-  }
-
-  handleDatePick(event, picker) {
-    this.setState({
-      searchStartDate: picker.startDate,
-      searchEndDate: picker.endDate,
-    });
-  }
-
-  openLightbox(event) {
-    event.preventDefault();
-    this.setState({
-      lightboxIsOpen: true,
-    });
-  }
-
-  closeLightbox() {
-    this.setState({
-      currentImage: 0,
-      lightboxIsOpen: false,
-    });
-  }
-
-  gotoPrevious() {
-    this.setState({
-      currentImage: this.state.currentImage - 1,
-    });
-  }
-
-  gotoNext() {
-    this.setState({
-      currentImage: this.state.currentImage + 1,
-    });
-  }
-
-  gotoImage(index) {
-    this.setState({
-      currentImage: index,
-    });
-  }
-
-  handleClickImage() {
-    if (this.state.currentImage === this.state.data.pictures.length - 1) return;
-    this.gotoNext();
-  }
-
   calculateNights(startDate, endDate) {
-    let checkIn = moment(startDate, 'DD/MM/YYYY');
-    let checkOut = moment(endDate, 'DD/MM/YYYY');
+    let diffDays = endDate.startOf('day').diff(startDate.startOf('day'), 'days');
 
-    let diffDays = checkOut.diff(checkIn, 'days');
-
-    if (checkOut > checkIn) {
+    if (endDate > startDate) {
       this.setState({ nights: diffDays });
     }
     else {
@@ -205,62 +100,14 @@ class HomeDetailsPage extends React.Component {
     }
   }
 
-  sendMessageToHost(id, message, captchaToken) {
-    this.setState({ loading: true });
+  sendMessageToHost(id, message) {
     let contactHostObj = {
       message: message
     };
 
-    requester.contactHost(id, contactHostObj, captchaToken).then(res => {
+    requester.contactHost(id, contactHostObj).then(res => {
       res.body.then(data => {
         this.props.history.push(`/profile/messages/chat/${data.conversation}`);
-      });
-    });
-  }
-
-  initializeCalendar() {
-    let now = new Date();
-    let end = new Date();
-    const DAY_INTERVAL = 90;
-    end.setUTCHours(now.getUTCHours() + 24 * DAY_INTERVAL);
-
-    requester.getListing(this.props.match.params.id).then(res => {
-
-      res.body.then(data => {
-        this.setState({ data: data });
-      });
-
-      let searchTermMap = [];
-      const startDateParam = `${now.getUTCDate()}/${now.getUTCMonth() + 1}/${now.getUTCFullYear()}`;
-      const endDateParam = `${end.getUTCDate()}/${end.getUTCMonth() + 1}/${end.getUTCFullYear()}`;
-      searchTermMap.push(
-        `listing=${this.props.match.params.id}`,
-        `startDate=${startDateParam}`,
-        `endDate=${endDateParam}`,
-        `page=${0}`,
-        `toCode=${this.props.paymentInfo.currency}`,
-        `size=${DAY_INTERVAL}`);
-
-
-      requester.getCalendarByListingIdAndDateRange(searchTermMap).then(res => {
-        res.body.then(data => {
-          let prices = [];
-          for (let dateInfo of data.content) {
-            let price = dateInfo.available ? `${this.props.paymentInfo.currencySign}${Math.round(dateInfo.price)}` : '';
-            prices.push(
-              {
-                'title': <span className="calendar-price bold">{price}</span>,
-                'start': moment(dateInfo.date, 'DD/MM/YYYY'),
-                'end': moment(dateInfo.date, 'DD/MM/YYYY'),
-                'allDay': true,
-                'price': dateInfo.price,
-                'available': dateInfo.available
-              }
-            );
-          }
-
-          this.setState({ prices: prices, calendar: data.content, oldCurrency: this.props.paymentInfo.currency });
-        });
       });
     });
   }
@@ -273,130 +120,233 @@ class HomeDetailsPage extends React.Component {
     this.setState({ isShownContactHostModal: false });
   }
 
+  getValidPictures(pictures) {
+    if (!pictures) {
+      pictures = [];
+    }
+
+    while (pictures.length < 3) {
+      pictures.push({ thumbnail: DEFAULT_LISTING_IMAGE_URL });
+    }
+
+    return pictures.map(picture => ({
+      src: Config.getValue('imgHost') + picture.thumbnail
+    }));
+  }
+
+  getExcludedDates(calendar) {
+    return calendar
+      .filter(item => item.available === false)
+      .map(item => moment(item.date, 'DD/MM/YYYY'));
+  }
+
   render() {
-    let loading, allEvents, images;
-    // if (this.state.data === null ||
-    //   this.state.prices === null ||
-    //   this.state.reservations === null ||
-    //   this.state.loaded === false) {
-    //   loading = true;
-    // } else {
-    //   allEvents = this.state.prices;
-    //   images = null;
-    //   if (this.state.data.pictures !== undefined) {
-    //     images = this.state.data.pictures.map(x => {
-    //       return { src: Config.getValue('imgHost') + x.original };
-    //     });
-    //   }
 
-    //   if (this.state.oldCurrency !== this.props.paymentInfo.currency) {
-    //     this.initializeCalendar();
-    //   }
-    // }
+    if (!this.props.listing || !this.props.calendar) {
+      return (
+        <Loader minHeight={'50vh'} />
+      );
+    }
 
-    if (this.state.data === null) {
-      loading = true;
-    } else {
-      allEvents = this.state.prices;
-      images = null;
-      if (this.state.data.pictures !== undefined) {
-        images = this.state.data.pictures.map(x => {
-          return { src: Config.getValue('imgHost') + x.original };
-        });
+    const { listing, calendar, bookingDetails } = this.props;
+
+    const {
+      property_type,
+      guests,
+      size,
+      bathroom,
+      bedrooms,
+      eventsAllowed,
+      smokingAllowed,
+      suitableForPets,
+      suitableForInfants,
+      house_rules } = bookingDetails;
+
+    const {
+      averageRating,
+      city,
+      country,
+      amenities,
+      name,
+      descriptionText,
+      reviews,
+      latitude,
+      currencyCode,
+      cleaningFee,
+      longitude } = listing;
+
+    const hasSpaceDetails = property_type || guests || size || bathroom || bedrooms;
+    const hasHouseRules = eventsAllowed || smokingAllowed || suitableForPets || suitableForInfants || house_rules;
+    const houseRules = house_rules && house_rules.split('\r\n');
+
+    const { startDate, endDate } = this.props.searchDatesInfo;
+    const checks = this.calculateCheckInOuts(listing);
+
+    const guestArray = [];
+    if (guests) {
+      for (let i = 1; i <= guests; i++) {
+        guestArray.push(i);
       }
-
-      if (this.state.oldCurrency !== this.props.paymentInfo.currency) {
-        this.initializeCalendar();
+    } else {
+      for (let i = 1; i <= 10; i++) {
+        guestArray.push(i);
       }
     }
 
-    return (
-      <div>
-        <div>
-          {/* <ListingTypeNav /> */}
-          <div className="container">
-            <HomesSearchBar
-              countryId={this.state.countryId}
-              countries={this.props.countries}
-              startDate={this.state.searchStartDate}
-              endDate={this.state.searchEndDate}
-              guests={this.state.guests}
-              onChange={this.onChange}
-              handleSearch={this.handleSearch}
-              handleDatePick={this.handleDatePick} />
-          </div>
-        </div>
+    const images = this.getValidPictures(listing.pictures);
 
-        {loading ?
-          <div className="loader"></div> :
-          <div>
-            <section className="hotel-gallery">
-              <div className="hotel-gallery-bgr" style={(this.state.data.pictures !== undefined && this.state.data.pictures.length > 0) ? { 'backgroundImage': 'url("' + Config.getValue('imgHost') + this.state.data.pictures[0].original + '")' } : { backgroundColor: '#AAA' }}>
-                <div className="container">
-                  <a onClick={(e => this.openLightbox(e))} className="btn btn-primary btn-gallery">Open Gallery</a>
-                  {images !== null && <Lightbox
-                    currentImage={this.state.currentImage}
-                    images={images}
-                    isOpen={this.state.lightboxIsOpen}
-                    onClickImage={this.handleClickImage}
-                    onClickNext={this.gotoNext}
-                    onClickPrev={this.gotoPrevious}
-                    onClickThumbnail={this.gotoImage}
-                    onClose={this.closeLightbox}
-                  />}
-                </div>
+    return (
+      <React.Fragment>
+        <div className="container">
+          <HomesSearchBar search={this.search} />
+        </div>
+        <ContactHostModal
+          id={this.props.match.params.id}
+          isActive={this.state.isShownContactHostModal}
+          closeModal={this.closeModal}
+          handleContactHost={this.sendMessageToHost} />
+
+        <div className="home-details-container">
+          <section className="hotel-gallery">
+            {images && <Lightbox
+              currentImage={this.state.currentImage}
+              images={images}
+              isOpen={this.state.lightboxIsOpen}
+              onClickImage={this.handleClickImage}
+              onClickNext={this.gotoNext}
+              onClickPrev={this.gotoPrevious}
+              onClickThumbnail={this.gotoImage}
+              onClose={this.closeLightbox}
+            />}
+            <div className='hotel-details-carousel'>
+              <SlickCarousel
+                ref={c => (this.slider = c)}
+                {...CAROUSEL_SETTINGS}>
+                {images && images.map((image, index) => {
+                  return (
+                    <div key={index} onClick={(e) => this.openLightbox(e, image.index)}>
+                      <div className='slide' style={{ 'backgroundImage': 'url("' + image.src + '")' }}></div>
+                    </div>
+                  );
+                })}
+              </SlickCarousel>
+            </div>
+            <div className="main-carousel">
+              <div className="carousel-nav">
+                <button className="prev icon-arrow-left" onClick={this.previous}></button>
+                <button className="next icon-arrow-right" onClick={this.next}></button>
               </div>
-            </section>
-            <nav id="hotel-nav">
-              <div className="container">
+            </div>
+          </section>
+          <nav className="hotel-nav" id="hotel-nav">
+            <div className="hotel-nav-box">
+              <div className="nav-box">
                 <ul className="nav navbar-nav">
-                  <li>
-                    <a href="#overview">Overview</a>
-                  </li>
-                  <li>
-                    <a href="#facilities">Facilities</a>
-                  </li>
-                  {this.state.data.descriptionsAccessInfo &&
-                    <li>
-                      <a href="#reviews">Access Info</a>
-                    </li>
+                  <li><a href="#overview">Overview</a></li>
+                  <li><a href="#facilities">Facilities</a></li>
+                  {reviews && reviews.length > 0 &&
+                    <li><a href="#reviews">User Reviews</a></li>
                   }
-                  {this.state.data.reviews && this.state.data.reviews.lenght > 0 &&
-                    <li>
-                      <a href="#reviews">Reviews</a>
-                    </li>
-                  }
-                  <li>
-                    <a href="#map">Location</a>
-                  </li>
+                  <li><a href="#location">Location</a></li>
                 </ul>
               </div>
-            </nav>
+              <div className="share-box">
+                <p><img alt="share" src={`${Config.getValue('basePath')}/images/icon-share.png`} /> Share</p>
+                <p><img alt="save" src={`${Config.getValue('basePath')}/images/icon-heart.png`} /> Save</p>
+              </div>
+              <div className="contact-box">
+                <button onClick={this.openModal}>Contact Host</button>
+              </div>
+            </div>
+          </nav>
 
-            <HomeDetailsInfoSection
-              allEvents={allEvents}
-              calendar={this.state.calendar}
-              nights={this.state.nights}
-              onApply={this.handleApply}
-              startDate={this.state.calendarStartDate}
-              endDate={this.state.calendarEndDate}
-              data={this.state.data}
-              prices={this.state.prices}
-              isLogged={this.props.userInfo.isLogged}
-              loading={this.state.loading}
-              openModal={this.openModal}
-              closeModal={this.closeModal}
-              isShownContactHostModal={this.state.isShownContactHostModal}
-              sendMessageToHost={this.sendMessageToHost} />
-          </div>
-        }
-      </div>
+          {(!bookingDetails || !checks)
+            ? <div className="loader"></div>
+            : <section className="home-container">
+              <div className="home-box" id="home-box">
+                <div className="home-content" id="overview">
+                  <p className="location">{city.name} &bull; {country.name}</p>
+                  <h1>{name}</h1>
+                  {averageRating > 0 && <HomeDetailsRatingBox rating={averageRating} reviewsCount={0} />}
+
+                  {hasSpaceDetails &&
+                    <RoomSpaceInformationBox
+                      property_type={property_type}
+                      guests={guests}
+                      size={size}
+                      bathroom={bathroom}
+                      bedrooms={bedrooms} />
+                  }
+
+                  <div className="list-hotel-description">
+                    <h2>Description</h2>
+                    <hr />
+                    {descriptionText}
+                  </div>
+
+                  <Facilities facilities={amenities} />
+
+                  {hasHouseRules &&
+                    <div className="hotel-rules-container">
+                      <h2>House Rules</h2>
+                      <hr />
+                      {eventsAllowed && <p>Events allowed</p>}
+                      {smokingAllowed && <p>Smoking allowed</p>}
+                      {suitableForInfants && <p>Suitable for infants</p>}
+                      {suitableForPets && <p>Suitable for pets</p>}
+                      {houseRules && houseRules.map((rule, index) => {
+                        return (<p key={index}>{rule}</p>);
+                      })}
+                    </div>
+                  }
+
+                  <RoomAccommodationBox
+                    checkInStart={checks.checkInStart}
+                    checkInEnd={checks.checkInEnd}
+                    checkOutStart={checks.checkOutStart}
+                    checkOutEnd={checks.checkOutEnd} />
+
+                  {reviews && reviews.length > 0 &&
+                    <div id="reviews">
+                      <h2>User Rating &amp; Reviews</h2>
+                      {reviews.map((item, i) => {
+                        return (
+                          <HomeDetailsReviewBox
+                            key={i}
+                            rating={item.average}
+                            reviewText={item.comments}
+                          />
+                        );
+                      })}
+                      <hr />
+                    </div>
+                  }
+
+                  <div id="location">
+                    <h2>Location</h2>
+                    <hr />
+                    <MyMapComponent key="map" latitude={latitude} longitude={longitude} />
+                  </div>
+                </div>
+
+                <HomeDetailsBookingPanel
+                  startDate={startDate}
+                  endDate={endDate}
+                  calendar={calendar}
+                  guestArray={guestArray}
+                  cleaningFee={cleaningFee}
+                  currencyCode={currencyCode}
+                />
+              </div>
+            </section>
+          }
+        </div>
+      </React.Fragment>
     );
   }
 }
 
 HomeDetailsPage.propTypes = {
-  countries: PropTypes.array,
   match: PropTypes.object,
 
   // start Router props
@@ -406,14 +356,16 @@ HomeDetailsPage.propTypes = {
   // start Redux props
   dispatch: PropTypes.func,
   userInfo: PropTypes.object,
-  paymentInfo: PropTypes.object
+  paymentInfo: PropTypes.object,
+  searchDatesInfo: PropTypes.object
 };
 
 function mapStateToProps(state) {
-  const { userInfo, paymentInfo } = state;
+  const { userInfo, paymentInfo, searchDatesInfo } = state;
   return {
     userInfo,
-    paymentInfo
+    paymentInfo,
+    searchDatesInfo
   };
 }
 

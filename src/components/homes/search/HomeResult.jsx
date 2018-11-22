@@ -2,23 +2,29 @@ import { Link, withRouter } from 'react-router-dom';
 
 import { Config } from '../../../config';
 import ListingItemPictureCarousel from '../../common/listing/ListingItemPictureCarousel';
-import ListingItemRatingBox from '../../common/listing/ListingItemRatingBox';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { RoomsXMLCurrency } from '../../../services/utilities/roomsXMLCurrency';
 import LocPrice from '../../common/utility/LocPrice';
+import Rating from '../../common/rating';
+import { DEFAULT_LISTING_IMAGE_URL } from '../../../constants/images';
 
 function HomeResult(props) {
   const { currency, currencySign } = props.paymentInfo;
-  const { cityName, countryName, prices, currency_code, defaultDailyPrice, id, name, reviewsCount, averageRating, description } = props.listing;
-  let { pictures } = props.listing;
-  const listingPrice = prices && currency === currency_code ? parseInt(defaultDailyPrice, 10).toFixed() : parseInt(prices[currency], 10).toFixed(2);
+  const { cityName, countryName, prices, currency_code, defaultDailyPrice, id, name, averageRating, description } = props.listing;
+  const listingPrice = prices && currency === currency_code ? parseFloat(defaultDailyPrice, 10).toFixed() : parseFloat(prices[currency], 10).toFixed(2);
   const listingPriceInRoomsCurrency = prices && prices[RoomsXMLCurrency.get()];
-
+  
+  let pictures = props.listing.pictures || [];
   if (typeof pictures === 'string') {
     pictures = JSON.parse(pictures).map(img => { return { thumbnail: Config.getValue('imgHost') + img.thumbnail }; });
   }
+
+  if (pictures.length < 1) {
+    pictures.push({ thumbnail: Config.getValue('imgHost') + DEFAULT_LISTING_IMAGE_URL });
+  }
+
   return (
     <div className="list-hotel">
       <div className="list-image">
@@ -26,7 +32,7 @@ function HomeResult(props) {
       </div>
       <div className="list-content">
         <h2><Link to={`/homes/listings/${id}${props.location.search}`}>{name}</Link></h2>
-        <ListingItemRatingBox rating={averageRating} reviewsCount={reviewsCount} />
+        <Rating rating={averageRating} />
         <div className="clearfix"></div>
         <p>{cityName}, {countryName}</p>
         <div className="list-hotel-text">

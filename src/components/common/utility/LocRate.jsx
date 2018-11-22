@@ -1,7 +1,7 @@
 import React, { PureComponent, Fragment } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { LocPriceWebSocket } from '../../../services/socket/locPriceWebSocket';
+import { ExchangerWebsocket } from '../../../services/socket/exchangerWebsocket';
 import { CurrencyConverter } from '../../../services/utilities/currencyConverter';
 
 const DEFAULT_CRYPTO_CURRENCY = 'EUR';
@@ -14,17 +14,17 @@ class LocRate extends PureComponent {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (!nextProps.exchangerSocketInfo.isLocPriceWebsocketConnected && this.isSendMessage) {
+    if (!nextProps.exchangerSocketInfo.isExchangerWebsocketConnected && this.isSendMessage) {
       this.isSendMessage = false;
     }
-    if (nextProps.exchangerSocketInfo.isLocPriceWebsocketConnected && !this.isSendMessage) {
+    if (nextProps.exchangerSocketInfo.isExchangerWebsocketConnected && !this.isSendMessage) {
       this.isSendMessage = true;
-      LocPriceWebSocket.sendMessage(this.props.exchangeRatesInfo.locRateFiatAmount, null, { fiatAmount: this.props.exchangeRatesInfo.locRateFiatAmount });
+      ExchangerWebsocket.sendMessage(this.props.exchangeRatesInfo.locRateFiatAmount, 'getLocPrice', { fiatAmount: this.props.exchangeRatesInfo.locRateFiatAmount });
     }
   }
 
   componentWillUnmount() {
-    LocPriceWebSocket.sendMessage(this.props.exchangeRatesInfo.locRateFiatAmount, 'unsubscribe');
+    ExchangerWebsocket.sendMessage(this.props.exchangeRatesInfo.locRateFiatAmount, 'unsubscribe');
   }
 
   render() {
@@ -52,21 +52,21 @@ class LocRate extends PureComponent {
 }
 
 LocRate.propTypes = {
-  paymentInfo: PropTypes.object,
-
   // Redux props
+  paymentInfo: PropTypes.object,
   exchangerSocketInfo: PropTypes.object,
   exchangeRatesInfo: PropTypes.object,
   locAmountsInfo: PropTypes.object
 };
 
 function mapStateToProps(state) {
-  const { exchangerSocketInfo, exchangeRatesInfo, locAmountsInfo } = state;
+  const { exchangerSocketInfo, exchangeRatesInfo, locAmountsInfo, paymentInfo } = state;
 
   return {
     exchangerSocketInfo,
     exchangeRatesInfo,
-    locAmountsInfo
+    locAmountsInfo,
+    paymentInfo
   };
 }
 

@@ -1,5 +1,3 @@
-import '../../../../styles/css/components/captcha/captcha-container.css';
-
 import { NavLink, withRouter } from 'react-router-dom';
 
 import AdminNav from '../AdminNav';

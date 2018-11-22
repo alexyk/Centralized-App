@@ -1,7 +1,7 @@
 import React, { PureComponent, Fragment } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { setSeconds, reset, setInitialSeconds } from '../../../actions/locPriceUpdateTimerInfo';
+import { setSeconds, reset } from '../../../actions/locPriceUpdateTimerInfo';
 
 class LocPriceUpdateTimer extends PureComponent {
   constructor(props) {
@@ -13,8 +13,14 @@ class LocPriceUpdateTimer extends PureComponent {
   }
 
   componentDidMount() {
-    this.props.dispatch(setInitialSeconds(this.props.initialSeconds));
     this.timer = setInterval(this.tick, 1000);
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.seconds > this.props.seconds) {
+      clearInterval(this.timer);
+      this.timer = setInterval(this.tick, 1000);
+    }
   }
 
   componentWillUnmount() {
@@ -28,13 +34,11 @@ class LocPriceUpdateTimer extends PureComponent {
   }
 
   render() {
-    return null;
+    return <Fragment />;
   }
 }
 
 LocPriceUpdateTimer.propTypes = {
-  initialSeconds: PropTypes.number,
-
   // Redux props
   dispatch: PropTypes.func,
   seconds: PropTypes.number

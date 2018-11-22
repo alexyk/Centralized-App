@@ -11,7 +11,7 @@ let captcha = undefined;
 function AirdropLoginModal(props) {
 
   return (
-    <div>
+    <React.Fragment>
       <Modal show={props.isActive} onHide={() => props.closeModal(AIRDROP_LOGIN)} className="modal fade myModal">
         <Modal.Header>
           <h1>Login airdrop</h1>
@@ -50,7 +50,7 @@ function AirdropLoginModal(props) {
         sitekey={Config.getValue('recaptchaKey')}
         onChange={(token) => { props.handleLogin(token); captcha.reset(); }}
       />
-    </div>
+    </React.Fragment>
   );
 }
 

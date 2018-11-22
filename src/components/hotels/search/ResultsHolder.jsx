@@ -2,7 +2,6 @@ import '../../../styles/css/components/search-result-component.css';
 
 import PropTypes from 'prop-types';
 import React from 'react';
-import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import Result from './Result';
 import NoEntriesMessage from '../../common/messages/NoEntriesMessage';
 
@@ -25,7 +24,6 @@ function ResultsHolder(props) {
     return <Result
       key={hotel.id}
       hotel={hotel}
-      exchangeRates={props.exchangeRates}
       nights={props.nights}
       allElements={props.allElements}
       price={hotel.price} />;
@@ -33,12 +31,7 @@ function ResultsHolder(props) {
 
   return (
     <div className="results-holder">
-      <ReactCSSTransitionGroup
-        transitionName="example"
-        transitionEnterTimeout={500}
-        transitionLeaveTimeout={500}>
-        {hotels}
-      </ReactCSSTransitionGroup>
+      {hotels}
     </div>
   );
 }
@@ -46,7 +39,6 @@ function ResultsHolder(props) {
 ResultsHolder.propTypes = {
   hotels: PropTypes.any,
   allElements: PropTypes.bool,
-  exchangeRates: PropTypes.object,
   nights: PropTypes.number
 };
 

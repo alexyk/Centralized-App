@@ -1,6 +1,333 @@
-#hotel-info {
-  .btn-home-details-info-section-container {
-    display: flex;
-    justify-content: space-between;
+@import "../../../vendors/include-media";
+
+.home-details-container {
+  margin-top: 15px;
+}
+
+.home-container {
+  padding: 20px 0;
+  .home-box {
+    max-width: 1200px;
+    width: 100%;
+    padding: 0 15px;
+    margin: 0 auto;
+    display: grid;
+    display: -ms-grid;
+    grid-template-columns: 60% 40%;
+    -ms-grid-columns: 60% 40%;
+    @include media("<=desktop") {
+      grid-template-columns: auto;
+    }
+    .home-rating {
+      display: flex;
+      align-items: center;
+      @include media("<tablet") {
+        display: grid;
+        grid-template-columns: auto auto;
+      }
+      p {
+        margin-right: 15px;
+        @include media("<tablet") {
+          margin-right: 5px;
+        }
+      }
+      .home-rating-count,
+      .home-rating-reviews {
+        font-size: 18px;
+        color: #898c8d;
+        @include media("<=tablet") {
+          font-size: 16px;
+        }
+        .max-rating {
+          font-size: 16px;
+        }
+        .fa.fa-star::before {
+          content: "\E919";
+          color: white;
+        }
+        .fa.fa-star.full::before {
+          color: #a1c5bf;
+        }
+      }
+      .home-rating-stars {
+        margin-left: 15px;
+        @include media("<=tablet") {
+          margin-left: 5px;
+        }
+      }
+    }
+    h2 {
+      margin: 20px 0 10px 0;
+    }
+    .icons-container-space div {
+      border: 1px solid #d3d3d3;
+      border-radius: 4px;
+      padding: 20px;
+      @include media("<=desktop") {
+        padding: 10px 6px;
+      }
+      @include media("<tablet") {
+        padding: 10px 2px;
+      }
+    }
+    .home-content {
+      -ms-grid-column: 1;
+      grid-column: 1;
+    }
+    .home-booking-panel {
+      -ms-grid-column: 2;
+      margin-left: 15%;
+      @include media("<=desktop") {
+        margin-top: 15px;
+      }
+      .box {
+        border-radius: 4px;
+        background-color: #ffffff;
+        border: 1px solid #cbcbcb;
+        padding: 20px;
+        .default-price {
+          font-size: 20px;
+          color: #1f2427;
+          font-weight: 300;
+          .main-fiat {
+            font-size: 34px;
+            font-weight: normal;
+          }
+        }
+        .booking-dates {
+          display: grid;
+          display: -ms-grid;
+          grid-template-columns: 80% 20%;
+          -ms-grid-columns: 80% 20%;
+          margin: 10px 0;
+          @include media("<=tablet") {
+            grid-template-columns: auto;
+          }
+          > div {
+            border: 1px solid #cccccc;
+            border-radius: 4px;
+            padding: 10px 5px;
+          }
+          .days-of-stay {
+            margin-left: 10%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            text-align: center;
+            padding: 3px 9px;
+            margin-bottom: 10px;
+            border: 1px solid #cccccc99;
+            border-radius: 4px;
+            margin-bottom: 0;
+            -ms-grid-column: 2;
+            @include media("<=desktop") {
+              display: none;
+            }
+            span {
+              font-size: 12px;
+            }
+            .icon-moon {
+              font-size: 18px;
+              margin-bottom: 5px;
+            }
+          }
+        }
+        .booking-guests {
+          position: relative;
+          select {
+            padding: 17px 18px;
+            border: 1px solid #cccccc99;
+            border-radius: 4px;
+            margin: 5px 0;
+          }
+          &:after {
+            position: absolute;
+            content: "\e900";
+            font-family: "icomoon" !important;
+            padding: 0 8px;
+            font-size: 5px;
+            right: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 1;
+            text-align: center;
+            pointer-events: none;
+            box-sizing: border-box;
+            @include media(">=desktop") {
+              font-size: 7px;
+            }
+          }
+        }
+        .common-datepicker {
+          .check-in, .check-in:hover {
+            border: none;
+          }
+          .check-in-popper {
+            margin-left: 0;
+          }
+          .check-out-popper {
+            left: -153px !important;
+          }
+        }
+        .without-fees div,
+        .cleaning-fee div,
+        .total div {
+          display: inline-block;
+          margin: 0;
+          font-size: 18px;
+          color: #1f2427;
+          font-weight: 300;
+        }
+        .without-fees div:last-of-type,
+        .cleaning-fee div:last-of-type,
+        .total div:last-of-type {
+          margin-left: auto;
+        }
+        .total div {
+          font-weight: normal;
+        }
+        .without-fees,
+        .cleaning-fee,
+        .total {
+          display: flex;
+          margin: 15px 0;
+        }
+        .pay-in {
+          display: block;
+          width: 100%;
+          letter-spacing: 1px;
+          font-size: 18px;
+          color: #ffffff;
+          background-color: #d77961;
+          border-radius: 4px;
+          padding: 20px 0;
+          margin: 15px 0;
+          text-align: center;
+          &.disabled {
+            cursor: default;
+            opacity: 0.7;
+          }
+        }
+        .booking-helper {
+          font-size: 14px;
+          text-align: center;
+          margin: 0;
+          color: #898c8d;
+        }
+        .fiat-price-box > div  p:last-of-type {
+          
+        }
+      }
+    }
+  }
+  h1 {
+    font-size: 38px;
+    font-weight: 300;
+  }
+  .location {
+    font-size: 16px;
+    margin: 0;
+  }
+  .daterangepicker {
+    width: 23.2% !important;
+    .table-condensed > tbody > tr > td {
+      padding: 10px !important;
+    }
+  }
+}
+.hotel-nav {
+  background-color: #ffffff;
+  .hotel-nav-box {
+    max-width: 1200px;
+    width: 100%;
+    padding: 10px 0;
+    margin: 0 auto;
+    display: grid;
+    display: -ms-grid;
+    grid-template-columns: 60% 20% 20%;
+    -ms-grid-columns: 60% 20% 20%;
+    @include media("<=tablet") {
+      grid-template-columns: auto;
+    }
+    // remove this when remove bootstrap
+    .navbar-nav {
+      margin: 7.5px 0;
+    }
+    .nav-box {
+      grid-column: 1;
+      -ms-grid-column: 1;
+    }
+    a {
+      font-size: 20px;
+      margin: 10px 0;
+      padding: 5px 15px;
+      border-right: 1px solid #eff1f3;
+    }
+    .share-box {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      -ms-grid-column: 2;
+      p {
+        display: flex;
+        align-items: center;
+        font-size: 20px;
+        margin: 0;
+        margin-right: 15px;
+        img {
+          margin-right: 5px;
+        }
+      }
+      @include media("<=tablet") {
+        display: none;
+      }
+    }
+    .contact-box {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      -ms-grid-column: 3;
+      button {
+        font-size: 20px;
+        color: #ffffff;
+        background-color: #d77961;
+        border-radius: 4px;
+        letter-spacing: 1px;
+        padding: 10px 15px;
+        @include media("<=tablet") {
+          width: 95%;
+        }
+      }
+    }
+  }
+}
+
+.sticky {
+  position: fixed;
+  top: 100px;
+}
+
+.sticky-nav {
+  position: fixed;
+  top: 0;
+  z-index: 999;
+}
+@include media("<=desktop") {
+  .daterangepicker.ltr .left .daterangepicker_input {
+    padding-right: 0;
+  }
+  .daterangepicker.ltr .calendar.left .calendar-table {
+    padding: 0 15px;
+  }
+  .daterangepicker.ltr .calendar.right .calendar-table {
+    padding: 0 15px;
+  }
+}
+
+.datepicker {
+  display: grid;
+  grid-template-columns: auto auto;
+  input[type="text"] {
+    padding: 0;
   }
 }

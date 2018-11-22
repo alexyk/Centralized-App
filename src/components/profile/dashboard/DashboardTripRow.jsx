@@ -7,6 +7,25 @@ import HotelIcon from '../../../styles/images/icon-hotel.png';
 
 import '../../../styles/css/components/profile/dashboard/dashboard-trips.css';
 
+const STATUS = {
+  DONE: 'COMPLETE',
+  CONFIRMED: 'PENDING',
+  FAIL: 'BOOKING FAILED',
+  FAILED: 'BOOKING FAILED',
+  PENDING: 'PENDING',
+  QUEUED: 'PENDING',
+  QUEUED_FOR_CONFIRMATION: 'PENDING',
+  CANCELLED: 'CANCELLED',
+  PENDING_SAFECHARGE_CONFIRMATION: 'PENDING'
+};
+
+const STATUS_TOOLTIP = {
+  'COMPLETE': 'Your reservation is complete',
+  'PENDING': 'Contact us if status is still Pending after 30 minutes',
+  'BOOKING FAILED': 'Your booking failed please contact us',
+  'CANCELLED': 'You canceled your reservation'
+};
+
 function DashboardTripRow(props) {
   const getHostName = (name) => {
     if (name.length <= 50) {
@@ -16,8 +35,8 @@ function DashboardTripRow(props) {
   };
 
   const extractDatesData = (trip) => {
-    const startDateMoment = moment(trip.displayStartDate, 'DD MMM, YYYY');
-    const endDateMoment = moment(trip.displayEndDate, 'DD MMM, YYYY');
+    const startDateMoment = moment(trip.displayStartDate, 'DD MMM, YYYY').utc();
+    const endDateMoment = moment(trip.displayEndDate, 'DD MMM, YYYY').utc();
 
     const checkIn = {
       day: startDateMoment.format('DD'),
@@ -35,17 +54,20 @@ function DashboardTripRow(props) {
   };
 
   const dates = extractDatesData(props.trip);
+  const status = STATUS[props.trip.status];
+  const statusMessage = STATUS_TOOLTIP[status];
+  const { hostName, userImage, listingName, error, booking_id } = props.trip; 
 
   return (
     <ProfileFlexContainer styleClass={`flex-container-row ${props.styleClass}`}>
       <div className="flex-row-child dashboard-image">
-        <img className="image-host" src={`${Config.getValue('imgHost')}${props.trip.userImage}`} alt="user-profile" />
+        <img className="image-host" src={`${Config.getValue('imgHost')}${userImage}`} alt="user-profile" />
       </div>
       <div className="flex-row-child dashboard-host">
         <img className="icon" src={HotelIcon} alt="hotel" />
         <div className="content-row">
-          <div className="host-name">{getHostName(props.trip.hostName)}</div>
-          <div>{props.trip.listingName}</div>
+          <div className="host-name">{getHostName(hostName)}</div>
+          <div>{listingName}</div>
         </div>
       </div>
       <div className="flex-row-child dashboard-dates">
@@ -55,15 +77,14 @@ function DashboardTripRow(props) {
         </div>
       </div>
       <div className="flex-row-child dashboard-status">
-        {
-          <span className="status">{props.capitalize(props.trip.status != null && props.trip.status.length > 0 ? props.trip.status : 'PENDING')}</span>
+        {status &&
+          <span className="status">{status}</span>
         }
-        <span>&nbsp;</span>
-        {props.trip.status && props.trip.status.toUpperCase() === 'FAILED' &&
-          <span className="icon-question" title={props.trip.error ? props.trip.error : 'Transaction failed.'}></span>
+        {status &&
+          <span className="icon-question" tooltip={error ? error : statusMessage}></span>
         }
-        {props.trip.status && props.trip.status.toUpperCase() === 'DONE' &&
-          <div className="reference">Reference No.: {props.trip.booking_id}</div>
+        {status && status === 'COMPLETE' &&
+          <div>Reference No.: {booking_id}</div>
         }
       </div>
     </ProfileFlexContainer>

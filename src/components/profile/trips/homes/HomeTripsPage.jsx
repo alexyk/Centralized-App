@@ -1,10 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Link } from 'react-router-dom';
 import { NotificationManager } from 'react-notifications';
-import ReCAPTCHA from 'react-google-recaptcha';
 
-import { Config } from '../../../../config';
 import CancellationModal from '../../../common/modals/CancellationModal';
 import Pagination from '../../../common/pagination/Pagination';
 import requester from '../../../../requester';
@@ -34,7 +31,6 @@ class HomeTripsPage extends React.Component {
     this.onChange = this.onChange.bind(this);
     this.openModal = this.openModal.bind(this);
     this.closeModal = this.closeModal.bind(this);
-    this.onTripCancel = this.onTripCancel.bind(this);
     this.onTripSelect = this.onTripSelect.bind(this);
   }
 
@@ -61,15 +57,11 @@ class HomeTripsPage extends React.Component {
     });
   }
 
-  onTripCancel() {
-    this.cancelCaptcha.execute();
-  }
-
-  cancelTrip(captchaToken) {
+  cancelTrip() {
     const id = this.state.selectedTripId;
     const message = this.state.cancellationText;
     let messageObj = { message: message };
-    requester.cancelTrip(id, messageObj, captchaToken).then(res => {
+    requester.cancelTrip(id, messageObj).then(res => {
       res.body.then(data => {
         if (res.success) {
           this.componentDidMount();
@@ -133,12 +125,6 @@ class HomeTripsPage extends React.Component {
 
     return (
       <div className="my-reservations">
-        <ReCAPTCHA
-          ref={el => this.cancelCaptcha = el}
-          size="invisible"
-          sitekey={Config.getValue('recaptchaKey')}
-          onChange={token => { this.cancelTrip(token); this.cancelCaptcha.reset(); }} />
-
         <CancellationModal
           name={'showCancelTripModal'}
           value={this.state.cancellationText}
@@ -147,7 +133,7 @@ class HomeTripsPage extends React.Component {
           onChange={this.onChange}
           isActive={this.state.showCancelTripModal}
           onClose={this.closeModal}
-          onSubmit={this.onTripCancel} />
+          onSubmit={this.cancelTrip} />
 
         <section id="profile-my-reservations">
           <div>

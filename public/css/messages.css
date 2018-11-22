@@ -1,12 +1,13 @@
-.unread-messages-box {
+/* .unread-messages-box {
   background: url('../images/mail-unread.png');
   width: 36px;
   height: 26px;
   position: relative;
+  top: -5px;
 }
 .unread-messages-box span {
   font-size: 10px;
-  top: -2px;
+  top: 2px;
   left: 26px;
   position: absolute;
   color: white;
@@ -16,4 +17,5 @@
   background: url('../images/not-mail-unread.png');
   width: 29px;
   height: 21px;
-}
+  top: 0px;
+} */

@@ -6,7 +6,7 @@ import '../../../styles/css/components/modals/modal.css';
 
 function CancellationModal(props) {
   return (
-    <div>
+    <React.Fragment>
       <Modal show={props.isActive} onHide={e => props.onClose(props.name, e)} className="modal fade myModal">
         <Modal.Header>
           <h1>{props.title}</h1>
@@ -15,13 +15,13 @@ function CancellationModal(props) {
         <Modal.Body>
           <form onSubmit={(e) => { e.preventDefault(); props.onSubmit(); props.onClose(props.name); }}>
             <div className="modal-input-label">{props.text}</div>
-            <textarea rows="4" name="cancellationText" value={props.value} onChange={props.onChange}></textarea>
+            <textarea rows="4" name="cancellationText" value={props.value} onChange={props.onChange} required></textarea>
             <button type="submit" className="btn btn-primary">Send message</button>
             <div className="clearfix"></div>
           </form>
         </Modal.Body>
       </Modal>
-    </div>
+    </React.Fragment>
   );
 }
 

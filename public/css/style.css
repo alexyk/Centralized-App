@@ -73,7 +73,6 @@ header form button {
 
 #location-select {
   font-size: 16px;
-  height: 36px;
   text-align-last: center;
 }
 
@@ -142,10 +141,6 @@ header form button {
     display: none;
 }
 
-#main-nav {
-    background: #fff;
-}
-
 .session-nav-user-thumb img {
     display: inline-block;
     vertical-align: middle;
@@ -155,24 +150,7 @@ header form button {
     margin-right: -15px;
 }
 
-#main-nav .navbar-nav a {
-    font-size: 18px;
-    border-radius: 0;
-}
 
-#main-nav .navbar-nav .first-nav-button a {
-    border-radius: 0;
-    border-left: 1px solid #f0f1f3;
-    border-right: 1px solid #f0f1f3;
-    margin-left: 0;
-    padding: 25px 25px;
-}
-
-#main-nav .navbar-nav .first-nav-button a i {
-    float: left;
-    margin-top: -6px;
-    margin-right: 10px;
-}
 
 #second-nav {
     background: none;
@@ -285,18 +263,6 @@ header form button {
     border: 1px solid #cccccc;
     border-radius: 4px;
     padding: 10px;
-}
-
-.navbar {
-    border-radius: 0;
-    border: 0;
-    margin-bottom: 0;
-    background-color: #fff;
-    border-bottom: 0.1px solid #ccc;
-}
-
-.navbar-brand {
-    margin-top: 0;
 }
 
 /* .form-control {
@@ -563,171 +529,6 @@ button.disabled:hover {
     width: 100%;
 }
 
-#hotel-nav {
-    background: #fff;
-}
-
-#hotel-nav a {
-    font-size: 18px;
-    padding-top: 20px;
-    padding-bottom: 20px;
-}
-
-#hotel-info .hotel-content {
-    float: left;
-    width: 100%;
-}
-
-#hotel-info #hotel-section {
-    float: none;
-    width: 100%;
-}
-
-#hotel-info .hotel-chekin {
-    float: left;
-    width: 45%;
-}
-
-#hotel-info .hotel-chekin-box {
-    background: #223843;
-    margin-top: -60px;
-    border-bottom-left-radius: 4px;
-    border-bottom-right-radius: 4px;
-    padding: 15px;
-}
-
-#hotel-info h1 {
-    margin: 30px 0 10px 0;
-}
-
-#hotel-info .list-hotel-rating {
-    color: #898c8d;
-    font-size: 18px;
-}
-
-#hotel-info .list-hotel-rating div {
-    float: left;
-    margin-right: 15px;
-}
-
-#hotel-info .empty-star {
-    background: url(../images/icon-star-filter-g.png) center no-repeat;
-    display: block;
-    width: 20px;
-    height: 20px;
-    float: left;
-    margin-top: 2px;
-}
-
-#hotel-info .full-star {
-    background: url(../images/icon-star-filter.png) center no-repeat;
-    display: block;
-    width: 20px;
-    height: 20px;
-    float: left;
-    margin-top: 2px;
-}
-
-#hotel-info .list-hotel-description {
-    color: #54575a;
-    margin: 5px 0 15px 0;
-}
-
-#hotel-info .list-hotel-description-box {
-    white-space: pre-line;
-}
-
-#hotel-info hr {
-    border-top: 1px solid #ccc;
-    margin: 10px 0 30px 0;
-}
-
-/* .hotel-content .facilities {
-  margin-bottom: 10px;
-} */
-
-/* .hotel-content .facilities .icons {
-  margin-bottom: 20px;
-} */
-
-.hotel-content .hotel-extras-list {
-    margin: 10px 0;
-}
-
-/* .icon-facilities {
-    display: block;
-    float: left;
-    margin-right: 20px;
-}
-
-.icon-facilities .icon-image {
-    display: block;
-    width: 70px;
-    height: 70px;
-    background-color: #fff;
-    border: 1px solid #cccccc;
-    border-radius: 2px;
-}
-
-.icon-facilities .icon-extend {
-  display: block;
-  width: 70px;
-  height: 70px;
-  font-size: 30px;
-  font-weight: 100;
-  background: none;
-  border: none;
-  outline: none;
-  color: #D87A61;
-} */
-
-.hotel-chekin-box .has-feedback-left .form-control-feedback {
-    left: 0;
-    right: auto;
-    margin: 16px 0 0 12px;
-}
-
-.hotel-chekin-box .btn-primary {
-    width: 100%
-}
-
-.hotel-chekin-box .select-person {
-    background: #fff;
-    border-radius: 4px;
-    margin-bottom: 15px;
-}
-
-.hotel-top-price {
-    font-size: 20px;
-    color: #fff;
-    margin: 0 0 20px 0;
-}
-
-.hotel-top-price span {
-    font-size: 30px;
-    font-family: 'FuturaStd-Medium', sans-serif;
-}
-
-.hotel-second-price {
-    font-size: 20px;
-    color: #fff;
-    margin: 0 0 20px 0;
-    display: inline-block;
-}
-
-.hotel-second-price>span {
-    color: #d87a61;
-}
-
-.hotel-second-price span.total-price {
-    font-size: 30px;
-    font-family: 'FuturaStd-Medium', sans-serif;
-}
-
-.hotel-second-price .hotel-search-nights {
-    display: inline-block;
-}
-
 /* footer {
     background: #223843;
     color: #fff;
@@ -825,44 +626,6 @@ footer .currency-switcher {
     padding-bottom: 0;
 }
 
-#main-nav.home_page {
-    background: transparent url(../images/bgr-home-new.jpg) no-repeat top center;
-    background-size: cover;
-    min-height: 500px;
-}
-
-
-#main-nav #second-nav {
-    background-color: transparent;
-}
-
-#main-nav #second-nav .navbar-nav a {
-    font-size: 18px;
-    border-radius: 0;
-    font-weight: 300;
-    border-bottom: 4px solid transparent !important;
-    background-color: transparent;
-    color: #fff;
-    padding: 15px 25px;
-}
-
-#main-nav #second-nav .navbar-nav a:hover,
-#main-nav #second-nav .navbar-nav li a.active {
-    font-size: 18px;
-    border-radius: 0;
-    /* font-weight: 400; */
-    color: #fff;
-    border-bottom: 4px solid #d87a61 !important;
-    background-color: transparent;
-    padding: 15px 25px;
-}
-
-#main-nav .absolute_box {
-    bottom: 0;
-    margin-bottom: 100px;
-    position: absolute;
-}
-
 #search-bar {
   max-width: 1170px;
   background: #fff;
@@ -871,12 +634,6 @@ footer .currency-switcher {
   border-radius: 5px;
   margin: 0 auto;
   /* box-shadow: 0 0 40px #223843; */
-}
-
-#main-nav #search-bar .form-group {
-    margin-bottom: 0;
-    margin-right: 5px;
-    flex-grow: 1;
 }
 
 /* #localization-nav div.container {
@@ -2192,9 +1949,6 @@ li.dropdown {
     .home_page h2.home_title {
         font-size: 22px;
     }
-    #main-nav #second-nav .navbar-nav a {
-        padding-bottom: 2px;
-    }
 }
 
 #popular-hotels-box {
@@ -2281,11 +2035,6 @@ li.dropdown {
 .list-hotel-rating {
     color: #898c8d;
     font-size: 14px;
-}
-
-.list-hotel-rating div {
-    float: left;
-    margin-right: 10px;
 }
 
 .empty-star {
@@ -3097,6 +2846,10 @@ h3 {
     pointer-events: none;
     opacity:0;
 } */
-.slick-prev:before, .slick-next:before {
+/* .slick-prev:before, .slick-next:before {
   color: #d87a61!important;
+} */
+
+select::-ms-expand {
+    display: none;
 }

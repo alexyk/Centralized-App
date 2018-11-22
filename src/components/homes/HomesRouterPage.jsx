@@ -4,39 +4,18 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import HomePage from '../home/HomePage';
 import HomesSearchPage from './search/HomesSearchPage';
-import HomeDetailsPage from './details/HomeDetailsPage';
-import requester from '../../requester';
-import HomesBookingRouterPage from './booking/HomesBookingRouterPage';
+import HomeDetailsRouterPage from './details/HomeDetailsRouterPage';
 
-class HomesRouterPage extends React.Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      countries: undefined
-    };
-  }
-
-  componentDidMount() {
-    requester.getCountries().then(res => {
-      res.body.then(data => {
-        this.setState({ countries: data });
-      });
-    });
-  }
-
-  render() {
-    return (
-      <div>
-        <Switch>
-          <Route exact path="/homes" render={() => <HomePage homePage="homes" listings={this.props.listings} hotels={this.props.hotels} />} />
-          <Route exact path="/homes/listings" render={() => <HomesSearchPage countries={this.state.countries} />} />
-          <Route exact path="/homes/listings/:id" render={() => <HomeDetailsPage countries={this.state.countries} />} />
-          <Route path="/homes/listings/book" render={() => <HomesBookingRouterPage />} />
-        </Switch>
-      </div>
-    );
-  }
+function HomesRouterPage(props) {
+  return (
+    <div>
+      <Switch>
+        <Route exact path="/homes" render={() => <HomePage homePage="homes" listings={props.listings} hotels={props.hotels} />} />
+        <Route exact path="/homes/listings" render={() => <HomesSearchPage />} />
+        <Route path="/homes/listings/:id" render={() => <HomeDetailsRouterPage />} />
+      </Switch>
+    </div>
+  );
 }
 
 HomesRouterPage.propTypes = {

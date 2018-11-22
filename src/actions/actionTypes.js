@@ -20,21 +20,26 @@ export const airdropInfo = {
   SET_AIRDROP_INFO: 'SET_AIRDROP_INFO'
 };
 
-// searchInfo actions
-export const searchInfo = {
-  SET_DATES: 'SET_DATES',
+// hotels searchInfo actions
+export const hotelsSearchInfo = {
   SET_REGION: 'SET_REGION',
   SET_ROOMS_BY_COUNT_OF_ROOMS: 'SET_ROOMS_BY_COUNT_OF_ROOMS',
   SET_ROOMS: 'SET_ROOMS',
   SET_ADULTS: 'SET_ADULTS',
   SET_CHILDREN: 'SET_CHILDREN',
-  SET_SEARCH_INFO: 'SET_SEARCH_INFO'
+  SET_HOTELS_SEARCH_INFO: 'SET_HOTELS_SEARCH_INFO'
+};
+
+// homes searchInfo actions
+export const homesSearchInfo = {
+  SET_COUNTRY: 'SET_COUNTRY',
+  SET_GUESTS: 'SET_GUESTS',
+  SET_HOMES_SEARCH_INFO: 'SET_HOMES_SEARCH_INFO'
 };
 
 // socket actions
 export const exchangerSocketInfo = {
-  SET_LOC_PRICE_WEBSOCKET_CONNECTION: 'SET_LOC_PRICE_WEBSOCKET_CONNECTION',
-  SET_LOC_RATE_WEBSOCKET_CONNECTION: 'SET_LOC_RATE_WEBSOCKET_CONNECTION',
+  SET_EXCHANGER_WEBSOCKET_CONNECTION: 'SET_EXCHANGER_WEBSOCKET_CONNECTION'
 };
 
 // locAmounts actions
@@ -55,4 +60,15 @@ export const locPriceUpdateTimerInfo = {
   SET_INITIAL_SECONDS: 'SET_INITIAL_SECONDS',
   SET_SECONDS: 'SET_SECONDS',
   RESET: 'RESET'
+};
+
+// burger menu actions
+export const burgerMenuInfo = {
+  SET_SHOW_MENU: 'SET_SHOW_MENU'
+};
+
+// search dates actions
+export const searchDatesInfo = {
+  SET_START_DATE: 'SET_START_DATE',
+  SET_END_DATE: 'SET_END_DATE',
 };

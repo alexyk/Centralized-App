@@ -4,6 +4,7 @@ import { NavDropdown } from 'react-bootstrap/lib';
 import { NavLink, withRouter } from 'react-router-dom';
 import React from 'react';
 import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
 
 function ProfileNav(props) {
   return (
@@ -22,12 +23,18 @@ function ProfileNav(props) {
           {props.isAdmin && <NavDropdown id="admin-panel" title="Admin">
             <li><NavLink activeClassName="active" to="/profile/admin/listings">All Listings</NavLink></li>
             <li><NavLink activeClassName="active" to="/profile/admin/users">All Users</NavLink></li>
+            <li><NavLink activeClassName="active" to="/profile/admin/airdrop">Airdrop</NavLink></li>
+            <li><NavLink activeClassName="active" to="/profile/admin/safecharge">Safecharge</NavLink></li>
           </NavDropdown>}
         </ul>
       </div>
     </nav>
   );
 }
+
+ProfileNav.propTypes = {
+  isAdmin: PropTypes.bool
+};
 
 const mapStateToProps = ({ userInfo }) => ({
   isAdmin: userInfo.isAdmin,
