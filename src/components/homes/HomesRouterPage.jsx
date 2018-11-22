@@ -4,8 +4,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import HomePage from '../home/HomePage';
 import HomesSearchPage from './search/HomesSearchPage';
-import HomeDetailsPage from './details/HomeDetailsPage';
-import HomesBookingPage from './booking/HomesBookingPage';
+import HomeDetailsRouterPage from './details/HomeDetailsRouterPage';
 
 function HomesRouterPage(props) {
   return (
@@ -13,8 +12,7 @@ function HomesRouterPage(props) {
       <Switch>
         <Route exact path="/homes" render={() => <HomePage homePage="homes" listings={props.listings} hotels={props.hotels} />} />
         <Route exact path="/homes/listings" render={() => <HomesSearchPage />} />
-        <Route exact path="/homes/listings/:id" render={() => <HomeDetailsPage />} />
-        <Route path="/homes/listings/book/:id" render={() => <HomesBookingPage />} />
+        <Route path="/homes/listings/:id" render={() => <HomeDetailsRouterPage />} />
       </Switch>
     </div>
   );

@@ -41,7 +41,7 @@ class LocalizationNav extends PureComponent {
 
             <div className="info-details">
               <div className="loc-rate">
-                <LocRate paymentInfo={this.props.paymentInfo} />
+                <LocRate />
               </div>
 
               {isLogged &&

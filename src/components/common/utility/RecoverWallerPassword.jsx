@@ -97,13 +97,13 @@ class RecoverWallerPassword extends Component {
     }
   }
 
-  updateWalletJson(captchaToken) {
+  updateWalletJson() {
     if (this.state.wallet) {
       this.state.wallet.encrypt(this.state.walletPassword)
         .then(json => {
           let { userInfo } = this.state;
           userInfo.jsonFile = json;
-          requester.updateUserInfo(userInfo, captchaToken)
+          requester.updateUserInfo(userInfo)
             .then((res) => {
               if (res.success) {
                 res.body

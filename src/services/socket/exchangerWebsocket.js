@@ -1,14 +1,12 @@
 import { Config } from '../../config';
 import store from '../../reduxStore';
-import { setLocPriceWebsocketConnection } from '../../actions/exchangerSocketInfo';
+import { setExchangerWebsocketConnection } from '../../actions/exchangerSocketInfo';
 import { updateLocAmounts, clearLocAmounts } from '../../actions/locAmountsInfo';
 import { setSeconds } from '../../actions/locPriceUpdateTimerInfo';
 
 const WEBSOCKET_RECONNECT_DELAY = 5000;
 
-const DEFAULT_SOCKET_METHOD = 'getLocPrice';
-
-class WS {
+class ExchangerWS {
   constructor() {
     this.ws = null;
     this.shoudSocketReconnect = true;
@@ -23,12 +21,11 @@ class WS {
   }
 
   connect() {
-    store.dispatch(setLocPriceWebsocketConnection(true));
+    store.dispatch(setExchangerWebsocketConnection(true));
   }
 
   sendMessage(id, method, params) {
     if (this.ws.readyState === 1 && id) {
-      method = method ? method : DEFAULT_SOCKET_METHOD;
       this.ws.send(JSON.stringify({ id, method, params }));
     }
   }
@@ -46,9 +43,9 @@ class WS {
 
   close() {
     if (this.shoudSocketReconnect) {
-      if (store.getState().exchangerSocketInfo.isLocPriceWebsocketConnected) {
+      if (store.getState().exchangerSocketInfo.isExchangerWebsocketConnected) {
         store.dispatch(clearLocAmounts());
-        store.dispatch(setLocPriceWebsocketConnection(false));
+        store.dispatch(setExchangerWebsocketConnection(false));
       }
       setTimeout(() => {
         this.initSocket();
@@ -64,6 +61,6 @@ class WS {
   }
 }
 
-export default WS;
+export default ExchangerWS;
 
-export const Websocket = new WS();
+export const ExchangerWebsocket = new ExchangerWS();
