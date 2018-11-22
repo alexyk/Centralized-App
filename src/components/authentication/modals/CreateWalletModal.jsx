@@ -77,6 +77,7 @@ function CreateWalletModal(props) {
 
 CreateWalletModal.propTypes = {
   walletPassword: PropTypes.string,
+  repeatWalletPassword: PropTypes.string,
   openModal: PropTypes.func,
   closeModal: PropTypes.func,
   onChange: PropTypes.func,
