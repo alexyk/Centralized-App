@@ -1,0 +1,91 @@
+@import '../../../../vendors/include-media';
+@import '../../../../base/variables';
+
+.air-tickets-booking-confirm {
+  .booking-details {
+    .booking-details-header {
+      display: flex;
+      justify-content: space-between;
+    }
+    .payment-methods {
+      display: flex;
+      justify-content: space-between;
+      flex-direction: column;
+      align-items: flex-start;
+      @include media("<=tablet") {
+        // margin-top: 20px;
+      }
+      &-card, &-loc {
+        background-color: #fff;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        border: 1px solid #cfcfcf;
+        border-radius: 5px;
+        width: 100%;
+        padding: 20px;
+        margin-bottom: 20px;
+        @include media("<=tablet") {
+          flex-direction: column;
+        }
+        .details {
+          width: 50%;
+          text-align: center;
+          @include media("<=tablet") {
+            width: 100%;
+          }
+          .price-update-timer {
+            display: inline-block;
+            padding: 10px;
+            font-weight: 400;
+            border-radius: 3px;
+            color: $white;
+            background-color: $light-cyan;
+            margin-bottom: 10px;
+          }
+        }
+        .logos {
+          width: 50%;
+          &-row {
+            // border: 1px solid black;
+            display: flex;
+            margin: 0 auto;
+            justify-content: space-around;
+            width: 50%;
+            max-height: 50px;
+            @include media("<=tablet") {
+              width: 80%;
+            }
+          }
+          .logo {
+            // border: 1px solid green;
+            text-align: center;
+            img {
+              max-width:100%;
+              max-height:100%;
+            }
+          }
+          .credit-cards {
+            width: 100%;
+          }
+          .safecharge, .loc {
+            width: 100%;
+          }
+          .loc > img {
+            width: 20%;
+            @include media("<=tablet") {
+              width: 40%;
+            }
+          }
+        }
+      }
+      .important {
+        font-weight: 400;
+      }
+      a {
+        color: $moderate-red;
+      }
+    }
+  }
+}

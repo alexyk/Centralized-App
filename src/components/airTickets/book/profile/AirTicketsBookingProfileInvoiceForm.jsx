@@ -3,7 +3,7 @@ import { withRouter, NavLink } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import Select from '../../../common/google/GooglePlacesAutocomplete';
 
-import '../../../../styles/css/components/airTickets/initBook/bookProfile/air-tickets-booking-profile-invoice-form.css';
+import '../../../../styles/css/components/airTickets/book/profile/air-tickets-booking-profile-invoice-form.css';
 
 class AirTicketsBookingProfileInvoiceForm extends Component {
   constructor(props) {
@@ -22,14 +22,14 @@ class AirTicketsBookingProfileInvoiceForm extends Component {
   }
 
   render() {
-    const { invoiceInfo, countries, isFlightServices } = this.props;
+    const { invoiceInfo, countries, hasFlightServices } = this.props;
     const { name, country, city, address, zip } = invoiceInfo;
 
     return (
       <div className="air-tickets-invoice-form">
         <h2>Invoice</h2>
         <hr />
-        <form onSubmit={(e) => { e.preventDefault(); this.props.enableNextSection(isFlightServices ? 'services' : 'passengers'); }}>
+        <form onSubmit={(e) => { e.preventDefault(); this.props.enableNextSection(hasFlightServices ? 'services' : 'passengers'); }}>
           <div className="company-name">
             <label htmlFor="invoiceCompanyName">Company name</label>
             <input id="invoiceCompanyName" name="name" value={name || ''} onChange={this.onChange} type="text" />
@@ -71,7 +71,7 @@ class AirTicketsBookingProfileInvoiceForm extends Component {
             <input id="invoiceCompanyAddress" name="address" value={address || ''} onChange={this.onChange} type="text" />
           </div>
           <div className="buttons-wrapper">
-            <NavLink to={{ pathname: `/tickets/results/initBook/${this.props.match.params.id}/profile`, search: this.props.location.search }} className="btn-back" id="btn-continue">
+            <NavLink to={{ pathname: `/tickets/results/book/${this.props.match.params.id}/profile`, search: this.props.location.search }} className="btn-back" id="btn-continue">
               <i className="fa fa-long-arrow-left" aria-hidden="true"></i>
               &nbsp;Back</NavLink>
             <button type="submit" className="btn">Next</button>
@@ -84,7 +84,7 @@ class AirTicketsBookingProfileInvoiceForm extends Component {
 
 AirTicketsBookingProfileInvoiceForm.propTypes = {
   invoiceInfo: PropTypes.object,
-  isFlightServices: PropTypes.bool,
+  hasFlightServices: PropTypes.bool,
   countries: PropTypes.array,
   onChange: PropTypes.func,
   enableNextSection: PropTypes.func,

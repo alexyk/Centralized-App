@@ -152,15 +152,15 @@ class AirTicketsSearchPage extends Component {
 
   applyFilters(filtersObject) {
     const filters = {
-      airlines: filtersObject.airlines.map(a => a.id).join(',') || null,
-      stops: filtersObject.stops.map(a => a.id).join(',') || null,
+      airlines: filtersObject.airlines.map(a => a.airlineId).join(',') || null,
+      stops: filtersObject.stops.map(a => a.changesId).join(',') || null,
       minPrice: filtersObject.priceRange && filtersObject.priceRange[0],
       maxPrice: filtersObject.priceRange && filtersObject.priceRange[1],
       minWaitTime: filtersObject.waitingTimeRange && filtersObject.waitingTimeRange[0],
       maxWaitTime: filtersObject.waitingTimeRange && filtersObject.waitingTimeRange[1],
-      airportsDeparture: filtersObject.airportsDeparture.map(a => a.id).join(',') || null,
-      airportsArrival: filtersObject.airportsArrival.map(a => a.id).join(',') || null,
-      airportsTransfer: filtersObject.airportsTransfer.map(a => a.id).join(',') || null,
+      airportsDeparture: filtersObject.airportsDeparture.map(a => a.airportId).join(',') || null,
+      airportsArrival: filtersObject.airportsArrival.map(a => a.airportId).join(',') || null,
+      airportsTransfer: filtersObject.airportsTransfer.map(a => a.airportId).join(',') || null,
       searchId: this.searchId,
       uuid: this.filtersQueueId
     };
@@ -441,7 +441,7 @@ class AirTicketsSearchPage extends Component {
       this.unsubscribeFilters();
       this.clearIntervals();
     } else if (messageBody.success === false || messageBody.errorMessage) {
-      this.setState({ loading: false });
+      this.setState({ loading: false, allElements: true });
       this.clearIntervals();
       NotificationManager.warning(messageBody.message || messageBody.errorMessage, '', LONG);
     } else if (messageBody.id) {

@@ -7,7 +7,7 @@ import WirelessIcon from '../../../../styles/images/icon-wireless_internet.png';
 import TimeIcon from '../../../../styles/images/time-icon.png';
 
 import '../../../../styles/css/components/airTickets/search/air-tickets-search-result.css';
-import '../../../../styles/css/components/airTickets/initBook/details/air-tickets-details-info-section.css';
+import '../../../../styles/css/components/airTickets/book/details/air-tickets-details-info-section.css';
 
 class AirTicketsDetailsInfoSection extends Component {
   constructor(props) {
@@ -188,7 +188,6 @@ class AirTicketsDetailsInfoSection extends Component {
 
     const { rules } = result;
     const { fareRulesIndex } = this.state;
-    console.log(result);
 
     const departureInfo = this.getDepartureInfo(result.departureInfo);
     const returnInfo = this.getReturnInfo(result.returnInfo);
@@ -239,7 +238,7 @@ class AirTicketsDetailsInfoSection extends Component {
                     );
                   })}
                 </div>
-                {result.returnInfo &&
+                {result.returnInfo && result.returnInfo.length > 0 &&
                   <div className="return">
                     <h5>Return</h5>
                     {result.returnInfo.map((segment, index) => {
@@ -274,34 +273,35 @@ class AirTicketsDetailsInfoSection extends Component {
                   </div>}
               </div>
             </div>
-            <div className="air-tickets-details-content-item">
-              <h2>Fare Rules</h2>
-              <hr />
-              <div className="farerules">
-                {rules.segments.map((segment, segmentIndex) => {
-                  const rules = segment.fareRules.map((rule, ruleIndex) => {
+            {rules &&
+              <div className="air-tickets-details-content-item">
+                <h2>Fare Rules</h2>
+                <hr />
+                <div className="farerules">
+                  {rules.segments.map((segment, segmentIndex) => {
+                    const rules = segment.fareRules.map((rule, ruleIndex) => {
+                      return (
+                        <div key={ruleIndex} className="rule">
+                          <h5>{rule.title}</h5>
+                          <h6>{rule.text}</h6>
+                        </div>
+                      );
+                    });
                     return (
-                      <div key={ruleIndex} className="rule">
-                        <h5>{rule.title}</h5>
-                        <h6>{rule.text}</h6>
-                      </div>
+                      <Fragment key={segmentIndex}>
+                        <div className="flight-rule-title">
+                          <h5><div className="flight-rule-origin">{segment.origin.name}</div> <span className="icon-arrow-right arrow"></span> <div className="flight-rule-destination">{segment.destination.name}</div></h5>
+                          {fareRulesIndex === segmentIndex ? <div className="toggle"><span className="fa fa-angle-down" onClick={() => this.toggleFareRule(-1)} /></div> : <div className="toggle"><span className="fa fa-angle-right" onClick={() => this.toggleFareRule(segmentIndex)} /></div>}
+                        </div>
+                        {fareRulesIndex === segmentIndex &&
+                          <div className="flight-rules">
+                            {rules}
+                          </div>}
+                      </Fragment>
                     );
-                  });
-                  return (
-                    <Fragment key={segmentIndex}>
-                      <div className="flight-rule-title">
-                        <h5><div className="flight-rule-origin">{segment.origin.name}</div> <span className="icon-arrow-right arrow"></span> <div className="flight-rule-destination">{segment.destination.name}</div></h5>
-                        {fareRulesIndex === segmentIndex ? <div className="toggle"><span className="fa fa-angle-down" onClick={() => this.toggleFareRule(-1)} /></div> : <div className="toggle"><span className="fa fa-angle-right" onClick={() => this.toggleFareRule(segmentIndex)} /></div>}
-                      </div>
-                      {fareRulesIndex === segmentIndex &&
-                        <div className="flight-rules">
-                          {rules}
-                        </div>}
-                    </Fragment>
-                  );
-                })}
-              </div>
-            </div>
+                  })}
+                </div>
+              </div>}
           </div>
           <AirTicketsDetailsBookingPanel result={result} />
         </div>

@@ -239,8 +239,8 @@ class AirTicketsSearchResult extends Component {
 
     // TODO: add redirect path for mobile
     const redirectURL = isMobile
-      ? '/tickets/results/initBook'
-      : '/tickets/results/initBook';
+      ? '/tickets/results/book'
+      : '/tickets/results/book';
 
     const search = this.props.location.search;
     const endOfSearch = search.indexOf('&filters=') !== -1 ? search.indexOf('&filters=') : search.length;

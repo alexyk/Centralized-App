@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Component } from 'react';
 import { withRouter, Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
@@ -9,7 +9,7 @@ import { RoomsXMLCurrency } from '../../../../services/utilities/roomsXMLCurrenc
 import { openModal } from '../../../../actions/modalsInfo.js';
 import { LOGIN } from '../../../../constants/modals.js';
 
-class AirTicketsDetailsBookingPanel extends React.Component {
+class AirTicketsDetailsBookingPanel extends Component {
   render() {
     const { currencyExchangeRates } = this.props.exchangeRatesInfo;
     if (!currencyExchangeRates) {
@@ -54,7 +54,7 @@ class AirTicketsDetailsBookingPanel extends React.Component {
           </div>
         </div>
         {userInfo.isLogged ?
-          <Link to={`/tickets/results/initBook/${this.props.match.params.id}/profile${this.props.location.search}`} className="pay-in">Request Booking</Link> :
+          <Link to={`/tickets/results/book/${this.props.match.params.id}/profile${this.props.location.search}`} className="pay-in">Request Booking</Link> :
           <button className="pay-in" onClick={(e) => this.props.dispatch(openModal(LOGIN, e))}>Login</button>}
         <hr />
         <p className="booking-helper">You won&#39;t be charged yet</p>
@@ -64,17 +64,17 @@ class AirTicketsDetailsBookingPanel extends React.Component {
 }
 
 AirTicketsDetailsBookingPanel.propTypes = {
-  match: PropTypes.object,
   result: PropTypes.object,
-
+  
   // Router props
+  match: PropTypes.object,
   location: PropTypes.object,
 
   // Redux props
+  dispatch: PropTypes.func,
   exchangeRatesInfo: PropTypes.object,
   paymentInfo: PropTypes.object,
-  userInfo: PropTypes.object,
-  dispatch: PropTypes.func
+  userInfo: PropTypes.object
 };
 
 function mapStateToProps(state) {

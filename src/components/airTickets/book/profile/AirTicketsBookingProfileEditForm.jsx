@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Select from '../../../common/google/GooglePlacesAutocomplete';
 
-import '../../../../styles/css/components/airTickets/initBook/bookProfile/air-tickets-booking-profile-edit-form.css';
+import '../../../../styles/css/components/airTickets/book/profile/air-tickets-booking-profile-edit-form.css';
 
 class AirTicketsBookingProfileEditForm extends Component {
   constructor(props) {

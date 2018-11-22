@@ -19,9 +19,13 @@ class AirTicketsDatepickerWrapper extends Component {
     this.validateDates();
   }
 
+  componentDidUpdate() {
+    this.validateDates();
+  }
+
   validateDates() {
     const { startDate, endDate } = this.props.searchDatesInfo;
-    if (endDate.isBefore(startDate, 'day')) {
+    if (endDate.isBefore(startDate, 'day') || (endDate.isAfter(startDate, 'day') && this.props.airTicketsSearchInfo.flightRouting === '1')) {
       this.props.dispatch(asyncSetEndDate(moment(startDate)));
     }
   }

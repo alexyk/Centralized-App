@@ -4,8 +4,7 @@ import { NotificationManager } from 'react-notifications';
 import PropTypes from 'prop-types';
 import HomePage from '../home/HomePage';
 import AirTicketsSearchPage from './search/AirTicketsSearchPage';
-import AirTicketsInitBookingRouterPage from './initBook/AirTicketsInitBookingRouterPage';
-import AirTicketsBookingConfirmPage from './book/AirTicketsBookingConfirmPage';
+import AirTicketsBookingRouterPage from './book/AirTicketsBookingRouterPage';
 import { LONG } from '../../constants/notificationDisplayTimes';
 import { SEARCH_EXPIRED } from '../../constants/infoMessages';
 
@@ -47,8 +46,7 @@ class AirTicketsRouterPage extends Component {
         <Switch>
           <Route exact path="/tickets" render={() => <HomePage homePage="tickets" listings={this.props.listings} hotels={this.props.hotels} />} />
           <Route exact path="/tickets/results" render={() => <AirTicketsSearchPage initSearchAirTicketsSetTimeout={this.initSearchAirTicketsSetTimeout} />} />
-          <Route path="/tickets/results/initBook/:id" render={() => <AirTicketsInitBookingRouterPage />} />
-          <Route exact path="/tickets/results/book/:id" render={() => <AirTicketsBookingConfirmPage />} />
+          <Route path="/tickets/results/book/:id" render={() => <AirTicketsBookingRouterPage />} />
         </Switch>
       </Fragment>
     );
