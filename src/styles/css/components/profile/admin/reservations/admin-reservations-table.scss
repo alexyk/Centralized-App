@@ -1,0 +1,30 @@
+@import "../../../../base/variables";
+
+.reservations-table {
+  overflow-x: auto;
+  table {
+    border-collapse: collapse;
+    border-spacing: 0;
+    width: 100%;
+    border: 1px solid #ddd;
+    margin: 2% 0 10%;
+    background-color: #fff;
+  }
+  th {
+    font-weight: 400;
+  }
+  td {
+    a {
+      color: $moderate-red;
+      font-size: 20px;
+    }
+  }
+  th,
+  td {
+    text-align: left;
+    padding: 8px;
+    max-width: 150px;
+    word-wrap: break-word;
+    border: 1px solid #ddd;
+  }
+}
