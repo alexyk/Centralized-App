@@ -15,3 +15,4 @@ export const VOTE_URL_SUCCESSFULLY_SAVED = 'Vote URL saved.';
 export const RESERVATION_ACCEPTED = 'Your reservation was accepted.';
 export const RESERVATION_DELETED = 'Your reservation was deleted.';
 export const RESERVATION_CANCELLED = 'Your reservation was cancelled.';
+export const BOOKING_UPDATED = 'Booking was successfully updated.';

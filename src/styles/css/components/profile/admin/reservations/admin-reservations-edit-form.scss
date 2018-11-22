@@ -1,0 +1,49 @@
+.reservations-edit-form {
+  .status {
+    width: 50%;
+    select {
+      border: 1px solid #cfcfcf;
+      border-radius: 5px;
+      background-color: white;
+      padding: 15px;
+      width: 100%;
+    }
+  }
+  label {
+    display: block;
+    margin: 10px 0 5px 5px;
+  }
+  input {
+    border: 1px solid #cfcfcf;
+    border-radius: 5px;
+    background-color: white;
+    padding: 15px;
+    width: 50%;
+  }
+  form > div {
+    clear: both;
+    margin-bottom: 20px;
+  }
+  .transaction-hash {
+    margin-top: 20px;
+  }
+  .admin-booking-rooms {
+    .admin-booking-room {
+      .room-adults,
+      .room-children {
+        margin-left: 30px;
+      }
+      .room-adults {
+        margin-bottom: 5px;
+      }
+    }
+  }
+  .button-holder {
+    height: 60px;
+    width: 200px;
+    button {
+      width: 100%;
+      height: 100%;
+    }
+  }
+}
