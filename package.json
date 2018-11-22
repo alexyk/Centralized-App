@@ -86,6 +86,7 @@
     "build/local": "sh -ac '. ./.env; npm run build'",
     "build/stage": "sh -ac '. ./.env.staging; npm run build'",
     "build/prod": "sh -ac '. ./.env.production; npm run build'",
+    "build/dev": "sh -ac '. ./.env.dev; npm run build'",
     "build-css": "node-sass-chokidar ./src/ --output ./src/",
     "watch-css": "node-sass-chokidar ./src/ --output ./src/ --watch",
     "all": "npm-run-all --parallel watch-css start-js"
