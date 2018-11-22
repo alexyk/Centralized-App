@@ -6,8 +6,6 @@ import { CONFIRM_WALLET, SAVE_WALLET } from '../../../constants/modals.js';
 import { MNEMONIC_LAST_CALL, WRONG_MNEMONIC_WORDS } from '../../../constants/warningMessages.js';
 import { LONG } from '../../../constants/notificationDisplayTimes.js';
 
-import '../../../styles/css/components/modals/modal.css';
-
 function ConfirmWalletModal(props) {
   const onWordsForget = (e) => {
     if (e) {

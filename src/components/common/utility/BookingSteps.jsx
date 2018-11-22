@@ -2,7 +2,7 @@ import React, { Fragment } from 'react';
 import PropTypes from 'prop-types';
 import NextArrow from '../../../styles/images/icon-next.png';
 
-import '../../../styles/css/components/common/utilities/booking-steps.css';
+import '../../../styles/css/components/common/utilities/booking-steps.scss';
 
 function BookingSteps(props) {
   return (

@@ -1,5 +1,4 @@
-import 'react-notifications/lib/notifications.css';
-import '../../../styles/css/components/profile/me/my-profile-edit-form.css';
+import '../../../styles/css/components/profile/me/my-profile-edit-form.scss';
 
 import { NotificationManager } from 'react-notifications';
 import React from 'react';

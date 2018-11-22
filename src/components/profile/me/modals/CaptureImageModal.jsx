@@ -1,4 +1,4 @@
-import '../../../../styles/css/components/profile/me/profile-verification.css';
+import '../../../../styles/css/components/profile/me/profile-verification.scss';
 
 import { CAPTURE_IMAGE } from '../../../../constants/modals.js';
 import { Modal } from 'react-bootstrap';

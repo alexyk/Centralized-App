@@ -1,5 +1,4 @@
-import 'react-notifications/lib/notifications.css';
-import '../../../styles/css/components/profile/me/my-profile-edit-form.css';
+import '../../../styles/css/components/profile/me/my-profile-edit-form.scss';
 
 import { Config } from '../../../config';
 import { LONG } from '../../../constants/notificationDisplayTimes.js';

@@ -5,7 +5,7 @@ import React from 'react';
 import ProfileFlexContainer from '../flexContainer/ProfileFlexContainer';
 import DefaultBackground from '../../../styles/images/silver_background.png';
 
-import '../../../styles/css/components/profile/listings/my-listings-page.css';
+import '../../../styles/css/components/profile/listings/my-listings-page.scss';
 
 function MyListingsColapseInProgressItem(props) {
   return (

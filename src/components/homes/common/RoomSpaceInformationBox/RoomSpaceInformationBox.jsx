@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import './style.css';
+import './style.scss';
 
 function RoomSpaceInformationBox(props) {
   const { property_type, guests, size, bathroom, bedrooms } = props;

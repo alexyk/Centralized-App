@@ -1,5 +1,5 @@
 import 'react-big-calendar/lib/css/react-big-calendar.css';
-import '../../../styles/css/components/profile/calendar/calendar.css';
+import '../../../styles/css/components/profile/calendar/calendar.scss';
 
 import Calendar from './Calendar';
 import CalendarAside from './CalendarAside';

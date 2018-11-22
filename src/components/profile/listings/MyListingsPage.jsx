@@ -1,4 +1,4 @@
-import '../../../styles/css/components/profile/listings/my-listings-page.css';
+import '../../../styles/css/components/profile/listings/my-listings-page.scss';
 
 import DeletionModal from '../../common/modals/DeletionModal';
 import { LISTING_DELETED } from '../../../constants/successMessages.js';

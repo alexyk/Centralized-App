@@ -24,7 +24,7 @@ import { closeModal, openModal } from '../../../actions/modalsInfo.js';
 import RecoverWallerPassword from '../../common/utility/RecoverWallerPassword';
 import { ExchangerWebsocket } from '../../../services/socket/exchangerWebsocket';
 
-import '../../../styles/css/components/hotels/book/hotel-booking-confirm-page.css';
+import '../../../styles/css/components/hotels/book/hotel-booking-confirm-page.scss';
 import PendingBookingLocModal from '../modals/PendingBookingLocModal';
 import PendingBookingFiatModal from '../modals/PendingBookingFiatModal';
 

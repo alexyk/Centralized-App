@@ -1,4 +1,4 @@
-import '../../../../styles/css/components/profile/admin/unpublished-item.css';
+import '../../../../styles/css/components/profile/admin/unpublished-item.scss';
 
 import { Config } from '../../../../config.js';
 import PropTypes from 'prop-types';

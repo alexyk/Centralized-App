@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import '../../../styles/css/components/profile/no-entries-message.css';
+import '../../../styles/css/components/profile/no-entries-message.scss';
 
 function NoEntriesMessage(props) {
   return (

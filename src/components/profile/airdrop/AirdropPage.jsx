@@ -1,4 +1,4 @@
-import '../../../styles/css/components/profile/airdrop-page.css';
+import '../../../styles/css/components/profile/airdrop-page.scss';
 
 import {
   AIRDROP_LOGIN,

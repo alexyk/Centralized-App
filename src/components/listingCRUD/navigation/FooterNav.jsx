@@ -1,7 +1,7 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 import { PropTypes } from 'prop-types';
-import '../../../styles/css/components/listing_crud/footer-navigation.css';
+import '../../../styles/css/components/listing_crud/footer-navigation.scss';
 
 function FooterNav(props) {
   return (

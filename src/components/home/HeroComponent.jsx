@@ -5,8 +5,8 @@ import HomesSearchBar from '../homes/search/HomesSearchBar';
 import HotelsSearchBar from '../hotels/search/HotelsSearchBar';
 import ListingTypeNav from '../common/listingTypeNav/ListingTypeNav';
 
-import '../../styles/css/components/hero-component.css';
-import '../../styles/css/components/tabs-component.css';
+import '../../styles/css/components/hero-component.scss';
+import '../../styles/css/components/tabs-component.scss';
 
 class HeroComponent extends React.Component {
   constructor(props) {

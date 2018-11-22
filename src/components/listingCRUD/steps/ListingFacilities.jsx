@@ -6,7 +6,7 @@ import ListingCrudNav from '../navigation/ListingCrudNav';
 import FilterCheckbox from '../../common/filter/FilterCheckbox';
 import FooterNav from '../navigation/FooterNav';
 
-import '../../../styles/css/components/profile/listings/listing-facilities.css';
+import '../../../styles/css/components/profile/listings/listing-facilities.scss';
 
 function ListingFacilities(props) {
   if (!props) {

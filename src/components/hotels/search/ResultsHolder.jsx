@@ -1,4 +1,4 @@
-import '../../../styles/css/components/search-result-component.css';
+import '../../../styles/css/components/search-result-component.scss';
 
 import PropTypes from 'prop-types';
 import React from 'react';

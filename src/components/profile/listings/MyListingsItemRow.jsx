@@ -5,7 +5,7 @@ import { Config } from '../../../config';
 import ProfileFlexContainer from '../flexContainer/ProfileFlexContainer';
 import DefaultBackground from '../../../styles/images/silver_background.png';
 
-import '../../../styles/css/components/profile/listings/my-listings-page.css';
+import '../../../styles/css/components/profile/listings/my-listings-page.scss';
 import Rating from '../../common/rating/Rating';
 
 function MyListingsItemRow(props) {

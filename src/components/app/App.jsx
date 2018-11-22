@@ -1,5 +1,7 @@
-import '../../styles/css/main.css';
-import '../../styles/css/components/captcha/captcha-container.css';
+import '../../styles/css/main.scss';
+import '../../styles/css/components/modals/modal.scss';
+import '../../styles/css/components/captcha/captcha-container.scss';
+import 'react-notifications/lib/notifications.css';
 
 import { Redirect, Route, Switch, withRouter } from 'react-router-dom';
 import { setIsLogged, setUserInfo } from '../../actions/userInfo';

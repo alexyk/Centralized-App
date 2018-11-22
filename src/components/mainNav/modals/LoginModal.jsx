@@ -4,8 +4,6 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { LOGIN, REGISTER, SEND_RECOVERY_EMAIL } from '../../../constants/modals.js';
 
-import '../../../styles/css/components/modals/modal.css';
-
 function LoginModal(props) {
 
   return (

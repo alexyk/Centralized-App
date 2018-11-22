@@ -4,7 +4,7 @@ import MyListingsInProgressItemAdditionalContent from './MyListingsInProgressIte
 import MyListingsColapseInProgressItem from './MyListingsColapseInProgressItem';
 import ProfileFlexContainer from '../flexContainer/ProfileFlexContainer';
 
-import '../../../styles/css/components/profile/my-listings__progress-item.css';
+import '../../../styles/css/components/profile/my-listings__progress-item.scss';
 
 class MyListingsInProgressItem extends React.Component {
   constructor(props) {

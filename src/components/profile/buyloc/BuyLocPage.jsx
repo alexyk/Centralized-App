@@ -1,7 +1,7 @@
 import React from 'react';
 import BancorConvertWidget from '../../external/BancorConvertWidget';
 
-import '../../../styles/css/components/profile/buyloc/buyloc-page.css';
+import '../../../styles/css/components/profile/buyloc/buyloc-page.scss';
 
 function BuyLocPage() {
   return (

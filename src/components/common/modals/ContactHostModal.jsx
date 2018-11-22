@@ -3,8 +3,6 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { withRouter } from 'react-router-dom';
 
-import '../../../styles/css/components/modals/modal.css';
-
 const modal = {
   current: 'showContactHostModal',
 };

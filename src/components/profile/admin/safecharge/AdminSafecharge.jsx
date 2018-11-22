@@ -5,7 +5,7 @@ import AdminNav from '../AdminNav';
 // import { LONG } from '../../../../constants/notificationDisplayTimes.js';
 import requester from '../../../../requester';
 
-import '../../../../styles/css/components/profile/admin/safecharge/admin-safecharge.css';
+import '../../../../styles/css/components/profile/admin/safecharge/admin-safecharge.scss';
 
 const SAFECHARGE_VAR = 'SCPaymentModeOn';
 

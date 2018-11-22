@@ -3,8 +3,6 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { ENTER_EMAIL_VERIFICATION_SECURITY_TOKEN } from '../../../constants/modals.js';
 
-import '../../../styles/css/components/modals/modal.css';
-
 function EmailVerificationModal(props) {
 
   return (

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
-import './style.css';
+import './style.scss';
 
 const DEFAULT_PLACEHOLDER = 'Choose an option';
 

@@ -10,7 +10,7 @@ import { MISSING_NAMES } from '../../../constants/warningMessages.js';
 import HomesBookingAside from './aside/HomesBookingAside';
 import BookingSteps from '../../common/utility/BookingSteps';
 
-import '../../../styles/css/components/homes/booking/homes-booking-confirm-page.css';
+import '../../../styles/css/components/homes/booking/homes-booking-confirm-page.scss';
 
 class HomesBookingConfirmPage extends React.Component {
   constructor(props) {

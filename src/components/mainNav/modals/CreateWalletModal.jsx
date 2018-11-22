@@ -1,5 +1,3 @@
-import '../../../styles/css/components/modals/modal.css';
-
 import { CREATE_WALLET, SAVE_WALLET } from '../../../constants/modals.js';
 
 import { CREATING_WALLET } from '../../../constants/infoMessages.js';

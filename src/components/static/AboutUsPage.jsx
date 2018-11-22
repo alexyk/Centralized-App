@@ -1,6 +1,6 @@
 import React from 'react';
 
-import '../../styles/css/components/static/about-us-page.css';
+import '../../styles/css/components/static/about-us-page.scss';
 
 function AboutUsPage() {
   return (

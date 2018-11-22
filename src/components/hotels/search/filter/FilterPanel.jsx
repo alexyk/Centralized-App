@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import ReactBootstrapSlider from 'react-bootstrap-slider';
 import FilterStarCheckbox from './FilterStarCheckbox';
 
-import '../../../../styles/css/components/hotels_search/filter/filter.css';
+import '../../../../styles/css/components/hotels_search/filter/filter.scss';
 
 function FilterPanel(props) {
   if (!props.isSearchReady) {

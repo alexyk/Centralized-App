@@ -1,4 +1,4 @@
-import '../../../../styles/css/components/profile/trips/details.css';
+import '../../../../styles/css/components/profile/trips/details.scss';
 
 import { Link, withRouter } from 'react-router-dom';
 

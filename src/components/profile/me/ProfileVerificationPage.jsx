@@ -1,5 +1,5 @@
-import '../../../styles/css/components/profile/me/profile-verification.css';
-import '../../../styles/css/components/profile/admin/navigation-tab.css';
+import '../../../styles/css/components/profile/me/profile-verification.scss';
+import '../../../styles/css/components/profile/admin/navigation-tab.scss';
 
 import { closeModal, openModal } from '../../../actions/modalsInfo';
 

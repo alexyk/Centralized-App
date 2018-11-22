@@ -5,7 +5,7 @@ import ProfileFlexContainer from '../flexContainer/ProfileFlexContainer';
 import { Config } from '../../../config';
 import HotelIcon from '../../../styles/images/icon-hotel.png';
 
-import '../../../styles/css/components/profile/dashboard/dashboard-trips.css';
+import '../../../styles/css/components/profile/dashboard/dashboard-trips.scss';
 
 const STATUS = {
   DONE: 'COMPLETE',

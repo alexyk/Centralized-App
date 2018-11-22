@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
-import './style.css';
+import './style.scss';
 
 class DropdownMenu extends Component {
   constructor(props) {

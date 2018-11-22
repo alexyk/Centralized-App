@@ -7,7 +7,7 @@ import moment from 'moment';
 import { Config } from '../../../config';
 import requester from '../../../requester';
 import SlickCarousel from 'react-slick';
-import '../../../styles/css/components/carousel-component.css';
+import '../../../styles/css/components/carousel-component.scss';
 import HomesSearchBar from '../search/HomesSearchBar';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
@@ -24,7 +24,7 @@ import {
   calculateCheckInOuts
 } from '../common/detailsPageUtils.js';
 import { DEFAULT_LISTING_IMAGE_URL } from '../../../constants/images';
-import '../../../styles/css/components/home/details/home-details-info-section.css';
+import '../../../styles/css/components/home/details/home-details-info-section.scss';
 import Facilities from '../../hotels/details/Facilities';
 
 import HomeDetailsBookingPanel from './HomeDetailsBookingPanel';
@@ -34,7 +34,7 @@ import HomeDetailsRatingBox from './HomeDetailsRatingBox';
 import HomeDetailsReviewBox from './HomeDetailsReviewBox';
 import MyMapComponent from './MyMapComponent';
 
-import '../../../styles/css/components/carousel-component.css';
+import '../../../styles/css/components/carousel-component.scss';
 import Loader from '../../common/loader';
 
 const CAROUSEL_SETTINGS = {

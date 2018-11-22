@@ -4,8 +4,6 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { CHANGE_PASSWORD } from '../../../constants/modals.js';
 
-import '../../../styles/css/components/modals/modal.css';
-
 function ChangePasswordModal(props) {
 
   return (

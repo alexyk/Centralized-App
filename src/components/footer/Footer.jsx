@@ -1,4 +1,4 @@
-import '../../styles/css/components/footer/footer-component.css';
+import '../../styles/css/components/footer/footer-component.scss';
 
 import { setCurrency } from '../../actions/paymentInfo';
 

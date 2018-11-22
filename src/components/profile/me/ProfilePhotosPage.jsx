@@ -4,7 +4,7 @@ import React from 'react';
 import request from 'superagent';
 import requester from '../../../requester';
 
-import '../../../styles/css/components/profile/me/profile-photos.css';
+import '../../../styles/css/components/profile/me/profile-photos.scss';
 
 const API_HOST = Config.getValue('apiHost');
 const IMG_HOST = Config.getValue('imgHost');

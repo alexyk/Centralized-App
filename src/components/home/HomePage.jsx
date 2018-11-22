@@ -12,7 +12,7 @@ import HomePageContentItem from './HomePageContentItem';
 import moment from 'moment';
 import PopularHomesPrice from './PopularHomesPrice';
 
-import '../../styles/css/components/home/home_page.css';
+import '../../styles/css/components/home/home_page.scss';
 
 const SlickButton = ({ currentSlide, slideCount, ...arrowProps }) => {
   return (

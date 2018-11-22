@@ -8,7 +8,7 @@ import ListingCrudNav from '../navigation/ListingCrudNav';
 
 import { Config } from '../../../config';
 
-import '../../../styles/css/components/profile/listings/listing-landing-page.css';
+import '../../../styles/css/components/profile/listings/listing-landing-page.scss';
 
 import { COMMING_SOON, INVALID_TITLE } from '../../../constants/warningMessages.js';
 import { LONG } from '../../../constants/notificationDisplayTimes.js';

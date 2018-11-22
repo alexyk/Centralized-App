@@ -6,7 +6,7 @@ import { connect } from 'react-redux';
 import { asyncSetStartDate, asyncSetEndDate } from '../../../actions/searchDatesInfo.js';
 
 import 'react-datepicker/dist/react-datepicker.css';
-import './style.css';
+import './style.scss';
 
 class Datepicker extends Component {
   constructor(props) {

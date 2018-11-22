@@ -1,6 +1,6 @@
 import React from 'react';
 
-import '../../styles/css/components/static/help-page.css';
+import '../../styles/css/components/static/help-page.scss';
 
 function HelpPage() {
   return (

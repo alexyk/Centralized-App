@@ -5,7 +5,7 @@ import GuestSettingsAside from '../aside/GuestSettingsAside';
 import ListingCrudNav from '../navigation/ListingCrudNav';
 import FooterNav from '../navigation/FooterNav';
 
-import '../../../styles/css/components/profile/listings/listing-checking.css';
+import '../../../styles/css/components/profile/listings/listing-checking.scss';
 
 function ListingChecking(props) {
   const { checkinStart, checkinEnd, checkoutStart, checkoutEnd } = props.values;

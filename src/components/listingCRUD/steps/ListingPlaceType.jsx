@@ -6,7 +6,7 @@ import ListingCrudNav from '../navigation/ListingCrudNav';
 import FooterNav from '../navigation/FooterNav';
 
 import { Config } from '../../../config';
-import '../../../styles/css/components/profile/listings/listing-place-type.css';
+import '../../../styles/css/components/profile/listings/listing-place-type.scss';
 
 function ListingPlaceType(props) {
   const { listingType, propertyType, propertyTypes, roomType, dedicatedSpace, propertySize } = props.values;

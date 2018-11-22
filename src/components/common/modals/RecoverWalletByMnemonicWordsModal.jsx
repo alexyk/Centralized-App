@@ -3,8 +3,6 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { RECOVER_WALLET } from '../../../constants/modals.js';
 
-import '../../../styles/css/components/modals/modal.css';
-
 function RecoverWalletByMnemonicWordsModal(props) {
 
   const handleEnterKeyPress = (event) => {

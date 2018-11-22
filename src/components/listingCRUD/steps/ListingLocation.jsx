@@ -1,5 +1,5 @@
 import 'react-select/dist/react-select.css';
-import '../../../styles/css/components/profile/listings/listing-location.css';
+import '../../../styles/css/components/profile/listings/listing-location.scss';
 
 import { INVALID_ADDRESS, MISSING_ADDRESS, MISSING_CITY, MISSING_COUNTRY } from '../../../constants/warningMessages.js';
 

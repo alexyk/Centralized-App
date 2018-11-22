@@ -4,7 +4,7 @@ import moment from 'moment';
 import ProfileFlexContainer from '../flexContainer/ProfileFlexContainer';
 import { Config } from '../../../config';
 
-import '../../../styles/css/components/profile/dashboard/dashboard-reservations.css';
+import '../../../styles/css/components/profile/dashboard/dashboard-reservations.scss';
 
 function DashboardReservationRow(props) {
   const extractDatesData = (reservation) => {

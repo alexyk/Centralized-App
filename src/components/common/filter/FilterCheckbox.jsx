@@ -1,6 +1,5 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-// import '../../../styles/css/components/profile/listings/listing-facilities.css';
 
 const FilterCheckbox = ({ id, text, checked }) => (
   <div className="key">

@@ -1,4 +1,4 @@
-import '../../../styles/css/components/hotels/details/facilities.css';
+import '../../../styles/css/components/hotels/details/facilities.scss';
 
 import React from 'react';
 import PropTypes from 'prop-types';

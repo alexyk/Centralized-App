@@ -1,7 +1,7 @@
-import '../../../styles/css/components/search-result-component.css';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
-import '../../../styles/css/components/hotels_search/result/results_holder__hotels.css';
+import '../../../styles/css/components/search-result-component.scss';
+import '../../../styles/css/components/hotels_search/result/results_holder__hotels.scss';
 
 import { Link, withRouter } from 'react-router-dom';
 

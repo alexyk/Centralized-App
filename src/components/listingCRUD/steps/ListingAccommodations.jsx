@@ -7,7 +7,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import FooterNav from '../navigation/FooterNav';
 
-import '../../../styles/css/components/profile/listings/listing-accommodations.css';
+import '../../../styles/css/components/profile/listings/listing-accommodations.scss';
 
 
 

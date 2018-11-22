@@ -3,7 +3,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { setShowMenu } from '../../../actions/burgerMenuInfo.js';
 
-import './style.css';
+import './style.scss';
 
 class BurgerMenu extends React.Component {
   constructor(props) {

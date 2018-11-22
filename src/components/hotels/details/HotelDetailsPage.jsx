@@ -1,5 +1,4 @@
-import '../../../styles/css/main.css';
-import '../../../styles/css/components/carousel-component.css';
+import '../../../styles/css/components/carousel-component.scss';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 

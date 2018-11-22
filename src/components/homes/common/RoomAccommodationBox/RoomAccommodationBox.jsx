@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import './style.css';
+import './style.scss';
 
 function RoomAccommodationBox({ checkInStart, checkInEnd, checkOutStart, checkOutEnd }) {
   (function setCheckInOutHours(checkInStart, checkInEnd, checkOutStart, checkOutEnd) {

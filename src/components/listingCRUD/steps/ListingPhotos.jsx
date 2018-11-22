@@ -14,7 +14,7 @@ import { Config } from '../../../config';
 import { MISSING_PICTURE, INVALID_PICTURE } from '../../../constants/warningMessages.js';
 import { LONG } from '../../../constants/notificationDisplayTimes.js';
 
-import '../../../styles/css/components/profile/listings/listing-photos.css';
+import '../../../styles/css/components/profile/listings/listing-photos.scss';
 
 function ListingPhotos(props) {
   const SortableItem = SortableElement(({ value, i }) =>

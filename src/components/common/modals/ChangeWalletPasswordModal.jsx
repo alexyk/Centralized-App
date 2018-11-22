@@ -8,8 +8,6 @@ import { CHANGE_WALLET_PASSWORD } from '../../../constants/modals';
 import { LONG } from '../../../constants/notificationDisplayTimes.js';
 import { WALLET_INVALID_PASSWORD_LENGTH } from '../../../constants/warningMessages.js';
 
-import '../../../styles/css/components/modals/modal.css';
-
 function ChangeWalletPasswordModal(props) {
 
   const submitPassword = () => {

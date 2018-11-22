@@ -4,7 +4,7 @@ import NoEntriesMessage from '../../common/messages/NoEntriesMessage';
 import MyGuestsReservations from './MyGuestsReservations';
 import ProfileFlexContainer from '../flexContainer/ProfileFlexContainer';
 
-import '../../../styles/css/components/profile/guests/homes-guests-table.css';
+import '../../../styles/css/components/profile/guests/homes-guests-table.scss';
 
 function MyGuestsTable(props) {
 

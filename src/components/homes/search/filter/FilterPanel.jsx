@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import ReactBootstrapSlider from 'react-bootstrap-slider';
 
-import '../../../../styles/css/components/hotels_search/filter/filter.css';
+import '../../../../styles/css/components/hotels_search/filter/filter.scss';
 
 function FilterPanel(props) {
   return (

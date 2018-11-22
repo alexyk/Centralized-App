@@ -4,8 +4,6 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { SEND_RECOVERY_EMAIL, ENTER_RECOVERY_TOKEN } from '../../../constants/modals.js';
 
-import '../../../styles/css/components/modals/modal.css';
-
 function SendRecoveryEmailModal(props) {
 
   return (

@@ -8,7 +8,7 @@ import ListingCrudNav from '../navigation/ListingCrudNav';
 import Textarea from '../textbox/Textarea';
 import FooterNav from '../navigation/FooterNav';
 
-import '../../../styles/css/components/profile/listings/listing-description.css';
+import '../../../styles/css/components/profile/listings/listing-description.scss';
 
 import { INVALID_SUMMARY } from '../../../constants/warningMessages.js';
 import { LONG } from '../../../constants/notificationDisplayTimes.js';

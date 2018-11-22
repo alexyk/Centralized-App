@@ -5,7 +5,7 @@ import GuestSettingsAside from '../aside/GuestSettingsAside';
 import ListingCrudNav from '../navigation/ListingCrudNav';
 import FooterNav from '../navigation/FooterNav';
 
-import '../../../styles/css/components/profile/listings/listing-house-rules.css';
+import '../../../styles/css/components/profile/listings/listing-house-rules.scss';
 
 function ListingHouseRules(props) {
   const { suitableForChildren, suitableForInfants, suitableForPets, smokingAllowed, eventsAllowed, otherHouseRules, otherRuleText } = props.values;

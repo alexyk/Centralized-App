@@ -5,8 +5,8 @@ import HomesBookingAside from './aside/HomesBookingAside';
 import { parse } from 'query-string';
 import PropTypes from 'prop-types';
 import { calculateCheckInOuts } from '../common/detailsPageUtils.js';
-import '../../../styles/css/components/homes/booking/homes-booking-page.css';
-import '../../../styles/css/components/homes/booking/homes-booking-room-details-info.css';
+import '../../../styles/css/components/homes/booking/homes-booking-page.scss';
+import '../../../styles/css/components/homes/booking/homes-booking-room-details-info.scss';
 import RoomAccommodationBox from '../common/RoomAccommodationBox';
 import RoomSpaceInformationBox from '../common/RoomSpaceInformationBox';
 

@@ -1,4 +1,4 @@
-import '../../../styles/css/components/hotels_search/sidebar/sidebar.css';
+import '../../../styles/css/components/hotels_search/sidebar/sidebar.scss';
 
 import { setRegion, setHotelsSearchInfo } from '../../../actions/hotelsSearchInfo';
 import { asyncSetStartDate, asyncSetEndDate } from '../../../actions/searchDatesInfo';

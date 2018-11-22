@@ -2,8 +2,6 @@ import React from 'react';
 import { Modal } from 'react-bootstrap';
 import PropTypes from 'prop-types';
 
-import '../../../styles/css/components/modals/modal.css';
-
 function CancellationModal(props) {
   return (
     <React.Fragment>

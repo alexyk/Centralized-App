@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import { setCurrency } from '../../actions/paymentInfo';
 import LocRate from '../common/utility/LocRate';
 
-import '../../styles/css/components/tabs-component.css';
+import '../../styles/css/components/tabs-component.scss';
 
 class LocalizationNav extends PureComponent {
   componentDidMount() {

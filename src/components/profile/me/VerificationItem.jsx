@@ -1,4 +1,4 @@
-import '../../../styles/css/components/profile/me/profile-verification.css';
+import '../../../styles/css/components/profile/me/profile-verification.scss';
 
 // import { Link } from 'react-router-dom';
 import { ProfileVerification } from '../../../constants/profileVerification';

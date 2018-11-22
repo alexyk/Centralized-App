@@ -1,5 +1,3 @@
-import '../../../styles/css/components/modals/modal.css';
-
 import { REGISTER } from '../../../constants/modals.js';
 import {
   EMAIL_ALREADY_EXISTS,

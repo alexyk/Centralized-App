@@ -3,8 +3,6 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { SAVE_WALLET, CONFIRM_WALLET } from '../../../constants/modals.js';
 
-import '../../../styles/css/components/modals/modal.css';
-
 function SaveWalletModal(props) {
 
   const handleFocus = (e) => {

@@ -1,4 +1,4 @@
-import '../../../styles/css/components/profile/admin/navigation-tab.css';
+import '../../../styles/css/components/profile/admin/navigation-tab.scss';
 
 import PropTypes from 'prop-types';
 import React from 'react';

@@ -1,4 +1,4 @@
-import '../../../styles/css/components/profile/me/profile-edit-nav.css';
+import '../../../styles/css/components/profile/me/profile-edit-nav.scss';
 
 import { NavLink } from 'react-router-dom';
 import React from 'react';

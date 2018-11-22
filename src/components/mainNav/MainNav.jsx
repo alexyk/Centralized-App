@@ -1,4 +1,4 @@
-import '../../styles/css/components/main_nav/main_nav.css';
+import '../../styles/css/components/main_nav/main_nav.scss';
 
 import {
   AIRDROP_LOGIN,

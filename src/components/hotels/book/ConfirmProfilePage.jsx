@@ -10,7 +10,7 @@ import BookingSteps from '../../common/utility/BookingSteps';
 import Select from '../../common/google/GooglePlacesAutocomplete';
 import StringUtils from '../../../services/utilities/stringUtilities';
 
-import '../../../styles/css/components/hotels/book/profile-confirm-form.css';
+import '../../../styles/css/components/hotels/book/profile-confirm-form.scss';
 
 class ConfirmProfilePage extends React.Component {
   constructor(props) {

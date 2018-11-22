@@ -1,4 +1,4 @@
-import '../../../../styles/css/components/profile/trips/hotel-trips-table.css';
+import '../../../../styles/css/components/profile/trips/hotel-trips-table.scss';
 
 import { Config } from '../../../../config';
 import { Link } from 'react-router-dom';

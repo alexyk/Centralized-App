@@ -3,8 +3,6 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { EMAIL_VERIFICATION } from '../../../constants/modals.js';
 
-import '../../../styles/css/components/modals/modal.css';
-
 function EmailVerificationModal(props) {
 
   return (

@@ -7,7 +7,7 @@ import { Config } from '../../../../config.js';
 import DatePreview from '../datePreview';
 import { CurrencyConverter } from '../../../../services/utilities/currencyConverter.js';
 import { getPriceForPeriod } from '../../common/detailsPageUtils.js';
-import './style.css';
+import './style.scss';
 import Rating from '../../../common/rating/Rating';
 import LocPrice from '../../../common/utility/LocPrice';
 import { RoomsXMLCurrency } from '../../../../services/utilities/roomsXMLCurrency.js';

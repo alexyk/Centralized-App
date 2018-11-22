@@ -2,8 +2,8 @@ import React from 'react';
 import DatePicker from 'react-datepicker';
 import moment from 'moment';
 import 'react-datepicker/dist/react-datepicker.css';
-import '../../../styles/css/components/common/search/search-bar-date-picker-hide-preview.css';
-import '../../../styles/css/components/common/home/date-picker-preview.css';
+import '../../../styles/css/components/common/search/search-bar-date-picker-hide-preview.scss';
+import '../../../styles/css/components/common/home/date-picker-preview.scss';
 
 function DatePickerPreview(props) {
   const { onClick } = props;

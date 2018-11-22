@@ -1,4 +1,4 @@
-import '../../../styles/css/components/profile/messages/message-box.css';
+import '../../../styles/css/components/profile/messages/message-box.scss';
 
 import { Config } from '../../../config';
 import PropTypes from 'prop-types';

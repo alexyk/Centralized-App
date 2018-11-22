@@ -1,5 +1,4 @@
-import 'react-notifications/lib/notifications.css';
-import '../../../styles/css/components/profile/wallet/wallet-index-page.css';
+import '../../../styles/css/components/profile/wallet/wallet-index-page.scss';
 import { CREATE_WALLET, RECOVER_WALLET } from '../../../constants/modals.js';
 import { Config } from '../../../config';
 import { LONG } from '../../../constants/notificationDisplayTimes.js';

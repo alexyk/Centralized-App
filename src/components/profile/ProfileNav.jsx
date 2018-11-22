@@ -1,4 +1,4 @@
-import '../../styles/css/components/profile/me/profile-nav.css';
+import '../../styles/css/components/profile/me/profile-nav.scss';
 
 import { NavDropdown } from 'react-bootstrap/lib';
 import { NavLink, withRouter } from 'react-router-dom';

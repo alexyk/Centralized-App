@@ -1,5 +1,3 @@
-import '../../../styles/css/components/modals/modal.css';
-
 import { PENDING_BOOKING_LOC, PASSWORD_PROMPT } from '../../../constants/modals.js';
 
 import { Modal } from 'react-bootstrap';
