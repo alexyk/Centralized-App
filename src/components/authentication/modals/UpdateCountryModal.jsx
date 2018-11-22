@@ -2,6 +2,7 @@ import { Modal } from 'react-bootstrap';
 import React from 'react';
 import { UPDATE_COUNTRY } from '../../../constants/modals.js';
 import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
 
 function UpdateCountryModal(props) {
 
@@ -53,6 +54,23 @@ function UpdateCountryModal(props) {
     </React.Fragment>
   );
 }
+
+UpdateCountryModal.propTypes = {
+  countries: PropTypes.array,
+  country: PropTypes.string,
+  states: PropTypes.array,
+  countryState: PropTypes.string,
+  onChange: PropTypes.func,
+  openModal: PropTypes.func,
+  closeModal: PropTypes.func,
+  isActive: PropTypes.bool,
+  handleChangeCountry: PropTypes.func,
+  handleUpdateCountry: PropTypes.func,
+
+  // Redux props
+  modalsInfo: PropTypes.object
+};
+
 
 const mapStateToProps = (state) => ({
   modalsInfo: state.modalsInfo

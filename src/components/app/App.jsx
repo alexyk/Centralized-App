@@ -1,4 +1,5 @@
 import '../../styles/css/main.css';
+import '../../styles/css/components/captcha/captcha-container.css';
 
 import { Redirect, Route, Switch, withRouter } from 'react-router-dom';
 import { setIsLogged, setUserInfo } from '../../actions/userInfo';
@@ -27,6 +28,10 @@ import GooglePlaces from '../common/GooglePlaces';
 import HelpPage from '../static/HelpPage';
 import AboutUsPage from '../static/AboutUsPage';
 import { hot } from 'react-hot-loader';
+import LoginManager from '../authentication/LoginManager';
+import RegisterManager from '../authentication/RegisterManager';
+import WalletCreationManager from '../authentication/WalletCreationManager';
+import PasswordRecoveryManager from '../authentication/PasswordRecoveryManager';
 
 class App extends React.Component {
   constructor(props) {
@@ -137,12 +142,15 @@ class App extends React.Component {
           <LocalizationNav />
         }
 
+        <LoginManager />
+        <RegisterManager />
+        <WalletCreationManager />
+        <PasswordRecoveryManager />
         <NotificationContainer />
 
         <Switch>
           <Route exact path="/" render={() => <HomeRouterPage />} />
           <Route exact path="/profile/listings/edit/:step/:id" render={() => !this.isAuthenticated() ? <Redirect to="/" /> : <EditListingPage />} />
-          {/* <Route exact path="/profile/listings/calendar/:id" render={() => !this.isAuthenticated() ? <Redirect to="/" /> : <CalendarPage />} /> */}
           <Route exact path="/users/resetPassword/:confirm" render={() => <HomeRouterPage />} />
           <Route path="/homes" render={() => <HomeRouterPage />} />
           <Route path="/hotels" render={() => <HomeRouterPage />} />
