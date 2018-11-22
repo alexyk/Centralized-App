@@ -153,7 +153,7 @@ class CalendarPage extends React.Component {
     }
   }
 
-  onSubmit(captchaToken) {
+  onSubmit() {
     let listingId = this.props.match.params.id;
 
     let slotInfo = {
@@ -162,7 +162,7 @@ class CalendarPage extends React.Component {
       available: this.state.available
     };
 
-    requester.publishCalendarSlot(listingId, slotInfo, captchaToken).then(res => {
+    requester.publishCalendarSlot(listingId, slotInfo).then(res => {
       if (res.success) {
         let prices = this.state.prices;
         let indexOfSlot = prices.findIndex(x => x.start.isSame(this.state.selectedDate));
@@ -187,7 +187,7 @@ class CalendarPage extends React.Component {
     this.setState({ [e.target.name]: e.target.value });
   }
 
-  updateDailyPrice(captchaToken) {
+  updateDailyPrice() {
     this.setState({ loading: true });
 
     const listingId = this.props.match.params.id;
@@ -195,7 +195,7 @@ class CalendarPage extends React.Component {
       defaultDailyPrice: this.state.defaultDailyPrice
     };
 
-    requester.editDefaultDailyPrice(listingId, priceObj, captchaToken).then(res => {
+    requester.editDefaultDailyPrice(listingId, priceObj).then(res => {
       if (res.success) {
         let prices = this.state.prices;
         for (let i = 0; i < prices.length; i++) {

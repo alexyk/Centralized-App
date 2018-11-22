@@ -1,9 +1,7 @@
 import 'react-notifications/lib/notifications.css';
 import '../../../styles/css/components/profile/me/my-profile-edit-form.css';
 
-import { Config } from '../../../config';
 import { NotificationManager } from 'react-notifications';
-import ReCAPTCHA from 'react-google-recaptcha';
 import React from 'react';
 import requester from '../../../requester';
 
@@ -41,7 +39,10 @@ class ProfileAdditionalInfo extends React.Component {
     this.setState({ [e.target.name]: e.target.value });
   }
 
-  updateUserAdditionalInfo(captchaToken) {
+  updateUserAdditionalInfo(e) {
+    if (e) {
+      e.preventDefault();
+    }
 
     let userAdditionalInfo = {
       aboutMe: this.state.aboutMe,
@@ -51,7 +52,7 @@ class ProfileAdditionalInfo extends React.Component {
 
     Object.keys(userAdditionalInfo).forEach((key) => (userAdditionalInfo[key] === null || userAdditionalInfo[key] === '') && delete userAdditionalInfo[key]);
 
-    requester.updateUserAdditionalInfo(userAdditionalInfo, captchaToken).then(res => {
+    requester.updateUserAdditionalInfo(userAdditionalInfo).then(res => {
       if (res.success) {
         NotificationManager.success('Successfully updated your info', 'Update user additional info');
       }
@@ -74,7 +75,7 @@ class ProfileAdditionalInfo extends React.Component {
       <div id="my-profile-edit-form">
         <h2>Additional Info</h2>
         <hr />
-        <form onSubmit={(e) => { e.preventDefault(); this.captcha.execute(); }}>
+        <form onSubmit={(e) => { this.updateUserAdditionalInfo(e); }}>
           <div className="about-me">
             <label htmlFor="about-me">About me</label>
             <textarea value={this.state.aboutMe} onChange={this.onChange} name="aboutMe" id="about-me">
@@ -90,13 +91,6 @@ class ProfileAdditionalInfo extends React.Component {
             <label htmlFor="school">School</label>
             <input id="school" name="school" value={this.state.school} onChange={this.onChange} type="text" placeholder='Enter your school' />
           </div>
-
-          <ReCAPTCHA
-            ref={el => this.captcha = el}
-            size="invisible"
-            sitekey={Config.getValue('recaptchaKey')}
-            onChange={token => { this.updateUserAdditionalInfo(token); this.captcha.reset(); }}
-          />
 
           <button type="submit" className="btn">Save</button>
         </form>

@@ -25,6 +25,7 @@ function ProfileNav(props) {
             <li><NavLink activeClassName="active" to="/profile/admin/users">All Users</NavLink></li>
             <li><NavLink activeClassName="active" to="/profile/admin/airdrop">Airdrop</NavLink></li>
             <li><NavLink activeClassName="active" to="/profile/admin/safecharge">Safecharge</NavLink></li>
+            <li><NavLink activeClassName="active" to="/profile/admin/reservation/booking/all">Reservations</NavLink></li>
           </NavDropdown>}
         </ul>
       </div>

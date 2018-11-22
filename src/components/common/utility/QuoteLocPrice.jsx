@@ -4,7 +4,7 @@ import { NotificationManager } from 'react-notifications';
 import PropTypes from 'prop-types';
 import { CurrencyConverter } from '../../../services/utilities/currencyConverter';
 import { RoomsXMLCurrency } from '../../../services/utilities/roomsXMLCurrency';
-import { Websocket } from '../../../services/socket/exchangerWebsocket';
+import { ExchangerWebsocket } from '../../../services/socket/exchangerWebsocket';
 import { removeLocAmount } from '../../../actions/locAmountsInfo';
 import { LONG } from '../../../constants/notificationDisplayTimes.js';
 
@@ -23,8 +23,8 @@ class QuoteLocPrice extends PureComponent {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.exchangerSocketInfo.isLocPriceWebsocketConnected &&
-      nextProps.exchangerSocketInfo.isLocPriceWebsocketConnected !== this.props.exchangerSocketInfo.isLocPriceWebsocketConnected) {
+    if (nextProps.exchangerSocketInfo.isExchangerWebsocketConnected &&
+      nextProps.exchangerSocketInfo.isExchangerWebsocketConnected !== this.props.exchangerSocketInfo.isExchangerWebsocketConnected) {
       this.sendWebsocketMessage(null, null, this.props.params);
     }
   }
@@ -38,7 +38,7 @@ class QuoteLocPrice extends PureComponent {
   }
 
   sendWebsocketMessage(id, method, params) {
-    Websocket.sendMessage(id || DEFAULT_QUOTE_LOC_ID, method || DEFAULT_QUOTE_LOC_METHOD, params);
+    ExchangerWebsocket.sendMessage(id || DEFAULT_QUOTE_LOC_ID, method || DEFAULT_QUOTE_LOC_METHOD, params);
   }
 
   redirectToHotelDetailsPage() {
