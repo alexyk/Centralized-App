@@ -1,7 +1,5 @@
-import { Config } from '../../../config';
 import { Modal } from 'react-bootstrap';
 import PropTypes from 'prop-types';
-import ReCAPTCHA from 'react-google-recaptcha';
 import React from 'react';
 import { withRouter } from 'react-router-dom';
 
@@ -26,6 +24,16 @@ class ContactHostModal extends React.Component {
     this.setState({ [e.target.name]: e.target.value });
   }
 
+  onSubmit(e) {
+    if (e) {
+      e.preventDefault();
+    }
+
+    const { id } = this.props;
+    const { message } = this.state;
+    this.props.handleContactHost(id, message); 
+  }
+
   render() {
     return (
       <React.Fragment>
@@ -35,18 +43,10 @@ class ContactHostModal extends React.Component {
             <button type="button" className="close" onClick={e => this.props.closeModal(modal.current, e)}>&times;</button>
           </Modal.Header>
           <Modal.Body>
-            <form onSubmit={(e) => { e.preventDefault(); this.captcha.execute(); }}>
+            <form onSubmit={(e) => { this.onSubmit(e); }}>
               <div className="input-container">
                 <textarea rows="4" name="message" value={this.state.message} onChange={this.onChange}></textarea>
               </div>
-
-              <ReCAPTCHA
-                ref={el => this.captcha = el}
-                size="invisible"
-                sitekey={Config.getValue('recaptchaKey')}
-                onChange={token => { this.props.handleContactHost(this.props.id, this.state.message, token); this.captcha.reset(); }}
-              />
-
               <button type="submit" className="btn btn-primary">Send message</button>
               <div className="clearfix"></div>
             </form>

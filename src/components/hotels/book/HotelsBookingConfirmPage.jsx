@@ -21,9 +21,8 @@ import QuoteLocPrice from '../../common/utility/QuoteLocPrice';
 import QuoteLocPricePP from '../../common/utility/QuoteLocPricePP';
 import LocPriceUpdateTimer from '../../common/utility/LocPriceUpdateTimer';
 import { closeModal, openModal } from '../../../actions/modalsInfo.js';
-import { setLocRateFiatAmount } from '../../../actions/exchangeRatesInfo.js';
 import RecoverWallerPassword from '../../common/utility/RecoverWallerPassword';
-import { Websocket } from '../../../services/socket/exchangerWebsocket';
+import { ExchangerWebsocket } from '../../../services/socket/exchangerWebsocket';
 
 import '../../../styles/css/components/hotels/book/hotel-booking-confirm-page.css';
 import PendingBookingLocModal from '../modals/PendingBookingLocModal';
@@ -41,7 +40,6 @@ class HotelBookingConfirmPage extends React.Component {
   constructor(props) {
     super(props);
 
-    this.captcha = null;
     this.isQuoteApproved = false;
 
     this.state = {
@@ -63,16 +61,7 @@ class HotelBookingConfirmPage extends React.Component {
 
   componentDidMount() {
     this.requestSafechargeMode();
-    this.props.requestCreateReservation().then(() => {
-      const { currencyExchangeRates } = this.props.exchangeRatesInfo;
-      const fiatPriceRoomsXML = this.props.reservation.fiatPrice;
-      const fiatPriceRoomsXMLInEur = currencyExchangeRates && CurrencyConverter.convert(currencyExchangeRates, RoomsXMLCurrency.get(), DEFAULT_CRYPTO_CURRENCY, fiatPriceRoomsXML);
-      this.props.dispatch(setLocRateFiatAmount(fiatPriceRoomsXMLInEur));
-    });
-  }
-
-  componentWillUnmount() {
-    this.props.dispatch(setLocRateFiatAmount(1000));
+    this.props.requestCreateReservation();
   }
 
   requestSafechargeMode() {
@@ -115,7 +104,7 @@ class HotelBookingConfirmPage extends React.Component {
   }
 
   stopQuote() {
-    Websocket.sendMessage(DEFAULT_QUOTE_LOC_ID, 'approveQuote', { bookingId: this.props.reservation.preparedBookingId });
+    ExchangerWebsocket.sendMessage(DEFAULT_QUOTE_LOC_ID, 'approveQuote', { bookingId: this.props.reservation.preparedBookingId });
 
     this.setState({
       isQuoteStopped: true
@@ -123,7 +112,7 @@ class HotelBookingConfirmPage extends React.Component {
   }
 
   stopQuotePP() {
-    Websocket.sendMessage(DEFAULT_QUOTE_LOC_PP_ID, 'approveQuote', { bookingId: this.props.reservation.preparedBookingId + PAYMENT_PROCESSOR_IDENTIFICATOR });
+    ExchangerWebsocket.sendMessage(DEFAULT_QUOTE_LOC_PP_ID, 'approveQuote', { bookingId: this.props.reservation.preparedBookingId + PAYMENT_PROCESSOR_IDENTIFICATOR });
 
     this.setState({
       isQuotePPStopped: true
@@ -131,8 +120,8 @@ class HotelBookingConfirmPage extends React.Component {
   }
 
   restartQuote() {
-    Websocket.sendMessage(DEFAULT_QUOTE_LOC_ID, 'quoteLoc', { bookingId: this.props.reservation.preparedBookingId });
-    Websocket.sendMessage(DEFAULT_QUOTE_LOC_PP_ID, 'quoteLoc', { bookingId: this.props.reservation.preparedBookingId + PAYMENT_PROCESSOR_IDENTIFICATOR });
+    ExchangerWebsocket.sendMessage(DEFAULT_QUOTE_LOC_ID, 'quoteLoc', { bookingId: this.props.reservation.preparedBookingId });
+    ExchangerWebsocket.sendMessage(DEFAULT_QUOTE_LOC_PP_ID, 'quoteLoc', { bookingId: this.props.reservation.preparedBookingId + PAYMENT_PROCESSOR_IDENTIFICATOR });
 
     this.setState({
       isQuoteStopped: false,
@@ -480,7 +469,7 @@ class HotelBookingConfirmPage extends React.Component {
           rows.push(
             <tr key={3 * 1000 + feeIndex + 1}>
               <td>
-                {`Canceling on or after ${date} will cost you`}
+                {`Cancelling on or after ${date} will cost you`}
               </td>
               <td>
                 <span className="booking-price">
@@ -501,7 +490,7 @@ class HotelBookingConfirmPage extends React.Component {
       <table>
         <thead>
           <tr>
-            <th>Cancelation condition</th>
+            <th>Cancellation condition</th>
             <th>Price</th>
           </tr>
         </thead>
@@ -573,7 +562,7 @@ class HotelBookingConfirmPage extends React.Component {
                   </div>
                   <hr className="table-splitter" />
                   <div className="confirm-and-pay-table">
-                    <h4>Cancelation Details</h4>
+                    <h4>Cancellation Details</h4>
                     {this.getRoomFees(reservation)}
                   </div>
                   <p className='billing-disclaimer'>The charge will appear on your bill as LockChain Ltd. (team@locktrip.com)</p>

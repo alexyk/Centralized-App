@@ -10,7 +10,7 @@ function HelpPage() {
           <h4>FAQ</h4>
           <div className='question'>
             <p>Q: What is LockTrip?</p>
-            <p>A: LockTrip is a blockchain powered marketplace & technology, where hoteliers and property owners can rent their property globally, collect money and manage bookings without paying any commissions to middlemen.</p>
+            <p>A: LockTrip is a blockchain powered marketplace &amp; technology, where hoteliers and property owners can rent their property globally, collect money and manage bookings without paying any commissions to middlemen.</p>
           </div>
 
           <div className='question'>
@@ -35,11 +35,11 @@ function HelpPage() {
 
           <div className='question'>
             <p>Q: Who manages LockTrip?</p>
-            <p>A: Our team has been operating in the digital space for more than a decade, with centuries of combined expertise in fields as diverse as travel, technical innovations, software engineering, politics, fintech, and crypto-currency. The majority shareholders are the project's founders Nikola Alexandrov and Hristo Tenchev.</p>
+            <p>A: Our team has been operating in the digital space for more than a decade, with centuries of combined expertise in fields as diverse as travel, technical innovations, software engineering, politics, fintech, and crypto-currency. The majority shareholders are the project&#39;s founders Nikola Alexandrov and Hristo Tenchev.</p>
           </div>
 
           <div className='question'>
-            <p>Q: Who are LockTrip's advisors?</p>
+            <p>Q: Who are LockTrip&#39;s advisors?</p>
             <p>A: LockTrip is proud to be backed by a strong and prominent Advisory Board that includes the president of Bulgaria and the co-founder of SoftUni Educational Center. You can check our Board of Advisors at: <a href='https://locktrip.com/#team_advisor' target="_blank" rel='noopener noreferrer' className='link'>https://locktrip.com/#team_advisor</a></p>
           </div>
 
@@ -58,7 +58,7 @@ function HelpPage() {
           <br />
           <hr />
           <h4>Refund/Cancellation Policy</h4>
-          <p>Property owner can allow cancelation of booking and return of funds.</p>
+          <p>Property owner can allow cancellation of booking and return of funds.</p>
           <ul>
             <li>Property owner can define percent of amount returned and a deadline date.</li>
             <li>Conditions and LOC are hold on the blockchain, which gives 100% guarantee of execution of rules for both property owner and customer.</li>

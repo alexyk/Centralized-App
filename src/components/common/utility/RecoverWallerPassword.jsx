@@ -47,6 +47,9 @@ class RecoverWallerPassword extends Component {
         if (data.preferredCurrency) {
           data.preferredCurrency = data.preferredCurrency.id;
         }
+        if (data.countryState) {
+          data.countryState = data.countryState.id;
+        }
         this.setState({
           userInfo: data
         });
@@ -94,13 +97,13 @@ class RecoverWallerPassword extends Component {
     }
   }
 
-  updateWalletJson(captchaToken) {
+  updateWalletJson() {
     if (this.state.wallet) {
       this.state.wallet.encrypt(this.state.walletPassword)
         .then(json => {
           let { userInfo } = this.state;
           userInfo.jsonFile = json;
-          requester.updateUserInfo(userInfo, captchaToken)
+          requester.updateUserInfo(userInfo)
             .then((res) => {
               if (res.success) {
                 res.body

@@ -5,11 +5,11 @@ $breakpoints: (
 	'big-desktop': 1220px,
 );
 
-@import '../../../vendors/include-media';
+@import '../../../../styles/css/vendors/include-media';
 
 .left-part {
   border-radius: 5px;
-  width: 34%;
+  width: 35%;
   background-color: #fff;
   margin-bottom: 25px;
   height: 60%;
@@ -35,7 +35,7 @@ $breakpoints: (
       right: 16px !important;
       background: none !important;
       &:before {
-        content: url('../../../../images/right.png');
+        content: url('../../../../styles/images/right.png');
         border: 0px;
         padding: 0px;
       }
@@ -46,7 +46,7 @@ $breakpoints: (
       z-index: 2;
       background: none !important;
       &:before {
-        content: url('../../../../images/left.png');
+        content: url('../../../../styles/images/left.png');
         border: 0px;
         padding: 0px;
       }
@@ -122,13 +122,9 @@ $breakpoints: (
     .div-guest {
       display: flex;
       margin-bottom: 16px;
+      justify-content: center;
+      width: 100%;
       @include media("<=tablet") {
-        justify-content: center;
-      }
-      @include media("<=big-desktop") {
-        width: 50%;
-        justify-content: center;
-        align-items: center;
       }
       p {
         font-size: 18px;

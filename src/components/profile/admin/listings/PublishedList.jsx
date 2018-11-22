@@ -1,5 +1,3 @@
-import '../../../../styles/css/components/captcha/captcha-container.css';
-
 import { NavLink, withRouter } from 'react-router-dom';
 
 import AdminNav from '../AdminNav';
@@ -15,7 +13,6 @@ import NoEntriesMessage from '../../../common/messages/NoEntriesMessage';
 import { NotificationManager } from 'react-notifications';
 import Pagination from '../../../common/pagination/Pagination';
 import PropTypes from 'prop-types';
-import ReCAPTCHA from 'react-google-recaptcha';
 import React from 'react';
 import queryString from 'query-string';
 import requester from '../../../../requester';
@@ -218,12 +215,12 @@ class PublishedList extends React.Component {
     });
   }
 
-  handleContactHost(id, message, captchaToken) {
+  handleContactHost(id, message) {
     let contactHostObj = {
       message: message
     };
 
-    requester.contactHost(id, contactHostObj, captchaToken).then(() => {
+    requester.contactHost(id, contactHostObj).then(() => {
       NotificationManager.info(MESSAGE_SENT, '', LONG);
       this.closeContactHostModal();
     });
@@ -356,34 +353,6 @@ class PublishedList extends React.Component {
               {this.state.listings.length === 0
                 ? <NoEntriesMessage text="No listings to show" />
                 : <div>
-                  {/* <div className="table-header bold">
-                  <div className="col-md-1">
-                  </div>
-                  <div className="col-md-4">
-                    <span>Name</span>
-                  </div>
-                  <div className="col-md-2">
-                    <span>Price</span>
-                  </div>
-                  <div className="col-md-3">
-                    <span>Actions</span>
-                  </div>
-                  <div className="col-md-2">
-                    <span>Contact host</span>
-                  </div>
-                </div> */}
-
-                  {/* TODO: Fix event emmiter warning from this piece of code */}
-
-                  {/* <ListingRow
-                      action="Unpublish"
-                      canDelete={false}
-                      updateListingStatus={this.updateListingStatus}
-                      actionClass="btn btn-danger"
-                      listing={item}
-                      key={i}
-                      openModal={this.openModal}
-                    /> */}
                   {this.state.listings.map((l, i) => {
                     return (
                       <ListItem
@@ -420,16 +389,6 @@ class PublishedList extends React.Component {
                   onClose={this.closeLightbox}
                 />
               }
-
-              <div className='captcha-container'>
-                <ReCAPTCHA
-                  ref={el => this.captcha = el}
-                  size="invisible"
-                  sitekey={Config.getValue('recaptchaKey')}
-                  onChange={token => { this.handleDeleteListing(token); this.captcha.reset(); }}
-                />
-
-              </div>
             </div>
           </section>
         </div>
