@@ -51,7 +51,7 @@ class AdminSafecharge extends Component {
     const isSafechargeEnabled = this.props.configVars[SAFECHARGE_VAR] === 'true';
 
     return (
-      <div className="admin-safecharge">
+      <div className="admin-safecharge container">
         <AdminNav>
           <h2 className="navigation-tab">Safecharge</h2>
         </AdminNav>
