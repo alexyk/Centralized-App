@@ -54,7 +54,7 @@ class AirTicketsDetailsBookingPanel extends Component {
           </div>
         </div>
         {userInfo.isLogged ?
-          <Link to={`/tickets/results/book/${this.props.match.params.id}/profile${this.props.location.search}`} className="pay-in">Request Booking</Link> :
+          <Link to={`/tickets/results/initBook/${this.props.match.params.id}/profile${this.props.location.search}`} className="pay-in">Request Booking</Link> :
           <button className="pay-in" onClick={(e) => this.props.dispatch(openModal(LOGIN, e))}>Login</button>}
         <hr />
         <p className="booking-helper">You won&#39;t be charged yet</p>

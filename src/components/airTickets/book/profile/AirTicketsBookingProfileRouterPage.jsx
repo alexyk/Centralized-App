@@ -36,7 +36,7 @@ function AirTicketsBookingProfileRouterPage(props) {
               <Switch>
                 <Route
                   exact
-                  path="/tickets/results/book/:id/profile"
+                  path="/tickets/results/initBook/:id/profile"
                   render={() => {
                     return (
                       <AirTicketsBookingProfileEditForm
@@ -51,7 +51,7 @@ function AirTicketsBookingProfileRouterPage(props) {
                 {confirmInfo.invoice ?
                   <Route
                     exact
-                    path="/tickets/results/book/:id/profile/invoice"
+                    path="/tickets/results/initBook/:id/profile/invoice"
                     render={() => {
                       return (
                         <AirTicketsBookingProfileInvoiceForm
@@ -63,12 +63,12 @@ function AirTicketsBookingProfileRouterPage(props) {
                         />
                       );
                     }}
-                  /> : <Redirect to={{ pathname: '/tickets/results/book/:id/profile', search: props.location.search }} />}
+                  /> : <Redirect to={{ pathname: '/tickets/results/initBook/:id/profile', search: props.location.search }} />}
                 {!!flightServices &&
                   (confirmInfo.services ?
                     <Route
                       exact
-                      path="/tickets/results/book/:id/profile/services"
+                      path="/tickets/results/initBook/:id/profile/services"
                       render={() => {
                         return (
                           <AirTicketsBookingProfileServicesForm
@@ -80,12 +80,12 @@ function AirTicketsBookingProfileRouterPage(props) {
                           />
                         );
                       }}
-                    /> : <Redirect to={{ pathname: '/tickets/results/book/:id/profile', search: props.location.search }} />)
+                    /> : <Redirect to={{ pathname: '/tickets/results/initBook/:id/profile', search: props.location.search }} />)
                 }
                 {confirmInfo.passengers ?
                   <Route
                     exact
-                    path="/tickets/results/book/:id/profile/passengers"
+                    path="/tickets/results/initBook/:id/profile/passengers"
                     render={() => {
                       return (
                         <AirTicketsBookingProfilePassengersForm
@@ -99,7 +99,7 @@ function AirTicketsBookingProfileRouterPage(props) {
                         />
                       );
                     }}
-                  /> : <Redirect to={{ pathname: '/tickets/results/book/:id/profile', search: props.location.search }} />}
+                  /> : <Redirect to={{ pathname: '/tickets/results/initBook/:id/profile', search: props.location.search }} />}
               </Switch>
             </div>
           </div>

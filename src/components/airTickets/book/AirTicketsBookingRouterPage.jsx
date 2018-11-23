@@ -6,7 +6,6 @@ import PropTypes from 'prop-types';
 import { parse } from 'query-string';
 import AirTicketsDetailsPage from './details/AirTicketsDetailsPage';
 import AirTicketsBookingProfileRouterPage from './profile/AirTicketsBookingProfileRouterPage';
-import AirTicketsBookingConfirmPage from './confirm/AirTicketsBookingConfirmPage';
 import { Config } from '../../../config';
 import { LONG } from '../../../constants/notificationDisplayTimes';
 
@@ -22,23 +21,69 @@ class AirTicketsBookingRouterPage extends Component {
 
     this.state = {
       result: null,
-      contactInfo: {},
-      invoiceInfo: {},
-      servicesInfo: [],
-      passengersInfo: [],
+      contactInfo: {
+        address: 'Krasno selo 212',
+        city: 'Sofia, Bulgaria',
+        country: 'BG',
+        email: 'ico_skipernov@abv.bg',
+        firstName: 'Hristo',
+        lastName: 'Skipernov',
+        phone: '0887603249',
+        title: 'Mr',
+        zip: '1000'
+      },
+      invoiceInfo: {
+        address: 'Tintqva 15-17',
+        city: 'Sofia, Bulgaria',
+        country: 'BG',
+        name: 'Codexio LTD',
+        zip: '1000',
+      },
+      servicesInfo: [
+        
+      ],
+      passengersInfo: [
+        {
+          birthDate: '1952-01-02',
+          birthdateYear: '1984',
+          birthdateMonth: '09',
+          birthdateDay: '23',
+          firstName: 'Hristo',
+          lastName: 'Skipernov',
+          nationality: 'BG',
+          options: [
+            {
+              id: 'OutwardLuggageOptions',
+              value: '1'
+            },
+            {
+              id: 'ReturnLuggageOptions',
+              value: '1'
+            }
+          ],
+          passportNumber: '1247987654324',
+          passportIssueCountry: 'BG',
+          passportExpYear: '2022',
+          passportExpMonth: '05',
+          passportExpDay: '16',
+          title: 'Mr',
+          type: 'ADT'
+        }
+      ],
       countries: [],
       confirmInfo: {
         contact: true,
-        invoice: false,
-        services: false,
-        passengers: false
-      },
-      preparedBooking: null
+        invoice: true,
+        services: true,
+        passengers: true
+      }
     };
 
     this.searchAirTickets = this.searchAirTickets.bind(this);
     this.requestSelectFlight = this.requestSelectFlight.bind(this);
     this.requestAllCountries = this.requestAllCountries.bind(this);
+    this.requestPrepareBooking = this.requestPrepareBooking.bind(this);
+    this.requestBooking = this.requestBooking.bind(this);
     this.onChangeContactInfo = this.onChangeContactInfo.bind(this);
     this.onChangeInvoiceInfo = this.onChangeInvoiceInfo.bind(this);
     this.onChangeServiceInfo = this.onChangeServiceInfo.bind(this);
@@ -52,7 +97,7 @@ class AirTicketsBookingRouterPage extends Component {
   componentDidMount() {
     this.requestSelectFlight();
     this.requestAllCountries();
-    this.populatePassengersInfo();
+    // this.populatePassengersInfo();
   }
 
   requestSelectFlight() {
@@ -88,6 +133,53 @@ class AirTicketsBookingRouterPage extends Component {
           console.log(res);
         }
       });
+  }
+
+  requestPrepareBooking(initBooking) {
+    return new Promise((resolve, reject) => {
+      fetch(`${Config.getValue('apiHost')}flight/prepareBooking`, {
+        method: 'POST',
+        headers: {
+          'Content-type': 'application/json'
+        },
+        body: JSON.stringify(initBooking)
+      })
+        .then((res) => {
+          if (res.ok) {
+            res.json().then((data) => {
+              if (data.success === false) {
+                reject(data);
+              } else {
+                resolve(data);
+              }
+            });
+          } else {
+            reject();
+            console.log(res);
+          }
+        });
+    });
+  }
+
+  requestBooking() {
+    return new Promise((resolve, reject) => {
+      fetch(`${Config.getValue('apiHost')}flight/flightBooking`, {
+        method: 'POST',
+        headers: {
+          'Content-type': 'application/json'
+        },
+        body: JSON.stringify({ flightId: this.props.match.params.id })
+      })
+        .then((res) => {
+          if (res.ok) {
+            res.json().then((data) => {
+              resolve(data);
+            });
+          } else {
+            reject(res);
+          }
+        });
+    });
   }
 
   searchAirTickets(queryString) {
@@ -197,7 +289,7 @@ class AirTicketsBookingRouterPage extends Component {
         ...prevState.confirmInfo,
         [section]: true
       }
-    }), () => this.props.history.push(`/tickets/results/book/${this.props.match.params.id}/profile/${section}${this.props.location.search}`));
+    }), () => this.props.history.push(`/tickets/results/initBook/${this.props.match.params.id}/profile/${section}${this.props.location.search}`));
   }
 
   initBooking() {
@@ -231,38 +323,30 @@ class AirTicketsBookingRouterPage extends Component {
       passengers
     };
 
-    fetch(`${Config.getValue('apiHost')}flight/prepareBooking`, {
-      method: 'POST',
-      headers: {
-        'Content-type': 'application/json'
-      },
-      body: JSON.stringify(initBooking)
-    })
-      .then((res) => {
-        if (res.ok) {
-          res.json().then((data) => {
-            if (data.success === false) {
-              NotificationManager.warning(data.message, '', LONG);
-            } else {
-              this.setState({
-                preparedBooking: data
-              }, () => this.props.history.push(`/tickets/results/book/${this.props.match.params.id}/confirm${this.props.location.search}`));
-            }
+    this.requestPrepareBooking(initBooking)
+      .then((data) => {
+        console.log('Success prepare booking.');
+        console.log(data);
+        this.requestBooking()
+          .then((data) => {
+            console.log('Success booking.');
+            console.log(data);
+            this.props.history.push(`/tickets/results/book/${this.props.match.params.id}${this.props.location.search}`);
           });
-        } else {
-          console.log(res);
-        }
+      })
+      .catch((err) => {
+        NotificationManager.warning(err.message, '', LONG);
       });
   }
 
   render() {
-    const { result, contactInfo, invoiceInfo, servicesInfo, passengersInfo, countries, confirmInfo, preparedBooking } = this.state;
+    const { result, contactInfo, invoiceInfo, servicesInfo, passengersInfo, countries, confirmInfo } = this.state;
 
     return (
       <Fragment>
         <Switch>
-          <Route exact path="/tickets/results/book/:id/details" render={() => <AirTicketsDetailsPage result={result} />} />
-          <Route path="/tickets/results/book/:id/profile" render={() => {
+          <Route exact path="/tickets/results/initBook/:id/details" render={() => <AirTicketsDetailsPage result={result} />} />
+          <Route path="/tickets/results/initBook/:id/profile" render={() => {
             return (
               <AirTicketsBookingProfileRouterPage
                 result={result}
@@ -279,15 +363,6 @@ class AirTicketsBookingRouterPage extends Component {
                 onChangePassengerServices={this.onChangePassengerServices}
                 enableNextSection={this.enableNextSection}
                 initBooking={this.initBooking}
-              />
-            );
-          }}
-          />
-          <Route exact path="/tickets/results/book/:id/confirm" render={() => {
-            return (
-              <AirTicketsBookingConfirmPage
-                result={result}
-                preparedBooking={preparedBooking}
               />
             );
           }}

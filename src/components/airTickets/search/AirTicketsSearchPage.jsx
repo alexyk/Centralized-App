@@ -470,6 +470,9 @@ class AirTicketsSearchPage extends Component {
     this.props.history.push('/tickets/results' + queryString);
 
     this.setState({
+      allResults: '',
+      totalElements: 0,
+      filters: null,
       loading: true,
       page: 0,
       currentPageResults: '',

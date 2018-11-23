@@ -8,7 +8,7 @@ import requester from '../../../requester';
 import { LONG } from '../../../constants/notificationDisplayTimes.js';
 import { MISSING_NAMES } from '../../../constants/warningMessages.js';
 import HomesBookingAside from './aside/HomesBookingAside';
-import BookingSteps from '../../common/utility/BookingSteps';
+import BookingSteps from '../../common/bookingSteps';
 
 import '../../../styles/css/components/homes/booking/homes-booking-confirm-page.css';
 

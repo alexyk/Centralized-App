@@ -1,11 +1,198 @@
-@import '../../../../vendors/include-media';
-@import '../../../../base/variables';
+@import "../../../../vendors/include-media";
+@import "../../../../base/variables";
 
 .air-tickets-booking-confirm {
   .booking-details {
     .booking-details-header {
       display: flex;
       justify-content: space-between;
+    }
+    .flight-details {
+      background-color: #fff;
+      border: 1px solid #cfcfcf;
+      border-radius: 5px;
+      width: 100%;
+      padding: 20px;
+      margin-bottom: 20px;
+      h4 {
+        width: 100%;
+        text-align: center;
+      }
+      .flight-details-info {
+        .departure-title,
+        .return-title {
+          font-weight: 400;
+          text-align: center;
+          font-size: 20px;
+          margin-bottom: 20px;
+        }
+        .departure-header,
+        .return-header {
+          display: flex;
+          justify-content: space-between;
+          font-size: 18px;
+          font-weight: 400;
+          margin-bottom: 20px;
+          .carrier-title {
+            width: 18%;
+          }
+          .class-flight-title {
+            width: 15%;
+          }
+          .origin-title {
+            width: 18%;
+          }
+          .destination-title {
+            width: 18%;
+          }
+          .additional-info-title {
+            width: 21%;
+          }
+        }
+        .segment-title {
+          font-weight: 400;
+          margin-bottom: 10px;
+        }
+        .departure-details-info,
+        .return-details-info {
+          display: flex;
+          justify-content: space-between;
+          margin-bottom: 40px;
+          .carrier {
+            width: 18%;
+            &-item {
+              display: flex;
+              margin-bottom: 5px;
+              &-label {
+                width: 45%;
+              }
+              &-value {
+                width: 45%;
+                text-align: right;
+              }
+            }
+          }
+          .class-flight {
+            width: 15%;
+            &-item {
+              display: flex;
+              margin-bottom: 5px;
+              &-label {
+                width: 45%;
+              }
+              &-value {
+                width: 45%;
+                text-align: right;
+              }
+            }
+          }
+          .origin,
+          .destination {
+            width: 18%;
+            &-item {
+              display: flex;
+              margin-bottom: 5px;
+              &-label {
+                width: 45%;
+              }
+              &-value {
+                width: 45%;
+                text-align: right;
+              }
+            }
+          }
+          .additional-info {
+            width: 21%;
+            &-item {
+              display: flex;
+              margin-bottom: 5px;
+              &-label {
+                width: 45%;
+              }
+              &-value {
+                width: 45%;
+                text-align: right;
+              }
+            }
+          }
+        }
+      }
+    }
+    .profile-details {
+      background-color: #fff;
+      border: 1px solid #cfcfcf;
+      border-radius: 5px;
+      width: 100%;
+      padding: 20px;
+      margin-bottom: 20px;
+      h4 {
+        width: 100%;
+        text-align: center;
+      }
+      .profile-details-info {
+        display: flex;
+        flex-wrap: wrap;
+        h5 {
+          font-weight: 400;
+        }
+        .contact-info {
+          width: 40%;
+          margin-bottom: 30px;
+          .contact-info-details {
+            .contact-info-item {
+              display: flex;
+              justify-content: space-between;
+              margin-bottom: 5px;
+              .contact-info-label {
+                width: 20%;
+              }
+              .contact-info-value {
+                width: 60%;
+              }
+            }
+          }
+        }
+        .invoice-info {
+          width: 40%;
+          margin-bottom: 30px;
+          .invoice-info-details {
+            .invoice-info-item {
+              display: flex;
+              justify-content: space-between;
+              margin-bottom: 5px;
+              .invoice-info-label {
+                width: 20%;
+              }
+              .invoice-info-value {
+                width: 60%;
+              }
+            }
+          }
+        }
+        .flight-services-info {
+          width: 20%;
+        }
+        .passengers-info {
+          width: 100%;
+          .passengers-info-details-holder {
+            display: flex;
+            .passenger-info-details {
+              width: 40%;
+              .passenger-info-item {
+                display: flex;
+                justify-content: space-between;
+                margin-bottom: 5px;
+                .passenger-info-label {
+                  width: 40%;
+                }
+                .passenger-info-value {
+                  width: 60%;
+                }
+              }
+            }
+          }
+        }
+      }
     }
     .payment-methods {
       display: flex;
@@ -15,7 +202,8 @@
       @include media("<=tablet") {
         // margin-top: 20px;
       }
-      &-card, &-loc {
+      &-card,
+      &-loc {
         background-color: #fff;
         display: flex;
         flex-direction: row;
@@ -35,14 +223,22 @@
           @include media("<=tablet") {
             width: 100%;
           }
-          .price-update-timer {
-            display: inline-block;
-            padding: 10px;
-            font-weight: 400;
-            border-radius: 3px;
-            color: $white;
-            background-color: $light-cyan;
-            margin-bottom: 10px;
+          .air-tickets-price {
+            display: flex;
+            margin-bottom: 20px;
+            justify-content: center;
+            .price-label {
+              width: 20%;
+              text-align: left;
+            }
+            .price-amount {
+              display: flex;
+              width: 40%;
+              div {
+                text-align: right;
+                width: 50%;
+              }
+            }
           }
         }
         .logos {
@@ -62,14 +258,15 @@
             // border: 1px solid green;
             text-align: center;
             img {
-              max-width:100%;
-              max-height:100%;
+              max-width: 100%;
+              max-height: 100%;
             }
           }
           .credit-cards {
             width: 100%;
           }
-          .safecharge, .loc {
+          .safecharge,
+          .loc {
             width: 100%;
           }
           .loc > img {

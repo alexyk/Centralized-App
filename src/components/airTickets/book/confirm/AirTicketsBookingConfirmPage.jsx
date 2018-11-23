@@ -6,36 +6,40 @@ import BookingSteps from '../../../common/bookingSteps';
 import { Config } from '../../../../config';
 import { CREATE_WALLET } from '../../../../constants/modals.js';
 import { CurrencyConverter } from '../../../../services/utilities/currencyConverter';
+import LocPrice from '../../../common/utility/LocPrice';
 
 import '../../../../styles/css/components/airTickets/book/confirm/air-tickets-booking-confirm-page.css';
+
+const PASSENGER_TYPES = {
+  ADT: 'Adult',
+  CHD: 'Child',
+  INF: 'Infant'
+};
 
 class AirTicketsBookingConfirmPage extends Component {
   constructor(props) {
     super(props);
 
+    this.state = {
+      bookingDetails: ''
+    };
+
     this.handlePayWithLOC = this.handlePayWithLOC.bind(this);
+    this.requestBookingDetails = this.requestBookingDetails.bind(this);
   }
 
-  handlePayWithLOC() {
-    const { data } = this.state;
-    console.log('pay with loc');
-    fetch(`${Config.getValue('apiHost')}flight/flightBooking`, {
-      method: 'POST',
-      headers: {
-        'Content-type': 'application/json'
-      },
-      body: JSON.stringify({ flightId: data.flightId })
-    })
+  componentDidMount() {
+    this.requestBookingDetails();
+  }
+
+  requestBookingDetails() {
+    fetch(`${Config.getValue('apiHost')}flight/bookings/${this.props.match.params.id}`)
       .then((res) => {
         if (res.ok) {
           res.json().then((data) => {
-            console.log(res);
-            console.log(data);
-            // if (data.success === false) {
-            //   NotificationManager.warning(data.message, '', LONG);
-            // } else {
-            //   this.props.history.push({ pathname: `/tickets/results/book/${this.props.match.params.id}${this.props.location.search}`, state: data });
-            // }
+            this.setState({
+              bookingDetails: data
+            });
           });
         } else {
           console.log(res);
@@ -43,21 +47,42 @@ class AirTicketsBookingConfirmPage extends Component {
       });
   }
 
+  convertMinutesToTime(minutes) {
+    const hours = Math.floor(minutes / 60);
+    const remainingMinutes = minutes % 60;
+
+    return `${hours}h ${remainingMinutes}min`;
+  }
+
+  handlePayWithLOC() {
+    console.log('pay with loc');
+  }
+
   render() {
-    const { result, preparedBooking } = this.props;
+    const { bookingDetails } = this.state;
     const hasLocAddress = !!this.props.userInfo.locAddress;
     const currentCurrency = this.props.paymentInfo.currency;
     const { currencyExchangeRates } = this.props.exchangeRatesInfo;
     const userConfirmedPaymentWithLOC = false;
 
-    if (!preparedBooking) {
+    if (!bookingDetails) {
       return <div className="loader"></div>;
     }
 
-    console.log(result);
-    console.log(preparedBooking);
+    console.log(bookingDetails);
 
-    const fiatPriceInUserCurrency = currencyExchangeRates && CurrencyConverter.convert(currencyExchangeRates, preparedBooking.price.currency, currentCurrency, preparedBooking.price.total).toFixed(2);
+    const flightProperties = bookingDetails.entities[0];
+    const flightPriceInfo = flightProperties.properties.price;
+    const departureInfo = flightProperties.segments.filter(s => s.group === '0');
+    const returnInfo = flightProperties.segments.filter(s => s.group === '1');
+    const bookingProperties = bookingDetails.properties;
+    const passengersInfo = bookingProperties.passengers;
+
+    const netTotalPriceInUserCurrency = currencyExchangeRates && CurrencyConverter.convert(currencyExchangeRates, flightPriceInfo.currency, currentCurrency, flightPriceInfo.basePrice);
+    const servicesPriceInUserCurrency = currencyExchangeRates && CurrencyConverter.convert(currencyExchangeRates, flightPriceInfo.currency, currentCurrency, flightPriceInfo.optionalServices);
+    const taxPriceInUserCurrency = currencyExchangeRates && CurrencyConverter.convert(currencyExchangeRates, flightPriceInfo.currency, currentCurrency, flightPriceInfo.tax);
+    const totalFiatPriceInUserCurrency = currencyExchangeRates && CurrencyConverter.convert(currencyExchangeRates, flightPriceInfo.currency, currentCurrency, flightPriceInfo.total);
+
 
     return (
       <Fragment>
@@ -70,17 +95,374 @@ class AirTicketsBookingConfirmPage extends Component {
                 <h2>Hristo Skipernov</h2>
               </div>
               <hr />
+              <div className="flight-details">
+                <h4>Flight details</h4>
+                <hr />
+                <div className="flight-details-info">
+                  <div className="departure-title">Departure</div>
+                  <div className="departure-header">
+                    <div className="carrier-title">Carrier info</div>
+                    <div className="class-flight-title">Class flight info</div>
+                    <div className="origin-title">Origin info</div>
+                    <div className="destination-title">Destination info</div>
+                    <div className="additional-info-title">Additional info</div>
+                  </div>
+                  {departureInfo.map((segment, segmentIndex) => {
+                    return (
+                      <Fragment key={segmentIndex}>
+                        <div className="segment-title">{`${segment.origin.name} -> ${segment.destination.name}`}</div>
+                        <div className="departure-details-info">
+                          <div className="carrier">
+                            <div className="carrier-item">
+                              <div className="carrier-item-label">Name</div>
+                              <div className="carrier-item-value">{segment.carrier.name}</div>
+                            </div>
+                            <div className="carrier-item">
+                              <div className="carrier-item-label">Code</div>
+                              <div className="carrier-item-value">{segment.carrier.code}</div>
+                            </div>
+                            <div className="carrier-item">
+                              <div className="carrier-item-label">Flight number</div>
+                              <div className="carrier-item-value">{segment.carrier.flightNumber}</div>
+                            </div>
+                          </div>
+                          <div className="class-flight">
+                            <div className="class-flight-item">
+                              <div className="class-flight-item-label">Name</div>
+                              <div className="class-flight-item-value">{segment.classInfo.name}</div>
+                            </div>
+                          </div>
+                          <div className="origin">
+                            <div className="origin-item">
+                              <div className="origin-item-label">Name</div>
+                              <div className="origin-item-value">{segment.origin.name}</div>
+                            </div>
+                            <div className="origin-item">
+                              <div className="origin-item-label">Code</div>
+                              <div className="origin-item-value">{segment.origin.code}</div>
+                            </div>
+                            <div className="origin-item">
+                              <div className="origin-item-label">Date</div>
+                              <div className="origin-item-value">{segment.origin.date}</div>
+                            </div>
+                            <div className="origin-item">
+                              <div className="origin-item-label">Time</div>
+                              <div className="origin-item-value">{segment.origin.time}</div>
+                            </div>
+                            <div className="origin-item">
+                              <div className="origin-item-label">Timezone</div>
+                              <div className="origin-item-value">{segment.origin.timezone}</div>
+                            </div>
+                            <div className="origin-item">
+                              <div className="origin-item-label">Terminal</div>
+                              <div className="origin-item-value">{segment.origin.terminal}</div>
+                            </div>
+                          </div>
+                          <div className="destination">
+                            <div className="destination-item">
+                              <div className="destination-item-label">Name</div>
+                              <div className="destination-item-value">{segment.destination.name}</div>
+                            </div>
+                            <div className="destination-item">
+                              <div className="destination-item-label">Code</div>
+                              <div className="destination-item-value">{segment.destination.code}</div>
+                            </div>
+                            <div className="destination-item">
+                              <div className="destination-item-label">Date</div>
+                              <div className="destination-item-value">{segment.destination.date}</div>
+                            </div>
+                            <div className="destination-item">
+                              <div className="destination-item-label">Time</div>
+                              <div className="destination-item-value">{segment.destination.time}</div>
+                            </div>
+                            <div className="destination-item">
+                              <div className="destination-item-label">Timezone</div>
+                              <div className="destination-item-value">{segment.destination.timezone}</div>
+                            </div>
+                            <div className="destination-item">
+                              <div className="destination-item-label">Terminal</div>
+                              <div className="destination-item-value">{segment.destination.terminal}</div>
+                            </div>
+                          </div>
+                          <div className="additional-info">
+                            <div className="additional-info-item">
+                              <div className="additional-info-item-label">Flight time</div>
+                              <div className="additional-info-item-value">{this.convertMinutesToTime(segment.flightTime)}</div>
+                            </div>
+                            <div className="additional-info-item">
+                              <div className="additional-info-item-label">Wait time</div>
+                              <div className="additional-info-item-value">{this.convertMinutesToTime(segment.waitTime)}</div>
+                            </div>
+                            <div className="additional-info-item">
+                              <div className="additional-info-item-label">Tech stops</div>
+                              <div className="additional-info-item-value">{segment.techStops}</div>
+                            </div>
+                            <div className="additional-info-item">
+                              <div className="additional-info-item-label">Plane</div>
+                              <div className="additional-info-item-value">{segment.equipment.name}</div>
+                            </div>
+                          </div>
+                        </div>
+                      </Fragment>
+                    );
+                  })}
+                  {returnInfo.length > 0 &&
+                    <Fragment>
+                      <div className="return-title">Return</div>
+                      <div className="return-header">
+                        <div className="carrier-title">Carrier info</div>
+                        <div className="class-flight-title">Class flight info</div>
+                        <div className="origin-title">Origin info</div>
+                        <div className="destination-title">Destination info</div>
+                        <div className="additional-info-title">Additional info</div>
+                      </div>
+                      {returnInfo.map((segment, segmentIndex) => {
+                        return (
+                          <Fragment key={segmentIndex}>
+                            <div className="segment-title">{`${segment.origin.name} -> ${segment.destination.name}`}</div>
+                            <div className="return-details-info">
+                              <div className="carrier">
+                                <div className="carrier-item">
+                                  <div className="carrier-item-label">Name</div>
+                                  <div className="carrier-item-value">{segment.carrier.name}</div>
+                                </div>
+                                <div className="carrier-item">
+                                  <div className="carrier-item-label">Code</div>
+                                  <div className="carrier-item-value">{segment.carrier.code}</div>
+                                </div>
+                                <div className="carrier-item">
+                                  <div className="carrier-item-label">Flight number</div>
+                                  <div className="carrier-item-value">{segment.carrier.flightNumber}</div>
+                                </div>
+                              </div>
+                              <div className="class-flight">
+                                <div className="class-flight-item">
+                                  <div className="class-flight-item-label">Name</div>
+                                  <div className="class-flight-item-value">{segment.classInfo.name}</div>
+                                </div>
+                              </div>
+                              <div className="origin">
+                                <div className="origin-item">
+                                  <div className="origin-item-label">Name</div>
+                                  <div className="origin-item-value">{segment.origin.name}</div>
+                                </div>
+                                <div className="origin-item">
+                                  <div className="origin-item-label">Code</div>
+                                  <div className="origin-item-value">{segment.origin.code}</div>
+                                </div>
+                                <div className="origin-item">
+                                  <div className="origin-item-label">Date</div>
+                                  <div className="origin-item-value">{segment.origin.date}</div>
+                                </div>
+                                <div className="origin-item">
+                                  <div className="origin-item-label">Time</div>
+                                  <div className="origin-item-value">{segment.origin.time}</div>
+                                </div>
+                                <div className="origin-item">
+                                  <div className="origin-item-label">Timezone</div>
+                                  <div className="origin-item-value">{segment.origin.timezone}</div>
+                                </div>
+                                <div className="origin-item">
+                                  <div className="origin-item-label">Terminal</div>
+                                  <div className="origin-item-value">{segment.origin.terminal}</div>
+                                </div>
+                              </div>
+                              <div className="destination">
+                                <div className="destination-item">
+                                  <div className="destination-item-label">Name</div>
+                                  <div className="destination-item-value">{segment.destination.name}</div>
+                                </div>
+                                <div className="destination-item">
+                                  <div className="destination-item-label">Code</div>
+                                  <div className="destination-item-value">{segment.destination.code}</div>
+                                </div>
+                                <div className="destination-item">
+                                  <div className="destination-item-label">Date</div>
+                                  <div className="destination-item-value">{segment.destination.date}</div>
+                                </div>
+                                <div className="destination-item">
+                                  <div className="destination-item-label">Time</div>
+                                  <div className="destination-item-value">{segment.destination.time}</div>
+                                </div>
+                                <div className="destination-item">
+                                  <div className="destination-item-label">Timezone</div>
+                                  <div className="destination-item-value">{segment.destination.timezone}</div>
+                                </div>
+                                <div className="destination-item">
+                                  <div className="destination-item-label">Terminal</div>
+                                  <div className="destination-item-value">{segment.destination.terminal}</div>
+                                </div>
+                              </div>
+                              <div className="additional-info">
+                                <div className="additional-info-item">
+                                  <div className="additional-info-item-label">Flight time</div>
+                                  <div className="additional-info-item-value">{this.convertMinutesToTime(segment.flightTime)}</div>
+                                </div>
+                                <div className="additional-info-item">
+                                  <div className="additional-info-item-label">Wait time</div>
+                                  <div className="additional-info-item-value">{this.convertMinutesToTime(segment.waitTime)}</div>
+                                </div>
+                                <div className="additional-info-item">
+                                  <div className="additional-info-item-label">Tech stops</div>
+                                  <div className="additional-info-item-value">{segment.techStops}</div>
+                                </div>
+                              </div>
+                            </div>
+                          </Fragment>
+                        );
+                      })}
+                    </Fragment>}
+                </div>
+              </div>
+              <div className="profile-details">
+                <h4>Profile details</h4>
+                <hr />
+                <div className="profile-details-info">
+                  {/* <div className="contact-info">
+                    <h5>Contact info</h5>
+                    <div className="contact-info-details">
+                      <div className="contact-info-item">
+                        <div className="contact-info-label">Name</div>
+                        <div className="contact-info-value">{`${contactInfo.title} ${contactInfo.firstName} ${contactInfo.lastName}`}</div>
+                      </div>
+                      <div className="contact-info-item">
+                        <div className="contact-info-label">Email</div>
+                        <div className="contact-info-value">{contactInfo.email}</div>
+                      </div>
+                      <div className="contact-info-item">
+                        <div className="contact-info-label">Phone</div>
+                        <div className="contact-info-value">{contactInfo.phone}</div>
+                      </div>
+                      <div className="contact-info-item">
+                        <div className="contact-info-label">Country</div>
+                        <div className="contact-info-value">{contactInfo.country}</div>
+                      </div>
+                      <div className="contact-info-item">
+                        <div className="contact-info-label">City</div>
+                        <div className="contact-info-value">{contactInfo.city}</div>
+                      </div>
+                      <div className="contact-info-item">
+                        <div className="contact-info-label">Zip</div>
+                        <div className="contact-info-value">{contactInfo.zip}</div>
+                      </div>
+                      <div className="contact-info-item">
+                        <div className="contact-info-label">Address</div>
+                        <div className="contact-info-value">{contactInfo.address}</div>
+                      </div>
+                    </div>
+                  </div> */}
+                  {/* <div className="invoice-info">
+                    <h5>Invoice info</h5>
+                    <div className="invoice-info-details">
+                      <div className="invoice-info-item">
+                        <div className="invoice-info-label">Company</div>
+                        <div className="invoice-info-value">{invoiceInfo.name}</div>
+                      </div>
+                      <div className="invoice-info-item">
+                        <div className="invoice-info-label">Country</div>
+                        <div className="invoice-info-value">{invoiceInfo.country}</div>
+                      </div>
+                      <div className="invoice-info-item">
+                        <div className="invoice-info-label">City</div>
+                        <div className="invoice-info-value">{invoiceInfo.city}</div>
+                      </div>
+                      <div className="invoice-info-item">
+                        <div className="invoice-info-label">Zip</div>
+                        <div className="invoice-info-value">{invoiceInfo.zip}</div>
+                      </div>
+                      <div className="invoice-info-item">
+                        <div className="invoice-info-label">Address</div>
+                        <div className="invoice-info-value">{invoiceInfo.address}</div>
+                      </div>
+                    </div>
+                  </div> */}
+                  {/* <div className="flight-services-info">
+                    <h5>Flight Services Info</h5>
+                    <div className="flight-services-info-details">
+
+                    </div>
+                  </div> */}
+                  <div className="passengers-info">
+                    <h5>Passengers Info</h5>
+                    <div className="passengers-info-details-holder">
+                      {passengersInfo.map((passenger, passengerIndex) => {
+                        return (
+                          <div key={passengerIndex} className="passenger-info-details">
+                            <h6>Passenger - {passengerIndex + 1}</h6>
+                            <div className="passenger-info-item">
+                              <div className="passenger-info-label">Name</div>
+                              <div className="passenger-info-value">{`${passenger.title} ${passenger.firstName} ${passenger.lastName}`}</div>
+                            </div>
+                            <div className="passenger-info-item">
+                              <div className="passenger-info-label">Birthdate</div>
+                              <div className="passenger-info-value">{passenger.birthDate}</div>
+                            </div>
+                            <div className="passenger-info-item">
+                              <div className="passenger-info-label">Type</div>
+                              <div className="passenger-info-value">{PASSENGER_TYPES[passenger.type]}</div>
+                            </div>
+                            <div className="passenger-info-item">
+                              <div className="passenger-info-label">Nationality</div>
+                              <div className="passenger-info-value">{passenger.nationality}</div>
+                            </div>
+                            <div className="passenger-info-item">
+                              <div className="passenger-info-label">Passport number</div>
+                              <div className="passenger-info-value">{passenger.passport.number}</div>
+                            </div>
+                            <div className="passenger-info-item">
+                              <div className="passenger-info-label">Passport country</div>
+                              <div className="passenger-info-value">{passenger.passport.issueCountry}</div>
+                            </div>
+                            <div className="passenger-info-item">
+                              <div className="passenger-info-label">Passport expired</div>
+                              <div className="passenger-info-value">{passenger.passport.expiry}</div>
+                            </div>
+                            {/* <div className="passenger-info-item">
+                              <div className="passenger-info-label">Services</div>
+                              <div className="passenger-info-value">
+                                {passenger.options.map((option) => {
+                                  return `${serviceOption.bags ? `Bags - ${serviceOption.bags}.` : ''}${serviceOption.maxWeight ? ` Max weight - ${serviceOption.maxWeight}.` : ''}${serviceOption.price ? ` Price - ${this.getCurrencySign(this.props.currency)}${serviceOption.price}.` : ''}`;
+                                })}
+                              </div>
+                            </div> */}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </div>
+              </div>
               <div className="payment-methods">
                 <div className="payment-methods-loc">
                   <div className="details">
-                    <p>Pay Directly With LOC: <span className="important">{this.props.paymentInfo.currencySign}{currencyExchangeRates && fiatPriceInUserCurrency}</span></p>
-                    <p>Order Total: <span className="important">
-                      {/* {this.props.isQuoteLocValid && <QuoteLocPrice fiat={reservation.fiatPrice} params={{ bookingId: reservation.preparedBookingId }} brackets={false} invalidateQuoteLoc={this.props.invalidateQuoteLoc} redirectToHotelDetailsPage={this.props.redirectToHotelDetailsPage} />} */}
-                    </span></p>
-                    {/* {locAmounts[DEFAULT_QUOTE_LOC_ID] &&
-                      <div className="price-update-timer" tooltip="Seconds until we update your quoted price">
-                        {!isQuoteStopped ? <span>LOC price will update in <i className="fa fa-clock-o" aria-hidden="true"></i>&nbsp;{this.props.locPriceUpdateTimerInfo.seconds} sec &nbsp;</span> : 'Processing payment...'}
-                      </div>} */}
+                    <div className="air-tickets-price">
+                      <div className="price-label">Base price:</div>
+                      <div className="price-amount important">
+                        <div>{this.props.paymentInfo.currencySign}{currencyExchangeRates && (netTotalPriceInUserCurrency).toFixed(2)}</div>
+                        <div><LocPrice fiat={netTotalPriceInUserCurrency} /></div>
+                      </div>
+                    </div>
+                    <div className="air-tickets-price">
+                      <div className="price-label">Services price:</div>
+                      <div className="price-amount important">
+                        <div>{this.props.paymentInfo.currencySign}{currencyExchangeRates && (servicesPriceInUserCurrency).toFixed(2)}</div>
+                        <div><LocPrice fiat={servicesPriceInUserCurrency} /></div>
+                      </div>
+                    </div>
+                    <div className="air-tickets-price">
+                      <div className="price-label">Tax price:</div>
+                      <div className="price-amount important">
+                        <div>{this.props.paymentInfo.currencySign}{currencyExchangeRates && (taxPriceInUserCurrency).toFixed(2)}</div>
+                        <div><LocPrice fiat={taxPriceInUserCurrency} /></div>
+                      </div>
+                    </div>
+                    <div className="air-tickets-price">
+                      <div className="price-label">Total price:</div>
+                      <div className="price-amount important">
+                        <div>{this.props.paymentInfo.currencySign}{currencyExchangeRates && (totalFiatPriceInUserCurrency).toFixed(2)}</div>
+                        <div><LocPrice fiat={totalFiatPriceInUserCurrency} /></div>
+                      </div>
+                    </div>
                     <p>(Click <a href="">here</a> to learn how you can buy LOC directly to enjoy cheaper travel)</p>
                     {userConfirmedPaymentWithLOC
                       ? <button className="btn btn-primary" disabled>Processing Payment...</button>
@@ -105,10 +487,8 @@ class AirTicketsBookingConfirmPage extends Component {
 }
 
 AirTicketsBookingConfirmPage.propTypes = {
-  result: PropTypes.object,
-  preparedBooking: PropTypes.object,
-
   // Router props
+  match: PropTypes.object,
   location: PropTypes.object,
 
   // Redux props

@@ -5,6 +5,7 @@ import PropTypes from 'prop-types';
 import HomePage from '../home/HomePage';
 import AirTicketsSearchPage from './search/AirTicketsSearchPage';
 import AirTicketsBookingRouterPage from './book/AirTicketsBookingRouterPage';
+import AirTicketsBookingConfirmPage from './book/confirm/AirTicketsBookingConfirmPage';
 import { LONG } from '../../constants/notificationDisplayTimes';
 import { SEARCH_EXPIRED } from '../../constants/infoMessages';
 
@@ -46,7 +47,8 @@ class AirTicketsRouterPage extends Component {
         <Switch>
           <Route exact path="/tickets" render={() => <HomePage homePage="tickets" listings={this.props.listings} hotels={this.props.hotels} />} />
           <Route exact path="/tickets/results" render={() => <AirTicketsSearchPage initSearchAirTicketsSetTimeout={this.initSearchAirTicketsSetTimeout} />} />
-          <Route path="/tickets/results/book/:id" render={() => <AirTicketsBookingRouterPage />} />
+          <Route path="/tickets/results/initBook/:id" render={() => <AirTicketsBookingRouterPage />} />
+          <Route exact path="/tickets/results/book/:id" render={() => <AirTicketsBookingConfirmPage />} />
         </Switch>
       </Fragment>
     );
