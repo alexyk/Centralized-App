@@ -1,4 +1,4 @@
-import React, { Component, Fragment } from 'react';
+import React, { Component } from 'react';
 import { Link, withRouter } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import moment from 'moment';
@@ -67,7 +67,7 @@ class AdminReservationsTable extends Component {
     }
 
     return (
-      <Fragment>
+      <div className="reservations-container">
         <AdminNav>
           <h2 className="navigation-tab">All Booking With Transaction Hash</h2>
         </AdminNav>
@@ -78,6 +78,7 @@ class AdminReservationsTable extends Component {
                 <th>Rooms Booking Id</th>
                 <th>Booking Status</th>
                 <th>Transaction Hash</th>
+                <th>Payment Method</th>
                 <th>User Email</th>
                 <th>Hotel Name</th>
                 <th>Checkin Date</th>
@@ -92,11 +93,17 @@ class AdminReservationsTable extends Component {
             </thead>
             <tbody>
               {bookings.map((booking, bookingIndex) => {
+                const isValidHash = booking.transactionHash.startsWith('0x');
+                let txHash = booking.transactionHash;
+                if (isValidHash) {
+                  txHash = <a target='_blank' rel="noopener noreferrer" href={'https://etherscan.io/tx/' + booking.transactionHash}>{booking.transactionHash}</a>;
+                }
                 return (
                   <tr key={bookingIndex}>
                     <td>{booking.bookingId}</td>
                     <td>{booking.bookingStatus}</td>
-                    <td>{booking.transactionHash}</td>
+                    <td>{txHash}</td>
+                    <td>{booking.paymentMethod}</td>
                     <td>{booking.userEmail}</td>
                     <td>{booking.hotelName}</td>
                     <td>{moment(booking.checkinDate).utc().format('DD/MM/YYYY')}</td>
@@ -111,7 +118,7 @@ class AdminReservationsTable extends Component {
                 );
               })}
             </tbody>
-          </table >
+          </table>
           <Pagination
             loading={loading}
             onPageChange={this.onPageChange}
@@ -119,8 +126,8 @@ class AdminReservationsTable extends Component {
             pageSize={10}
             totalElements={totalElements}
           />
-        </div >
-      </Fragment >
+        </div>
+      </div>
     );
   }
 }
