@@ -2,7 +2,7 @@ import React, { Component, Fragment } from 'react';
 import { withRouter, NavLink } from 'react-router-dom';
 import PropTypes from 'prop-types';
 
-import '../../../../styles/css/components/airTickets/initBook/bookProfile/air-tickets-booking-profile-passengers-form.css';
+import '../../../../styles/css/components/airTickets/book/profile/air-tickets-booking-profile-passengers-form.css';
 
 const PASSENGER_TYPES_CODES = {
   adult: 'ADT',
@@ -47,12 +47,31 @@ class AirTicketsBookingProfilePassengersForm extends Component {
     });
   }
 
+  getCurrencySign(currency) {
+    let currencySign = '$';
+    if (currency === 'GBP') currencySign = '£';
+    if (currency === 'EUR') currencySign = '€';
+    return currencySign;
+  }
+
   getSelectionNameByServiceType(serviceTypeName, serviceOption) {
     switch (serviceTypeName) {
+      case 'Baggage':
+        return `${serviceOption.bags ? `Bags - ${serviceOption.bags}.` : ''}${serviceOption.maxWeight ? ` Max weight - ${serviceOption.maxWeight}.` : ''}${serviceOption.price ? ` Price - ${this.getCurrencySign(this.props.currency)}${serviceOption.price}.` : ''}`;
       case 'Checkin bag for outward':
-        return `${serviceOption.bags} bag. Price - ${serviceOption.price}`;
+        return `${serviceOption.bags ? `Bags - ${serviceOption.bags}.` : ''}${serviceOption.maxWeight ? ` Max weight - ${serviceOption.maxWeight}.` : ''}${serviceOption.price ? ` Price - ${this.getCurrencySign(this.props.currency)}${serviceOption.price}.` : ''}`;
       case 'Checking bag for return':
-        return `${serviceOption.bags} bag. Price - ${serviceOption.price}`;
+        return `${serviceOption.bags ? `Bags - ${serviceOption.bags}.` : ''}${serviceOption.maxWeight ? ` Max weight - ${serviceOption.maxWeight}.` : ''}${serviceOption.price ? ` Price - ${this.getCurrencySign(this.props.currency)}${serviceOption.price}.` : ''}`;
+      case 'Hand baggage':
+        return 'Hand baggage is not formatted.';
+      case 'Checkin':
+        return 'Checkin is not formatted.';
+      case 'Priority boarding':
+        return `${serviceOption.bags ? `Bags - ${serviceOption.bags}.` : ''}${serviceOption.maxWeight ? ` Max weight - ${serviceOption.maxWeight}.` : ''}${serviceOption.price ? ` Price - ${this.getCurrencySign(this.props.currency)}${serviceOption.price}.` : ''}`;
+      case 'Dining/meal':
+        return 'Dining/meal is not formatted.';
+      case 'Cabins':
+        return 'Cabins is not formatted.';
       default:
         return '';
     }
@@ -75,8 +94,8 @@ class AirTicketsBookingProfilePassengersForm extends Component {
     }
 
     let passengersServices;
-    if (services && services.filter(service => service.servicePerPax).length > 0) {
-      passengersServices = services.filter(service => service.servicePerPax);
+    if (services && services.filter(service => service.perPassenger).length > 0) {
+      passengersServices = services.filter(service => service.perPassenger);
     }
 
     return (
@@ -241,16 +260,16 @@ class AirTicketsBookingProfilePassengersForm extends Component {
                       <div className="services">
                         <h5>Services</h5>
                         {passengersServices.map((service, serviceIndex) => {
-                          const selectedService = passenger.options.filter(x => x.id === service.serviceId)[0];
+                          const selectedService = passenger.options.filter(x => x.id === service.id)[0];
                           const selectedServiceValue = selectedService ? selectedService.serviceValue : '';
                           return (
                             <div key={serviceIndex} className="service">
-                              <div className="service-title">{SERVICES_TYPES_CODES[service.serviceType]}</div>
+                              <div className="service-title">{SERVICES_TYPES_CODES[service.type]}</div>
                               <div className="select">
-                                <select name={service.serviceId} value={selectedServiceValue} onChange={this.onChangeService}>
+                                <select name={service.id} value={selectedServiceValue} onChange={this.onChangeService}>
                                   <option defaultValue="" disabled hidden></option>
-                                  {service.serviceSelections.map((selection, selectionIndex) => {
-                                    return <option key={selectionIndex} value={selection.value} onChange={this.onChangeService}>{this.getSelectionNameByServiceType(SERVICES_TYPES_CODES[service.serviceType], selection)}</option>;
+                                  {service.options.map((option, selectionIndex) => {
+                                    return <option key={selectionIndex} value={option.value} onChange={this.onChangeService}>{this.getSelectionNameByServiceType(SERVICES_TYPES_CODES[service.type], option)}</option>;
                                   })}
                                 </select>
                               </div>
@@ -264,7 +283,7 @@ class AirTicketsBookingProfilePassengersForm extends Component {
             );
           })}
           <div className="buttons-wrapper">
-            <NavLink to={{ pathname: `/tickets/results/initBook/${this.props.match.params.id}/profile/${isFlightServices ? 'services' : 'invoice'}`, search: this.props.location.search }} className="btn-back" id="btn-continue">
+            <NavLink to={{ pathname: `/tickets/results/book/${this.props.match.params.id}/profile/${isFlightServices ? 'services' : 'invoice'}`, search: this.props.location.search }} className="btn-back" id="btn-continue">
               <i className="fa fa-long-arrow-left" aria-hidden="true"></i>
               &nbsp;Back</NavLink>
             <button type="submit" className="btn">Proceed</button>
@@ -280,6 +299,7 @@ AirTicketsBookingProfilePassengersForm.propTypes = {
   countries: PropTypes.array,
   services: PropTypes.array,
   isFlightServices: PropTypes.bool,
+  currency: PropTypes.string,
   onChange: PropTypes.func,
   onChangeService: PropTypes.func,
   initBooking: PropTypes.func,

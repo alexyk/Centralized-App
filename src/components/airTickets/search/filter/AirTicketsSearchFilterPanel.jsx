@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import ReactBootstrapSlider from 'react-bootstrap-slider';
 import Select from 'react-select';
 import PropTypes from 'prop-types';
-import moment from 'moment';
+// import moment from 'moment';
 
 import '../../../../styles/css/components/airTickets/search/filter/air-tickets-search-filter-panel.css';
 
@@ -88,25 +88,25 @@ class AirTicketsSearchFilterPanel extends Component {
       );
     }
 
-    const departureDate = filters.departure.date.min;
-    const departureLandingMinTime = filters.departure.landing.min;
-    const departureLandingMaxTime = filters.departure.landing.max;
-    const departureTakeoffMinTime = filters.departure.takeoff.min;
-    const departureTakeoffMaxTime = filters.departure.takeoff.max;
-    const departureMomentLandingMin = moment(`${departureDate} ${departureLandingMinTime}`);
-    const departureMomentLandingMax = moment(`${departureDate} ${departureLandingMaxTime}`);
-    const departureMomentTakeoffMin = moment(`${departureDate} ${departureTakeoffMinTime}`);
-    const departureMomentTakeoffMax = moment(`${departureDate} ${departureTakeoffMaxTime}`);
+    // const departureDate = filters.departure.date.min;
+    // const departureLandingMinTime = filters.departure.landing.min;
+    // const departureLandingMaxTime = filters.departure.landing.max;
+    // const departureTakeoffMinTime = filters.departure.takeOff.min;
+    // const departureTakeoffMaxTime = filters.departure.takeOff.max;
+    // const departureMomentLandingMin = moment(`${departureDate} ${departureLandingMinTime}`);
+    // const departureMomentLandingMax = moment(`${departureDate} ${departureLandingMaxTime}`);
+    // const departureMomentTakeoffMin = moment(`${departureDate} ${departureTakeoffMinTime}`);
+    // const departureMomentTakeoffMax = moment(`${departureDate} ${departureTakeoffMaxTime}`);
 
-    const arrivalDate = filters.arrival.date.min;
-    const arrivalLandingMinTime = filters.arrival.landing.min;
-    const arrivalLandingMaxTime = filters.arrival.landing.max;
-    const arrivalTakeoffMinTime = filters.arrival.takeoff.min;
-    const arrivalTakeoffMaxTime = filters.arrival.takeoff.max;
-    const arrivalMomentLandingMin = moment(`${arrivalDate} ${arrivalLandingMinTime}`);
-    const arrivalMomentLandingMax = moment(`${arrivalDate} ${arrivalLandingMaxTime}`);
-    const arrivalMomentTakeoffMin = moment(`${arrivalDate} ${arrivalTakeoffMinTime}`);
-    const arrivalMomentTakeoffMax = moment(`${arrivalDate} ${arrivalTakeoffMaxTime}`);
+    // const arrivalDate = filters.arrival.date.min;
+    // const arrivalLandingMinTime = filters.arrival.landing.min;
+    // const arrivalLandingMaxTime = filters.arrival.landing.max;
+    // const arrivalTakeoffMinTime = filters.arrival.takeOff.min;
+    // const arrivalTakeoffMaxTime = filters.arrival.takeOff.max;
+    // const arrivalMomentLandingMin = moment(`${arrivalDate} ${arrivalLandingMinTime}`);
+    // const arrivalMomentLandingMax = moment(`${arrivalDate} ${arrivalLandingMaxTime}`);
+    // const arrivalMomentTakeoffMin = moment(`${arrivalDate} ${arrivalTakeoffMinTime}`);
+    // const arrivalMomentTakeoffMax = moment(`${arrivalDate} ${arrivalTakeoffMaxTime}`);
 
     const { airlines, stops, priceRange, waitingTimeRange, airportsArrival, airportsDeparture, airportsTransfer } = this.state;
 
@@ -126,8 +126,8 @@ class AirTicketsSearchFilterPanel extends Component {
             name="airlines"
             placeholder=""
             value={airlines}
-            valueKey={'id'}
-            labelKey={'value'}
+            valueKey={'airlineId'}
+            labelKey={'airlineName'}
             options={filters.airlines}
             onChange={(option) => this.onChange('airlines', option)}
             multi
@@ -139,8 +139,8 @@ class AirTicketsSearchFilterPanel extends Component {
             name="stops"
             placeholder=""
             value={stops}
-            valueKey={'id'}
-            labelKey={'value'}
+            valueKey={'changesId'}
+            labelKey={'changesName'}
             options={filters.changes}
             onChange={(option) => this.onChange('stops', option)}
             multi
@@ -154,8 +154,8 @@ class AirTicketsSearchFilterPanel extends Component {
               name="airportsArrival"
               placeholder=""
               value={airportsArrival}
-              valueKey={'id'}
-              labelKey={'value'}
+              valueKey={'airportId'}
+              labelKey={'airportName'}
               options={filters.airports.arrivals}
               onChange={(option) => this.onChange('airportsArrival', option)}
               multi
@@ -167,8 +167,8 @@ class AirTicketsSearchFilterPanel extends Component {
               name="airportsDeparture"
               placeholder=""
               value={airportsDeparture}
-              valueKey={'id'}
-              labelKey={'value'}
+              valueKey={'airportId'}
+              labelKey={'airportName'}
               options={filters.airports.departures}
               onChange={(option) => this.onChange('airportsDeparture', option)}
               multi
@@ -180,15 +180,15 @@ class AirTicketsSearchFilterPanel extends Component {
               name="airportsTransfer"
               placeholder=""
               value={airportsTransfer}
-              valueKey={'id'}
-              labelKey={'value'}
+              valueKey={'airportId'}
+              labelKey={'airportName'}
               options={filters.airports.transfers}
               onChange={(option) => this.onChange('airportsTransfer', option)}
               multi
             />
           </div>
         </div>
-        <div className="filter hide">
+        {/* <div className="filter hide">
           <h5>Departure</h5>
           <div className="departure-filter">
             <div className="departure-landing-time">
@@ -226,8 +226,8 @@ class AirTicketsSearchFilterPanel extends Component {
               </div>
             </div>
           </div>
-        </div>
-        <div className="filter hide">
+        </div> */}
+        {/* <div className="filter hide">
           <h5>Return</h5>
           <div className="arrival-filter">
             <div className="arrival-landing-time">
@@ -265,21 +265,21 @@ class AirTicketsSearchFilterPanel extends Component {
               </div>
             </div>
           </div>
-        </div>
-        {filters.price.max && filters.price.min &&
+        </div> */}
+        {filters.price.maxPrice && filters.price.minPrice &&
           <div className="price-range-filters">
             <h5>Pricing</h5>
             <ReactBootstrapSlider
-              value={priceRange ? priceRange : [filters.price.min, filters.price.max]}
+              value={priceRange ? priceRange : [filters.price.minPrice, filters.price.maxPrice]}
               slideStop={this.handlePriceRangeSelect}
               step={5}
-              max={filters.price.max}
-              min={filters.price.min}
+              max={filters.price.maxPrice}
+              min={filters.price.minPrice}
               orientation="horizontal"
               range={true} />
             <div className="labels">
-              <label>{this.getCurrencySign(filters.price.currency)} {(filters.price.min).toFixed(3)}</label>
-              <label>{this.getCurrencySign(filters.price.currency)} {(filters.price.max).toFixed(3)}</label>
+              <label>{this.getCurrencySign(filters.price.currency)} {(filters.price.minPrice).toFixed(3)}</label>
+              <label>{this.getCurrencySign(filters.price.currency)} {(filters.price.maxPrice).toFixed(3)}</label>
             </div>
           </div>}
         {filters.waiting && filters.waiting.max && filters.waiting.min &&
