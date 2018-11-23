@@ -1,13 +1,12 @@
 import React from 'react';
 import requester from '../../requester';
-import { Config } from '../../config';
 import PropTypes from 'prop-types';
 import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { NotificationManager } from 'react-notifications';
 import { LONG } from '../../constants/notificationDisplayTimes.js';
 import { closeModal, openModal } from '../../actions/modalsInfo';
-import ReCAPTCHA from 'react-google-recaptcha';
+import { executeWithToken } from '../../services/grecaptcha/grecaptcha';
 import { 
   INVALID_EMAIL, 
   INVALID_SECURITY_CODE, 
@@ -32,9 +31,6 @@ import { NOT_FOUND } from '../../constants/errorMessages';
 class PasswordRecoveryManager extends React.Component {
   constructor(props) {
     super(props);
-
-    this.submitEmailCaptcha = React.createRef();
-    this.submitPasswordCaptcha = React.createRef();
 
     this.state = {
       loginEmail: '',
@@ -105,8 +101,7 @@ class PasswordRecoveryManager extends React.Component {
     } else if (!newPassword.match('^([^\\s]*[a-zA-Z]+.*?[0-9]+[^\\s]*|[^\\s]*[0-9]+.*?[a-zA-Z]+[^\\s]*)$')) {
       NotificationManager.warning(PROFILE_PASSWORD_REQUIREMENTS, '', LONG);
     } else {
-      this.submitPasswordCaptcha.execute();
-      this.submitPasswordCaptcha.reset();
+      executeWithToken(this.handlePasswordChange);
     }
   }
 
@@ -135,7 +130,7 @@ class PasswordRecoveryManager extends React.Component {
           openModal={this.openModal}
           closeModal={this.closeModal} 
           recoveryEmail={this.state.recoveryEmail} 
-          handleSubmitRecoveryEmail={() => this.submitEmailCaptcha.execute()} 
+          handleSubmitRecoveryEmail={() => executeWithToken(this.handleSubmitRecoveryEmail)} 
           onChange={this.onChange} 
         />
         <EnterRecoveryTokenModal 
@@ -154,24 +149,6 @@ class PasswordRecoveryManager extends React.Component {
           confirmNewPassword={this.state.confirmNewPassword} 
           onChange={this.onChange} 
           handlePasswordChange={this.verifyUserPassword} 
-        />
-
-        <ReCAPTCHA
-          ref={el => this.submitEmailCaptcha = el}
-          size="invisible"
-          sitekey={Config.getValue('recaptchaKey')}
-          onChange={(token) => {
-            this.handleSubmitRecoveryEmail(token);
-            this.submitEmailCaptcha.reset();
-          }}
-        />
-        <ReCAPTCHA
-          ref={el => this.submitPasswordCaptcha = el}
-          size="invisible"
-          sitekey={Config.getValue('recaptchaKey')}
-          onChange={(token) => {
-            this.handlePasswordChange(token);
-          }}
         />
       </React.Fragment>
     );
