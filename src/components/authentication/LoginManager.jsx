@@ -38,8 +38,7 @@ class LoginManager extends React.Component {
   constructor(props) {
     super(props);
 
-    this.captcha = null;
-    this.updateCountryCaptcha = null;
+    this.captcha = React.createRef();
 
     this.state = {
       loginEmail: '',
@@ -144,6 +143,7 @@ class LoginManager extends React.Component {
   }
 
   handleLogin(captchaToken) {
+    console.log(captchaToken)
     let user = {
       email: this.state.loginEmail,
       password: this.state.loginPassword
@@ -292,7 +292,7 @@ class LoginManager extends React.Component {
           openModal={this.openModal} 
           closeModal={this.closeModal} 
           onChange={this.onChange} 
-          handleLogin={() => this.executeReCaptcha('login')} 
+          handleLogin={() => this.captcha.execute()} 
           emailVerificationToken={this.state.emailVerificationToken} 
         />
         {/* <AirdropLoginModal isActive={this.props.modalsInfo.isActive[AIRDROP_LOGIN]} openModal={this.openModal} closeModal={this.closeModal} loginEmail={this.state.loginEmail} loginPassword={this.state.loginPassword} onChange={this.onChange} handleLogin={this.handleAirdropLogin} /> */}

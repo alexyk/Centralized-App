@@ -24,7 +24,7 @@ class RegisterManager extends React.Component {
   constructor(props) {
     super(props);
 
-    this.captcha = null;
+    this.registerCaptcha = React.createRef();
 
     this.state = {
       signUpEmail: '',
@@ -150,15 +150,15 @@ class RegisterManager extends React.Component {
           states={this.state.states} 
           onChange={this.onChange} 
           handleChangeCountry={this.handleChangeCountry} 
-          handleRegister={() => this.captcha.execute()} 
+          handleRegister={() => this.registerCaptcha.execute()} 
         />
         <ReCAPTCHA
-          ref={el => this.captcha = el}
+          ref={el => this.registerCaptcha = el}
           size="invisible"
           sitekey={Config.getValue('recaptchaKey')}
           onChange={(token) => {
             this.handleRegister(token);
-            this.captcha.reset();
+            this.registerCaptcha.reset();
           }}
         />
       </React.Fragment>

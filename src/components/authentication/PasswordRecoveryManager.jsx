@@ -33,8 +33,8 @@ class PasswordRecoveryManager extends React.Component {
   constructor(props) {
     super(props);
 
-    this.submitEmailCaptcha = null;
-    this.submitPasswordCaptcha = null;
+    this.submitEmailCaptcha = React.createRef();
+    this.submitPasswordCaptcha = React.createRef();
 
     this.state = {
       loginEmail: '',
@@ -106,6 +106,7 @@ class PasswordRecoveryManager extends React.Component {
       NotificationManager.warning(PROFILE_PASSWORD_REQUIREMENTS, '', LONG);
     } else {
       this.submitPasswordCaptcha.execute();
+      this.submitPasswordCaptcha.reset();
     }
   }
 
@@ -170,7 +171,6 @@ class PasswordRecoveryManager extends React.Component {
           sitekey={Config.getValue('recaptchaKey')}
           onChange={(token) => {
             this.handlePasswordChange(token);
-            this.submitPasswordCaptcha.reset();
           }}
         />
       </React.Fragment>

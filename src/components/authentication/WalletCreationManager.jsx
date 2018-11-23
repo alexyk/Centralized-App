@@ -27,7 +27,7 @@ class WalletCreationManager extends React.Component {
   constructor(props) {
     super(props);
 
-    this.captcha = null;
+    this.createWalletCaptcha = React.createRef();
 
     this.state = {
       userName: '',
@@ -165,16 +165,16 @@ class WalletCreationManager extends React.Component {
           closeModal={this.closeModal} 
           handleMnemonicWordsChange={this.handleMnemonicWordsChange} 
           mnemonicWords={this.state.mnemonicWords} 
-          handleCreateWallet={() => this.captcha.execute()} 
+          handleCreateWallet={() => this.createWalletCaptcha.execute()} 
           confirmedRegistration={this.state.confirmedRegistration} 
         />
         <ReCAPTCHA
-          ref={el => this.captcha = el}
+          ref={el => this.createWalletCaptcha = el}
           size="invisible"
           sitekey={Config.getValue('recaptchaKey')}
           onChange={(token) => {
             this.handleCreateWallet(token);
-            this.captcha.reset();
+            this.createWalletCaptcha.reset();
           }}
         />
       </React.Fragment>
