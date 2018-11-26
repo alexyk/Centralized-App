@@ -93,7 +93,7 @@ class UnverifiedList extends React.Component {
     }
 
     return (
-      <div>
+      <div className="container">
         <AdminNav>
           <div>
             <li><NavLink exact activeClassName="active" to="/profile/admin/users/unverified"><h2>Unverified</h2></NavLink></li>

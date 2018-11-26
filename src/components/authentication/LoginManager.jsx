@@ -8,13 +8,13 @@ import { NotificationManager } from 'react-notifications';
 import { LONG } from '../../constants/notificationDisplayTimes.js';
 import LoginModal from './modals/LoginModal';
 import { closeModal, openModal } from '../../actions/modalsInfo';
-import ReCAPTCHA from 'react-google-recaptcha';
 import { setIsLogged, setUserInfo } from '../../actions/userInfo';
 import { Wallet } from '../../services/blockchain/wallet.js';
 import { VERIFICATION_EMAIL_SENT } from '../../constants/infoMessages.js';
 import UpdateCountryModal from './modals/UpdateCountryModal';
 import EmailVerificationModal from './modals/EmailVerificationModal';
 import EnterEmailVerificationTokenModal from './modals/EnterEmailVerificationTokenModal';
+import { executeWithToken } from '../../services/grecaptcha/grecaptcha';
 import queryString from 'query-string';
 import {
   EMAIL_VERIFICATION,
@@ -38,9 +38,6 @@ class LoginManager extends React.Component {
   constructor(props) {
     super(props);
 
-    this.captcha = null;
-    this.updateCountryCaptcha = null;
-
     this.state = {
       loginEmail: '',
       loginPassword: '',
@@ -49,13 +46,15 @@ class LoginManager extends React.Component {
       states: [],
       countryState: '',
       recoveryToken: '',
-      isUpdatingCountry: false
+      isUpdatingCountry: false,
+      isLogging: false
     };
 
     this.onChange = this.onChange.bind(this);
     this.openModal = this.openModal.bind(this);
     this.closeModal = this.closeModal.bind(this);
-    this.handleLogin = this.handleLogin.bind(this);
+    this.login = this.login.bind(this);
+    this.handleLoginClick = this.handleLoginClick.bind(this);
     this.handleChangeCountry = this.handleChangeCountry.bind(this);
     this.handleUpdateCountry = this.handleUpdateCountry.bind(this);
     this.requestCountries = this.requestCountries.bind(this);
@@ -143,7 +142,16 @@ class LoginManager extends React.Component {
     this.props.dispatch(closeModal(modal));
   }
 
-  handleLogin(captchaToken) {
+
+
+  handleLoginClick() {
+    this.setState({ isLogging: true }, () => {
+      executeWithToken(this.login);
+    });
+  }
+
+  login(captchaToken) {
+    
     let user = {
       email: this.state.loginEmail,
       password: this.state.loginPassword
@@ -166,7 +174,7 @@ class LoginManager extends React.Component {
           localStorage[Config.getValue('domainPrefix') + '.auth.username'] = user.email;
           this.setUserInfo();
           this.closeModal(LOGIN);
-          this.setState({ loginEmail: '', loginPassword: '' });
+          this.setState({ loginEmail: '', loginPassword: '', isLogging: false });
         });
       } else {
         this.handleLoginErrors(res);
@@ -191,7 +199,7 @@ class LoginManager extends React.Component {
           }
         }
 
-        this.setState({ loginEmail: '', loginPassword: '' });
+        this.setState({ loginEmail: '', loginPassword: '', isLogging: false });
       }
     }).catch(errors => {
       for (var e in errors) {
@@ -265,8 +273,9 @@ class LoginManager extends React.Component {
           loginEmail={this.state.loginEmail}
           loginPassword={this.state.loginPassword}
           onChange={this.onChange}
-          handleLogin={() => this.captcha.execute()}
+          handleLogin={this.handleLoginClick}
           requestCountries={this.requestCountries}
+          isLogging={this.state.isLogging}
         />
         <UpdateCountryModal 
           isActive={this.props.modalsInfo.isActive[UPDATE_COUNTRY]} 
@@ -292,19 +301,10 @@ class LoginManager extends React.Component {
           openModal={this.openModal} 
           closeModal={this.closeModal} 
           onChange={this.onChange} 
-          handleLogin={() => this.executeReCaptcha('login')} 
+          handleLogin={() => executeWithToken(this.login)} 
           emailVerificationToken={this.state.emailVerificationToken} 
         />
         {/* <AirdropLoginModal isActive={this.props.modalsInfo.isActive[AIRDROP_LOGIN]} openModal={this.openModal} closeModal={this.closeModal} loginEmail={this.state.loginEmail} loginPassword={this.state.loginPassword} onChange={this.onChange} handleLogin={this.handleAirdropLogin} /> */}
-        <ReCAPTCHA
-          ref={el => this.captcha = el}
-          size="invisible"
-          sitekey={Config.getValue('recaptchaKey')}
-          onChange={(token) => {
-            this.handleLogin(token);
-            this.captcha.reset();
-          }}
-        />
       </React.Fragment>
     );
   }

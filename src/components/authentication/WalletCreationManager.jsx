@@ -1,13 +1,11 @@
 import React from 'react';
 import requester from '../../requester';
-import { Config } from '../../config';
 import PropTypes from 'prop-types';
 import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { NotificationManager } from 'react-notifications';
 import { LONG } from '../../constants/notificationDisplayTimes.js';
 import { closeModal, openModal } from '../../actions/modalsInfo';
-import ReCAPTCHA from 'react-google-recaptcha';
 import { setIsLogged, setUserInfo } from '../../actions/userInfo';
 import { Wallet } from '../../services/blockchain/wallet.js';
 import moment from 'moment';
@@ -22,12 +20,13 @@ import ConfirmWalletModal from './modals/ConfirmWalletModal';
 import CreateWalletModal from './modals/CreateWalletModal';
 
 import SaveWalletModal from './modals/SaveWalletModal';
+import { executeWithToken } from '../../services/grecaptcha/grecaptcha';
 
 class WalletCreationManager extends React.Component {
   constructor(props) {
     super(props);
 
-    this.captcha = null;
+    this.createWalletCaptcha = React.createRef();
 
     this.state = {
       userName: '',
@@ -165,17 +164,8 @@ class WalletCreationManager extends React.Component {
           closeModal={this.closeModal} 
           handleMnemonicWordsChange={this.handleMnemonicWordsChange} 
           mnemonicWords={this.state.mnemonicWords} 
-          handleCreateWallet={() => this.captcha.execute()} 
+          handleCreateWallet={() => executeWithToken(this.handleCreateWallet)} 
           confirmedRegistration={this.state.confirmedRegistration} 
-        />
-        <ReCAPTCHA
-          ref={el => this.captcha = el}
-          size="invisible"
-          sitekey={Config.getValue('recaptchaKey')}
-          onChange={(token) => {
-            this.handleCreateWallet(token);
-            this.captcha.reset();
-          }}
         />
       </React.Fragment>
     );
