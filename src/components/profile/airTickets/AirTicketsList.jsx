@@ -4,6 +4,8 @@ import AirTicket from './AirTicket';
 import NoEntriesMessage from '../../common/messages/NoEntriesMessage';
 import ProfileFlexContainer from '../flexContainer/ProfileFlexContainer';
 
+import '../../../styles/css/components/profile/airTickets/air-tickets-list.css';
+
 function AirTicketsList(props) {
 
   const renderTickets = () => {

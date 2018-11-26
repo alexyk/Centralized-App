@@ -38,7 +38,7 @@ class AirTicketsPage extends React.Component {
 
     return (
       <div className="container">
-        <section id="profile-my-reservations">
+        <section>
           <div>
             <h2>Latest Tickets</h2>
             <AirTicketsList

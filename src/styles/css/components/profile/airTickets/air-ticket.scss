@@ -1,0 +1,183 @@
+$breakpoints: (
+	'xs-phone': 320px,
+	'phone': 490px,
+	'tablet': 768px,
+	'desktop': 1024px,
+	'widescreen': 1200px
+);
+
+@import '../../../vendors/include-media';
+
+@import '../../../base/mixins';
+@import '../../../base/variables';
+
+.ticket-flex-container {
+  font-size: 18px;
+  .icon {
+    display: none;
+  }
+  .tablet-col-1 {
+    width: 32%;
+    display: inline-flex;
+    .trips-image {
+      width: 25%;
+      @include imageHost();
+    }
+    .trips-host {
+      width: 75%;
+      .send-message-icon {
+        background: url(../../../../images/icon-mail.png) center center;
+        display: inline-block;
+        height: 15px;
+        width: 23px;
+        margin-right: 5px;
+      }
+      .hostName {
+        font-weight: 400;
+        margin-bottom: 3%;
+      }
+      .email, .phoneNumber {
+        font-size: 19px;
+        margin-bottom: 3%;
+      }
+    }
+  }
+  .tablet-col-2 {
+    width: 68%;
+    display: inline-flex;
+    .trips-location {
+      width: 30%;
+    }
+    .trips-dates {
+      width: 35%;
+      @include checkInCheckoutDates();
+    }
+    .trips-actions {
+      width: 20%;
+      button {
+        padding-bottom: 10px;
+        padding-left: 0;
+        color: #E98B73;
+        background: none;
+        border: none;
+        outline: none;
+      }
+    }
+    .trips-status {
+      width: 18%;
+      .status {
+        font-weight: 400;
+      }
+      .icon-question {
+        margin: 0 5px;
+      }
+    }
+
+    @include dashboardTooltip();
+  }
+
+  @include media("<=desktop") {
+    padding: 5%;
+    &.flex-container-header {
+      display: none;
+    }
+    .tablet-col-1 {
+      display: flex;
+      flex-direction: column;
+      width: 30%;
+      justify-content: center;
+      text-align: center;
+      .trips-image,
+      .trips-host {
+        width: 80%;
+      }
+      .trips-host {
+        margin-top: 10%;
+      }
+    }
+
+    .tablet-col-2 {
+      width: 70%;
+      flex-wrap: wrap;
+      @include icon();
+      .trips-location,
+      .trips-dates,
+      .trips-actions {
+        margin-bottom: 5%;
+      }
+      .trips-location,
+      .trips-dates {
+        @include rowWithIconInMobile(left, 50%);
+      }
+      .trips-actions {
+        @include rowWithIconInMobile(left, 100%);
+      }
+      .trips-status {
+        width: 50%;
+        border-top: 0px;
+        @include statusRowInMobile();
+      }
+    }
+
+  }
+
+  @include media("<=tablet") {
+    .tablet-col-1 {
+      min-width: 180px;
+      .trips-image,
+      .trips-host {
+        width: 90%;
+      }
+    }
+
+    .tablet-col-2 {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      .trips-location {
+        @include rowWithIconInMobile(center, 100%);
+      }
+      .trips-dates {
+        @include rowWithIconInMobile(center, 100%);
+      }
+      .trips-actions {
+        @include rowWithIconInMobile(center, 100%);
+      }
+      .trips-status {
+        width: 100%;
+      }
+    }
+  }
+
+  @include media("<=phone") {
+    flex-wrap: wrap;
+    margin-bottom: 10%;
+    .tablet-col-1 {
+      display: block;
+      width: 100%;
+      .trips-image {
+        @include imageHostInMobile();
+      }
+      .trips-host {
+        margin-bottom: 5%;
+        margin-top: 5%;
+        @include rowWithIconInMobile(center, 100%);
+      }
+    }
+
+    .tablet-col-2 {
+      display: block;
+      width: 100%;
+      .trips-location,
+      .trips-dates,
+      .trips-actions {
+        .icon {
+          display: none;
+        }
+      }
+      .trips-status {
+        @include statusRowInMobile();
+      }
+    }
+  }
+}
