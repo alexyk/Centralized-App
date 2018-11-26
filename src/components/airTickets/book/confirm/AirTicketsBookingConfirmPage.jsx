@@ -197,10 +197,11 @@ class AirTicketsBookingConfirmPage extends Component {
                               <div className="additional-info-item-label">Tech stops</div>
                               <div className="additional-info-item-value">{segment.techStops}</div>
                             </div>
-                            <div className="additional-info-item">
-                              <div className="additional-info-item-label">Plane</div>
-                              <div className="additional-info-item-value">{segment.equipment.name}</div>
-                            </div>
+                            {segment.equipment &&
+                              <div className="additional-info-item">
+                                <div className="additional-info-item-label">Plane</div>
+                                <div className="additional-info-item-value">{segment.equipment.name}</div>
+                              </div>}
                           </div>
                         </div>
                       </Fragment>
@@ -306,6 +307,11 @@ class AirTicketsBookingConfirmPage extends Component {
                                   <div className="additional-info-item-label">Tech stops</div>
                                   <div className="additional-info-item-value">{segment.techStops}</div>
                                 </div>
+                                {segment.equipment &&
+                                  <div className="additional-info-item">
+                                    <div className="additional-info-item-label">Plane</div>
+                                    <div className="additional-info-item-value">{segment.equipment.name}</div>
+                                  </div>}
                               </div>
                             </div>
                           </Fragment>

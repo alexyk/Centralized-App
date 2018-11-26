@@ -40,7 +40,7 @@ class AirTicketsBookingRouterPage extends Component {
         zip: '1000',
       },
       servicesInfo: [
-        
+
       ],
       passengersInfo: [
         {
@@ -331,7 +331,11 @@ class AirTicketsBookingRouterPage extends Component {
           .then((data) => {
             console.log('Success booking.');
             console.log(data);
-            this.props.history.push(`/tickets/results/book/${this.props.match.params.id}${this.props.location.search}`);
+            if (data.bookings[0].status.bookingStatus === 'NO') {
+              this.searchAirTickets(this.props.location.search);
+            } else {
+              this.props.history.push(`/tickets/results/book/${this.props.match.params.id}${this.props.location.search}`);
+            }
           });
       })
       .catch((err) => {
