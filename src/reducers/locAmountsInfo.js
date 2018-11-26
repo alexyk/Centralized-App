@@ -14,7 +14,6 @@ export default function reducer(state = initialState, action) {
             ...state.locAmounts,
             [action.fiatAmount]: {
               locAmount: action.params.locAmount,
-              quotedPair: action.params.quotedPair,
               fundsSufficient: action.params.fundsSufficient,
               fiatAmount: action.params.fiatAmount
             }
