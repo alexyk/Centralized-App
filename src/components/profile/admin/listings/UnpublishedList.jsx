@@ -376,7 +376,7 @@ class UnpublishedList extends React.Component {
     }
 
     return (
-      <div>
+      <div className="container">
         <AdminNav>
           <div>
             <li><NavLink exact activeClassName="active" to="/profile/admin/listings/unpublished"><h2>Unpublished</h2></NavLink></li>

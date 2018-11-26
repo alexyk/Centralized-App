@@ -7,7 +7,7 @@ import { LOGIN, REGISTER, SEND_RECOVERY_EMAIL } from '../../../constants/modals.
 import '../../../styles/css/components/modals/modal.css';
 
 function LoginModal(props) {
-
+  const { isLogging } = props; 
   return (
     <React.Fragment>
       <Modal show={props.isActive} onHide={() => props.closeModal(LOGIN)} className="modal fade myModal">
@@ -28,8 +28,7 @@ function LoginModal(props) {
             <div className="remember-me">
               <label><input type="checkbox" value="" id="login-remember" />Remember me</label>
             </div>
-
-            <button type="submit" className="btn btn-primary">Login</button>
+            <button type="submit" className="btn btn-primary" disabled={isLogging}>{isLogging ? 'Logging in...' : 'Login'}</button>
             <div className="clearfix"></div>
           </form>
 
