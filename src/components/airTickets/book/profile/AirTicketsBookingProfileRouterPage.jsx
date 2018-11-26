@@ -22,6 +22,8 @@ function AirTicketsBookingProfileRouterPage(props) {
     passengersServices = result.optionalServices.filter(service => service.perPassenger === true);
   }
 
+  const hasFlightServices = flightServices && flightServices.length > 0;
+
   return (
     <Fragment>
       <BookingSteps steps={['Search', 'Details', 'Prepare Booking', 'Confirm & Pay']} currentStepIndex={2} />
@@ -30,7 +32,7 @@ function AirTicketsBookingProfileRouterPage(props) {
         <section className="container">
           <div className="air-tickets-profile">
             <div className="air-tickets-profile-nav">
-              <AirTicketsBookingProfileEditNav confirmInfo={confirmInfo} hasFlightServices={!!flightServices} />
+              <AirTicketsBookingProfileEditNav confirmInfo={confirmInfo} hasFlightServices={hasFlightServices} />
             </div>
             <div className="air-tickets-profile-content">
               <Switch>
@@ -59,12 +61,12 @@ function AirTicketsBookingProfileRouterPage(props) {
                           onChange={props.onChangeInvoiceInfo}
                           enableNextSection={props.enableNextSection}
                           countries={countries}
-                          hasFlightServices={!!flightServices}
+                          hasFlightServices={hasFlightServices}
                         />
                       );
                     }}
                   /> : <Redirect to={{ pathname: '/tickets/results/initBook/:id/profile', search: props.location.search }} />}
-                {!!flightServices &&
+                {hasFlightServices &&
                   (confirmInfo.services ?
                     <Route
                       exact

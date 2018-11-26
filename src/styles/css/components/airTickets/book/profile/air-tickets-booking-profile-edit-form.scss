@@ -42,4 +42,19 @@
       }
     }
   }
+  .button-wrapper {
+    display: flex;
+    justify-content: flex-end;
+    .btn-back {
+      display: flex;
+      align-items: center;
+      &:hover {
+        color: #333;
+      }
+    }
+    .btn {
+      padding: 15px 70px;
+      margin: 20px 0;
+    }
+  }
 }

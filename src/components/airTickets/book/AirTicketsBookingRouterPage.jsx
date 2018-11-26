@@ -3,17 +3,17 @@ import { Route, Switch, withRouter } from 'react-router-dom';
 import { NotificationManager } from 'react-notifications';
 import update from 'react-addons-update';
 import PropTypes from 'prop-types';
-import { parse } from 'query-string';
+// import { parse } from 'query-string';
 import AirTicketsDetailsPage from './details/AirTicketsDetailsPage';
 import AirTicketsBookingProfileRouterPage from './profile/AirTicketsBookingProfileRouterPage';
 import { Config } from '../../../config';
 import { LONG } from '../../../constants/notificationDisplayTimes';
 
-const PASSENGER_TYPES_CODES = {
-  adult: 'ADT',
-  child: 'CHD',
-  infant: 'INF'
-};
+// const PASSENGER_TYPES_CODES = {
+//   adult: 'ADT',
+//   child: 'CHD',
+//   infant: 'INF'
+// };
 
 class AirTicketsBookingRouterPage extends Component {
   constructor(props) {
@@ -42,34 +42,7 @@ class AirTicketsBookingRouterPage extends Component {
       servicesInfo: [
 
       ],
-      passengersInfo: [
-        {
-          birthDate: '1952-01-02',
-          birthdateYear: '1984',
-          birthdateMonth: '09',
-          birthdateDay: '23',
-          firstName: 'Hristo',
-          lastName: 'Skipernov',
-          nationality: 'BG',
-          options: [
-            {
-              id: 'OutwardLuggageOptions',
-              value: '1'
-            },
-            {
-              id: 'ReturnLuggageOptions',
-              value: '1'
-            }
-          ],
-          passportNumber: '1247987654324',
-          passportIssueCountry: 'BG',
-          passportExpYear: '2022',
-          passportExpMonth: '05',
-          passportExpDay: '16',
-          title: 'Mr',
-          type: 'ADT'
-        }
-      ],
+      passengersInfo: [],
       countries: [],
       confirmInfo: {
         contact: true,
@@ -97,7 +70,7 @@ class AirTicketsBookingRouterPage extends Component {
   componentDidMount() {
     this.requestSelectFlight();
     this.requestAllCountries();
-    // this.populatePassengersInfo();
+    this.populatePassengersInfo();
   }
 
   requestSelectFlight() {
@@ -187,24 +160,42 @@ class AirTicketsBookingRouterPage extends Component {
   }
 
   populatePassengersInfo() {
-    const queryParams = parse(this.props.location.search);
-    const adults = Number(queryParams.adults);
-    const children = JSON.parse(queryParams.children);
-    const infants = Number(queryParams.infants);
+    // const queryParams = parse(this.props.location.search);
+    // const adults = Number(queryParams.adults);
+    // const children = JSON.parse(queryParams.children);
+    // const infants = Number(queryParams.infants);
 
     const passengersInfo = [...this.state.passengersInfo];
 
-    for (let i = 0; i < adults; i++) {
-      passengersInfo.push({ type: PASSENGER_TYPES_CODES.adult, options: [] });
-    }
+    // for (let i = 0; i < adults; i++) {
+    //   passengersInfo.push({ type: PASSENGER_TYPES_CODES.adult, options: [] });
+    // }
 
-    for (let i = 0; i < children.length; i++) {
-      passengersInfo.push({ type: PASSENGER_TYPES_CODES.child, age: children[i].age, options: [] });
-    }
+    // for (let i = 0; i < children.length; i++) {
+    //   passengersInfo.push({ type: PASSENGER_TYPES_CODES.child, age: children[i].age, options: [] });
+    // }
 
-    for (let i = 0; i < infants; i++) {
-      passengersInfo.push({ type: PASSENGER_TYPES_CODES.infant, options: [] });
-    }
+    // for (let i = 0; i < infants; i++) {
+    //   passengersInfo.push({ type: PASSENGER_TYPES_CODES.infant, options: [] });
+    // }
+
+    passengersInfo.push({
+      birthDate: '1952-01-02',
+      birthdateYear: '1984',
+      birthdateMonth: '09',
+      birthdateDay: '23',
+      firstName: 'Hristo',
+      lastName: 'Skipernov',
+      nationality: 'BG',
+      passportNumber: '1247987654324',
+      passportIssueCountry: 'BG',
+      passportExpYear: '2022',
+      passportExpMonth: '05',
+      passportExpDay: '16',
+      title: 'Mr',
+      type: 'ADT',
+      options: []
+    });
 
     this.setState({
       passengersInfo

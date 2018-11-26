@@ -94,7 +94,7 @@ class AirTicketsBookingProfileEditForm extends Component {
             <label htmlFor="contactAddress">Address <span className="mandatory">*</span></label>
             <input id="contactAddress" name="address" value={address || ''} onChange={this.onChange} type="text" />
           </div>
-          <div className="buttons-wrapper">
+          <div className="button-wrapper">
             <button type="submit" className="btn">Next</button>
           </div>
         </form>
