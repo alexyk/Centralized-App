@@ -26,7 +26,7 @@ class AirTicketsPage extends React.Component {
   }
 
   onPageChange() {
-    
+
   }
 
   render() {
@@ -39,18 +39,16 @@ class AirTicketsPage extends React.Component {
     return (
       <div className="container">
         <section>
-          <div>
-            <h2>Latest Tickets</h2>
-            <AirTicketsList
-              tickets={tickets}
-            />
-            {/* <Pagination
+          <h2>Latest Tickets</h2>
+          <AirTicketsList
+            tickets={tickets}
+          />
+          {/* <Pagination
               loading={this.state.totalListings === 0}
               onPageChange={this.onPageChange}
               currentPage={this.state.currentPage}
               totalElements={this.state.totalTrips}
             /> */}
-          </div>
         </section>
       </div>
     );

@@ -214,6 +214,9 @@
         width: 100%;
         padding: 20px;
         margin-bottom: 20px;
+        button {
+          margin-bottom: 1em;
+        }
         @include media("<=tablet") {
           flex-direction: column;
         }

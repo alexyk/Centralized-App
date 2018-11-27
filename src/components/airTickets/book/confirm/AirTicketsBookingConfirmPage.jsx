@@ -1,5 +1,5 @@
 import React, { Component, Fragment } from 'react';
-import { withRouter } from 'react-router-dom';
+import { withRouter, Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import BookingSteps from '../../../common/bookingSteps';
@@ -476,6 +476,7 @@ class AirTicketsBookingConfirmPage extends Component {
                         ? <button className="btn btn-primary" onClick={this.handlePayWithLOC}>Pay with LOC Tokens</button>
                         : <button className="btn btn-primary" onClick={(e) => this.openModal(CREATE_WALLET, e)}>Create Wallet</button>
                     }
+                    <p>You can pay <Link to="/profile/tickets">later</Link>, until {flightProperties.properties.deadline}.</p>
                   </div>
                   <div className="logos">
                     <div className="logo loc">

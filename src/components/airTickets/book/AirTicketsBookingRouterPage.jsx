@@ -49,7 +49,8 @@ class AirTicketsBookingRouterPage extends Component {
         invoice: true,
         services: true,
         passengers: true
-      }
+      },
+      isBookingProccess: false
     };
 
     this.searchAirTickets = this.searchAirTickets.bind(this);
@@ -284,6 +285,10 @@ class AirTicketsBookingRouterPage extends Component {
   }
 
   initBooking() {
+    this.setState({
+      isBookingProccess: true
+    });
+
     const { contactInfo, invoiceInfo, servicesInfo, passengersInfo } = this.state;
 
     const passengers = [];
@@ -320,13 +325,19 @@ class AirTicketsBookingRouterPage extends Component {
         console.log(data);
         this.requestBooking()
           .then((data) => {
-            console.log('Success booking.');
-            console.log(data);
-            if (data.bookings[0].status.bookingStatus === 'NO') {
-              this.searchAirTickets(this.props.location.search);
-            } else {
-              this.props.history.push(`/tickets/results/book/${this.props.match.params.id}${this.props.location.search}`);
-            }
+            this.setState({
+              isBookingProccess: false
+            }, () => {
+              console.log('Success booking.');
+              console.log(data);
+              if (data.bookingStatus === 'Unsuccessful booking or no booking has made') {
+                this.searchAirTickets(this.props.location.search);
+                NotificationManager.warning(data.bookingStatus, '', LONG);
+              } else {
+                this.props.history.push(`/tickets/results/book/${this.props.match.params.id}${this.props.location.search}`);
+                NotificationManager.success(data.bookingStatus, '', LONG);
+              }
+            });
           });
       })
       .catch((err) => {
@@ -335,7 +346,7 @@ class AirTicketsBookingRouterPage extends Component {
   }
 
   render() {
-    const { result, contactInfo, invoiceInfo, servicesInfo, passengersInfo, countries, confirmInfo } = this.state;
+    const { result, contactInfo, invoiceInfo, servicesInfo, passengersInfo, countries, confirmInfo, isBookingProccess } = this.state;
 
     return (
       <Fragment>
@@ -358,6 +369,7 @@ class AirTicketsBookingRouterPage extends Component {
                 onChangePassengerServices={this.onChangePassengerServices}
                 enableNextSection={this.enableNextSection}
                 initBooking={this.initBooking}
+                isBookingProccess={isBookingProccess}
               />
             );
           }}

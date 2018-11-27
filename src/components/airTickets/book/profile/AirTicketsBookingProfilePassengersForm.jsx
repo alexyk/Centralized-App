@@ -78,7 +78,7 @@ class AirTicketsBookingProfilePassengersForm extends Component {
   }
 
   render() {
-    const { passengersInfo, countries, services, isFlightServices } = this.props;
+    const { passengersInfo, countries, services, isFlightServices, isBookingProccess } = this.props;
     const { currentPassengerIndex } = this.state;
 
     let years = [];
@@ -286,7 +286,7 @@ class AirTicketsBookingProfilePassengersForm extends Component {
             <NavLink to={{ pathname: `/tickets/results/book/${this.props.match.params.id}/profile/${isFlightServices ? 'services' : 'invoice'}`, search: this.props.location.search }} className="btn-back" id="btn-continue">
               <i className="fa fa-long-arrow-left" aria-hidden="true"></i>
               &nbsp;Back</NavLink>
-            <button type="submit" className="btn">Proceed</button>
+            <button type="submit" disabled={isBookingProccess} className="btn">{isBookingProccess ? 'Processing...' : 'Proceed'}</button>
           </div>
         </form>
       </div>
@@ -300,6 +300,7 @@ AirTicketsBookingProfilePassengersForm.propTypes = {
   services: PropTypes.array,
   isFlightServices: PropTypes.bool,
   currency: PropTypes.string,
+  isBookingProccess: PropTypes.bool,
   onChange: PropTypes.func,
   onChangeService: PropTypes.func,
   initBooking: PropTypes.func,
