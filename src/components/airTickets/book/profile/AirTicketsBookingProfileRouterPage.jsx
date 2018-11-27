@@ -13,7 +13,7 @@ import '../../../../styles/css/components/airTickets/book/profile/air-tickets-bo
 
 
 function AirTicketsBookingProfileRouterPage(props) {
-  const { result, contactInfo, invoiceInfo, servicesInfo, passengersInfo, countries, confirmInfo } = props;
+  const { result, contactInfo, invoiceInfo, servicesInfo, passengersInfo, countries, confirmInfo, isBookingProccess } = props;
 
   let flightServices;
   let passengersServices;
@@ -98,6 +98,7 @@ function AirTicketsBookingProfileRouterPage(props) {
                           countries={countries}
                           services={passengersServices}
                           currency={result.price.currency}
+                          isBookingProccess={isBookingProccess}
                         />
                       );
                     }}
@@ -118,6 +119,7 @@ AirTicketsBookingProfileRouterPage.propTypes = {
   passengersInfo: PropTypes.array,
   confirmInfo: PropTypes.object,
   countries: PropTypes.array,
+  isBookingProccess: PropTypes.bool,
   onChangeContactInfo: PropTypes.func,
   onChangeInvoiceInfo: PropTypes.func,
   onChangeServiceInfo: PropTypes.func,
@@ -127,8 +129,6 @@ AirTicketsBookingProfileRouterPage.propTypes = {
   initBooking: PropTypes.func,
 
   // Router props
-  match: PropTypes.object,
-  history: PropTypes.object,
   location: PropTypes.object
 };
 

@@ -1,5 +1,7 @@
+import React from 'react';
 import { Route, Switch, withRouter } from 'react-router-dom';
-
+import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
 import AdminPage from './admin/AdminPage';
 import CalendarPage from './calendar/CalendarPage';
 import DashboardPage from './dashboard/DashboardPage';
@@ -9,13 +11,11 @@ import MyGuestsPage from './guests/MyGuestsPage';
 import MyListingsPage from './listings/MyListingsPage';
 import ProfileNav from './ProfileNav';
 import ProfileEditPage from './me/ProfileEditPage';
-import PropTypes from 'prop-types';
-import React from 'react';
 import TripsRouter from './trips/TripsRouter';
 import WalletPage from './wallet/WalletIndexPage';
 import AirdropPage from './airdrop/AirdropPage';
 import BuyLocPage from './buyloc/BuyLocPage';
-import { connect } from 'react-redux';
+import AirTicketsPage from './airTickets/AirTicketsPage';
 
 function ProfilePage(props) {
   return (
@@ -29,6 +29,7 @@ function ProfilePage(props) {
         <Route exact path="/profile/messages/chat/:id" render={() => <MessagesChatPage />} />
         <Route path="/profile/trips" render={() => <TripsRouter location={props.location} />} />
         <Route path="/profile/reservations" render={() => <MyGuestsPage />} />
+        <Route path="/profile/tickets" render={() => <AirTicketsPage />} />
         <Route path="/profile/me" render={() => <ProfileEditPage />} />
         <Route path="/profile/wallet" render={() => <WalletPage />} />
         <Route path="/airdrop" render={() => <AirdropPage />} />
@@ -40,6 +41,7 @@ function ProfilePage(props) {
 }
 
 ProfilePage.propTypes = {
+  isLogged: PropTypes.bool,
   location: PropTypes.object,
 };
 
