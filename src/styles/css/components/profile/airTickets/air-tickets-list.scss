@@ -14,38 +14,110 @@ $breakpoints: (
 .tickets-flex-container {
   margin-bottom: 40px;
   .ticket-flex-container {
-    .tablet-col-1 {
-      width: 32%;
-      display: inline-flex;
-      .tickets-image {
-        width: 25%;
-      }
-      .tickets-description {
-        width: 75%;
+    flex-direction: column;
+    .departure {
+      margin-bottom: 20px;
+    }
+    .departure,
+    .return {
+      display: flex;
+    }
+    h4 {
+      font-weight: 400;
+      font-size: 22px;
+    }
+    .tickets-image {
+      width: 10%;
+      font-size: 30px;
+      i {
+        color: $moderate-gray;
       }
     }
-    .tablet-col-2 {
-      width: 68%;
-      display: inline-flex;
-      .tickets-locations {
-        width: 30%;
+    .tickets-airports {
+      width: 33%;
+      .item {
+        margin-right: 10px;
+        display: flex;
+        align-items: center;
+        position: relative;
       }
-      .tickets-dates {
-        width: 35%;
-      }
-      .tickets-actions {
-        width: 20%;
-      }
-      .tickets-status {
-        width: 18%;
-        button {
-          padding-bottom: 10px;
-          padding-left: 0;
-          color: #e98b73;
-          background: none;
-          border: none;
-          outline: none;
+      .flight-stops {
+        .stop {
+          text-align: center;
         }
+        .middle-stop {
+          position: absolute;
+          top: 10px;
+          width: 40px;
+          text-align: center;
+        }
+        .stops-container {
+          margin: 0 10px;
+          position: relative;
+          display: flex;
+          align-items: center;
+          .bulet-container {
+            display: flex;
+            .bulet {
+              display: inline-block;
+              font-weight: 800;
+              width: 0.5em;
+              height: 0.5em;
+              text-align: center;
+              line-height: 1em;
+              border-radius: 1em;
+              background: #d87a61;
+              position: relative;
+            }
+          }
+          .line {
+            width: 50px;
+            border: 1px solid #d87a61;
+            margin: 0;
+          }
+        }
+      }
+    }
+    .tickets-dates {
+      width: 32%;
+      .content-row {
+        display: flex;
+        align-items: center;
+        .date-in-day {
+          color: #a2c5bf;
+        }
+        .date-out-day {
+          color: #d87a61;
+        }
+        i {
+          margin: 0 10px;
+        }
+        .time {
+          font-size: 16px;
+        }
+      }
+    }
+    .tickets-actions {
+      width: 15%;
+      button,
+      a {
+        padding-bottom: 10px;
+        padding-left: 0;
+        color: #e98b73;
+        background: none;
+        border: none;
+        outline: none;
+      }
+    }
+    .tickets-status {
+      width: 10%;
+      button {
+        padding-bottom: 10px;
+        padding-left: 0;
+        color: #e98b73;
+        background: none;
+        border: none;
+        outline: none;
       }
     }
   }
