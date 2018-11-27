@@ -1,12 +1,14 @@
 import React, { Component, Fragment } from 'react';
 import { withRouter, Link } from 'react-router-dom';
 import { connect } from 'react-redux';
+import { NotificationManager } from 'react-notifications';
 import PropTypes from 'prop-types';
 import BookingSteps from '../../../common/bookingSteps';
 import { Config } from '../../../../config';
 import { CREATE_WALLET } from '../../../../constants/modals.js';
 import { CurrencyConverter } from '../../../../services/utilities/currencyConverter';
 import LocPrice from '../../../common/utility/LocPrice';
+import { LONG } from '../../../../constants/notificationDisplayTimes';
 
 import '../../../../styles/css/components/airTickets/book/confirm/air-tickets-booking-confirm-page.css';
 
@@ -55,7 +57,29 @@ class AirTicketsBookingConfirmPage extends Component {
   }
 
   handlePayWithLOC() {
-    console.log('pay with loc');
+    fetch(`${Config.getValue('apiHost')}flight/bookings/issue`, {
+      method: 'POST',
+      headers: {
+        'Content-type': 'application/json'
+      },
+      body: JSON.stringify({ flightId: this.props.match.params.id })
+    })
+      .then((res) => {
+        console.log(res);
+        if (res.ok) {
+          res.json().then((data) => {
+            if (data.success) {
+              console.log(data);
+              NotificationManager.success(data.documentStatus, '', LONG);
+              this.props.history.push('/profile/tickets');
+            } else {
+              NotificationManager.warning(data.documentStatus, '', LONG);
+            }
+          });
+        } else {
+          console.log(res);
+        }
+      });
   }
 
   render() {
@@ -497,6 +521,7 @@ AirTicketsBookingConfirmPage.propTypes = {
   // Router props
   match: PropTypes.object,
   location: PropTypes.object,
+  history: PropTypes.object,
 
   // Redux props
   userInfo: PropTypes.object,
