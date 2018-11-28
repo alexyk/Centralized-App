@@ -12,6 +12,7 @@ import ProfileEditPage from './me/ProfileEditPage';
 import PropTypes from 'prop-types';
 import React from 'react';
 import TripsRouter from './trips/TripsRouter';
+import AffiliatesPage from './affiliates/AffiliatesPage';
 import WalletPage from './wallet/WalletIndexPage';
 import AirdropPage from './airdrop/AirdropPage';
 import BuyLocPage from './buyloc/BuyLocPage';
@@ -23,6 +24,7 @@ function ProfilePage(props) {
       {props.isLogged && <ProfileNav />}
       <Switch>
         <Route exact path="/profile/dashboard" render={() => <DashboardPage />} />
+        <Route exact path="/profile/affiliates" render={() => <AffiliatesPage />} />
         <Route exact path="/profile/listings" render={() => <MyListingsPage />} />
         <Route exact path="/profile/listings/calendar/:id" render={() => <CalendarPage />} />
         <Route exact path="/profile/messages" render={() => <MessagesPage />} />
