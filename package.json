@@ -83,6 +83,7 @@
     "analyze": "source-map-explorer build/static/js/main.*",
     "start-js": "react-app-rewired start",
     "start": "sh -ac '. ./.env; npm run all'",
+    "start/dev": "sh -ac '. ./.env.dev; npm run all'",
     "start/stage": "sh -ac '. ./.env.staging; npm run all'",
     "start/prod": "sh -ac '. ./.env.production; npm run all'",
     "build": "npm-run-all build-css build-js",
