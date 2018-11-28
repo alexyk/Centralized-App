@@ -147,20 +147,17 @@ class HotelBookingConfirmPage extends React.Component {
     const { currency } = this.props.paymentInfo;
     const { locAmounts } = this.props.locAmountsInfo;
 
-    let locAmount;
-    let quotedPair;
-
-    locAmount = locAmounts[DEFAULT_QUOTE_LOC_PP_ID].quotedLoc;
-    quotedPair = locAmounts[DEFAULT_QUOTE_LOC_PP_ID].quotedPair;
+    const locAmount = locAmounts[DEFAULT_QUOTE_LOC_PP_ID].locAmount;
 
     const paymentInfo = {
       fiatAmount,
       locAmount,
-      quotedPair,
       currency,
       bookingId: reservation.preparedBookingId,
       backUrl: this.createBackUrl(),
     };
+
+    console.log(paymentInfo);
 
     this.stopQuotePP();
     this.approveQuote();

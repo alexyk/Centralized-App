@@ -1,14 +1,13 @@
 import React from 'react';
 import requester from '../../requester';
-import { Config } from '../../config';
 import PropTypes from 'prop-types';
 import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { NotificationManager } from 'react-notifications';
 import { LONG } from '../../constants/notificationDisplayTimes.js';
 import { closeModal, openModal } from '../../actions/modalsInfo';
-import ReCAPTCHA from 'react-google-recaptcha';
 import RegisterModal from './modals/RegisterModal';
+import { executeWithToken } from '../../services/grecaptcha/grecaptcha';
 
 import {
   REGISTER
@@ -23,8 +22,6 @@ import {
 class RegisterManager extends React.Component {
   constructor(props) {
     super(props);
-
-    this.captcha = null;
 
     this.state = {
       signUpEmail: '',
@@ -150,16 +147,7 @@ class RegisterManager extends React.Component {
           states={this.state.states} 
           onChange={this.onChange} 
           handleChangeCountry={this.handleChangeCountry} 
-          handleRegister={() => this.captcha.execute()} 
-        />
-        <ReCAPTCHA
-          ref={el => this.captcha = el}
-          size="invisible"
-          sitekey={Config.getValue('recaptchaKey')}
-          onChange={(token) => {
-            this.handleRegister(token);
-            this.captcha.reset();
-          }}
+          handleRegister={() => executeWithToken(this.handleRegister)} 
         />
       </React.Fragment>
     );
