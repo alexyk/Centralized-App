@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import moment from 'moment';
 import ProfileFlexContainer from '../flexContainer/ProfileFlexContainer';
+import PlaneIcon from '../../../styles/images/plane-icon.png';
 
 class AirTicket extends Component {
   extractDatesData(segments) {
@@ -122,7 +123,8 @@ class AirTicket extends Component {
       <Fragment>
         <ProfileFlexContainer styleClass={`flex-container-row ${this.props.styleClass}`}>
           <div className="flex-row-child tickets-image">
-            <i className="fa fa-plane"></i>
+            {/* <i className="fa fa-plane"></i> */}
+            <img src={PlaneIcon} alt="plane" />
           </div>
           <div className="flex-row-child tickets-airports">
             <div className="content-row">
