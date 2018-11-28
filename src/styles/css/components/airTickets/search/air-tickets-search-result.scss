@@ -1,27 +1,30 @@
-$breakpoints: ('xs-phone': 320px,
-  'phone': 480px,
-  'tablet': 768px,
-  'desktop': 1024px,
-  'widescreen': 1200px);
+$breakpoints: (
+  "xs-phone": 320px,
+  "phone": 480px,
+  "tablet": 768px,
+  "desktop": 1024px,
+  "widescreen": 1200px
+);
 
 // keywords
-$media-expressions: ('screen': 'screen',
-  'print': 'print',
-  'handheld': 'handheld',
-  'landscape': '(orientation: landscape)',
-  'portrait': '(orientation: portrait)',
-  'retina2x': '(-webkit-min-device-pixel-ratio: 1.5), (min-resolution: 144dpi)',
-  'retina3x': '(-webkit-min-device-pixel-ratio: 2.5), (min-resolution: 240dpi)'
+$media-expressions: (
+  "screen": "screen",
+  "print": "print",
+  "handheld": "handheld",
+  "landscape": "(orientation: landscape)",
+  "portrait": "(orientation: portrait)",
+  "retina2x": "(-webkit-min-device-pixel-ratio: 1.5), (min-resolution: 144dpi)",
+  "retina3x": "(-webkit-min-device-pixel-ratio: 2.5), (min-resolution: 240dpi)"
 );
 
 // ligatured operators ≥ ≤
 
-@import '../../../vendors/include-media';
+@import "../../../vendors/include-media";
 
-@import '../../../base/functions';
-@import '../../../base/variables';
-@import '../../../base/mixins';
-@import '../../../base/helpers';
+@import "../../../base/functions";
+@import "../../../base/variables";
+@import "../../../base/mixins";
+@import "../../../base/helpers";
 
 .air-tickets-result,
 .air-tickets-details-result {
@@ -114,17 +117,20 @@ $media-expressions: ('screen': 'screen',
         .flight-stops {
           width: 60%;
           justify-content: center;
-          .stop {
+          .stop,
+          .middle-stop {
             text-align: center;
+            @include flightAirportsTooltip();
           }
 
+          .stop {
+            position: relative;
+          }
           .middle-stop {
             position: absolute;
             top: 10px;
             width: 40px;
-            text-align: center;
           }
-
           .stops-container {
             margin: 0 10px;
             position: relative;
@@ -219,7 +225,7 @@ $media-expressions: ('screen': 'screen',
 
       &:after {
         position: absolute;
-        content: '';
+        content: "";
         top: 100%;
         right: 10px;
         width: 0;

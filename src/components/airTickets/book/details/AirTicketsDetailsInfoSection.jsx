@@ -55,7 +55,14 @@ class AirTicketsDetailsInfoSection extends Component {
         <Fragment key={i}>
           <div key={i} className="bulet-container"><span className="bulet"></span></div>
           <hr className="line" />
-          <div className="middle-stop" style={{ left: `${(i * 60) + 40}px` }}>{departureInfo[i].destination.code}</div>
+          <div className="middle-stop" style={{ left: `${(i * 60) + 40}px` }}>
+            {departureInfo[i].destination.code}
+            <div className="tooltip-content">
+              <div>Transfer</div>
+              <hr />
+              <div>{departureInfo[i].destination.name} ({departureInfo[i].destination.code})</div>
+            </div>
+          </div>
         </Fragment>
       );
     }
@@ -81,14 +88,28 @@ class AirTicketsDetailsInfoSection extends Component {
               {arrivalTime}
             </div>
             <div className="item flight-stops">
-              <div className="stop">{departureInfo[0].origin.code}</div>
+              <div className="stop">
+                {departureInfo[0].origin.code}
+                <div className="tooltip-content">
+                  <div>Departure</div>
+                  <hr />
+                  <div>{departureInfo[0].origin.name} ({departureInfo[0].origin.code})</div>
+                </div>
+              </div>
               <div className="stops-container horizontal">
                 <div className="bulet-container"><span className="bulet"></span></div>
                 <hr className="line" />
                 {departureInfo.length === 1 ? null : middleStopsBulets}
                 <div className="bulet-container"><span className="bulet"></span></div>
               </div>
-              <div className="stop">{departureInfo[departureInfo.length - 1].destination.code}</div>
+              <div className="stop">
+                {departureInfo[departureInfo.length - 1].destination.code}
+                <div className="tooltip-content">
+                  <div>Arrival</div>
+                  <hr />
+                  <div>{departureInfo[departureInfo.length - 1].destination.name} ({departureInfo[departureInfo.length - 1].destination.code})</div>
+                </div>
+              </div>
             </div>
             <div className="item flight-icons">
               <div className="icon">
