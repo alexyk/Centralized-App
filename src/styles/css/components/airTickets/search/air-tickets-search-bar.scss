@@ -1,6 +1,6 @@
 $breakpoints: (
   "xs-phone": 320px,
-  "phone": 480px,
+  "phone": 440px,
   "tablet": 768px,
   "desktop": 1024px,
   "widescreen": 1200px
@@ -52,7 +52,7 @@ $media-expressions: (
       min-width: 180px;
       background: $white;
       @include media("<=widescreen") {
-        width: 33%;
+        width: 50%;
       }
       @include media("<=desktop") {
         width: 100%;
@@ -201,12 +201,26 @@ $media-expressions: (
       width: 29%;
       background: $white;
       @include media("<=widescreen") {
-        width: 33%;
+        width: 100%;
+        .check {
+          border: none !important;
+        }
       }
       @include media("<=desktop") {
         width: 100%;
         margin-bottom: 10px;
         padding: 7px 0;
+      }
+      @include media("<=phone") {
+        .check {
+          .check-in,
+          .roundtrip {
+            width: 100px;
+            span {
+              display: none;
+            }
+          }
+        }
       }
       .check {
         border-left: 1px solid $gray;
@@ -226,6 +240,12 @@ $media-expressions: (
         width: 25%;
         margin-bottom: 10px;
       }
+      @include media("<=tablet") {
+        width: 100%;
+        justify-content: center;
+        margin-bottom: 10px;
+        padding: 7px 0;
+      }
       select,
       .select-children {
         border: 0;
@@ -235,10 +255,16 @@ $media-expressions: (
       }
       .select-adults {
         width: 80%;
+        @include media("<=tablet") {
+          width: 50%;
+        }
       }
       .select-children {
         width: 80px;
         padding: 8px;
+        @include media("<=tablet") {
+          width: 50%;
+        }
       }
     }
     .air-tickets-form-flight-class,
@@ -266,6 +292,9 @@ $media-expressions: (
         width: 25%;
         margin-bottom: 10px;
       }
+      @include media("<=tablet") {
+        width: 33%;
+      }
     }
     .air-tickets-form-flight-stops {
       min-width: 70px;
@@ -276,6 +305,9 @@ $media-expressions: (
       @include media("<=desktop") {
         width: 25%;
         margin-bottom: 10px;
+      }
+      @include media("<=tablet") {
+        width: 34%;
       }
     }
     .air-tickets-form-flight-class {
