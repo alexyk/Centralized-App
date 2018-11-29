@@ -63,6 +63,7 @@ class EditListingPage extends React.Component {
       bedrooms: [this.createBedroom(),],
       bathrooms: 1,
       facilities: new Set(),
+      selectedOption: null,
       street: '',
       city: '',
       state: '',

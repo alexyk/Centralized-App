@@ -5,28 +5,73 @@ import { CHILDREN } from '../../../constants/modals';
 import ChildrenModal from '../modals/ChildrenModal';
 import PropTypes from 'prop-types';
 import React from 'react';
-import Select from 'react-select';
+import AsyncSelect from 'react-select/lib/Async';
 import { connect } from 'react-redux';
 import requester from '../../../requester';
 import { withRouter } from 'react-router-dom';
 import Datepicker from '../../common/datepicker';
 import moment from 'moment';
 
+const customStyles = {
+  container: (styles) => ({
+    ...styles,
+    flex: '1 1 0',
+    minWidth: '300px',
+    outline: 'none',
+
+  }),
+  input: (styles) => ({
+    ...styles,
+    outline: 'none',
+  }),
+  control: (styles) => ({
+    ...styles,
+    height: '61px',
+    padding: '0 10px',
+    boxShadow: 'none',
+    border: 0
+  }),
+  indicatorSeparator: (styles) => ({
+    ...styles,
+    display: 'none'
+  })
+};
+
 function HotelsSearchBar(props) {
   if (props.location.pathname.indexOf('/mobile') !== -1) {
     return null;
   }
 
-  const getRegions = (param) => {
-    if (!param) {
-      return Promise.resolve({ options: [] });
-    }
+  const loadOptions = (input = '', callback) => {
+    fetchCities(input).then(cities => callback(cities));
+  };
 
-    return requester.getRegionsBySearchParameter([`query=${param}`]).then(res => {
+  const fetchCities = (input = '') => {
+    console.log(input)
+    return requester.getRegionsBySearchParameter([`query=${input}`]).then(res => {
       return res.body.then(data => {
-        return { options: data };
+        if (!data) {
+          return [];
+        }
+        console.log(data);
+
+        return data.map(region => ({
+          value: region.id,
+          label: region.query
+        }));
       });
     });
+  };
+
+  const changeRegion = (selectedOption) => {
+    if (selectedOption) {
+      const region = {
+        id: selectedOption.value,
+        query: selectedOption.label
+      };
+
+      props.dispatch(setRegion(region));
+    }
   };
 
   const getQueryString = () => {
@@ -94,23 +139,28 @@ function HotelsSearchBar(props) {
     });
   };
 
+  const region = props.hotelsSearchInfo.region;
+  let selectedOption = null;
+  if (region) {
+    selectedOption = {
+      value: region.id,
+      label: region.query
+    };
+  }
+
   return (
     <form className="source-panel" onSubmit={handleSearch}>
-      <div className="source-panel-select source-panel-item">
-        <Select.Async
-          placeholder="Choose a location"
-          required
-          style={{ boxShadow: 'none', border: 'none' }}
-          value={props.hotelsSearchInfo.region}
-          onChange={value => props.dispatch(setRegion(value))}
-          valueKey={'id'}
-          labelKey={'query'}
-          loadOptions={getRegions}
-          backspaceRemoves={true}
-          arrowRenderer={null}
-          onSelectResetsInput={false}
-        />
-      </div>
+      <AsyncSelect
+        styles={customStyles}
+        value={selectedOption}
+        onChange={changeRegion}
+        loadOptions={loadOptions}
+        backspaceRemoves={true}
+        arrowRenderer={null}
+        onSelectResetsInput={false}
+        placeholder="Choose a location"
+        required
+      />
 
       <div className="check-wrap source-panel-item">
         <ChildrenModal
@@ -118,7 +168,7 @@ function HotelsSearchBar(props) {
           closeModal={closeChildrenModal}
           handleSubmit={handleSubmitModal}
         />
-        
+
         <div className="check">
           <Datepicker minDate={moment()} enableRanges />
         </div>
