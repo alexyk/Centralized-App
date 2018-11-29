@@ -40,7 +40,6 @@ class AirdropPage extends Component {
       loginPassword: '',
       token: '',
       voteUrl: '',
-      userParticipates: false,
       loading: true,
       withdrawTransactionHash: null
     };
@@ -94,12 +93,6 @@ class AirdropPage extends Component {
       });
     } else {
       this.setState({ loading: false });
-    }
-  }
-
-  componentWillReceiveProps(props) {
-    if (props.airdropInfo.participates) {
-      this.setState({ userParticipates: true });
     }
   }
 
