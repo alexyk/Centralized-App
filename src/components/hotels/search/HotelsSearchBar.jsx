@@ -17,7 +17,10 @@ const customStyles = {
     ...styles,
     flex: '1 1 0',
     outline: 'none',
-
+  }),
+  valueContainer: (styles) => ({
+    ...styles,
+    fontSize: '1.2em'
   }),
   input: (styles) => ({
     ...styles,
@@ -26,8 +29,9 @@ const customStyles = {
   control: (styles) => ({
     ...styles,
     padding: '0 10px',
+    cursor: 'pointer',
     boxShadow: 'none',
-    border: 0
+    border: 0,
   }),
   indicatorSeparator: (styles) => ({
     ...styles,
@@ -41,7 +45,7 @@ const customStyles = {
     const color = isSelected ? '#d87a61' : 'black';
     return {
       ...styles,
-      fontWeight: '300',
+      fontSize: '1.2em',
       textAlign: 'left',
       cursor: 'pointer',
       backgroundColor: isFocused
@@ -50,6 +54,7 @@ const customStyles = {
       color: isSelected
         ? color
         : data.color,
+      fontWeight: isSelected && '400',
       paddingLeft: isSelected && '30px',
     };
   },
