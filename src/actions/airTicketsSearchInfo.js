@@ -49,12 +49,6 @@ export function setAdults(adultsCount) {
   };
 }
 
-export function setHasChildren() {
-  return {
-    type: airTicketsSearchInfo.SET_HAS_CHILDREN
-  };
-}
-
 export function setChildren(children) {
   return {
     type: airTicketsSearchInfo.SET_CHILDREN,
@@ -62,14 +56,13 @@ export function setChildren(children) {
   };
 }
 
-export function setInfants(infants) {
+export function setFlexSearch() {
   return {
-    type: airTicketsSearchInfo.SET_INFANTS,
-    infants
+    type: airTicketsSearchInfo.SET_FLEX_SEARCH
   };
 }
 
-export function setAirTicketsSearchInfo(flightRouting, flightClass, stops, departureTime, origin, destination, adultsCount, children, infants, hasChildren) {
+export function setAirTicketsSearchInfo(flightRouting, flightClass, stops, departureTime, origin, destination, adultsCount, children, flexSearch) {
   return {
     type: airTicketsSearchInfo.SET_AIR_TICKETS_SEARCH_INFO,
     flightRouting,
@@ -80,7 +73,6 @@ export function setAirTicketsSearchInfo(flightRouting, flightClass, stops, depar
     destination,
     adultsCount,
     children,
-    infants,
-    hasChildren
+    flexSearch
   };
 }

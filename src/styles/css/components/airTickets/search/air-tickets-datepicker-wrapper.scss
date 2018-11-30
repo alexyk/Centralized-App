@@ -43,7 +43,7 @@ $media-expressions: (
     &.hide-single {
       display: none;
     }
-    .roundtrip {
+    .flight-routing {
       padding: 5px;
       width: 130px;
       display: inline-flex;
@@ -51,14 +51,6 @@ $media-expressions: (
       border-bottom: 2px solid #fff;
       &:hover {
         border-bottom: 2px solid #d87a61;
-      }
-      .icon-calendar {
-        display: flex;
-        align-items: center;
-        margin-left: 6px;
-        margin-right: 9px;
-        font-size: 0.9em;
-        color: #898c8d;
       }
       .choose-roundtrip-content {
         margin: 0;

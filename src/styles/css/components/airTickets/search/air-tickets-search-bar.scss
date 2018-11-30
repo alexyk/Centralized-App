@@ -85,131 +85,25 @@ $media-expressions: (
       .Select-value {
         width: calc(100% - 50px);
       }
-      &.guests {
-        position: relative;
-        border-right: none;
-        &:hover {
-          .fake-dropdown {
-            opacity: 1;
-            visibility: visible;
-            transform: translateY(0);
-          }
-        }
-        .fake-dropdown {
-          @include animate(opacity visibility transform);
-          position: absolute;
-          right: -15px;
-          top: calc(100% + 10px);
-          min-height: 60vh;
-          background: #f0f1f3;
-          padding: 0 0 70px 0;
-          border-radius: 3px;
-          box-shadow: 2px 2px 5px 0px rgba(14, 23, 27, 0.1);
-          z-index: 2;
-          opacity: 0;
-          visibility: hidden;
-          transform: translateY(50%);
-          min-width: 290px;
-          width: 100vw;
-          @include media(">=desktop") {
-            position: absolute;
-            right: auto;
-            left: 0;
-            min-width: 325px;
-            width: 100%;
-            top: calc(100% + 10px);
-            background: $white;
-            padding: 25px;
-            min-height: auto;
-          }
-          @include media(">=widescreen") {
-            min-width: 397px;
-          }
-          ul {
-            border-bottom: 1px solid $gray;
-            margin-bottom: 25px;
-            padding-bottom: 25px;
-            padding-right: 25px;
-            padding-left: 25px;
-            @include media(">=desktop") {
-              padding-right: 0;
-              padding-left: 0;
-            }
-            &:last-of-type {
-              border-bottom: none;
-            }
-            li {
-              span {
-                font-size: 14px;
-                @include media(">=desktop") {
-                  font-weight: 400;
-                  font-size: 18px;
-                }
-              }
-            }
-          }
-          .input-wrap {
-            span {
-              width: 34px;
-              height: 34px;
-              border-width: 2px;
-              border-radius: 100%;
-            }
-          }
-          .apply {
-            text-align: center;
-            width: 100%;
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            padding: 15px;
-            background: $white;
-            box-shadow: 0px -3px 9px 0px rgba(0, 0, 0, 0.1);
-            @include media(">=desktop") {
-              text-align: right;
-              width: auto;
-              position: relative;
-              padding: 0;
-              background: none;
-              right: auto;
-              box-shadow: none;
-            }
-            a {
-              font-size: 18px;
-              color: $white;
-              background: $moderate-red;
-              width: 100%;
-              display: block;
-              padding: 13px;
-              @include media(">=desktop") {
-                color: $moderate-red;
-                background: none;
-                font-weight: 400;
-              }
-              &:hover {
-                color: $light-cyan;
-              }
-            }
-          }
-        }
-      }
     }
     .air-tickets-form-check-wrap {
       display: flex;
       align-items: center;
       justify-content: center;
-      width: 29%;
+      width: 25%;
       background: $white;
       @include media("<=widescreen") {
-        width: 100%;
+        width: 70%;
         .check {
           border: none !important;
         }
       }
       @include media("<=desktop") {
-        width: 100%;
         margin-bottom: 10px;
         padding: 7px 0;
+      }
+      @include media("<=tablet") {
+        width: 100%;
       }
       @include media("<=phone") {
         .check {
@@ -227,12 +121,38 @@ $media-expressions: (
         border-right: 1px solid $gray;
       }
     }
-    .air-tickets-form-guest-wrap {
-      width: 25%;
+    .air-tickets-form-flex-search {
+      width: 15%;
+      display: flex;
+      align-items: center;
+      background: #fff;
+      cursor: pointer;
+      @include media("<=widescreen") {
+        width: 30%;
+        .check {
+          border: none !important;
+        }
+      }
+      @include media("<=desktop") {
+        margin-bottom: 10px;
+        padding: 7px 0;
+      }
+      @include media("<=tablet") {
+        width: 30%;
+        justify-content: center;
+      }
+      @include media("<=phone") {
+        width: 100%;
+        padding: 17px 0;
+      }
+    }
+    .air-tickets-form-passengers-wrap {
+      width: 15%;
       display: flex;
       justify-content: center;
       align-items: center;
       background: $white;
+      position: relative;
       @include media("<=widescreen") {
         width: 30%;
       }
@@ -241,29 +161,69 @@ $media-expressions: (
         margin-bottom: 10px;
       }
       @include media("<=tablet") {
-        width: 100%;
-        justify-content: center;
+        width: 70%;
         margin-bottom: 10px;
-        padding: 7px 0;
+        padding: 17px 0;
       }
-      select,
-      .select-children {
-        border: 0;
+      @include media("<=phone") {
+        width: 100%;
       }
-      .select-children:hover {
+      .passengers-title {
         cursor: pointer;
       }
-      .select-adults {
-        width: 80%;
-        @include media("<=tablet") {
-          width: 50%;
+      .passengers-popup {
+        position: absolute;
+        text-align: left;
+        width: 405px;
+        background-color: #fff;
+        top: 120%;
+        left: 0;
+        z-index: 1;
+        padding: 20px 25px;
+        border-radius: 3px;
+        font-weight: 400;
+        &-item {
+          display: flex;
+          margin-bottom: 20px;
+          &-title {
+            width: 70%;
+          }
+          &-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 30%;
+            min-width: 100px;
+            .plus,
+            .minus {
+              cursor: pointer;
+              font-size: 20px;
+              color: $moderate-red;
+              border: 2px solid $moderate-red;
+              border-radius: 50%;
+              width: 35px;
+              height: 35px;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+            }
+            .count {
+              font-weight: 300;
+            }
+          }
         }
-      }
-      .select-children {
-        width: 80px;
-        padding: 8px;
         @include media("<=tablet") {
-          width: 50%;
+          width: 100%;
+        }
+        .button-holder {
+          display: flex;
+          justify-content: flex-end;
+          margin-top: 20px;
+          .passengers-apply-button {
+            font-weight: 400;
+            color: $moderate-red;
+            cursor: pointer;
+          }
         }
       }
     }
@@ -298,7 +258,7 @@ $media-expressions: (
     }
     .air-tickets-form-flight-stops {
       min-width: 70px;
-      width: 6%;
+      width: 5%;
       @include media("<=widescreen") {
         width: 20%;
       }

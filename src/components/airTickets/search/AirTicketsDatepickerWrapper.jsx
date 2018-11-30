@@ -5,6 +5,7 @@ import moment from 'moment';
 import DatePicker from '../../common/datepicker';
 import { asyncSetEndDate } from '../../../actions/searchDatesInfo';
 import { setFlightRouting } from '../../../actions/airTicketsSearchInfo';
+import SelectFlex from '../../common/select';
 
 import '../../../styles/css/components/airTickets/search/air-tickets-datepicker-wrapper.css';
 
@@ -46,13 +47,13 @@ class AirTicketsDatepickerWrapper extends Component {
         />
         <div className={`choose-roundtrip${this.props.airTicketsSearchInfo.flightRouting === '2' ? ' hide-single' : ''}`}>
           <span className="icon-arrow-right arrow"></span>
-          <div className="roundtrip" onClick={() => this.changeFlightRouting('2')}>
-            <span className='icon-calendar'></span>
-            <div className="choose-roundtrip-content">
-              <div className="text">Choose</div>
-              <div className="text">roundtrip</div>
-            </div>
-          </div>
+          <SelectFlex placeholder="Flight Routing" className="flight-routing" onChange={(value) => this.props.dispatch(setFlightRouting(value))} value={this.props.airTicketsSearchInfo.flightRouting}>
+            <select name="departureTime">
+              <option value="1">One Way</option>
+              <option value="2">Roundtrip</option>
+              <option value="3">Multi Stops</option>
+            </select>
+          </SelectFlex>
         </div>
         <div className="close-roundtrip-holder">
           <span className={`close-roundtrip-button${this.props.airTicketsSearchInfo.flightRouting === '1' ? ' hide-close-roundtrip' : ''}`} onClick={() => this.changeFlightRouting('1')} />

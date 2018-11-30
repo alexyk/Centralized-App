@@ -164,7 +164,6 @@ class AirTicketsBookingRouterPage extends Component {
     // const queryParams = parse(this.props.location.search);
     // const adults = Number(queryParams.adults);
     // const children = JSON.parse(queryParams.children);
-    // const infants = Number(queryParams.infants);
 
     const passengersInfo = [...this.state.passengersInfo];
 
@@ -174,10 +173,6 @@ class AirTicketsBookingRouterPage extends Component {
 
     // for (let i = 0; i < children.length; i++) {
     //   passengersInfo.push({ type: PASSENGER_TYPES_CODES.child, age: children[i].age, options: [] });
-    // }
-
-    // for (let i = 0; i < infants; i++) {
-    //   passengersInfo.push({ type: PASSENGER_TYPES_CODES.infant, options: [] });
     // }
 
     passengersInfo.push({
