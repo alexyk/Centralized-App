@@ -16,7 +16,6 @@ const customStyles = {
   container: (styles) => ({
     ...styles,
     flex: '1 1 0',
-    minWidth: '300px',
     outline: 'none',
 
   }),
@@ -26,7 +25,6 @@ const customStyles = {
   }),
   control: (styles) => ({
     ...styles,
-    height: '61px',
     padding: '0 10px',
     boxShadow: 'none',
     border: 0
@@ -34,7 +32,27 @@ const customStyles = {
   indicatorSeparator: (styles) => ({
     ...styles,
     display: 'none'
-  })
+  }),
+  menu: (styles) => ({
+    ...styles,
+    marginTop: '20px'
+  }),
+  option: (styles, { data, isFocused, isSelected }) => {
+    const color = isSelected ? '#d87a61' : 'black';
+    return {
+      ...styles,
+      fontWeight: '300',
+      textAlign: 'left',
+      cursor: 'pointer',
+      backgroundColor: isFocused
+        ? '#f0f1f3'
+        : 'none',
+      color: isSelected
+        ? color
+        : data.color,
+      paddingLeft: isSelected && '30px',
+    };
+  },
 };
 
 function HotelsSearchBar(props) {
@@ -150,17 +168,19 @@ function HotelsSearchBar(props) {
 
   return (
     <form className="source-panel" onSubmit={handleSearch}>
-      <AsyncSelect
-        styles={customStyles}
-        value={selectedOption}
-        onChange={changeRegion}
-        loadOptions={loadOptions}
-        backspaceRemoves={true}
-        arrowRenderer={null}
-        onSelectResetsInput={false}
-        placeholder="Choose a location"
-        required
-      />
+      <div className="select-wrap source-panel-item">
+        <AsyncSelect
+          styles={customStyles}
+          value={selectedOption}
+          onChange={changeRegion}
+          loadOptions={loadOptions}
+          backspaceRemoves={true}
+          arrowRenderer={null}
+          onSelectResetsInput={false}
+          placeholder="Choose a location"
+          required
+        />
+      </div>
 
       <div className="check-wrap source-panel-item">
         <ChildrenModal

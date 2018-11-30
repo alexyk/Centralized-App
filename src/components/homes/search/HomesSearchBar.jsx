@@ -13,7 +13,6 @@ const customStyles = {
   container: (styles) => ({
     ...styles,
     flex: '1 1 0',
-    minWidth: '300px',
     outline: 'none',
 
   }),
@@ -23,7 +22,6 @@ const customStyles = {
   }),
   control: (styles) => ({
     ...styles,
-    height: '61px',
     padding: '0 10px',
     boxShadow: 'none',
     border: 0
@@ -31,7 +29,27 @@ const customStyles = {
   indicatorSeparator: (styles) => ({
     ...styles,
     display: 'none'
-  })
+  }),
+  menu: (styles) => ({
+    ...styles,
+    marginTop: '20px'
+  }),
+  option: (styles, { data, isFocused, isSelected }) => {
+    const color = isSelected ? '#d87a61' : 'black';
+    return {
+      ...styles,
+      fontWeight: '300',
+      textAlign: 'left',
+      cursor: 'pointer',
+      backgroundColor: isFocused
+        ? '#f0f1f3'
+        : 'none',
+      color: isSelected
+        ? color
+        : data.color,
+      paddingLeft: isSelected && '30px',
+    };
+  },
 };
 
 class HomesSearchBar extends Component {
@@ -105,7 +123,12 @@ class HomesSearchBar extends Component {
 
     let selectedOption = null;
     if (countryId && countries) {
-      const selectedCountry = countries.filter(c => c.id === countryId)[0];
+      const selectedCountry = countries.find((c) => {
+        if (Number(c.id) === Number(countryId)) {
+          return c;
+        }
+      });
+
       if (selectedCountry) {
         selectedOption = {
           value: selectedCountry.id,
@@ -114,29 +137,17 @@ class HomesSearchBar extends Component {
       }
     }
 
-    console.log(countryId)
-    console.log(countries)
-    console.log(selectedOption)
-
     return (
       <form className="source-panel" onSubmit={this.handleSearch}>
-        <Select
-          styles={customStyles}
-          value={selectedOption}
-          onChange={this.handleChangeCountry}
-          options={options}
-          placeholder={'Choose a location'}
-        />
-        {/* <select onChange={e => this.props.dispatch(setCountry(e.target.value))}
-              value={homesSearchInfo.country}
-              id="location-select"
-              name="countryId"
-              required="required">
-              <option disabled value="">Choose a location</option>
-              {countries.map((item, i) => {
-                return <option key={i} value={item.id}>{StringUtils.shorten(item.name, 30)}</option>;
-              })}
-            </select> */}
+        <div className="select-wrap source-panel-item">
+          <Select
+            styles={customStyles}
+            value={selectedOption}
+            onChange={this.handleChangeCountry}
+            options={options}
+            placeholder={'Choose a location'}
+          />
+        </div>
 
         <div className="check-wrap source-panel-item">
           <div className="check">

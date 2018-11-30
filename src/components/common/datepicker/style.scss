@@ -14,17 +14,23 @@ $breakpoints: (
   .check-in,
   .check-out {
     padding: 5px;
-    width: 130px;
+    width: 100px;
     display: inline-flex;
     justify-content: center;
     border-bottom: 2px solid $white;
+    @include media(">=tablet") {
+      width: 130px;
+    }
     
     .icon-calendar {
-      display: flex;
+      display: none;
       align-items: center;
       margin-right: 10px;
       font-size: 0.9em;
       color: $moderate-gray;
+      @include media(">=tablet") {
+        display: flex;
+      }
     }
     .date-container {
       margin: 0;
@@ -45,16 +51,6 @@ $breakpoints: (
     &:hover, &.opened {
       cursor: pointer;
       border-bottom: 2px solid $moderate-red;
-    }
-  }
-  
-    
-  .icon-calendar {
-    margin-right: 5px;
-    font-size: 12px;
-    @include media(">=tablet") {
-      margin-right: 16px;
-      font-size: 20px;
     }
   }
   .icon-arrow-right {
