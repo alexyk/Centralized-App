@@ -111,7 +111,7 @@ class HomePage extends React.Component {
         <div className="carousel-nav">
           <ul>
             <li><button className="icon-arrow-left" onClick={() => this.prev(slider)}></button></li>
-            <li><Link to={allLink} className="btn">See all</Link></li>
+            <li><Link to={allLink} className="button">See all</Link></li>
             <li><button className="icon-arrow-right" onClick={() => this.next(slider)}></button></li>
           </ul>
         </div>
@@ -167,7 +167,7 @@ class HomePage extends React.Component {
           <section className="get-started">
             <h2>Host on LocKtrip</h2>
             <div className="get-started-content">Easily list your home or hotel on Locktrip and start earning money</div>
-            <Link to="/profile/listings/create/landing" className="btn">Get started</Link>
+            <Link to="/profile/listings/create/landing" className="button">Get started</Link>
             <div className="get-started-graphic" />
           </section>
         </section>

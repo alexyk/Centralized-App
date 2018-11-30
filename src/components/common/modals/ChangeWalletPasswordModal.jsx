@@ -51,7 +51,7 @@ function ChangeWalletPasswordModal(props) {
             </ul>
             <hr />
             <p><span className="important-text">Important:</span> Your LOC wallet is Blockchain based and you are the only person to have access to it. It will not be hosted on our server. When you are adding funds to it, your funds will be in your complete control and possession therefore It is very important not to share your wallet password with anyone. For security reasons we will not store this password.</p>
-            <button type="submit" className="btn btn-primary">Save Password</button>
+            <button type="submit" className="button">Save Password</button>
             <div className="clearfix"></div>
           </form>
         </Modal.Body>

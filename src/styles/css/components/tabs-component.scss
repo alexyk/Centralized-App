@@ -206,7 +206,7 @@ $media-expressions: (
 }
 
 .source-panel {
-  border-radius: 3px;
+  border-radius: 5px;
   margin-bottom: 5px;
   display: flex;
   justify-content: center;
@@ -219,7 +219,7 @@ $media-expressions: (
     margin-bottom: 15px;
   }
   @include media(">=desktop") {
-    padding: 4px 7px 4px 0;
+    padding: 7px 7px 7px 0;
     background: $white;
     flex-wrap: nowrap;
     justify-content: space-between;
@@ -230,14 +230,11 @@ $media-expressions: (
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 7px 0;
+    // padding: 7px 0;
     background: #ffffff;
     > .Select {
       min-width: 100%;
       width: 100%;
-    }
-    .Select-control {
-      height: 40px;
     }
     @include media(">=tablet") {
       width: 100%;
@@ -522,11 +519,12 @@ $media-expressions: (
       margin-bottom: 5px;
     }
   }
-  .btn {
+  .button {
     width: 100%;
     @include media(">=desktop") {
       width: auto;
       min-width: 150px;
+      padding: 12px 30px;
     }
   }
 }

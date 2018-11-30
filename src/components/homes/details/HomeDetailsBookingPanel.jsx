@@ -95,8 +95,8 @@ class HomeDetailsBookingPanel extends React.Component {
         </div>
         <hr />
         {this.props.userInfo.isLogged ?
-          <Link to={`/homes/listings/${this.props.match.params.id}/book?startDate=${startDate.format('DD/MM/YYYY')}&endDate=${endDate.format('DD/MM/YYYY')}&guests=${this.props.homesSearchInfo.guests}`} onClick={e => invalidRange && e.preventDefault()} className={[invalidRange ? 'disabled' : null, 'pay-in'].join(' ')}>Request Booking</Link> :
-          <button className="pay-in" onClick={(e) => this.props.dispatch(openModal(LOGIN, e))}>Login</button>}
+          <Link to={`/homes/listings/${this.props.match.params.id}/book?startDate=${startDate.format('DD/MM/YYYY')}&endDate=${endDate.format('DD/MM/YYYY')}&guests=${this.props.homesSearchInfo.guests}`} onClick={e => invalidRange && e.preventDefault()} className={[invalidRange ? 'disabled' : null, 'button'].join(' ')}>Request Booking</Link> :
+          <button className="button" onClick={(e) => this.props.dispatch(openModal(LOGIN, e))}>Login</button>}
         <p className="booking-helper">You won&#39;t be charged yet</p>
       </div>
     </div>);

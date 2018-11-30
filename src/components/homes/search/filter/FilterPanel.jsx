@@ -54,7 +54,7 @@ function FilterPanel(props) {
         </ul>
       </div>
 
-      <button type="submit" onClick={props.clearFilters} className="btn btn">Clear Filters</button>
+      <button type="submit" onClick={props.clearFilters} className="button">Clear Filters</button>
     </div>
   );
 }

@@ -28,7 +28,7 @@ function LoginModal(props) {
             <div className="remember-me">
               <label><input type="checkbox" value="" id="login-remember" />Remember me</label>
             </div>
-            <button type="submit" className="btn btn-primary" disabled={isLogging}>{isLogging ? 'Logging in...' : 'Login'}</button>
+            <button type="submit" className="button" disabled={isLogging}>{isLogging ? 'Logging in...' : 'Login'}</button>
             <div className="clearfix"></div>
           </form>
 
