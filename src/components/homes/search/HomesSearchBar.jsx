@@ -7,6 +7,50 @@ import StringUtils from '../../../services/utilities/stringUtilities.js';
 import Datepicker from '../../common/datepicker';
 import { setCountry, setGuests } from '../../../actions/homesSearchInfo';
 import requester from '../../../requester';
+import Select from 'react-select';
+
+const customStyles = {
+  container: (styles) => ({
+    ...styles,
+    flex: '1 1 0',
+    outline: 'none',
+
+  }),
+  input: (styles) => ({
+    ...styles,
+    outline: 'none',
+  }),
+  control: (styles) => ({
+    ...styles,
+    padding: '0 10px',
+    boxShadow: 'none',
+    border: 0
+  }),
+  indicatorSeparator: (styles) => ({
+    ...styles,
+    display: 'none'
+  }),
+  menu: (styles) => ({
+    ...styles,
+    marginTop: '20px'
+  }),
+  option: (styles, { data, isFocused, isSelected }) => {
+    const color = isSelected ? '#d87a61' : 'black';
+    return {
+      ...styles,
+      fontWeight: '300',
+      textAlign: 'left',
+      cursor: 'pointer',
+      backgroundColor: isFocused
+        ? '#f0f1f3'
+        : 'none',
+      color: isSelected
+        ? color
+        : data.color,
+      paddingLeft: isSelected && '30px',
+    };
+  },
+};
 
 class HomesSearchBar extends Component {
   constructor(props) {
@@ -17,6 +61,7 @@ class HomesSearchBar extends Component {
     };
 
     this.handleSearch = this.handleSearch.bind(this);
+    this.handleChangeCountry = this.handleChangeCountry.bind(this);
   }
 
   componentDidMount() {
@@ -50,25 +95,58 @@ class HomesSearchBar extends Component {
     this.props.search(this.getQueryString());
   }
 
+  handleChangeCountry(selectedOption) {
+    if (selectedOption) {
+      const country = {
+        id: selectedOption.value,
+        name: selectedOption.label
+      };
+
+      this.props.dispatch(setCountry(country.id));
+    }
+  }
+
   render() {
     const { countries } = this.state;
     const { searchDatesInfo, homesSearchInfo } = this.props;
+    const { country: countryId } = homesSearchInfo;
+
+    let options = [];
+    if (countries) {
+      options = countries && countries.map((item, i) => {
+        return {
+          value: item.id,
+          label: StringUtils.shorten(item.name, 30)
+        };
+      });
+    }
+
+    let selectedOption = null;
+    if (countryId && countries) {
+      const selectedCountry = countries.find((c) => {
+        if (Number(c.id) === Number(countryId)) {
+          return c;
+        }
+      });
+
+      if (selectedCountry) {
+        selectedOption = {
+          value: selectedCountry.id,
+          label: selectedCountry.name,
+        };
+      }
+    }
 
     return (
       <form className="source-panel" onSubmit={this.handleSearch}>
-        <div className="source-panel-select source-panel-item">
-          {countries &&
-            <select onChange={e => this.props.dispatch(setCountry(e.target.value))}
-              value={homesSearchInfo.country}
-              id="location-select"
-              name="countryId"
-              required="required">
-              <option disabled value="">Choose a location</option>
-              {countries.map((item, i) => {
-                return <option key={i} value={item.id}>{StringUtils.shorten(item.name, 30)}</option>;
-              })}
-            </select>
-          }
+        <div className="select-wrap source-panel-item">
+          <Select
+            styles={customStyles}
+            value={selectedOption}
+            onChange={this.handleChangeCountry}
+            options={options}
+            placeholder={'Choose a location'}
+          />
         </div>
 
         <div className="check-wrap source-panel-item">
