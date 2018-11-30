@@ -27,21 +27,17 @@ class MultiMarkerGoogleMap extends Component {
     this.closeAll = this.closeAll.bind(this);
   }
 
-  shouldComponentUpdate() {
-    return false;
-  }
-
-  componentWillReceiveProps(props) {
-    const hasNewCoordinates = props.lat && props.lon && (props.lat !== this.lat || props.lon !== this.lon);
+  componentDidUpdate() {
+    const hasNewCoordinates = this.props.lat && this.props.lon && (this.props.lat !== this.lat || this.props.lon !== this.lon);
     if (hasNewCoordinates) {
       this.clearAll();
-      this.lat = props.lat;
-      this.lon = props.lon;
-      const latLng = new window.google.maps.LatLng(props.lat, props.lon);
+      this.lat = this.props.lat;
+      this.lon = this.props.lon;
+      const latLng = new window.google.maps.LatLng(this.props.lat, this.props.lon);
       this.mapInstance.panTo(latLng);
-      this.placeMarkers(props.mapInfo, this.infoWindows);
-    } else if (props.mapInfo && props.mapInfo.length > 0) {
-      this.placeSingleMarker(props.mapInfo[props.mapInfo.length - 1], this.infoWindows);
+      this.placeMarkers(this.props.mapInfo, this.infoWindows);
+    } else if (this.props.mapInfo && this.props.mapInfo.length > 0) {
+      this.placeSingleMarker(this.props.mapInfo[this.props.mapInfo.length - 1], this.infoWindows);
     }
   }
 

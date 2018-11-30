@@ -22,10 +22,10 @@ class QuoteLocPricePP extends PureComponent {
     this.sendWebsocketMessage(null, null, this.props.params);
   }
 
-  componentWillReceiveProps(nextProps) {
-    if (nextProps.exchangerSocketInfo.isExchangerWebsocketConnected &&
-      nextProps.exchangerSocketInfo.isExchangerWebsocketConnected !== this.props.exchangerSocketInfo.isExchangerWebsocketConnected) {
-      this.sendWebsocketMessage(null, null, this.props.params);
+  componentDidUpdate(prevProps) {
+    if (this.props.exchangerSocketInfo.isExchangerWebsocketConnected &&
+      this.props.exchangerSocketInfo.isExchangerWebsocketConnected !== prevProps.exchangerSocketInfo.isExchangerWebsocketConnected) {
+      this.sendWebsocketMessage(null, null, prevProps.params);
     }
   }
 
