@@ -207,10 +207,7 @@ class ListingLocation extends React.Component {
 
 function validateInput(values) {
   const { street, city, country, isAddressSelected } = values;
-  if (!isAddressSelected) {
-    return false;
-  }
-
+  console.log(street, city, country, isAddressSelected)
   if (street.length < 6) {
     return false;
   }
@@ -227,10 +224,7 @@ function validateInput(values) {
 }
 
 function showErrors(values) {
-  const { street, city, country, isAddressSelected } = values;
-  if (!isAddressSelected) {
-    NotificationManager.warning(MISSING_ADDRESS, '', LONG);
-  }
+  const { street, city, country } = values;
 
   if (street.length < 6) {
     NotificationManager.warning(INVALID_ADDRESS, '', LONG);
