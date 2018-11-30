@@ -1,12 +1,13 @@
-import React, { Component, Fragment } from 'react';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import Select from 'react-select';
 import PropTypes from 'prop-types';
-import { setFlightClass, setStops, setDepartureTime, setOrigin, setDestination, setAdults, setChildren, setFlexSearch } from '../../../actions/airTicketsSearchInfo';
+import { setFlightClass, setStops, setDepartureTime, setOrigin, setDestination, setFlexSearch } from '../../../actions/airTicketsSearchInfo';
 import SelectFlex from '../../common/select';
 import AirTicketsDatepickerWrapper from './AirTicketsDatepickerWrapper';
 import { Config } from '../../../config';
+import PassengersPopup from './common/passengersPopup';
 
 import '../../../styles/css/components/airTickets/search/air-tickets-search-bar.css';
 
@@ -15,20 +16,11 @@ class AirTicketsSearchBar extends Component {
     super(props);
 
     this.state = {
-      showPassengersPopup: false,
-      passengers: {
-        adults: 1,
-        children: []
-      }
+      showPassengersPopup: false
     };
 
     this.getQueryString = this.getQueryString.bind(this);
     this.handleSearch = this.handleSearch.bind(this);
-    this.applyPassengersChoose = this.applyPassengersChoose.bind(this);
-    this.increaseAdults = this.increaseAdults.bind(this);
-    this.decreaseAdults = this.decreaseAdults.bind(this);
-    this.increaseChildren = this.increaseChildren.bind(this);
-    this.decreaseChildren = this.decreaseChildren.bind(this);
   }
 
   requestAirports(param) {
@@ -107,87 +99,10 @@ class AirTicketsSearchBar extends Component {
     }));
   }
 
-  increaseAdults() {
-    this.setState(prevState => ({
-      passengers: {
-        ...prevState.passengers,
-        adults: prevState.passengers.adults + 1
-      }
-    }));
-  }
-
-  decreaseAdults() {
-    this.setState(prevState => ({
-      passengers: {
-        ...prevState.passengers,
-        adults: this.state.passengers.adults - 1 < 1 ? 1 : this.state.passengers.adults - 1
-      }
-    }));
-  }
-
-  increaseChildren() {
-    this.setState(prevState => ({
-      ...prevState,
-      passengers: {
-        ...prevState.passengers,
-        children: [...prevState.passengers.children, { age: 0 }]
-      }
-    }));
-  }
-
-  decreaseChildren() {
-    const children = [...this.state.passengers.children];
-    children.splice(children.length - 1, 1);
-    this.setState(prevState => ({
-      ...prevState,
-      passengers: {
-        ...prevState.passengers,
-        children
-      }
-    }));
-  }
-
-  increaseChildAge(childIndex) {
-    const children = [...this.state.passengers.children];
-    children[childIndex].age = children[childIndex].age + 1 > 12 ? 12 : children[childIndex].age + 1;
-    this.setState(prevState => ({
-      ...prevState,
-      passengers: {
-        ...prevState.passengers,
-        children
-      }
-    }));
-  }
-
-  decreaseChildAge(childIndex) {
-    const children = [...this.state.passengers.children];
-    children[childIndex].age = children[childIndex].age - 1 < 0 ? 0 : children[childIndex].age - 1;
-    this.setState(prevState => ({
-      ...prevState,
-      passengers: {
-        ...prevState.passengers,
-        children
-      }
-    }));
-  }
-
-  applyPassengersChoose() {
-    const { passengers } = this.state;
-
-    this.setState({
-      showPassengersPopup: false
-    });
-
-    this.props.dispatch(setAdults(passengers.adults));
-    this.props.dispatch(setChildren(passengers.children));
-  }
-
   render() {
     if (this.props.location.pathname.indexOf('/mobile') !== -1) {
       return null;
     }
-
-    const { showPassengersPopup, passengers } = this.state;
 
     return (
       <div className="air-tickets">
@@ -234,45 +149,8 @@ class AirTicketsSearchBar extends Component {
             </div>
           </div>
           <div className="air-tickets-form-passengers-wrap">
-            <div className="passengers-title" onClick={() => this.handlePassengers()}>{passengers.adults + passengers.children.length} Passengers</div>
-            {showPassengersPopup &&
-              <div className="passengers-popup">
-                <div className="passengers-popup-item">
-                  <div className="passengers-popup-item-title">Adults</div>
-                  <div className="passengers-popup-item-controls">
-                    <div className="minus" onClick={this.decreaseAdults}>-</div>
-                    <div className="count">{passengers.adults}</div>
-                    <div className="plus" onClick={this.increaseAdults}>+</div>
-                  </div>
-                </div>
-                <div className="passengers-popup-item">
-                  <div className="passengers-popup-item-title">Children</div>
-                  <div className="passengers-popup-item-controls">
-                    <div className="minus" onClick={this.decreaseChildren}>-</div>
-                    <div className="count">{passengers.children.length}</div>
-                    <div className="plus" onClick={this.increaseChildren}>+</div>
-                  </div>
-                </div>
-                {passengers.children.length > 0 &&
-                  <Fragment>
-                    <hr />
-                    {passengers.children.map((child, childIndex) => {
-                      return (
-                        <div key={childIndex} className="passengers-popup-item">
-                          <div className="passengers-popup-item-title">Age at Departure date (0-12)</div>
-                          <div className="passengers-popup-item-controls">
-                            <div className="minus" onClick={() => this.decreaseChildAge(childIndex)}>-</div>
-                            <div className="count">{child.age}</div>
-                            <div className="plus" onClick={() => this.increaseChildAge(childIndex)}>+</div>
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </Fragment>}
-                <div className="button-holder">
-                  <div className="passengers-apply-button" onClick={this.applyPassengersChoose}>Apply</div>
-                </div>
-              </div>}
+            <div className="passengers-title" onClick={() => this.handlePassengers()}>{Number(this.props.airTicketsSearchInfo.adultsCount) + this.props.airTicketsSearchInfo.children.length} Passengers</div>
+            <PassengersPopup showPassengersPopup={this.state.showPassengersPopup} />
           </div>
           <SelectFlex placeholder="Departure time" className="air-tickets-form-departure-time" onChange={(value) => this.props.dispatch(setDepartureTime(value))} value={this.props.airTicketsSearchInfo.departureTime}>
             <select name="departureTime">
