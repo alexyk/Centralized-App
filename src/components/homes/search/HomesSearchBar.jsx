@@ -124,9 +124,7 @@ class HomesSearchBar extends Component {
     let selectedOption = null;
     if (countryId && countries) {
       const selectedCountry = countries.find((c) => {
-        if (Number(c.id) === Number(countryId)) {
-          return c;
-        }
+        return Number(c.id) === Number(countryId);
       });
 
       if (selectedCountry) {

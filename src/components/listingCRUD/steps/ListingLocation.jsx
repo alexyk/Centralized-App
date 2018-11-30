@@ -3,7 +3,6 @@ import '../../../styles/css/components/profile/listings/listing-location.css';
 
 import { INVALID_ADDRESS, MISSING_ADDRESS, MISSING_CITY, MISSING_COUNTRY } from '../../../constants/warningMessages.js';
 
-import Autocomplete from 'react-google-autocomplete';
 import BasicsAside from '../aside/BasicsAside';
 import FooterNav from '../navigation/FooterNav';
 import { LONG } from '../../../constants/notificationDisplayTimes.js';
@@ -16,8 +15,8 @@ import { withRouter } from 'react-router-dom';
 import AsyncSelect from 'react-select/lib/Async';
 import _ from 'lodash';
 
-const GOOGLE_MAPS_API_AUTOCOMPLETE_URL = 'https://maps.googleapis.com/maps/api/place/autocomplete/json'
-const GOOGLE_MAPS_API_PLACE_DETAILS_URL = 'https://maps.googleapis.com/maps/api/place/details/json'
+const GOOGLE_MAPS_API_AUTOCOMPLETE_URL = 'https://maps.googleapis.com/maps/api/place/autocomplete/json';
+const GOOGLE_MAPS_API_PLACE_DETAILS_URL = 'https://maps.googleapis.com/maps/api/place/details/json';
 const GOOGLE_API_KEY = 'AIzaSyBLMYRyzRm83mQIUj3hsO-UVz8-yzfAvmU';
 
 const customStyles = {
@@ -52,68 +51,6 @@ class ListingLocation extends React.Component {
     this.onInputChange = this.onInputChange.bind(this);
     this.loadOptions = _.debounce(this.loadOptions, 300).bind(this);
   }
-
-  // const getWarningMessage = (message) => {
-  //   NotificationManager.warning(message, '', LONG);
-  //   props.onChange({ target: { name: 'street', value: '' } });
-  //   props.onChange({ target: { name: 'lng', value: '' } });
-  //   props.onChange({ target: { name: 'lat', value: '' } });
-  //   props.onChange({ target: { name: 'isAddressSelected', value: false } });
-  // };
-
-  // const handleStreetSelected = (place) => {
-  //   if (place.address_components) {
-  //     let addressComponentsMap = props.convertGoogleApiAddressComponents(place);
-  //     let lat = place.geometry.location.lat();
-  //     let lng = place.geometry.location.lng();
-  //     // console.log(place);
-  //     // console.log(lat);
-  //     // console.log(lng);
-  //     props.onChange({ target: { name: 'lng', value: undefined } });
-  //     props.onChange({ target: { name: 'lat', value: undefined } });
-  //     if (addressComponentsMap.filter(x => x.type === 'route')[0] && lat && lng) {
-  //       const addressNumber = addressComponentsMap.filter(x => x.type === 'street_number')[0] ? addressComponentsMap.filter(x => x.type === 'street_number')[0].name : '';
-  //       const addressRoute = addressComponentsMap.filter(x => x.type === 'route')[0].name;
-  //       if (!addressRoute) {
-  //         getWarningMessage('Please fill valid address - location and number');
-  //       } else {
-  //         const address = `${addressNumber ? addressNumber + ' ' : ''}${addressRoute}`;
-  //         props.onChange({ target: { name: 'street', value: address } });
-  //         props.onChange({ target: { name: 'lng', value: place.geometry.location.lng() } });
-  //         props.onChange({ target: { name: 'lat', value: place.geometry.location.lat() } });
-  //         props.onChange({ target: { name: 'isAddressSelected', value: true } });
-  //         changeAddressComponents(addressComponentsMap);
-  //       }
-  //     } else {
-  //       getWarningMessage('Invalid address');
-  //     }
-  //   }
-  // };
-
-  // const changeAddressComponents = (addressComponentsMap) => {
-  //   let addressCountry = addressComponentsMap.filter(x => x.type === 'country')[0];
-  //   let addressCityName = addressComponentsMap.filter(x => x.type === 'locality')[0]
-  //     || addressComponentsMap.filter(x => x.type === 'postal_town')[0]
-  //     || addressComponentsMap.filter(x => x.type === 'administrative_area_level_2')[0];
-  //   let addressStateName = addressComponentsMap.filter(x => x.type === 'administrative_area_level_1')[0];
-
-  //   if (addressCityName) {
-  //     props.onChange({ target: { name: 'city', value: addressCityName ? addressCityName.name : '' } });
-  //   }
-  //   else {
-  //     getWarningMessage('An error has occurred. Please contact with support');
-  //   }
-  //   props.onChange({ target: { name: 'country', value: addressCountry ? addressCountry.name : '' } });
-  //   props.onChange({ target: { name: 'state', value: addressStateName ? addressStateName.name : '' } });
-  //   props.onChange({ target: { name: 'countryCode', value: addressCountry ? addressCountry.shortName : '' } });
-  // };
-
-  // const onAddressChange = (e) => {
-  //   props.onChange({ target: { name: 'isAddressSelected', value: false } });
-  //   props.onChange(e);
-  // };
-
-  
 
   onChange(selectedOption) {
     if (selectedOption) {
@@ -221,16 +158,7 @@ class ListingLocation extends React.Component {
                   <div className="col-md-12">
                     <div className="form-group">
                       <label htmlFor="street">Street address</label>
-                      {/* <Autocomplete
-                        value={street}
-                        onChange={onAddressChange}
-                        name="street"
-                        onPlaceSelected={handleStreetSelected}
-                        types={['address']}
-                        placeholder="e.g. 123 Easy Street"
-                      /> */}
                       <AsyncSelect
-                        className={``}
                         value={selectedOption}
                         styles={customStyles}
                         loadOptions={this.loadOptions}
