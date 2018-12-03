@@ -38,7 +38,7 @@ class PopularItem extends Component {
       pictures.push({ url: DEFAULT_LISTING_IMAGE_URL });
     }
 
-    return pictures.map(x => { return { thumbnail: Config.getValue('imgHost') + x.url }; });
+    return pictures.map(x => { return { thumbnail: Config.getValue('imgHost') + x.thumbnail }; });
   }
 
   render() {
