@@ -156,22 +156,15 @@ $media-expressions: (
     &:last-child {
       margin-right: 0;
     }
-    // &.active {
-    // 	a {
-    // 		&:after {
-    // 			transform: translateY(0);
-    // 		}
-    // 	}
-    // }
   }
   a {
     position: relative;
     display: inline-block;
     vertical-align: middle;
     color: $text-black;
-    font-size: 13px;
+    font-size: 1em;
     text-transform: uppercase;
-    padding: 15px 0px;
+    padding: 10px;
     overflow: hidden;
     &:after {
       @include animate(transform);
@@ -185,13 +178,13 @@ $media-expressions: (
       transform: translateY(100%);
     }
     &.active {
-      border-bottom: 1px solid $moderate-red;
+      border-bottom: 2px solid $moderate-red;
       @include media(">=desktop") {
         border-bottom: 4px solid $moderate-red;
       }
     }
     @include media(">=desktop") {
-      font-size: 18px;
+      font-size: 1.2em;
       padding: 16px 5px 13px 5px;
       &:after {
         height: 4px;
@@ -230,7 +223,6 @@ $media-expressions: (
     display: flex;
     align-items: center;
     justify-content: center;
-    // padding: 7px 0;
     background: #ffffff;
     > .Select {
       min-width: 100%;
@@ -239,7 +231,7 @@ $media-expressions: (
     @include media(">=tablet") {
       width: 100%;
     }
-    @include media("<=tablet") {
+    @include media("<desktop") {
       height: 50px;
     }
   }

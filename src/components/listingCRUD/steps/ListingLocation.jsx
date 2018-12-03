@@ -67,7 +67,7 @@ class ListingLocation extends React.Component {
     this.setState({ input });
   }
 
-  fetchCities() {
+  fetchOptions() {
     const { input } = this.state;
     return fetch(`${GOOGLE_MAPS_API_AUTOCOMPLETE_URL}?key=${GOOGLE_API_KEY}&type=address&input=${input}`)
       .then(res => res.json())
@@ -91,6 +91,7 @@ class ListingLocation extends React.Component {
         if (data.status === 'OK') {
           const { lat, lng } = data.result.geometry.location;
           const address = this.getAddressComponents(data.result.address_components);
+          console.log(data)
           this.props.onChange({ target: { name: 'street', value: this.props.values.selectedOption.label } });
           this.props.onChange({ target: { name: 'country', value: address.country } });
           this.props.onChange({ target: { name: 'state', value: address.state } });
@@ -102,7 +103,7 @@ class ListingLocation extends React.Component {
   }
 
   loadOptions(input, callback) {
-    this.fetchCities().then(cities => callback(cities));
+    this.fetchOptions().then(cities => callback(cities));
   }
 
   getAddressComponents(components) {
@@ -121,8 +122,13 @@ class ListingLocation extends React.Component {
       }
     });
 
+    const locality = address.city || address.state;
+    if (!address.city) {
+      address.city = locality;
+    }
+
     if (!address.state) {
-      address.state = address.city;
+      address.state = locality;
     }
 
     return address;
@@ -206,8 +212,7 @@ class ListingLocation extends React.Component {
 }
 
 function validateInput(values) {
-  const { street, city, country, isAddressSelected } = values;
-  console.log(street, city, country, isAddressSelected)
+  const { street, city, country } = values;
   if (street.length < 6) {
     return false;
   }
