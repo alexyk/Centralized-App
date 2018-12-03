@@ -238,7 +238,7 @@ function HotelsSearchBar(props) {
           </div>
         </div>
       </div>
-      <button type="submit" className="btn btn-primary btn-search">Search</button>
+      <button type="submit" className="button">Search</button>
     </form>
   );
 }

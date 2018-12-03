@@ -82,14 +82,14 @@ class Balance extends React.Component {
                       <input className="form-control form-control-disabled" id="refLink" name="refLink"
                         type="text" disabled="disabled" value={this.state.refLink} />
                       <CopyToClipboard text={this.state.refLink} onCopy={() => { NotificationManager.info(COPIED_TO_CLIPBOARD, '', LONG); }}>
-                        <a href="" className="btn">Copy</a>
+                        <a href="" className="button">Copy</a>
                       </CopyToClipboard>
                     </div>
                   }
                   <hr />
                   {this.state.canProceed ?
-                    <button className="btn btn-primary" type="submit">Check</button> :
-                    <button className="btn btn-primary" disabled="disabled">Check</button>}
+                    <button className="button" type="submit">Check</button> :
+                    <button className="button" disabled="disabled">Check</button>}
                 </form>
               </div>
             </div>

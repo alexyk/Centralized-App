@@ -56,7 +56,7 @@ class AdminSafecharge extends Component {
           <h2 className="navigation-tab">Safecharge</h2>
         </AdminNav>
         <div className="button-holder">
-          <button type="submit" className="btn btn-primary" onClick={this.handleSafeChargeMode}>{isSafechargeEnabled ? 'Disable' : 'Enable'}</button>
+          <button type="submit" className="button" onClick={this.handleSafeChargeMode}>{isSafechargeEnabled ? 'Disable' : 'Enable'}</button>
         </div>
       </div>
     );

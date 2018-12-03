@@ -92,7 +92,7 @@ class ProfileAdditionalInfo extends React.Component {
             <input id="school" name="school" value={this.state.school} onChange={this.onChange} type="text" placeholder='Enter your school' />
           </div>
 
-          <button type="submit" className="btn">Save</button>
+          <button type="submit" className="button">Save</button>
         </form>
       </div>
     );

@@ -91,8 +91,6 @@ class CreateListingPage extends React.Component {
       propertyTypes: [],
       cities: [],
       currencies: [],
-
-      isAddressSelected: false,
       locAddress: ''
     };
 
@@ -476,13 +474,11 @@ class CreateListingPage extends React.Component {
   }
 
   finish() {
-    const { name, street, city, country, isAddressSelected, text, uploadedFilesUrls } = this.state;
+    console.log('finish')
+    const { name, street, city, country, text, uploadedFilesUrls } = this.state;
     if (name.length < 2) {
       NotificationManager.warning(INVALID_TITLE, '', LONG);
       this.props.history.push('/profile/listings/create/landing/');
-    } else if (!isAddressSelected) {
-      NotificationManager.warning(MISSING_ADDRESS, '', LONG);
-      this.props.history.push('/profile/listings/create/location/');
     } else if (street.length < 6) {
       NotificationManager.warning(INVALID_ADDRESS, '', LONG);
       this.props.history.push('/profile/listings/create/location/');
@@ -499,7 +495,8 @@ class CreateListingPage extends React.Component {
       NotificationManager.warning(MISSING_PICTURE, '', LONG);
       this.props.history.push('/profile/listings/create/photos/');
     } else {
-      this.createListing();
+    console.log('create')
+    this.createListing();
     }
   }
 

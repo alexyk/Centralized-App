@@ -182,7 +182,7 @@ class HomesSearchBar extends Component {
             <option value={10}>Guests: 10</option>
           </select>
         </div>
-        <button type="submit" className="btn btn-primary">Search</button>
+        <button type="submit" className="button">Search</button>
       </form>
     );
   }

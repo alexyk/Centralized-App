@@ -119,7 +119,7 @@ class WalletIndexPage extends React.Component {
       return (
         <div className='container'>
           <NoEntriesMessage text='You need to create a wallet first'>
-            <a href="" className="btn" onClick={(e) => this.openModal(CREATE_WALLET, e)} style={{ minWidth: '200px' }}>Create Wallet</a>
+            <a href="" className="button" onClick={(e) => this.openModal(CREATE_WALLET, e)} style={{ minWidth: '200px' }}>Create Wallet</a>
           </NoEntriesMessage>
         </div>
       );
@@ -162,7 +162,7 @@ class WalletIndexPage extends React.Component {
                 <input id="password" name="password" onChange={this.onChange} type="password" value={this.state.password} placeholder="The password is needed to unlock your wallet for a single transaction" />
               </div>
               <div>
-                {this.state.canProceed ? <button className="btn btn-primary" type="submit">Send Tokens</button> : <button className="btn btn-primary" disabled="disabled">Send Tokens</button>}
+                {this.state.canProceed ? <button className="button" type="submit">Send Tokens</button> : <button className="button" disabled="disabled">Send Tokens</button>}
                 <div className="button-wallet-link"><a href={etherscanUrl} target="_blank" rel="noopener noreferrer" className="wallet-link">Check your transactions</a></div>
                 {this.state.latestTxHash && <div className="button-wallet-link"><a href={etherscanLatestTxUrl} target="_blank" rel="noopener noreferrer" className="wallet-link">Latest transaction status</a></div>}
               </div>
