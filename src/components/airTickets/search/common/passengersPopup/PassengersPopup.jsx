@@ -90,12 +90,10 @@ class PassengersPopup extends Component {
   applyPassengersChoose() {
     const { passengers } = this.state;
 
-    this.setState({
-      showPassengersPopup: false
-    });
-
     this.props.dispatch(setAdults(passengers.adults));
     this.props.dispatch(setChildren(passengers.children));
+    
+    this.props.closePassengersPopup();
   }
 
   render() {
@@ -150,6 +148,7 @@ class PassengersPopup extends Component {
 
 PassengersPopup.propTypes = {
   showPassengersPopup: PropTypes.bool,
+  closePassengersPopup: PropTypes.func,
 
   // Redux props
   dispatch: PropTypes.func

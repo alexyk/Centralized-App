@@ -62,7 +62,14 @@ export function setFlexSearch() {
   };
 }
 
-export function setAirTicketsSearchInfo(flightRouting, flightClass, stops, departureTime, origin, destination, adultsCount, children, flexSearch) {
+export function setMultiStopsDestinations(multiStopsDestinations) {
+  return {
+    type: airTicketsSearchInfo.SET_MULTI_STOPS_DESTINATIONS,
+    multiStopsDestinations
+  };
+}
+
+export function setAirTicketsSearchInfo(flightRouting, flightClass, stops, departureTime, origin, destination, adultsCount, children, flexSearch, multiStopsDestinations) {
   return {
     type: airTicketsSearchInfo.SET_AIR_TICKETS_SEARCH_INFO,
     flightRouting,
@@ -73,6 +80,7 @@ export function setAirTicketsSearchInfo(flightRouting, flightClass, stops, depar
     destination,
     adultsCount,
     children,
-    flexSearch
+    flexSearch,
+    multiStopsDestinations
   };
 }

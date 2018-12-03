@@ -9,7 +9,8 @@ const initialState = {
   destination: null,
   adultsCount: '1',
   children: [],
-  flexSearch: false
+  flexSearch: false,
+  multiStopsDestinations: []
 };
 
 export default function reducer(state = initialState, action) {
@@ -50,6 +51,10 @@ export default function reducer(state = initialState, action) {
       return Object.assign({}, state, {
         flexSearch: !state.flexSearch
       });
+    case airTicketsSearchInfo.SET_MULTI_STOPS_DESTINATIONS:
+      return Object.assign({}, state, {
+        multiStopsDestinations: action.multiStopsDestinations
+      });
     case airTicketsSearchInfo.SET_AIR_TICKETS_SEARCH_INFO:
       return Object.assign({}, state, {
         flightRouting: action.flightRouting,
@@ -60,7 +65,8 @@ export default function reducer(state = initialState, action) {
         destination: action.destination,
         adultsCount: action.adultsCount,
         children: action.children,
-        flexSearch: action.flexSearch
+        flexSearch: action.flexSearch,
+        multiStopsDestinations: action.multiStopsDestinations
       });
     default:
       return state;

@@ -69,7 +69,7 @@ $media-expressions: (
       position: absolute;
       top: -30px;
       right: 0px;
-      color: #d87a61;
+      color: $moderate-red;
       font-size: 1.2em;
       &.hide-close-roundtrip {
         display: none;
@@ -78,6 +78,17 @@ $media-expressions: (
       &:before {
         content: "\00d7";
       }
+    }
+  }
+  .open-multi-city-popup-holder {
+    position: relative;
+    img {
+      position: absolute;
+      min-width: 15px;
+      height: 14px;
+      top: 0;
+      right: 0;
+      cursor: pointer;
     }
   }
   .icon-arrow-right {

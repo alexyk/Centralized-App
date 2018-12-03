@@ -8,6 +8,7 @@ import SelectFlex from '../../common/select';
 import AirTicketsDatepickerWrapper from './AirTicketsDatepickerWrapper';
 import { Config } from '../../../config';
 import PassengersPopup from './common/passengersPopup';
+import MultiStopsPopup from './common/multiStopsPopup';
 
 import '../../../styles/css/components/airTickets/search/air-tickets-search-bar.css';
 
@@ -16,11 +17,16 @@ class AirTicketsSearchBar extends Component {
     super(props);
 
     this.state = {
-      showPassengersPopup: false
+      showPassengersPopup: false,
+      showMultiStopsPopup: false
     };
 
     this.getQueryString = this.getQueryString.bind(this);
     this.handleSearch = this.handleSearch.bind(this);
+    this.openPassengersPopup = this.openPassengersPopup.bind(this);
+    this.closePassengersPopup = this.closePassengersPopup.bind(this);
+    this.openMultiStopsPopup = this.openMultiStopsPopup.bind(this);
+    this.closeMultiStopsPopup = this.closeMultiStopsPopup.bind(this);
   }
 
   requestAirports(param) {
@@ -62,7 +68,15 @@ class AirTicketsSearchBar extends Component {
         { origin: airTicketsSearchInfo.destination.code, destination: airTicketsSearchInfo.origin.code, date: searchDatesInfo.endDate.format('DD/MM/YYYY') }
       ];
     } else if (airTicketsSearchInfo.flightRouting === '3') {
-      destinations = '';
+      destinations = [
+        { origin: airTicketsSearchInfo.origin.code, destination: airTicketsSearchInfo.destination.code, date: searchDatesInfo.startDate.format('DD/MM/YYYY') }
+      ];
+
+      airTicketsSearchInfo.multiStopsDestinations.forEach((destination) => {
+        destinations.push({
+          origin: destination.origin.code, destination: destination.destination.code, date: destination.date.format('DD/MM/YYYY')
+        });
+      });
     }
 
     return destinations;
@@ -93,52 +107,75 @@ class AirTicketsSearchBar extends Component {
     this.props.search(this.getQueryString(), e);
   }
 
-  handlePassengers() {
-    this.setState((prevState) => ({
-      showPassengersPopup: !prevState.showPassengersPopup
-    }));
+  openPassengersPopup() {
+    this.setState({
+      showPassengersPopup: true
+    });
+  }
+
+  closePassengersPopup() {
+    this.setState({
+      showPassengersPopup: false
+    });
+  }
+
+  openMultiStopsPopup() {
+    this.setState({
+      showMultiStopsPopup: true
+    });
+  }
+
+  closeMultiStopsPopup() {
+    this.setState({
+      showMultiStopsPopup: false
+    });
   }
 
   render() {
     if (this.props.location.pathname.indexOf('/mobile') !== -1) {
       return null;
     }
+    
+    const { showMultiStopsPopup } = this.state;
 
     return (
       <div className="air-tickets">
         <form className="air-tickets-form" onSubmit={this.handleSearch}>
-          <div className="air-tickets-form-select">
-            <Select.Async
-              placeholder="Origin"
-              required
-              style={{ boxShadow: 'none', border: 'none' }}
-              value={this.props.airTicketsSearchInfo.origin}
-              onChange={value => this.props.dispatch(setOrigin(value))}
-              valueKey={'code'}
-              labelKey={'name'}
-              loadOptions={this.requestAirports}
-              backspaceRemoves={true}
-              arrowRenderer={null}
-              onSelectResetsInput={false}
-            />
-          </div>
-          <div className="air-tickets-form-select">
-            <Select.Async
-              placeholder="Destination"
-              required
-              style={{ boxShadow: 'none', border: 'none' }}
-              value={this.props.airTicketsSearchInfo.destination}
-              onChange={value => this.props.dispatch(setDestination(value))}
-              valueKey={'code'}
-              labelKey={'name'}
-              loadOptions={this.requestAirports}
-              backspaceRemoves={true}
-              arrowRenderer={null}
-              onSelectResetsInput={false}
-            />
-          </div>
-          <div className="air-tickets-form-check-wrap">
-            <AirTicketsDatepickerWrapper />
+          <div className="air-tickets-form-destinations-dates-wrapper">
+            <div className="air-tickets-form-select">
+              <Select.Async
+                placeholder="Origin"
+                required
+                style={{ boxShadow: 'none', border: 'none' }}
+                value={this.props.airTicketsSearchInfo.origin}
+                onChange={value => this.props.dispatch(setOrigin(value))}
+                valueKey={'code'}
+                labelKey={'name'}
+                loadOptions={this.requestAirports}
+                backspaceRemoves={true}
+                arrowRenderer={null}
+                onSelectResetsInput={false}
+              />
+            </div>
+            <div className="air-tickets-form-select">
+              <Select.Async
+                placeholder="Destination"
+                required
+                style={{ boxShadow: 'none', border: 'none' }}
+                value={this.props.airTicketsSearchInfo.destination}
+                onChange={value => this.props.dispatch(setDestination(value))}
+                valueKey={'code'}
+                labelKey={'name'}
+                loadOptions={this.requestAirports}
+                backspaceRemoves={true}
+                arrowRenderer={null}
+                onSelectResetsInput={false}
+              />
+            </div>
+            <div className="air-tickets-form-check-wrap">
+              <AirTicketsDatepickerWrapper openMultiStopsPopup={this.openMultiStopsPopup} closeMultiStopsPopup={this.closeMultiStopsPopup} />
+            </div>
+            <MultiStopsPopup showMultiStopsPopup={showMultiStopsPopup} closeMultiStopsPopup={this.closeMultiStopsPopup} />
           </div>
           <div className="air-tickets-form-flex-search" onClick={() => this.props.dispatch(setFlexSearch())}>
             <div>
@@ -149,8 +186,8 @@ class AirTicketsSearchBar extends Component {
             </div>
           </div>
           <div className="air-tickets-form-passengers-wrap">
-            <div className="passengers-title" onClick={() => this.handlePassengers()}>{Number(this.props.airTicketsSearchInfo.adultsCount) + this.props.airTicketsSearchInfo.children.length} Passengers</div>
-            <PassengersPopup showPassengersPopup={this.state.showPassengersPopup} />
+            <div className="passengers-title" onClick={this.openPassengersPopup}>{Number(this.props.airTicketsSearchInfo.adultsCount) + this.props.airTicketsSearchInfo.children.length} Passengers</div>
+            <PassengersPopup showPassengersPopup={this.state.showPassengersPopup} closePassengersPopup={this.closePassengersPopup} />
           </div>
           <SelectFlex placeholder="Departure time" className="air-tickets-form-departure-time" onChange={(value) => this.props.dispatch(setDepartureTime(value))} value={this.props.airTicketsSearchInfo.departureTime}>
             <select name="departureTime">
