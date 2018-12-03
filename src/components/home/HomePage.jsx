@@ -30,10 +30,6 @@ class HomePage extends React.Component {
     this.handleDestinationPick = this.handleDestinationPick.bind(this);
   }
 
-  componentDidMount() {
-    console.log('mount');
-  }
-
   handleDestinationPick(region, searchUrl) {
     this.props.dispatch(setRegion(region));
     this.props.history.push(searchUrl);

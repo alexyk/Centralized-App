@@ -9,7 +9,7 @@ class BancorConvertWidget extends Component {
         'pairCurrencyId': '5937d635231e97001f744267',
         'primaryColor': '#DD7A63',
         'displayCurrency': 'ETH',
-        'primaryColorHover': '#213842'
+        'primaryColorHover': '#EA8C73'
       });
 
       this.instance = instance;
