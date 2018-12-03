@@ -24,14 +24,14 @@ body {
 	color: $white;
 	border-radius: 4px;
 	padding: 10px 30px;
-	font-size: 14px;
+	font-size: 1em;
 	font-weight: 300;
   letter-spacing: -0.03em;
   min-width: 160px;
+  font-weight: 400;
 	@include media(">=desktop") {
 		padding: 15px 30px;
-		font-size: 18px;
-		font-weight: 400;
+		font-size: 1.2em;
 	}
 	&:hover {
     background: #EA8C73;
