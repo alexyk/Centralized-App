@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 class BancorConvertWidget extends Component {
   componentDidMount() {
     if (window.BancorConvertWidget) {
-      window.BancorConvertWidget.init({
+      const instance = window.BancorConvertWidget.createInstance({
         'type': '1',
         'baseCurrencyId': '5b27eb823751b7bb8dad17bb',
         'pairCurrencyId': '5937d635231e97001f744267',
@@ -11,7 +11,13 @@ class BancorConvertWidget extends Component {
         'displayCurrency': 'ETH',
         'primaryColorHover': '#213842'
       });
+
+      this.instance = instance;
     }
+  }
+
+  componentWillUnmount() {
+    this.instance.deinit();
   }
 
   render() {
