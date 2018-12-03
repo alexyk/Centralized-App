@@ -65,10 +65,10 @@ class PopularItem extends Component {
     };
 
     const settings = {
-      infinite: false,
+      infinite: true,
       draggable: false,
       lazyLoad: 'ondemand',
-      speed: 500,
+      speed: 400,
       slidesToShow: 1,
       slidesToScroll: 1,
       nextArrow: <SlickButton />,

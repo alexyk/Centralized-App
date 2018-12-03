@@ -2,11 +2,10 @@ import { Route, Switch } from 'react-router-dom';
 
 import PropTypes from 'prop-types';
 import React from 'react';
-import HomePage from '../home/HomePage';
 import HomesSearchPage from './search/HomesSearchPage';
 import HomeDetailsRouterPage from './details/HomeDetailsRouterPage';
 
-function HomesRouterPage(props) {
+function HomesRouterPage() {
   return (
     <div>
       <Switch>

@@ -1,7 +1,7 @@
 // import 'react-select/dist/react-select.css';
 import '../../../styles/css/components/profile/listings/listing-location.css';
 
-import { INVALID_ADDRESS, MISSING_ADDRESS, MISSING_CITY, MISSING_COUNTRY } from '../../../constants/warningMessages.js';
+import { INVALID_ADDRESS, MISSING_CITY, MISSING_COUNTRY } from '../../../constants/warningMessages.js';
 
 import BasicsAside from '../aside/BasicsAside';
 import FooterNav from '../navigation/FooterNav';

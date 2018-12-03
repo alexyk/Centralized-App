@@ -1,6 +1,14 @@
 @import "../../vendors/include-media";
 @import "../../base/variables";
 
+$breakpoints: (
+	'xs-phone': 320px,
+	'phone': 480px,
+	'tablet': 768px,
+	'desktop': 1024px,
+	'widescreen': 1200px
+);
+
 @mixin horizontalLine() {
   padding-top: 20px;
   border-top: 1px solid #ccc;
@@ -14,16 +22,9 @@
   @include media("<=tablet") {
     margin-top: 10%;
   }
-  .top-destinations,
-  .hotels-cards {
-    @include horizontalLine();
-  }
   .top-destinations {
     .slick-next {
-      // right: 15% !important;
-      // @include media(">=tablet") {
       right: 40px !important;
-      // }
       &:before {
         font-family: "icomoon" !important;
         speak: none;
@@ -81,13 +82,20 @@
     }
   }
   .hotels-cards {
-    margin-bottom: 30px;
+    margin-bottom: 20px;
+    @include media(">=tablet") {
+      margin-bottom: 30px;
+    }
     .slick-slide {
-      padding-left: 10px;
-      padding-right: 10px;
+      @include media(">phone") {
+        padding-left: 10px;
+        padding-right: 10px;
+      }
       .card {
         background-color: white;
         padding-bottom: 5%;
+        border-radius: 4px;
+        overflow: hidden;
         a {
           color: inherit;
         }
@@ -218,7 +226,7 @@
     margin-bottom: 5px;
   }
   h5 {
-    margin: 10px 0 40px 0;
+    margin: 10px 0 10px 0;
   }
   .subtitle {
     display: inline-block;
