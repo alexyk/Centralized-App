@@ -11,6 +11,7 @@ import requester from '../../../requester';
 import { withRouter } from 'react-router-dom';
 import Datepicker from '../../common/datepicker';
 import moment from 'moment';
+import { NotificationManager } from 'react-notifications';
 
 const customStyles = {
   container: (styles) => ({
@@ -61,6 +62,9 @@ const customStyles = {
 };
 
 function HotelsSearchBar(props) {
+
+  let select = null;
+
   if (props.location.pathname.indexOf('/mobile') !== -1) {
     return null;
   }
@@ -153,13 +157,18 @@ function HotelsSearchBar(props) {
       e.preventDefault();
     }
 
-    distributeAdults().then((rooms) => {
-      if (props.hotelsSearchInfo.hasChildren) {
-        openChildrenModal(CHILDREN);
-      } else {
-        props.search(getQueryString(rooms), e);
-      }
-    });
+    if (!props.hotelsSearchInfo.region) {
+      select.focus();
+      NotificationManager.info('Please choose a location.');
+    } else {
+      distributeAdults().then((rooms) => {
+        if (props.hotelsSearchInfo.hasChildren) {
+          openChildrenModal(CHILDREN);
+        } else {
+          props.search(getQueryString(rooms), e);
+        }
+      });
+    }
   };
 
   const region = props.hotelsSearchInfo.region;
@@ -175,6 +184,7 @@ function HotelsSearchBar(props) {
     <form className="source-panel" onSubmit={handleSearch}>
       <div className="select-wrap source-panel-item">
         <AsyncSelect
+          ref={(node) => select = node}
           styles={customStyles}
           value={selectedOption}
           onChange={changeRegion}
@@ -183,7 +193,7 @@ function HotelsSearchBar(props) {
           arrowRenderer={null}
           onSelectResetsInput={false}
           placeholder="Choose a location"
-          required
+          required={true}
         />
       </div>
 

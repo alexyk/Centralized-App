@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
@@ -6,8 +6,8 @@ import moment from 'moment';
 import StringUtils from '../../../services/utilities/stringUtilities.js';
 import Datepicker from '../../common/datepicker';
 import { setCountry, setGuests } from '../../../actions/homesSearchInfo';
-import requester from '../../../requester';
 import Select from 'react-select';
+import { NotificationManager } from 'react-notifications';
 
 const customStyles = {
   container: (styles) => ({
@@ -58,134 +58,116 @@ const customStyles = {
   },
 };
 
-class HomesSearchBar extends Component {
-  constructor(props) {
-    super(props);
+function HomesSearchBar(props) {
 
-    this.state = {
-      countries: ''
-    };
+  let select = null;
 
-    this.handleSearch = this.handleSearch.bind(this);
-    this.handleChangeCountry = this.handleChangeCountry.bind(this);
-  }
-
-  componentDidMount() {
-    this.requestCountries();
-  }
-
-  requestCountries() {
-    requester.getCountries().then(res => {
-      res.body.then(data => {
-        this.setState({ countries: data });
-      });
-    });
-  }
-
-  getQueryString() {
+  const getQueryString = () => {
     let queryString = '?';
 
-    queryString += 'countryId=' + this.props.homesSearchInfo.country;
-    queryString += '&startDate=' + this.props.searchDatesInfo.startDate.format('DD/MM/YYYY');
-    queryString += '&endDate=' + this.props.searchDatesInfo.endDate.format('DD/MM/YYYY');
-    queryString += '&guests=' + this.props.homesSearchInfo.guests;
+    queryString += 'countryId=' + props.countryId;
+    queryString += '&startDate=' + props.searchDatesInfo.startDate.format('DD/MM/YYYY');
+    queryString += '&endDate=' + props.searchDatesInfo.endDate.format('DD/MM/YYYY');
+    queryString += '&guests=' + props.guests;
 
     return queryString;
-  }
+  };
 
-  handleSearch(e) {
+  const handleSearch = (e) => {
     if (e) {
       e.preventDefault();
     }
 
-    this.props.search(this.getQueryString());
-  }
+    if (!props.countryId) {
+      select.focus();
+      NotificationManager.info('Please choose a location.');
+    } else {
+      props.search(getQueryString());
+    }
+  };
 
-  handleChangeCountry(selectedOption) {
+  const handleChangeCountry = (selectedOption) => {
     if (selectedOption) {
       const country = {
         id: selectedOption.value,
         name: selectedOption.label
       };
 
-      this.props.dispatch(setCountry(country.id));
+      props.dispatch(setCountry(country.id.toString()));
+    }
+  };
+
+  const { countries, searchDatesInfo, countryId, guests } = props;
+
+  let options = [];
+  if (countries) {
+    options = countries && countries.map((item, i) => {
+      return {
+        value: item.id,
+        label: StringUtils.shorten(item.name, 30)
+      };
+    });
+  }
+
+  let selectedOption = null;
+  if (countryId && countries) {
+    const selectedCountry = countries.find((c) => {
+      return Number(c.id) === Number(countryId);
+    });
+
+    if (selectedCountry) {
+      selectedOption = {
+        value: selectedCountry.id,
+        label: selectedCountry.name,
+      };
     }
   }
 
-  render() {
-    const { countries } = this.state;
-    const { searchDatesInfo, homesSearchInfo } = this.props;
-    const { country: countryId } = homesSearchInfo;
+  return (
+    <form className="source-panel" onSubmit={handleSearch}>
+      <div className="select-wrap source-panel-item">
+        <Select
+          ref={(node) => select = node}
+          styles={customStyles}
+          value={selectedOption}
+          onChange={handleChangeCountry}
+          options={options}
+          placeholder={'Choose a location'}
+        />
+      </div>
 
-    let options = [];
-    if (countries) {
-      options = countries && countries.map((item, i) => {
-        return {
-          value: item.id,
-          label: StringUtils.shorten(item.name, 30)
-        };
-      });
-    }
-
-    let selectedOption = null;
-    if (countryId && countries) {
-      const selectedCountry = countries.find((c) => {
-        return Number(c.id) === Number(countryId);
-      });
-
-      if (selectedCountry) {
-        selectedOption = {
-          value: selectedCountry.id,
-          label: selectedCountry.name,
-        };
-      }
-    }
-
-    return (
-      <form className="source-panel" onSubmit={this.handleSearch}>
-        <div className="select-wrap source-panel-item">
-          <Select
-            styles={customStyles}
-            value={selectedOption}
-            onChange={this.handleChangeCountry}
-            options={options}
-            placeholder={'Choose a location'}
-          />
+      <div className="check-wrap source-panel-item">
+        <div className="check">
+          <Datepicker minDate={moment().add(1, 'days')} enableRanges />
         </div>
 
-        <div className="check-wrap source-panel-item">
-          <div className="check">
-            <Datepicker minDate={moment().add(1, 'days')} enableRanges />
-          </div>
-
-          <div className="days-of-stay">
-            <span className="icon-moon"></span>
-            <span>{searchDatesInfo.endDate.diff(searchDatesInfo.startDate, 'days')} nights</span>
-          </div>
+        <div className="days-of-stay">
+          <span className="icon-moon"></span>
+          <span>{searchDatesInfo.endDate.diff(searchDatesInfo.startDate, 'days')} nights</span>
         </div>
+      </div>
 
-        <div className="source-panel-select source-panel-item">
-          <select onChange={e => this.props.dispatch(setGuests(e.target.value))}
-            value={homesSearchInfo.guests}
-            id="location-select"
-            name="guests"
-            required="required">
-            <option value={1}>Guests: 1</option>
-            <option value={2}>Guests: 2</option>
-            <option value={3}>Guests: 3</option>
-            <option value={4}>Guests: 4</option>
-            <option value={5}>Guests: 5</option>
-            <option value={6}>Guests: 6</option>
-            <option value={7}>Guests: 7</option>
-            <option value={8}>Guests: 8</option>
-            <option value={9}>Guests: 9</option>
-            <option value={10}>Guests: 10</option>
-          </select>
-        </div>
-        <button type="submit" className="button">Search</button>
-      </form>
-    );
-  }
+      <div className="source-panel-select source-panel-item">
+        <select onChange={e => props.dispatch(setGuests(e.target.value))}
+          value={guests}
+          id="location-select"
+          name="guests"
+          required="required">
+          <option value={1}>Guests: 1</option>
+          <option value={2}>Guests: 2</option>
+          <option value={3}>Guests: 3</option>
+          <option value={4}>Guests: 4</option>
+          <option value={5}>Guests: 5</option>
+          <option value={6}>Guests: 6</option>
+          <option value={7}>Guests: 7</option>
+          <option value={8}>Guests: 8</option>
+          <option value={9}>Guests: 9</option>
+          <option value={10}>Guests: 10</option>
+        </select>
+      </div>
+      <button type="submit" className="button">Search</button>
+    </form>
+  );
 }
 
 HomesSearchBar.propTypes = {
@@ -194,16 +176,20 @@ HomesSearchBar.propTypes = {
 
   // Redux props
   dispatch: PropTypes.func,
-  homesSearchInfo: PropTypes.object,
+  countryId: PropTypes.string,
+  guests: PropTypes.string,
+  countries: PropTypes.array,
   searchDatesInfo: PropTypes.object
 };
 
 const mapStateToProps = (state) => {
-  const { homesSearchInfo, searchDatesInfo } = state;
+  const { homesSearchInfo, searchDatesInfo, countriesInfo } = state;
 
   return {
-    homesSearchInfo,
-    searchDatesInfo
+    countryId: homesSearchInfo.country,
+    guests: homesSearchInfo.guests,
+    searchDatesInfo,
+    countries: countriesInfo.countries
   };
 };
 

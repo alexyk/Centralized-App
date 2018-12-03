@@ -10,7 +10,6 @@ function HomesRouterPage(props) {
   return (
     <div>
       <Switch>
-        <Route exact path="/homes" render={() => <HomePage homePage="homes" listings={props.listings} hotels={props.hotels} />} />
         <Route exact path="/homes/listings" render={() => <HomesSearchPage />} />
         <Route path="/homes/listings/:id" render={() => <HomeDetailsRouterPage />} />
       </Switch>
