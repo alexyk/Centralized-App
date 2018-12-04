@@ -29,7 +29,7 @@ function AirdropLoginModal(props) {
               <input type="password" name="loginPassword" value={props.loginPassword} onChange={props.onChange} className="with-icon" placeholder="Password" />
             </div>
             <div className="remember-me">
-              <label><input type="checkbox" value="" id="login-remember" />Remember me</label>
+              <label><input type="checkbox" value="" id="login-remember" />Remember Me</label>
             </div>
 
             <button type="submit" className="btn btn-primary">Login</button>
