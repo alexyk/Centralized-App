@@ -74,13 +74,11 @@ function HotelsSearchBar(props) {
   };
 
   const fetchCities = (input = '') => {
-    console.log(input)
     return requester.getRegionsBySearchParameter([`query=${input}`]).then(res => {
       return res.body.then(data => {
         if (!data) {
           return [];
         }
-        console.log(data);
 
         return data.map(region => ({
           value: region.id,

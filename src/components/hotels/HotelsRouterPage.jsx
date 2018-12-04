@@ -2,7 +2,6 @@ import { Route, Switch, withRouter } from 'react-router-dom';
 
 import React, { Fragment } from 'react';
 import PropTypes from 'prop-types';
-import HomePage from '../home/HomePage';
 import HotelDetailsPage from './details/HotelDetailsPage';
 import HotelsBookingRouterPage from './book/HotelsBookingRouterPage';
 import StaticHotelsSearchPage from './search/StaticHotelsSearchPage';

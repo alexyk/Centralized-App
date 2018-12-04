@@ -5,11 +5,8 @@
 		margin-bottom: 17px;
 		padding: 21px 15px 14px;
 		background: $white;
-		border-radius: 3px;
-  }
-  
-	.map {
-		padding: 7px;
+    border-radius: 3px;	
+    padding: 7px;
 		.img-holder {
       background-image: url('./map.jpg');
 			display: flex;
@@ -26,5 +23,5 @@
 			background: $white;
 			padding: 22px;
 		}
-	}
+  }
 }

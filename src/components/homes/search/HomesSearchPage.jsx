@@ -11,6 +11,7 @@ import Pagination from '../../common/pagination/Pagination';
 import requester from '../../../requester';
 import { asyncSetStartDate, asyncSetEndDate } from '../../../actions/searchDatesInfo';
 import { setHomesSearchInfo } from '../../../actions/homesSearchInfo';
+import AsideContentPage from '../../common/asideContentPage';
 
 class HomesSearchPage extends React.Component {
   constructor(props) {
@@ -266,14 +267,11 @@ class HomesSearchPage extends React.Component {
 
     return (
       <React.Fragment>
-        <div className="container">
-          <HomesSearchBar search={this.search} />
-        </div>
-
         <section id="hotel-box">
           <div className="container">
-            <div className="row">
-              <div className="col-md-3">
+            <HomesSearchBar search={this.search} />
+            <AsideContentPage>
+              <AsideContentPage.Aside>
                 <FilterPanel
                   cities={this.state.cities}
                   citiesToggled={this.state.filters.cities}
@@ -284,12 +282,12 @@ class HomesSearchPage extends React.Component {
                   countryId={this.props.homesSearchInfo.country}
                   handleSearch={this.handleFilter}
                   toggleFilter={this.toggleFilter}
-                  clearFilters={this.clearFilters} />
-              </div>
-              <div className="col-md-9">
+                  clearFilters={this.clearFilters}
+                />
+              </AsideContentPage.Aside>
+              <AsideContentPage.Content>
                 <div className="list-hotel-box" id="list-hotel-box">
                   {renderListings}
-
                   <Pagination
                     loading={this.state.totalItems === 0}
                     onPageChange={this.onPageChange}
@@ -297,8 +295,8 @@ class HomesSearchPage extends React.Component {
                     totalElements={this.state.totalItems}
                   />
                 </div>
-              </div>
-            </div>
+              </AsideContentPage.Content>
+            </AsideContentPage>
           </div>
         </section>
       </React.Fragment>

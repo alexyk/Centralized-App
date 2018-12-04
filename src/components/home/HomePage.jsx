@@ -45,10 +45,10 @@ class HomePage extends React.Component {
 
   getSlider(items, itemsType) {
     const settings = {
-      infinite: false,
+      infinite: true,
       draggable: false,
       lazyLoad: 'ondemand',
-      speed: 500,
+      speed: 400,
       slidesToShow: 4,
       slidesToScroll: 1,
       nextArrow: <SlickButton />,
@@ -166,7 +166,8 @@ class HomePage extends React.Component {
           </HomePageContentItem>
           <section className="get-started">
             <h2>Host on LocKtrip</h2>
-            <div className="get-started-content">Easily list your home or hotel on Locktrip and start earning money</div>
+            <div className="get-started-content">Easily list your home or hotel on</div>
+            <div className="get-started-content">Locktrip and start earning money</div>
             <Link to="/profile/listings/create/landing" className="button">Get started</Link>
             <div className="get-started-graphic" />
           </section>

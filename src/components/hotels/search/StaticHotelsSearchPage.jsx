@@ -23,6 +23,7 @@ import { withRouter } from 'react-router-dom';
 import { NotificationManager } from 'react-notifications';
 import { LONG } from '../../../constants/notificationDisplayTimes';
 import { FILTERED_UNAVAILABLE_HOTELS } from '../../../constants/infoMessages';
+import AsideContentPage from '../../common/asideContentPage/AsideContentPage';
 
 const DEBUG_SOCKET = false;
 const DELAY_INTERVAL = 100;
@@ -132,7 +133,7 @@ class StaticHotelsSearchPage extends React.Component {
       const regionId = searchParams.region;
       const region = { id: regionId };
       const page = searchParams.page;
-      
+
       this.props.dispatch(asyncSetStartDate(startDate));
       this.props.dispatch(asyncSetEndDate(endDate));
       this.props.dispatch(setHotelsSearchInfo(region, rooms, adults, hasChildren));
@@ -617,14 +618,12 @@ class StaticHotelsSearchPage extends React.Component {
     const nights = this.props.searchDatesInfo.endDate.diff(this.props.searchDatesInfo.startDate, 'days');
 
     return (
-      <div>
+      <React.Fragment>
         <div className="container">
           <HotelsSearchBar search={this.search} />
-        </div>
-        <section id="hotel-box">
-          <div className="container">
-            <div className="row">
-              <div className="hotels-search-sidebar col-md-3">
+          <AsideContentPage>
+            <AsideContentPage.Aside>
+              <div className="hotels-search-sidebar">
                 <FilterPanel
                   windowWidth={this.state.windowWidth}
                   showFiltersMobile={this.state.showFiltersMobile}
@@ -649,51 +648,50 @@ class StaticHotelsSearchPage extends React.Component {
                   </div>
                 </div>
               </div>
-              <div className="col-md-9">
-                <div>
-                  {this.state.showMap
-                    ? <div>
-                      {this.state.mapLoading
-                        ? <div className="loader"></div>
-                        : <MultiMarkerGoogleMap
-                          lat={this.state.lat}
-                          lon={this.state.lon}
-                          hotels={hotels}
-                          mapInfo={this.state.mapInfo}
-                          isLogged={this.props.userInfo.isLogged}
-                          nights={nights}
-                          loading={this.state.loading}
-                        />
-                      }
-                    </div>
-                    : <div>
-                      {this.state.loading
-                        ? <div className="loader"></div>
-                        : <ResultsHolder
-                          hotels={hotels}
-                          allElements={this.state.allElements}
-                          nights={nights}
-                          loading={this.state.loading}
-                        />
-                      }
+            </AsideContentPage.Aside>
 
-                      {!this.state.loading &&
-                        <Pagination
-                          loading={this.state.loading}
-                          onPageChange={this.onPageChange}
-                          currentPage={this.state.page + 1}
-                          pageSize={10}
-                          totalElements={totalElements}
-                        />
-                      }
-                    </div>
+            <AsideContentPage.Content>
+              {this.state.showMap
+                ? <div>
+                  {this.state.mapLoading
+                    ? <div className="loader"></div>
+                    : <MultiMarkerGoogleMap
+                      lat={this.state.lat}
+                      lon={this.state.lon}
+                      hotels={hotels}
+                      mapInfo={this.state.mapInfo}
+                      isLogged={this.props.userInfo.isLogged}
+                      nights={nights}
+                      loading={this.state.loading}
+                    />
                   }
                 </div>
-              </div>
-            </div>
-          </div>
-        </section>
-      </div>
+                : <div>
+                  {this.state.loading
+                    ? <div className="loader"></div>
+                    : <ResultsHolder
+                      hotels={hotels}
+                      allElements={this.state.allElements}
+                      nights={nights}
+                      loading={this.state.loading}
+                    />
+                  }
+
+                  {!this.state.loading &&
+                    <Pagination
+                      loading={this.state.loading}
+                      onPageChange={this.onPageChange}
+                      currentPage={this.state.page + 1}
+                      pageSize={10}
+                      totalElements={totalElements}
+                    />
+                  }
+                </div>
+              }
+            </AsideContentPage.Content>
+          </AsideContentPage>
+        </div>
+      </React.Fragment>
     );
   }
 }
