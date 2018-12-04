@@ -13,13 +13,13 @@ class LocRate extends PureComponent {
     this.isSendMessage = false;
   }
 
-  componentWillReceiveProps(nextProps) {
-    if (!nextProps.exchangerSocketInfo.isExchangerWebsocketConnected && this.isSendMessage) {
+  componentDidUpdate(prevProps) {
+    if (!this.props.exchangerSocketInfo.isExchangerWebsocketConnected && this.isSendMessage) {
       this.isSendMessage = false;
     }
-    if (nextProps.exchangerSocketInfo.isExchangerWebsocketConnected && !this.isSendMessage) {
+    if (this.props.exchangerSocketInfo.isExchangerWebsocketConnected && !this.isSendMessage) {
       this.isSendMessage = true;
-      ExchangerWebsocket.sendMessage(this.props.exchangeRatesInfo.locRateFiatAmount, 'getLocPrice', { fiatAmount: this.props.exchangeRatesInfo.locRateFiatAmount });
+      ExchangerWebsocket.sendMessage(prevProps.exchangeRatesInfo.locRateFiatAmount, 'getLocPrice', { fiatAmount: prevProps.exchangeRatesInfo.locRateFiatAmount });
     }
   }
 
