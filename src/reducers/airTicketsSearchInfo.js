@@ -9,8 +9,8 @@ const initialState = {
   destination: null,
   adultsCount: '1',
   children: [],
-  infants: 0,
-  hasChildren: false
+  flexSearch: false,
+  multiStopsDestinations: []
 };
 
 export default function reducer(state = initialState, action) {
@@ -43,17 +43,17 @@ export default function reducer(state = initialState, action) {
       return Object.assign({}, state, {
         adultsCount: action.adultsCount,
       });
-    case airTicketsSearchInfo.SET_HAS_CHILDREN:
-      return Object.assign({}, state, {
-        hasChildren: !state.hasChildren
-      });
     case airTicketsSearchInfo.SET_CHILDREN:
       return Object.assign({}, state, {
         children: action.children
       });
-    case airTicketsSearchInfo.SET_INFANTS:
+    case airTicketsSearchInfo.SET_FLEX_SEARCH:
       return Object.assign({}, state, {
-        infants: action.infants
+        flexSearch: !state.flexSearch
+      });
+    case airTicketsSearchInfo.SET_MULTI_STOPS_DESTINATIONS:
+      return Object.assign({}, state, {
+        multiStopsDestinations: action.multiStopsDestinations
       });
     case airTicketsSearchInfo.SET_AIR_TICKETS_SEARCH_INFO:
       return Object.assign({}, state, {
@@ -64,9 +64,9 @@ export default function reducer(state = initialState, action) {
         origin: action.origin,
         destination: action.destination,
         adultsCount: action.adultsCount,
-        hasChildren: action.hasChildren,
         children: action.children,
-        infants: action.infants
+        flexSearch: action.flexSearch,
+        multiStopsDestinations: action.multiStopsDestinations
       });
     default:
       return state;

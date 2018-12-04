@@ -43,7 +43,7 @@ $media-expressions: (
     &.hide-single {
       display: none;
     }
-    .roundtrip {
+    .flight-routing {
       padding: 5px;
       width: 130px;
       display: inline-flex;
@@ -51,14 +51,6 @@ $media-expressions: (
       border-bottom: 2px solid #fff;
       &:hover {
         border-bottom: 2px solid #d87a61;
-      }
-      .icon-calendar {
-        display: flex;
-        align-items: center;
-        margin-left: 6px;
-        margin-right: 9px;
-        font-size: 0.9em;
-        color: #898c8d;
       }
       .choose-roundtrip-content {
         margin: 0;
@@ -77,7 +69,7 @@ $media-expressions: (
       position: absolute;
       top: -30px;
       right: 0px;
-      color: #d87a61;
+      color: $moderate-red;
       font-size: 1.2em;
       &.hide-close-roundtrip {
         display: none;
@@ -86,6 +78,17 @@ $media-expressions: (
       &:before {
         content: "\00d7";
       }
+    }
+  }
+  .open-multi-city-popup-holder {
+    position: relative;
+    img {
+      position: absolute;
+      min-width: 15px;
+      height: 14px;
+      top: 0;
+      right: 0;
+      cursor: pointer;
     }
   }
   .icon-arrow-right {

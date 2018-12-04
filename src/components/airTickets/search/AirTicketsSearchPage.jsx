@@ -239,28 +239,44 @@ class AirTicketsSearchPage extends Component {
   populateSearchBar() {
     if (this.props.location.search) {
       const searchParams = queryString.parse(this.props.location.search);
+
+      const destinations = JSON.parse(searchParams.destinations);
       const flightRouting = searchParams.routing;
+      const origin = { id: destinations[0].origin };
+      const destination = { id: destinations[0].destination };
+      const departureDate = moment(destinations[0].date, 'DD/MM/YYYY');
+      let returnDate = moment(departureDate, 'DD/MM/YYYY');
+      if (flightRouting === '2') {
+        returnDate = moment(destinations[1].date, 'DD/MM/YYYY');
+      } else if (flightRouting === '3') {
+        returnDate = moment(destinations[1].date, 'DD/MM/YYYY');
+        destinations.shift();
+      }
+      destinations.forEach((destination) => {
+        this.requestAirportInfo(destination.origin)
+          .then((data) => {
+            destination.origin = { code: data.code, name: `${data.cityName}, ${data.cityState ? data.cityState + ', ' : ''}${data.countryName}, ${data.code} airport` };
+          });
+        this.requestAirportInfo(destination.destination)
+          .then((data) => {
+            destination.destination = { code: data.code, name: `${data.cityName}, ${data.cityState ? data.cityState + ', ' : ''}${data.countryName}, ${data.code} airport` };
+          });
+        destination.date = moment(destination.date, 'DD/MM/YYYY');
+      });
       const flightClass = searchParams.flightClass;
       const stops = searchParams.stops;
       const departureTime = searchParams.departureTime ? searchParams.departureTime : '';
-      const origin = { id: searchParams.origin };
-      const destination = { id: searchParams.destination };
-      const departureDate = moment(searchParams.departureDate, 'DD/MM/YYYY');
-      let returnDate = moment(departureDate);
-      if (flightRouting === '2') {
-        returnDate = moment(searchParams.returnDate, 'DD/MM/YYYY');
-      }
       const adultsCount = searchParams.adults;
       const children = JSON.parse(searchParams.children);
-      const infants = searchParams.infants;
-      const hasChildren = children.length !== 0 || infants > 0;
       const page = searchParams.page;
+      const flexSearch = searchParams.flexSearch;
+
 
       this.props.dispatch(asyncSetStartDate(departureDate));
       this.props.dispatch(asyncSetEndDate(returnDate));
-      this.props.dispatch(setAirTicketsSearchInfo(flightRouting, flightClass, stops, departureTime, origin, destination, adultsCount, children, infants, hasChildren));
+      this.props.dispatch(setAirTicketsSearchInfo(flightRouting, flightClass, stops, departureTime, origin, destination, adultsCount, children, flexSearch, destinations));
 
-      this.populateAirports(searchParams.origin, searchParams.destination);
+      this.populateAirports(origin.id, destination.id);
 
       this.setState({
         page: page ? Number(page) : 0,

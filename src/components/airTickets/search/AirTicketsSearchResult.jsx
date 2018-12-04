@@ -6,9 +6,6 @@ import _ from 'lodash';
 import { CurrencyConverter } from '../../../services/utilities/currencyConverter';
 import { RoomsXMLCurrency } from '../../../services/utilities/roomsXMLCurrency';
 import LocPrice from '../../common/utility/LocPrice';
-import BagIcon from '../../../styles/images/bag-icon.png';
-import MealIcon from '../../../styles/images/meal-icon.png';
-import WirelessIcon from '../../../styles/images/icon-wireless_internet.png';
 import TimeIcon from '../../../styles/images/time-icon.png';
 
 import '../../../styles/css/components/airTickets/search/air-tickets-search-result.css';
@@ -98,9 +95,6 @@ class AirTicketsSearchResult extends Component {
       return;
     }
 
-    const departureTime = departureInfo[0].origin.time;
-    const arrivalTime = departureInfo[departureInfo.length - 1].destination.time;
-    const carrierName = departureInfo[0].carrier.name;
     let middleStopsBulets = [];
     for (let i = 0; i < departureInfo.length - 1; i++) {
       middleStopsBulets.push(
@@ -123,7 +117,7 @@ class AirTicketsSearchResult extends Component {
       <Fragment>
         <div className="solution-main-info">
           <h5 className="departure">Departure</h5>
-          <h5 className="carrier">{carrierName}</h5>
+          <h5 className="carrier">{departureInfo[0].carrier.name}</h5>
           <div className="duration">
             <img width="20" src={TimeIcon} alt="time" />
             {this.extractFlightFullDurationFromMinutes(departureInfo[departureInfo.length - 1].journeyTime)}
@@ -132,12 +126,18 @@ class AirTicketsSearchResult extends Component {
         </div>
         <div className="solution-flight">
           <div className="flight">
-            <div className="item flight-times">
-              {departureTime}
+            <div className="item flight-date-times">
+              <div className="flight-date-time">
+                <div>{departureInfo[0].origin.date}</div>
+                <div>{departureInfo[0].origin.time} {departureInfo[0].origin.timeZone}</div>
+              </div>
               <div className="arrow-icon-container">
                 <img src="/images/icon-arrow.png" alt="icon-arrow" />
               </div>
-              {arrivalTime}
+              <div className="flight-date-time">
+                <div>{departureInfo[departureInfo.length - 1].destination.date}</div>
+                <div>{departureInfo[departureInfo.length - 1].destination.time} {departureInfo[departureInfo.length - 1].destination.timeZone}</div>
+              </div>
             </div>
             <div className="item flight-stops">
               <div className="stop">
@@ -163,17 +163,6 @@ class AirTicketsSearchResult extends Component {
                 </div>
               </div>
             </div>
-            <div className="item flight-icons">
-              <div className="icon">
-                <img src={MealIcon} alt="meal" />
-              </div>
-              <div className="icon">
-                <img src={BagIcon} alt="bag" />
-              </div>
-              <div className="icon wi-fi">
-                <img src={WirelessIcon} alt="bag" />
-              </div>
-            </div>
           </div>
         </div>
       </Fragment >
@@ -185,9 +174,6 @@ class AirTicketsSearchResult extends Component {
       return;
     }
 
-    const departureTime = returnInfo[0].origin.time;
-    const arrivalTime = returnInfo[returnInfo.length - 1].destination.time;
-    const carrierName = returnInfo[0].carrier.name;
     let middleStopsBulets = [];
     for (let i = 0; i < returnInfo.length - 1; i++) {
       middleStopsBulets.push(
@@ -210,7 +196,7 @@ class AirTicketsSearchResult extends Component {
       <Fragment>
         <div className="solution-main-info">
           <h5 className="departure">Return</h5>
-          <h5 className="carrier">{carrierName}</h5>
+          <h5 className="carrier">{returnInfo[0].carrier.name}</h5>
           <div className="duration">
             <img width="20" src={TimeIcon} alt="time" />
             {this.extractFlightFullDurationFromMinutes(returnInfo[returnInfo.length - 1].journeyTime)}
@@ -219,12 +205,18 @@ class AirTicketsSearchResult extends Component {
         </div>
         <div className="solution-flight">
           <div className="flight">
-            <div className="item flight-times">
-              {departureTime}
+            <div className="item flight-date-times">
+              <div className="flight-date-time">
+                <div>{returnInfo[0].origin.date}</div>
+                <div>{returnInfo[0].origin.time} {returnInfo[0].origin.timeZone}</div>
+              </div>
               <div className="arrow-icon-container">
                 <img src="/images/icon-arrow.png" alt="icon-arrow" />
               </div>
-              {arrivalTime}
+              <div className="flight-date-time">
+                <div>{returnInfo[returnInfo.length - 1].destination.date}</div>
+                <div>{returnInfo[returnInfo.length - 1].destination.time} {returnInfo[returnInfo.length - 1].destination.timeZone}</div>
+              </div>
             </div>
             <div className="item flight-stops">
               <div className="stop">
@@ -250,17 +242,6 @@ class AirTicketsSearchResult extends Component {
                 </div>
               </div>
             </div>
-            <div className="item flight-icons">
-              <div className="icon">
-                <img src={MealIcon} alt="meal" />
-              </div>
-              <div className="icon">
-                <img src={BagIcon} alt="bag" />
-              </div>
-              <div className="icon wi-fi">
-                <img src={WirelessIcon} alt="bag" />
-              </div>
-            </div>
           </div>
         </div>
       </Fragment >
@@ -268,7 +249,10 @@ class AirTicketsSearchResult extends Component {
   }
 
   render() {
-    const { exchangeRatesInfo, paymentInfo, userInfo, result, allElements } = this.props;
+    const { exchangeRatesInfo, paymentInfo, userInfo, result, allElements, flightRouting } = this.props;
+
+    const departureInfo = result.segments.filter(s => s.group === '0');
+    const returnInfo = result.segments.filter(s => s.group === '1');
 
     const priceInfo = result.price;
     const price = priceInfo.total;
@@ -290,8 +274,15 @@ class AirTicketsSearchResult extends Component {
     return (
       <div className="air-tickets-result" >
         <form className="air-tickets-result-content">
-          {this.getDepartureInfo(result.departureInfo)}
-          {this.getReturnInfo(result.returnInfo)}
+          {flightRouting !== '3' ?
+            <Fragment>
+              {this.getDepartureInfo(departureInfo)}
+              {this.getReturnInfo(returnInfo)}
+            </Fragment> :
+            <Fragment>
+              {this.getDepartureInfo(departureInfo)}
+              {this.getReturnInfo(returnInfo)}
+            </Fragment>}
           <div className="air-tickets-result-mobile-pricing">
             {!isPriceLoaded
               ? (!allElements ? <div className="price">Loading price...</div> : <div></div>)
@@ -338,16 +329,18 @@ AirTicketsSearchResult.propTypes = {
   // Redux props
   exchangeRatesInfo: PropTypes.object,
   paymentInfo: PropTypes.object,
-  userInfo: PropTypes.object
+  userInfo: PropTypes.object,
+  flightRouting: PropTypes.string
 };
 
 const mapStateToProps = (state) => {
-  const { exchangeRatesInfo, paymentInfo, userInfo } = state;
+  const { exchangeRatesInfo, paymentInfo, userInfo, airTicketsSearchInfo } = state;
 
   return {
     exchangeRatesInfo,
     paymentInfo,
-    userInfo
+    userInfo,
+    flightRouting: airTicketsSearchInfo.flightRouting
   };
 };
 

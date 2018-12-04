@@ -91,12 +91,12 @@ $media-expressions: (
         padding: 10px 10px;
         display: flex;
         align-items: center;
-
-        .flight-times {
-          width: 20%;
+        .flight-date-times {
+          width: 50%;
+          justify-content: center;
           .arrow-icon-container {
             min-width: 30px;
-            margin: 0 5px;
+            margin: 0 15px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -115,7 +115,7 @@ $media-expressions: (
         }
 
         .flight-stops {
-          width: 60%;
+          width: 50%;
           justify-content: center;
           .stop,
           .middle-stop {
@@ -157,26 +157,6 @@ $media-expressions: (
               width: 50px;
               border: 1px solid #d87a61;
               margin: 0;
-            }
-          }
-        }
-
-        .flight-icons {
-          display: flex;
-          justify-content: space-between;
-          margin-right: 0;
-          width: 20%;
-
-          .icon {
-            width: 30px;
-            height: 30px;
-            padding: 3px;
-            margin-left: 5px;
-            background-color: white;
-            border: 1px solid #cccccc;
-
-            &.wi-fi {
-              padding: 0;
             }
           }
         }
