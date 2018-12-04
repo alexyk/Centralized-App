@@ -32,7 +32,7 @@ $media-expressions: (
   border-radius: 3px;
   overflow: hidden;
   padding: 5px;
-  font-size: 14px;
+  font-size: 15px;
   color: $dark-gray;
   margin-bottom: 40px;
   display: flex;
@@ -94,6 +94,19 @@ $media-expressions: (
         .flight-date-times {
           width: 50%;
           justify-content: center;
+          .date-in-day {
+            color: #a2c5bf;
+          }
+          .date-out-day {
+            color: $moderate-red;
+          }
+          i {
+            margin: 0 10px;
+          }
+          .time {
+            margin-top: 5px;
+            font-size: 16px;
+          }
           .arrow-icon-container {
             min-width: 30px;
             margin: 0 15px;
@@ -125,21 +138,21 @@ $media-expressions: (
 
           .stop {
             position: relative;
+            width: 30px;
           }
           .middle-stop {
             position: absolute;
             top: 10px;
-            width: 40px;
+            width: 30px;
           }
           .stops-container {
             margin: 0 10px;
             position: relative;
             display: flex;
             align-items: center;
-
             .bulet-container {
               display: flex;
-
+              position: absolute;
               .bulet {
                 display: inline-block;
                 font-weight: 800;
@@ -148,13 +161,13 @@ $media-expressions: (
                 text-align: center;
                 line-height: 1em;
                 border-radius: 1em;
-                background: #d87a61;
+                background: $moderate-red;
                 position: relative;
               }
             }
 
             .line {
-              width: 50px;
+              width: 200px;
               border: 1px solid #d87a61;
               margin: 0;
             }

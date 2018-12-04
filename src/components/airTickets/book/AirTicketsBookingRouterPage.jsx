@@ -333,6 +333,11 @@ class AirTicketsBookingRouterPage extends Component {
                 NotificationManager.success(data.bookingStatus, '', LONG);
               }
             });
+          })
+          .catch((err) => {
+            err.json().then((data) => {
+              console.log(data);
+            });
           });
       })
       .catch((err) => {

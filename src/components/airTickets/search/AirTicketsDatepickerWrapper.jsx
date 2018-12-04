@@ -6,7 +6,6 @@ import DatePicker from '../../common/datepicker';
 import { asyncSetEndDate } from '../../../actions/searchDatesInfo';
 import { setFlightRouting } from '../../../actions/airTicketsSearchInfo';
 import SelectFlex from '../../common/select';
-import PlusIcon from '../../../styles/images/plus-icon.png';
 
 import '../../../styles/css/components/airTickets/search/air-tickets-datepicker-wrapper.css';
 
@@ -64,11 +63,11 @@ class AirTicketsDatepickerWrapper extends Component {
           </SelectFlex>
         </div>
         <div className="close-roundtrip-holder">
-          <span className={`close-roundtrip-button${flightRouting === '1' ? ' hide-close-roundtrip' : ''}`} onClick={() => this.changeFlightRouting('1')} />
+          <span className={`icon-close-icon${flightRouting === '1' ? ' hide-close-roundtrip' : ''}`} onClick={() => this.changeFlightRouting('1')} />
         </div>
         {flightRouting === '3' &&
           <div className="open-multi-city-popup-holder">
-            <img src={PlusIcon} alt="plus" onClick={this.props.openMultiStopsPopup}></img>
+            <span className="icon-plus" onClick={this.props.openMultiStopsPopup}></span>
           </div>}
       </div>
     );

@@ -7,23 +7,23 @@ import PlaneIcon from '../../../styles/images/plane-icon.png';
 
 class AirTicket extends Component {
   extractDatesData(segments) {
-    const startDateMoment = moment(segments[0].origin.date).utc();
-    const endDateMoment = moment(segments[segments.length - 1].destination.date).utc();
+    const startDateMoment = moment(segments[0].originDate).utc();
+    const endDateMoment = moment(segments[segments.length - 1].destinationDate).utc();
 
     const departure = {
       day: startDateMoment.format('D'),
       year: startDateMoment.format('YYYY'),
-      month: startDateMoment.format('MMM').toLowerCase(),
-      time: segments[0].origin.time,
-      timezone: segments[0].origin.timezone
+      month: startDateMoment.format('MMM').toUpperCase(),
+      time: segments[0].originTime,
+      timezone: segments[0].originTimezone
     };
 
     const arrival = {
       day: endDateMoment.format('D'),
       year: endDateMoment.format('YYYY'),
-      month: endDateMoment.format('MMM').toLowerCase(),
-      time: segments[segments.length - 1].origin.time,
-      timezone: segments[segments.length - 1].origin.timezone
+      month: endDateMoment.format('MMM').toUpperCase(),
+      time: segments[segments.length - 1].originTime,
+      timezone: segments[segments.length - 1].originTimezone
     };
 
     return { departure, arrival };
@@ -31,17 +31,17 @@ class AirTicket extends Component {
 
   getDepartureAirports(airports) {
     let middleStopsBulets = [];
+    const buletIndex = 200 / airports.length;
     for (let i = 0; i < airports.length - 1; i++) {
       middleStopsBulets.push(
         <Fragment key={i}>
-          <div key={i} className="bulet-container"><span className="bulet"></span></div>
-          <hr className="line" />
-          <div className="middle-stop" style={{ left: `${(i * 60) + 45}px` }}>
-            {airports[i].destination.code}
+          <div key={i} className="bulet-container" style={{ left: `${((i + 1) * buletIndex) + 8}px` }}><span className="bulet"></span></div>
+          <div className="middle-stop" style={{ left: `${(((i + 1) * buletIndex) + 8) - 11}px` }}>
+            {airports[i].destination}
             <div className="tooltip-content">
               <div>Transfer</div>
               <hr />
-              <div>{airports[i].destination.name} ({airports[i].destination.code})</div>
+              <div>{airports[i].destination} ({airports[i].destination})</div>
             </div>
           </div>
         </Fragment>
@@ -51,25 +51,25 @@ class AirTicket extends Component {
     return (
       <div className="item flight-stops">
         <div className="stop">
-          {airports[0].origin.code}
+          {airports[0].origin}
           <div className="tooltip-content">
             <div>Departure</div>
             <hr />
-            <div>{airports[0].origin.name} ({airports[0].origin.code})</div>
+            <div>{airports[0].origin} ({airports[0].origin})</div>
           </div>
         </div>
         <div className="stops-container horizontal">
           <div className="bulet-container"><span className="bulet"></span></div>
           <hr className="line" />
           {airports.length === 1 ? null : middleStopsBulets}
-          <div className="bulet-container"><span className="bulet"></span></div>
+          <div className="bulet-container" style={{ left: '200px' }}><span className="bulet"></span></div>
         </div>
         <div className="stop">
-          {airports[airports.length - 1].destination.code}
+          {airports[airports.length - 1].destination}
           <div className="tooltip-content">
             <div>Arrival</div>
             <hr />
-            <div>{airports[airports.length - 1].destination.name} ({airports[airports.length - 1].destination.code})</div>
+            <div>{airports[airports.length - 1].destination} ({airports[airports.length - 1].destination})</div>
           </div>
         </div>
       </div>
@@ -78,55 +78,79 @@ class AirTicket extends Component {
 
   getReturnAirports(airports) {
     let middleStopsBulets = [];
+
+    const buletIndex = 200 / airports.length;
+
     for (let i = 0; i < airports.length - 1; i++) {
       middleStopsBulets.push(
         <Fragment key={i}>
-          <div key={i} className="bulet-container"><span className="bulet"></span></div>
-          <hr className="line" />
-          <div className="middle-stop" style={{ left: `${(i * 60) + 45}px` }} tooltip={airports[i].destination.name}>{airports[i].destination.code}</div>
+          <div key={i} className="bulet-container" style={{ left: `${((i + 1) * buletIndex) + 8}px` }}><span className="bulet"></span></div>
+          <div className="middle-stop" style={{ left: `${(((i + 1) * buletIndex) + 8) - 11}px` }}>
+            {airports[i].destination}
+            <div className="tooltip-content">
+              <div>Transfer</div>
+              <hr />
+              <div>{airports[i].destination} ({airports[i].destination})</div>
+            </div>
+          </div>
         </Fragment>
       );
     }
 
     return (
       <div className="item flight-stops">
-        <div className="stop" tooltip={airports[0].origin.name}>{airports[0].origin.code}</div>
+        <div className="stop">
+          {airports[0].origin}
+          <div className="tooltip-content">
+            <div>Departure</div>
+            <hr />
+            <div>{airports[0].origin} ({airports[0].origin})</div>
+          </div>
+        </div>
         <div className="stops-container horizontal">
           <div className="bulet-container"><span className="bulet"></span></div>
           <hr className="line" />
           {airports.length === 1 ? null : middleStopsBulets}
-          <div className="bulet-container"><span className="bulet"></span></div>
+          <div className="bulet-container" style={{ left: '200px' }}><span className="bulet"></span></div>
         </div>
-        <div className="stop" tooltip={airports[airports.length - 1].destination.name}>{airports[airports.length - 1].destination.code}</div>
-        <span tooltip={airports[airports.length - 1].destination.name}></span>
+        <div className="stop">
+          {airports[airports.length - 1].destination}
+          <div className="tooltip-content">
+            <div>Arrival</div>
+            <hr />
+            <div>{airports[airports.length - 1].destination} ({airports[airports.length - 1].destination})</div>
+          </div>
+        </div>
       </div>
     );
+  }
+
+  getStatus(status) {
+    const statusPreview = status.split('_').join(' ');
+
+    return statusPreview;
   }
 
   render() {
     const { ticket } = this.props;
 
-    // console.log(ticket);
+    console.log(ticket);
 
-    const flightInfo = ticket.entities[0];
-    const departureSegments = flightInfo.segments.filter(s => s.group === '0');
-    const returnSegments = flightInfo.segments.filter(s => s.group === '1');
+    const departureSegments = ticket.segments.filter(s => s.group === '0');
+    const returnSegments = ticket.segments.filter(s => s.group === '1');
     const departureDate = this.extractDatesData(departureSegments);
     let returnDate;
     if (returnSegments.length > 0) {
       returnDate = this.extractDatesData(returnSegments);
     }
 
-    console.log(flightInfo);
-
     return (
       <Fragment>
         <ProfileFlexContainer styleClass={`flex-container-row ${this.props.styleClass}`}>
           <div className="flex-row-child tickets-image">
-            {/* <i className="fa fa-plane"></i> */}
             <img src={PlaneIcon} alt="plane" />
           </div>
-          <div className="flex-row-child tickets-airports">
+          <div className={`flex-row-child tickets-airports${returnSegments.length === 0 ? ' one-way' : ''}`}>
             <div className="content-row">
               {this.getDepartureAirports(departureSegments)}
             </div>
@@ -135,9 +159,9 @@ class AirTicket extends Component {
                 {this.getReturnAirports(returnSegments)}
               </div>}
           </div>
-          <div className="flex-row-child tickets-dates">
+          <div className={`flex-row-child tickets-dates${returnSegments.length === 0 ? ' one-way' : ''}`}>
             <div className="content-row">
-              <div className="departure-dates">
+              <div className={`departure-dates${returnSegments.length === 0 ? ' one-way' : ''}`}>
                 <div>
                   <span className="date-in-day">{departureDate.departure.day}</span> {departureDate.departure.month}, {departureDate.departure.year}
                   <div className="time">{departureDate.departure.time} {departureDate.departure.timezone}</div>
@@ -172,14 +196,13 @@ class AirTicket extends Component {
             </div>
           </div>
           <div className="flex-row-child tickets-status">
-            <span className="status">{flightInfo.properties.status.booking}</span>
+            {ticket.status &&
+              <span className="status">{this.getStatus(ticket.status)}</span>
+            }
             {/* {this.props.trip.status &&
-              <span className="status">{status}</span>
-            }
-            {this.props.trip.status &&
               <span className="icon-question" tooltip={this.props.trip.error ? this.props.trip.error : statusMessage}></span>
-            }
-            {this.props.trip.status && this.props.trip.status.toUpperCase() === 'DONE' &&
+            } */}
+            {/* {this.props.trip.status && this.props.trip.status.toUpperCase() === 'DONE' &&
               <div>Reference No.: {this.props.trip.booking_id}</div>
             } */}
           </div>

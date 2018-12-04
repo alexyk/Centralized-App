@@ -21,6 +21,8 @@ $media-expressions: (
 
 @import "../../../../vendors/include-media";
 
+@import "../../../../base/variables";
+
 .air-tickets-details-container {
   padding: 20px 0;
   .air-tickets-details-box {
@@ -93,8 +95,15 @@ $media-expressions: (
           }
         }
         .flight-rules {
+          margin-bottom: 30px;
           .rule {
             margin-bottom: 10px;
+            a {
+              color: $moderate-red;
+              &:hover {
+                color: $moderate-red;
+              }
+            }
             h5 {
               font-weight: 400;
             }
@@ -131,6 +140,45 @@ $media-expressions: (
             align-items: center;
             justify-content: center;
             width: 100%;
+            .check-in {
+              &:hover {
+                cursor: initial;
+                border-bottom: 2px solid #fff;
+              }
+            }
+            .choose-roundtrip {
+              display: flex;
+              align-items: center;
+              padding: 5px;
+              .flight-routing-preview {
+                width: 130px;
+                display: inline-flex;
+                justify-content: center;
+                border-bottom: 2px solid #fff;
+                .icon-calendar {
+                  display: flex;
+                  align-items: center;
+                  margin-right: 10px;
+                  font-size: 0.9em;
+                  color: #898c8d;
+                }
+                .date-container {
+                  margin: 0;
+                  .text {
+                    margin: 0;
+                  }
+                  .date {
+                    min-width: 80px;
+                    font-size: 0.8em;
+                    font-weight: 400;
+                    text-align: left;
+                    span {
+                      color: #a2c5bf;
+                    }
+                  }
+                }
+              }
+            }
           }
         }
         .booking-guests {

@@ -65,27 +65,23 @@ $media-expressions: (
   }
   .close-roundtrip-holder {
     position: relative;
-    .close-roundtrip-button {
+    .icon-close-icon {
       position: absolute;
       top: -30px;
       right: 0px;
       color: $moderate-red;
-      font-size: 1.2em;
+      font-size: 1em;
       &.hide-close-roundtrip {
         display: none;
       }
       cursor: pointer;
-      &:before {
-        content: "\00d7";
-      }
     }
   }
   .open-multi-city-popup-holder {
     position: relative;
-    img {
+    span {
       position: absolute;
-      min-width: 15px;
-      height: 14px;
+      font-size: 1em;
       top: 0;
       right: 0;
       cursor: pointer;

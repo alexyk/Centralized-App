@@ -1,5 +1,6 @@
 import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
+import moment from 'moment';
 import AirTicketsDetailsBookingPanel from './AirTicketsDetailsBookingPanel';
 import TimeIcon from '../../../../styles/images/time-icon.png';
 
@@ -17,20 +18,6 @@ class AirTicketsDetailsInfoSection extends Component {
     this.toggleFareRule = this.toggleFareRule.bind(this);
   }
 
-  middleStops(item) {
-    let middleStopsBulets = [];
-    for (let i = 0; i < item.segments.length - 1; i++) {
-      middleStopsBulets.push(
-        <Fragment key={i}>
-          <div key={i} className="bulet-container"><span className="bulet"></span></div>
-          <hr className="line" />
-          <div className="middle-stop" style={{ left: `${(i * 60) + 40}px` }}>{item.segments[i].destinationInfo.airportIATACode}</div>
-        </Fragment>
-      );
-    }
-    return middleStopsBulets;
-  }
-
   convertMinutesToTime(minutes) {
     const hours = Math.floor(minutes / 60);
     const remainingMinutes = minutes % 60;
@@ -38,18 +25,45 @@ class AirTicketsDetailsInfoSection extends Component {
     return `${hours}h ${remainingMinutes}min`;
   }
 
+  extractDatesData(segments) {
+    const startDateMoment = moment(segments[0].origin.date).utc();
+    const endDateMoment = moment(segments[segments.length - 1].destination.date).utc();
+
+    const departure = {
+      day: startDateMoment.format('D'),
+      year: startDateMoment.format('YYYY'),
+      month: startDateMoment.format('MMM').toUpperCase(),
+      time: segments[0].origin.time,
+      timezone: segments[0].origin.timezone
+    };
+
+    const arrival = {
+      day: endDateMoment.format('D'),
+      year: endDateMoment.format('YYYY'),
+      month: endDateMoment.format('MMM').toUpperCase(),
+      time: segments[segments.length - 1].origin.time,
+      timezone: segments[segments.length - 1].origin.timezone
+    };
+
+    return { departure, arrival };
+  }
+
   getDepartureInfo(departureInfo) {
     if (departureInfo.length === 0) {
       return;
     }
 
+    const departureDate = this.extractDatesData(departureInfo);
+
     let middleStopsBulets = [];
+
+    const buletIndex = 200 / departureInfo.length;
+
     for (let i = 0; i < departureInfo.length - 1; i++) {
       middleStopsBulets.push(
         <Fragment key={i}>
-          <div key={i} className="bulet-container"><span className="bulet"></span></div>
-          <hr className="line" />
-          <div className="middle-stop" style={{ left: `${(i * 60) + 40}px` }}>
+          <div key={i} className="bulet-container" style={{ left: `${((i + 1) * buletIndex) + 8}px` }}><span className="bulet"></span></div>
+          <div className="middle-stop" style={{ left: `${(((i + 1) * buletIndex) + 8) - 11}px` }}>
             {departureInfo[i].destination.code}
             <div className="tooltip-content">
               <div>Transfer</div>
@@ -76,15 +90,15 @@ class AirTicketsDetailsInfoSection extends Component {
           <div className="flight">
             <div className="item flight-date-times">
               <div className="flight-date-time">
-                <div>{departureInfo[0].origin.date}</div>
-                <div>{departureInfo[0].origin.time} {departureInfo[0].origin.timezone}</div>
+                <span className="date-in-day">{departureDate.departure.day}</span> {departureDate.departure.month}, {departureDate.departure.year}
+                <div className="time">{departureDate.departure.time} {departureDate.departure.timezone}</div>
               </div>
               <div className="arrow-icon-container">
                 <img src="/images/icon-arrow.png" alt="icon-arrow" />
               </div>
               <div className="flight-date-time">
-                <div>{departureInfo[departureInfo.length - 1].destination.date}</div>
-                <div>{departureInfo[departureInfo.length - 1].destination.time} {departureInfo[departureInfo.length - 1].destination.timezone}</div>
+                <span className="date-out-day">{departureDate.arrival.day}</span> {departureDate.arrival.month}, {departureDate.arrival.year}
+                <div className="time">{departureDate.arrival.time} {departureDate.arrival.timezone}</div>
               </div>
             </div>
             <div className="item flight-stops">
@@ -100,7 +114,7 @@ class AirTicketsDetailsInfoSection extends Component {
                 <div className="bulet-container"><span className="bulet"></span></div>
                 <hr className="line" />
                 {departureInfo.length === 1 ? null : middleStopsBulets}
-                <div className="bulet-container"><span className="bulet"></span></div>
+                <div className="bulet-container" style={{ left: '200px' }}><span className="bulet"></span></div>
               </div>
               <div className="stop">
                 {departureInfo[departureInfo.length - 1].destination.code}
@@ -122,13 +136,24 @@ class AirTicketsDetailsInfoSection extends Component {
       return;
     }
 
+    const returnDate = this.extractDatesData(returnInfo);
+
     let middleStopsBulets = [];
+
+    const buletIndex = 200 / returnInfo.length;
+
     for (let i = 0; i < returnInfo.length - 1; i++) {
       middleStopsBulets.push(
         <Fragment key={i}>
-          <div key={i} className="bulet-container"><span className="bulet"></span></div>
-          <hr className="line" />
-          <div className="middle-stop" style={{ left: `${(i * 60) + 40}px` }}>{returnInfo[i].destination.code}</div>
+          <div key={i} className="bulet-container" style={{ left: `${((i + 1) * buletIndex) + 8}px` }}><span className="bulet"></span></div>
+          <div className="middle-stop" style={{ left: `${(((i + 1) * buletIndex) + 8) - 11}px` }}>
+            {returnInfo[i].destination.code}
+            <div className="tooltip-content">
+              <div>Transfer</div>
+              <hr />
+              <div>{returnInfo[i].destination.name} ({returnInfo[i].destination.code})</div>
+            </div>
+          </div>
         </Fragment>
       );
     }
@@ -148,26 +173,40 @@ class AirTicketsDetailsInfoSection extends Component {
           <div className="flight">
             <div className="item flight-date-times">
               <div className="flight-date-time">
-                <div>{returnInfo[0].origin.date}</div>
-                <div>{returnInfo[0].origin.time} {returnInfo[0].origin.timezone}</div>
+                <span className="date-in-day">{returnDate.departure.day}</span> {returnDate.departure.month}, {returnDate.departure.year}
+                <div className="time">{returnDate.departure.time} {returnDate.departure.timezone}</div>
               </div>
               <div className="arrow-icon-container">
                 <img src="/images/icon-arrow.png" alt="icon-arrow" />
               </div>
               <div className="flight-date-time">
-                <div>{returnInfo[returnInfo.length - 1].destination.date}</div>
-                <div>{returnInfo[returnInfo.length - 1].destination.time} {returnInfo[returnInfo.length - 1].destination.timezone}</div>
+                <span className="date-out-day">{returnDate.arrival.day}</span> {returnDate.arrival.month}, {returnDate.arrival.year}
+                <div className="time">{returnDate.arrival.time} {returnDate.arrival.timezone}</div>
               </div>
             </div>
             <div className="item flight-stops">
-              <div className="stop">{returnInfo[0].origin.code}</div>
+              <div className="stop">
+                {returnInfo[0].origin.code}
+                <div className="tooltip-content">
+                  <div>Departure</div>
+                  <hr />
+                  <div>{returnInfo[0].origin.name} ({returnInfo[0].origin.code})</div>
+                </div>
+              </div>
               <div className="stops-container horizontal">
                 <div className="bulet-container"><span className="bulet"></span></div>
                 <hr className="line" />
                 {returnInfo.length === 1 ? null : middleStopsBulets}
-                <div className="bulet-container"><span className="bulet"></span></div>
+                <div className="bulet-container" style={{ left: '200px' }}><span className="bulet"></span></div>
               </div>
-              <div className="stop">{returnInfo[returnInfo.length - 1].destination.code}</div>
+              <div className="stop">
+                {returnInfo[returnInfo.length - 1].destination.code}
+                <div className="tooltip-content">
+                  <div>Arrival</div>
+                  <hr />
+                  <div>{returnInfo[returnInfo.length - 1].destination.name} ({returnInfo[returnInfo.length - 1].destination.code})</div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -188,12 +227,17 @@ class AirTicketsDetailsInfoSection extends Component {
       return <div className="loader"></div>;
     }
 
-    console.log(result);
-
     const resultDepartureInfo = result.segments.filter(s => s.group === '0');
     const resultReturnInfo = result.segments.filter(s => s.group === '1');
 
-    const { rules } = result;
+    const isLowCost = result.propertiesInfo.isLowCost;
+
+    let rules;
+    if (isLowCost) {
+      rules = result.supplierInfo;
+    } else {
+      rules = result.rules;
+    }
     const { fareRulesIndex } = this.state;
 
     const departureInfo = this.getDepartureInfo(resultDepartureInfo);
@@ -245,7 +289,7 @@ class AirTicketsDetailsInfoSection extends Component {
                     );
                   })}
                 </div>
-                {resultReturnInfo > 0 &&
+                {resultReturnInfo.length > 0 &&
                   <div className="return">
                     <h5>Return</h5>
                     {resultReturnInfo.map((segment, index) => {
@@ -280,7 +324,28 @@ class AirTicketsDetailsInfoSection extends Component {
                   </div>}
               </div>
             </div>
-            {rules &&
+            {rules && isLowCost ?
+              <div className="air-tickets-details-content-item">
+                <h2>Supplier Info</h2>
+                <hr />
+                <div className="farerules">
+                  {rules.map((rule, ruleIndex) => {
+                    return (
+                      <Fragment key={ruleIndex}>
+                        <div className="flight-rule-title">
+                          <h5>{rule.name}</h5>
+                        </div>
+                        <div className="flight-rules">
+                          <div className="rule">
+                            <a href={rule.value} target="_blank" rel="noopener noreferrer">{rule.value}</a>
+                          </div>
+                        </div>
+                      </Fragment>
+                    );
+                  })}
+                </div>
+              </div>
+              :
               <div className="air-tickets-details-content-item">
                 <h2>Fare Rules</h2>
                 <hr />

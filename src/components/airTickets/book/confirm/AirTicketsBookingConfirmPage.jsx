@@ -28,10 +28,15 @@ class AirTicketsBookingConfirmPage extends Component {
 
     this.handlePayWithLOC = this.handlePayWithLOC.bind(this);
     this.requestBookingDetails = this.requestBookingDetails.bind(this);
+    this.searchAirTickets = this.searchAirTickets.bind(this);
   }
 
   componentDidMount() {
     this.requestBookingDetails();
+  }
+
+  searchAirTickets(queryString) {
+    this.props.history.push('/tickets/results' + queryString);
   }
 
   requestBookingDetails() {
@@ -39,9 +44,14 @@ class AirTicketsBookingConfirmPage extends Component {
       .then((res) => {
         if (res.ok) {
           res.json().then((data) => {
-            this.setState({
-              bookingDetails: data
-            });
+            if (data.success === false) {
+              this.searchAirTickets(this.props.location.search);
+              NotificationManager.warning(data.message, '', LONG);
+            } else {
+              this.setState({
+                bookingDetails: data
+              });
+            }
           });
         } else {
           console.log(res);
@@ -65,15 +75,15 @@ class AirTicketsBookingConfirmPage extends Component {
       body: JSON.stringify({ flightId: this.props.match.params.id })
     })
       .then((res) => {
-        console.log(res);
         if (res.ok) {
           res.json().then((data) => {
+            console.log(data);
             if (data.success) {
               console.log(data);
               NotificationManager.success(data.documentStatus, '', LONG);
               this.props.history.push('/profile/tickets');
             } else {
-              NotificationManager.warning(data.documentStatus, '', LONG);
+              NotificationManager.warning(data.message, '', LONG);
             }
           });
         } else {

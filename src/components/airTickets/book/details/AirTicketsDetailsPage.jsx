@@ -63,10 +63,24 @@ class AirTicketsDetailsPage extends Component {
       const origin = { id: destinations[0].origin };
       const destination = { id: destinations[0].destination };
       const departureDate = moment(destinations[0].date, 'DD/MM/YYYY');
-      let returnDate = moment(departureDate);
+      let returnDate = moment(departureDate, 'DD/MM/YYYY');
       if (flightRouting === '2') {
-        returnDate = moment(searchParams.returnDate, 'DD/MM/YYYY');
+        returnDate = moment(destinations[1].date, 'DD/MM/YYYY');
+      } else if (flightRouting === '3') {
+        returnDate = moment(destinations[1].date, 'DD/MM/YYYY');
+        destinations.shift();
       }
+      destinations.forEach((destination) => {
+        this.requestAirportInfo(destination.origin)
+          .then((data) => {
+            destination.origin = { code: data.code, name: `${data.cityName}, ${data.cityState ? data.cityState + ', ' : ''}${data.countryName}, ${data.code} airport` };
+          });
+        this.requestAirportInfo(destination.destination)
+          .then((data) => {
+            destination.destination = { code: data.code, name: `${data.cityName}, ${data.cityState ? data.cityState + ', ' : ''}${data.countryName}, ${data.code} airport` };
+          });
+        destination.date = moment(destination.date, 'DD/MM/YYYY');
+      });
       const flightClass = searchParams.flightClass;
       const stops = searchParams.stops;
       const departureTime = searchParams.departureTime ? searchParams.departureTime : '';
@@ -77,7 +91,7 @@ class AirTicketsDetailsPage extends Component {
 
       this.props.dispatch(asyncSetStartDate(departureDate));
       this.props.dispatch(asyncSetEndDate(returnDate));
-      this.props.dispatch(setAirTicketsSearchInfo(flightRouting, flightClass, stops, departureTime, origin, destination, adultsCount, children, flexSearch));
+      this.props.dispatch(setAirTicketsSearchInfo(flightRouting, flightClass, stops, departureTime, origin, destination, adultsCount, children, flexSearch, destinations));
 
       this.populateAirports(origin.id, destination.id);
 

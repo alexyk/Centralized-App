@@ -1,10 +1,12 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
-// import PropTypes from 'prop-types';
-// import Pagination from '../../../common/pagination/Pagination';
+// import { NotificationManager } from 'react-notifications';
+import PropTypes from 'prop-types';
+import Pagination from '../../common/pagination/Pagination';
 import AirTicketsList from './AirTicketsList';
-import * as tickets from './mock.json';
+import { Config } from '../../../config';
+// import { LONG } from '../../../constants/notificationDisplayTimes';
 
 class AirTicketsPage extends React.Component {
   constructor(props) {
@@ -12,17 +14,45 @@ class AirTicketsPage extends React.Component {
 
     this.state = {
       tickets: [],
-      loading: true
+      loading: true,
+      currentPage: 0
     };
 
     this.onPageChange = this.onPageChange.bind(this);
   }
 
   componentDidMount() {
-    this.setState({
-      loading: false,
-      tickets
-    });
+    fetch(`${Config.getValue('apiHost')}flight/dashboard`)
+      .then((res) => {
+        if (res.ok) {
+          res.json().then((data) => {
+            let tickets = [];
+
+            data.reverse().forEach((ticket) => {
+              tickets.push({
+                segments: JSON.parse(ticket.dashboardViews),
+                deadline: ticket.deadline,
+                status: ticket.status
+              });
+            });
+
+            this.setState({
+              tickets,
+              loading: false
+            });
+            // if (data.success === false) {
+            //   this.searchAirTickets(this.props.location.search);
+            //   NotificationManager.warning(data.message, '', LONG);
+            // } else {
+            //   this.setState({
+            //     bookingDetails: data
+            //   });
+            // }
+          });
+        } else {
+          console.log(res);
+        }
+      });
   }
 
   onPageChange() {
@@ -30,7 +60,7 @@ class AirTicketsPage extends React.Component {
   }
 
   render() {
-    const { loading, tickets } = this.state;
+    const { loading, tickets, currentPage } = this.state;
 
     if (loading) {
       return <div className="loader"></div>;
@@ -43,12 +73,12 @@ class AirTicketsPage extends React.Component {
           <AirTicketsList
             tickets={tickets}
           />
-          {/* <Pagination
-              loading={this.state.totalListings === 0}
-              onPageChange={this.onPageChange}
-              currentPage={this.state.currentPage}
-              totalElements={this.state.totalTrips}
-            /> */}
+          <Pagination
+            loading={loading}
+            onPageChange={this.onPageChange}
+            currentPage={currentPage}
+            totalElements={tickets.length}
+          />
         </section>
       </div>
     );
@@ -56,6 +86,9 @@ class AirTicketsPage extends React.Component {
 }
 
 AirTicketsPage.propTypes = {
+  // Router props
+  match: PropTypes.object,
+  location: PropTypes.object
 };
 
 export default withRouter(connect()(AirTicketsPage));

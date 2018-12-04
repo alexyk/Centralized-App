@@ -7,7 +7,7 @@ import DatePicker from 'react-datepicker';
 import PropTypes from 'prop-types';
 import queryString from 'query-string';
 import moment from 'moment';
-import DateInput from './date-input';
+import DateInput from '../../../common/date-input';
 import { Config } from '../../../../../config';
 import { LONG } from '../../../../../constants/notificationDisplayTimes';
 import { setMultiStopsDestinations } from '../../../../../actions/airTicketsSearchInfo';
@@ -50,13 +50,15 @@ class MultiStopsPopup extends PureComponent {
   componentDidMount() {
     const searchParams = queryString.parse(this.props.location.search);
 
-    const destinations = JSON.parse(searchParams.destinations);
-    if (this.state.destinations.length <= destinations.length - 1) {
-      this.destinationsTimeOut = setTimeout(() => {
-        this.setState({
-          destinations: this.props.destinations
-        });
-      }, 100);
+    if (searchParams.destinations) {
+      const destinations = JSON.parse(searchParams.destinations);
+      if (this.state.destinations.length <= destinations.length - 1) {
+        this.destinationsTimeOut = setTimeout(() => {
+          this.setState({
+            destinations: this.props.destinations
+          });
+        }, 100);
+      }
     }
   }
 
