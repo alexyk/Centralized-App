@@ -249,7 +249,7 @@ class AirTicketsSearchResult extends Component {
   }
 
   render() {
-    const { exchangeRatesInfo, paymentInfo, userInfo, result, allElements } = this.props;
+    const { exchangeRatesInfo, paymentInfo, userInfo, result, allElements, flightRouting } = this.props;
 
     const departureInfo = result.segments.filter(s => s.group === '0');
     const returnInfo = result.segments.filter(s => s.group === '1');
@@ -274,8 +274,15 @@ class AirTicketsSearchResult extends Component {
     return (
       <div className="air-tickets-result" >
         <form className="air-tickets-result-content">
-          {this.getDepartureInfo(departureInfo)}
-          {this.getReturnInfo(returnInfo)}
+          {flightRouting !== '3' ?
+            <Fragment>
+              {this.getDepartureInfo(departureInfo)}
+              {this.getReturnInfo(returnInfo)}
+            </Fragment> :
+            <Fragment>
+              {this.getDepartureInfo(departureInfo)}
+              {this.getReturnInfo(returnInfo)}
+            </Fragment>}
           <div className="air-tickets-result-mobile-pricing">
             {!isPriceLoaded
               ? (!allElements ? <div className="price">Loading price...</div> : <div></div>)
@@ -322,16 +329,18 @@ AirTicketsSearchResult.propTypes = {
   // Redux props
   exchangeRatesInfo: PropTypes.object,
   paymentInfo: PropTypes.object,
-  userInfo: PropTypes.object
+  userInfo: PropTypes.object,
+  flightRouting: PropTypes.string
 };
 
 const mapStateToProps = (state) => {
-  const { exchangeRatesInfo, paymentInfo, userInfo } = state;
+  const { exchangeRatesInfo, paymentInfo, userInfo, airTicketsSearchInfo } = state;
 
   return {
     exchangeRatesInfo,
     paymentInfo,
-    userInfo
+    userInfo,
+    flightRouting: airTicketsSearchInfo.flightRouting
   };
 };
 

@@ -1,11 +1,13 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
+import { withRouter } from 'react-router-dom';
 import Select from 'react-select';
 import { NotificationManager } from 'react-notifications';
 import DatePicker from 'react-datepicker';
-import DateInput from './date-input';
 import PropTypes from 'prop-types';
+import queryString from 'query-string';
 import moment from 'moment';
+import DateInput from './date-input';
 import { Config } from '../../../../../config';
 import { LONG } from '../../../../../constants/notificationDisplayTimes';
 import { setMultiStopsDestinations } from '../../../../../actions/airTicketsSearchInfo';
@@ -45,6 +47,19 @@ class MultiStopsPopup extends PureComponent {
     this.applyDestinationsChoose = this.applyDestinationsChoose.bind(this);
   }
 
+  componentDidMount() {
+    const searchParams = queryString.parse(this.props.location.search);
+
+    const destinations = JSON.parse(searchParams.destinations);
+    if (this.state.destinations.length <= destinations.length - 1) {
+      this.destinationsTimeOut = setTimeout(() => {
+        this.setState({
+          destinations: this.props.destinations
+        });
+      }, 100);
+    }
+  }
+
   componentDidUpdate(prevProps) {
     if (prevProps.flightRouting !== this.props.flightRouting && this.props.flightRouting === '3') {
       this.setState({
@@ -54,6 +69,10 @@ class MultiStopsPopup extends PureComponent {
     if ((prevProps.searchDatesInfo.startDate).format() !== (this.props.searchDatesInfo.startDate).format() && this.state.destinations[0].date.isBefore(this.props.searchDatesInfo.startDate)) {
       this.handleDateChange(this.props.searchDatesInfo.startDate, 0);
     }
+  }
+
+  componentWillUnmount() {
+    clearTimeout(this.destinationsTimeOut);
   }
 
   requestAirports(param) {
@@ -131,7 +150,7 @@ class MultiStopsPopup extends PureComponent {
   handleDateChange(value, index) {
     let destinations = [...this.state.destinations];
     destinations[index].date = value;
-    
+
     destinations = this.validateMultiStopsDates(index, destinations);
 
     this.setState({
@@ -225,6 +244,9 @@ class MultiStopsPopup extends PureComponent {
 MultiStopsPopup.propTypes = {
   showMultiStopsPopup: PropTypes.bool,
 
+  // Router props
+  location: PropTypes.object,
+
   // Redux props
   dispatch: PropTypes.func,
   flightRouting: PropTypes.string,
@@ -241,4 +263,4 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps)(MultiStopsPopup);
+export default withRouter(connect(mapStateToProps)(MultiStopsPopup));

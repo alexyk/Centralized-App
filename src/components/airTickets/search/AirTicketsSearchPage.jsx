@@ -255,11 +255,11 @@ class AirTicketsSearchPage extends Component {
       destinations.forEach((destination) => {
         this.requestAirportInfo(destination.origin)
           .then((data) => {
-            destination.origin = { code: destination.origin, name: `${data.cityName}, ${data.cityState ? data.cityState + ', ' : ''}${data.countryName}, ${destination.origin} airport` };
+            destination.origin = { code: data.code, name: `${data.cityName}, ${data.cityState ? data.cityState + ', ' : ''}${data.countryName}, ${data.code} airport` };
           });
         this.requestAirportInfo(destination.destination)
           .then((data) => {
-            destination.destination = { code: destination.destination, name: `${data.cityName}, ${data.cityState ? data.cityState + ', ' : ''}${data.countryName}, ${destination.origin} airport` };
+            destination.destination = { code: data.code, name: `${data.cityName}, ${data.cityState ? data.cityState + ', ' : ''}${data.countryName}, ${data.code} airport` };
           });
         destination.date = moment(destination.date, 'DD/MM/YYYY');
       });
