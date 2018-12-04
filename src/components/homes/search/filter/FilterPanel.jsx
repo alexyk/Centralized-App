@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import ReactBootstrapSlider from 'react-bootstrap-slider';
+import NumberRangeSlider from '../../../common/numberRangeSlider';
 
 import '../../../../styles/css/components/hotels_search/filter/filter.css';
 
@@ -27,14 +28,19 @@ function FilterPanel(props) {
 
       <div className="range-filters">
         <h5>Pricing</h5>
-        <ReactBootstrapSlider
+
+        <NumberRangeSlider
+          value={props.priceValue}
+          onChange={value => { props.setPriceValue(value); props.handleSearch(); }}
+        />
+        {/* <ReactBootstrapSlider
           value={props.priceValue}
           slideStop={(e) => { props.setPriceValue(e); props.handleSearch(e); }}
           step={5}
           max={5000}
           min={1}
           orientation="horizontal"
-          range={true} />
+          range={true} /> */}
       </div>
       <div className="clearfix" />
 

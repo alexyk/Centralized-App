@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import ReactBootstrapSlider from 'react-bootstrap-slider';
 import FilterStarCheckbox from './FilterStarCheckbox';
+import NumberRangeSlider from '../../../common/numberRangeSlider';
 
 import '../../../../styles/css/components/hotels_search/filter/filter.css';
 
@@ -96,18 +96,10 @@ function FilterPanel(props) {
 
           <div className="range-filters">
             <h5>Pricing</h5>
-            <ReactBootstrapSlider
-              value={props.priceRange}
-              slideStop={(e) => { props.handlePriceRangeSelect(e); }}
-              step={5}
-              max={5000}
-              min={1}
-              orientation="horizontal"
-              range={true} />
-            <div className="labels">
-              <label>$0.000</label>
-              <label>$5.000</label>
-            </div>
+            <NumberRangeSlider
+              value={props.priceRange} 
+              onChange={props.handlePriceRangeSelect}
+            />
           </div>
         </div>
 
@@ -118,7 +110,7 @@ function FilterPanel(props) {
 }
 
 FilterPanel.propTypes = {
-  priceRange: PropTypes.array,
+  priceRange: PropTypes.object,
   isSearchReady: PropTypes.bool,
   orderBy: PropTypes.string,
   stars: PropTypes.array,
