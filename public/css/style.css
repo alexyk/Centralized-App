@@ -2378,82 +2378,6 @@ select {
     line-height: 60px;
 }
 
-/* Hotel Info Section */
-
-#room-book .title-select {
-    font-size: 16px;
-    padding: 15px 39px 15px 15px;
-    width: 15%;
-    outline: none;
-    border-radius: 3px;
-    margin-right: 10px;
-}
-
-#room-book .guest-name {
-    font-size: 16px;
-    padding: 15px 39px 15px 15px;
-    width: 30%;
-    outline: none;
-    border-radius: 3px;
-    margin-right: 10px;
-    border: 1px solid rgb(169, 169, 169);
-}
-
-#room-book .child-age {
-    font-size: 16px;
-    padding: 15px 39px 15px 15px;
-    width: 15%;
-    outline: none;
-    border-radius: 3px;
-    margin-right: 10px;
-    border: 1px solid rgb(169, 169, 169);
-}
-
-#room-book .form-row {
-    margin-bottom: 10px;
-}
-
-#room-book label {
-    width: 15%;
-    font-size: 16px;
-    margin-right: 10px;
-}
-
-#room-book .btn-book {
-    width: 20%;
-    margin: 10px 30px;
-    float: right;
-}
-
-#room-book .hotel-info {
-    background-color: #fff;
-    margin: 0 30px 30px 30px;
-    padding: 10px;
-    border-radius: 3px;
-}
-
-#room-book .hotel-info h1,
-h2,
-h3 {
-    font-family: inherit;
-}
-
-#room-book .hotel-info .hotel-picture {
-    width: 100%;
-    max-height: 200px;
-    border-radius: 3px;
-    margin: 0 auto 20px auto;
-    overflow: hidden;
-}
-
-#room-book .hotel-info .hotel-picture img {
-    width: 100%;
-}
-
-#room-book .hotel-info .total-price {
-    float: right
-}
-
 /* Hotel Details Rooms */
 
 .hotel-content .room-group {
@@ -2512,12 +2436,6 @@ h3 {
 
 .room-dates i {
     margin: 0 3%;
-}
-
-.btn-book {
-    float: right;
-    margin-bottom: 25px;
-    font-weight: 400;
 }
 
 .hotels-input-daterange {
