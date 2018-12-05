@@ -28,19 +28,19 @@
 }
 
 @font-face {
-  font-family: '#{$icomoon-font-family}';
-  src:  url('#{$icomoon-font-path}/#{$icomoon-font-family}.eot?jfp0vn');
-  src:  url('#{$icomoon-font-path}/#{$icomoon-font-family}.eot?jfp0vn#iefix') format('embedded-opentype'),
-    url('#{$icomoon-font-path}/#{$icomoon-font-family}.ttf?jfp0vn') format('truetype'),
-    url('#{$icomoon-font-path}/#{$icomoon-font-family}.woff?jfp0vn') format('woff'),
-    url('#{$icomoon-font-path}/#{$icomoon-font-family}.svg?jfp0vn##{$icomoon-font-family}') format('svg');
+  font-family: 'icomoon';
+  src:  url('../fonts/icomoon.eot?p7c2f7');
+  src:  url('../fonts/icomoon.eot?p7c2f7#iefix') format('embedded-opentype'),
+    url('../fonts/icomoon.ttf?p7c2f7') format('truetype'),
+    url('../fonts/icomoon.woff?p7c2f7') format('woff'),
+    url('../fonts/icomoon.svg?p7c2f7#icomoon') format('svg');
   font-weight: normal;
   font-style: normal;
 }
 
 [class^="icon-"], [class*=" icon-"] {
   /* use !important to prevent issues with browser extensions that change fonts */
-  font-family: '#{$icomoon-font-family}' !important;
+  font-family: 'icomoon' !important;
   speak: none;
   font-style: normal;
   font-weight: normal;
@@ -53,284 +53,182 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-.icon-plane-arrive {
-  &:before {
-    content: $icon-plane-arrive;     
-    color: #54575a;
-  }
+.icon-plane-arrive:before {
+  content: "\e930";
+  color: #54575a;
 }
-.icon-plane-depart {
-  &:before {
-    content: $icon-plane-depart;     
-    color: #54575a;
-  }
+.icon-plane-depart:before {
+  content: "\e931";
+  color: #54575a;
 }
-.icon-suitcase .path1 {
-  &:before {
-    content: $icon-suitcase-path1;  
-    color: rgb(84, 87, 90);
-  }
+.icon-suitcase .path1:before {
+  content: "\e924";
+  color: rgb(84, 87, 90);
 }
-.icon-suitcase .path2 {
-  &:before {
-    content: $icon-suitcase-path2;  
-    margin-left: -1.205078125em;  
-    color: rgb(84, 87, 90);
-  }
+.icon-suitcase .path2:before {
+  content: "\e925";
+  margin-left: -1.205078125em;
+  color: rgb(84, 87, 90);
 }
-.icon-suitcase .path3 {
-  &:before {
-    content: $icon-suitcase-path3;  
-    margin-left: -1.205078125em;  
-    color: rgb(84, 87, 90);
-  }
+.icon-suitcase .path3:before {
+  content: "\e926";
+  margin-left: -1.205078125em;
+  color: rgb(84, 87, 90);
 }
-.icon-suitcase .path4 {
-  &:before {
-    content: $icon-suitcase-path4;  
-    margin-left: -1.205078125em;  
-    color: rgb(84, 87, 90);
-  }
+.icon-suitcase .path4:before {
+  content: "\e927";
+  margin-left: -1.205078125em;
+  color: rgb(84, 87, 90);
 }
-.icon-suitcase .path5 {
-  &:before {
-    content: $icon-suitcase-path5;  
-    margin-left: -1.205078125em;  
-    color: rgb(95, 96, 96);
-  }
+.icon-suitcase .path5:before {
+  content: "\e928";
+  margin-left: -1.205078125em;
+  color: rgb(95, 96, 96);
 }
-.icon-suitcase .path6 {
-  &:before {
-    content: $icon-suitcase-path6;  
-    margin-left: -1.205078125em;  
-    color: rgb(84, 87, 90);
-  }
+.icon-suitcase .path6:before {
+  content: "\e929";
+  margin-left: -1.205078125em;
+  color: rgb(84, 87, 90);
 }
-.icon-suitcase .path7 {
-  &:before {
-    content: $icon-suitcase-path7;  
-    margin-left: -1.205078125em;  
-    color: rgb(84, 87, 90);
-  }
+.icon-suitcase .path7:before {
+  content: "\e92a";
+  margin-left: -1.205078125em;
+  color: rgb(84, 87, 90);
 }
-.icon-suitcase .path8 {
-  &:before {
-    content: $icon-suitcase-path8;  
-    margin-left: -1.205078125em;  
-    color: rgb(84, 87, 90);
-  }
+.icon-suitcase .path8:before {
+  content: "\e92b";
+  margin-left: -1.205078125em;
+  color: rgb(84, 87, 90);
 }
-.icon-suitcase .path9 {
-  &:before {
-    content: $icon-suitcase-path9;  
-    margin-left: -1.205078125em;  
-    color: rgb(84, 87, 90);
-  }
+.icon-suitcase .path9:before {
+  content: "\e92c";
+  margin-left: -1.205078125em;
+  color: rgb(84, 87, 90);
 }
-.icon-suitcase .path10 {
-  &:before {
-    content: $icon-suitcase-path10;  
-    margin-left: -1.205078125em;  
-    color: rgb(84, 87, 90);
-  }
+.icon-suitcase .path10:before {
+  content: "\e92d";
+  margin-left: -1.205078125em;
+  color: rgb(84, 87, 90);
 }
-.icon-suitcase .path11 {
-  &:before {
-    content: $icon-suitcase-path11;  
-    margin-left: -1.205078125em;  
-    color: rgb(84, 87, 90);
-  }
+.icon-suitcase .path11:before {
+  content: "\e92e";
+  margin-left: -1.205078125em;
+  color: rgb(84, 87, 90);
 }
-.icon-suitcase .path12 {
-  &:before {
-    content: $icon-suitcase-path12;  
-    margin-left: -1.205078125em;  
-    color: rgb(84, 87, 90);
-  }
+.icon-suitcase .path12:before {
+  content: "\e92f";
+  margin-left: -1.205078125em;
+  color: rgb(84, 87, 90);
 }
-.icon-close {
-  &:before {
-    content: $icon-close;     
-    color: #54575a;
-  }
+.icon-close:before {
+  content: "\e932";
+  color: #54575a;
 }
-.icon-arrow {
-  &:before {
-    content: $icon-arrow; 
-  }
+.icon-arrow:before {
+  content: "\e900";
 }
-.icon-arrow-left {
-  &:before {
-    content: $icon-arrow-left; 
-  }
+.icon-arrow-left:before {
+  content: "\e901";
 }
-.icon-arrow-right {
-  &:before {
-    content: $icon-arrow-right; 
-  }
+.icon-arrow-right:before {
+  content: "\e902";
 }
-.icon-bath {
-  &:before {
-    content: $icon-bath; 
-  }
+.icon-bath:before {
+  content: "\e903";
 }
-.icon-beach {
-  &:before {
-    content: $icon-beach; 
-  }
+.icon-beach:before {
+  content: "\e904";
 }
-.icon-boat {
-  &:before {
-    content: $icon-boat; 
-  }
+.icon-boat:before {
+  content: "\e905";
 }
-.icon-calendar {
-  &:before {
-    content: $icon-calendar; 
-  }
+.icon-calendar:before {
+  content: "\e906";
 }
-.icon-heart {
-  &:before {
-    content: $icon-heart; 
-  }
+.icon-heart:before {
+  content: "\e907";
 }
-.icon-heating {
-  &:before {
-    content: $icon-heating; 
-  }
+.icon-heating:before {
+  content: "\e908";
 }
-.icon-home {
-  &:before {
-    content: $icon-home; 
-  }
+.icon-home:before {
+  content: "\e909";
 }
-.icon-kitchen {
-  &:before {
-    content: $icon-kitchen; 
-  }
+.icon-kitchen:before {
+  content: "\e90a";
 }
-.icon-like {
-  &:before {
-    content: $icon-like; 
-  }
+.icon-like:before {
+  content: "\e90b";
 }
-.icon-mail {
-  &:before {
-    content: $icon-mail; 
-  }
+.icon-mail:before {
+  content: "\e90c";
 }
-.icon-media {
-  &:before {
-    content: $icon-media; 
-  }
+.icon-media:before {
+  content: "\e90d";
 }
-.icon-moon {
-  &:before {
-    content: $icon-moon; 
-  }
+.icon-moon:before {
+  content: "\e90e";
 }
-.icon-parking {
-  &:before {
-    content: $icon-parking; 
-  }
+.icon-parking:before {
+  content: "\e90f";
 }
-.icon-pets {
-  &:before {
-    content: $icon-pets; 
-  }
+.icon-pets:before {
+  content: "\e910";
 }
-.icon-plus-bold {
-  &:before {
-    content: $icon-plus-bold; 
-  }
+.icon-plus-bold:before {
+  content: "\e911";
 }
-.icon-pool {
-  &:before {
-    content: $icon-pool; 
-  }
+.icon-pool:before {
+  content: "\e912";
 }
-.icon-pool-01 {
-  &:before {
-    content: $icon-pool-01; 
-  }
+.icon-pool-01:before {
+  content: "\e913";
 }
-.icon-question {
-  &:before {
-    content: $icon-question; 
-  }
+.icon-question:before {
+  content: "\e914";
 }
-.icon-reply {
-  &:before {
-    content: $icon-reply; 
-  }
+.icon-reply:before {
+  content: "\e915";
 }
-.icon-share {
-  &:before {
-    content: $icon-share; 
-  }
+.icon-share:before {
+  content: "\e916";
 }
-.icon-spa {
-  &:before {
-    content: $icon-spa; 
-  }
+.icon-spa:before {
+  content: "\e917";
 }
-.icon-star {
-  &:before {
-    content: $icon-star; 
-  }
+.icon-star:before {
+  content: "\e918";
 }
-.icon-star-filled {
-  &:before {
-    content: $icon-star-filled; 
-  }
+.icon-star-filled:before {
+  content: "\e919";
 }
-.icon-swing {
-  &:before {
-    content: $icon-swing; 
-  }
+.icon-swing:before {
+  content: "\e91a";
 }
-.icon-wifi {
-  &:before {
-    content: $icon-wifi; 
-  }
+.icon-wifi:before {
+  content: "\e91b";
 }
-.icon-bathroom {
-  &:before {
-    content: $icon-bathroom; 
-  }
+.icon-bathroom:before {
+  content: "\e91c";
 }
-.icon-bedroom {
-  &:before {
-    content: $icon-bedroom; 
-  }
+.icon-bedroom:before {
+  content: "\e91d";
 }
-.icon-double-bed {
-  &:before {
-    content: $icon-double-bed; 
-  }
+.icon-double-bed:before {
+  content: "\e91e";
 }
-.icon-guests {
-  &:before {
-    content: $icon-guests; 
-  }
+.icon-guests:before {
+  content: "\e91f";
 }
-.icon-size {
-  &:before {
-    content: $icon-size; 
-  }
+.icon-size:before {
+  content: "\e920";
 }
-.icon-sofa {
-  &:before {
-    content: $icon-sofa; 
-  }
+.icon-sofa:before {
+  content: "\e921";
 }
-.icon-two-single-beds {
-  &:before {
-    content: $icon-two-single-beds; 
-  }
+.icon-two-single-beds:before {
+  content: "\e922";
 }
-.icon-plus {
-  &:before {
-    content: $icon-plus; 
-  }
+.icon-plus:before {
+  content: "\e923";
 }
