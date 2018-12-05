@@ -130,6 +130,7 @@ class HotelBookingConfirmPage extends React.Component {
   }
 
   handlePayWithCard(fiatAmount) {
+    this.stopQuotePP();
     requester.getUserHasPendingBooking()
       .then(res => res.body).then(data => {
         if (data.userHasPendingBooking) {
@@ -138,6 +139,7 @@ class HotelBookingConfirmPage extends React.Component {
           this.payWithCard(fiatAmount);
         }
       }).catch(() => {
+        this.restartQuote();
         NotificationManager.error(SERVICE_UNAVAILABLE);
       });
   }
@@ -159,7 +161,6 @@ class HotelBookingConfirmPage extends React.Component {
 
     console.log(paymentInfo);
 
-    this.stopQuotePP();
     this.approveQuote();
 
     const id = this.props.match.params.id;
@@ -268,16 +269,17 @@ class HotelBookingConfirmPage extends React.Component {
   }
 
   handlePayWithLOC() {
+    this.stopQuote();
     requester.getUserHasPendingBooking()
       .then(res => res.body).then(data => {
         if (data.userHasPendingBooking) {
           this.openModal(PENDING_BOOKING_LOC);
         } else {
-          this.stopQuote();
           this.openModal(PASSWORD_PROMPT);
         }
       }).catch((e) => {
         console.log(e);
+        this.restartQuote();
         NotificationManager.error(SERVICE_UNAVAILABLE);
       });
   }
@@ -285,6 +287,7 @@ class HotelBookingConfirmPage extends React.Component {
   payWithLocSingleWithdrawer() {
     window.addEventListener('beforeunload', this.showLeavePagePromt);
 
+    this.approveQuote();
     this.props.requestLockOnQuoteId('privateWallet').then(() => {
       const { password } = this.state;
       const { reservation } = this.props;
@@ -294,7 +297,6 @@ class HotelBookingConfirmPage extends React.Component {
       const locAmount = (locAmounts[DEFAULT_QUOTE_LOC_ID] && locAmounts[DEFAULT_QUOTE_LOC_ID].locAmount) ||
         TEST_FIAT_AMOUNT_IN_EUR / this.props.exchangeRatesInfo.locEurRate;
 
-      this.approveQuote();
       // console.log('LOC',locAmounts[DEFAULT_QUOTE_LOC_ID]);
       // console.log('LOC',locAmounts[DEFAULT_QUOTE_LOC_ID].locAmount);
 
@@ -362,7 +364,11 @@ class HotelBookingConfirmPage extends React.Component {
             });
           }, 1000);
         });
+      }).catch(e => {
+        this.restartQuote();
       });
+    }).catch(e => {
+      this.restartQuote();
     });
   }
 
