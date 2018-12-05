@@ -234,6 +234,10 @@ $media-expressions: (
     @include media("<desktop") {
       height: 50px;
     }
+    .guest-count {
+      font-size: 1.2em;
+      padding-left: 25px;
+    }
   }
   .select-wrap {
     margin-bottom: 10px;
@@ -296,7 +300,6 @@ $media-expressions: (
     }
     @include media("<=phone") {
       width: 85%;
-      padding: 0 0 0 10px;
     }
   }
   .checkin {

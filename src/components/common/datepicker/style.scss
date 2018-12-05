@@ -11,6 +11,11 @@ $breakpoints: (
   display: flex;
   justify-content: center;
   width: 100%;
+
+  @include media("<tablet") {
+    justify-content: space-between;
+  }
+
   .check-in,
   .check-out {
     padding: 5px;
@@ -188,7 +193,7 @@ $breakpoints: (
     }
   }
   .react-datepicker-popper-custom {
-    left: 76px!important;
+    // left: 76px!important;
   }
 }
 

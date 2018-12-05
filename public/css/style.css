@@ -55,15 +55,6 @@ header form button {
     padding: 10px 0;
 }
 
-#location-select {
-  font-size: 16px;
-  text-align-last: center;
-}
-
-#location-select option {
-    padding-left: 5px;
-}
-
 #search-bar form {
     display: flex;
     flex-wrap: wrap;
