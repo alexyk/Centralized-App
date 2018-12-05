@@ -14,9 +14,10 @@ class Footer extends React.Component {
     else localStorage['currency'] = currency;
   }
 
-  componentWillReceiveProps(nextProps) {
-    const { currency } = nextProps.paymentInfo;
-    if (currency !== this.props.paymentInfo.currency) {
+  componentDidUpdate(prevProps) {
+    const prevCurrency = prevProps.paymentInfo.currency;
+    const { currency } = this.props.paymentInfo;
+    if (prevCurrency !== currency) {
       localStorage['currency'] = currency;
     }
   }
