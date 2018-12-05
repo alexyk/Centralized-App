@@ -221,6 +221,7 @@ class MultiStopsPopup extends PureComponent {
                   withPortal={isMobile}
                   monthsShown={monthsToShow}
                   fixedHeight
+                  minDate={moment()}
                   {...this.props}
                 />
               </div>

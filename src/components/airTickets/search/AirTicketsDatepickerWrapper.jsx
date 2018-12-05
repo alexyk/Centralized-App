@@ -63,7 +63,7 @@ class AirTicketsDatepickerWrapper extends Component {
           </SelectFlex>
         </div>
         <div className="close-roundtrip-holder">
-          <span className={`icon-close-icon${flightRouting === '1' ? ' hide-close-roundtrip' : ''}`} onClick={() => this.changeFlightRouting('1')} />
+          <span className={`icon-close${flightRouting === '1' ? ' hide-close-roundtrip' : ''}`} onClick={() => this.changeFlightRouting('1')} />
         </div>
         {flightRouting === '3' &&
           <div className="open-multi-city-popup-holder">

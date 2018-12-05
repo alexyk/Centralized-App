@@ -140,7 +140,8 @@ class AirTicketsBookingRouterPage extends Component {
       fetch(`${Config.getValue('apiHost')}flight/flightBooking`, {
         method: 'POST',
         headers: {
-          'Content-type': 'application/json'
+          'Content-type': 'application/json',
+          'Authorization': localStorage[Config.getValue('domainPrefix') + '.auth.locktrip']
         },
         body: JSON.stringify({ flightId: this.props.match.params.id })
       })
@@ -329,7 +330,7 @@ class AirTicketsBookingRouterPage extends Component {
                 this.searchAirTickets(this.props.location.search);
                 NotificationManager.warning(data.bookingStatus, '', LONG);
               } else {
-                this.props.history.push(`/tickets/results/book/${this.props.match.params.id}${this.props.location.search}`);
+                this.props.history.push(`/tickets/results/book/${this.props.match.params.id}`);
                 NotificationManager.success(data.bookingStatus, '', LONG);
               }
             });

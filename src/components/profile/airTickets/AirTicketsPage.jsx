@@ -22,7 +22,11 @@ class AirTicketsPage extends React.Component {
   }
 
   componentDidMount() {
-    fetch(`${Config.getValue('apiHost')}flight/dashboard`)
+    fetch(`${Config.getValue('apiHost')}flight/dashboard`, {
+      headers: {
+        'Authorization': localStorage[Config.getValue('domainPrefix') + '.auth.locktrip']
+      }
+    })
       .then((res) => {
         if (res.ok) {
           res.json().then((data) => {
@@ -32,7 +36,9 @@ class AirTicketsPage extends React.Component {
               tickets.push({
                 segments: JSON.parse(ticket.dashboardViews),
                 deadline: ticket.deadline,
-                status: ticket.status
+                status: ticket.status,
+                flightId: ticket.flightId,
+                reservationId: ticket.reservationId
               });
             });
 

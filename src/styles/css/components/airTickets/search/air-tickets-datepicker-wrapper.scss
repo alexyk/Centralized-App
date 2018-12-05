@@ -65,12 +65,14 @@ $media-expressions: (
   }
   .close-roundtrip-holder {
     position: relative;
-    .icon-close-icon {
+    .icon-close {
       position: absolute;
-      top: -30px;
+      top: -25px;
       right: 0px;
-      color: $moderate-red;
       font-size: 1em;
+      &::before {
+        color: $moderate-red;
+      }
       &.hide-close-roundtrip {
         display: none;
       }
@@ -85,6 +87,9 @@ $media-expressions: (
       top: 0;
       right: 0;
       cursor: pointer;
+      &::before {
+        color: $moderate-red;
+      }
     }
   }
   .icon-arrow-right {

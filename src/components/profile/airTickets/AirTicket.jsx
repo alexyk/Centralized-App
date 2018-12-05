@@ -188,23 +188,21 @@ class AirTicket extends Component {
           </div>
           <div className="flex-row-child tickets-actions">
             <div className="content-row">
-              <Link to=" #">Pay</Link>
+              <div>
+                <Link to={`/tickets/results/book/${ticket.flightId}`}>Pay</Link>
+              </div>
               {/* {isCompleted &&
                 <button type="submit" onClick={e => { e.preventDefault(); this.props.onTripSelect(this.props.trip.id); this.props.handleCancelReservation(); }}>Cancel Trip</button>
               } */}
-              {/* {this.props.trip.has_details === 1 && <Link to={`/profile/trips/hotels/${this.props.trip.id}`}>Details</Link>} */}
+              <div>
+                {ticket.status === 'FLIGHT_RESERVATION' && <Link to={`/profile/tickets/${ticket.reservationId}`}>Details</Link>}
+              </div>
             </div>
           </div>
           <div className="flex-row-child tickets-status">
             {ticket.status &&
               <span className="status">{this.getStatus(ticket.status)}</span>
             }
-            {/* {this.props.trip.status &&
-              <span className="icon-question" tooltip={this.props.trip.error ? this.props.trip.error : statusMessage}></span>
-            } */}
-            {/* {this.props.trip.status && this.props.trip.status.toUpperCase() === 'DONE' &&
-              <div>Reference No.: {this.props.trip.booking_id}</div>
-            } */}
           </div>
         </ProfileFlexContainer>
       </Fragment>

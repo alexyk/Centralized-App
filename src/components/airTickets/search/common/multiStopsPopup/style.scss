@@ -173,6 +173,9 @@ $media-expressions: (
       .react-datepicker__triangle {
         display: none;
       }
+      .check-in-popper {
+        left: -130px !important;
+      }
       .check-out-popper {
         left: -152px !important;
       }

@@ -14,8 +14,8 @@ function ProfileNav(props) {
           <li><NavLink exact activeClassName="active" to="/profile/dashboard">Dashboard</NavLink></li>
           <li><NavLink exact activeClassName="active" to="/profile/listings">My Listings</NavLink></li>
           <li><NavLink activeClassName="active" to="/profile/trips">My Trips</NavLink></li>
+          <li><NavLink activeClassName="active" to="/profile/reservations">My Guests</NavLink></li>
           <li><NavLink activeClassName="active" to="/profile/tickets">My Air Tickets</NavLink></li>
-          <li><NavLink activeClassName="active" to="/buyloc">Buy LOC</NavLink></li>
           <li><NavLink activeClassName="active" to="/profile/messages">Messages</NavLink></li>
           <li><NavLink activeClassName="active" to="/profile/me/edit">Profile</NavLink></li>
           <li><NavLink activeClassName="active" to="/profile/wallet">Wallet</NavLink></li>

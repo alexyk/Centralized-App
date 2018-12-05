@@ -122,14 +122,19 @@ $breakpoints: (
       width: 15%;
       display: flex;
       align-items: center;
-      button,
-      a {
-        padding-bottom: 10px;
-        padding-left: 0;
-        color: #e98b73;
-        background: none;
-        border: none;
-        outline: none;
+      .content-row {
+        margin-bottom: 0;
+        div {
+          margin-top: 10px;
+          margin-bottom: 10px;
+          a {
+            padding-left: 0;
+            color: #e98b73;
+            background: none;
+            border: none;
+            outline: none;
+          }
+        }
       }
     }
     .tickets-status {
