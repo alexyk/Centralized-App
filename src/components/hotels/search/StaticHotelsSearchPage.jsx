@@ -178,7 +178,7 @@ class StaticHotelsSearchPage extends React.Component {
     if (messageBody.allElements) {
       this.setState({ allElements: true });
       this.unsubscribe();
-      this.applyFilters(() => {
+      this.applyFilters(false, () => {
         NotificationManager.info(FILTERED_UNAVAILABLE_HOTELS, '', LONG);
       });
     } else {
@@ -312,15 +312,14 @@ class StaticHotelsSearchPage extends React.Component {
     this.setState({ loading: true, });
     const orderBy = event.target.value;
     this.setState({ orderBy, showMap: false, page: 0 }, () => {
-      this.applyFilters();
+      this.applyFilters(true);
     });
   }
 
   handlePriceRangeSelect(value) {
-    this.setState({ loading: true, });
     const priceRange = value;
     this.setState({ priceRange, showMap: false, page: 0 }, () => {
-      this.applyFilters();
+      this.applyFilters(true);
     });
   }
 
@@ -328,7 +327,7 @@ class StaticHotelsSearchPage extends React.Component {
     // this.setState({ loading: true, });
     const hotelName = event.target.value;
     this.setState({ hotelName, showMap: false, page: 0 }, () => {
-      this.applyFilters();
+      this.applyFilters(true);
     });
   }
 
@@ -337,15 +336,14 @@ class StaticHotelsSearchPage extends React.Component {
     const stars = this.state.stars;
     stars[star] = !stars[star];
     this.setState({ stars, showMap: false, page: 0 }, () => {
-      this.applyFilters();
+      this.applyFilters(true);
     });
   }
 
   handleShowUnavailable() {
-    // this.setState({ loading: true, });
     const showUnavailable = !this.state.showUnavailable;
     this.setState({ showUnavailable, showMap: false, page: 0 }, () => {
-      this.applyFilters();
+      this.applyFilters(true);
     });
   }
 
@@ -400,7 +398,10 @@ class StaticHotelsSearchPage extends React.Component {
     });
   }
 
-  applyFilters(onSuccess) {
+  applyFilters(setLoading, onSuccess) {
+    if (setLoading) {
+      this.setState({ loading: true, });
+    }
     const baseUrl = this.props.location.pathname.indexOf('/mobile') !== -1 ? '/mobile/hotels/listings' : '/hotels/listings';
     const search = this.getSearchString();
     const filters = this.getFilterString();
@@ -417,9 +418,8 @@ class StaticHotelsSearchPage extends React.Component {
           });
         });
       } else {
-        // console.log('Search expired');
+        this.setState({ loading: false, });
       }
-
     });
   }
 
@@ -460,7 +460,7 @@ class StaticHotelsSearchPage extends React.Component {
       showMap: false,
       loading: true
     }, () => {
-      this.applyFilters();
+      this.applyFilters(true);
     });
   }
 
@@ -558,7 +558,7 @@ class StaticHotelsSearchPage extends React.Component {
     window.scrollTo(0, 0);
 
     if (this.isSearchReady()) {
-      this.applyFilters();
+      this.applyFilters(true);
     } else {
       requester.getStaticHotels(region, page - 1).then(res => {
         res.body.then(data => {
