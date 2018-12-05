@@ -48,7 +48,7 @@ class StaticHotelsSearchPage extends React.Component {
       showUnavailable: false,
       orderBy: 'rank,desc',
       stars: [false, false, false, false, false],
-      priceRange: [0, 5000],
+      priceRange: { min: 0, max: 5000},
       city: '',
       hotels: [],
       mapInfo: [],
@@ -316,9 +316,9 @@ class StaticHotelsSearchPage extends React.Component {
     });
   }
 
-  handlePriceRangeSelect(event) {
+  handlePriceRangeSelect(value) {
     this.setState({ loading: true, });
-    const priceRange = event.target.value;
+    const priceRange = value;
     this.setState({ priceRange, showMap: false, page: 0 }, () => {
       this.applyFilters();
     });
@@ -393,7 +393,7 @@ class StaticHotelsSearchPage extends React.Component {
     this.setState({
       hotelName: filters.name,
       showUnavailable: filters.showUnavailable,
-      priceRange: [filters.minPrice, filters.maxPrice],
+      priceRange: { min: filters.minPrice, max: filters.maxPrice},
       stars: stars,
       orderBy: params.sort,
       page: params.page ? Number(params.page) : 0
@@ -437,8 +437,8 @@ class StaticHotelsSearchPage extends React.Component {
     const filtersObj = {
       showUnavailable: this.state.showUnavailable,
       name: this.state.hotelName,
-      minPrice: this.state.priceRange[0],
-      maxPrice: this.state.priceRange[1],
+      minPrice: this.state.priceRange.min,
+      maxPrice: this.state.priceRange.max,
       stars: this.mapStars(this.state.stars)
     };
 
@@ -456,7 +456,7 @@ class StaticHotelsSearchPage extends React.Component {
       showUnavailable: false,
       orderBy: 'rank,desc',
       stars: [false, false, false, false, false],
-      priceRange: [0, 5000],
+      priceRange: { min: 0, max: 5000},
       showMap: false,
       loading: true
     }, () => {

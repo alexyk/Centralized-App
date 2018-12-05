@@ -149,20 +149,21 @@ function HomesSearchBar(props) {
 
       <div className="source-panel-select source-panel-item">
         <select onChange={e => props.dispatch(setGuests(e.target.value))}
+          className="guest-count"
           value={guests}
           id="location-select"
           name="guests"
           required="required">
-          <option value={1}>Guests: 1</option>
-          <option value={2}>Guests: 2</option>
-          <option value={3}>Guests: 3</option>
-          <option value={4}>Guests: 4</option>
-          <option value={5}>Guests: 5</option>
-          <option value={6}>Guests: 6</option>
-          <option value={7}>Guests: 7</option>
-          <option value={8}>Guests: 8</option>
-          <option value={9}>Guests: 9</option>
-          <option value={10}>Guests: 10</option>
+          <option value={1}>1 Guest</option>
+          <option value={2}>2 Guests</option>
+          <option value={3}>3 Guests</option>
+          <option value={4}>4 Guests</option>
+          <option value={5}>5 Guests</option>
+          <option value={6}>6 Guests</option>
+          <option value={7}>7 Guests</option>
+          <option value={8}>8 Guests</option>
+          <option value={9}>9 Guests</option>
+          <option value={10}>10 Guests</option>
         </select>
       </div>
       <button type="submit" className="button">Search</button>
