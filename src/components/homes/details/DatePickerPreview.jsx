@@ -32,7 +32,7 @@ function DatePickerPreview(props) {
             <div className="row-container">
               <p>Check-in</p>
               <div className="date-mon-day">
-                <p><span>{props.startDate.format("DD")} </span>{props.startDate.format("MMM, ddd").toUpperCase()}</p>
+                <p><span>{props.startDate.format("DD")} </span>{props.startDate.format("MMM, ddd")}</p>
               </div>
             </div>
           </div>
@@ -70,7 +70,7 @@ function DatePickerPreview(props) {
             <div className="row-container">
               <p>Check-out</p>
               <p className="date-mon-day">
-                <p><span className="date-color">{props.endDate.format("DD")} </span>{props.endDate.format("MMM, ddd").toUpperCase()}</p>
+                <p><span className="date-color">{props.endDate.format("DD")} </span>{props.endDate.format("MMM, ddd")}</p>
               </p>
             </div>
           </div>

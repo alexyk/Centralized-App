@@ -41,13 +41,13 @@ function DashboardTripRow(props) {
     const checkIn = {
       day: startDateMoment.format('DD'),
       year: startDateMoment.format('YYYY'),
-      month: startDateMoment.format('MMM').toLowerCase()
+      month: startDateMoment.format('MMM')
     };
 
     const checkOut = {
       day: endDateMoment.format('D'),
       year: endDateMoment.format('YYYY'),
-      month: endDateMoment.format('MMM').toLowerCase()
+      month: endDateMoment.format('MMM')
     };
 
     return { checkIn, checkOut };

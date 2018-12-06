@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 // import { NotificationManager } from 'react-notifications';
@@ -73,7 +73,7 @@ class AirTicketsPage extends React.Component {
     }
 
     return (
-      <div className="container">
+      <Fragment>
         <section>
           <h2>Latest Tickets</h2>
           <AirTicketsList
@@ -86,7 +86,7 @@ class AirTicketsPage extends React.Component {
             totalElements={tickets.length}
           />
         </section>
-      </div>
+      </Fragment>
     );
   }
 }

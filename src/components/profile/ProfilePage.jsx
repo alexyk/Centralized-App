@@ -15,7 +15,7 @@ import TripsRouter from './trips/TripsRouter';
 import WalletPage from './wallet/WalletIndexPage';
 import AirdropPage from './airdrop/AirdropPage';
 import BuyLocPage from './buyloc/BuyLocPage';
-import AirTicketsPage from './airTickets/AirTicketsPage';
+import ProfileAirTicketsRouter from './airTickets/ProfileAirTicketsRouter';
 
 function ProfilePage(props) {
   return (
@@ -29,7 +29,7 @@ function ProfilePage(props) {
         <Route exact path="/profile/messages/chat/:id" render={() => <MessagesChatPage />} />
         <Route path="/profile/trips" render={() => <TripsRouter location={props.location} />} />
         <Route path="/profile/reservations" render={() => <MyGuestsPage />} />
-        <Route path="/profile/tickets" render={() => <AirTicketsPage />} />
+        <Route path="/profile/tickets" render={() => <ProfileAirTicketsRouter />} />
         <Route path="/profile/me" render={() => <ProfileEditPage />} />
         <Route path="/profile/wallet" render={() => <WalletPage />} />
         <Route path="/airdrop" render={() => <AirdropPage />} />

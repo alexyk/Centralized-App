@@ -39,7 +39,7 @@ function AirTicketsDetailsBookingPanel(props) {
           <div className="date-container">
             <div className="text">Return</div>
             <div className="date">
-              <span>{props.searchDatesInfo.endDate.format('DD')} </span>{props.searchDatesInfo.endDate.format('MMM, ddd').toUpperCase()}
+              <span>{props.searchDatesInfo.endDate.format('DD')} </span>{props.searchDatesInfo.endDate.format('MMM, ddd')}
             </div>
           </div>
         </Fragment>

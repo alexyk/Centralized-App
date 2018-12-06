@@ -1,0 +1,78 @@
+@import "../../../base/variables";
+
+.ticket-details {
+  background-color: #fff;
+  border: 1px solid #cccccc;
+  margin: 5% auto;
+  padding: 10px;
+  border-radius: 5px;
+  .flight-info {
+    display: flex;
+    background-color: $light-gray;
+    border-radius: 5px;
+    &-plane {
+      width: 30%;
+      padding: 2%;
+      img {
+        width: 100%;
+      }
+    }
+    &-content {
+      width: 70%;
+      padding: 2%;
+      .segments {
+        height: 80%;
+        background: $white;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-around;
+        padding: 25px;
+        border-radius: 5px;
+        .segments-item {
+          h5 {
+            font-weight: 500;
+          }
+          .departure-info,
+          .return-info {
+            display: flex;
+            .destinations {
+              width: 54%;
+              .icon-arrow-right {
+                font-size: 0.6em;
+                margin: 0 10px;
+              }
+            }
+            .date-time {
+              width: 46%;
+              display: flex;
+              &-item {
+                width: 50%;
+                .date {
+                  .date-in-day {
+                    color: $light-cyan;
+                  }
+                  .date-out-day {
+                    color: $moderate-red;
+                  }
+                }
+                .time {
+                  margin-top: 5px;
+                }
+              }
+            }
+          }
+        }
+      }
+      .toggle-details {
+        display: flex;
+        justify-content: flex-end;
+        align-items: flex-end;
+        height: 20%;
+        color: $moderate-red;
+        text-decoration: underline;
+        font-weight: 400;
+        cursor: pointer;
+      }
+    }
+  }
+}

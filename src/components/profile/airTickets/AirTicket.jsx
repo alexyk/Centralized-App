@@ -13,7 +13,7 @@ class AirTicket extends Component {
     const departure = {
       day: startDateMoment.format('D'),
       year: startDateMoment.format('YYYY'),
-      month: startDateMoment.format('MMM').toUpperCase(),
+      month: startDateMoment.format('MMM'),
       time: segments[0].originTime,
       timezone: segments[0].originTimezone
     };
@@ -21,7 +21,7 @@ class AirTicket extends Component {
     const arrival = {
       day: endDateMoment.format('D'),
       year: endDateMoment.format('YYYY'),
-      month: endDateMoment.format('MMM').toUpperCase(),
+      month: endDateMoment.format('MMM'),
       time: segments[segments.length - 1].originTime,
       timezone: segments[segments.length - 1].originTimezone
     };

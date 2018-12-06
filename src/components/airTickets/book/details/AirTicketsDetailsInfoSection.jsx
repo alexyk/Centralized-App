@@ -32,7 +32,7 @@ class AirTicketsDetailsInfoSection extends Component {
     const departure = {
       day: startDateMoment.format('D'),
       year: startDateMoment.format('YYYY'),
-      month: startDateMoment.format('MMM').toUpperCase(),
+      month: startDateMoment.format('MMM'),
       time: segments[0].origin.time,
       timezone: segments[0].origin.timezone
     };
@@ -40,7 +40,7 @@ class AirTicketsDetailsInfoSection extends Component {
     const arrival = {
       day: endDateMoment.format('D'),
       year: endDateMoment.format('YYYY'),
-      month: endDateMoment.format('MMM').toUpperCase(),
+      month: endDateMoment.format('MMM'),
       time: segments[segments.length - 1].origin.time,
       timezone: segments[segments.length - 1].origin.timezone
     };

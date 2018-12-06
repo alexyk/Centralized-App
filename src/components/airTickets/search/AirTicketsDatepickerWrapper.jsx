@@ -55,7 +55,7 @@ class AirTicketsDatepickerWrapper extends Component {
         <div className={`choose-roundtrip${flightRouting === '2' ? ' hide-single' : ''}`}>
           <span className="icon-arrow-right arrow"></span>
           <SelectFlex placeholder="Flight Routing" className="flight-routing" onChange={(value) => this.changeFlightRouting(value)} value={flightRouting}>
-            <select name="departureTime">
+            <select name="flightRouting">
               <option value="1">One Way</option>
               <option value="2">Roundtrip</option>
               <option value="3">Multi Stops</option>
