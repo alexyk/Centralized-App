@@ -25,14 +25,14 @@ class LocPrice extends PureComponent {
     };
   }
 
-  componentWillReceiveProps(nextProps) {
-    if (nextProps.exchangerSocketInfo.isLocPriceWebsocketConnected &&
-      nextProps.exchangerSocketInfo.isLocPriceWebsocketConnected !== this.props.exchangerSocketInfo.isLocPriceWebsocketConnected) {
-      this.sendWebsocketMessage(this.state.fiatInEur, null, Object.assign(this.props.params, { fiatAmount: this.state.fiatInEur }));
+  componentDidUpdate(prevProps) {
+    if (this.props.exchangerSocketInfo.isExchangerWebsocketConnected &&
+      this.props.exchangerSocketInfo.isExchangerWebsocketConnected !== prevProps.exchangerSocketInfo.isExchangerWebsocketConnected) {
+      this.sendWebsocketMessage(this.state.fiatInEur, null, Object.assign(prevProps.params, { fiatAmount: this.state.fiatInEur }));
     }
-    if (nextProps.exchangeRatesInfo.currencyExchangeRates && !this.state.isLocPriceRendered) {
-      const fiatInEur = nextProps.exchangeRatesInfo.currencyExchangeRates && CurrencyConverter.convert(nextProps.exchangeRatesInfo.currencyExchangeRates, RoomsXMLCurrency.get(), DEFAULT_CRYPTO_CURRENCY, this.props.fiat);
-      this.sendWebsocketMessage(fiatInEur, null, Object.assign(this.props.params, { fiatAmount: fiatInEur }));
+    if (this.props.exchangeRatesInfo.currencyExchangeRates && !this.state.isLocPriceRendered) {
+      const fiatInEur = this.props.exchangeRatesInfo.currencyExchangeRates && CurrencyConverter.convert(this.props.exchangeRatesInfo.currencyExchangeRates, RoomsXMLCurrency.get(), DEFAULT_CRYPTO_CURRENCY, prevProps.fiat);
+      this.sendWebsocketMessage(fiatInEur, null, Object.assign(prevProps.params, { fiatAmount: fiatInEur }));
       this.setState({
         isLocPriceRendered: true,
         fiatInEur
