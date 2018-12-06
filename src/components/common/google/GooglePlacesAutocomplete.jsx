@@ -23,14 +23,16 @@ export default class GooglePlacesAutocomplete extends React.Component {
     this.event = this.autocomplete.addListener('place_changed', this.onSelected.bind(this));
   }
 
-  componentWillReceiveProps(nextProps) {
-    const { types = ['(cities)'], componentRestrictions, bounds, } = nextProps;
-    if (this.props.componentRestrictions !== this.componentRestrictions) {
+  componentDidUpdate(prevProps) {
+    const { types = ['(cities)'], componentRestrictions, bounds } = this.props;
+    if (JSON.stringify(prevProps.componentRestrictions) !== JSON.stringify(this.componentRestrictions)) {
       const config = {
         types,
         bounds,
         componentRestrictions
       };
+
+      this.componentRestrictions = this.props.componentRestrictions;
 
       this.autocomplete.setOptions(config);
     }
