@@ -13,7 +13,7 @@ function ChildrenModal(props) {
       const children = rooms[i].children;
       for (let j = 0; j < children.length; j++) {
         const age = Number(children[j].age);
-        if (age < 1 || age > 17) {
+        if (age < 0 || age > 17) {
           return false;
         }
       }
@@ -28,7 +28,7 @@ function ChildrenModal(props) {
     let children = rooms[roomIndex].children;
     if (children.length < value) {
       while (children.length < value) {
-        children.push({age: ''});
+        children.push({age: '-1'});
       }
     } else if (children.length > value) {
       children = children.slice(0, value);
@@ -80,7 +80,8 @@ function ChildrenModal(props) {
                         <div key={childIndex} className="col col-md-2">
                           <select name={`children${roomIndex}age`} className="form-control children-age-select"
                             value={child.age} onChange={(e) => handleChildAgeChange(e, roomIndex, childIndex)}>
-                            <option value="" disabled required>Age</option>
+                            <option value="-1" disabled required>Age</option>
+                            <option value="0">0</option>
                             <option value="1">1</option>
                             <option value="2">2</option>
                             <option value="3">3</option>
