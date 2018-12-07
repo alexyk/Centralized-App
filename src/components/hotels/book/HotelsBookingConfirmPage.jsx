@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import { NotificationManager } from 'react-notifications';
@@ -36,7 +36,7 @@ const DEFAULT_QUOTE_LOC_ID = 'quote';
 const DEFAULT_QUOTE_LOC_PP_ID = DEFAULT_QUOTE_LOC_ID + PAYMENT_PROCESSOR_IDENTIFICATOR;
 const SAFECHARGE_VAR = 'SCPaymentModeOn';
 
-class HotelBookingConfirmPage extends React.Component {
+class HotelsBookingConfirmPage extends Component {
   constructor(props) {
     super(props);
 
@@ -641,7 +641,7 @@ class HotelBookingConfirmPage extends React.Component {
   }
 }
 
-HotelBookingConfirmPage.propTypes = {
+HotelsBookingConfirmPage.propTypes = {
   userInfo: PropTypes.object,
   reservation: PropTypes.object,
   isQuoteLocValid: PropTypes.bool,
@@ -676,4 +676,4 @@ function mapStateToProps(state) {
   };
 }
 
-export default withRouter(connect(mapStateToProps)(HotelBookingConfirmPage));
+export default withRouter(connect(mapStateToProps)(HotelsBookingConfirmPage));

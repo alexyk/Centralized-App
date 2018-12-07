@@ -33,6 +33,7 @@ class ExchangerWS {
   handleRecieveMessage(event) {
     if (event) {
       const data = JSON.parse(event.data);
+      // console.log(data);
       if (data.params && data.params.secondsLeft) {
         const seconds = Math.round(data.params.secondsLeft / 1000);
         store.dispatch(setSeconds(seconds));
