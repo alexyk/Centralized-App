@@ -16,7 +16,6 @@ export const INVALID_GUEST_NAME = 'Names should be at least 1 character long.';
 export const INVALID_TITLE = 'Title should be at least 2 characters.';
 export const INVALID_ADDRESS = 'Address should be at least 6 characters long.';
 export const INVALID_SUMMARY = 'Summary should be at least 6 characters long.';
-export const MISSING_ADDRESS = 'Select a valid address.';
 export const MISSING_CITY = 'City is required.';
 export const MISSING_COUNTRY = 'Country is required.';
 export const MISSING_PICTURE = 'At least 1 picture is required.';

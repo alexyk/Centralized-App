@@ -16,7 +16,7 @@ function CancellationModal(props) {
           <form onSubmit={(e) => { e.preventDefault(); props.onSubmit(); props.onClose(props.name); }}>
             <div className="modal-input-label">{props.text}</div>
             <textarea rows="4" name="cancellationText" value={props.value} onChange={props.onChange} required></textarea>
-            <button type="submit" className="btn btn-primary">Send message</button>
+            <button type="submit" className="button">Send message</button>
             <div className="clearfix"></div>
           </form>
         </Modal.Body>

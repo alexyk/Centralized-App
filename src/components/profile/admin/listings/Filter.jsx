@@ -52,7 +52,7 @@ function Filter(props) {
           onChange={props.handleSelectCity}
           options={renderCities}
         />
-        <button type="submit" className="btn btn-primary">Search</button>
+        <button type="submit" className="button">Search</button>
       </form>
     </div>
   );

@@ -46,7 +46,7 @@ function UpdateCountryModal(props) {
               </div>
             </div>}
 
-            <button type="submit" className="btn btn-primary">Save</button>
+            <button type="submit" className="button">Save</button>
             <div className="clearfix"></div>
           </form>
         </Modal.Body>

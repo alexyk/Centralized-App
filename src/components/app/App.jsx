@@ -32,6 +32,7 @@ import LoginManager from '../authentication/LoginManager';
 import RegisterManager from '../authentication/RegisterManager';
 import WalletCreationManager from '../authentication/WalletCreationManager';
 import PasswordRecoveryManager from '../authentication/PasswordRecoveryManager';
+import { fetchCountries } from '../../actions/countriesInfo';
 
 class App extends React.Component {
   constructor(props) {
@@ -46,6 +47,7 @@ class App extends React.Component {
 
     this.requestExchangeRates();
     this.requestLocEurRate();
+    this.requestCountries();
   }
 
   isAuthenticated() {
@@ -116,6 +118,10 @@ class App extends React.Component {
         this.props.dispatch(setLocEurRate(Number(data[0][`price_${(baseCurrency).toLowerCase()}`])));
       });
     });
+  }
+
+  requestCountries() {
+    this.props.dispatch(fetchCountries());
   }
 
   getQueryString(queryStringParameters) {

@@ -192,17 +192,10 @@
           display: flex;
           margin: 15px 0;
         }
-        .pay-in {
+        .button {
           display: block;
-          width: 100%;
-          letter-spacing: 1px;
-          font-size: 18px;
           color: #ffffff;
-          background-color: #d77961;
-          border-radius: 4px;
-          padding: 20px 0;
           margin: 15px 0;
-          text-align: center;
           &.disabled {
             cursor: default;
             opacity: 0.7;
@@ -213,9 +206,6 @@
           text-align: center;
           margin: 0;
           color: #898c8d;
-        }
-        .fiat-price-box > div  p:last-of-type {
-          
         }
       }
     }
@@ -288,12 +278,7 @@
       justify-content: center;
       -ms-grid-column: 3;
       button {
-        font-size: 20px;
-        color: #ffffff;
-        background-color: #d77961;
-        border-radius: 4px;
-        letter-spacing: 1px;
-        padding: 10px 15px;
+        padding: 15px 30px;
         @include media("<=tablet") {
           width: 95%;
         }

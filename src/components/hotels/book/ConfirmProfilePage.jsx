@@ -247,7 +247,7 @@ class ConfirmProfilePage extends React.Component {
             </div>
 
             <p className="text"><span className="mandatory">*</span> Fields mandatory for payment with Credit Card</p>
-            <button type="submit" className="btn">Proceed</button>
+            <button type="submit" className="button">Proceed</button>
           </form>
         </div>
       </React.Fragment>
