@@ -2,7 +2,6 @@ import React, { Component, Fragment } from 'react';
 import { withRouter, Route, Switch } from 'react-router-dom';
 import { NotificationManager } from 'react-notifications';
 import PropTypes from 'prop-types';
-import HomePage from '../home/HomePage';
 import AirTicketsSearchPage from './search/AirTicketsSearchPage';
 import AirTicketsBookingRouterPage from './book/AirTicketsBookingRouterPage';
 import AirTicketsBookingConfirmPage from './book/confirm/AirTicketsBookingConfirmPage';
@@ -45,7 +44,6 @@ class AirTicketsRouterPage extends Component {
     return (
       <Fragment>
         <Switch>
-          <Route exact path="/tickets" render={() => <HomePage homePage="tickets" listings={this.props.listings} hotels={this.props.hotels} />} />
           <Route exact path="/tickets/results" render={() => <AirTicketsSearchPage initSearchAirTicketsSetTimeout={this.initSearchAirTicketsSetTimeout} />} />
           <Route path="/tickets/results/initBook/:id" render={() => <AirTicketsBookingRouterPage />} />
           <Route exact path="/tickets/results/book/:id" render={() => <AirTicketsBookingConfirmPage />} />

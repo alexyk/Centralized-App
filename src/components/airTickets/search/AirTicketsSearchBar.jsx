@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
-import Select from 'react-select';
+import AsyncSelect from 'react-select/lib/Async';
 import PropTypes from 'prop-types';
 import { setFlightClass, setStops, setDepartureTime, setOrigin, setDestination, setFlexSearch } from '../../../actions/airTicketsSearchInfo';
 import SelectFlex from '../../common/select';
@@ -11,6 +11,54 @@ import PassengersPopup from './common/passengersPopup';
 import MultiStopsPopup from './common/multiStopsPopup';
 
 import '../../../styles/css/components/airTickets/search/air-tickets-search-bar.css';
+
+const customStyles = {
+  container: (styles) => ({
+    ...styles,
+    flex: '1 1 0',
+    outline: 'none',
+  }),
+  valueContainer: (styles) => ({
+    ...styles,
+    fontSize: '1.2em'
+  }),
+  input: (styles) => ({
+    ...styles,
+    outline: 'none',
+  }),
+  control: (styles) => ({
+    ...styles,
+    padding: '0 10px',
+    cursor: 'pointer',
+    boxShadow: 'none',
+    border: 0,
+  }),
+  indicatorSeparator: (styles) => ({
+    ...styles,
+    display: 'none'
+  }),
+  menu: (styles) => ({
+    ...styles,
+    marginTop: '20px'
+  }),
+  option: (styles, { data, isFocused, isSelected }) => {
+    const color = isSelected ? '#d87a61' : 'black';
+    return {
+      ...styles,
+      fontSize: '1.2em',
+      textAlign: 'left',
+      cursor: 'pointer',
+      backgroundColor: isFocused
+        ? '#f0f1f3'
+        : 'none',
+      color: isSelected
+        ? color
+        : data.color,
+      fontWeight: isSelected && '400',
+      paddingLeft: isSelected && '30px',
+    };
+  },
+};
 
 class AirTicketsSearchBar extends Component {
   constructor(props) {
@@ -27,14 +75,18 @@ class AirTicketsSearchBar extends Component {
     this.closePassengersPopup = this.closePassengersPopup.bind(this);
     this.openMultiStopsPopup = this.openMultiStopsPopup.bind(this);
     this.closeMultiStopsPopup = this.closeMultiStopsPopup.bind(this);
+    this.loadOptions = this.loadOptions.bind(this);
+    this.requestAirports = this.requestAirports.bind(this);
+    this.changeOrigin = this.changeOrigin.bind(this);
+    this.changeDestination = this.changeDestination.bind(this);
   }
 
-  requestAirports(param) {
-    if (!param) {
-      return Promise.resolve({ options: [] });
-    }
+  loadOptions(input = '', callback) {
+    this.requestAirports(input).then(airports => callback(airports));
+  }
 
-    return fetch(`${Config.getValue('apiHost')}flight/city/search?query=${param}`, {
+  requestAirports(input = '') {
+    return fetch(`${Config.getValue('apiHost')}flight/city/search?query=${input}`, {
       headers: {
         'Content-type': 'application/json'
       }
@@ -44,35 +96,36 @@ class AirTicketsSearchBar extends Component {
         towns.forEach(town => {
           town.airports.forEach(airport => {
             if (airport.code) {
-              options.push({ code: airport.code, name: `${town.name}, ${town.cityState ? town.cityState + ', ' : ''}${town.countryName}, ${airport.code} airport` });
+              options.push({ value: airport.code, label: `${town.name}, ${town.cityState ? town.cityState + ', ' : ''}${town.countryName}, ${airport.code} airport` });
             }
           });
         });
-        return { options };
+        return options;
       });
     });
   }
 
   getDestinations() {
     const { airTicketsSearchInfo, searchDatesInfo } = this.props;
+    const { origin, destination, flightRouting, multiStopsDestinations } = airTicketsSearchInfo;
 
     let destinations;
 
-    if (airTicketsSearchInfo.flightRouting === '1') {
+    if (flightRouting === '1') {
       destinations = [
-        { origin: airTicketsSearchInfo.origin.code, destination: airTicketsSearchInfo.destination.code, date: searchDatesInfo.startDate.format('DD/MM/YYYY') }
+        { origin: origin.code, destination: destination.code, date: searchDatesInfo.startDate.format('DD/MM/YYYY') }
       ];
-    } else if (airTicketsSearchInfo.flightRouting === '2') {
+    } else if (flightRouting === '2') {
       destinations = [
-        { origin: airTicketsSearchInfo.origin.code, destination: airTicketsSearchInfo.destination.code, date: searchDatesInfo.startDate.format('DD/MM/YYYY') },
-        { origin: airTicketsSearchInfo.destination.code, destination: airTicketsSearchInfo.origin.code, date: searchDatesInfo.endDate.format('DD/MM/YYYY') }
+        { origin: origin.code, destination: destination.code, date: searchDatesInfo.startDate.format('DD/MM/YYYY') },
+        { origin: destination.code, destination: origin.code, date: searchDatesInfo.endDate.format('DD/MM/YYYY') }
       ];
-    } else if (airTicketsSearchInfo.flightRouting === '3') {
+    } else if (flightRouting === '3') {
       destinations = [
-        { origin: airTicketsSearchInfo.origin.code, destination: airTicketsSearchInfo.destination.code, date: searchDatesInfo.startDate.format('DD/MM/YYYY') }
+        { origin: origin.code, destination: destination.code, date: searchDatesInfo.startDate.format('DD/MM/YYYY') }
       ];
 
-      airTicketsSearchInfo.multiStopsDestinations.forEach((destination) => {
+      multiStopsDestinations.forEach((destination) => {
         destinations.push({
           origin: destination.origin.code, destination: destination.destination.code, date: destination.date.format('DD/MM/YYYY')
         });
@@ -82,18 +135,41 @@ class AirTicketsSearchBar extends Component {
     return destinations;
   }
 
+  changeOrigin(selectedOption) {
+    if (selectedOption) {
+      const origin = {
+        code: selectedOption.value,
+        name: selectedOption.label
+      };
+
+      this.props.dispatch(setOrigin(origin));
+    }
+  }
+
+  changeDestination(selectedOption) {
+    if (selectedOption) {
+      const destination = {
+        code: selectedOption.value,
+        name: selectedOption.label
+      };
+
+      this.props.dispatch(setDestination(destination));
+    }
+  }
+
   getQueryString() {
+    const { flexSearch, adultsCount, children, departureTime, stops, flightClass, flightRouting } = this.props.airTicketsSearchInfo;
     let queryString = '?';
 
     queryString += 'destinations=' + encodeURI(JSON.stringify(this.getDestinations()));
-    queryString += '&adults=' + this.props.airTicketsSearchInfo.adultsCount;
-    queryString += '&children=' + encodeURI(JSON.stringify(this.props.airTicketsSearchInfo.children));
-    queryString += '&routing=' + this.props.airTicketsSearchInfo.flightRouting;
-    queryString += '&flightClass=' + this.props.airTicketsSearchInfo.flightClass;
-    queryString += '&stops=' + this.props.airTicketsSearchInfo.stops;
-    queryString += '&flexSearch=' + this.props.airTicketsSearchInfo.flexSearch;
-    if (this.props.airTicketsSearchInfo.departureTime) {
-      queryString += '&departureTime=' + this.props.airTicketsSearchInfo.departureTime;
+    queryString += '&adults=' + adultsCount;
+    queryString += '&children=' + encodeURI(JSON.stringify(children));
+    queryString += '&routing=' + flightRouting;
+    queryString += '&flightClass=' + flightClass;
+    queryString += '&stops=' + stops;
+    queryString += '&flexSearch=' + flexSearch;
+    if (departureTime) {
+      queryString += '&departureTime=' + departureTime;
     }
 
     return queryString;
@@ -135,41 +211,53 @@ class AirTicketsSearchBar extends Component {
     if (this.props.location.pathname.indexOf('/mobile') !== -1) {
       return null;
     }
-    
+
+    const { origin, destination, flexSearch, adultsCount, children, departureTime, stops, flightClass } = this.props.airTicketsSearchInfo;
     const { showMultiStopsPopup } = this.state;
+
+    let selectedOrigin = null;
+    if (origin) {
+      selectedOrigin = {
+        value: origin.code,
+        label: origin.name
+      };
+    }
+    let selectedDestination = null;
+    if (destination) {
+      selectedDestination = {
+        value: destination.code,
+        label: destination.name
+      };
+    }
 
     return (
       <div className="air-tickets">
         <form className="air-tickets-form" onSubmit={this.handleSearch}>
           <div className="air-tickets-form-destinations-dates-wrapper">
             <div className="air-tickets-form-select">
-              <Select.Async
-                placeholder="Origin"
-                required
-                style={{ boxShadow: 'none', border: 'none' }}
-                value={this.props.airTicketsSearchInfo.origin}
-                onChange={value => this.props.dispatch(setOrigin(value))}
-                valueKey={'code'}
-                labelKey={'name'}
-                loadOptions={this.requestAirports}
+              <AsyncSelect
+                styles={customStyles}
+                value={selectedOrigin}
+                onChange={this.changeOrigin}
+                loadOptions={this.loadOptions}
                 backspaceRemoves={true}
                 arrowRenderer={null}
                 onSelectResetsInput={false}
+                placeholder="Origin"
+                required={true}
               />
             </div>
             <div className="air-tickets-form-select">
-              <Select.Async
-                placeholder="Destination"
-                required
-                style={{ boxShadow: 'none', border: 'none' }}
-                value={this.props.airTicketsSearchInfo.destination}
-                onChange={value => this.props.dispatch(setDestination(value))}
-                valueKey={'code'}
-                labelKey={'name'}
-                loadOptions={this.requestAirports}
+              <AsyncSelect
+                styles={customStyles}
+                value={selectedDestination}
+                onChange={this.changeDestination}
+                loadOptions={this.loadOptions}
                 backspaceRemoves={true}
                 arrowRenderer={null}
                 onSelectResetsInput={false}
+                placeholder="Destination"
+                required={true}
               />
             </div>
             <div className="air-tickets-form-check-wrap">
@@ -179,17 +267,17 @@ class AirTicketsSearchBar extends Component {
           </div>
           <div className="air-tickets-form-flex-search" onClick={() => this.props.dispatch(setFlexSearch())}>
             <div>
-              {!this.props.airTicketsSearchInfo.flexSearch
+              {!flexSearch
                 ? 'No flex search'
                 : 'With flex search'
               }
             </div>
           </div>
           <div className="air-tickets-form-passengers-wrap">
-            <div className="passengers-title" onClick={this.openPassengersPopup}>{Number(this.props.airTicketsSearchInfo.adultsCount) + this.props.airTicketsSearchInfo.children.length} Passengers</div>
+            <div className="passengers-title" onClick={this.openPassengersPopup}>{Number(adultsCount) + children.length} Passengers</div>
             <PassengersPopup showPassengersPopup={this.state.showPassengersPopup} closePassengersPopup={this.closePassengersPopup} />
           </div>
-          <SelectFlex placeholder="Departure time" className="air-tickets-form-departure-time" onChange={(value) => this.props.dispatch(setDepartureTime(value))} value={this.props.airTicketsSearchInfo.departureTime}>
+          <SelectFlex placeholder="Departure time" className="air-tickets-form-departure-time" onChange={(value) => this.props.dispatch(setDepartureTime(value))} value={departureTime}>
             <select name="departureTime">
               <option value="">any</option>
               <option value="0">00:00</option>
@@ -218,7 +306,7 @@ class AirTicketsSearchBar extends Component {
               <option value="23">23:00</option>
             </select>
           </SelectFlex>
-          <SelectFlex placeholder="Flight stops" className="air-tickets-form-flight-stops" onChange={(value) => this.props.dispatch(setStops(value))} value={this.props.airTicketsSearchInfo.stops}>
+          <SelectFlex placeholder="Flight stops" className="air-tickets-form-flight-stops" onChange={(value) => this.props.dispatch(setStops(value))} value={stops}>
             <select name="flightStops">
               <option value="-1">any</option>
               <option value="0">direct flight</option>
@@ -226,7 +314,7 @@ class AirTicketsSearchBar extends Component {
               <option value="2">more stops</option>
             </select>
           </SelectFlex>
-          <SelectFlex placeholder="Flight class" className="air-tickets-form-flight-class" onChange={(value) => this.props.dispatch(setFlightClass(value))} value={this.props.airTicketsSearchInfo.flightClass}>
+          <SelectFlex placeholder="Flight class" className="air-tickets-form-flight-class" onChange={(value) => this.props.dispatch(setFlightClass(value))} value={flightClass}>
             <select name="flightClass">
               <option value="0">any</option>
               <option value="E">economy</option>
