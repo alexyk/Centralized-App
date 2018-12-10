@@ -22,7 +22,7 @@ function EnterRecoveryTokenModal(props) {
               <input type="text" name="recoveryToken" value={props.recoveryToken} onChange={props.onChange} className="with-icon" placeholder="Security Code" />
             </div>
 
-            <button type="submit" className="btn btn-primary">Proceed to Password Change</button>
+            <button type="submit" className="button">Proceed to Password Change</button>
             <div className="clearfix"></div>
           </form>
         </Modal.Body>

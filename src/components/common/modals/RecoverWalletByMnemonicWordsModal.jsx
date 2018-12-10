@@ -24,7 +24,7 @@ function RecoverWalletByMnemonicWordsModal(props) {
           <form onSubmit={(e) => { e.preventDefault(); props.recoverPassword(); }}>
             <div className="modal-input-label">Enter your wallet mnemonic words:</div>
             <textarea name="mnemonicWords" onChange={props.onChange} value={props.mnemonicWords} autoFocus onKeyPress={handleEnterKeyPress} />
-            <button type="submit" className="btn btn-primary">Recover</button>
+            <button type="submit" className="button">Recover</button>
           </form>
         </Modal.Body>
       </Modal>

@@ -38,7 +38,7 @@ class PopularItem extends Component {
       pictures.push({ url: DEFAULT_LISTING_IMAGE_URL });
     }
 
-    return pictures.map(x => { return { thumbnail: Config.getValue('imgHost') + x.url }; });
+    return pictures.map(x => { return { thumbnail: Config.getValue('imgHost') + x.thumbnail }; });
   }
 
   render() {
@@ -65,10 +65,10 @@ class PopularItem extends Component {
     };
 
     const settings = {
-      infinite: false,
+      infinite: true,
       draggable: false,
       lazyLoad: 'ondemand',
-      speed: 500,
+      speed: 400,
       slidesToShow: 1,
       slidesToScroll: 1,
       nextArrow: <SlickButton />,

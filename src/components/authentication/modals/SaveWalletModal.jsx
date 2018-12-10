@@ -30,7 +30,7 @@ function SaveWalletModal(props) {
           <textarea name="mnemonic" onFocus={handleFocus} value={localStorage.walletMnemonic} />
           <input type="hidden" name="json" onFocus={handleFocus} value={localStorage.walletJson} />
           <p>You can use the mnemonic phrases to decrypt the wallet from external wallet manager such as MyEtherWallet or MetaMask. Save them carefully, they are irrecoverable.</p>
-          <button className="btn btn-primary" onClick={handleSubmit}>Continue</button>
+          <button className="button" onClick={handleSubmit}>Continue</button>
         </Modal.Body>
       </Modal>
     </React.Fragment>

@@ -20,7 +20,7 @@ function EmailVerificationModal(props) {
             <div className="input-container">
               <input type="text" name="emailVerificationToken" value={props.emailVerificationToken} onChange={props.onChange} placeholder="Security Code" />
             </div>
-            <button type="submit" className="btn btn-primary">Submit Security Code</button>
+            <button type="submit" className="button">Submit Security Code</button>
           </form>
         </Modal.Body>
       </Modal>
