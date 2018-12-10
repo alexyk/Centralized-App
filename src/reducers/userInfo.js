@@ -1,17 +1,17 @@
-import { userInfo } from '../actions/actionTypes';
+import { userInfo } from "../actions/actionTypes";
 
 const initialState = {
   isLogged: false,
-  firstName: '',
-  lastName: '',
-  phoneNumber: '',
-  email: '',
-  locAddress: '',
-  locBalance: '',
-  ethBalance: '',
-  gender: '',
+  firstName: "",
+  lastName: "",
+  phoneNumber: "",
+  email: "",
+  locAddress: "",
+  locBalance: "",
+  ethBalance: "",
+  gender: "",
   isEmailVerified: false,
-  isAdmin: false,
+  isAdmin: false
 };
 
 export default function reducer(state = initialState, action) {
@@ -29,7 +29,7 @@ export default function reducer(state = initialState, action) {
         ethBalance: action.isLogged ? state.ethBalance : null,
         gender: action.isLogged ? state.gender : null,
         isEmailVerified: action.isEmailVerified ? state.isEmailVerified : null,
-        isAdmin: action.isAdmin ? state.isAdmin : false,
+        isAdmin: action.isAdmin ? state.isAdmin : false
       };
     case userInfo.SET_USER_INFO:
       return {
@@ -43,7 +43,7 @@ export default function reducer(state = initialState, action) {
         ethBalance: action.ethBalance,
         gender: action.gender,
         isEmailVerified: action.isEmailVerified,
-        isAdmin: action.isAdmin,
+        isAdmin: action.isAdmin
       };
     default:
       return state;

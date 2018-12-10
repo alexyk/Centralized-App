@@ -1,9 +1,9 @@
-import { countriesInfo } from './actionTypes';
-import requester from '../requester';
+import { countriesInfo } from "./actionTypes";
+import requester from "../requester";
 
 function requestCountries() {
   return {
-    type: countriesInfo.REQUEST_COUNTRIES,
+    type: countriesInfo.REQUEST_COUNTRIES
   };
 }
 
@@ -17,7 +17,8 @@ function receiveCountries(countries) {
 export function fetchCountries() {
   return dispatch => {
     dispatch(requestCountries());
-    return requester.getCountries()
+    return requester
+      .getCountries()
       .then(res => res.body)
       .then(countries => dispatch(receiveCountries(countries)));
   };

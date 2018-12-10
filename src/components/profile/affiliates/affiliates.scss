@@ -1,0 +1,39 @@
+@import "../../../styles/css/base/_variables.scss";
+
+.btn {
+  min-width: 200px;
+}
+
+.btn.active {
+  background: $light-cyan;
+  color: $white
+}
+
+.single-booking {
+  text-align: left;
+  margin-bottom: 10px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.bookings-container, .controls-container {
+  padding: 10px 0;
+}
+
+.threshold-message  {
+  margin-left: 20px
+}
+
+.stats-chart {
+  display: flex;
+  justify-content: space-between;
+
+  .chart-container {
+    width: 100%;
+  }
+
+  .stats-controls {
+    width: 300px;
+  }
+}

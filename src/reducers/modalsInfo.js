@@ -1,7 +1,7 @@
-import { modalsInfo } from '../actions/actionTypes';
+import { modalsInfo } from "../actions/actionTypes";
 
 const initialState = {
-  isActive: {},
+  isActive: {}
 };
 
 export default function reducer(state = initialState, action) {

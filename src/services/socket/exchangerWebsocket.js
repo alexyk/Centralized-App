@@ -1,8 +1,11 @@
-import { Config } from '../../config';
-import store from '../../reduxStore';
-import { setExchangerWebsocketConnection } from '../../actions/exchangerSocketInfo';
-import { updateLocAmounts, clearLocAmounts } from '../../actions/locAmountsInfo';
-import { setSeconds } from '../../actions/locPriceUpdateTimerInfo';
+import { Config } from "../../config";
+import store from "../../reduxStore";
+import { setExchangerWebsocketConnection } from "../../actions/exchangerSocketInfo";
+import {
+  updateLocAmounts,
+  clearLocAmounts
+} from "../../actions/locAmountsInfo";
+import { setSeconds } from "../../actions/locPriceUpdateTimerInfo";
 
 const WEBSOCKET_RECONNECT_DELAY = 5000;
 
@@ -14,10 +17,12 @@ class ExchangerWS {
   }
 
   initSocket() {
-    this.ws = new WebSocket(Config.getValue('SOCKET_HOST_PRICE'));
+    this.ws = new WebSocket(Config.getValue("SOCKET_HOST_PRICE"));
     this.ws.onmessage = this.handleRecieveMessage;
     this.ws.onopen = this.connect;
-    this.ws.onclose = () => { this.close(this); };
+    this.ws.onclose = () => {
+      this.close(this);
+    };
   }
 
   connect() {
