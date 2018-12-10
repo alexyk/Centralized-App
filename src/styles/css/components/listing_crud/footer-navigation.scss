@@ -31,7 +31,7 @@ $breakpoints: (
       padding: 15px 5px;
       width: 100%;
 
-      .btn-back {
+      .button-back {
         min-width: 170px;
         font-weight: 400;
         background: transparent;
@@ -39,9 +39,13 @@ $breakpoints: (
         @include media("<=tablet") {
           min-width: 70px;
         }
+        &:active {
+          box-shadow: 1px 1px 2px #ccc;
+        }
       }
 
-      .btn-next{
+      .button-next{
+        color: white;
         min-width: 170px;
         @include media("<=tablet") {
           min-width: 70px;

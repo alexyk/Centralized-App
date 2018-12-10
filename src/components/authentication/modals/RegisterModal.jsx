@@ -98,7 +98,7 @@ function RegisterModal(props) {
               <input type="password" required="required" name="signUpPassword" value={props.signUpPassword} onChange={props.onChange} className="with-icon" placeholder="Password" />
             </div>
             <div className="clearfix"></div>
-            <button type="submit" className="btn btn-primary">Proceed</button>
+            <button type="submit" className="button">Proceed</button>
           </form>
           <div className="signup-rights">
             <p>By creating an account, you are agreeing with our Terms and Conditions and Privacy Statement.</p>

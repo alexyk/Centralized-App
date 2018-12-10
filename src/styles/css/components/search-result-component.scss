@@ -86,7 +86,7 @@ $media-expressions: (
       width: 240px !important;
     }
     button {
-      @include animate(opacity background);
+      // @include animate(opacity background);
       position: absolute;
       bottom: 0;
       display: flex;
@@ -239,6 +239,9 @@ $media-expressions: (
       font-weight: 400;
       margin-bottom: 21px;
     }
+    a {
+      color: white;
+    }
   }
   &-mobile-pricing {
     display: flex;
@@ -264,7 +267,7 @@ $media-expressions: (
       padding: 10px 0 10px 10px;
     }
   }
-  .btn {
+  .button {
     padding: 12px;
     @include media(">=desktop") {
       min-width: 160px;

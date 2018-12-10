@@ -63,6 +63,7 @@ class EditListingPage extends React.Component {
       bedrooms: [this.createBedroom(),],
       bathrooms: 1,
       facilities: new Set(),
+      selectedOption: null,
       street: '',
       city: '',
       state: '',
@@ -442,6 +443,7 @@ class EditListingPage extends React.Component {
           res.errors.then(data => {
             const errors = data.errors;
             for (let key in errors) {
+              console.log("error")
               if (typeof errors[key] !== 'function') {
                 NotificationManager.warning(errors[key].message, '', LONG);
               }

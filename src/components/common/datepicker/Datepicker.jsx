@@ -92,7 +92,18 @@ class Datepicker extends Component {
           excludeDates={this.props.excludedDates}
           withPortal={isMobile}
           monthsShown={monthsToShow}
-          fixedHeight
+          popperPlacement='bottom-start'
+          popperModifiers={{
+            flip: {
+              behavior: ['bottom-start'] // don't allow it to flip to be above
+            },
+            preventOverflow: {
+              enabled: false
+            },
+            hide: {
+              enabled: false
+            }
+          }}
           {...this.props}
         />
 
@@ -112,6 +123,17 @@ class Datepicker extends Component {
             withPortal={isMobile}
             monthsShown={monthsToShow}
             fixedHeight
+            popperModifiers={{
+              flip: {
+                behavior: ['bottom-start']
+              },
+              preventOverflow: {
+                enabled: false
+              },
+              hide: {
+                enabled: false
+              }
+            }}
             {...this.props}
           />
         }

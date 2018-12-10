@@ -19,8 +19,8 @@ function DeletionModal(props) {
               e.preventDefault();
               props.handleDeleteListing();
             }}>
-              <button type="submit" className="btn">Delete</button>
-              <button onClick={(e) => { e.preventDefault(); props.onHide(); }} className="btn">Cancel</button>
+              <button type="submit" className="button">Delete</button>
+              <button onClick={(e) => { e.preventDefault(); props.onHide(); }} className="button">Cancel</button>
             </form>
           }
         </Modal.Body>

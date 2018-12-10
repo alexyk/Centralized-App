@@ -5,27 +5,97 @@ import { CHILDREN } from '../../../constants/modals';
 import ChildrenModal from '../modals/ChildrenModal';
 import PropTypes from 'prop-types';
 import React from 'react';
-import Select from 'react-select';
+import AsyncSelect from 'react-select/lib/Async';
 import { connect } from 'react-redux';
 import requester from '../../../requester';
 import { withRouter } from 'react-router-dom';
 import HotelsDatepickerWrapper from './HotelsDatepickerWrapper';
+import { NotificationManager } from 'react-notifications';
+
+const customStyles = {
+  container: (styles) => ({
+    ...styles,
+    flex: '1 1 0',
+    outline: 'none',
+  }),
+  valueContainer: (styles) => ({
+    ...styles,
+    fontSize: '1.2em'
+  }),
+  input: (styles) => ({
+    ...styles,
+    outline: 'none',
+  }),
+  control: (styles) => ({
+    ...styles,
+    padding: '0 10px',
+    cursor: 'pointer',
+    boxShadow: 'none',
+    border: 0,
+  }),
+  indicatorSeparator: (styles) => ({
+    ...styles,
+    display: 'none'
+  }),
+  menu: (styles) => ({
+    ...styles,
+    marginTop: '20px'
+  }),
+  option: (styles, { data, isFocused, isSelected }) => {
+    const color = isSelected ? '#d87a61' : 'black';
+    return {
+      ...styles,
+      fontSize: '1.2em',
+      textAlign: 'left',
+      cursor: 'pointer',
+      backgroundColor: isFocused
+        ? '#f0f1f3'
+        : 'none',
+      color: isSelected
+        ? color
+        : data.color,
+      fontWeight: isSelected && '400',
+      paddingLeft: isSelected && '30px',
+    };
+  },
+};
 
 function HotelsSearchBar(props) {
+
+  let select = null;
+
   if (props.location.pathname.indexOf('/mobile') !== -1) {
     return null;
   }
 
-  const getRegions = (param) => {
-    if (!param) {
-      return Promise.resolve({ options: [] });
-    }
+  const loadOptions = (input = '', callback) => {
+    fetchCities(input).then(cities => callback(cities));
+  };
 
-    return requester.getRegionsBySearchParameter([`query=${param}`]).then(res => {
+  const fetchCities = (input = '') => {
+    return requester.getRegionsBySearchParameter([`query=${input}`]).then(res => {
       return res.body.then(data => {
-        return { options: data };
+        if (!data) {
+          return [];
+        }
+
+        return data.map(region => ({
+          value: region.id,
+          label: region.query
+        }));
       });
     });
+  };
+
+  const changeRegion = (selectedOption) => {
+    if (selectedOption) {
+      const region = {
+        id: selectedOption.value,
+        query: selectedOption.label
+      };
+
+      props.dispatch(setRegion(region));
+    }
   };
 
   const getQueryString = () => {
@@ -84,30 +154,43 @@ function HotelsSearchBar(props) {
       e.preventDefault();
     }
 
-    distributeAdults().then((rooms) => {
-      if (props.hotelsSearchInfo.hasChildren) {
-        openChildrenModal(CHILDREN);
-      } else {
-        props.search(getQueryString(rooms), e);
-      }
-    });
+    if (!props.hotelsSearchInfo.region) {
+      select.focus();
+      NotificationManager.info('Please choose a location.');
+    } else {
+      distributeAdults().then((rooms) => {
+        if (props.hotelsSearchInfo.hasChildren) {
+          openChildrenModal(CHILDREN);
+        } else {
+          props.search(getQueryString(rooms), e);
+        }
+      });
+    }
   };
+
+  const region = props.hotelsSearchInfo.region;
+  let selectedOption = null;
+  if (region) {
+    selectedOption = {
+      value: region.id,
+      label: region.query
+    };
+  }
 
   return (
     <form className="source-panel" onSubmit={handleSearch}>
-      <div className="source-panel-select source-panel-item">
-        <Select.Async
-          placeholder="Choose a location"
-          required
-          style={{ boxShadow: 'none', border: 'none' }}
-          value={props.hotelsSearchInfo.region}
-          onChange={value => props.dispatch(setRegion(value))}
-          valueKey={'id'}
-          labelKey={'query'}
-          loadOptions={getRegions}
+      <div className="select-wrap source-panel-item">
+        <AsyncSelect
+          ref={(node) => select = node}
+          styles={customStyles}
+          value={selectedOption}
+          onChange={changeRegion}
+          loadOptions={loadOptions}
           backspaceRemoves={true}
           arrowRenderer={null}
           onSelectResetsInput={false}
+          placeholder="Choose a location"
+          required={true}
         />
       </div>
 
@@ -117,7 +200,7 @@ function HotelsSearchBar(props) {
           closeModal={closeChildrenModal}
           handleSubmit={handleSubmitModal}
         />
-        
+
         <div className="check">
           <HotelsDatepickerWrapper />
         </div>
@@ -162,7 +245,7 @@ function HotelsSearchBar(props) {
           </div>
         </div>
       </div>
-      <button type="submit" className="btn btn-primary btn-search">Search</button>
+      <button type="submit" className="button">Search</button>
     </form>
   );
 }

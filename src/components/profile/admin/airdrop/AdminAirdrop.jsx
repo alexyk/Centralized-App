@@ -95,7 +95,7 @@ class AdminAirDrop extends Component {
                 onChange={this.onChange} />
             </div>
             <div className="button-holder">
-              <button type="submit" className="btn btn-primary">Modify</button>
+              <button type="submit" className="button">Modify</button>
             </div>
           </form>
         </div>

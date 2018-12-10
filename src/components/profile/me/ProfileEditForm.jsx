@@ -336,7 +336,7 @@ class ProfileEditForm extends React.Component {
 
           <p className="text"><span className="mandatory">*</span> Fields mandatory for payment with Credit Card</p>
 
-          <button type="submit" className="btn">Save</button>
+          <button type="submit" className="button">Save</button>
         </form>
       </div>
     );

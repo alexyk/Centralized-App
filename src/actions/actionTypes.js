@@ -88,3 +88,9 @@ export const searchDatesInfo = {
   SET_START_DATE: 'SET_START_DATE',
   SET_END_DATE: 'SET_END_DATE',
 };
+
+// counties actions
+export const countriesInfo = {
+  REQUEST_COUNTRIES: 'REQUEST_COUNTRIES',
+  RECEIVE_COUNTRIES: 'RECEIVE_COUNTRIES'
+};

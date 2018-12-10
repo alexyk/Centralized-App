@@ -45,9 +45,9 @@ function HotelDetailsInfoSection(props) {
 
   const getButton = (resultIndex) => {
     if (!props.userInfo.isLogged) {
-      return <button className="btn btn-primary" onClick={(e) => props.dispatch(openModal(LOGIN, e))}>Login</button>;
+      return <button className="button" onClick={(e) => props.dispatch(openModal(LOGIN, e))}>Login</button>;
     } else {
-      return <button className="btn btn-primary" onClick={() => hangleBookNowClick(resultIndex)}>Book Now</button>;
+      return <button className="button" onClick={() => hangleBookNowClick(resultIndex)}>Book Now</button>;
     }
   };
 
