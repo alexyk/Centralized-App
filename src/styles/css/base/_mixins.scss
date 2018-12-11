@@ -290,14 +290,14 @@ $animation-speed: .3s !default;
 
 @mixin statusRowInMobile() {
 	width: 100%;
-    text-align: center;
-    margin-right: 0;
-    font-size: 20px;
+  text-align: center;
+  margin-right: 0;
+  font-size: 20px;
 	border-top: 1px #CCCCCC solid;
 	padding-top: 5%;
-    .status {
-    	font-weight: bold;
-    }
+  .status {
+  	font-weight: bold;
+  }
 }
 
 @mixin imageHostInMobile() {

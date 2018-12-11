@@ -324,7 +324,7 @@ class AirTicketsSearchResult extends Component {
             <div>
               {!isPriceLoaded && allElements
                 ? <button disabled className="mobile-pricing-button">Unavailable</button>
-                : <Link target={isMobile === false ? '_blank' : '_self'} className="mobile-pricing-button" to={`${redirectURL}/${result.id}${search.substr(0, endOfSearch)}`}>Book now</Link>
+                : <Link className="mobile-pricing-button" to={`${redirectURL}/${result.id}/details${search.substr(0, endOfSearch)}`}>Book now</Link>
               }
             </div>
           </div>

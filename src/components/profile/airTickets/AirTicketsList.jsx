@@ -36,8 +36,10 @@ function AirTicketsList(props) {
     <div className="tickets-flex-container">
       <ProfileFlexContainer styleClass="flex-container-header ticket-flex-container">
         <div className="tickets-image"></div>
-        <div className="tickets-airports">Airports</div>
-        <div className="tickets-dates">Dates &amp; Times</div>
+        <div className="tickets-airports-holder">
+          <div className="tickets-airports">Airports</div>
+          <div className="tickets-dates">Dates &amp; Times</div>
+        </div>
         <div className="tickets-actions">Actions</div>
         <div className="tickets-status">Status</div>
       </ProfileFlexContainer>

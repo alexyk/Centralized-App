@@ -42,7 +42,10 @@ class PassengersPopup extends Component {
     const searchParams = queryString.parse(this.props.location.search);
 
     const adultsCount = searchParams.adults;
-    const children = JSON.parse(searchParams.children);
+    let children = [];
+    if (searchParams.children) {
+      children = JSON.parse(searchParams.children);
+    }
     this.passengersTimeOut = setTimeout(() => {
       const passengers = {
         adults: adultsCount < 1 ? 1 : Number(adultsCount),

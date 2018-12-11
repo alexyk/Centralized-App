@@ -343,6 +343,9 @@ class AirTicketsBookingRouterPage extends Component {
       })
       .catch((err) => {
         NotificationManager.warning(err.message, '', LONG);
+        this.setState({
+          isBookingProccess: false
+        });
       });
   }
 

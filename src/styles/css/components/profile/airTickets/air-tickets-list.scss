@@ -29,92 +29,96 @@ $breakpoints: (
         width: 75px;
       }
     }
-    .tickets-airports {
-      width: 33%;
+    .tickets-airports-holder {
+      width: 62%;
       display: flex;
-      justify-content: space-between;
-      flex-direction: column;
-      &.one-way {
-        justify-content: center;
-      }
-      .item {
-        margin-right: 10px;
+      .tickets-airports {
+        width: 50%;
         display: flex;
-        align-items: center;
-        position: relative;
-      }
-      .flight-stops {
-        .stop,
-        .middle-stop {
-          @include flightAirportsTooltip();
-          text-align: center;
+        justify-content: space-between;
+        flex-direction: column;
+        &.one-way {
+          justify-content: center;
         }
-        .stop {
-          position: relative;
-          width: 30px;
-        }
-        .middle-stop {
-          position: absolute;
-          top: 10px;
-          width: 30px;
-        }
-        .stops-container {
-          margin: 0 10px;
-          position: relative;
+        .item {
+          margin-right: 10px;
           display: flex;
           align-items: center;
-          .bulet-container {
-            display: flex;
+          position: relative;
+        }
+        .flight-stops {
+          .stop,
+          .middle-stop {
+            @include flightAirportsTooltip();
+            text-align: center;
+          }
+          .stop {
+            position: relative;
+            width: 30px;
+          }
+          .middle-stop {
             position: absolute;
-            .bulet {
-              display: inline-block;
-              font-weight: 800;
-              width: 0.5em;
-              height: 0.5em;
-              text-align: center;
-              line-height: 1em;
-              border-radius: 1em;
-              background: $moderate-red;
-              position: relative;
+            top: 10px;
+            width: 30px;
+          }
+          .stops-container {
+            margin: 0 10px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            .bulet-container {
+              display: flex;
+              position: absolute;
+              .bulet {
+                display: inline-block;
+                font-weight: 800;
+                width: 0.5em;
+                height: 0.5em;
+                text-align: center;
+                line-height: 1em;
+                border-radius: 1em;
+                background: $moderate-red;
+                position: relative;
+              }
+            }
+            .line {
+              width: 180px;
+              border: 1px solid $moderate-red;
+              margin: 0;
             }
           }
-          .line {
-            width: 200px;
-            border: 1px solid $moderate-red;
-            margin: 0;
+        }
+      }
+      .tickets-dates {
+        width: 50%;
+        &.one-way {
+          display: flex;
+          align-items: center;
+        }
+        .departure-dates {
+          margin-bottom: 20px;
+          display: flex;
+          align-items: center;
+          &.one-way {
+            margin-bottom: 0;
           }
         }
-      }
-    }
-    .tickets-dates {
-      width: 29%;
-      &.one-way {
-        display: flex;
-        align-items: center;
-      }
-      .departure-dates {
-        margin-bottom: 20px;
-        display: flex;
-        align-items: center;
-        &.one-way {
-          margin-bottom: 0;
-        }
-      }
-      .content-row {
-        display: flex;
-        align-items: center;
-        .date-in-day {
-          color: #a2c5bf;
-        }
-        .date-out-day {
-          color: $moderate-red;
-        }
-        i {
-          margin: 0 10px;
-        }
-        .time {
-          margin-top: 5px;
-          font-size: 16px;
+        .content-row {
+          display: flex;
+          align-items: center;
+          .date-in-day {
+            color: #a2c5bf;
+          }
+          .date-out-day {
+            color: $moderate-red;
+          }
+          i {
+            margin: 0 10px;
+          }
+          .time {
+            margin-top: 5px;
+            font-size: 16px;
+          }
         }
       }
     }
@@ -143,6 +147,67 @@ $breakpoints: (
       align-items: center;
       span {
         font-weight: 400;
+      }
+    }
+    @include media("<=desktop") {
+      flex-direction: column;
+      &.flex-container-header {
+        display: none;
+      }
+      .tickets-image {
+        width: 100%;
+        justify-content: center;
+        img {
+          width: 150px;
+          min-width: 150px;
+        }
+      }
+      .tickets-airports-holder {
+        width: 100%;
+        justify-content: space-around;
+        .tickets-airports {
+          width: 45%;
+          .item {
+            justify-content: center;
+          }
+        }
+        .tickets-dates {
+          width: 45%;
+          .content-row {
+            justify-content: center;
+          }
+        }
+      }
+      .tickets-actions {
+        width: 100%;
+        .content-row {
+          display: flex;
+          width: 100%;
+          justify-content: space-around;
+          margin: 40px 0 20px;
+        }
+      }
+      .tickets-status {
+        @include statusRowInMobile();
+        justify-content: center;
+      }
+    }
+    @include media("<=tablet") {
+      .tickets-airports-holder {
+        width: 100%;
+        justify-content: space-around;
+        .tickets-airports {
+          width: 45%;
+          .item {
+            justify-content: center;
+          }
+        }
+        .tickets-dates {
+          width: 45%;
+          .content-row {
+            justify-content: center;
+          }
+        }
       }
     }
   }

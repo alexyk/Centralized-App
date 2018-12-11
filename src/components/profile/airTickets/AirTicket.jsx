@@ -150,41 +150,43 @@ class AirTicket extends Component {
           <div className="flex-row-child tickets-image">
             <img src={PlaneIcon} alt="plane" />
           </div>
-          <div className={`flex-row-child tickets-airports${returnSegments.length === 0 ? ' one-way' : ''}`}>
-            <div className="content-row">
-              {this.getDepartureAirports(departureSegments)}
-            </div>
-            {returnSegments.length > 0 &&
+          <div className="tickets-airports-holder">
+            <div className={`flex-row-child tickets-airports${returnSegments.length === 0 ? ' one-way' : ''}`}>
               <div className="content-row">
-                {this.getReturnAirports(returnSegments)}
-              </div>}
-          </div>
-          <div className={`flex-row-child tickets-dates${returnSegments.length === 0 ? ' one-way' : ''}`}>
-            <div className="content-row">
-              <div className={`departure-dates${returnSegments.length === 0 ? ' one-way' : ''}`}>
-                <div>
-                  <span className="date-in-day">{departureDate.departure.day}</span> {departureDate.departure.month}, {departureDate.departure.year}
-                  <div className="time">{departureDate.departure.time} {departureDate.departure.timezone}</div>
-                </div>
-                <i aria-hidden="true" className="fa fa-long-arrow-right" />
-                <div>
-                  <span className="date-out-day">{departureDate.arrival.day}</span> {departureDate.arrival.month}, {departureDate.arrival.year}
-                  <div className="time">{departureDate.arrival.time} {departureDate.arrival.timezone}</div>
+                {this.getDepartureAirports(departureSegments)}
+              </div>
+              {returnSegments.length > 0 &&
+                <div className="content-row">
+                  {this.getReturnAirports(returnSegments)}
+                </div>}
+            </div>
+            <div className={`flex-row-child tickets-dates${returnSegments.length === 0 ? ' one-way' : ''}`}>
+              <div className="content-row">
+                <div className={`departure-dates${returnSegments.length === 0 ? ' one-way' : ''}`}>
+                  <div>
+                    <span className="date-in-day">{departureDate.departure.day}</span> {departureDate.departure.month}, {departureDate.departure.year}
+                    <div className="time">{departureDate.departure.time} {departureDate.departure.timezone}</div>
+                  </div>
+                  <i aria-hidden="true" className="fa fa-long-arrow-right" />
+                  <div>
+                    <span className="date-out-day">{departureDate.arrival.day}</span> {departureDate.arrival.month}, {departureDate.arrival.year}
+                    <div className="time">{departureDate.arrival.time} {departureDate.arrival.timezone}</div>
+                  </div>
                 </div>
               </div>
+              {returnSegments.length > 0 &&
+                <div className="content-row">
+                  <div>
+                    <span className="date-in-day">{returnDate.departure.day}</span> {returnDate.departure.month}, {returnDate.departure.year}
+                    <div className="time">{returnDate.departure.time} {returnDate.departure.timezone}</div>
+                  </div>
+                  <i aria-hidden="true" className="fa fa-long-arrow-right" />
+                  <div>
+                    <span className="date-out-day">{returnDate.arrival.day}</span> {returnDate.arrival.month}, {returnDate.arrival.year}
+                    <div className="time">{returnDate.arrival.time} {returnDate.arrival.timezone}</div>
+                  </div>
+                </div>}
             </div>
-            {returnSegments.length > 0 &&
-              <div className="content-row">
-                <div>
-                  <span className="date-in-day">{returnDate.departure.day}</span> {returnDate.departure.month}, {returnDate.departure.year}
-                  <div className="time">{returnDate.departure.time} {returnDate.departure.timezone}</div>
-                </div>
-                <i aria-hidden="true" className="fa fa-long-arrow-right" />
-                <div>
-                  <span className="date-out-day">{returnDate.arrival.day}</span> {returnDate.arrival.month}, {returnDate.arrival.year}
-                  <div className="time">{returnDate.arrival.time} {returnDate.arrival.timezone}</div>
-                </div>
-              </div>}
           </div>
           <div className="flex-row-child tickets-actions">
             <div className="content-row">
