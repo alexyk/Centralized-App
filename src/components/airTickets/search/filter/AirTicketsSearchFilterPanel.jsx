@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
-import ReactBootstrapSlider from 'react-bootstrap-slider';
 import Select from 'react-select';
 import PropTypes from 'prop-types';
+import NumberRangeSlider from '../../../common/numberRangeSlider';
 // import moment from 'moment';
 
 import '../../../../styles/css/components/airTickets/search/filter/air-tickets-search-filter-panel.css';
@@ -39,15 +39,13 @@ class AirTicketsSearchFilterPanel extends Component {
     return currencySign;
   }
 
-  handlePriceRangeSelect(event) {
-    const priceRange = event.target.value;
+  handlePriceRangeSelect(priceRange) {
     this.setState({
       priceRange
     });
   }
 
-  handleWaitingRangeSelect(event) {
-    const waitingTimeRange = event.target.value;
+  handleWaitingRangeSelect(waitingTimeRange) {
     this.setState({
       waitingTimeRange
     });
@@ -66,7 +64,7 @@ class AirTicketsSearchFilterPanel extends Component {
   }
 
   render() {
-    const { loading, filters } = this.props;
+    const { loading, filters, windowWidth, showFiltersMobile } = this.props;
 
     if (loading) {
       return (
@@ -110,13 +108,15 @@ class AirTicketsSearchFilterPanel extends Component {
 
     const { airlines, stops, priceRange, waitingTimeRange, airportsArrival, airportsDeparture, airportsTransfer } = this.state;
 
-    // if (props.windowWidth <= 991 && !props.showFiltersMobile) {
-    //   return (
-    //     <div className="filter-box">
-    //       <div onClick={props.handleShowFilters} className="show-filters">Show Filters</div>
-    //     </div>
-    //   );
-    // }
+    if (windowWidth <= 1024 && !showFiltersMobile) {
+      return (
+        <div className="filter-box">
+          <div onClick={this.props.handleShowFilters} className="show-filters">Show Filters</div>
+        </div>
+      );
+    }
+
+    const priceObject = { min: filters.price.minPrice, max: filters.price.maxPrice };
 
     return (
       <div className="filter-box">
@@ -126,11 +126,11 @@ class AirTicketsSearchFilterPanel extends Component {
             name="airlines"
             placeholder=""
             value={airlines}
-            valueKey={'airlineId'}
-            labelKey={'airlineName'}
+            getOptionValue={(option) => option.airlineId}
+            getOptionLabel={(option) => option.airlineName}
             options={filters.airlines}
             onChange={(option) => this.onChange('airlines', option)}
-            multi
+            isMulti
           />
         </div>
         <div className="filter stops-filter">
@@ -139,11 +139,11 @@ class AirTicketsSearchFilterPanel extends Component {
             name="stops"
             placeholder=""
             value={stops}
-            valueKey={'changesId'}
-            labelKey={'changesName'}
+            getOptionValue={(option) => option.changesId}
+            getOptionLabel={(option) => option.changesName}
             options={filters.changes}
             onChange={(option) => this.onChange('stops', option)}
-            multi
+            isMulti
           />
         </div>
         <div className="filter airports-filter">
@@ -154,11 +154,11 @@ class AirTicketsSearchFilterPanel extends Component {
               name="airportsArrival"
               placeholder=""
               value={airportsArrival}
-              valueKey={'airportId'}
-              labelKey={'airportName'}
+              getOptionValue={(option) => option.airportId}
+              getOptionLabel={(option) => option.airportName}
               options={filters.airports.arrivals}
               onChange={(option) => this.onChange('airportsArrival', option)}
-              multi
+              isMulti
             />
           </div>
           <div className="departures">
@@ -167,11 +167,11 @@ class AirTicketsSearchFilterPanel extends Component {
               name="airportsDeparture"
               placeholder=""
               value={airportsDeparture}
-              valueKey={'airportId'}
-              labelKey={'airportName'}
+              getOptionValue={(option) => option.airportId}
+              getOptionLabel={(option) => option.airportName}
               options={filters.airports.departures}
               onChange={(option) => this.onChange('airportsDeparture', option)}
-              multi
+              isMulti
             />
           </div>
           <div className="transfers">
@@ -180,11 +180,11 @@ class AirTicketsSearchFilterPanel extends Component {
               name="airportsTransfer"
               placeholder=""
               value={airportsTransfer}
-              valueKey={'airportId'}
-              labelKey={'airportName'}
+              getOptionValue={(option) => option.airportId}
+              getOptionLabel={(option) => option.airportName}
               options={filters.airports.transfers}
               onChange={(option) => this.onChange('airportsTransfer', option)}
-              multi
+              isMulti
             />
           </div>
         </div>
@@ -269,34 +269,26 @@ class AirTicketsSearchFilterPanel extends Component {
         {filters.price.maxPrice && filters.price.minPrice &&
           <div className="price-range-filters">
             <h5>Pricing</h5>
-            <ReactBootstrapSlider
-              value={priceRange ? priceRange : [filters.price.minPrice, filters.price.maxPrice]}
-              slideStop={this.handlePriceRangeSelect}
-              step={5}
-              max={filters.price.maxPrice}
-              min={filters.price.minPrice}
-              orientation="horizontal"
-              range={true} />
-            <div className="labels">
-              <label>{this.getCurrencySign(filters.price.currency)} {(filters.price.minPrice).toFixed(3)}</label>
-              <label>{this.getCurrencySign(filters.price.currency)} {(filters.price.maxPrice).toFixed(3)}</label>
-            </div>
+            <NumberRangeSlider
+              minLabel={`${this.getCurrencySign(filters.price.currency)} ${priceRange ? priceRange.min : priceObject.min}`}
+              maxLabel={`${this.getCurrencySign(filters.price.currency)} ${priceRange ? priceRange.max : priceObject.max}`}
+              minValue={priceObject.min}
+              maxValue={priceObject.max}
+              value={priceRange ? priceRange : priceObject}
+              onChange={this.handlePriceRangeSelect}
+            />
           </div>}
         {filters.waiting && filters.waiting.max && filters.waiting.min &&
           <div className="waiting-range-filters">
             <h5>Waiting time</h5>
-            <ReactBootstrapSlider
-              value={waitingTimeRange ? waitingTimeRange : [filters.waiting.min, filters.waiting.max]}
-              slideStop={this.handleWaitingRangeSelect}
-              step={5}
-              max={filters.waiting.max}
-              min={filters.waiting.min}
-              orientation="horizontal"
-              range={true} />
-            <div className="labels">
-              <label>{`${filters.waiting.min} min`}</label>
-              <label>{`${filters.waiting.max} min`}</label>
-            </div>
+            <NumberRangeSlider
+              minLabel={`${filters.waiting.min} min`}
+              maxLabel={`${filters.waiting.max} min`}
+              minValue={filters.waiting.min}
+              maxValue={filters.waiting.max}
+              value={waitingTimeRange ? waitingTimeRange : filters.waiting}
+              onChange={this.handleWaitingRangeSelect}
+            />
           </div>}
         <div className="buttons-holder">
           <button onClick={() => this.props.applyFilters(this.state)} className="btn btn">Apply Filters</button>
@@ -310,6 +302,9 @@ class AirTicketsSearchFilterPanel extends Component {
 AirTicketsSearchFilterPanel.propTypes = {
   loading: PropTypes.bool,
   filters: PropTypes.object,
+  windowWidth: PropTypes.number,
+  showFiltersMobile: PropTypes.bool,
+  handleShowFilters: PropTypes.func,
   applyFilters: PropTypes.func
 };
 

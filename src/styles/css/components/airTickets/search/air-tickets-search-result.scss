@@ -30,7 +30,6 @@ $media-expressions: (
 .air-tickets-details-result {
   background: $white;
   border-radius: 3px;
-  overflow: hidden;
   padding: 5px;
   font-size: 15px;
   color: $dark-gray;
@@ -44,7 +43,6 @@ $media-expressions: (
   }
 
   &-content {
-    overflow: hidden;
     width: 100%;
 
     .solution-main-info {
@@ -52,26 +50,44 @@ $media-expressions: (
       padding: 5px 10px;
       align-items: center;
       font-weight: 400;
-
+      @include media("<phone") {
+        flex-wrap: wrap;
+      }
       h5 {
         font-weight: 400;
       }
 
       .departure {
         width: 25%;
-        margin-left: 23px;
+        @include media("<phone") {
+          width: 50%;
+          order: 1;
+        }
       }
 
       .carrier {
         width: 45%;
+        @include media("<tablet") {
+          width: 35%;
+        }
+        @include media("<phone") {
+          width: 50%;
+          order: 3;
+        }
       }
 
       .duration {
         width: 20%;
-        margin: 0 0 0.5em;
         display: flex;
         align-items: center;
         font-size: 12px;
+        @include media("<tablet") {
+          width: 25%;
+        }
+        @include media("<phone") {
+          width: 50%;
+          order: 2;
+        }
         img {
           margin-right: 5px;
         }
@@ -80,6 +96,13 @@ $media-expressions: (
       .stops-count {
         width: 10%;
         margin: 0 0 0.5em;
+        @include media("<tablet") {
+          width: 15%;
+        }
+        @include media("<phone") {
+          width: 50%;
+          order: 4;
+        }
       }
     }
 
@@ -91,9 +114,16 @@ $media-expressions: (
         padding: 10px 10px;
         display: flex;
         align-items: center;
+        @include media("<tablet") {
+          flex-wrap: wrap;
+        }
         .flight-date-times {
           width: 50%;
           justify-content: center;
+          @include media("<tablet") {
+            width: 100%;
+            margin-bottom: 20px;
+          }
           .date-in-day {
             color: #a2c5bf;
           }
@@ -130,6 +160,9 @@ $media-expressions: (
         .flight-stops {
           width: 50%;
           justify-content: center;
+          @include media("<tablet") {
+            width: 100%;
+          }
           .stop,
           .middle-stop {
             text-align: center;
@@ -196,7 +229,7 @@ $media-expressions: (
     justify-content: center;
     padding: 5px;
 
-    @include media(">=desktop") {
+    @include media(">=tablet") {
       min-width: 195px;
     }
 

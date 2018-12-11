@@ -97,7 +97,11 @@ function FilterPanel(props) {
           <div className="range-filters">
             <h5>Pricing</h5>
             <NumberRangeSlider
-              value={props.priceRange} 
+              minLabel={`$${props.priceRange.min}`}
+              maxLabel={`$${props.priceRange.max}`}
+              minValue={0}
+              maxValue={5000}
+              value={props.priceRange}
               onChange={props.handlePriceRangeSelect}
             />
           </div>

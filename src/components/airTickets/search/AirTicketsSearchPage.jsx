@@ -16,6 +16,7 @@ import { Config } from '../../../config';
 import AirTicketsResultsHolder from './AirTicketsSearchResultsHolder';
 import AirTicketsSearchFilterPanel from './filter/AirTicketsSearchFilterPanel';
 import { LONG } from '../../../constants/notificationDisplayTimes';
+import AsideContentPage from '../../common/asideContentPage/AsideContentPage';
 
 import '../../../styles/css/components/airTickets/search/air-tickets-search-page.css';
 
@@ -35,13 +36,16 @@ class AirTicketsSearchPage extends Component {
       loading: true,
       totalElements: 0,
       page: !queryParams.page ? 0 : Number(queryParams.page),
-      filters: null
+      filters: null,
+      windowWidth: 0,
+      showFiltersMobile: false
     };
 
     this.onPageChange = this.onPageChange.bind(this);
     this.searchAirTickets = this.searchAirTickets.bind(this);
     this.applyFilters = this.applyFilters.bind(this);
     this.initAirTicketsSearchPage = this.initAirTicketsSearchPage.bind(this);
+    this.handleShowFilters = this.handleShowFilters.bind(this);
 
     // SOCKET BINDINGS
     this.handleReceiveMessageSearch = this.handleReceiveMessageSearch.bind(this);
@@ -154,8 +158,8 @@ class AirTicketsSearchPage extends Component {
     const filters = {
       airlines: filtersObject.airlines.map(a => a.airlineId).join(',') || null,
       stops: filtersObject.stops.map(a => a.changesId).join(',') || null,
-      minPrice: filtersObject.priceRange && filtersObject.priceRange[0],
-      maxPrice: filtersObject.priceRange && filtersObject.priceRange[1],
+      minPrice: filtersObject.priceRange && filtersObject.priceRange.min,
+      maxPrice: filtersObject.priceRange && filtersObject.priceRange.max,
       minWaitTime: filtersObject.waitingTimeRange && filtersObject.waitingTimeRange[0],
       maxWaitTime: filtersObject.waitingTimeRange && filtersObject.waitingTimeRange[1],
       airportsDeparture: filtersObject.airportsDeparture.map(a => a.airportId).join(',') || null,
@@ -195,6 +199,10 @@ class AirTicketsSearchPage extends Component {
 
   updateWindowWidth() {
     this.setState({ windowWidth: window.innerWidth });
+  }
+
+  handleShowFilters() {
+    this.setState({ showFiltersMobile: true });
   }
 
   requestAirportInfo(airportCode) {
@@ -497,7 +505,7 @@ class AirTicketsSearchPage extends Component {
   }
 
   render() {
-    const { currentPageResults, allElements, loading, filters, totalElements, page } = this.state;
+    const { currentPageResults, allElements, loading, filters, totalElements, page, windowWidth, showFiltersMobile } = this.state;
 
     return (
       <Fragment>
@@ -506,30 +514,37 @@ class AirTicketsSearchPage extends Component {
         </div>
         <BookingSteps steps={['Search', 'Details', 'Prepare Booking', 'Confirm & Pay']} currentStepIndex={0} />
         <div className="container">
-          <div className="air-tickets-search-results">
-            <div className="air-tickets-search-filter-panel">
-              <AirTicketsSearchFilterPanel
-                loading={!allElements}
-                filters={filters}
-                applyFilters={this.applyFilters}
-              />
-            </div>
-            <div className="air-tickets-search-results-holder">
-              <AirTicketsResultsHolder
-                results={currentPageResults}
-                allElements={allElements}
-                loading={loading}
-              />
-              {!loading &&
-                <Pagination
-                  onPageChange={this.onPageChange}
-                  currentPage={page + 1}
-                  pageSize={DEFAULT_PAGE_SIZE}
-                  totalElements={totalElements}
+          <AsideContentPage>
+            <AsideContentPage.Aside>
+              <div className="air-tickets-search-filter-panel">
+                <AirTicketsSearchFilterPanel
+                  windowWidth={windowWidth}
+                  showFiltersMobile={showFiltersMobile}
+                  loading={!allElements}
+                  filters={filters}
+                  handleShowFilters={this.handleShowFilters}
+                  applyFilters={this.applyFilters}
                 />
-              }
-            </div>
-          </div>
+              </div>
+            </AsideContentPage.Aside>
+            <AsideContentPage.Content>
+              <div className="air-tickets-search-results-holder">
+                <AirTicketsResultsHolder
+                  results={currentPageResults}
+                  allElements={allElements}
+                  loading={loading}
+                />
+                {!loading &&
+                  <Pagination
+                    onPageChange={this.onPageChange}
+                    currentPage={page + 1}
+                    pageSize={DEFAULT_PAGE_SIZE}
+                    totalElements={totalElements}
+                  />
+                }
+              </div>
+            </AsideContentPage.Content>
+          </AsideContentPage>
         </div>
       </Fragment>
     );
