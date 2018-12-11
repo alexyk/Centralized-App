@@ -114,6 +114,7 @@ $media-expressions: (
         padding: 10px 10px;
         display: flex;
         align-items: center;
+        margin-bottom: 10px;
         @include media("<tablet") {
           flex-wrap: wrap;
         }
@@ -143,6 +144,9 @@ $media-expressions: (
             display: flex;
             align-items: center;
             justify-content: center;
+            @include media("<phone") {
+            margin: 0 5px;
+            }
           }
         }
 
@@ -151,6 +155,9 @@ $media-expressions: (
           display: flex;
           align-items: center;
           position: relative;
+          @include media("<tablet") {
+            margin-right: 0;
+          }
         }
 
         input {
@@ -200,7 +207,7 @@ $media-expressions: (
             }
 
             .line {
-              width: 200px;
+              width: 180px;
               border: 1px solid #d87a61;
               margin: 0;
             }

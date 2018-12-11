@@ -57,7 +57,7 @@ class AirTicketsDetailsInfoSection extends Component {
 
     let middleStopsBulets = [];
 
-    const buletIndex = 200 / departureInfo.length;
+    const buletIndex = 180 / departureInfo.length;
 
     for (let i = 0; i < departureInfo.length - 1; i++) {
       middleStopsBulets.push(
@@ -114,7 +114,7 @@ class AirTicketsDetailsInfoSection extends Component {
                 <div className="bulet-container"><span className="bulet"></span></div>
                 <hr className="line" />
                 {departureInfo.length === 1 ? null : middleStopsBulets}
-                <div className="bulet-container" style={{ left: '200px' }}><span className="bulet"></span></div>
+                <div className="bulet-container" style={{ left: '180px' }}><span className="bulet"></span></div>
               </div>
               <div className="stop">
                 {departureInfo[departureInfo.length - 1].destination.code}
@@ -140,7 +140,7 @@ class AirTicketsDetailsInfoSection extends Component {
 
     let middleStopsBulets = [];
 
-    const buletIndex = 200 / returnInfo.length;
+    const buletIndex = 180 / returnInfo.length;
 
     for (let i = 0; i < returnInfo.length - 1; i++) {
       middleStopsBulets.push(
@@ -197,7 +197,7 @@ class AirTicketsDetailsInfoSection extends Component {
                 <div className="bulet-container"><span className="bulet"></span></div>
                 <hr className="line" />
                 {returnInfo.length === 1 ? null : middleStopsBulets}
-                <div className="bulet-container" style={{ left: '200px' }}><span className="bulet"></span></div>
+                <div className="bulet-container" style={{ left: '180px' }}><span className="bulet"></span></div>
               </div>
               <div className="stop">
                 {returnInfo[returnInfo.length - 1].destination.code}

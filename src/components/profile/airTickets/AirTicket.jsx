@@ -31,7 +31,7 @@ class AirTicket extends Component {
 
   getDepartureAirports(airports) {
     let middleStopsBulets = [];
-    const buletIndex = 200 / airports.length;
+    const buletIndex = 180 / airports.length;
     for (let i = 0; i < airports.length - 1; i++) {
       middleStopsBulets.push(
         <Fragment key={i}>
@@ -62,7 +62,7 @@ class AirTicket extends Component {
           <div className="bulet-container"><span className="bulet"></span></div>
           <hr className="line" />
           {airports.length === 1 ? null : middleStopsBulets}
-          <div className="bulet-container" style={{ left: '200px' }}><span className="bulet"></span></div>
+          <div className="bulet-container" style={{ left: '180px' }}><span className="bulet"></span></div>
         </div>
         <div className="stop">
           {airports[airports.length - 1].destination}
@@ -79,7 +79,7 @@ class AirTicket extends Component {
   getReturnAirports(airports) {
     let middleStopsBulets = [];
 
-    const buletIndex = 200 / airports.length;
+    const buletIndex = 180 / airports.length;
 
     for (let i = 0; i < airports.length - 1; i++) {
       middleStopsBulets.push(
@@ -111,7 +111,7 @@ class AirTicket extends Component {
           <div className="bulet-container"><span className="bulet"></span></div>
           <hr className="line" />
           {airports.length === 1 ? null : middleStopsBulets}
-          <div className="bulet-container" style={{ left: '200px' }}><span className="bulet"></span></div>
+          <div className="bulet-container" style={{ left: '180px' }}><span className="bulet"></span></div>
         </div>
         <div className="stop">
           {airports[airports.length - 1].destination}
