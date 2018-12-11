@@ -1,6 +1,8 @@
 import React, { Component, Fragment } from 'react';
+import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
+import queryString from 'query-string';
 import { setAdults, setChildren } from '../../../../../actions/airTicketsSearchInfo';
 
 import './style.css';
@@ -9,18 +11,47 @@ class PassengersPopup extends Component {
   constructor(props) {
     super(props);
 
+    this.passengersTimeOut = null;
+
     this.state = {
       passengers: {
         adults: 1,
         children: []
       }
     };
-    
+
     this.applyPassengersChoose = this.applyPassengersChoose.bind(this);
     this.increaseAdults = this.increaseAdults.bind(this);
     this.decreaseAdults = this.decreaseAdults.bind(this);
     this.increaseChildren = this.increaseChildren.bind(this);
     this.decreaseChildren = this.decreaseChildren.bind(this);
+    this.populatePassengersPopup = this.populatePassengersPopup.bind(this);
+  }
+
+  componentDidMount() {
+    this.populatePassengersPopup();
+  }
+
+  componentWillUnmount() {
+    if (this.passengersTimeOut) {
+      clearTimeout(this.passengersTimeOut);
+    }
+  }
+
+  populatePassengersPopup() {
+    const searchParams = queryString.parse(this.props.location.search);
+
+    const adultsCount = searchParams.adults;
+    const children = JSON.parse(searchParams.children);
+    this.passengersTimeOut = setTimeout(() => {
+      const passengers = {
+        adults: adultsCount < 1 ? 1 : Number(adultsCount),
+        children: children
+      };
+      this.setState({
+        passengers
+      });
+    }, 100);
   }
 
   increaseAdults() {
@@ -92,7 +123,7 @@ class PassengersPopup extends Component {
 
     this.props.dispatch(setAdults(passengers.adults));
     this.props.dispatch(setChildren(passengers.children));
-    
+
     this.props.closePassengersPopup();
   }
 
@@ -150,8 +181,11 @@ PassengersPopup.propTypes = {
   showPassengersPopup: PropTypes.bool,
   closePassengersPopup: PropTypes.func,
 
+  // Router props
+  location: PropTypes.object,
+
   // Redux props
   dispatch: PropTypes.func
 };
 
-export default connect()(PassengersPopup);
+export default withRouter(connect()(PassengersPopup));

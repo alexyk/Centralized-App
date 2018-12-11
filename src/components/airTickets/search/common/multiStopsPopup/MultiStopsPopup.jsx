@@ -68,6 +68,8 @@ class MultiStopsPopup extends PureComponent {
   constructor(props) {
     super(props);
 
+    this.destinationsTimeOut = null;
+
     let destinations;
 
     if (this.props.destinations && this.props.destinations.length > 0) {
@@ -94,21 +96,11 @@ class MultiStopsPopup extends PureComponent {
     this.handleDestination = this.handleDestination.bind(this);
     this.handleDateChange = this.handleDateChange.bind(this);
     this.applyDestinationsChoose = this.applyDestinationsChoose.bind(this);
+    this.populateMultiStopsPopup = this.populateMultiStopsPopup.bind(this);
   }
 
   componentDidMount() {
-    const searchParams = queryString.parse(this.props.location.search);
-
-    if (searchParams.destinations) {
-      const destinations = JSON.parse(searchParams.destinations);
-      if (this.state.destinations.length <= destinations.length - 1) {
-        this.destinationsTimeOut = setTimeout(() => {
-          this.setState({
-            destinations: this.props.destinations
-          });
-        }, 100);
-      }
-    }
+    this.populateMultiStopsPopup();
   }
 
   componentDidUpdate(prevProps) {
@@ -123,7 +115,24 @@ class MultiStopsPopup extends PureComponent {
   }
 
   componentWillUnmount() {
-    clearTimeout(this.destinationsTimeOut);
+    if (this.destinationsTimeOut) {
+      clearTimeout(this.destinationsTimeOut);
+    }
+  }
+
+  populateMultiStopsPopup() {
+    const searchParams = queryString.parse(this.props.location.search);
+
+    if (searchParams.destinations) {
+      const destinations = JSON.parse(searchParams.destinations);
+      if (this.state.destinations.length <= destinations.length - 1) {
+        this.destinationsTimeOut = setTimeout(() => {
+          this.setState({
+            destinations: this.props.destinations
+          });
+        }, 100);
+      }
+    }
   }
 
   loadOptions(input = '', callback) {
@@ -234,8 +243,8 @@ class MultiStopsPopup extends PureComponent {
                   value={destination.origin}
                   onChange={(value) => this.handleOrigin(value, destinationIndex)}
                   loadOptions={this.loadOptions}
-                  getOptionLabel ={(option)=> option.name}
-                  getOptionValue ={(option)=> option.code}
+                  getOptionLabel={(option) => option.name}
+                  getOptionValue={(option) => option.code}
                   backspaceRemoves={true}
                   arrowRenderer={null}
                   onSelectResetsInput={false}
@@ -249,8 +258,8 @@ class MultiStopsPopup extends PureComponent {
                   value={destination.destination}
                   onChange={(value) => this.handleDestination(value, destinationIndex)}
                   loadOptions={this.loadOptions}
-                  getOptionLabel ={(option)=> option.name}
-                  getOptionValue ={(option)=> option.code}
+                  getOptionLabel={(option) => option.name}
+                  getOptionValue={(option) => option.code}
                   backspaceRemoves={true}
                   arrowRenderer={null}
                   onSelectResetsInput={false}
