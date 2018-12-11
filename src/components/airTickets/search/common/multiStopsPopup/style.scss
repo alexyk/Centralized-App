@@ -55,23 +55,6 @@ $media-expressions: (
         border: none;
         padding: 5px 18px;
       }
-      &:after {
-        position: absolute;
-        content: "\e900";
-        font-family: "icomoon" !important;
-        padding: 0 8px;
-        font-size: 5px;
-        right: 16px;
-        top: 50%;
-        transform: translateY(-50%);
-        z-index: 1;
-        text-align: center;
-        pointer-events: none;
-        box-sizing: border-box;
-        @include media(">=desktop") {
-          font-size: 7px;
-        }
-      }
       .Select-value {
         width: calc(100% - 50px);
       }

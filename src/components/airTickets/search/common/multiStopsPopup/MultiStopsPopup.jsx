@@ -1,7 +1,7 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
-import Select from 'react-select';
+import AsyncSelect from 'react-select/lib/Async';
 import { NotificationManager } from 'react-notifications';
 import DatePicker from 'react-datepicker';
 import PropTypes from 'prop-types';
@@ -15,6 +15,54 @@ import { setMultiStopsDestinations } from '../../../../../actions/airTicketsSear
 import './style.css';
 import 'react-datepicker/dist/react-datepicker.css';
 import '../../../../common/datepicker/style.css';
+
+const customStyles = {
+  container: (styles) => ({
+    ...styles,
+    flex: '1 1 0',
+    outline: 'none',
+  }),
+  valueContainer: (styles) => ({
+    ...styles,
+    fontSize: '1.2em'
+  }),
+  input: (styles) => ({
+    ...styles,
+    outline: 'none',
+  }),
+  control: (styles) => ({
+    ...styles,
+    padding: '0 10px',
+    cursor: 'pointer',
+    boxShadow: 'none',
+    border: 0,
+  }),
+  indicatorSeparator: (styles) => ({
+    ...styles,
+    display: 'none'
+  }),
+  menu: (styles) => ({
+    ...styles,
+    marginTop: '20px'
+  }),
+  option: (styles, { data, isFocused, isSelected }) => {
+    const color = isSelected ? '#d87a61' : 'black';
+    return {
+      ...styles,
+      fontSize: '1.2em',
+      textAlign: 'left',
+      cursor: 'pointer',
+      backgroundColor: isFocused
+        ? '#f0f1f3'
+        : 'none',
+      color: isSelected
+        ? color
+        : data.color,
+      fontWeight: isSelected && '400',
+      paddingLeft: isSelected && '30px',
+    };
+  },
+};
 
 class MultiStopsPopup extends PureComponent {
   constructor(props) {
@@ -38,6 +86,7 @@ class MultiStopsPopup extends PureComponent {
       destinations
     };
 
+    this.loadOptions = this.loadOptions.bind(this);
     this.requestAirports = this.requestAirports.bind(this);
     this.addDestination = this.addDestination.bind(this);
     this.removeDestination = this.removeDestination.bind(this);
@@ -77,12 +126,12 @@ class MultiStopsPopup extends PureComponent {
     clearTimeout(this.destinationsTimeOut);
   }
 
-  requestAirports(param) {
-    if (!param) {
-      return Promise.resolve({ options: [] });
-    }
+  loadOptions(input = '', callback) {
+    this.requestAirports(input).then(airports => callback(airports));
+  }
 
-    return fetch(`${Config.getValue('apiHost')}flight/city/search?query=${param}`, {
+  requestAirports(input = '') {
+    return fetch(`${Config.getValue('apiHost')}flight/city/search?query=${input}`, {
       headers: {
         'Content-type': 'application/json'
       }
@@ -96,7 +145,7 @@ class MultiStopsPopup extends PureComponent {
             }
           });
         });
-        return { options };
+        return options;
       });
     });
   }
@@ -180,33 +229,33 @@ class MultiStopsPopup extends PureComponent {
           return (
             <div key={destinationIndex} className="multi-stops-popup-item">
               <div className="multi-stops-popup-item-origin">
-                <Select.Async
-                  placeholder="Origin"
-                  required
-                  style={{ boxShadow: 'none', border: 'none' }}
+                <AsyncSelect
+                  styles={customStyles}
                   value={destination.origin}
                   onChange={(value) => this.handleOrigin(value, destinationIndex)}
-                  valueKey={'code'}
-                  labelKey={'name'}
-                  loadOptions={this.requestAirports}
+                  loadOptions={this.loadOptions}
+                  getOptionLabel ={(option)=> option.name}
+                  getOptionValue ={(option)=> option.code}
                   backspaceRemoves={true}
                   arrowRenderer={null}
                   onSelectResetsInput={false}
+                  placeholder="Origin"
+                  required={true}
                 />
               </div>
               <div className="multi-stops-popup-item-destination">
-                <Select.Async
-                  placeholder="Destination"
-                  required
-                  style={{ boxShadow: 'none', border: 'none' }}
+                <AsyncSelect
+                  styles={customStyles}
                   value={destination.destination}
                   onChange={(value) => this.handleDestination(value, destinationIndex)}
-                  valueKey={'code'}
-                  labelKey={'name'}
-                  loadOptions={this.requestAirports}
+                  loadOptions={this.loadOptions}
+                  getOptionLabel ={(option)=> option.name}
+                  getOptionValue ={(option)=> option.code}
                   backspaceRemoves={true}
                   arrowRenderer={null}
                   onSelectResetsInput={false}
+                  placeholder="Destination"
+                  required={true}
                 />
               </div>
               <div className="multi-stops-popup-item-date">

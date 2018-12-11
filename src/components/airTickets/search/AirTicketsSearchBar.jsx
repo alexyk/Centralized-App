@@ -17,6 +17,7 @@ const customStyles = {
     ...styles,
     flex: '1 1 0',
     outline: 'none',
+    zIndex: '2'
   }),
   valueContainer: (styles) => ({
     ...styles,
@@ -76,9 +77,6 @@ class AirTicketsSearchBar extends Component {
     this.openMultiStopsPopup = this.openMultiStopsPopup.bind(this);
     this.closeMultiStopsPopup = this.closeMultiStopsPopup.bind(this);
     this.loadOptions = this.loadOptions.bind(this);
-    this.requestAirports = this.requestAirports.bind(this);
-    this.changeOrigin = this.changeOrigin.bind(this);
-    this.changeDestination = this.changeDestination.bind(this);
   }
 
   loadOptions(input = '', callback) {
@@ -96,7 +94,7 @@ class AirTicketsSearchBar extends Component {
         towns.forEach(town => {
           town.airports.forEach(airport => {
             if (airport.code) {
-              options.push({ value: airport.code, label: `${town.name}, ${town.cityState ? town.cityState + ', ' : ''}${town.countryName}, ${airport.code} airport` });
+              options.push({ code: airport.code, name: `${town.name}, ${town.cityState ? town.cityState + ', ' : ''}${town.countryName}, ${airport.code} airport` });
             }
           });
         });
@@ -133,28 +131,6 @@ class AirTicketsSearchBar extends Component {
     }
 
     return destinations;
-  }
-
-  changeOrigin(selectedOption) {
-    if (selectedOption) {
-      const origin = {
-        code: selectedOption.value,
-        name: selectedOption.label
-      };
-
-      this.props.dispatch(setOrigin(origin));
-    }
-  }
-
-  changeDestination(selectedOption) {
-    if (selectedOption) {
-      const destination = {
-        code: selectedOption.value,
-        name: selectedOption.label
-      };
-
-      this.props.dispatch(setDestination(destination));
-    }
   }
 
   getQueryString() {
@@ -215,21 +191,6 @@ class AirTicketsSearchBar extends Component {
     const { origin, destination, flexSearch, adultsCount, children, departureTime, stops, flightClass } = this.props.airTicketsSearchInfo;
     const { showMultiStopsPopup } = this.state;
 
-    let selectedOrigin = null;
-    if (origin) {
-      selectedOrigin = {
-        value: origin.code,
-        label: origin.name
-      };
-    }
-    let selectedDestination = null;
-    if (destination) {
-      selectedDestination = {
-        value: destination.code,
-        label: destination.name
-      };
-    }
-
     return (
       <div className="air-tickets">
         <form className="air-tickets-form" onSubmit={this.handleSearch}>
@@ -237,9 +198,11 @@ class AirTicketsSearchBar extends Component {
             <div className="air-tickets-form-select">
               <AsyncSelect
                 styles={customStyles}
-                value={selectedOrigin}
-                onChange={this.changeOrigin}
+                value={origin}
+                onChange={(value) => this.props.dispatch(setOrigin(value))}
                 loadOptions={this.loadOptions}
+                getOptionLabel ={(option)=> option.name}
+                getOptionValue ={(option)=> option.code}
                 backspaceRemoves={true}
                 arrowRenderer={null}
                 onSelectResetsInput={false}
@@ -250,9 +213,11 @@ class AirTicketsSearchBar extends Component {
             <div className="air-tickets-form-select">
               <AsyncSelect
                 styles={customStyles}
-                value={selectedDestination}
-                onChange={this.changeDestination}
+                value={destination}
+                onChange={(value) => this.props.dispatch(setDestination(value))}
                 loadOptions={this.loadOptions}
+                getOptionLabel ={(option)=> option.name}
+                getOptionValue ={(option)=> option.code}
                 backspaceRemoves={true}
                 arrowRenderer={null}
                 onSelectResetsInput={false}
@@ -323,7 +288,7 @@ class AirTicketsSearchBar extends Component {
               <option value="F">first</option>
             </select>
           </SelectFlex>
-          <button type="submit" className="btn btn-primary btn-search">Search</button>
+          <button type="submit" className="button air-tickets-button-search">Search</button>
         </form>
       </div >
     );
