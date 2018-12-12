@@ -1,6 +1,7 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
+import { components } from 'react-select';
 import AsyncSelect from 'react-select/lib/Async';
 import { NotificationManager } from 'react-notifications';
 import DatePicker from 'react-datepicker';
@@ -43,7 +44,14 @@ const customStyles = {
   }),
   menu: (styles) => ({
     ...styles,
-    marginTop: '20px'
+    marginTop: '20px',
+    zIndex: '3 !important'
+  }),
+  groupHeading: styles => ({
+    ...styles,
+    fontSize: '1.2em',
+    textAlign: 'left',
+    fontWeight: '400'
   }),
   option: (styles, { data, isFocused, isSelected }) => {
     const color = isSelected ? '#d87a61' : 'black';
@@ -59,7 +67,7 @@ const customStyles = {
         ? color
         : data.color,
       fontWeight: isSelected && '400',
-      paddingLeft: isSelected && '30px',
+      paddingLeft: '30px',
     };
   },
 };
@@ -140,21 +148,27 @@ class MultiStopsPopup extends PureComponent {
   }
 
   requestAirports(input = '') {
-    return fetch(`${Config.getValue('apiHost')}flight/city/search?query=${input}`, {
+    return fetch(`${Config.getValue('apiHost')}flight/city/airports/search?query=${input}`, {
       headers: {
         'Content-type': 'application/json'
       }
     }).then(res => {
       return res.json().then(towns => {
-        let options = [];
+        let groupedOptions = [];
+        let currentOptions;
         towns.forEach(town => {
+          groupedOptions.push({ label: `${town.cityName}, ${town.countryName}`, options: [] });
+          currentOptions = groupedOptions[groupedOptions.length - 1].options;
+          if (town.airports.length > 1) {
+            currentOptions.push({ code: town.cityCode, name: `${town.cityName} - all airports (${town.cityCode})` });
+          }
           town.airports.forEach(airport => {
             if (airport.code) {
-              options.push({ code: airport.code, name: `${town.name}, ${town.cityState ? town.cityState + ', ' : ''}${town.countryName}, ${airport.code} airport` });
+              currentOptions.push({ code: airport.code, name: `${airport.name ? airport.name : town.cityName} (${airport.code})` });
             }
           });
         });
-        return options;
+        return groupedOptions;
       });
     });
   }
@@ -250,6 +264,13 @@ class MultiStopsPopup extends PureComponent {
                   onSelectResetsInput={false}
                   placeholder="Origin"
                   required={true}
+                  components={(props) => {
+                    return (
+                      <div>
+                        <components.Group {...props} />
+                      </div>
+                    );
+                  }}
                 />
               </div>
               <div className="multi-stops-popup-item-destination">
@@ -265,6 +286,13 @@ class MultiStopsPopup extends PureComponent {
                   onSelectResetsInput={false}
                   placeholder="Destination"
                   required={true}
+                  components={(props) => {
+                    return (
+                      <div>
+                        <components.Group {...props} />
+                      </div>
+                    );
+                  }}
                 />
               </div>
               <div className="multi-stops-popup-item-date">

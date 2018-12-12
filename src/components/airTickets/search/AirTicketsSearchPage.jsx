@@ -206,7 +206,7 @@ class AirTicketsSearchPage extends Component {
   }
 
   requestAirportInfo(airportCode) {
-    return fetch(`${Config.getValue('apiHost')}flight/city/search/${airportCode}`, {
+    return fetch(`${Config.getValue('apiHost')}flight/city/airports/${airportCode}`, {
       headers: {
         'Content-type': 'application/json'
       }
