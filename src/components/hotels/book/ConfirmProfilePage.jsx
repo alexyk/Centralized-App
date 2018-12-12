@@ -1,4 +1,5 @@
 import React from 'react';
+import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import { NotificationManager } from 'react-notifications';
 import PropTypes from 'prop-types';
@@ -17,7 +18,6 @@ class ConfirmProfilePage extends React.Component {
     super(props);
 
     this.state = {
-      countries: [],
       loading: true,
       states: [],
       userInfo: {
@@ -38,13 +38,11 @@ class ConfirmProfilePage extends React.Component {
     this.updateUserProfile = this.updateUserProfile.bind(this);
     this.payWithCard = this.payWithCard.bind(this);
     this.requestUserInfo = this.requestUserInfo.bind(this);
-    this.requestCountries = this.requestCountries.bind(this);
     this.requestStates = this.requestStates.bind(this);
   }
 
   componentDidMount() {
     this.requestUserInfo();
-    this.requestCountries();
   }
 
   requestUserInfo() {
@@ -69,13 +67,6 @@ class ConfirmProfilePage extends React.Component {
 
         this.setState({ userInfo, loading: false });
       });
-  }
-
-  requestCountries() {
-    requester.getCountries()
-      .then(res => res.body)
-      .then(data => this.setState({ countries: data }))
-      .catch(error => console.log(error));
   }
 
   requestStates(countryId) {
@@ -167,6 +158,8 @@ class ConfirmProfilePage extends React.Component {
       return <div className="loader"></div>;
     }
 
+    const { countries } = this.props;
+
     return (
       <React.Fragment>
         <div className="sm-none">
@@ -200,7 +193,7 @@ class ConfirmProfilePage extends React.Component {
                 <div className='select'>
                   <select name="country" onChange={this.updateCountry} value={JSON.stringify(this.state.userInfo.country)} required>
                     <option disabled value="">Country</option>
-                    {this.state.countries.map((item, i) => {
+                    {countries && countries.map((item, i) => {
                       return <option key={i} value={JSON.stringify(item)}>{StringUtils.shorten(item.name, 30)}</option>;
                     })}
                   </select>
@@ -256,14 +249,21 @@ class ConfirmProfilePage extends React.Component {
 }
 
 ConfirmProfilePage.propTypes = {
-  // Redux
-  paymentInfo: PropTypes.object,
+  requestLockOnQuoteId: PropTypes.func,
 
-  // Router
+  // Router props
   location: PropTypes.object,
-  match: PropTypes.object,
-
-  requestLockOnQuoteId: PropTypes.func
+  
+  // Redux props
+  countries: PropTypes.array
 };
 
-export default withRouter(ConfirmProfilePage);
+const mapStateToProps = (state) => {
+  const { countriesInfo } = state;
+
+  return {
+    countries: countriesInfo.countries
+  };
+};
+
+export default withRouter(connect(mapStateToProps)(ConfirmProfilePage));

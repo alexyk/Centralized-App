@@ -28,10 +28,9 @@ class PublishedList extends React.Component {
       loading: true,
       totalElements: 0,
       currentPage: !searchMap.page ? 0 : Number(searchMap.page),
-      country: searchMap.countryId === undefined ? '' : searchMap.countryId,
+      country: searchMap.countryId === undefined ? {} : searchMap.countryId,
       city: searchMap.cityId === undefined ? '' : searchMap.cityId,
       cities: [],
-      countries: [],
       name: searchMap.listingName === undefined ? '' : searchMap.listingName,
       hostEmail: searchMap.host === undefined ? '' : searchMap.host,
       isShownContactHostModal: false,
@@ -67,19 +66,13 @@ class PublishedList extends React.Component {
       });
     });
 
-    if (this.state.country !== '') {
-      requester.getCities(this.state.country).then(res => {
+    if (this.state.country.id) {
+      requester.getCities(this.state.country.id).then(res => {
         res.body.then(data => {
           this.setState({ cities: data.content });
         });
       });
     }
-
-    requester.getCountries()
-      .then(res => res.body)
-      .then(data => {
-        this.setState({ countries: data });
-      });
   }
 
   onSearch() {
@@ -109,9 +102,9 @@ class PublishedList extends React.Component {
       searchTerm += `&listingName=${this.state.name}`;
     }
 
-    if (this.state.country) {
-      searchTermMap.push(`countryId=${this.state.country}`);
-      searchTerm += `&countryId=${this.state.country}`;
+    if (this.state.country.id) {
+      searchTermMap.push(`countryId=${this.state.country.id}`);
+      searchTerm += `&countryId=${this.state.country.id}`;
     }
 
     if (this.state.hostEmail) {
@@ -133,17 +126,18 @@ class PublishedList extends React.Component {
 
   handleSelectCountry(option) {
     this.setState({
-      country: option ? option.value : null,
+      country: option,
       city: null
     }, () => {
       if (option) {
-        requester.getCities(option.value).then(res => {
-          res.body.then(data => {
-            this.setState({
-              cities: data.content,
-            });
-          });
-        });
+        // TODO notify backend to create endpoint
+        // requester.getCities(option.id).then(res => {
+        //   res.body.then(data => {
+        //     this.setState({
+        //       cities: data.content,
+        //     });
+        //   });
+        // });
       } else {
         this.setState({
           cities: [],
@@ -331,7 +325,6 @@ class PublishedList extends React.Component {
           <section id="profile-my-reservations">
             <div>
               <Filter
-                countries={this.state.countries}
                 cities={this.state.cities}
                 city={this.state.city}
                 country={this.state.country}
@@ -340,7 +333,6 @@ class PublishedList extends React.Component {
                 handleSelectCountry={this.handleSelectCountry}
                 handleSelectCity={this.handleSelectCity}
                 onSearch={this.onSearch}
-                loading={this.state.countries === [] || this.state.countries.length === 0}
                 onChange={this.onChange} />
 
               <ContactHostModal
@@ -398,9 +390,9 @@ class PublishedList extends React.Component {
 }
 
 PublishedList.propTypes = {
+  // Router props
   location: PropTypes.object,
   history: PropTypes.object,
-
 };
 
 export default withRouter(PublishedList);
