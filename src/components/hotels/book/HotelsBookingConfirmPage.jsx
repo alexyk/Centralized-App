@@ -517,7 +517,7 @@ class HotelsBookingConfirmPage extends Component {
     const { locAmounts } = this.props.locAmountsInfo;
 
     const fiatAmountPP = currencyExchangeRates && locAmounts[DEFAULT_QUOTE_LOC_PP_ID] && CurrencyConverter.convert(currencyExchangeRates, DEFAULT_CRYPTO_CURRENCY, currency, locAmounts[DEFAULT_QUOTE_LOC_PP_ID].fiatAmount);
-    const fiatPriceInUserCurrency = CurrencyConverter.convert(currencyExchangeRates, reservation.currency, currency, reservation.fiatPrice).toFixed(2);
+    const fiatPriceInUserCurrency = currencyExchangeRates && CurrencyConverter.convert(currencyExchangeRates, reservation.currency, currency, reservation.fiatPrice).toFixed(2);
 
     return (
       <React.Fragment>
@@ -579,7 +579,7 @@ class HotelsBookingConfirmPage extends Component {
                           {!isQuotePPStopped ? <span>Market Price will update in <i className="fa fa-clock-o" aria-hidden="true"></i>&nbsp;{this.props.locPriceUpdateTimerInfo.seconds} sec &nbsp;</span> : 'Processing payment...'}
                         </div>
                         <div>
-                          <button className="btn btn-primary" disabled={!fiatAmountPP} onClick={() => this.handlePayWithCard(fiatAmountPP)}>Pay with Credit Card</button>
+                          <button className="button" disabled={!fiatAmountPP} onClick={() => this.handlePayWithCard(fiatAmountPP)}>Pay with Credit Card</button>
                         </div>
                       </div>
                       <div className="logos">
@@ -606,10 +606,10 @@ class HotelsBookingConfirmPage extends Component {
                         </div>}
                       <p>(Click <a href={`${Config.getValue('basePath')}buyloc`} target="_blank" rel="noopener noreferrer">here</a> to learn how you can buy LOC directly to enjoy cheaper travel)</p>
                       {userConfirmedPaymentWithLOC
-                        ? <button className="btn btn-primary" disabled>Processing Payment...</button>
+                        ? <button className="button" disabled>Processing Payment...</button>
                         : hasLocAddress
-                          ? <button className="btn btn-primary" onClick={this.handlePayWithLOC}>Pay with LOC Tokens</button>
-                          : <button className="btn btn-primary" onClick={(e) => this.openModal(CREATE_WALLET, e)}>Create Wallet</button>
+                          ? <button className="button" onClick={this.handlePayWithLOC}>Pay with LOC Tokens</button>
+                          : <button className="button" onClick={(e) => this.openModal(CREATE_WALLET, e)}>Create Wallet</button>
                       }
                     </div>
                     <div className="logos">

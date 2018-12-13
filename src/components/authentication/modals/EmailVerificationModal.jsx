@@ -18,7 +18,7 @@ function EmailVerificationModal(props) {
           <p>It seems that your email has not yet been verified. You need to verify your email before you can proceed with your booking.</p>
           <hr/>
           <form onSubmit={(e) => { e.preventDefault(); props.requestVerificationEmail(); }}>
-            <button type="submit" className="btn btn-primary">Send Email</button>
+            <button type="submit" className="button">Send Email</button>
             <div className="clearfix"></div>
           </form>
         </Modal.Body>

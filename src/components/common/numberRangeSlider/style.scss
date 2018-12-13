@@ -1,0 +1,61 @@
+@import '../../../styles/css/vendors/include-media';
+@import '../../../styles/css/base/variables';
+
+.number-range-slider {
+  padding: 0 10px;
+
+  .input-range {    
+    height: 1rem;
+    position: relative;
+    width: 95%;
+    margin: 0px auto 15px auto;
+  
+    &__slider-container {
+      position: absolute;
+      left: 0%;
+    }
+  
+    &__track {
+      background: #eeeeee;
+      border-radius: 0.3rem;
+      cursor: pointer;
+      display: block;
+      height: 0.3rem;
+      position: relative;
+    }
+  
+    &__track--background {
+      left: 0;
+      position: absolute;
+      right: 0;
+      top: 50%;
+    }
+  
+    &__track--active {
+      background: $moderate-red;
+    }
+  
+    &__slider {
+      -webkit-appearance: none;
+      border-radius: 100%;
+      cursor: pointer;
+      display: block;
+      margin-left: -0.5rem;
+      margin-top: -0.9rem;
+      outline: none;
+      position: absolute;
+      background: $moderate-red;
+      border: 2px solid $white;
+      height: 1.5rem;
+      width: 1.5rem;
+    }
+  
+    &__label--max, &__label--min {
+      display: none;
+    }
+  
+    &__label--value {
+      display: none;
+    }
+  }
+}

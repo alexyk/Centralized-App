@@ -27,7 +27,7 @@ function ChangePasswordModal(props) {
               <input type="password" name="confirmNewPassword" value={props.confirmNewPassword} onChange={props.onChange} className="with-icon" placeholder="Re-enter password" />
             </div>
 
-            <button type="submit" className="btn btn-primary">Save Password</button>
+            <button type="submit" className="button">Save Password</button>
             <div className="clearfix"></div>
           </form>
         </Modal.Body>

@@ -139,7 +139,7 @@ function HomesBookingPage(props) {
               checkOutStart={checks.checkOutStart}
               checkOutEnd={checks.checkOutEnd} />
 
-            <button className="btn" onClick={handleSubmit}>Agree &amp; Continue</button>
+            <button className="button" onClick={handleSubmit}>Agree &amp; Continue</button>
           </div>
         </div>
       </div>

@@ -45,6 +45,7 @@
     }
   }
   .button-remove-container {
+    text-align: center;
     padding-left: 10px;
     padding-right: 28px;
   }
@@ -57,8 +58,8 @@
       margin-bottom: 5px;
     }
   }
-  .btn {
-    padding: 17px;
+  .button {
+    padding: 19px;
     margin-top: 5px;
     width: 100%;
     @include media('<tablet') {
