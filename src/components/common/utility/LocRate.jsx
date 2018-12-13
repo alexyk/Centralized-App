@@ -4,6 +4,8 @@ import PropTypes from 'prop-types';
 import { ExchangerWebsocket } from '../../../services/socket/exchangerWebsocket';
 import { CurrencyConverter } from '../../../services/utilities/currencyConverter';
 import { getCurrency } from '../../../selectors/paymentInfo';
+import { getCurrencyExchangeRates, getLocEurRate, getLocRateFiatAmount } from '../../../selectors/exchangeRatesInfo';
+import { isExchangerWebsocketConnected } from '../../../selectors/exchangerSocketInfo';
 
 const DEFAULT_CRYPTO_CURRENCY = 'EUR';
 
@@ -15,26 +17,26 @@ class LocRate extends PureComponent {
   }
 
   componentDidUpdate(prevProps) {
-    if (!this.props.exchangerSocketInfo.isExchangerWebsocketConnected && this.isSendMessage) {
+    if (!this.props.isExchangerWebsocketConnected && this.isSendMessage) {
       this.isSendMessage = false;
     }
-    if (this.props.exchangerSocketInfo.isExchangerWebsocketConnected && !this.isSendMessage) {
+    if (this.props.isExchangerWebsocketConnected && !this.isSendMessage) {
       this.isSendMessage = true;
-      ExchangerWebsocket.sendMessage(prevProps.exchangeRatesInfo.locRateFiatAmount, 'getLocPrice', { fiatAmount: prevProps.exchangeRatesInfo.locRateFiatAmount });
+      ExchangerWebsocket.sendMessage(prevProps.locRateFiatAmount, 'getLocPrice', { fiatAmount: prevProps.locRateFiatAmount });
     }
   }
 
   componentWillUnmount() {
-    ExchangerWebsocket.sendMessage(this.props.exchangeRatesInfo.locRateFiatAmount, 'unsubscribe');
+    ExchangerWebsocket.sendMessage(this.props.locRateFiatAmount, 'unsubscribe');
   }
 
   render() {
-    const { currency, exchangeRatesInfo, locAmountsInfo } = this.props;
-    
-    const fiat = exchangeRatesInfo.currencyExchangeRates && CurrencyConverter.convert(exchangeRatesInfo.currencyExchangeRates, DEFAULT_CRYPTO_CURRENCY, currency, this.props.exchangeRatesInfo.locRateFiatAmount);
-    let locAmount = locAmountsInfo.locAmounts[exchangeRatesInfo.locRateFiatAmount] && locAmountsInfo.locAmounts[exchangeRatesInfo.locRateFiatAmount].locAmount;
+    const { currency, currencyExchangeRates, locRateFiatAmount, locEurRate, locAmountsInfo } = this.props;
+
+    const fiat = currencyExchangeRates && CurrencyConverter.convert(currencyExchangeRates, DEFAULT_CRYPTO_CURRENCY, currency, locRateFiatAmount);
+    let locAmount = locAmountsInfo.locAmounts[locRateFiatAmount] && locAmountsInfo.locAmounts[locRateFiatAmount].locAmount;
     if (!locAmount) {
-      locAmount = exchangeRatesInfo.locRateFiatAmount / exchangeRatesInfo.locEurRate;
+      locAmount = locRateFiatAmount / locEurRate;
     }
 
     let locRate = fiat / locAmount;
@@ -55,8 +57,10 @@ class LocRate extends PureComponent {
 LocRate.propTypes = {
   // Redux props
   currency: PropTypes.string,
-  exchangerSocketInfo: PropTypes.object,
-  exchangeRatesInfo: PropTypes.object,
+  isExchangerWebsocketConnected: PropTypes.bool,
+  currencyExchangeRates: PropTypes.object,
+  locEurRate: PropTypes.string,
+  locRateFiatAmount: PropTypes.number,
   locAmountsInfo: PropTypes.object
 };
 
@@ -64,8 +68,10 @@ function mapStateToProps(state) {
   const { exchangerSocketInfo, exchangeRatesInfo, locAmountsInfo, paymentInfo } = state;
 
   return {
-    exchangerSocketInfo,
-    exchangeRatesInfo,
+    isExchangerWebsocketConnected: isExchangerWebsocketConnected(exchangerSocketInfo),
+    currencyExchangeRates: getCurrencyExchangeRates(exchangeRatesInfo),
+    locEurRate: getLocEurRate(exchangeRatesInfo),
+    locRateFiatAmount: getLocRateFiatAmount(exchangeRatesInfo),
     locAmountsInfo,
     currency: getCurrency(paymentInfo)
   };

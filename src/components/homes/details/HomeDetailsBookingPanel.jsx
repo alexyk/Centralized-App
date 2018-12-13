@@ -5,6 +5,9 @@ import PropTypes from 'prop-types';
 import { openModal } from '../../../actions/modalsInfo.js';
 import { setGuests } from '../../../actions/homesSearchInfo';
 import { isLogged } from '../../../selectors/userInfo';
+import { getCurrencyExchangeRates } from '../../../selectors/exchangeRatesInfo.js';
+import { getCurrency, getCurrencySign } from '../../../selectors/paymentInfo.js';
+import { getStartDate, getEndDate } from '../../../selectors/searchDatesInfo';
 import { LOGIN } from '../../../constants/modals.js';
 import Datepicker from '../../common/datepicker';
 import moment from 'moment';
@@ -13,7 +16,6 @@ import { RoomsXMLCurrency } from '../../../services/utilities/roomsXMLCurrency';
 import LocPrice from '../../common/utility/LocPrice';
 import { isInvalidRange, getPriceForPeriod } from '../common/detailsPageUtils.js';
 import { initStickyElements } from '../common/detailsPageUtils.js';
-import { getCurrency, getCurrencySign } from '../../../selectors/paymentInfo.js';
 
 class HomeDetailsBookingPanel extends React.Component {
   componentDidMount() {
@@ -32,13 +34,12 @@ class HomeDetailsBookingPanel extends React.Component {
   }
 
   render() {
-    const { currencyExchangeRates } = this.props.exchangeRatesInfo;
+    const { currencyExchangeRates } = this.props;
     if (!currencyExchangeRates || !this.props.calendar) {
       return <div className="loader"></div>;
     }
 
-    const { calendar, currencyCode, cleaningFee, currency, currencySign } = this.props;
-    const { startDate, endDate } = this.props.searchDatesInfo;
+    const { calendar, currencyCode, cleaningFee, currency, currencySign, startDate, endDate, homesSearchInfo, isUserLogged, match, guestArray } = this.props;
     
     const nights = this.calculateNights(startDate, endDate);
     const price = getPriceForPeriod(startDate, nights, calendar);
@@ -72,10 +73,10 @@ class HomeDetailsBookingPanel extends React.Component {
         </div>
         <div className="booking-guests">
           <select
-            value={this.props.homesSearchInfo.guests}
+            value={homesSearchInfo.guests}
             onChange={e => this.props.dispatch(setGuests(e.target.value))}
           >
-            {this.props.guestArray.map((item, i) => {
+            {guestArray.map((item, i) => {
               return <option key={i} value={item}>{`${item} Guests`}</option>;
             })}
           </select>
@@ -95,8 +96,8 @@ class HomeDetailsBookingPanel extends React.Component {
           </div>
         </div>
         <hr />
-        {this.props.isUserLogged ?
-          <Link to={`/homes/listings/${this.props.match.params.id}/book?startDate=${startDate.format('DD/MM/YYYY')}&endDate=${endDate.format('DD/MM/YYYY')}&guests=${this.props.homesSearchInfo.guests}`} onClick={e => invalidRange && e.preventDefault()} className={[invalidRange ? 'disabled' : null, 'button'].join(' ')}>Request Booking</Link> :
+        {isUserLogged ?
+          <Link to={`/homes/listings/${match.params.id}/book?startDate=${startDate.format('DD/MM/YYYY')}&endDate=${endDate.format('DD/MM/YYYY')}&guests=${homesSearchInfo.guests}`} onClick={e => invalidRange && e.preventDefault()} className={[invalidRange ? 'disabled' : null, 'button'].join(' ')}>Request Booking</Link> :
           <button className="button" onClick={(e) => this.props.dispatch(openModal(LOGIN, e))}>Login</button>}
         <p className="booking-helper">You won&#39;t be charged yet</p>
       </div>
@@ -105,36 +106,36 @@ class HomeDetailsBookingPanel extends React.Component {
 }
 
 HomeDetailsBookingPanel.propTypes = {
-  startDate: PropTypes.any,
-  endDate: PropTypes.any,
-  handleChangeStart: PropTypes.func,
-  handleChangeEnd: PropTypes.func,
   calendar: PropTypes.array,
-  nights: PropTypes.number,
   guestArray: PropTypes.array,
   cleaningFee: PropTypes.number,
   currencyCode: PropTypes.string,
+
+  // Router props
   match: PropTypes.object,
 
   // Redux props
   dispatch: PropTypes.func,
   currency: PropTypes.string,
   currencySign: PropTypes.string,
-  exchangeRatesInfo: PropTypes.object,
+  currencyExchangeRates: PropTypes.object,
   isUserLogged: PropTypes.bool,
   homesSearchInfo: PropTypes.object,
-  searchDatesInfo: PropTypes.object
+  startDate: PropTypes.object,
+  endDate: PropTypes.object
 };
 
 function mapStateToProps(state) {
   const { paymentInfo, exchangeRatesInfo, userInfo, homesSearchInfo, searchDatesInfo } = state;
+
   return {
     currency: getCurrency(paymentInfo),
     currencySign: getCurrencySign(paymentInfo),
-    exchangeRatesInfo,
+    currencyExchangeRates: getCurrencyExchangeRates(exchangeRatesInfo),
     isUserLogged: isLogged(userInfo),
     homesSearchInfo,
-    searchDatesInfo
+    startDate: getStartDate(searchDatesInfo),
+    endDate: getEndDate(searchDatesInfo)
   };
 }
 

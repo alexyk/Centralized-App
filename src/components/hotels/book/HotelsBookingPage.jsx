@@ -19,6 +19,7 @@ import xregexp from 'xregexp';
 import { DEFAULT_LISTING_IMAGE_URL } from '../../../constants/images';
 import AsideContentPage from '../../common/asideContentPage';
 import { getCurrency, getCurrencySign } from '../../../selectors/paymentInfo';
+import { getCurrencyExchangeRates } from '../../../selectors/exchangeRatesInfo';
 
 class HotelsBookingPage extends React.Component {
   constructor(props) {
@@ -111,7 +112,7 @@ class HotelsBookingPage extends React.Component {
       return (<div className="loader"></div>);
     }
 
-    if (!this.props.exchangeRatesInfo.currencyExchangeRates) {
+    if (!this.props.currencyExchangeRates) {
       return (<div className="loader"></div>);
     }
 
@@ -119,8 +120,7 @@ class HotelsBookingPage extends React.Component {
       return (<div className="loader"></div>);
     }
 
-    const { hotel, rooms, guests, currency, currencySign, exchangeRatesInfo, handleAdultChange, handleChildAgeChange, location } = this.props;
-    const { currencyExchangeRates } = exchangeRatesInfo;
+    const { hotel, rooms, guests, currency, currencySign, currencyExchangeRates, handleAdultChange, handleChildAgeChange, location } = this.props;
     const city = hotel.city;
     const address = hotel.additionalInfo.mainAddress;
     const roomsTotalPrice = this.calculateRoomsTotalPrice(rooms);
@@ -233,7 +233,7 @@ HotelsBookingPage.propTypes = {
   dispatch: PropTypes.func,
   currency: PropTypes.string,
   currencySign: PropTypes.string,
-  exchangeRatesInfo: PropTypes.object
+  currencyExchangeRates: PropTypes.object
 };
 
 function mapStateToProps(state) {
@@ -241,7 +241,7 @@ function mapStateToProps(state) {
   return {
     currency: getCurrency(paymentInfo),
     currencySign: getCurrencySign(paymentInfo),
-    exchangeRatesInfo
+    currencyExchangeRates: getCurrencyExchangeRates(exchangeRatesInfo)
   };
 }
 

@@ -2,6 +2,7 @@ import '../../../styles/css/components/hotels_search/sidebar/sidebar.css';
 
 import { setRegion, setHotelsSearchInfo } from '../../../actions/hotelsSearchInfo';
 import { asyncSetStartDate, asyncSetEndDate } from '../../../actions/searchDatesInfo';
+import { getStartDate, getEndDate } from '../../../selectors/searchDatesInfo';
 
 import { Config } from '../../../config';
 import FilterPanel from './filter/FilterPanel';
@@ -617,7 +618,7 @@ class StaticHotelsSearchPage extends React.Component {
 
   render() {
     const { hotels, totalElements } = this.state;
-    const nights = this.props.searchDatesInfo.endDate.diff(this.props.searchDatesInfo.startDate, 'days');
+    const nights = this.props.endDate.diff(this.props.startDate, 'days');
 
     return (
       <React.Fragment>
@@ -706,9 +707,10 @@ StaticHotelsSearchPage.propTypes = {
   // start Redux props
   dispatch: PropTypes.func,
   currency: PropTypes.string,
-  isUserLogged: PropTypes.object,
+  isUserLogged: PropTypes.bool,
   hotelsSearchInfo: PropTypes.object,
-  searchDatesInfo: PropTypes.object
+  startDate: PropTypes.object,
+  endDate: PropTypes.object
 };
 
 
@@ -718,7 +720,8 @@ function mapStateToProps(state) {
     currency: getCurrency(paymentInfo),
     isUserLogged: isLogged(userInfo),
     hotelsSearchInfo,
-    searchDatesInfo
+    startDate: getStartDate(searchDatesInfo),
+    endDate: getEndDate(searchDatesInfo)
   };
 }
 

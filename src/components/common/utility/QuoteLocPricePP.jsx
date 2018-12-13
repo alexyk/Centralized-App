@@ -7,6 +7,7 @@ import { RoomsXMLCurrency } from '../../../services/utilities/roomsXMLCurrency';
 import { ExchangerWebsocket } from '../../../services/socket/exchangerWebsocket';
 import { removeLocAmount } from '../../../actions/locAmountsInfo';
 import { isLogged } from '../../../selectors/userInfo';
+import { isExchangerWebsocketConnected } from '../../../selectors/exchangerSocketInfo';
 import { LONG } from '../../../constants/notificationDisplayTimes.js';
 
 const DEFAULT_CRYPTO_CURRENCY = 'EUR';
@@ -24,8 +25,8 @@ class QuoteLocPricePP extends PureComponent {
   }
 
   componentDidUpdate(prevProps) {
-    if (this.props.exchangerSocketInfo.isExchangerWebsocketConnected &&
-      this.props.exchangerSocketInfo.isExchangerWebsocketConnected !== prevProps.exchangerSocketInfo.isExchangerWebsocketConnected) {
+    if (this.props.isExchangerWebsocketConnected &&
+      this.props.isExchangerWebsocketConnected !== prevProps.isExchangerWebsocketConnected) {
       this.sendWebsocketMessage(null, null, prevProps.params);
     }
   }
@@ -95,7 +96,7 @@ QuoteLocPricePP.propTypes = {
   // Redux props
   dispatch: PropTypes.func,
   isUserLogged: PropTypes.bool,
-  exchangerSocketInfo: PropTypes.object,
+  isExchangerWebsocketConnected: PropTypes.bool,
   locAmount: PropTypes.string,
   renderLocAmount: PropTypes.bool,
   quoteLocError: PropTypes.string
@@ -117,7 +118,7 @@ function mapStateToProps(state, ownProps) {
 
   return {
     isUserLogged: isLogged(userInfo),
-    exchangerSocketInfo,
+    isExchangerWebsocketConnected: isExchangerWebsocketConnected(exchangerSocketInfo),
     locAmount,
     quoteLocError
   };

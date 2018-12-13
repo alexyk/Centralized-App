@@ -1,3 +1,3 @@
-export const getCurrencyExchangeRates = (state) => state.exchangeRatesInfo.currencyExchangeRates;
-export const getLocEurRate = (state) => state.exchangeRatesInfo.locEurRate;
-export const getLocRateFiatAmount = (state) => state.exchangeRatesInfo.locRateFiatAmount;
+export const getCurrencyExchangeRates = (state) => state.currencyExchangeRates;
+export const getLocEurRate = (state) => state.locEurRate;
+export const getLocRateFiatAmount = (state) => state.locRateFiatAmount;

@@ -6,6 +6,7 @@ import { CurrencyConverter } from '../../services/utilities/currencyConverter';
 import { RoomsXMLCurrency } from '../../services/utilities/roomsXMLCurrency';
 import { isLogged } from '../../selectors/userInfo';
 import { getCurrency, getCurrencySign } from '../../selectors/paymentInfo';
+import { getCurrencyExchangeRates } from '../../selectors/exchangeRatesInfo';
 
 class PopularHomesPrice extends Component {
 
@@ -17,8 +18,7 @@ class PopularHomesPrice extends Component {
   }
 
   render() {
-    const { currency, currencySign, isUserLogged, exchangeRatesInfo, item } = this.props;
-    const { currencyExchangeRates } = exchangeRatesInfo;
+    const { currency, currencySign, isUserLogged, currencyExchangeRates, item } = this.props;
     const price = (item.prices) && currency === item.currencyCode ? item.defaultDailyPrice : item.prices[RoomsXMLCurrency.get()];
 
     return (
@@ -38,7 +38,7 @@ PopularHomesPrice.propTypes = {
   currency: PropTypes.string,
   currencySign: PropTypes.string,
   isUserLogged: PropTypes.bool,
-  exchangeRatesInfo: PropTypes.object,
+  currencyExchangeRates: PropTypes.object,
 };
 
 function mapStateToProps(state) {
@@ -47,7 +47,7 @@ function mapStateToProps(state) {
     currency: getCurrency(paymentInfo),
     currencySign: getCurrencySign(paymentInfo),
     isUserLogged: isLogged(userInfo),
-    exchangeRatesInfo
+    currencyExchangeRates: getCurrencyExchangeRates(exchangeRatesInfo)
   };
 }
 

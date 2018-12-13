@@ -1,7 +1,8 @@
 import { closeModal, openModal } from '../../../actions/modalsInfo.js';
+import { setAdults, setChildren, setRegion, setRooms, setRoomsByCountOfRooms } from '../../../actions/hotelsSearchInfo';
 import { isActive } from '../../../selectors/modalsInfo.js';
 import { getCurrency } from '../../../selectors/paymentInfo';
-import { setAdults, setChildren, setRegion, setRooms, setRoomsByCountOfRooms } from '../../../actions/hotelsSearchInfo';
+import { getStartDate, getEndDate } from '../../../selectors/searchDatesInfo';
 
 import { CHILDREN } from '../../../constants/modals';
 import ChildrenModal from '../modals/ChildrenModal';
@@ -102,12 +103,12 @@ function HotelsSearchBar(props) {
   };
 
   const getQueryString = () => {
-    const { hotelsSearchInfo, currency, searchDatesInfo } = props;
+    const { hotelsSearchInfo, currency, startDate, endDate } = props;
     let queryString = '?';
     queryString += 'region=' + hotelsSearchInfo.region.id;
     queryString += '&currency=' + currency;
-    queryString += '&startDate=' + searchDatesInfo.startDate.format('DD/MM/YYYY');
-    queryString += '&endDate=' + searchDatesInfo.endDate.format('DD/MM/YYYY');
+    queryString += '&startDate=' + startDate.format('DD/MM/YYYY');
+    queryString += '&endDate=' + endDate.format('DD/MM/YYYY');
     queryString += '&rooms=' + encodeURI(JSON.stringify(hotelsSearchInfo.rooms));
     return queryString;
   };
@@ -211,7 +212,7 @@ function HotelsSearchBar(props) {
 
         <div className="days-of-stay">
           <span className="icon-moon"></span>
-          <span>{props.searchDatesInfo.endDate.diff(props.searchDatesInfo.startDate, 'days')} nights</span>
+          <span>{props.endDate.diff(props.startDate, 'days')} nights</span>
         </div>
       </div>
 
@@ -263,16 +264,19 @@ HotelsSearchBar.propTypes = {
   // Redux props
   dispatch: PropTypes.func,
   hotelsSearchInfo: PropTypes.object,
-  searchDatesInfo: PropTypes.object,
+  startDate: PropTypes.object,
+  endDate: PropTypes.object,
   currency: PropTypes.string,
   isActive: PropTypes.object
 };
 
 function mapStateToProps(state) {
   const { hotelsSearchInfo, searchDatesInfo, paymentInfo, modalsInfo } = state;
+
   return {
     hotelsSearchInfo,
-    searchDatesInfo,
+    startDate: getStartDate(searchDatesInfo),
+    endDate: getEndDate(searchDatesInfo),
     currency: getCurrency(paymentInfo),
     isActive: isActive(modalsInfo)
   };

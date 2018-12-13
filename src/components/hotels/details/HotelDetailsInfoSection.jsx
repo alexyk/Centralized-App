@@ -5,6 +5,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { openModal } from '../../../actions/modalsInfo.js';
 import { isLogged } from '../../../selectors/userInfo';
+import { getCurrencyExchangeRates } from '../../../selectors/exchangeRatesInfo';
 import { getCurrency, getCurrencySign } from '../../../selectors/paymentInfo';
 import { withRouter } from 'react-router-dom';
 import { CurrencyConverter } from '../../../services/utilities/currencyConverter';
@@ -82,8 +83,7 @@ function HotelDetailsInfoSection(props) {
     roomsResults = roomsResults.sort((x, y) => getTotalPrice(x[0].roomsResults) > getTotalPrice(y[0].roomsResults) ? 1 : -1);
   }
 
-  const { currency, currencySign, exchangeRatesInfo, isUserLogged, hotel, loadingRooms, nights } = props;
-  const { currencyExchangeRates } = exchangeRatesInfo;
+  const { currency, currencySign, currencyExchangeRates, isUserLogged, hotel, loadingRooms, nights } = props;
   const roomsXMLCurrency = RoomsXMLCurrency.get();
 
   return (
@@ -208,7 +208,7 @@ HotelDetailsInfoSection.propTypes = {
   isUserLogged: PropTypes.bool,
   currency: PropTypes.string,
   currencySign: PropTypes.string,
-  exchangeRatesInfo: PropTypes.object,
+  currencyExchangeRates: PropTypes.object,
 };
 
 function mapStateToProps(state) {
@@ -217,7 +217,7 @@ function mapStateToProps(state) {
     isUserLogged: isLogged(userInfo),
     currency: getCurrency(paymentInfo),
     currencySign: getCurrencySign(paymentInfo),
-    exchangeRatesInfo
+    currencyExchangeRates: getCurrencyExchangeRates(exchangeRatesInfo)
   };
 }
 

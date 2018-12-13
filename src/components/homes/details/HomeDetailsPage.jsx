@@ -179,7 +179,6 @@ class HomeDetailsPage extends React.Component {
     const hasHouseRules = eventsAllowed || smokingAllowed || suitableForPets || suitableForInfants || house_rules;
     const houseRules = house_rules && house_rules.split('\r\n');
 
-    const { startDate, endDate } = this.props.searchDatesInfo;
     const checks = this.calculateCheckInOuts(listing);
 
     const guestArray = [];
@@ -330,8 +329,6 @@ class HomeDetailsPage extends React.Component {
                 </div>
 
                 <HomeDetailsBookingPanel
-                  startDate={startDate}
-                  endDate={endDate}
                   calendar={calendar}
                   guestArray={guestArray}
                   cleaningFee={cleaningFee}
@@ -354,15 +351,7 @@ HomeDetailsPage.propTypes = {
   location: PropTypes.object,
 
   // start Redux props
-  dispatch: PropTypes.func,
-  searchDatesInfo: PropTypes.object
+  dispatch: PropTypes.func
 };
 
-function mapStateToProps(state) {
-  const { searchDatesInfo } = state;
-  return {
-    searchDatesInfo
-  };
-}
-
-export default withRouter(connect(mapStateToProps)(HomeDetailsPage));
+export default withRouter(connect()(HomeDetailsPage));

@@ -22,6 +22,8 @@ import LocPriceUpdateTimer from '../../common/utility/LocPriceUpdateTimer';
 import { closeModal, openModal } from '../../../actions/modalsInfo.js';
 import { isActive } from '../../../selectors/modalsInfo.js';
 import { getCurrency, getCurrencySign } from '../../../selectors/paymentInfo';
+import { getLocEurRate, getCurrencyExchangeRates } from '../../../selectors/exchangeRatesInfo.js';
+import { getSeconds } from '../../../selectors/locPriceUpdateTimerInfo.js';
 import RecoverWallerPassword from '../../common/utility/RecoverWallerPassword';
 import { ExchangerWebsocket } from '../../../services/socket/exchangerWebsocket';
 
@@ -287,7 +289,7 @@ class HotelsBookingConfirmPage extends Component {
       const preparedBookingId = reservation.preparedBookingId;
 
       const locAmount = (locAmounts[DEFAULT_QUOTE_LOC_ID] && locAmounts[DEFAULT_QUOTE_LOC_ID].locAmount) ||
-        TEST_FIAT_AMOUNT_IN_EUR / this.props.exchangeRatesInfo.locEurRate;
+        TEST_FIAT_AMOUNT_IN_EUR / this.props.locEurRate;
 
       // console.log('LOC',locAmounts[DEFAULT_QUOTE_LOC_ID]);
       // console.log('LOC',locAmounts[DEFAULT_QUOTE_LOC_ID].locAmount);
@@ -421,9 +423,8 @@ class HotelsBookingConfirmPage extends Component {
   }
 
   addCheckInClauseRow(fees, rows, arrivalDate) {
-    const { currency, reservation, exchangeRatesInfo } = this.props;
+    const { currency, reservation, currencyExchangeRates } = this.props;
     const fiatPrice = reservation && reservation.fiatPrice;
-    const { currencyExchangeRates } = exchangeRatesInfo;
     rows.push(
       <tr key={2}>
         <td
@@ -442,8 +443,7 @@ class HotelsBookingConfirmPage extends Component {
     const arrivalDate = reservation.booking.hotelBooking[0].arrivalDate;
     const rows = [];
     const fees = this.getCancellationFees();
-    const { currency, exchangeRatesInfo } = this.props;
-    const { currencyExchangeRates } = exchangeRatesInfo;
+    const { currency, currencyExchangeRates } = this.props;
 
     if (fees.length === 0) {
       this.addFreeClauseRow(rows, arrivalDate);
@@ -501,10 +501,9 @@ class HotelsBookingConfirmPage extends Component {
       return <div className="loader"></div>;
     }
 
-    const { reservation, isActive, currency, currencySign, locAmountsInfo, exchangeRatesInfo, userInfo, locPriceUpdateTimerInfo } = this.props;
+    const { reservation, isActive, currency, currencySign, locAmountsInfo, currencyExchangeRates, userInfo, seconds } = this.props;
     const { userConfirmedPaymentWithLOC, password, isQuoteStopped, safeChargeMode } = this.state;
     const hasLocAddress = !!userInfo.locAddress;
-    const { currencyExchangeRates } = exchangeRatesInfo;
 
     const booking = reservation && reservation.booking.hotelBooking;
     const { locAmounts } = locAmountsInfo;
@@ -569,7 +568,7 @@ class HotelsBookingConfirmPage extends Component {
                           Pay with Credit Card: Current Market Price: <span className="important">{currencySign} {fiatAmountPP && (fiatAmountPP).toFixed(2)}</span>
                         </p>
                         <div className="price-update-timer" tooltip="Seconds until we update your quoted price">
-                          {!isQuoteStopped ? <span>Market Price will update in <i className="fa fa-clock-o" aria-hidden="true"></i>&nbsp;{locPriceUpdateTimerInfo.seconds} sec &nbsp;</span> : 'Price will not update during payment'}
+                          {!isQuoteStopped ? <span>Market Price will update in <i className="fa fa-clock-o" aria-hidden="true"></i>&nbsp;{seconds} sec &nbsp;</span> : 'Price will not update during payment'}
                         </div>
                         <div>
                           <button className="button" disabled={!fiatAmountPP} onClick={() => this.handlePayWithCard(fiatAmountPP)}>Pay with Credit Card</button>
@@ -595,7 +594,7 @@ class HotelsBookingConfirmPage extends Component {
                       <p>Order Total: <span className="important">{this.props.isQuoteLocValid && <QuoteLocPrice fiat={reservation.fiatPrice} params={{ bookingId: reservation.preparedBookingId }} brackets={false} invalidateQuoteLoc={this.props.invalidateQuoteLoc} redirectToHotelDetailsPage={this.props.redirectToHotelDetailsPage} />}</span></p>
                       {locAmounts[DEFAULT_QUOTE_LOC_ID] &&
                         <div className="price-update-timer" tooltip="Seconds until we update your quoted price">
-                          {!isQuoteStopped ? <span>LOC price will update in <i className="fa fa-clock-o" aria-hidden="true"></i>&nbsp;{locPriceUpdateTimerInfo.seconds} sec &nbsp;</span> : 'Price will not update during payment'}
+                          {!isQuoteStopped ? <span>LOC price will update in <i className="fa fa-clock-o" aria-hidden="true"></i>&nbsp;{seconds} sec &nbsp;</span> : 'Price will not update during payment'}
                         </div>}
                       <p>(Click <a href={`${Config.getValue('basePath')}buyloc`} target="_blank" rel="noopener noreferrer">here</a> to learn how you can buy LOC directly to enjoy cheaper travel)</p>
                       {userConfirmedPaymentWithLOC
@@ -653,9 +652,10 @@ HotelsBookingConfirmPage.propTypes = {
   currency: PropTypes.string,
   currencySign: PropTypes.string,
   isActive: PropTypes.object,
-  exchangeRatesInfo: PropTypes.object,
+  locEurRate: PropTypes.string,
+  currencyExchangeRates: PropTypes.object,
   locAmountsInfo: PropTypes.object,
-  locPriceUpdateTimerInfo: PropTypes.object
+  seconds: PropTypes.number
 };
 
 function mapStateToProps(state) {
@@ -665,9 +665,10 @@ function mapStateToProps(state) {
     currency: getCurrency(paymentInfo),
     currencySign: getCurrencySign(paymentInfo),
     isActive: isActive(modalsInfo),
-    exchangeRatesInfo,
+    locEurRate: getLocEurRate(exchangeRatesInfo),
+    currencyExchangeRates: getCurrencyExchangeRates(exchangeRatesInfo),
     locAmountsInfo,
-    locPriceUpdateTimerInfo
+    seconds: getSeconds(locPriceUpdateTimerInfo)
   };
 }
 

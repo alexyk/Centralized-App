@@ -20,7 +20,8 @@ import LocPrice from '../../common/utility/LocPrice';
 import Rating from '../../common/rating';
 import { DEFAULT_LISTING_IMAGE_URL } from '../../../constants/images';
 import { isLogged } from '../../../selectors/userInfo';
-import { getCurrency } from '../../../selectors/paymentInfo';
+import { getCurrency, getCurrencySign } from '../../../selectors/paymentInfo';
+import { getCurrencyExchangeRates } from '../../../selectors/exchangeRatesInfo';
 
 const SCREEN_SIZE_SMALL = 'SMALL';
 const SCREEN_SIZE_MEDIUM = 'MEDIUM';
@@ -107,8 +108,7 @@ class Result extends React.Component {
   }
 
   render() {
-    let { currency, currencySign, exchangeRatesInfo, isUserLogged, hotel, price, nights, allElements, location } = this.props;
-    const { currencyExchangeRates } = exchangeRatesInfo;
+    let { currency, currencySign, currencyExchangeRates, isUserLogged, hotel, price, nights, allElements, location } = this.props;
     let { id, name, generalDescription, star } = hotel;
 
     const isPriceLoaded = !!price;
@@ -123,7 +123,7 @@ class Result extends React.Component {
       pictures.push({ url: DEFAULT_LISTING_IMAGE_URL });
     }
 
-    const SlickButtonLoad = ({ ...props }) => (
+    const SlickButtonLoad = ({ currentSlide, slideCount, ...props }) => (
       <button {...props} onClick={() => {
         this.setState({ loadedPictures: false });
         requester.getHotelPictures(hotel.id).then(res => {
@@ -138,7 +138,7 @@ class Result extends React.Component {
       }} />
     );
 
-    const SlickButton = ({ ...props }) => (
+    const SlickButton = ({ currentSlide, slideCount, ...props }) => (
       <button {...props} />
     );
 
@@ -242,16 +242,18 @@ Result.propTypes = {
 
   // Redux props
   currency: PropTypes.string,
+  currencySign: PropTypes.string,
   isUserLogged: PropTypes.bool,
-  exchangeRatesInfo: PropTypes.object
+  currencyExchangeRates: PropTypes.object
 };
 
 function mapStateToProps(state) {
   const { paymentInfo, userInfo, exchangeRatesInfo } = state;
   return {
     currency: getCurrency(paymentInfo),
+    currencySign: getCurrencySign(paymentInfo),
     isUserLogged: isLogged(userInfo),
-    exchangeRatesInfo
+    currencyExchangeRates: getCurrencyExchangeRates(exchangeRatesInfo)
   };
 }
 

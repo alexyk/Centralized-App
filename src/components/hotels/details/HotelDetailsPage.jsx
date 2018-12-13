@@ -19,6 +19,7 @@ import requester from '../../../requester';
 import { setHotelsSearchInfo } from '../../../actions/hotelsSearchInfo';
 import { asyncSetStartDate, asyncSetEndDate } from '../../../actions/searchDatesInfo';
 import { getCurrency } from '../../../selectors/paymentInfo';
+import { getStartDate, getEndDate } from '../../../selectors/searchDatesInfo';
 import { withRouter } from 'react-router-dom';
 import queryString from 'query-string';
 
@@ -395,7 +396,7 @@ class HotelDetailsPage extends React.Component {
       ]
     };
 
-    const { searchDatesInfo } = this.props;
+    const { startDate, endDate } = this.props;
 
     return (
       <div>
@@ -463,7 +464,7 @@ class HotelDetailsPage extends React.Component {
             <HotelDetailsInfoSection
               hotel={this.state.hotel}
               hotelRooms={this.state.hotelRooms}
-              nights={searchDatesInfo.endDate.diff(searchDatesInfo.startDate, 'days')}
+              nights={endDate.diff(startDate, 'days')}
               loading={this.state.loading}
               handleBookRoom={this.handleBookRoom}
               loadingRooms={this.state.loadingRooms}
@@ -486,15 +487,18 @@ HotelDetailsPage.propTypes = {
   dispatch: PropTypes.func,
   currency: PropTypes.string,
   hotelsSearchInfo: PropTypes.object,
-  searchDatesInfo: PropTypes.object
+  startDate: PropTypes.object,
+  endDate: PropTypes.object
 };
 
 function mapStateToProps(state) {
   const { paymentInfo, hotelsSearchInfo, searchDatesInfo } = state;
+
   return {
     currency: getCurrency(paymentInfo),
     hotelsSearchInfo,
-    searchDatesInfo
+    startDate: getStartDate(searchDatesInfo),
+    endDate: getEndDate(searchDatesInfo)
   };
 }
 

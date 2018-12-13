@@ -104,25 +104,19 @@ class HomeDetailsRouterPage extends Component {
 }
 
 HomeDetailsRouterPage.propTypes = {
-  listings: PropTypes.array,
-  hotels: PropTypes.array,
-
   // Router props
   location: PropTypes.object,
-  history: PropTypes.object,
   match: PropTypes.object,
 
   // Redux props
   dispatch: PropTypes.func,
-  currency: PropTypes.string,
-  searchDatesInfo: PropTypes.object
+  currency: PropTypes.string
 };
 
 function mapStateToProps(state) {
-  const { paymentInfo, searchDatesInfo } = state;
+  const { paymentInfo } = state;
   return {
     currency: getCurrency(paymentInfo),
-    searchDatesInfo
   };
 }
 

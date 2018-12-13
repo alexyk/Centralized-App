@@ -304,20 +304,20 @@ class HomesSearchPage extends React.Component {
 }
 
 HomesSearchPage.propTypes = {
+  // Router props
   location: PropTypes.object,
   history: PropTypes.object,
 
+  // Redux props
   dispatch: PropTypes.func,
-  homesSearchInfo: PropTypes.object,
-  searchDatesInfo: PropTypes.object
+  homesSearchInfo: PropTypes.object
 };
 
 const mapStateToProps = (state) => {
-  const { homesSearchInfo, searchDatesInfo } = state;
+  const { homesSearchInfo } = state;
 
   return {
-    homesSearchInfo,
-    searchDatesInfo
+    homesSearchInfo
   };
 };
 

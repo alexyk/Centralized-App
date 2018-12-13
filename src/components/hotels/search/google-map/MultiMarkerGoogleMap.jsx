@@ -7,6 +7,7 @@ import MarkerInfoWindow from './MarkerInfoWindow';
 import { CurrencyConverter } from '../../../../services/utilities/currencyConverter';
 import { RoomsXMLCurrency } from '../../../../services/utilities/roomsXMLCurrency';
 import { getCurrency, getCurrencySign } from '../../../../selectors/paymentInfo';
+import { getLocEurRate, getCurrencyExchangeRates } from '../../../../selectors/exchangeRatesInfo';
 
 class MultiMarkerGoogleMap extends Component {
   componentDidMount() {
@@ -105,8 +106,7 @@ class MultiMarkerGoogleMap extends Component {
   }
 
   createInfoWindow(hotel) {
-    const { isLogged, nights, currency, currencySign, exchangeRatesInfo, location } = this.props;
-    const { locEurRate, currencyExchangeRates } = exchangeRatesInfo;
+    const { isLogged, nights, currency, currencySign, locEurRate, currencyExchangeRates, location } = this.props;
     const locPrice = ((hotel.price / locEurRate) / nights).toFixed(2);
     const fiatPrice = currencyExchangeRates && ((CurrencyConverter.convert(currencyExchangeRates, RoomsXMLCurrency.get(), currency, hotel.price)) / nights).toFixed(2);
     const isMobile = location.pathname.indexOf('/mobile') !== -1;
@@ -149,7 +149,8 @@ MultiMarkerGoogleMap.propTypes = {
   // start Redux props
   currency: PropTypes.string,
   currencySign: PropTypes.string,
-  exchangeRatesInfo: PropTypes.object,
+  locEurRate: PropTypes.string,
+  currencyExchangeRates: PropTypes.object
 };
 
 
@@ -158,7 +159,8 @@ function mapStateToProps(state) {
   return {
     currency: getCurrency(paymentInfo),
     currencySign: getCurrencySign(paymentInfo),
-    exchangeRatesInfo,
+    locEurRate: getLocEurRate(exchangeRatesInfo),
+    currencyExchangeRates: getCurrencyExchangeRates(exchangeRatesInfo),
   };
 }
 
