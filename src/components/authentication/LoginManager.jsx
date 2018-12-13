@@ -41,8 +41,7 @@ class LoginManager extends React.Component {
     this.state = {
       loginEmail: '',
       loginPassword: '',
-      countries: [],
-      country: '',
+      country: null,
       states: [],
       countryState: '',
       recoveryToken: '',
@@ -57,7 +56,6 @@ class LoginManager extends React.Component {
     this.handleLoginClick = this.handleLoginClick.bind(this);
     this.handleChangeCountry = this.handleChangeCountry.bind(this);
     this.handleUpdateCountry = this.handleUpdateCountry.bind(this);
-    this.requestCountries = this.requestCountries.bind(this);
     this.requestStates = this.requestStates.bind(this);
   }
 
@@ -98,12 +96,6 @@ class LoginManager extends React.Component {
     this.props.history.push(pushURL);
   }
 
-  requestCountries() {
-    requester.getCountries()
-      .then(response => response.body)
-      .then(data => this.setState({ countries: data }));
-  }
-
   requestStates(id) {
     requester.getStates(id)
       .then(response => response.body)
@@ -116,7 +108,7 @@ class LoginManager extends React.Component {
 
   handleChangeCountry(e) {
     if (!e.target.value) {
-      this.setState({ country: '' });
+      this.setState({ country: null });
     } else {
       const countryHasMandatoryState = ['Canada', 'India', 'United States of America'].includes(JSON.parse(e.target.value).name);
       this.setState({ country: JSON.parse(e.target.value) });
@@ -164,7 +156,7 @@ class LoginManager extends React.Component {
       }
 
       this.closeModal(UPDATE_COUNTRY);
-      this.setState({ isUpdatingCountry: false, country: '', countryState: '' });
+      this.setState({ isUpdatingCountry: false, country: null, countryState: '' });
     }
 
     requester.login(user, captchaToken).then(res => {
@@ -187,8 +179,7 @@ class LoginManager extends React.Component {
       const errors = res.errors;
       if (errors.hasOwnProperty('CountryNull')) {
         NotificationManager.warning(errors['CountryNull'].message, '', LONG);
-        this.requestCountries();
-        this.setState({ isUpdatingCountry: true }, () => {
+        this.setState({ isUpdatingCountry: true, isLogging: false }, () => {
           this.closeModal(LOGIN);
           this.openModal(UPDATE_COUNTRY);
         });
@@ -215,8 +206,9 @@ class LoginManager extends React.Component {
       if (['Canada', 'India', 'United States of America'].includes(this.state.country.name) && !this.state.countryState) {
         NotificationManager.error('Please select a valid state.', '', LONG);
       } else {
-        this.closeModal(UPDATE_COUNTRY);
-        this.captcha.execute();
+        this.setState({ isLogging: true }, () => {
+          executeWithToken(this.login);
+        });
       }
     } else {
       NotificationManager.error('Please select a valid country.', '', LONG);
@@ -274,7 +266,6 @@ class LoginManager extends React.Component {
           loginPassword={this.state.loginPassword}
           onChange={this.onChange}
           handleLogin={this.handleLoginClick}
-          requestCountries={this.requestCountries}
           isLogging={this.state.isLogging}
         />
         <UpdateCountryModal 
@@ -282,12 +273,12 @@ class LoginManager extends React.Component {
           openModal={this.openModal} 
           closeModal={this.closeModal} 
           onChange={this.onChange} 
-          country={this.state.country} 
-          countries={this.state.countries} 
+          country={this.state.country}
           states={this.state.states} 
           countryState={this.state.countryState} 
           handleUpdateCountry={this.handleUpdateCountry} 
           handleChangeCountry={this.handleChangeCountry} 
+          isLogging={this.state.isLogging}
         />
         <EmailVerificationModal 
           isActive={this.props.modalsInfo.isActive[EMAIL_VERIFICATION]} 

@@ -50,7 +50,8 @@ LoginModal.propTypes = {
   onChange: PropTypes.func,
   openModal: PropTypes.func,
   closeModal: PropTypes.func,
-  isActive: PropTypes.bool
+  isActive: PropTypes.bool,
+  isLogging: PropTypes.bool
 };
 
 export default LoginModal;
