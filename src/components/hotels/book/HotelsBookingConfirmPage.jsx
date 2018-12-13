@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import moment from 'moment';
 import queryString from 'query-string';
 import { Config } from '../../../config.js';
-import { PASSWORD_PROMPT, CREATE_WALLET, PENDING_BOOKING_LOC, PENDING_BOOKING_FIAT } from '../../../constants/modals.js';
+import { CONFIRM_PAYMENT_WITH_LOC, CREATE_WALLET, PENDING_BOOKING_LOC, PENDING_BOOKING_FIAT } from '../../../constants/modals.js';
 import { PROCESSING_TRANSACTION } from '../../../constants/infoMessages.js';
 import { SERVICE_UNAVAILABLE } from '../../../constants/errorMessages';
 import { LONG } from '../../../constants/notificationDisplayTimes.js';
@@ -14,7 +14,6 @@ import { HotelReservation } from '../../../services/blockchain/hotelReservation'
 import { RoomsXMLCurrency } from '../../../services/utilities/roomsXMLCurrency';
 import { CurrencyConverter } from '../../../services/utilities/currencyConverter';
 import requester from '../../../requester';
-import WalletPasswordModal from '../../common/modals/WalletPasswordModal';
 import BookingSteps from '../../common/utility/BookingSteps';
 import LocPrice from '../../common/utility/LocPrice';
 import QuoteLocPrice from '../../common/utility/QuoteLocPrice';
@@ -27,8 +26,9 @@ import RecoverWallerPassword from '../../common/utility/RecoverWallerPassword';
 import { ExchangerWebsocket } from '../../../services/socket/exchangerWebsocket';
 
 import '../../../styles/css/components/hotels/book/hotel-booking-confirm-page.css';
-import PendingBookingLocModal from '../modals/PendingBookingLocModal';
-import PendingBookingFiatModal from '../modals/PendingBookingFiatModal';
+import ConfirmPaymentWithLocModal from './modals/ConfirmPaymentWithLocModal';
+import PendingBookingLocModal from './modals/PendingBookingLocModal';
+import PendingBookingFiatModal from './modals/PendingBookingFiatModal';
 
 const ERROR_MESSAGE_TIME = 20000;
 const DEFAULT_CRYPTO_CURRENCY = 'EUR';
@@ -42,12 +42,9 @@ class HotelsBookingConfirmPage extends Component {
   constructor(props) {
     super(props);
 
-    this.isQuoteApproved = false;
-
     this.state = {
       password: '',
       isQuoteStopped: false,
-      isQuotePPStopped: false,
       userConfirmedPaymentWithLOC: false,
       safeChargeMode: false
     };
@@ -101,23 +98,21 @@ class HotelsBookingConfirmPage extends Component {
     return `hotels/listings/${id}?region=${queryParams.region}&currency=${currency}&startDate=${queryParams.startDate}&endDate=${queryParams.endDate}&rooms=${rooms}`;
   }
 
-  approveQuote() {
-    this.isQuoteApproved = true;
-  }
-
   stopQuote() {
-    ExchangerWebsocket.sendMessage(DEFAULT_QUOTE_LOC_ID, 'approveQuote', { bookingId: this.props.reservation.preparedBookingId });
+    ExchangerWebsocket.sendMessage(
+      DEFAULT_QUOTE_LOC_ID, 
+      'approveQuote', 
+      { bookingId: this.props.reservation.preparedBookingId }
+    );
+
+    ExchangerWebsocket.sendMessage(
+      DEFAULT_QUOTE_LOC_PP_ID, 
+      'approveQuote', 
+      { bookingId: this.props.reservation.preparedBookingId + PAYMENT_PROCESSOR_IDENTIFICATOR }
+    );
 
     this.setState({
       isQuoteStopped: true
-    });
-  }
-
-  stopQuotePP() {
-    ExchangerWebsocket.sendMessage(DEFAULT_QUOTE_LOC_PP_ID, 'approveQuote', { bookingId: this.props.reservation.preparedBookingId + PAYMENT_PROCESSOR_IDENTIFICATOR });
-
-    this.setState({
-      isQuotePPStopped: true
     });
   }
 
@@ -126,12 +121,12 @@ class HotelsBookingConfirmPage extends Component {
     ExchangerWebsocket.sendMessage(DEFAULT_QUOTE_LOC_PP_ID, 'quoteLoc', { bookingId: this.props.reservation.preparedBookingId + PAYMENT_PROCESSOR_IDENTIFICATOR });
 
     this.setState({
-      isQuoteStopped: false,
-      isQuotePPStopped: false
+      isQuoteStopped: false
     });
   }
 
   handlePayWithCard(fiatAmount) {
+    this.stopQuote();
     requester.getUserHasPendingBooking()
       .then(res => res.body).then(data => {
         if (data.userHasPendingBooking) {
@@ -140,6 +135,7 @@ class HotelsBookingConfirmPage extends Component {
           this.payWithCard(fiatAmount);
         }
       }).catch(() => {
+        this.restartQuote();
         NotificationManager.error(SERVICE_UNAVAILABLE);
       });
   }
@@ -158,10 +154,7 @@ class HotelsBookingConfirmPage extends Component {
       backUrl: this.createBackUrl(),
     };
 
-    console.log(paymentInfo);
-
-    this.stopQuotePP();
-    this.approveQuote();
+    // console.log(paymentInfo);
 
     const id = match.params.id;
     const isWebView = location.pathname.indexOf('/mobile') !== -1;
@@ -269,16 +262,17 @@ class HotelsBookingConfirmPage extends Component {
   }
 
   handlePayWithLOC() {
+    this.stopQuote();
     requester.getUserHasPendingBooking()
       .then(res => res.body).then(data => {
         if (data.userHasPendingBooking) {
           this.openModal(PENDING_BOOKING_LOC);
         } else {
-          this.stopQuote();
-          this.openModal(PASSWORD_PROMPT);
+          this.openModal(CONFIRM_PAYMENT_WITH_LOC);
         }
       }).catch((e) => {
         console.log(e);
+        this.restartQuote();
         NotificationManager.error(SERVICE_UNAVAILABLE);
       });
   }
@@ -295,7 +289,6 @@ class HotelsBookingConfirmPage extends Component {
       const locAmount = (locAmounts[DEFAULT_QUOTE_LOC_ID] && locAmounts[DEFAULT_QUOTE_LOC_ID].locAmount) ||
         TEST_FIAT_AMOUNT_IN_EUR / this.props.exchangeRatesInfo.locEurRate;
 
-      this.approveQuote();
       // console.log('LOC',locAmounts[DEFAULT_QUOTE_LOC_ID]);
       // console.log('LOC',locAmounts[DEFAULT_QUOTE_LOC_ID].locAmount);
 
@@ -306,7 +299,7 @@ class HotelsBookingConfirmPage extends Component {
 
       NotificationManager.info(PROCESSING_TRANSACTION, 'Transactions', 60000);
       this.setState({ userConfirmedPaymentWithLOC: true });
-      this.closeModal(PASSWORD_PROMPT);
+      this.closeModal(CONFIRM_PAYMENT_WITH_LOC);
 
       const queryString = this.props.location.search;
 
@@ -363,7 +356,11 @@ class HotelsBookingConfirmPage extends Component {
             });
           }, 1000);
         });
+      }).catch(e => {
+        this.restartQuote();
       });
+    }).catch(e => {
+      this.restartQuote();
     });
   }
 
@@ -375,12 +372,12 @@ class HotelsBookingConfirmPage extends Component {
     this.props.dispatch(openModal(modal));
   }
 
-  closeModal(modal, e) {
+  closeModal(modal, e, shouldRestartQuote) {
     if (e) {
       e.preventDefault();
     }
 
-    if (!this.isQuoteApproved) {
+    if (shouldRestartQuote) {
       this.restartQuote();
     }
 
@@ -500,16 +497,12 @@ class HotelsBookingConfirmPage extends Component {
   }
 
   render() {
-    if (!this.props.userInfo) {
-      return <div className="loader"></div>;
-    }
-
-    if (!this.props.reservation) {
+    if (!this.props.userInfo || !this.props.reservation) {
       return <div className="loader"></div>;
     }
 
     const { reservation, isActive, currency, currencySign, locAmountsInfo, exchangeRatesInfo, userInfo, locPriceUpdateTimerInfo } = this.props;
-    const { userConfirmedPaymentWithLOC, password, isQuoteStopped, isQuotePPStopped, safeChargeMode } = this.state;
+    const { userConfirmedPaymentWithLOC, password, isQuoteStopped, safeChargeMode } = this.state;
     const hasLocAddress = !!userInfo.locAddress;
     const { currencyExchangeRates } = exchangeRatesInfo;
 
@@ -576,7 +569,7 @@ class HotelsBookingConfirmPage extends Component {
                           Pay with Credit Card: Current Market Price: <span className="important">{currencySign} {fiatAmountPP && (fiatAmountPP).toFixed(2)}</span>
                         </p>
                         <div className="price-update-timer" tooltip="Seconds until we update your quoted price">
-                          {!isQuotePPStopped ? <span>Market Price will update in <i className="fa fa-clock-o" aria-hidden="true"></i>&nbsp;{locPriceUpdateTimerInfo.seconds} sec &nbsp;</span> : 'Processing payment...'}
+                          {!isQuoteStopped ? <span>Market Price will update in <i className="fa fa-clock-o" aria-hidden="true"></i>&nbsp;{locPriceUpdateTimerInfo.seconds} sec &nbsp;</span> : 'Price will not update during payment'}
                         </div>
                         <div>
                           <button className="button" disabled={!fiatAmountPP} onClick={() => this.handlePayWithCard(fiatAmountPP)}>Pay with Credit Card</button>
@@ -602,7 +595,7 @@ class HotelsBookingConfirmPage extends Component {
                       <p>Order Total: <span className="important">{this.props.isQuoteLocValid && <QuoteLocPrice fiat={reservation.fiatPrice} params={{ bookingId: reservation.preparedBookingId }} brackets={false} invalidateQuoteLoc={this.props.invalidateQuoteLoc} redirectToHotelDetailsPage={this.props.redirectToHotelDetailsPage} />}</span></p>
                       {locAmounts[DEFAULT_QUOTE_LOC_ID] &&
                         <div className="price-update-timer" tooltip="Seconds until we update your quoted price">
-                          {!isQuoteStopped ? <span>LOC price will update in <i className="fa fa-clock-o" aria-hidden="true"></i>&nbsp;{locPriceUpdateTimerInfo.seconds} sec &nbsp;</span> : 'Processing payment...'}
+                          {!isQuoteStopped ? <span>LOC price will update in <i className="fa fa-clock-o" aria-hidden="true"></i>&nbsp;{locPriceUpdateTimerInfo.seconds} sec &nbsp;</span> : 'Price will not update during payment'}
                         </div>}
                       <p>(Click <a href={`${Config.getValue('basePath')}buyloc`} target="_blank" rel="noopener noreferrer">here</a> to learn how you can buy LOC directly to enjoy cheaper travel)</p>
                       {userConfirmedPaymentWithLOC
@@ -622,8 +615,8 @@ class HotelsBookingConfirmPage extends Component {
               </div>
             </div>
           </div>
-          <WalletPasswordModal
-            isActive={isActive[PASSWORD_PROMPT]}
+          <ConfirmPaymentWithLocModal
+            isActive={isActive[CONFIRM_PAYMENT_WITH_LOC]}
             text={'Enter your wallet password'}
             placeholder={'Wallet password'}
             handleSubmit={() => this.payWithLocSingleWithdrawer()}
