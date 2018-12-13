@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { ExchangerWebsocket } from '../../../services/socket/exchangerWebsocket';
 import { CurrencyConverter } from '../../../services/utilities/currencyConverter';
+import { getCurrency } from '../../../selectors/paymentInfo';
 
 const DEFAULT_CRYPTO_CURRENCY = 'EUR';
 
@@ -28,9 +29,9 @@ class LocRate extends PureComponent {
   }
 
   render() {
-    const { paymentInfo, exchangeRatesInfo, locAmountsInfo } = this.props;
+    const { currency, exchangeRatesInfo, locAmountsInfo } = this.props;
     
-    const fiat = exchangeRatesInfo.currencyExchangeRates && CurrencyConverter.convert(exchangeRatesInfo.currencyExchangeRates, DEFAULT_CRYPTO_CURRENCY, paymentInfo.currency, this.props.exchangeRatesInfo.locRateFiatAmount);
+    const fiat = exchangeRatesInfo.currencyExchangeRates && CurrencyConverter.convert(exchangeRatesInfo.currencyExchangeRates, DEFAULT_CRYPTO_CURRENCY, currency, this.props.exchangeRatesInfo.locRateFiatAmount);
     let locAmount = locAmountsInfo.locAmounts[exchangeRatesInfo.locRateFiatAmount] && locAmountsInfo.locAmounts[exchangeRatesInfo.locRateFiatAmount].locAmount;
     if (!locAmount) {
       locAmount = exchangeRatesInfo.locRateFiatAmount / exchangeRatesInfo.locEurRate;
@@ -44,8 +45,8 @@ class LocRate extends PureComponent {
 
     return (
       <Fragment>
-        <span className="cross-rate">LOC/{paymentInfo.currency} </span>
-        <span className="rate">{Number(locRate).toFixed(4)} {paymentInfo.currency}</span>
+        <span className="cross-rate">LOC/{currency} </span>
+        <span className="rate">{Number(locRate).toFixed(4)} {currency}</span>
       </Fragment>
     );
   }
@@ -53,7 +54,7 @@ class LocRate extends PureComponent {
 
 LocRate.propTypes = {
   // Redux props
-  paymentInfo: PropTypes.object,
+  currency: PropTypes.string,
   exchangerSocketInfo: PropTypes.object,
   exchangeRatesInfo: PropTypes.object,
   locAmountsInfo: PropTypes.object
@@ -66,7 +67,7 @@ function mapStateToProps(state) {
     exchangerSocketInfo,
     exchangeRatesInfo,
     locAmountsInfo,
-    paymentInfo
+    currency: getCurrency(paymentInfo)
   };
 }
 

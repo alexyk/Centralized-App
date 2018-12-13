@@ -12,11 +12,12 @@ import Rating from '../../../common/rating/Rating';
 import LocPrice from '../../../common/utility/LocPrice';
 import { RoomsXMLCurrency } from '../../../../services/utilities/roomsXMLCurrency.js';
 import Loader from '../../../common/loader/index.js';
+import { getCurrency, getCurrencySign } from '../../../../selectors/paymentInfo.js';
 
 class HomesBookingAside extends React.Component {
   
   render() {
-    const { listing, searchParams, calendar } = this.props;
+    const { listing, searchParams, calendar, currency, currencySign } = this.props;
     const { currencyExchangeRates } = this.props.exchangeRatesInfo;
 
     if (!currencyExchangeRates || !calendar || !listing) {
@@ -48,9 +49,6 @@ class HomesBookingAside extends React.Component {
     };
 
     const { currencyCode, cleaningFee } = listing;
-
-    const { currency,
-      currencySign } = this.props.paymentInfo;
 
     const nights = calculateNights(startDate, endDate);
 
@@ -114,13 +112,15 @@ HomesBookingAside.propTypes = {
   searchParams: PropTypes.object,
 
   // Redux props
-  paymentInfo: PropTypes.object
+  currency: PropTypes.string,
+  currencySign: PropTypes.string
 };
 
 function mapStateToProps(state) {
   const { paymentInfo, exchangeRatesInfo } = state;
   return {
-    paymentInfo,
+    currency: getCurrency(paymentInfo),
+    currencySign: getCurrencySign(paymentInfo),
     exchangeRatesInfo
   };
 }

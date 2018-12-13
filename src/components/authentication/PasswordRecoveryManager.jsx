@@ -6,6 +6,7 @@ import { connect } from 'react-redux';
 import { NotificationManager } from 'react-notifications';
 import { LONG } from '../../constants/notificationDisplayTimes.js';
 import { closeModal, openModal } from '../../actions/modalsInfo';
+import { isActive } from '../../selectors/modalsInfo';
 import { executeWithToken } from '../../services/grecaptcha/grecaptcha';
 import { 
   INVALID_EMAIL, 
@@ -126,7 +127,7 @@ class PasswordRecoveryManager extends React.Component {
     return (
       <React.Fragment>
         <SendRecoveryEmailModal 
-          isActive={this.props.modalsInfo.isActive[SEND_RECOVERY_EMAIL]} 
+          isActive={this.props.isActive[SEND_RECOVERY_EMAIL]} 
           openModal={this.openModal}
           closeModal={this.closeModal} 
           recoveryEmail={this.state.recoveryEmail} 
@@ -134,7 +135,7 @@ class PasswordRecoveryManager extends React.Component {
           onChange={this.onChange} 
         />
         <EnterRecoveryTokenModal 
-          isActive={this.props.modalsInfo.isActive[ENTER_RECOVERY_TOKEN]} 
+          isActive={this.props.isActive[ENTER_RECOVERY_TOKEN]} 
           openModal={this.openModal} 
           closeModal={this.closeModal} 
           onChange={this.onChange} 
@@ -142,7 +143,7 @@ class PasswordRecoveryManager extends React.Component {
           handleSubmitRecoveryToken={this.handleSubmitRecoveryToken} 
         />
         <ChangePasswordModal 
-          isActive={this.props.modalsInfo.isActive[CHANGE_PASSWORD]}
+          isActive={this.props.isActive[CHANGE_PASSWORD]}
           openModal={this.openModal} 
           closeModal={this.closeModal} 
           newPassword={this.state.newPassword} 
@@ -162,16 +163,13 @@ PasswordRecoveryManager.propTypes = {
 
   // start Redux props
   dispatch: PropTypes.func,
-  userInfo: PropTypes.object,
-  modalsInfo: PropTypes.object,
+  isActive: PropTypes.object,
 };
 
 function mapStateToProps(state) {
-  const { userInfo, modalsInfo, airdropInfo } = state;
+  const { modalsInfo } = state;
   return {
-    userInfo,
-    modalsInfo,
-    airdropInfo
+    isActive: isActive(modalsInfo)
   };
 }
 

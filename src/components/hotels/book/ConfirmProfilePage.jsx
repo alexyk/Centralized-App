@@ -10,6 +10,7 @@ import { LONG } from '../../../constants/notificationDisplayTimes';
 import BookingSteps from '../../common/utility/BookingSteps';
 import Select from '../../common/google/GooglePlacesAutocomplete';
 import StringUtils from '../../../services/utilities/stringUtilities';
+import { getCountries } from '../../../selectors/countriesInfo';
 
 import '../../../styles/css/components/hotels/book/profile-confirm-form.css';
 
@@ -262,7 +263,7 @@ const mapStateToProps = (state) => {
   const { countriesInfo } = state;
 
   return {
-    countries: countriesInfo.countries
+    countries: getCountries(countriesInfo)
   };
 };
 

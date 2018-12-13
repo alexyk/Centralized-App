@@ -6,6 +6,7 @@ import moment from 'moment';
 import StringUtils from '../../../services/utilities/stringUtilities.js';
 import Datepicker from '../../common/datepicker';
 import { setCountry, setGuests } from '../../../actions/homesSearchInfo';
+import { getCountries } from '../../../selectors/countriesInfo';
 import Select from 'react-select';
 import { NotificationManager } from 'react-notifications';
 
@@ -190,7 +191,7 @@ const mapStateToProps = (state) => {
     countryId: homesSearchInfo.country,
     guests: homesSearchInfo.guests,
     searchDatesInfo,
-    countries: countriesInfo.countries
+    countries: getCountries(countriesInfo)
   };
 };
 

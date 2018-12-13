@@ -2,6 +2,7 @@ import '../../../styles/css/components/profile/me/profile-verification.css';
 import '../../../styles/css/components/profile/admin/navigation-tab.css';
 
 import { closeModal, openModal } from '../../../actions/modalsInfo';
+import { isActive } from '../../../selectors/modalsInfo';
 
 import { CAPTURE_IMAGE } from '../../../constants/modals.js';
 import CaptureImageModal from './modals/CaptureImageModal';
@@ -16,6 +17,7 @@ import { connect } from 'react-redux';
 import request from 'superagent';
 import requester from '../../../requester';
 import { withRouter } from 'react-router-dom';
+import { isEmailVerified } from '../../../selectors/userInfo';
 
 const API_HOST = Config.getValue('apiHost');
 const LOCKTRIP_UPLOAD_URL = `${API_HOST}users/me/identity/images/upload`;
@@ -261,7 +263,7 @@ class ProfileVerificationPage extends React.Component {
                     onClick={() => this.openModal(CAPTURE_IMAGE)}
                     className="button">
                     <i className="fa fa-camera"></i>Make a photo of ID</button>
-                  <CaptureImageModal isActive={this.props.modalsInfo.isActive[CAPTURE_IMAGE]} openModal={this.openModal} closeModal={this.closeModal}>
+                  <CaptureImageModal isActive={this.props.isActive[CAPTURE_IMAGE]} openModal={this.openModal} closeModal={this.closeModal}>
                     <form onSubmit={(e) => { e.preventDefault(); this.closeModal(CAPTURE_IMAGE); this.onCaptureDrop('governmentIdPhoto'); }}>
                       <Webcam
                         className="webcam"
@@ -293,7 +295,7 @@ class ProfileVerificationPage extends React.Component {
                       onClick={() => this.openModal(CAPTURE_IMAGE)}
                       className="button">
                       <i className="fa fa-camera"></i>Make a photo of Holder + ID</button>
-                    <CaptureImageModal isActive={this.props.modalsInfo.isActive[CAPTURE_IMAGE]} openModal={this.openModal} closeModal={this.closeModal}>
+                    <CaptureImageModal isActive={this.props.isActive[CAPTURE_IMAGE]} openModal={this.openModal} closeModal={this.closeModal}>
                       <form onSubmit={(e) => { e.preventDefault(); this.closeModal(CAPTURE_IMAGE); this.onCaptureDrop('governmentIdHolderPhoto'); }}>
                         <Webcam
                           className="webcam"
@@ -315,7 +317,7 @@ class ProfileVerificationPage extends React.Component {
         <br />
         <h2>Your verified info</h2>
         <hr />
-        <VerificationItem item={'Email'} verified={this.props.userInfo.isEmailVerified} />
+        <VerificationItem item={'Email'} verified={this.props.isUserEmailVerified} />
         {this.state.verifiedFields.map((item, i) => {
           return <VerificationItem key={i} item={item} verified={true} />;
         })}
@@ -337,15 +339,15 @@ class ProfileVerificationPage extends React.Component {
 ProfileVerificationPage.propTypes = {
   // start Redux props
   dispatch: PropTypes.func,
-  userInfo: PropTypes.object,
-  modalsInfo: PropTypes.object,
+  isUserEmailVerified: PropTypes.bool,
+  isActive: PropTypes.object,
 };
 
 function mapStateToProps(state) {
   const { modalsInfo, userInfo } = state;
   return {
-    modalsInfo,
-    userInfo
+    isActive: isActive(modalsInfo),
+    isUserEmailVerified: isEmailVerified(userInfo)
   };
 }
 

@@ -19,6 +19,8 @@ import requester from '../../../requester';
 import LocPrice from '../../common/utility/LocPrice';
 import Rating from '../../common/rating';
 import { DEFAULT_LISTING_IMAGE_URL } from '../../../constants/images';
+import { isLogged } from '../../../selectors/userInfo';
+import { getCurrency } from '../../../selectors/paymentInfo';
 
 const SCREEN_SIZE_SMALL = 'SMALL';
 const SCREEN_SIZE_MEDIUM = 'MEDIUM';
@@ -48,7 +50,8 @@ class Result extends React.Component {
 
     const screenWidth = window.innerWidth;
     const screenSize = this.getScreenSize(screenWidth);
-    const photoUrl = this.props.hotel.hotelPhoto && this.props.hotel.hotelPhoto.url ? this.props.hotel.hotelPhoto.url : this.props.hotel.hotelPhoto;
+    const { hotel } = this.props;
+    const photoUrl = hotel.hotelPhoto && hotel.hotelPhoto.url ? hotel.hotelPhoto.url : hotel.hotelPhoto;
 
     this.state = {
       screenWidth: screenWidth,
@@ -104,13 +107,12 @@ class Result extends React.Component {
   }
 
   render() {
-    let { id, name, generalDescription, star } = this.props.hotel;
-    let { price } = this.props;
+    let { currency, currencySign, exchangeRatesInfo, isUserLogged, hotel, price, nights, allElements, location } = this.props;
+    const { currencyExchangeRates } = exchangeRatesInfo;
+    let { id, name, generalDescription, star } = hotel;
 
-    const { currencyExchangeRates } = this.props.exchangeRatesInfo;
-    const { currencySign } = this.props.paymentInfo;
     const isPriceLoaded = !!price;
-    const priceInSelectedCurrency = currencyExchangeRates && ((CurrencyConverter.convert(currencyExchangeRates, RoomsXMLCurrency.get(), this.props.paymentInfo.currency, price)) / this.props.nights).toFixed(2);
+    const priceInSelectedCurrency = currencyExchangeRates && ((CurrencyConverter.convert(currencyExchangeRates, RoomsXMLCurrency.get(), currency, price)) / nights).toFixed(2);
 
     name = name && StringUtils.shorten(name, this.state.titleLength);
     generalDescription = generalDescription && StringUtils.shorten(generalDescription, this.state.descriptionLength);
@@ -124,7 +126,7 @@ class Result extends React.Component {
     const SlickButtonLoad = ({ ...props }) => (
       <button {...props} onClick={() => {
         this.setState({ loadedPictures: false });
-        requester.getHotelPictures(this.props.hotel.id).then(res => {
+        requester.getHotelPictures(hotel.id).then(res => {
           res.body.then(data => {
             let images = _.orderBy(data, ['url'], ['asc']);
             images.push(images.shift());
@@ -150,7 +152,7 @@ class Result extends React.Component {
       beforeChange: () => {
         if (!this.state.calledBackendForAllImages) {
           this.setState({ loadedPictures: false });
-          requester.getHotelPictures(this.props.hotel.id).then(res => {
+          requester.getHotelPictures(hotel.id).then(res => {
             res.body.then(data => {
               let images = _.orderBy(data, ['url'], ['asc']);
               images.push(images.shift());
@@ -162,13 +164,13 @@ class Result extends React.Component {
       }
     };
 
-    const isMobile = this.props.location.pathname.indexOf('mobile') !== -1;
+    const isMobile = location.pathname.indexOf('mobile') !== -1;
 
-    const redirectURL = this.props.location.pathname.indexOf('mobile') === -1
+    const redirectURL = location.pathname.indexOf('mobile') === -1
       ? '/hotels/listings'
       : '/mobile/hotels/listings';
 
-    const search = this.props.location.search;
+    const search = location.search;
     const endOfSearch = search.indexOf('&filters=') !== -1 ? search.indexOf('&filters=') : search.length;
 
     return (
@@ -199,12 +201,12 @@ class Result extends React.Component {
           <div className="result-description">{generalDescription && ReactHtmlParser(generalDescription)}</div>
           <div className="result-mobile-pricing">
             {!isPriceLoaded
-              ? (!this.props.allElements ? <div className="price">Loading price...</div> : <div></div>)
-              : <div className="price">{this.props.userInfo.isLogged && `${currencySign} ${priceInSelectedCurrency}`}</div>
+              ? (!allElements ? <div className="price">Loading price...</div> : <div></div>)
+              : <div className="price">{isUserLogged && `${currencySign} ${priceInSelectedCurrency}`}</div>
             }
-            {isPriceLoaded && <div className="price">1 night: <LocPrice fiat={price / this.props.nights} /></div>}
+            {isPriceLoaded && <div className="price">1 night: <LocPrice fiat={price / nights} /></div>}
             <div>
-              {!isPriceLoaded && this.props.allElements
+              {!isPriceLoaded && allElements
                 ? <button disabled className="mobile-pricing-button">Unavailable</button>
                 : <Link target={isMobile === false ? '_blank' : ''} className="mobile-pricing-button" to={`${redirectURL}/${id}${search.substr(0, endOfSearch)}`}>Book now</Link>
               }
@@ -215,11 +217,11 @@ class Result extends React.Component {
         <div className="result-pricing">
           <div className="price-for">Price for 1 night</div>
           {!isPriceLoaded
-            ? (!this.props.allElements ? <div className="loader" style={{ width: '100%' }}></div> : <span style={{ padding: '20px 10px 10px 10px' }}>Unavailable</span>)
-            : <span className="price">{this.props.userInfo.isLogged && priceInSelectedCurrency && `${currencySign} ${priceInSelectedCurrency}`}</span>
+            ? (!allElements ? <div className="loader" style={{ width: '100%' }}></div> : <span style={{ padding: '20px 10px 10px 10px' }}>Unavailable</span>)
+            : <span className="price">{isUserLogged && priceInSelectedCurrency && `${currencySign} ${priceInSelectedCurrency}`}</span>
           }
-          {isPriceLoaded && <LocPrice fiat={price / this.props.nights} />}
-          {!isPriceLoaded && this.props.allElements
+          {isPriceLoaded && <LocPrice fiat={price / nights} />}
+          {!isPriceLoaded && allElements
             ? <button disabled className="button">Unavailable</button>
             : <Link target={isMobile === false ? '_blank' : ''} className="button" to={`${redirectURL}/${id}${search.substr(0, endOfSearch)}`}>Book now</Link>
           }
@@ -239,16 +241,16 @@ Result.propTypes = {
   location: PropTypes.object,
 
   // Redux props
-  paymentInfo: PropTypes.object,
-  userInfo: PropTypes.object,
+  currency: PropTypes.string,
+  isUserLogged: PropTypes.bool,
   exchangeRatesInfo: PropTypes.object
 };
 
 function mapStateToProps(state) {
   const { paymentInfo, userInfo, exchangeRatesInfo } = state;
   return {
-    paymentInfo,
-    userInfo,
+    currency: getCurrency(paymentInfo),
+    isUserLogged: isLogged(userInfo),
     exchangeRatesInfo
   };
 }

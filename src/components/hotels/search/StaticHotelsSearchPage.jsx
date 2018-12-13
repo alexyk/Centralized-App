@@ -18,6 +18,8 @@ import moment from 'moment';
 import queryString from 'query-string';
 import requester from '../../../requester';
 import { setCurrency } from '../../../actions/paymentInfo';
+import { isLogged } from '../../../selectors/userInfo';
+import { getCurrency } from '../../../selectors/paymentInfo';
 import uuid from 'uuid';
 import { withRouter } from 'react-router-dom';
 import { NotificationManager } from 'react-notifications';
@@ -100,7 +102,7 @@ class StaticHotelsSearchPage extends React.Component {
 
     this.distributeSearchParameters();
 
-    if (!this.props.paymentInfo.currency) {
+    if (!this.props.currency) {
       this.props.dispatch(setCurrency(queryParams.currency));
     }
 
@@ -660,7 +662,7 @@ class StaticHotelsSearchPage extends React.Component {
                       lon={this.state.lon}
                       hotels={hotels}
                       mapInfo={this.state.mapInfo}
-                      isLogged={this.props.userInfo.isLogged}
+                      isLogged={this.props.isUserLogged}
                       nights={nights}
                       loading={this.state.loading}
                     />
@@ -703,8 +705,8 @@ StaticHotelsSearchPage.propTypes = {
 
   // start Redux props
   dispatch: PropTypes.func,
-  paymentInfo: PropTypes.object,
-  userInfo: PropTypes.object,
+  currency: PropTypes.string,
+  isUserLogged: PropTypes.object,
   hotelsSearchInfo: PropTypes.object,
   searchDatesInfo: PropTypes.object
 };
@@ -713,8 +715,8 @@ StaticHotelsSearchPage.propTypes = {
 function mapStateToProps(state) {
   const { paymentInfo, userInfo, hotelsSearchInfo, searchDatesInfo } = state;
   return {
-    paymentInfo,
-    userInfo,
+    currency: getCurrency(paymentInfo),
+    isUserLogged: isLogged(userInfo),
     hotelsSearchInfo,
     searchDatesInfo
   };

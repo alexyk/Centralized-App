@@ -9,14 +9,15 @@ import { RoomsXMLCurrency } from '../../../services/utilities/roomsXMLCurrency';
 import LocPrice from '../../common/utility/LocPrice';
 import Rating from '../../common/rating';
 import { DEFAULT_LISTING_IMAGE_URL } from '../../../constants/images';
+import { getCurrency, getCurrencySign } from '../../../selectors/paymentInfo';
 
 function HomeResult(props) {
-  const { currency, currencySign } = props.paymentInfo;
-  const { cityName, countryName, prices, currency_code, defaultDailyPrice, id, name, averageRating, description } = props.listing;
+  const { currency, currencySign, listing, location } = props;
+  const { cityName, countryName, prices, currency_code, defaultDailyPrice, id, name, averageRating, description } = listing;
   const listingPrice = prices && currency === currency_code ? parseFloat(defaultDailyPrice, 10).toFixed() : parseFloat(prices[currency], 10).toFixed(2);
   const listingPriceInRoomsCurrency = prices && prices[RoomsXMLCurrency.get()];
   
-  let pictures = props.listing.pictures || [];
+  let pictures = listing.pictures || [];
   if (typeof pictures === 'string') {
     pictures = JSON.parse(pictures).map(img => { return { thumbnail: Config.getValue('imgHost') + img.thumbnail }; });
   }
@@ -31,7 +32,7 @@ function HomeResult(props) {
         <ListingItemPictureCarousel pictures={pictures} id={id} />
       </div>
       <div className="list-content">
-        <h2><Link to={`/homes/listings/${id}${props.location.search}`}>{name}</Link></h2>
+        <h2><Link to={`/homes/listings/${id}${location.search}`}>{name}</Link></h2>
         <Rating rating={averageRating} />
         <div className="clearfix"></div>
         <p>{cityName}, {countryName}</p>
@@ -43,7 +44,7 @@ function HomeResult(props) {
         <div className="list-hotel-price-bgr">Price for 1 night</div>
         <div className="list-hotel-price-curency">{currencySign}{listingPrice}</div>
         <div className="list-hotel-price-loc">{listingPriceInRoomsCurrency && <LocPrice fiat={listingPriceInRoomsCurrency} />}</div>
-        <Link to={`/homes/listings/${id}${props.location.search}`} className="list-hotel-price-button button">Book now</Link>
+        <Link to={`/homes/listings/${id}${location.search}`} className="list-hotel-price-button button">Book now</Link>
       </div>
       <div className="clearfix"></div>
     </div>
@@ -52,17 +53,21 @@ function HomeResult(props) {
 
 HomeResult.propTypes = {
   listing: PropTypes.object,
+
+  // Router props
   location: PropTypes.object,
 
   // start Redux props
   dispatch: PropTypes.func,
-  paymentInfo: PropTypes.object
+  currency: PropTypes.string,
+  currencySign: PropTypes.string
 };
 
 function mapStateToProps(state) {
   const { paymentInfo } = state;
   return {
-    paymentInfo
+    currency: getCurrency(paymentInfo),
+    currencySign: getCurrencySign(paymentInfo)
   };
 }
 

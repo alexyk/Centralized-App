@@ -4,6 +4,7 @@ import { withRouter, Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { openModal } from '../../../actions/modalsInfo.js';
 import { setGuests } from '../../../actions/homesSearchInfo';
+import { isLogged } from '../../../selectors/userInfo';
 import { LOGIN } from '../../../constants/modals.js';
 import Datepicker from '../../common/datepicker';
 import moment from 'moment';
@@ -12,6 +13,7 @@ import { RoomsXMLCurrency } from '../../../services/utilities/roomsXMLCurrency';
 import LocPrice from '../../common/utility/LocPrice';
 import { isInvalidRange, getPriceForPeriod } from '../common/detailsPageUtils.js';
 import { initStickyElements } from '../common/detailsPageUtils.js';
+import { getCurrency, getCurrencySign } from '../../../selectors/paymentInfo.js';
 
 class HomeDetailsBookingPanel extends React.Component {
   componentDidMount() {
@@ -35,9 +37,8 @@ class HomeDetailsBookingPanel extends React.Component {
       return <div className="loader"></div>;
     }
 
-    const { calendar, currencyCode, cleaningFee } = this.props;
+    const { calendar, currencyCode, cleaningFee, currency, currencySign } = this.props;
     const { startDate, endDate } = this.props.searchDatesInfo;
-    const { currency, currencySign } = this.props.paymentInfo;
     
     const nights = this.calculateNights(startDate, endDate);
     const price = getPriceForPeriod(startDate, nights, calendar);
@@ -94,7 +95,7 @@ class HomeDetailsBookingPanel extends React.Component {
           </div>
         </div>
         <hr />
-        {this.props.userInfo.isLogged ?
+        {this.props.isUserLogged ?
           <Link to={`/homes/listings/${this.props.match.params.id}/book?startDate=${startDate.format('DD/MM/YYYY')}&endDate=${endDate.format('DD/MM/YYYY')}&guests=${this.props.homesSearchInfo.guests}`} onClick={e => invalidRange && e.preventDefault()} className={[invalidRange ? 'disabled' : null, 'button'].join(' ')}>Request Booking</Link> :
           <button className="button" onClick={(e) => this.props.dispatch(openModal(LOGIN, e))}>Login</button>}
         <p className="booking-helper">You won&#39;t be charged yet</p>
@@ -117,9 +118,10 @@ HomeDetailsBookingPanel.propTypes = {
 
   // Redux props
   dispatch: PropTypes.func,
-  paymentInfo: PropTypes.object,
+  currency: PropTypes.string,
+  currencySign: PropTypes.string,
   exchangeRatesInfo: PropTypes.object,
-  userInfo: PropTypes.object,
+  isUserLogged: PropTypes.bool,
   homesSearchInfo: PropTypes.object,
   searchDatesInfo: PropTypes.object
 };
@@ -127,9 +129,10 @@ HomeDetailsBookingPanel.propTypes = {
 function mapStateToProps(state) {
   const { paymentInfo, exchangeRatesInfo, userInfo, homesSearchInfo, searchDatesInfo } = state;
   return {
-    paymentInfo,
+    currency: getCurrency(paymentInfo),
+    currencySign: getCurrencySign(paymentInfo),
     exchangeRatesInfo,
-    userInfo,
+    isUserLogged: isLogged(userInfo),
     homesSearchInfo,
     searchDatesInfo
   };

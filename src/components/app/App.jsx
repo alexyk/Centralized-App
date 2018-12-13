@@ -189,14 +189,6 @@ App.propTypes = {
 
   // start Redux props
   dispatch: PropTypes.func,
-  paymentInfo: PropTypes.object
 };
 
-function mapStateToProps(state) {
-  const { paymentInfo } = state;
-  return {
-    paymentInfo
-  };
-}
-
-export default withRouter(connect(mapStateToProps)(App));
+export default withRouter(connect()(App));

@@ -1,4 +1,6 @@
 import { closeModal, openModal } from '../../../actions/modalsInfo.js';
+import { isActive } from '../../../selectors/modalsInfo.js';
+import { getCurrency } from '../../../selectors/paymentInfo';
 import { setAdults, setChildren, setRegion, setRooms, setRoomsByCountOfRooms } from '../../../actions/hotelsSearchInfo';
 
 import { CHILDREN } from '../../../constants/modals';
@@ -100,12 +102,13 @@ function HotelsSearchBar(props) {
   };
 
   const getQueryString = () => {
+    const { hotelsSearchInfo, currency, searchDatesInfo } = props;
     let queryString = '?';
-    queryString += 'region=' + props.hotelsSearchInfo.region.id;
-    queryString += '&currency=' + props.paymentInfo.currency;
-    queryString += '&startDate=' + props.searchDatesInfo.startDate.format('DD/MM/YYYY');
-    queryString += '&endDate=' + props.searchDatesInfo.endDate.format('DD/MM/YYYY');
-    queryString += '&rooms=' + encodeURI(JSON.stringify(props.hotelsSearchInfo.rooms));
+    queryString += 'region=' + hotelsSearchInfo.region.id;
+    queryString += '&currency=' + currency;
+    queryString += '&startDate=' + searchDatesInfo.startDate.format('DD/MM/YYYY');
+    queryString += '&endDate=' + searchDatesInfo.endDate.format('DD/MM/YYYY');
+    queryString += '&rooms=' + encodeURI(JSON.stringify(hotelsSearchInfo.rooms));
     return queryString;
   };
 
@@ -197,7 +200,7 @@ function HotelsSearchBar(props) {
 
       <div className="check-wrap source-panel-item">
         <ChildrenModal
-          isActive={props.modalsInfo.isActive[CHILDREN]}
+          isActive={props.isActive[CHILDREN]}
           closeModal={closeChildrenModal}
           handleSubmit={handleSubmitModal}
         />
@@ -261,8 +264,8 @@ HotelsSearchBar.propTypes = {
   dispatch: PropTypes.func,
   hotelsSearchInfo: PropTypes.object,
   searchDatesInfo: PropTypes.object,
-  paymentInfo: PropTypes.object,
-  modalsInfo: PropTypes.object
+  currency: PropTypes.string,
+  isActive: PropTypes.object
 };
 
 function mapStateToProps(state) {
@@ -270,8 +273,8 @@ function mapStateToProps(state) {
   return {
     hotelsSearchInfo,
     searchDatesInfo,
-    paymentInfo,
-    modalsInfo
+    currency: getCurrency(paymentInfo),
+    isActive: isActive(modalsInfo)
   };
 }
 

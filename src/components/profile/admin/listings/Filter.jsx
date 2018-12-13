@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import Select from 'react-select';
 import { connect } from 'react-redux';
+import { getCountries } from '../../../../selectors/countriesInfo';
 
 const customStyles = {
   container: (styles) => ({
@@ -121,7 +122,7 @@ const mapStateToProps = (state) => {
   const { countriesInfo } = state;
 
   return {
-    countries: countriesInfo.countries
+    countries: getCountries(countriesInfo)
   };
 };
 

@@ -8,8 +8,7 @@ export default function reducer(state = initialState, action) {
   switch (action.type) {
     case locAmountsInfo.UPDATE_LOC_AMOUNTS:
       if (action.params) {
-        if (!state.locAmounts[action.fiatAmount] && validateLocAmountsUpdate(action.params, state.locAmounts[action.fiatAmount])) {
-          console.log('update');
+        if (validateLocAmountsUpdate(action.params, state.locAmounts[action.fiatAmount])) {
           return {
             ...state,
             locAmounts: {
@@ -22,7 +21,6 @@ export default function reducer(state = initialState, action) {
             }
           };
         }
-        console.log('not update');
         return state;
       } else if (action.error) {
         return {
@@ -58,5 +56,5 @@ export default function reducer(state = initialState, action) {
 }
 
 function validateLocAmountsUpdate(params, locAmountObject) {
-  return locAmountObject.locAmount !== params.locAmount || locAmountObject.fundsSufficient !== params.fundsSufficient || locAmountObject.fiatAmount !== params.fiatAmount;
+  return !locAmountObject || locAmountObject.locAmount !== params.locAmount || locAmountObject.fundsSufficient !== params.fundsSufficient || locAmountObject.fiatAmount !== params.fiatAmount;
 }

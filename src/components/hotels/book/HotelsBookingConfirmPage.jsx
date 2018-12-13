@@ -21,6 +21,8 @@ import QuoteLocPrice from '../../common/utility/QuoteLocPrice';
 import QuoteLocPricePP from '../../common/utility/QuoteLocPricePP';
 import LocPriceUpdateTimer from '../../common/utility/LocPriceUpdateTimer';
 import { closeModal, openModal } from '../../../actions/modalsInfo.js';
+import { isActive } from '../../../selectors/modalsInfo.js';
+import { getCurrency, getCurrencySign } from '../../../selectors/paymentInfo';
 import RecoverWallerPassword from '../../common/utility/RecoverWallerPassword';
 import { ExchangerWebsocket } from '../../../services/socket/exchangerWebsocket';
 
@@ -86,14 +88,14 @@ class HotelsBookingConfirmPage extends Component {
   }
 
   createBackUrl() {
-    const currency = this.props.paymentInfo.currency;
-    const queryParams = queryString.parse(this.props.location.search);
+    const { currency, location, match } = this.props;
+    const queryParams = queryString.parse(location.search);
     let rooms = JSON.parse(queryParams.rooms);
     rooms.forEach((room) => {
       room.adults = room.adults.length;
     });
 
-    const id = this.props.match.params.id;
+    const id = match.params.id;
     rooms = encodeURI(JSON.stringify(rooms));
 
     return `hotels/listings/${id}?region=${queryParams.region}&currency=${currency}&startDate=${queryParams.startDate}&endDate=${queryParams.endDate}&rooms=${rooms}`;
@@ -143,9 +145,8 @@ class HotelsBookingConfirmPage extends Component {
   }
 
   payWithCard(fiatAmount) {
-    const { reservation } = this.props;
-    const { currency } = this.props.paymentInfo;
-    const { locAmounts } = this.props.locAmountsInfo;
+    const { reservation, currency, location, match, locAmountsInfo } = this.props;
+    const { locAmounts } = locAmountsInfo;
 
     const locAmount = locAmounts[DEFAULT_QUOTE_LOC_PP_ID].locAmount;
 
@@ -162,10 +163,10 @@ class HotelsBookingConfirmPage extends Component {
     this.stopQuotePP();
     this.approveQuote();
 
-    const id = this.props.match.params.id;
-    const isWebView = this.props.location.pathname.indexOf('/mobile') !== -1;
+    const id = match.params.id;
+    const isWebView = location.pathname.indexOf('/mobile') !== -1;
     const rootURL = !isWebView ? `/hotels/listings/book/${id}/profile` : `/mobile/hotels/listings/book/${id}/profile`;
-    const search = this.props.location.search;
+    const search = location.search;
     this.props.history.push({
       pathname: rootURL,
       search: search,
@@ -416,16 +417,16 @@ class HotelsBookingConfirmPage extends Component {
       <tr key={1}>
         <td>{`Cancelling on or before ${moment(date).format('DD MMM YYYY')} will cost you`}</td>
         <td><span
-          className="booking-price">{this.props.paymentInfo.currency} 0.00 (0.00 LOC)</span>
+          className="booking-price">{this.props.currency} 0.00 (0.00 LOC)</span>
         </td>
       </tr>
     );
   }
 
   addCheckInClauseRow(fees, rows, arrivalDate) {
-    const fiatPrice = this.props.reservation && this.props.reservation.fiatPrice;
-    const { currency } = this.props.paymentInfo;
-    const { currencyExchangeRates } = this.props.exchangeRatesInfo;
+    const { currency, reservation, exchangeRatesInfo } = this.props;
+    const fiatPrice = reservation && reservation.fiatPrice;
+    const { currencyExchangeRates } = exchangeRatesInfo;
     rows.push(
       <tr key={2}>
         <td
@@ -444,8 +445,8 @@ class HotelsBookingConfirmPage extends Component {
     const arrivalDate = reservation.booking.hotelBooking[0].arrivalDate;
     const rows = [];
     const fees = this.getCancellationFees();
-    const { currency } = this.props.paymentInfo;
-    const { currencyExchangeRates } = this.props.exchangeRatesInfo;
+    const { currency, exchangeRatesInfo } = this.props;
+    const { currencyExchangeRates } = exchangeRatesInfo;
 
     if (fees.length === 0) {
       this.addFreeClauseRow(rows, arrivalDate);
@@ -507,14 +508,13 @@ class HotelsBookingConfirmPage extends Component {
       return <div className="loader"></div>;
     }
 
-    const { reservation, modalsInfo } = this.props;
+    const { reservation, isActive, currency, currencySign, locAmountsInfo, exchangeRatesInfo, userInfo, locPriceUpdateTimerInfo } = this.props;
     const { userConfirmedPaymentWithLOC, password, isQuoteStopped, isQuotePPStopped, safeChargeMode } = this.state;
-    const hasLocAddress = !!this.props.userInfo.locAddress;
-    const { currencyExchangeRates } = this.props.exchangeRatesInfo;
+    const hasLocAddress = !!userInfo.locAddress;
+    const { currencyExchangeRates } = exchangeRatesInfo;
 
     const booking = reservation && reservation.booking.hotelBooking;
-    const { currency, currencySign } = this.props.paymentInfo;
-    const { locAmounts } = this.props.locAmountsInfo;
+    const { locAmounts } = locAmountsInfo;
 
     const fiatAmountPP = currencyExchangeRates && locAmounts[DEFAULT_QUOTE_LOC_PP_ID] && CurrencyConverter.convert(currencyExchangeRates, DEFAULT_CRYPTO_CURRENCY, currency, locAmounts[DEFAULT_QUOTE_LOC_PP_ID].fiatAmount);
     const fiatPriceInUserCurrency = currencyExchangeRates && CurrencyConverter.convert(currencyExchangeRates, reservation.currency, currency, reservation.fiatPrice).toFixed(2);
@@ -533,7 +533,7 @@ class HotelsBookingConfirmPage extends Component {
 
               <div className="booking-details-header">
                 <h2>Confirm and Pay</h2>
-                <h2>{this.props.userInfo.firstName} {this.props.userInfo.lastName}</h2>
+                <h2>{userInfo.firstName} {userInfo.lastName}</h2>
               </div>
               <hr className="header-underline" />
 
@@ -576,7 +576,7 @@ class HotelsBookingConfirmPage extends Component {
                           Pay with Credit Card: Current Market Price: <span className="important">{currencySign} {fiatAmountPP && (fiatAmountPP).toFixed(2)}</span>
                         </p>
                         <div className="price-update-timer" tooltip="Seconds until we update your quoted price">
-                          {!isQuotePPStopped ? <span>Market Price will update in <i className="fa fa-clock-o" aria-hidden="true"></i>&nbsp;{this.props.locPriceUpdateTimerInfo.seconds} sec &nbsp;</span> : 'Processing payment...'}
+                          {!isQuotePPStopped ? <span>Market Price will update in <i className="fa fa-clock-o" aria-hidden="true"></i>&nbsp;{locPriceUpdateTimerInfo.seconds} sec &nbsp;</span> : 'Processing payment...'}
                         </div>
                         <div>
                           <button className="button" disabled={!fiatAmountPP} onClick={() => this.handlePayWithCard(fiatAmountPP)}>Pay with Credit Card</button>
@@ -602,7 +602,7 @@ class HotelsBookingConfirmPage extends Component {
                       <p>Order Total: <span className="important">{this.props.isQuoteLocValid && <QuoteLocPrice fiat={reservation.fiatPrice} params={{ bookingId: reservation.preparedBookingId }} brackets={false} invalidateQuoteLoc={this.props.invalidateQuoteLoc} redirectToHotelDetailsPage={this.props.redirectToHotelDetailsPage} />}</span></p>
                       {locAmounts[DEFAULT_QUOTE_LOC_ID] &&
                         <div className="price-update-timer" tooltip="Seconds until we update your quoted price">
-                          {!isQuoteStopped ? <span>LOC price will update in <i className="fa fa-clock-o" aria-hidden="true"></i>&nbsp;{this.props.locPriceUpdateTimerInfo.seconds} sec &nbsp;</span> : 'Processing payment...'}
+                          {!isQuoteStopped ? <span>LOC price will update in <i className="fa fa-clock-o" aria-hidden="true"></i>&nbsp;{locPriceUpdateTimerInfo.seconds} sec &nbsp;</span> : 'Processing payment...'}
                         </div>}
                       <p>(Click <a href={`${Config.getValue('basePath')}buyloc`} target="_blank" rel="noopener noreferrer">here</a> to learn how you can buy LOC directly to enjoy cheaper travel)</p>
                       {userConfirmedPaymentWithLOC
@@ -623,7 +623,7 @@ class HotelsBookingConfirmPage extends Component {
             </div>
           </div>
           <WalletPasswordModal
-            isActive={modalsInfo.isActive[PASSWORD_PROMPT]}
+            isActive={isActive[PASSWORD_PROMPT]}
             text={'Enter your wallet password'}
             placeholder={'Wallet password'}
             handleSubmit={() => this.payWithLocSingleWithdrawer()}
@@ -633,8 +633,8 @@ class HotelsBookingConfirmPage extends Component {
             onChange={this.onChange}
           />
           <RecoverWallerPassword />
-          <PendingBookingLocModal isActive={modalsInfo.isActive[PENDING_BOOKING_LOC]} openModal={this.openModal} closeModal={this.closeModal} />
-          <PendingBookingFiatModal isActive={modalsInfo.isActive[PENDING_BOOKING_FIAT]} openModal={this.openModal} closeModal={this.closeModal} handleSubmit={() => this.payWithCard(fiatAmountPP)} />
+          <PendingBookingLocModal isActive={isActive[PENDING_BOOKING_LOC]} openModal={this.openModal} closeModal={this.closeModal} />
+          <PendingBookingFiatModal isActive={isActive[PENDING_BOOKING_FIAT]} openModal={this.openModal} closeModal={this.closeModal} handleSubmit={() => this.payWithCard(fiatAmountPP)} />
         </div>
       </React.Fragment>
     );
@@ -657,8 +657,9 @@ HotelsBookingConfirmPage.propTypes = {
 
   // start Redux props
   dispatch: PropTypes.func,
-  paymentInfo: PropTypes.object,
-  modalsInfo: PropTypes.object,
+  currency: PropTypes.string,
+  currencySign: PropTypes.string,
+  isActive: PropTypes.object,
   exchangeRatesInfo: PropTypes.object,
   locAmountsInfo: PropTypes.object,
   locPriceUpdateTimerInfo: PropTypes.object
@@ -668,8 +669,9 @@ function mapStateToProps(state) {
   const { paymentInfo, modalsInfo, exchangeRatesInfo, locAmountsInfo, locPriceUpdateTimerInfo } = state;
 
   return {
-    paymentInfo,
-    modalsInfo,
+    currency: getCurrency(paymentInfo),
+    currencySign: getCurrencySign(paymentInfo),
+    isActive: isActive(modalsInfo),
     exchangeRatesInfo,
     locAmountsInfo,
     locPriceUpdateTimerInfo

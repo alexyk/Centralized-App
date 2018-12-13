@@ -355,16 +355,12 @@ HomeDetailsPage.propTypes = {
 
   // start Redux props
   dispatch: PropTypes.func,
-  userInfo: PropTypes.object,
-  paymentInfo: PropTypes.object,
   searchDatesInfo: PropTypes.object
 };
 
 function mapStateToProps(state) {
-  const { userInfo, paymentInfo, searchDatesInfo } = state;
+  const { searchDatesInfo } = state;
   return {
-    userInfo,
-    paymentInfo,
     searchDatesInfo
   };
 }

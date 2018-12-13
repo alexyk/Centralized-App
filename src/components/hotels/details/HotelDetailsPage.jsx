@@ -18,6 +18,7 @@ import { parse } from 'query-string';
 import requester from '../../../requester';
 import { setHotelsSearchInfo } from '../../../actions/hotelsSearchInfo';
 import { asyncSetStartDate, asyncSetEndDate } from '../../../actions/searchDatesInfo';
+import { getCurrency } from '../../../selectors/paymentInfo';
 import { withRouter } from 'react-router-dom';
 import queryString from 'query-string';
 
@@ -49,8 +50,7 @@ class HotelDetailsPage extends React.Component {
       lightboxIsOpen: false,
       currentImage: 0,
       prices: null,
-      oldCurrency: this.props.paymentInfo.currency,
-      userInfo: null,
+      oldCurrency: this.props.currency,
       loading: true,
       isShownContactHostModal: false,
       hotelRooms: null,
@@ -251,7 +251,7 @@ class HotelDetailsPage extends React.Component {
   //     };
   //   });
 
-  //   const currency = this.props.paymentInfo.currency;
+  //   const currency = this.props.currency;
   //   const booking = {
   //     quoteId: quoteId,
   //     rooms: rooms,
@@ -275,9 +275,11 @@ class HotelDetailsPage extends React.Component {
   // }
 
   handleBookRoom(roomsResults) {
+    const { currency, hotelsSearchInfo } = this.props;
+
     this.setState({ loadingRooms: true });
     NotificationManager.info(CHECKING_ROOM_AVAILABILITY, '', LONG);
-    const rooms = this.props.hotelsSearchInfo.rooms.map((room) => {
+    const rooms = hotelsSearchInfo.rooms.map((room) => {
       const adults = [];
       const children = room.children;
       for (let j = 0; j < room.adults; j++) {
@@ -295,8 +297,6 @@ class HotelDetailsPage extends React.Component {
         children: children
       };
     });
-
-    const currency = this.props.paymentInfo.currency;
 
     const booking = {
       rooms: rooms,
@@ -484,18 +484,15 @@ HotelDetailsPage.propTypes = {
 
   // start Redux props
   dispatch: PropTypes.func,
-  userInfo: PropTypes.object,
-  paymentInfo: PropTypes.object,
+  currency: PropTypes.string,
   hotelsSearchInfo: PropTypes.object,
   searchDatesInfo: PropTypes.object
 };
 
 function mapStateToProps(state) {
-  const { userInfo, paymentInfo, modalsInfo, hotelsSearchInfo, searchDatesInfo } = state;
+  const { paymentInfo, hotelsSearchInfo, searchDatesInfo } = state;
   return {
-    userInfo,
-    paymentInfo,
-    modalsInfo,
+    currency: getCurrency(paymentInfo),
     hotelsSearchInfo,
     searchDatesInfo
   };

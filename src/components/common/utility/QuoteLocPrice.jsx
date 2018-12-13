@@ -6,6 +6,7 @@ import { CurrencyConverter } from '../../../services/utilities/currencyConverter
 import { RoomsXMLCurrency } from '../../../services/utilities/roomsXMLCurrency';
 import { ExchangerWebsocket } from '../../../services/socket/exchangerWebsocket';
 import { removeLocAmount } from '../../../actions/locAmountsInfo';
+import { isLogged } from '../../../selectors/userInfo';
 import { LONG } from '../../../constants/notificationDisplayTimes.js';
 
 const DEFAULT_CRYPTO_CURRENCY = 'EUR';
@@ -47,7 +48,7 @@ class QuoteLocPrice extends PureComponent {
   }
 
   render() {
-    const { brackets, locAmount, quoteLocError, userInfo, params } = this.props;
+    const { brackets, locAmount, quoteLocError, isUserLogged, params } = this.props;
 
     if (!this.isQuoteLocRendered && locAmount) {
       this.isQuoteLocRendered = true;
@@ -62,11 +63,10 @@ class QuoteLocPrice extends PureComponent {
     } else if (this.isQuoteLocRendered && quoteLocError) {
       this.redirectToHotelDetailsPage();
     }
-    const isLogged = userInfo.isLogged;
 
-    const bracket = brackets && isLogged;
+    const bracket = brackets && isUserLogged;
 
-    if (isLogged === undefined) {
+    if (isUserLogged === undefined) {
       return null;
     }
 
@@ -94,7 +94,7 @@ QuoteLocPrice.propTypes = {
 
   // Redux props
   dispatch: PropTypes.func,
-  userInfo: PropTypes.object,
+  isUserLogged: PropTypes.bool,
   exchangerSocketInfo: PropTypes.object,
   locAmount: PropTypes.string,
   renderLocAmount: PropTypes.bool,
@@ -116,7 +116,7 @@ function mapStateToProps(state, ownProps) {
   }
 
   return {
-    userInfo,
+    isUserLogged: isLogged(userInfo),
     exchangerSocketInfo,
     locAmount,
     quoteLocError
