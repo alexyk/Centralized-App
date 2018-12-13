@@ -1,3 +1,4 @@
+// @flow
 import '../../styles/css/main.scss';
 import '../../styles/css/components/modals/modal.scss';
 import '../../styles/css/components/captcha/captcha-container.scss';
