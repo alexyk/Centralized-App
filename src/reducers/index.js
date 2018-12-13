@@ -1,17 +1,17 @@
-import { combineReducers } from 'redux';
-import userInfo from './userInfo';
-import paymentInfo from './paymentInfo';
-import modalsInfo from './modalsInfo';
-import airdropInfo from './airdropInfo';
-import hotelsSearchInfo from './hotelsSearchInfo';
-import homesSearchInfo from './homesSearchInfo';
-import exchangerSocketInfo from './exchangerSocketInfo';
-import locAmountsInfo from './locAmountsInfo';
-import exchangeRatesInfo from './exchangeRatesInfo';
-import locPriceUpdateTimerInfo from './locPriceUpdateTimerInfo';
-import burgerMenuInfo from './burgerMenuInfo';
-import searchDatesInfo from './searchDatesInfo';
-
+import { combineReducers } from "redux";
+import userInfo from "./userInfo";
+import paymentInfo from "./paymentInfo";
+import modalsInfo from "./modalsInfo";
+import airdropInfo from "./airdropInfo";
+import hotelsSearchInfo from "./hotelsSearchInfo";
+import homesSearchInfo from "./homesSearchInfo";
+import exchangerSocketInfo from "./exchangerSocketInfo";
+import locAmountsInfo from "./locAmountsInfo";
+import exchangeRatesInfo from "./exchangeRatesInfo";
+import locPriceUpdateTimerInfo from "./locPriceUpdateTimerInfo";
+import burgerMenuInfo from "./burgerMenuInfo";
+import searchDatesInfo from "./searchDatesInfo";
+import affiliatesReducer from "../components/profile/affiliates/redux/affiliates-redux";
 const rootReducer = combineReducers({
   userInfo,
   paymentInfo,
@@ -24,7 +24,8 @@ const rootReducer = combineReducers({
   exchangeRatesInfo,
   locPriceUpdateTimerInfo,
   burgerMenuInfo,
-  searchDatesInfo
+  searchDatesInfo,
+  affiliatesInfo: affiliatesReducer
 });
 
 export default rootReducer;

@@ -1,4 +1,4 @@
-import { burgerMenuInfo } from '../actions/actionTypes';
+import { burgerMenuInfo } from "../actions/actionTypes";
 
 const initialState = {
   showMenu: false

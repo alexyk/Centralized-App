@@ -8,6 +8,7 @@ import { LONG } from '../../constants/notificationDisplayTimes.js';
 import { closeModal, openModal } from '../../actions/modalsInfo';
 import RegisterModal from './modals/RegisterModal';
 import { executeWithToken } from '../../services/grecaptcha/grecaptcha';
+import referralIdPersistence from "../profile/affiliates/service/persist-referral-id";
 
 import {
   REGISTER
@@ -45,6 +46,13 @@ class RegisterManager extends React.Component {
 
   componentDidMount() {
     this.requestCountries();
+  }
+
+  componentDidUpdate(prevProps) {
+    if(this.props.hasReferral && !prevProps.hasReferral){
+      this.openModal(REGISTER);
+
+    }
   }
 
   requestCountries() {
@@ -100,7 +108,8 @@ class RegisterManager extends React.Component {
       password: this.state.signUpPassword,
       country: this.state.country.id,
       countryState: this.state.countryState,
-      image: 'images/default.png'
+      image: 'images/default.png',
+      refId: referralIdPersistence.getIdToRegister()
     };
 
     this.clearLocalStorage();

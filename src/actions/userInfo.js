@@ -1,4 +1,4 @@
-import { userInfo } from './actionTypes';
+import { userInfo } from "./actionTypes";
 
 export function setIsLogged(isLogged) {
   return {
@@ -7,7 +7,18 @@ export function setIsLogged(isLogged) {
   };
 }
 
-export function setUserInfo(firstName, lastName, phoneNumber, email, locAddress, ethBalance, locBalance, gender, isEmailVerified, isAdmin) {
+export function setUserInfo(
+  firstName,
+  lastName,
+  phoneNumber,
+  email,
+  locAddress,
+  ethBalance,
+  locBalance,
+  gender,
+  isEmailVerified,
+  isAdmin
+) {
   return {
     type: userInfo.SET_USER_INFO,
     firstName,
@@ -19,6 +30,6 @@ export function setUserInfo(firstName, lastName, phoneNumber, email, locAddress,
     locBalance,
     gender,
     isEmailVerified,
-    isAdmin,
+    isAdmin
   };
 }

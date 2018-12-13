@@ -1,4 +1,4 @@
-import { airdropInfo } from '../actions/actionTypes';
+import { airdropInfo } from "../actions/actionTypes";
 
 const initialState = {
   email: null,
@@ -6,7 +6,7 @@ const initialState = {
   telegramProfile: null,
   twitterProfile: null,
   redditProfile: null,
-  participates: false,
+  participates: false
 };
 
 export default function reducer(state = initialState, action) {

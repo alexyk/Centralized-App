@@ -1,4 +1,4 @@
-import { locAmountsInfo } from '../actions/actionTypes';
+import { locAmountsInfo } from "../actions/actionTypes";
 
 const initialState = {
   locAmounts: {}
