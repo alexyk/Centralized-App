@@ -240,12 +240,12 @@ class HotelTripDetails extends React.Component {
             <h4>MUST-READ ESSENTIAL INFORMATION</h4>
             <div>
               <p>This booking is a result of a complex distribution channel partnership, not of a direct contract between LockTrip and the hotel.</p>
-              <p>We have acquired the right to book this hotel from a company that is authorized to redistribute its inventory. This is a common practice within all big OTAs, which makes it possible to cover as much properties as possible for you to choose from around the world.</p>
-              <p>In this regards, the hotel&#39;s personnel, and more specifically the receptionists, should not be expected to know the exact end-retail website or travel agent the booking originates from (<a href="https://locktrip.com/" rel="noopener noreferrer" target="_blank">LockTrip.com</a>). They will be aware of the company authorized to redistribute their inventory and sent the booking through.</p>
-              <p>To ensure fast check-in and avoid misunderstandings, LockTrip provides you herewith with a unique booking reference ID which is your undisputed proof/booking confirmation easily identifiable at the reception along with your name and surname. Alternatively, you can simply hand in the printed voucher (attached to this mail).</p>
-              <p>NOTE: Should you want to re-confirm your stay prior arrival, make sure you wait between 6 to 24 hours before contacting the hotel.</p>
-              <p>Information as where you made the booking, what payment method and/or currency you used to make the booking etc. will not help the receptionist retrieve your booking form the system as it is irrelevant. </p>
-              <p>Don&#39;t hesitate to get in touch if you need additional assistance.</p>
+              <p>We have acquired the right to book this hotel from a company that is authorized to redistribute its inventory. This is a common practice within all big OTAs, which enables us to cover as many properties as possible for you to choose from around the world.</p>
+              <p>In this regard, the hotel&#39;s personnel, and more specifically the receptionists, should not be expected to know the exact end-retail website or travel agent that the booking originates from (<a href="https://locktrip.com/" rel="noopener noreferrer" target="_blank">LockTrip.com</a>). They will be aware of the company authorized to redistribute their inventory and send the booking through.</p>
+              <p>To ensure fast check-in and avoid misunderstandings, LockTrip provides you here with with a unique booking reference ID which is your undisputed proof/booking confirmation easily identifiable at the reception along with your name and surname. Alternatively, you may simply hand in the printed voucher (attached to this mail).</p>
+              <p>NOTE: Should you want to re-confirm your stay prior to arrival, please make sure you wait between 6 and 24 hours before contacting the hotel.</p>
+              <p>Information as where you made the booking, what payment method and/or currency you used to make the booking etc. will not help the receptionist retrieve your booking from the system as it is irrelevant. </p>
+              <p>Don&#39;t hesitate to contact us if you need additional assistance.</p>
             </div>
           </div>
         </section>

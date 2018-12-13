@@ -152,7 +152,7 @@ function ListingHouseRules(props) {
                   </div>
                 </div>
                 <div className="button-add-container col-md-3">
-                  <button className="btn btn-primary" onClick={() => props.addRule()}> Add</button>
+                  <button className="button" onClick={() => props.addRule()}> Add</button>
                 </div>
 
                 <div>

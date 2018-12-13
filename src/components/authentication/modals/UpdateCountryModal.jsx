@@ -2,6 +2,7 @@ import { Modal } from 'react-bootstrap';
 import React from 'react';
 import { UPDATE_COUNTRY } from '../../../constants/modals.js';
 import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
 
 function UpdateCountryModal(props) {
 
@@ -13,7 +14,7 @@ function UpdateCountryModal(props) {
     return `${name.substring(0, length)}...`;
   };
 
-  const countryHasMandatoryState = ['Canada', 'India', 'United States of America'].includes(props.country.name);
+  const countryHasMandatoryState = props.country && ['Canada', 'India', 'United States of America'].includes(props.country.name);
 
   return (
     <React.Fragment>
@@ -45,7 +46,7 @@ function UpdateCountryModal(props) {
               </div>
             </div>}
 
-            <button type="submit" className="btn btn-primary">Save</button>
+            <button type="submit" className="button" disabled={props.isLogging}>{props.isLogging ? 'Logging in...' : 'Save'}</button>
             <div className="clearfix"></div>
           </form>
         </Modal.Body>
@@ -54,8 +55,27 @@ function UpdateCountryModal(props) {
   );
 }
 
+UpdateCountryModal.propTypes = {
+  country: PropTypes.object,
+  states: PropTypes.array,
+  countryState: PropTypes.string,
+  onChange: PropTypes.func,
+  openModal: PropTypes.func,
+  closeModal: PropTypes.func,
+  isActive: PropTypes.bool,
+  handleChangeCountry: PropTypes.func,
+  handleUpdateCountry: PropTypes.func,
+  isLogging: PropTypes.bool,
+
+  // Redux props
+  modalsInfo: PropTypes.object,
+  countries: PropTypes.array
+};
+
+
 const mapStateToProps = (state) => ({
-  modalsInfo: state.modalsInfo
+  modalsInfo: state.modalsInfo,
+  countries: state.countriesInfo.countries
 });
 
 export default connect(mapStateToProps)(UpdateCountryModal);

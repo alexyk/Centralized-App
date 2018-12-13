@@ -34,7 +34,7 @@ function MyListingsItemRow(props) {
         <Link to={`/profile/listings/edit/landing/${props.listing.id}`}>Edit Listing</Link>
       </div>
       <div className="flex-row-child calendar finished">
-        <Link to={'/profile/listings/calendar/' + props.listing.id}>View Calendar</Link>
+        <Link to={'/profile/listings/calendar/' + props.listing.id} className="button">View Calendar</Link>
       </div>
       <div className="flex-row-child remove finished" onClick={(e) => props.handleOpenDeleteListingModal(e, props.listing.id, props.listing.name, props.listing.state)}>
         <span />

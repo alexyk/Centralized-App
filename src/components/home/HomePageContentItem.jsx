@@ -6,6 +6,7 @@ function HomePageContentItem(props) {
     <section className="home-page-content-item">
       <h3>{props.title}</h3>
       <h5>{props.text}</h5>
+      <hr />
       {props.children}
     </section>
   );

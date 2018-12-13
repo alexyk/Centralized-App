@@ -24,7 +24,7 @@ function SendRecoveryEmailModal(props) {
               <p>Already sent an email? Enter your security <a onClick={(e) => { e.preventDefault(); props.closeModal(SEND_RECOVERY_EMAIL); props.openModal(ENTER_RECOVERY_TOKEN); }}>token</a>.</p>
             </div>
 
-            <button type="submit" className="btn btn-primary">Send email</button>
+            <button type="submit" className="button">Send email</button>
             <div className="clearfix"></div>
           </form>
         </Modal.Body>

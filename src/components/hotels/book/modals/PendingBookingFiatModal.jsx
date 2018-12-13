@@ -1,4 +1,4 @@
-import { PENDING_BOOKING_FIAT } from '../../../constants/modals.js';
+import { PENDING_BOOKING_FIAT } from '../../../../constants/modals.js';
 
 import { Modal } from 'react-bootstrap';
 import PropTypes from 'prop-types';
@@ -20,7 +20,7 @@ function PendingBookingLocModal(props) {
       <Modal show={props.isActive} className="modal fade myModal">
         <Modal.Header>
           <h1>Warning!</h1>
-          <button type="button" className="close" onClick={(e) => props.closeModal(PENDING_BOOKING_FIAT, e)}>&times;</button>
+          <button type="button" className="close" onClick={(e) => props.closeModal(PENDING_BOOKING_FIAT, e, true)}>&times;</button>
         </Modal.Header>
         <Modal.Body>
           <form onSubmit={ handleSubmit } >
@@ -30,7 +30,7 @@ function PendingBookingLocModal(props) {
               Please, confirm if you want to book a different stay from the one which is currently Pending.
             </p>
             <button type="submit" className="btn btn-primary">Yes, I want to book a different stay</button>
-            <button className="btn btn-primary" onClick={(e) => props.closeModal(PENDING_BOOKING_FIAT, e)}>Cancel</button>
+            <button className="btn btn-primary" onClick={(e) => props.closeModal(PENDING_BOOKING_FIAT, e, true)}>Cancel</button>
             <div className="clearfix"></div>
           </form>
         </Modal.Body>

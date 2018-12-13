@@ -399,7 +399,7 @@ class HotelDetailsPage extends React.Component {
     return (
       <div>
         <div className="container sm-none">
-          <HotelsSearchBar search={this.handleSearch} />
+          <HotelsSearchBar search={this.search} />
         </div>
         {loading ?
           <div className="loader"></div> :

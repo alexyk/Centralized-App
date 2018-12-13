@@ -6,6 +6,8 @@ import { NotificationManager } from 'react-notifications';
 import { PROFILE_SUCCESSFULLY_UPDATED } from '../../../constants/successMessages.js';
 import { PROFILE_UPDATE_ERROR } from '../../../constants/errorMessages.js';
 import React from 'react';
+import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
 import Select from '../../common/google/GooglePlacesAutocomplete';
 import moment from 'moment';
 import requester from '../../../requester';
@@ -33,7 +35,6 @@ class ProfileEditForm extends React.Component {
       jsonFile: '',
       currencies: [],
       cities: [],
-      countries: [],
       states: [],
       loading: true
     };
@@ -47,11 +48,6 @@ class ProfileEditForm extends React.Component {
   }
 
   async componentDidMount() {
-    requester.getCountries()
-      .then(res => res.body)
-      .then(data => this.setState({ countries: data }))
-      .catch(error => console.log(error));
-
     requester.getUserInfo()
       .then(res => res.body)
       .then(data => {
@@ -169,6 +165,7 @@ class ProfileEditForm extends React.Component {
       return <div className="loader"></div>;
     }
 
+    const { countries } = this.props;
     let years = [];
 
     for (let i = (new Date()).getFullYear(); i >= 1940; i--) {
@@ -288,7 +285,7 @@ class ProfileEditForm extends React.Component {
               <div className='select'>
                 <select name="country" id="address" onChange={this.updateCountry} value={JSON.stringify(this.state.country)}>
                   <option disabled value="">Country</option>
-                  {this.state.countries.map((item, i) => {
+                  {countries && countries.map((item, i) => {
                     return <option key={i} value={JSON.stringify(item)}>{item.name}</option>;
                   })}
                 </select>
@@ -335,11 +332,24 @@ class ProfileEditForm extends React.Component {
 
           <p className="text"><span className="mandatory">*</span> Fields mandatory for payment with Credit Card</p>
 
-          <button type="submit" className="btn">Save</button>
+          <button type="submit" className="button">Save</button>
         </form>
       </div>
     );
   }
 }
 
-export default ProfileEditForm;
+ProfileEditForm.propTypes = {
+  // Redux props
+  countries: PropTypes.array
+};
+
+const mapStateToProps = (state) => {
+  const { countriesInfo } = state;
+
+  return {
+    countries: countriesInfo.countries
+  };
+};
+
+export default connect(mapStateToProps)(ProfileEditForm);

@@ -3,7 +3,7 @@ import { AIRDROP_LOGIN, REGISTER, SEND_RECOVERY_EMAIL } from '../../../constants
 import { Config } from '../../../config';
 import { Modal } from 'react-bootstrap';
 import PropTypes from 'prop-types';
-import ReCAPTCHA from 'react-google-recaptcha';
+// import ReCAPTCHA from 'react-google-recaptcha';
 import React from 'react';
 
 let captcha = undefined;
@@ -29,7 +29,7 @@ function AirdropLoginModal(props) {
               <input type="password" name="loginPassword" value={props.loginPassword} onChange={props.onChange} className="with-icon" placeholder="Password" />
             </div>
             <div className="remember-me">
-              <label><input type="checkbox" value="" id="login-remember" />Remember me</label>
+              <label><input type="checkbox" value="" id="login-remember" />Remember Me</label>
             </div>
 
             <button type="submit" className="btn btn-primary">Login</button>
@@ -44,12 +44,12 @@ function AirdropLoginModal(props) {
         </Modal.Body>
       </Modal>
 
-      <ReCAPTCHA
+      {/* <ReCAPTCHA
         ref={el => captcha = el}
         size="invisible"
         sitekey={Config.getValue('recaptchaKey')}
         onChange={(token) => { props.handleLogin(token); captcha.reset(); }}
-      />
+      /> */}
     </React.Fragment>
   );
 }

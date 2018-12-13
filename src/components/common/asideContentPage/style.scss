@@ -1,0 +1,30 @@
+@import '../../../styles/css/vendors/include-media';
+@import '../../../styles/css/base/variables';
+
+.aside-content-page {
+  display: flex;
+  margin-bottom: 40px;
+
+  @include media('<desktop') {
+    flex-direction: column;
+  }
+
+  .aside {
+    width: 25%;
+    margin: 0;
+    
+    @include media('<desktop') {
+      width: 100% !important;
+      margin-bottom: 10px;
+    }
+  }
+
+  .content {
+    width: 73%;
+    margin-left: auto;
+
+    @include media('<desktop') {
+      width: 100% !important;
+    }
+  }
+}

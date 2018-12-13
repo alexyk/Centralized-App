@@ -8,6 +8,7 @@ import UnverifiedList from './users/UnverifiedList';
 import VerifiedList from './users/VerifiedList';
 import AdminAirdrop from './airdrop/AdminAirdrop';
 import AdminSafecharge from './safecharge/AdminSafecharge';
+import AdminReservationsRouter from './reservations/AdminReservationsRouter';
 import requester from '../../../requester';
 
 class AdminPage extends Component {
@@ -59,19 +60,18 @@ class AdminPage extends Component {
     const { configVars } = this.state;
 
     return (
-      <div className="container">
-        <Switch>
-          <Redirect exact path="/profile/admin/listings" to="/profile/admin/listings/published" />
-          <Redirect exact path="/profile/admin/users" to="/profile/admin/users/verified" />
+      <Switch>
+        <Redirect exact path="/profile/admin/listings" to="/profile/admin/listings/published" />
+        <Redirect exact path="/profile/admin/users" to="/profile/admin/users/verified" />
 
-          <Route exact path="/profile/admin/listings/published" render={() => <PublishedList />} />
-          <Route exact path="/profile/admin/listings/unpublished" render={() => <UnpublishedList />} />
-          <Route exact path="/profile/admin/users/verified" render={() => <VerifiedList />} />
-          <Route exact path="/profile/admin/users/unverified" render={() => <UnverifiedList />} />
-          <Route exact path="/profile/admin/airdrop" render={() => <AdminAirdrop />} />
-          <Route exact path="/profile/admin/safecharge" render={() => <AdminSafecharge configVars={configVars} onChangeConfigVars={this.onChangeConfigVars} />} />
-        </Switch>
-      </div>
+        <Route exact path="/profile/admin/listings/published" render={() => <PublishedList />} />
+        <Route exact path="/profile/admin/listings/unpublished" render={() => <UnpublishedList />} />
+        <Route exact path="/profile/admin/users/verified" render={() => <VerifiedList />} />
+        <Route exact path="/profile/admin/users/unverified" render={() => <UnverifiedList />} />
+        <Route exact path="/profile/admin/airdrop" render={() => <AdminAirdrop />} />
+        <Route exact path="/profile/admin/safecharge" render={() => <AdminSafecharge configVars={configVars} onChangeConfigVars={this.onChangeConfigVars} />} />
+        <Route path="/profile/admin/reservation/booking" render={() => <AdminReservationsRouter />} />
+      </Switch>
     );
   }
 }

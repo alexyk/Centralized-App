@@ -255,7 +255,7 @@ class HomeDetailsPage extends React.Component {
                 <p><img alt="save" src={`${Config.getValue('basePath')}/images/icon-heart.png`} /> Save</p>
               </div>
               <div className="contact-box">
-                <button onClick={this.openModal}>Contact Host</button>
+                <button onClick={this.openModal} className="button">Contact Host</button>
               </div>
             </div>
           </nav>

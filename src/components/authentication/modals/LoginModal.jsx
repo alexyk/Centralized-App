@@ -5,7 +5,7 @@ import React from 'react';
 import { LOGIN, REGISTER, SEND_RECOVERY_EMAIL } from '../../../constants/modals.js';
 
 function LoginModal(props) {
-
+  const { isLogging } = props; 
   return (
     <React.Fragment>
       <Modal show={props.isActive} onHide={() => props.closeModal(LOGIN)} className="modal fade myModal">
@@ -24,16 +24,15 @@ function LoginModal(props) {
               <input type="password" name="loginPassword" value={props.loginPassword} onChange={props.onChange} className="with-icon" placeholder="Password" />
             </div>
             <div className="remember-me">
-              <label><input type="checkbox" value="" id="login-remember" />Remember me</label>
+              <label><input type="checkbox" value="" id="login-remember" />Remember Me</label>
             </div>
-
-            <button type="submit" className="btn btn-primary">Login</button>
+            <button type="submit" className="button" disabled={isLogging}>{isLogging ? 'Logging in...' : 'Login'}</button>
             <div className="clearfix"></div>
           </form>
 
           <hr />
           <div className="login-sign">
-            Don’t have an account? <a onClick={() => { props.requestCountries(); props.closeModal(LOGIN); props.openModal(REGISTER); }}>Sign up</a>
+            Don’t have an account? <a onClick={() => { props.closeModal(LOGIN); props.openModal(REGISTER); }}>Sign up</a>
             . Forgot your password? <a onClick={(e) => { props.closeModal(LOGIN, e); props.openModal(SEND_RECOVERY_EMAIL, e); }}>Recover</a>
           </div>
         </Modal.Body>
@@ -49,7 +48,8 @@ LoginModal.propTypes = {
   onChange: PropTypes.func,
   openModal: PropTypes.func,
   closeModal: PropTypes.func,
-  isActive: PropTypes.bool
+  isActive: PropTypes.bool,
+  isLogging: PropTypes.bool
 };
 
 export default LoginModal;

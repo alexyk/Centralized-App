@@ -29,6 +29,11 @@ import requester from '../../requester';
 import GooglePlaces from '../common/GooglePlaces';
 import HelpPage from '../static/HelpPage';
 import AboutUsPage from '../static/AboutUsPage';
+import LoginManager from '../authentication/LoginManager';
+import RegisterManager from '../authentication/RegisterManager';
+import WalletCreationManager from '../authentication/WalletCreationManager';
+import PasswordRecoveryManager from '../authentication/PasswordRecoveryManager';
+import { fetchCountries } from '../../actions/countriesInfo';
 
 class App extends React.Component {
   constructor(props) {
@@ -43,6 +48,7 @@ class App extends React.Component {
 
     this.requestExchangeRates();
     this.requestLocEurRate();
+    this.requestCountries();
   }
 
   isAuthenticated() {
@@ -115,6 +121,10 @@ class App extends React.Component {
     });
   }
 
+  requestCountries() {
+    this.props.dispatch(fetchCountries());
+  }
+
   getQueryString(queryStringParameters) {
     let queryString = '?';
     queryString += 'region=' + encodeURI(queryStringParameters.region);
@@ -139,12 +149,15 @@ class App extends React.Component {
           <LocalizationNav />
         }
 
+        <LoginManager />
+        <RegisterManager />
+        <WalletCreationManager />
+        <PasswordRecoveryManager />
         <NotificationContainer />
 
         <Switch>
           <Route exact path="/" render={() => <HomeRouterPage />} />
           <Route exact path="/profile/listings/edit/:step/:id" render={() => !this.isAuthenticated() ? <Redirect to="/" /> : <EditListingPage />} />
-          {/* <Route exact path="/profile/listings/calendar/:id" render={() => !this.isAuthenticated() ? <Redirect to="/" /> : <CalendarPage />} /> */}
           <Route exact path="/users/resetPassword/:confirm" render={() => <HomeRouterPage />} />
           <Route path="/homes" render={() => <HomeRouterPage />} />
           <Route path="/hotels" render={() => <HomeRouterPage />} />

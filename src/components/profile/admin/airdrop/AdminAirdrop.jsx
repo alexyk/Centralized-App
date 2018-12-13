@@ -77,26 +77,28 @@ class AdminAirDrop extends Component {
     const { currentLocRate, locRate } = this.state;
 
     return (
-      <div className="loc-rate">
-        <AdminNav>
-          <h2 className="navigation-tab">Airdrop</h2>
-        </AdminNav>
-        <h4 className="current-loc-rate">Current loc rate: {currentLocRate && (currentLocRate).toFixed(2)}</h4>
-        <form method="post" onSubmit={this.handleSubmit}>
-          <div className="input-froup">
-            <label htmlFor="locRate">Loc rate</label>
-            <input
-              type="number"
-              id="locRate"
-              name="locRate"
-              placeholder="Loc rate"
-              value={locRate}
-              onChange={this.onChange} />
-          </div>
-          <div className="button-holder">
-            <button type="submit" className="btn btn-primary">Modify</button>
-          </div>
-        </form>
+      <div className="container">
+        <div className="loc-rate">
+          <AdminNav>
+            <h2 className="navigation-tab">Airdrop</h2>
+          </AdminNav>
+          <h4 className="current-loc-rate">Current loc rate: {currentLocRate && (currentLocRate).toFixed(2)}</h4>
+          <form method="post" onSubmit={this.handleSubmit}>
+            <div className="input-froup">
+              <label htmlFor="locRate">Loc rate</label>
+              <input
+                type="number"
+                id="locRate"
+                name="locRate"
+                placeholder="Loc rate"
+                value={locRate}
+                onChange={this.onChange} />
+            </div>
+            <div className="button-holder">
+              <button type="submit" className="button">Modify</button>
+            </div>
+          </form>
+        </div>
       </div>
     );
   }

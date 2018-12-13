@@ -45,7 +45,7 @@ class ContactHostModal extends React.Component {
               <div className="input-container">
                 <textarea rows="4" name="message" value={this.state.message} onChange={this.onChange}></textarea>
               </div>
-              <button type="submit" className="btn btn-primary">Send message</button>
+              <button type="submit" className="button">Send message</button>
               <div className="clearfix"></div>
             </form>
           </Modal.Body>

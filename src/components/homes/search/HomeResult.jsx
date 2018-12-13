@@ -43,7 +43,7 @@ function HomeResult(props) {
         <div className="list-hotel-price-bgr">Price for 1 night</div>
         <div className="list-hotel-price-curency">{currencySign}{listingPrice}</div>
         <div className="list-hotel-price-loc">{listingPriceInRoomsCurrency && <LocPrice fiat={listingPriceInRoomsCurrency} />}</div>
-        <Link to={`/homes/listings/${id}${props.location.search}`} className="list-hotel-price-button btn btn-primary">Book now</Link>
+        <Link to={`/homes/listings/${id}${props.location.search}`} className="list-hotel-price-button button">Book now</Link>
       </div>
       <div className="clearfix"></div>
     </div>

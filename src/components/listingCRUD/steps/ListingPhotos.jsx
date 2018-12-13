@@ -62,7 +62,7 @@ function ListingPhotos(props) {
                 onDrop={props.onImageDrop}
                 onDropRejected={onDropRejected}>
                 <p>Drop files to upload</p>
-                <button className="btn btn-primary">Choose file</button>
+                <button className="button">Choose file</button>
               </Dropzone>
 
               <div className="pictures-preview col-md-12">

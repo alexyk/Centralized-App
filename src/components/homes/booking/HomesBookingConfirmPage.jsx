@@ -137,7 +137,7 @@ class HomesBookingConfirmPage extends React.Component {
                       <label>Email</label>
                       <input type="email" name="email" value={this.state.email} onChange={this.handleChange} required />
                     </div>
-                    <button type="submit" className="btn">Request Booking</button>
+                    <button type="submit" className="button">Request Booking</button>
                   </form>
                 </Fragment> : <div className="loader"></div>}
             </div>
