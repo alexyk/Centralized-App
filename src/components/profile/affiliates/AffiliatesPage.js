@@ -46,15 +46,15 @@ export default class PopulatedAffiliatesPage extends React.Component<
   componentDidMount() {
     this.getGeneralAffiliatesData();
     this.getChartData();
+    this.toggleItemsRefresh();
   }
 
   getGeneralAffiliatesData() {
     AffiliatesService.getGeneralAffiliateData().then(
-      ({ totalAffiliates, totalRevenue, affiliateBookings }) => {
+      ({ totalAffiliates, totalRevenue }) => {
         this.setState({
           totalAffiliates,
-          totalRevenue,
-          affiliateBookings
+          totalRevenue
         });
       }
     );
@@ -71,24 +71,32 @@ export default class PopulatedAffiliatesPage extends React.Component<
     );
   }
 
-  toggleItemsRefresh(page: number) {
+  toggleItemsRefresh(page: number = 1) {
     AffiliatesService.getBookings(page).then(affiliateBookings => {
       this.setState({
-        affiliateBookings
+        affiliateBookings: affiliateBookings.bookings
       });
     });
   }
 
   render() {
+    const bookingPaginationOptions = {
+      onPageChange: this.toggleItemsRefresh,
+      totalElements: 22,
+      initialPage: 1,
+      pageSize: 10
+    };
+
     return (
       <AffiliatesDashboard
-        totalAffiliates={21}
-        totalRevenue={250.5}
+        totalAffiliates={this.state.totalAffiliates}
+        totalRevenue={this.state.totalRevenue}
         affiliateBookings={this.state.affiliateBookings}
         affiliatesChartData={this.state.affiliatesChartData}
         revenueChartData={this.state.revenueChartData}
         noBookingsText={"Sorry, no bookings yet!"}
-        onPageChange={this.toggleItemsRefresh}
+        // onPageChange={this.toggleItemsRefresh}
+        bookingPaginationOptions={bookingPaginationOptions}
         onWithdraw={console.log}
       />
     );

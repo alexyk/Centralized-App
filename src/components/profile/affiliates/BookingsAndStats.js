@@ -15,7 +15,8 @@ type Props = {
   onPageChange: Function,
   list: Array<AffiliateBooking>,
   revenueChartData: RevenueChartData,
-  affiliatesChartData: AffiliatesChartData
+  affiliatesChartData: AffiliatesChartData,
+  bookingPaginationOptions: Object
 };
 
 type State = {
@@ -92,7 +93,8 @@ export default class BookingsAndStats extends React.Component<Props, State> {
           <BookingsListPanel
             list={list}
             noBookingsText={noBookingsText}
-            onPageChange={onPageChange}
+            // onPageChange={onPageChange}
+            bookingPaginationOptions={this.props.bookingPaginationOptions}
           />
         )}
       </div>

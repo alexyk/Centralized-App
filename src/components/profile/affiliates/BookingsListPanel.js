@@ -5,7 +5,7 @@ export default class BookingsListPanel extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      currentPage: 0
+      currentPage: props.bookingPaginationOptions.initialPage || 1
     };
 
     this.onBookingsPageChange = this.onBookingsPageChange.bind(this);
@@ -18,7 +18,9 @@ export default class BookingsListPanel extends React.Component {
         currentPage: page
       },
       () => {
-        this.props.onPageChange(this.state.currentPage);
+        this.props.bookingPaginationOptions.onPageChange(
+          this.state.currentPage
+        );
       }
     );
   }
@@ -37,9 +39,9 @@ export default class BookingsListPanel extends React.Component {
         <Pagination
           currentPage={currentPage}
           onPageChange={this.onBookingsPageChange}
-          pageSize={20}
+          pageSize={this.props.bookingPaginationOptions.pageSize}
           loading={false}
-          totalElements={200}
+          totalElements={this.props.bookingPaginationOptions.totalElements}
         />
       </div>
     );
