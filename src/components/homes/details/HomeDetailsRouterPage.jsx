@@ -11,6 +11,7 @@ import { connect } from 'react-redux';
 import { parse } from 'query-string';
 import { asyncSetStartDate, asyncSetEndDate } from '../../../actions/searchDatesInfo';
 import { setHomesSearchInfo } from '../../../actions/homesSearchInfo';
+import { getCurrency } from '../../../selectors/paymentInfo';
 import _ from 'lodash';
 import HomesBookingConfirmPage from '../booking/HomesBookingConfirmPage';
 
@@ -53,7 +54,7 @@ class HomeDetailsRouterPage extends Component {
       `startDate=${moment().format('DD/MM/YYYY')}`,
       `endDate=${moment().add(DAY_INTERVAL, 'days').format('DD/MM/YYYY')}`,
       `page=${0}`,
-      `toCode=${this.props.paymentInfo.currency}`,
+      `toCode=${this.props.currency}`,
       `size=${DAY_INTERVAL}`];
 
     requester.getCalendarByListingIdAndDateRange(calendarByListingRequestParams).then(res => {
@@ -103,27 +104,19 @@ class HomeDetailsRouterPage extends Component {
 }
 
 HomeDetailsRouterPage.propTypes = {
-  listings: PropTypes.array,
-  hotels: PropTypes.array,
-
   // Router props
   location: PropTypes.object,
-  history: PropTypes.object,
   match: PropTypes.object,
 
   // Redux props
   dispatch: PropTypes.func,
-  userInfo: PropTypes.object,
-  paymentInfo: PropTypes.object,
-  searchDatesInfo: PropTypes.object
+  currency: PropTypes.string
 };
 
 function mapStateToProps(state) {
-  const { userInfo, paymentInfo, searchDatesInfo } = state;
+  const { paymentInfo } = state;
   return {
-    userInfo,
-    paymentInfo,
-    searchDatesInfo
+    currency: getCurrency(paymentInfo),
   };
 }
 

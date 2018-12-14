@@ -1,6 +1,7 @@
 import '../../styles/css/components/footer/footer-component.css';
 
 import { setCurrency } from '../../actions/paymentInfo';
+import { getCurrency } from '../../selectors/paymentInfo';
 
 import PropTypes from 'prop-types';
 import React from 'react';
@@ -9,14 +10,14 @@ import { Link, withRouter } from 'react-router-dom';
 
 class Footer extends React.Component {
   componentDidMount() {
-    const { currency } = this.props.paymentInfo;
+    const { currency } = this.props;
     if (localStorage['currency']) setCurrency(localStorage['currency']);
     else localStorage['currency'] = currency;
   }
 
   componentDidUpdate(prevProps) {
-    const prevCurrency = prevProps.paymentInfo.currency;
-    const { currency } = this.props.paymentInfo;
+    const prevCurrency = prevProps.currency;
+    const { currency } = this.props;
     if (prevCurrency !== currency) {
       localStorage['currency'] = currency;
     }
@@ -62,7 +63,7 @@ class Footer extends React.Component {
               </div>
               <div className="select">
                 <select className="currency"
-                  value={this.props.paymentInfo.currency}
+                  value={this.props.currency}
                   onChange={(e) => this.props.dispatch(setCurrency(e.target.value))}
                 >
                   <option value="EUR">Euro</option>
@@ -86,15 +87,13 @@ class Footer extends React.Component {
 Footer.propTypes = {
   // Redux props
   dispatch: PropTypes.func,
-  paymentInfo: PropTypes.object,
-  userInfo: PropTypes.object
+  currency: PropTypes.string
 };
 
 function mapStateToProps(state) {
-  const { paymentInfo, userInfo } = state;
+  const { paymentInfo } = state;
   return {
-    paymentInfo,
-    userInfo
+    currency: getCurrency(paymentInfo)
   };
 }
 

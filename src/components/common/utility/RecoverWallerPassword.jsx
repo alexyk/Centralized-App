@@ -9,6 +9,7 @@ import RecoverWalletByMnemonicWordsModal from '../modals/RecoverWalletByMnemonic
 import ChangeWalletPasswordModal from '../modals/ChangeWalletPasswordModal';
 import { RECOVER_WALLET, CHANGE_WALLET_PASSWORD, PASSWORD_PROMPT } from '../../../constants/modals.js';
 import { closeModal, openModal } from '../../../actions/modalsInfo.js';
+import { isActive } from '../../../selectors/modalsInfo.js';
 import { LONG } from '../../../constants/notificationDisplayTimes.js';
 import { PASSWORD_SUCCESSFULLY_CHANGED } from '../../../constants/successMessages';
 
@@ -128,7 +129,7 @@ class RecoverWallerPassword extends Component {
     return (
       <Fragment>
         <RecoverWalletByMnemonicWordsModal
-          isActive={this.props.modalsInfo.isActive[RECOVER_WALLET]}
+          isActive={this.props.isActive[RECOVER_WALLET]}
           openModal={this.openModal}
           closeModal={this.closeModal}
           onChange={this.onChange}
@@ -136,7 +137,7 @@ class RecoverWallerPassword extends Component {
           recoverPassword={this.recoverPassword}
         />
         <ChangeWalletPasswordModal
-          isActive={this.props.modalsInfo.isActive[CHANGE_WALLET_PASSWORD]}
+          isActive={this.props.isActive[CHANGE_WALLET_PASSWORD]}
           openModal={this.openModal}
           closeModal={this.closeModal}
           onChange={this.onChange}
@@ -152,13 +153,13 @@ class RecoverWallerPassword extends Component {
 RecoverWallerPassword.propTypes = {
   // start Redux props
   dispatch: PropTypes.func,
-  modalsInfo: PropTypes.object,
+  isActive: PropTypes.object,
 };
 
 function mapStateToProps(state) {
   const { modalsInfo } = state;
   return {
-    modalsInfo
+    isActive: isActive(modalsInfo)
   };
 }
 

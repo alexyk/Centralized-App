@@ -14,6 +14,7 @@ import { closeModal, openModal } from '../../../actions/modalsInfo';
 import NoEntriesMessage from '../../common/messages/NoEntriesMessage';
 import requester from '../../../requester';
 import RecoverWallerPassword from '../../common/utility/RecoverWallerPassword';
+import { getLocAddress, getEthBalance, getLocBalance, getEmail } from '../../../selectors/userInfo';
 
 class WalletIndexPage extends React.Component {
   constructor(props) {
@@ -34,7 +35,7 @@ class WalletIndexPage extends React.Component {
 
   onChange(e) {
     this.setState({ [e.target.name]: e.target.value }, () => {
-      this.setState({ canProceed: this.props.userInfo.locAddress !== null && this.state.password !== '' && this.state.recipientAddress !== '' && this.state.locAmount > 0 });
+      this.setState({ canProceed: this.props.userLocAddress !== null && this.state.password !== '' && this.state.recipientAddress !== '' && this.state.locAmount > 0 });
     });
   }
 
@@ -112,10 +113,11 @@ class WalletIndexPage extends React.Component {
   }
 
   render() {
-    const { email, locAddress, locBalance, ethBalance } = this.props.userInfo;
-    if (!email) {
+    const { userEmail, userLocAddress, userLocBalance, userEthBalance } = this.props;
+
+    if (!userEmail) {
       return null;
-    } else if (!locAddress) {
+    } else if (!userLocAddress) {
       return (
         <div className='container'>
           <NoEntriesMessage text='You need to create a wallet first'>
@@ -125,7 +127,7 @@ class WalletIndexPage extends React.Component {
       );
     }
 
-    const etherscanUrl = `https://etherscan.io/address/${locAddress}#tokentxns`;
+    const etherscanUrl = `https://etherscan.io/address/${userLocAddress}#tokentxns`;
     const etherscanLatestTxUrl = `${Config.getValue('ETHERS_HTTP_PROVIDER_NETWORK_BASE_URL')}/tx/${this.state.latestTxHash}`;
 
     return (
@@ -137,15 +139,15 @@ class WalletIndexPage extends React.Component {
             <hr />
             <div className="loc-address">
               <label htmlFor="loc-address">Your ETH/LOC address <img src={Config.getValue('basePath') + 'images/icon-lock.png'} className="lock" alt="lock-o" /></label>
-              <input className="disable-input" id="loc-address" name="locAddress" value={locAddress} type="text" readOnly />
+              <input className="disable-input" id="loc-address" name="locAddress" value={userLocAddress} type="text" readOnly />
             </div>
             <div className="loc-balance">
               <label htmlFor="loc-balance">LOC Balance</label>
-              <input className="disable-input" id="loc-balance" name="locBalance" value={locBalance} type="text" readOnly />
+              <input className="disable-input" id="loc-balance" name="locBalance" value={userLocBalance} type="text" readOnly />
             </div>
             <div className="eth-balance">
               <label htmlFor="eth-balance">ETH Balance</label>
-              <input className="disable-input" id="eth-balance" name="ethBalance" value={ethBalance} type="text" readOnly />
+              <input className="disable-input" id="eth-balance" name="ethBalance" value={userEthBalance} type="text" readOnly />
             </div>
             <h2>Send Tokens</h2>
             <form onSubmit={(e) => { e.preventDefault(); this.sendTokens(); }}>
@@ -179,11 +181,21 @@ class WalletIndexPage extends React.Component {
 WalletIndexPage.propTypes = {
   // Redux props
   dispatch: PropTypes.func,
-  userInfo: PropTypes.object
+  userLocBalance: PropTypes.number,
+  userEthBalance: PropTypes.number,
+  userLocAddress: PropTypes.string,
+  userEmail: PropTypes.string
 };
 
-const mapStateToProps = (state) => ({
-  userInfo: state.userInfo
-});
+const mapStateToProps = (state) => {
+  const { userInfo } = state;
+
+  return {
+    userLocBalance: getLocBalance(userInfo),
+    userEthBalance: getEthBalance(userInfo),
+    userLocAddress: getLocAddress(userInfo),
+    userEmail: getEmail(userInfo)
+  };
+};
 
 export default connect(mapStateToProps)(WalletIndexPage);

@@ -5,6 +5,10 @@ import { CurrencyConverter } from '../../../services/utilities/currencyConverter
 import { RoomsXMLCurrency } from '../../../services/utilities/roomsXMLCurrency';
 import { ExchangerWebsocket } from '../../../services/socket/exchangerWebsocket';
 import { removeLocAmount } from '../../../actions/locAmountsInfo';
+import { isLogged } from '../../../selectors/userInfo';
+import { getLocAmountById } from '../../../selectors/locAmountsInfo';
+import { getCurrencyExchangeRates, getLocEurRate } from '../../../selectors/exchangeRatesInfo';
+import { isExchangerWebsocketConnected } from '../../../selectors/exchangerSocketInfo';
 
 const DEFAULT_CRYPTO_CURRENCY = 'EUR';
 const DEFAULT_LOC__PRICE_METHOD = 'getLocPrice';
@@ -14,9 +18,10 @@ class LocPrice extends PureComponent {
     super(props);
     let isLocPriceRendered = false;
     let fiatInEur;
-    if (this.props.exchangeRatesInfo.currencyExchangeRates) {
-      fiatInEur = this.props.exchangeRatesInfo.currencyExchangeRates && CurrencyConverter.convert(this.props.exchangeRatesInfo.currencyExchangeRates, RoomsXMLCurrency.get(), DEFAULT_CRYPTO_CURRENCY, this.props.fiat);
-      this.sendWebsocketMessage(fiatInEur, null, Object.assign(this.props.params, { fiatAmount: fiatInEur }));
+    const { currencyExchangeRates, fiat } = this.props;
+    if (currencyExchangeRates) {
+      fiatInEur = currencyExchangeRates && CurrencyConverter.convert(currencyExchangeRates, RoomsXMLCurrency.get(), DEFAULT_CRYPTO_CURRENCY, fiat);
+      this.sendWebsocketMessage(fiatInEur, null, { fiatAmount: fiatInEur });
       isLocPriceRendered = true;
     }
     this.state = {
@@ -26,13 +31,13 @@ class LocPrice extends PureComponent {
   }
 
   componentDidUpdate(prevProps) {
-    if (this.props.exchangerSocketInfo.isExchangerWebsocketConnected &&
-      this.props.exchangerSocketInfo.isExchangerWebsocketConnected !== prevProps.exchangerSocketInfo.isExchangerWebsocketConnected) {
-      this.sendWebsocketMessage(this.state.fiatInEur, null, Object.assign(prevProps.params, { fiatAmount: this.state.fiatInEur }));
+    if (this.props.isExchangerWebsocketConnected &&
+      this.props.isExchangerWebsocketConnected !== prevProps.isExchangerWebsocketConnected) {
+      this.sendWebsocketMessage(this.state.fiatInEur, null, { fiatAmount: this.state.fiatInEur });
     }
-    if (this.props.exchangeRatesInfo.currencyExchangeRates && !this.state.isLocPriceRendered) {
-      const fiatInEur = this.props.exchangeRatesInfo.currencyExchangeRates && CurrencyConverter.convert(this.props.exchangeRatesInfo.currencyExchangeRates, RoomsXMLCurrency.get(), DEFAULT_CRYPTO_CURRENCY, prevProps.fiat);
-      this.sendWebsocketMessage(fiatInEur, null, Object.assign(prevProps.params, { fiatAmount: fiatInEur }));
+    if (this.props.currencyExchangeRates && !this.state.isLocPriceRendered) {
+      const fiatInEur = this.props.currencyExchangeRates && CurrencyConverter.convert(this.props.currencyExchangeRates, RoomsXMLCurrency.get(), DEFAULT_CRYPTO_CURRENCY, prevProps.fiat);
+      this.sendWebsocketMessage(fiatInEur, null, { fiatAmount: fiatInEur });
       this.setState({
         isLocPriceRendered: true,
         fiatInEur
@@ -54,12 +59,12 @@ class LocPrice extends PureComponent {
   }
 
   render() {
-    const isLogged = this.props.userInfo.isLogged;
-    const { brackets, locAmount } = this.props;
+    console.log('render');
+    const { isUserLogged, brackets, locAmount } = this.props;
 
-    const bracket = brackets && isLogged;
+    const bracket = brackets && isUserLogged;
 
-    if (isLogged === undefined) {
+    if (isUserLogged === undefined) {
       return null;
     }
 
@@ -70,44 +75,39 @@ class LocPrice extends PureComponent {
 }
 
 LocPrice.defaultProps = {
-  params: {},
   brackets: true
 };
 
 LocPrice.propTypes = {
   fiat: PropTypes.number,
   brackets: PropTypes.bool,
-  method: PropTypes.string,
-  params: PropTypes.object,
 
   // Redux props
   dispatch: PropTypes.func,
-  userInfo: PropTypes.object,
-  exchangerSocketInfo: PropTypes.object,
+  currencyExchangeRates: PropTypes.object,
   locAmount: PropTypes.string,
-  exchangeRatesInfo: PropTypes.object,
-  renderLocAmount: PropTypes.bool
+  isUserLogged: PropTypes.bool,
+  isExchangerWebsocketConnected: PropTypes.bool
 };
 
 function mapStateToProps(state, ownProps) {
   const { fiat } = ownProps;
+  const { userInfo, locAmountsInfo, exchangeRatesInfo, exchangerSocketInfo } = state;
 
-  const { userInfo, exchangerSocketInfo, locAmountsInfo, exchangeRatesInfo } = state;
-  const { currencyExchangeRates, locEurRate } = exchangeRatesInfo;
-
+  const currencyExchangeRates = getCurrencyExchangeRates(exchangeRatesInfo);
   const fiatInEur = currencyExchangeRates && CurrencyConverter.convert(currencyExchangeRates, RoomsXMLCurrency.get(), DEFAULT_CRYPTO_CURRENCY, fiat);
-
-  let locAmount = locAmountsInfo.locAmounts[fiatInEur] && (locAmountsInfo.locAmounts[fiatInEur].locAmount).toFixed(2);
+  let locAmount = getLocAmountById(locAmountsInfo, fiatInEur);
 
   if (!locAmount) {
-    locAmount = (fiatInEur / locEurRate).toFixed(2);
+    const locEurRate = getLocEurRate(exchangeRatesInfo);
+    locAmount = fiatInEur / locEurRate;
   }
 
   return {
-    userInfo,
-    exchangerSocketInfo,
-    locAmount,
-    exchangeRatesInfo
+    currencyExchangeRates,
+    locAmount: (locAmount).toFixed(2),
+    isUserLogged: isLogged(userInfo),
+    isExchangerWebsocketConnected: isExchangerWebsocketConnected(exchangerSocketInfo)
   };
 }
 

@@ -6,6 +6,9 @@ import moment from 'moment';
 import StringUtils from '../../../services/utilities/stringUtilities.js';
 import Datepicker from '../../common/datepicker';
 import { setCountry, setGuests } from '../../../actions/homesSearchInfo';
+import { getCountries } from '../../../selectors/countriesInfo';
+import { getStartDate, getEndDate } from '../../../selectors/searchDatesInfo';
+import { getCountry, getGuests } from '../../../selectors/homesSearchInfo';
 import Select from 'react-select';
 import { NotificationManager } from 'react-notifications';
 
@@ -66,8 +69,8 @@ function HomesSearchBar(props) {
     let queryString = '?';
 
     queryString += 'countryId=' + props.countryId;
-    queryString += '&startDate=' + props.searchDatesInfo.startDate.format('DD/MM/YYYY');
-    queryString += '&endDate=' + props.searchDatesInfo.endDate.format('DD/MM/YYYY');
+    queryString += '&startDate=' + props.startDate.format('DD/MM/YYYY');
+    queryString += '&endDate=' + props.endDate.format('DD/MM/YYYY');
     queryString += '&guests=' + props.guests;
 
     return queryString;
@@ -97,11 +100,11 @@ function HomesSearchBar(props) {
     }
   };
 
-  const { countries, searchDatesInfo, countryId, guests } = props;
+  const { countries, startDate, endDate, countryId, guests } = props;
 
   let options = [];
   if (countries) {
-    options = countries && countries.map((item, i) => {
+    options = countries && countries.map((item) => {
       return {
         value: item.id,
         label: StringUtils.shorten(item.name, 30)
@@ -143,7 +146,7 @@ function HomesSearchBar(props) {
 
         <div className="days-of-stay">
           <span className="icon-moon"></span>
-          <span>{searchDatesInfo.endDate.diff(searchDatesInfo.startDate, 'days')} nights</span>
+          <span>{endDate.diff(startDate, 'days')} nights</span>
         </div>
       </div>
 
@@ -180,17 +183,19 @@ HomesSearchBar.propTypes = {
   countryId: PropTypes.string,
   guests: PropTypes.string,
   countries: PropTypes.array,
-  searchDatesInfo: PropTypes.object
+  startDate: PropTypes.object,
+  endDate: PropTypes.object
 };
 
 const mapStateToProps = (state) => {
   const { homesSearchInfo, searchDatesInfo, countriesInfo } = state;
 
   return {
-    countryId: homesSearchInfo.country,
-    guests: homesSearchInfo.guests,
-    searchDatesInfo,
-    countries: countriesInfo.countries
+    countryId: getCountry(homesSearchInfo),
+    guests: getGuests(homesSearchInfo),
+    startDate: getStartDate(searchDatesInfo),
+    endDate: getEndDate(searchDatesInfo),
+    countries: getCountries(countriesInfo)
   };
 };
 

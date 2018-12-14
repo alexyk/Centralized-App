@@ -20,6 +20,7 @@ import { connect } from 'react-redux';
 import StringUtils from '../../../services/utilities/stringUtilities.js';
 import requester from '../../../requester';
 import validator from 'validator';
+import { getCountries } from '../../../selectors/countriesInfo';
 
 function RegisterModal(props) {
 
@@ -133,7 +134,7 @@ const mapStateToProps = (state) => {
   const { countriesInfo } = state;
 
   return {
-    countries: countriesInfo.countries
+    countries: getCountries(countriesInfo)
   };
 };
 

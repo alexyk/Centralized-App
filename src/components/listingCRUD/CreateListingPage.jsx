@@ -35,6 +35,7 @@ import { CREATE_WALLET } from '../../constants/modals';
 import ProfileNav from '../profile/ProfileNav';
 import { connect } from 'react-redux';
 import { openModal } from '../../actions/modalsInfo';
+import { getLocAddress } from '../../selectors/userInfo';
 
 const host = Config.getValue('apiHost');
 const LOCKTRIP_UPLOAD_URL = `${host}images/upload`;
@@ -473,7 +474,7 @@ class CreateListingPage extends React.Component {
   }
 
   finish() {
-    console.log('finish')
+    console.log('finish');
     const { name, street, city, country, text, uploadedFilesUrls } = this.state;
     if (name.length < 2) {
       NotificationManager.warning(INVALID_TITLE, '', LONG);
@@ -494,8 +495,8 @@ class CreateListingPage extends React.Component {
       NotificationManager.warning(MISSING_PICTURE, '', LONG);
       this.props.history.push('/profile/listings/create/photos/');
     } else {
-    console.log('create')
-    this.createListing();
+      console.log('create');
+      this.createListing();
     }
   }
 
@@ -514,7 +515,7 @@ class CreateListingPage extends React.Component {
       return <div className="loader"></div>;
     }
 
-    if (!this.props.userInfo.locAddress) {
+    if (!this.props.userLocAddress) {
       return (
         <React.Fragment>
           <ProfileNav />
@@ -652,9 +653,9 @@ CreateListingPage.propTypes = {
 
   // Redux props
   dispatch: PropTypes.func,
-  userInfo: PropTypes.object
+  userLocAddress: PropTypes.string
 };
 
-const mapStateToProps = ({ userInfo }) => ({ userInfo });
+const mapStateToProps = ({ userInfo }) => ({ userLocAddress: getLocAddress(userInfo) });
 
 export default withRouter(connect(mapStateToProps)(CreateListingPage));

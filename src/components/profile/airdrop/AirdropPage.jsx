@@ -340,7 +340,7 @@ class AirdropPage extends Component {
         {this.state.isWithdrawStarted && !this.state.withdrawTransactionHash && <button className="claim-button">Your payment is being processed</button>}
         {this.state.isWithdrawStarted && this.state.withdrawTransactionHash && this.state.withdrawTransactionHash === '0x0' && <button className="claim-button">Your payment is being processed</button>}
         {/* {this.state.isWithdrawStarted && this.state.withdrawTransactionHash && this.state.withdrawTransactionHash === '0x0' && <a href="mailto:team@locktrip.com?Subject=Customer%20Support" className='etherscan-link' tooltip="Contact Support">Transaction Failed</a>} */}
-        {this.state.isWithdrawStarted && this.state.withdrawTransactionHash && this.state.withdrawTransactionHash !== '0x0' && <a href={`https://etherscan.io/tx/${this.state.withdrawTransactionHash}`} className='etherscan-link' target='_blank'>TxHash: {this.state.withdrawTransactionHash.substring(0, 8)}...</a>}
+        {this.state.isWithdrawStarted && this.state.withdrawTransactionHash && this.state.withdrawTransactionHash !== '0x0' && <a href={`https://etherscan.io/tx/${this.state.withdrawTransactionHash}`} className='etherscan-link' target='_blank' rel="noopener noreferrer">TxHash: {this.state.withdrawTransactionHash.substring(0, 8)}...</a>}
       </React.Fragment>
     );
   }
@@ -559,24 +559,18 @@ class AirdropPage extends Component {
 }
 
 function mapStateToProps(state) {
-  const { userInfo, modalsInfo, airdropInfo } = state;
+  const { airdropInfo } = state;
   return {
-    userInfo,
-    modalsInfo,
     airdropInfo
   };
 }
 
 AirdropPage.propTypes = {
-  countries: PropTypes.array,
-
   // start Router props
   location: PropTypes.object,
   history: PropTypes.object,
 
   // start Redux props
-  paymentInfo: PropTypes.object,
-  userInfo: PropTypes.object,
   airdropInfo: PropTypes.object,
   dispatch: PropTypes.func,
 };
