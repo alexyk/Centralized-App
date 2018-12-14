@@ -150,10 +150,13 @@ const requests = {
 
 const AffiliatesService: AffiliatesServiceInterface = {
   getBookings(page) {
-    let list = createAListOf(20, page * 20);
-    return Promise.resolve(list);
+    return requests.getBookings(page);
+    // let list = createAListOf(20, page * 20);
+    // return Promise.resolve(list);
   },
   getChartData() {
+    return requests.getChartData();
+
     return Promise.resolve({
       revenueChartData: generateChartData(),
       affiliatesChartData: generateChartData()
@@ -161,6 +164,8 @@ const AffiliatesService: AffiliatesServiceInterface = {
   },
 
   getGeneralAffiliateData() {
+    return requests.getGeneralAffiliateData();
+
     return Promise.resolve({
       totalAffiliates: 21,
       totalRevenue: 225.5,
