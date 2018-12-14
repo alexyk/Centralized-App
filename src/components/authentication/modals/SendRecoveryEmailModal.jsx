@@ -21,7 +21,7 @@ function SendRecoveryEmailModal(props) {
             </div>
 
             <div className="login-sign">
-              <p>Already sent an email? Enter your security <a onClick={(e) => { e.preventDefault(); props.closeModal(SEND_RECOVERY_EMAIL); props.openModal(ENTER_RECOVERY_TOKEN); }}>token</a>.</p>
+              <p>Already sent an email? Enter your security <a href=" " onClick={(e) => { e.preventDefault(); props.closeModal(SEND_RECOVERY_EMAIL); props.openModal(ENTER_RECOVERY_TOKEN); }}>token</a>.</p>
             </div>
 
             <button type="submit" className="button">Send email</button>

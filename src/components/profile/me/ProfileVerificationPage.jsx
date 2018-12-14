@@ -213,7 +213,7 @@ class ProfileVerificationPage extends React.Component {
             <div className="box">
               <ul className="navigation-tab">
                 <li>
-                  <a href=""
+                  <a href=" "
                     onClick={() => this.changeTabStatus('cardId')}
                     className={this.state.activeTab === true ? 'active' : ''}>
                     <h2>
@@ -224,7 +224,7 @@ class ProfileVerificationPage extends React.Component {
                   </a>
                 </li>
                 <li>
-                  <a href=""
+                  <a href=" "
                     onClick={() => this.changeTabStatus('cardIdHolder')}
                     className={this.state.activeTab === false ? 'active' : ''}>
                     <h2>

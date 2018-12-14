@@ -24,7 +24,7 @@ function WalletPasswordModal(props) {
 
           <hr />
           <div className="login-sign">
-            Forgot your password? <a onClick={(e) => { props.closeModal(PASSWORD_PROMPT, e); props.openModal(RECOVER_WALLET, e); }}>Recover</a>
+            Forgot your password? <a href=" " onClick={(e) => { props.closeModal(PASSWORD_PROMPT, e); props.openModal(RECOVER_WALLET, e); }}>Recover</a>
           </div>
         </Modal.Body>
       </Modal>

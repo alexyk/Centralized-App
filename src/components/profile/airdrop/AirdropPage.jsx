@@ -340,7 +340,7 @@ class AirdropPage extends Component {
         {this.state.isWithdrawStarted && !this.state.withdrawTransactionHash && <button className="claim-button">Your payment is being processed</button>}
         {this.state.isWithdrawStarted && this.state.withdrawTransactionHash && this.state.withdrawTransactionHash === '0x0' && <button className="claim-button">Your payment is being processed</button>}
         {/* {this.state.isWithdrawStarted && this.state.withdrawTransactionHash && this.state.withdrawTransactionHash === '0x0' && <a href="mailto:team@locktrip.com?Subject=Customer%20Support" className='etherscan-link' tooltip="Contact Support">Transaction Failed</a>} */}
-        {this.state.isWithdrawStarted && this.state.withdrawTransactionHash && this.state.withdrawTransactionHash !== '0x0' && <a href={`https://etherscan.io/tx/${this.state.withdrawTransactionHash}`} className='etherscan-link' target='_blank'>TxHash: {this.state.withdrawTransactionHash.substring(0, 8)}...</a>}
+        {this.state.isWithdrawStarted && this.state.withdrawTransactionHash && this.state.withdrawTransactionHash !== '0x0' && <a href={`https://etherscan.io/tx/${this.state.withdrawTransactionHash}`} className='etherscan-link' target='_blank' rel="noopener noreferrer">TxHash: {this.state.withdrawTransactionHash.substring(0, 8)}...</a>}
       </React.Fragment>
     );
   }
@@ -431,7 +431,7 @@ class AirdropPage extends Component {
       return (
         <div className="container">
           <NoEntriesMessage text='Log in or participate in our airdrop campaign.'>
-            <a href="" className="btn" onClick={(e) => this.openModal(LOGIN, e)}>Log in</a>
+            <a href=" " className="btn" onClick={(e) => this.openModal(LOGIN, e)}>Log in</a>
             <a href={'https://locktrip.com/airdrop/' + this.props.location.search} className="btn">Participate</a>
           </NoEntriesMessage>
         </div>
@@ -494,7 +494,7 @@ class AirdropPage extends Component {
                   <div className="description">
                     {this.props.airdropInfo.isVerifyEmail
                       ? <div><span className="step-check checked"></span><span className="airdrop-row__heading">Email Signup - Completed</span></div>
-                      : <div><span className="step-check unchecked"></span><span className="airdrop-row__heading">Email Signup - Not yet verified. <a href="" onClick={this.handleResendVerificationEmail}>Resend verification email</a>.</span></div>
+                      : <div><span className="step-check unchecked"></span><span className="airdrop-row__heading">Email Signup - Not yet verified. <a href=" " onClick={this.handleResendVerificationEmail}>Resend verification email</a>.</span></div>
                     }
                   </div>
                 </div>
@@ -502,8 +502,8 @@ class AirdropPage extends Component {
                 <div className="airdrop-row">
                   <div className="description">
                     {this.props.airdropInfo.telegramProfile
-                      ? <div><span className="step-check checked"></span><span className="airdrop-row__heading">Telegram Join</span>&nbsp;<span className="icon-arrow-right"></span>&nbsp;<span>Social media activity for <span className="profile-name">{this.props.airdropInfo.telegramProfile}</span> is being verified. You can still <a href="" onClick={(e) => { this.handleEdit('telegram', e); }}>change</a> your profile.</span></div>
-                      : <div><span className="step-check unchecked"></span><span className="airdrop-row__heading">Telegram Join</span>&nbsp;<span className="icon-arrow-right"></span>&nbsp;<span>Please click <a href="" onClick={(e) => { this.handleEdit('telegram', e); }}>here</a> to complete this step and be eligible to claim your tokens.</span></div>
+                      ? <div><span className="step-check checked"></span><span className="airdrop-row__heading">Telegram Join</span>&nbsp;<span className="icon-arrow-right"></span>&nbsp;<span>Social media activity for <span className="profile-name">{this.props.airdropInfo.telegramProfile}</span> is being verified. You can still <a href=" " onClick={(e) => { this.handleEdit('telegram', e); }}>change</a> your profile.</span></div>
+                      : <div><span className="step-check unchecked"></span><span className="airdrop-row__heading">Telegram Join</span>&nbsp;<span className="icon-arrow-right"></span>&nbsp;<span>Please click <a href=" " onClick={(e) => { this.handleEdit('telegram', e); }}>here</a> to complete this step and be eligible to claim your tokens.</span></div>
                     }
                   </div>
                   {this.state.telegramEdit &&
@@ -516,8 +516,8 @@ class AirdropPage extends Component {
                 <div className="airdrop-row">
                   <div className="description">
                     {this.props.airdropInfo.twitterProfile
-                      ? <div><span className="step-check checked"></span><span className="airdrop-row__heading">Twitter Follow</span>&nbsp;<span className="icon-arrow-right"></span>&nbsp;<span>Social media activity for <span className="profile-name">{this.props.airdropInfo.twitterProfile}</span> is being verified. You can still <a href="" onClick={(e) => { this.handleEdit('twitter', e); }}>change</a> your profile.</span></div>
-                      : <div><span className="step-check unchecked"></span><span className="airdrop-row__heading">Twitter Follow</span>&nbsp;<span>Please click <a href="" onClick={(e) => { this.handleEdit('twitter', e); }}>here</a> to complete this step and be eligible to claim your tokens.</span></div>
+                      ? <div><span className="step-check checked"></span><span className="airdrop-row__heading">Twitter Follow</span>&nbsp;<span className="icon-arrow-right"></span>&nbsp;<span>Social media activity for <span className="profile-name">{this.props.airdropInfo.twitterProfile}</span> is being verified. You can still <a href=" " onClick={(e) => { this.handleEdit('twitter', e); }}>change</a> your profile.</span></div>
+                      : <div><span className="step-check unchecked"></span><span className="airdrop-row__heading">Twitter Follow</span>&nbsp;<span>Please click <a href=" " onClick={(e) => { this.handleEdit('twitter', e); }}>here</a> to complete this step and be eligible to claim your tokens.</span></div>
                     }
                   </div>
                   {this.state.twitterEdit &&
@@ -530,16 +530,16 @@ class AirdropPage extends Component {
                 <div className="airdrop-row">
                   <div className="description">
                     {this.props.airdropInfo.twitterProfile
-                      ? <div><span className="step-check checked"></span><span className="airdrop-row__heading">Twitter Share</span>&nbsp;<span className="icon-arrow-right"></span>&nbsp;<span>Social media activity for <span className="profile-name">{this.props.airdropInfo.twitterProfile}</span> is being verified. You can still <a href="" onClick={(e) => { this.handleEdit('twitter', e); }}>change</a> your profile.</span></div>
-                      : <div><span className="step-check unchecked"></span><span className="airdrop-row__heading">Twitter Share</span>&nbsp;<span>Please click <a href="" onClick={(e) => { this.handleEdit('twitter', e); }}>here</a> to complete this step and be eligible to claim your tokens.</span></div>
+                      ? <div><span className="step-check checked"></span><span className="airdrop-row__heading">Twitter Share</span>&nbsp;<span className="icon-arrow-right"></span>&nbsp;<span>Social media activity for <span className="profile-name">{this.props.airdropInfo.twitterProfile}</span> is being verified. You can still <a href=" " onClick={(e) => { this.handleEdit('twitter', e); }}>change</a> your profile.</span></div>
+                      : <div><span className="step-check unchecked"></span><span className="airdrop-row__heading">Twitter Share</span>&nbsp;<span>Please click <a href=" " onClick={(e) => { this.handleEdit('twitter', e); }}>here</a> to complete this step and be eligible to claim your tokens.</span></div>
                     }
                   </div>
                 </div>
                 <div className="airdrop-row">
                   <div className="description">
                     {this.props.airdropInfo.facebookProfile
-                      ? <div><span className="step-check checked"></span><span className="airdrop-row__heading">Facebook Follow</span>&nbsp;<span className="icon-arrow-right"></span>&nbsp;<span>Social media activity for <span className="profile-name">{this.props.airdropInfo.facebookProfile}</span> is being verified. You can still <a href="" onClick={(e) => { this.handleEdit('facebook', e); }}>change</a> your profile.</span></div>
-                      : <div><span className="step-check unchecked"></span><span className="airdrop-row__heading">Facebook Follow</span>&nbsp;<span>Please click <a href="" onClick={(e) => { this.handleEdit('facebook', e); }}>here</a> to enter your Facebook Username and be eligible to claim your tokens.</span></div>
+                      ? <div><span className="step-check checked"></span><span className="airdrop-row__heading">Facebook Follow</span>&nbsp;<span className="icon-arrow-right"></span>&nbsp;<span>Social media activity for <span className="profile-name">{this.props.airdropInfo.facebookProfile}</span> is being verified. You can still <a href=" " onClick={(e) => { this.handleEdit('facebook', e); }}>change</a> your profile.</span></div>
+                      : <div><span className="step-check unchecked"></span><span className="airdrop-row__heading">Facebook Follow</span>&nbsp;<span>Please click <a href=" " onClick={(e) => { this.handleEdit('facebook', e); }}>here</a> to enter your Facebook Username and be eligible to claim your tokens.</span></div>
                     }
                   </div>
                   {this.state.facebookEdit &&

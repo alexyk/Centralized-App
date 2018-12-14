@@ -32,10 +32,10 @@ function ListItem(props) {
           </div>
           <div className="major-actions">
             {verified === false &&
-              <div><a href="" onClick={(e) => props.updateUserStatus(e, id, true)}>Verify</a></div>
+              <div><a href=" " onClick={(e) => props.updateUserStatus(e, id, true)}>Verify</a></div>
             }
             {verified === true &&
-              <div><a href="" onClick={(e) => props.updateUserStatus(e, id, false)}>Unverify</a></div>
+              <div><a href=" " onClick={(e) => props.updateUserStatus(e, id, false)}>Unverify</a></div>
             }
           </div>
         </div>

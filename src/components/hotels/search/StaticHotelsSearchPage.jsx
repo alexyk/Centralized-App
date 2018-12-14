@@ -644,7 +644,7 @@ class StaticHotelsSearchPage extends React.Component {
 
                 <div className="map">
                   <div className="img-holder">
-                    <a href="" onClick={this.toggleMap}>See Results {this.state.showMap ? 'List' : 'on Map'}</a>
+                    <a href=" " onClick={this.toggleMap}>See Results {this.state.showMap ? 'List' : 'on Map'}</a>
                   </div>
                 </div>
               </div>

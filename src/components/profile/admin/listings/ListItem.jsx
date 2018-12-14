@@ -61,25 +61,25 @@ function ListItem(props) {
           <div className="minor-actions">
             {descriptionText && descriptionText.length > 300 &&
               (!props.isExpanded
-                ? <div>{descriptionText.length > 300 && <a href="" onClick={(e) => props.handleExpandListing(e, id)}>Expand</a>}</div>
-                : <div><a href="" onClick={(e) => props.handleShrinkListing(e, id)}>Hide</a></div>
+                ? <div>{descriptionText.length > 300 && <a href=" " onClick={(e) => props.handleExpandListing(e, id)}>Expand</a>}</div>
+                : <div><a href=" " onClick={(e) => props.handleShrinkListing(e, id)}>Hide</a></div>
               )
             }
 
-            <div><a href="" onClick={(e) => props.openContactHostModal(e, id)}>Contact Host</a></div>
+            <div><a href=" " onClick={(e) => props.openContactHostModal(e, id)}>Contact Host</a></div>
             {state === 'inactive' &&
-              <div><a href="" className="delete" onClick={(e) => props.handleOpenDeleteListingModal(e, id, name)}>Delete</a></div>
+              <div><a href=" " className="delete" onClick={(e) => props.handleOpenDeleteListingModal(e, id, name)}>Delete</a></div>
             }
           </div>
           <div className="major-actions">
             {state === 'inactive' &&
-              <div><a href="" onClick={(e) => props.updateListingStatus(e, id, 'active')}>Approve</a></div>
+              <div><a href=" " onClick={(e) => props.updateListingStatus(e, id, 'active')}>Approve</a></div>
             }
             {state === 'inactive' &&
-              <div><a href="" onClick={(e) => props.updateListingStatus(e, id, 'denied')}>Deny</a></div>
+              <div><a href=" " onClick={(e) => props.updateListingStatus(e, id, 'denied')}>Deny</a></div>
             }
             {state === 'active' &&
-              <div><a href="" onClick={(e) => props.updateListingStatus(e, id, 'inactive')}>Unpublish</a></div>
+              <div><a href=" " onClick={(e) => props.updateListingStatus(e, id, 'inactive')}>Unpublish</a></div>
             }
           </div>
         </div>

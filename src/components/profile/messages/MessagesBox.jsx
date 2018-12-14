@@ -14,7 +14,7 @@ function MessagesBox(props) {
   return (
     <div className="message-box">
       <div className="col-md-1">
-        <a onClick={() => props.changeMessageFlag(props.message.id, props.message.unread)}>
+        <a href=" " onClick={() => props.changeMessageFlag(props.message.id, props.message.unread)}>
           {props.message.unread === 'true' ? <img className="read-flag" src={Config.getValue('basePath') + 'images/icon-star-message.png'} alt="read-flag" /> : <img src={Config.getValue('basePath') + 'images/icon-star-filter-g.png'} alt="unread-flag" />}
         </a>
       </div>

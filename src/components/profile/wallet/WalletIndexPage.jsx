@@ -118,7 +118,7 @@ class WalletIndexPage extends React.Component {
       return (
         <div className='container'>
           <NoEntriesMessage text='You need to create a wallet first'>
-            <a href="" className="button" onClick={(e) => this.openModal(CREATE_WALLET, e)} style={{ minWidth: '200px' }}>Create Wallet</a>
+            <button className="button" onClick={(e) => this.openModal(CREATE_WALLET, e)} style={{ minWidth: '200px' }}>Create Wallet</button>
           </NoEntriesMessage>
         </div>
       );

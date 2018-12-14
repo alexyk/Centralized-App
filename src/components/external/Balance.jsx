@@ -81,7 +81,7 @@ class Balance extends React.Component {
                     <input className="form-control form-control-disabled" id="refLink" name="refLink"
                       type="text" disabled="disabled" value={this.state.refLink} />
                     <CopyToClipboard text={this.state.refLink} onCopy={() => { NotificationManager.info(COPIED_TO_CLIPBOARD, '', LONG); }}>
-                      <a href="" className="button">Copy</a>
+                      <button className="button">Copy</button>
                     </CopyToClipboard>
                   </div>
                   <hr />

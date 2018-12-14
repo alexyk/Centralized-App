@@ -32,8 +32,8 @@ function LoginModal(props) {
 
           <hr />
           <div className="login-sign">
-            Don’t have an account? <a onClick={() => { props.closeModal(LOGIN); props.openModal(REGISTER); }}>Sign up</a>
-            . Forgot your password? <a onClick={(e) => { props.closeModal(LOGIN, e); props.openModal(SEND_RECOVERY_EMAIL, e); }}>Recover</a>
+            Don’t have an account? <a href=" " onClick={() => { props.closeModal(LOGIN); props.openModal(REGISTER); }}>Sign up</a>
+            . Forgot your password? <a href=" " onClick={(e) => { props.closeModal(LOGIN, e); props.openModal(SEND_RECOVERY_EMAIL, e); }}>Recover</a>
           </div>
         </Modal.Body>
       </Modal>

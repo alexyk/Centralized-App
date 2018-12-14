@@ -96,7 +96,7 @@ function HomeTrip(props) {
       {hostLocAddress && !accepted &&
         <div className="reservation-box-pending">
           <div>
-            Please pay {locPrice} LOC to <a href={`https://etherscan.io/address/${hostLocAddress}`} target="_blank">{hostLocAddress.substr(0, 7)}</a>
+            Please pay {locPrice} LOC to <a href={`https://etherscan.io/address/${hostLocAddress}`} target="_blank" rel="noopener noreferrer">{hostLocAddress.substr(0, 7)}</a>
             <CopyToClipboard text={hostLocAddress}>
               <button><i className="fa fa-link" aria-hidden="true" title="Copy LOC Address"></i></button>
             </CopyToClipboard>

@@ -520,7 +520,7 @@ class CreateListingPage extends React.Component {
           <ProfileNav />
           <div className='container'>
             <NoEntriesMessage text='You need to create a wallet first'>
-              <a href="" className="btn" onClick={(e) => this.openModal(CREATE_WALLET, e)} style={{ minWidth: '200px' }}>Create Wallet</a>
+              <a href=" " className="button" onClick={(e) => this.openModal(CREATE_WALLET, e)} style={{ minWidth: '200px' }}>Create Wallet</a>
             </NoEntriesMessage>
           </div>
         </React.Fragment>

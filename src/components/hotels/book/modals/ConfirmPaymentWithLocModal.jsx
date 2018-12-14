@@ -24,7 +24,7 @@ function ConfirmPaymentWithLocModal(props) {
 
           <hr />
           <div className="login-sign">
-            Forgot your password? <a onClick={(e) => { props.closeModal(CONFIRM_PAYMENT_WITH_LOC, e, true); props.openModal(RECOVER_WALLET, e); }}>Recover</a>
+            Forgot your password? <a href=" " onClick={(e) => { props.closeModal(CONFIRM_PAYMENT_WITH_LOC, e, true); props.openModal(RECOVER_WALLET, e); }}>Recover</a>
           </div>
         </Modal.Body>
       </Modal>
