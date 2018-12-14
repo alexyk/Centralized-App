@@ -46,10 +46,10 @@ function ConfirmWalletModal(props) {
           <form onSubmit={(e) => { e.preventDefault(); handleSubmit(); }}>
             <div className="modal-input-label">Enter your wallet mnemonic words:</div>
             <textarea name="mnemonicWords" onChange={props.handleMnemonicWordsChange} value={props.mnemonicWords} autoFocus onKeyPress={handleEnterKeyPress} />
-            <button className="btn" onClick={onWordsForget}>Back to Mnemonic Words</button>
+            <button className="button" onClick={onWordsForget}>Back to Mnemonic Words</button>
             {!props.confirmedRegistration
-              ? <button type="submit" className="btn btn-primary">Confirm Wallet</button>
-              : <button className="btn btn-primary btn-book" disabled>Processing Creation...</button>
+              ? <button type="submit" className="button">Confirm Wallet</button>
+              : <button className="button btn-book" disabled>Processing Creation...</button>
             }
           </form>
         </Modal.Body>

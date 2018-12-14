@@ -11,7 +11,8 @@ import exchangeRatesInfo from "./exchangeRatesInfo";
 import locPriceUpdateTimerInfo from "./locPriceUpdateTimerInfo";
 import burgerMenuInfo from "./burgerMenuInfo";
 import searchDatesInfo from "./searchDatesInfo";
-import affiliatesReducer from "../components/profile/affiliates/redux/affiliates-redux";
+import countriesInfo from "./countriesInfo";
+
 const rootReducer = combineReducers({
   userInfo,
   paymentInfo,
@@ -25,7 +26,7 @@ const rootReducer = combineReducers({
   locPriceUpdateTimerInfo,
   burgerMenuInfo,
   searchDatesInfo,
-  affiliatesInfo: affiliatesReducer
+  countriesInfo
 });
 
 export default rootReducer;

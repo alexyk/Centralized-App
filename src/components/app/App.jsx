@@ -31,11 +31,12 @@ import LoginManager from '../authentication/LoginManager';
 import RegisterManager from '../authentication/RegisterManager';
 import WalletCreationManager from '../authentication/WalletCreationManager';
 import PasswordRecoveryManager from '../authentication/PasswordRecoveryManager';
-import referralIdPersistence from "../profile/affiliates/service/persist-referral-id";
+import { fetchCountries } from '../../actions/countriesInfo';
 
 class App extends React.Component {
   constructor(props) {
     super(props);
+    
     BigCalendar.setLocalizer(BigCalendar.momentLocalizer(moment.utc()));
   }
 
@@ -45,10 +46,7 @@ class App extends React.Component {
 
     this.requestExchangeRates();
     this.requestLocEurRate();
-    if(!this.isAuthenticated()){
-      // this.props.dispatch(setReferralIdFromSearch(this.props.location.search))
-      referralIdPersistence.tryToSetFromSearch(this.props.location.search)
-    }
+    this.requestCountries();
   }
 
   isAuthenticated() {
@@ -58,8 +56,6 @@ class App extends React.Component {
     }
     return false;
   }
-
-
 
   setUserInfo() {
     this.props.dispatch(setIsLogged(true));
@@ -123,6 +119,10 @@ class App extends React.Component {
     });
   }
 
+  requestCountries() {
+    this.props.dispatch(fetchCountries());
+  }
+
   getQueryString(queryStringParameters) {
     let queryString = '?';
     queryString += 'region=' + encodeURI(queryStringParameters.region);
@@ -148,14 +148,13 @@ class App extends React.Component {
         }
 
         <LoginManager />
-        <RegisterManager hasReferral={referralIdPersistence.hasId()}/>
+        <RegisterManager />
         <WalletCreationManager />
         <PasswordRecoveryManager />
         <NotificationContainer />
 
         <Switch>
-          <Route exact path="/" render={(props) => {
-            return <HomeRouterPage />}} />
+          <Route exact path="/" render={() => <HomeRouterPage />} />
           <Route exact path="/profile/listings/edit/:step/:id" render={() => !this.isAuthenticated() ? <Redirect to="/" /> : <EditListingPage />} />
           <Route exact path="/users/resetPassword/:confirm" render={() => <HomeRouterPage />} />
           <Route path="/homes" render={() => <HomeRouterPage />} />
@@ -190,14 +189,13 @@ App.propTypes = {
 
   // start Redux props
   dispatch: PropTypes.func,
-  paymentInfo: PropTypes.object,
-  setReferralIdFromSearch: PropTypes.func,
+  paymentInfo: PropTypes.object
 };
 
 function mapStateToProps(state) {
   const { paymentInfo } = state;
   return {
-    paymentInfo,
+    paymentInfo
   };
 }
 

@@ -60,7 +60,7 @@ export default class PopulatedAffiliatesPage extends React.Component<
     );
   }
 
-  getChartData(){
+  getChartData() {
     AffiliatesService.getChartData().then(
       ({ affiliatesChartData, revenueChartData }) => {
         this.setState({
@@ -77,7 +77,6 @@ export default class PopulatedAffiliatesPage extends React.Component<
         affiliateBookings
       });
     });
-
   }
 
   render() {

@@ -1,10 +1,150 @@
 // @flow
+import superagent from "superagen";
+import moment from "moment";
+import * as _ from "ramda";
 import { AffiliatesServiceInterface } from "./affiliates-rest-client.flow";
 import type {
   AffiliateBooking,
   RevenueChartData,
   AffiliatesChartData
 } from "../AffiliatesComponent.flow";
+
+const HOST = "";
+
+const requests = {
+  getBookings(page) {
+    let resp = {
+      content: [
+        {
+          id: 2,
+          date: 1539698779000,
+          revenue: 0
+        },
+        {
+          id: 2,
+          date: 1539698779000,
+          revenue: 0
+        },
+        {
+          id: 2,
+          date: 1539698779000,
+          revenue: 0
+        },
+        {
+          id: 2,
+          date: 1539698779000,
+          revenue: 0
+        },
+        {
+          id: 2,
+          date: 1539698779000,
+          revenue: 0
+        },
+        {
+          id: 2,
+          date: 1539698779000,
+          revenue: 0
+        },
+        {
+          id: 2,
+          date: 1539698779000,
+          revenue: 0
+        },
+        {
+          id: 2,
+          date: 1539698779000,
+          revenue: 0
+        },
+        {
+          id: 2,
+          date: 1539698779000,
+          revenue: 0
+        },
+        {
+          id: 2,
+          date: 1539698779000,
+          revenue: 0
+        }
+      ],
+      totalPages: 3,
+      totalElements: 22,
+      last: false,
+      size: 10,
+      number: 0,
+      sort: null,
+      first: true,
+      numberOfElements: 10
+    };
+
+    const query = `?page=${page}&size=20`;
+    return superagent
+      .get(`${HOST}/me/affiliates/bookings${query}`)
+      .then(response => {
+        let bookings = (response.content || []).map(booking => {
+          return {
+            affiliateId: booking.id,
+            revenue: booking.revenue,
+            date: booking.date // format is MM/YYYY
+          };
+        });
+      });
+  },
+  getGeneralAffiliateData() {
+    return superagent.get(`${HOST}/me/affiliates/stats`).then(response => {
+      return {
+        totalRevenue: response.totalRevenue,
+        totalAffiliates: response.totalAffiliates
+      };
+    });
+  },
+  getChartData() {
+    return superagent.get(`${HOST}me/affiliates/statistics`).then(response => {
+      // let example = {
+      //   initialDate: new Date("2018-12-02T00:00:00.000+0000").getTime(),
+      //   affiliates: {
+      //     "2018-12-10T00:00:00.000+0000": 1,
+      //     "2018-12-14T00:00:00.000+0000": 2
+      //   },
+      //   revenue: {
+      //     "2018-10-16T00:00:00.000+0000": 0
+      //   }
+      // };
+      let givenAffiliatesDailyStats = turnKeysIntoTimestamps(
+        response.affiliates
+      );
+      let givenRevenueDailyStats = turnKeysIntoTimestamps(response.revenue);
+
+      let revenueChartData = [];
+      let initialData = moment(response.initialData);
+      let today = moment();
+      let totalDaysWithAffiliates = today.diff(initialData, "days");
+      for (let day = 0; day <= totalDaysWithAffiliates; day += 1) {
+        let timeStampOfCurrentDay = initialData.add(day, "day").time();
+        if (givenRevenueDailyStats.hasOwnProperty(timeStampOfCurrentDay)) {
+          let revenue = givenRevenueDailyStats[timeStampOfCurrentDay];
+          revenueChartData.push([day, revenue]);
+        } else {
+          revenueChartData.push([day, 0]);
+        }
+      }
+
+      function turnKeysIntoTimestamps(originalObject) {
+        return Object.keys(originalObject).reduce((acc, date) => {
+          return {
+            ...acc,
+            [new Date(date).getTime()]: originalObject[date]
+          };
+        }, {});
+      }
+      let result = {
+        affiliatesChartData: [[0, 5], [1, 12]],
+        revenueChartData: revenueChartData
+      };
+
+      return result;
+    });
+  }
+};
 
 const AffiliatesService: AffiliatesServiceInterface = {
   getBookings(page) {

@@ -8,7 +8,6 @@ import { LONG } from '../../constants/notificationDisplayTimes.js';
 import { closeModal, openModal } from '../../actions/modalsInfo';
 import RegisterModal from './modals/RegisterModal';
 import { executeWithToken } from '../../services/grecaptcha/grecaptcha';
-import referralIdPersistence from "../profile/affiliates/service/persist-referral-id";
 
 import {
   REGISTER
@@ -30,8 +29,7 @@ class RegisterManager extends React.Component {
       signUpLastName: '',
       signUpPassword: '',
       signUpLocAddress: '',
-      country: '',
-      countries: [],
+      country: null,
       states: []
     };
 
@@ -39,26 +37,8 @@ class RegisterManager extends React.Component {
     this.handleChangeCountry = this.handleChangeCountry.bind(this);
     this.openModal = this.openModal.bind(this);
     this.closeModal = this.closeModal.bind(this);
-    this.requestCountries = this.requestCountries.bind(this);
     this.requestStates = this.requestStates.bind(this);
     this.handleRegister = this.handleRegister.bind(this);
-  }
-
-  componentDidMount() {
-    this.requestCountries();
-  }
-
-  componentDidUpdate(prevProps) {
-    if(this.props.hasReferral && !prevProps.hasReferral){
-      this.openModal(REGISTER);
-
-    }
-  }
-
-  requestCountries() {
-    requester.getCountries()
-      .then(response => response.body)
-      .then(data => this.setState({ countries: data }));
   }
 
   requestStates(id) {
@@ -73,7 +53,7 @@ class RegisterManager extends React.Component {
 
   handleChangeCountry(e) {
     if (!e.target.value) {
-      this.setState({ country: '' });
+      this.setState({ country: null });
     } else {
       const countryHasMandatoryState = ['Canada', 'India', 'United States of America'].includes(JSON.parse(e.target.value).name);
       this.setState({ country: JSON.parse(e.target.value) });
@@ -108,8 +88,7 @@ class RegisterManager extends React.Component {
       password: this.state.signUpPassword,
       country: this.state.country.id,
       countryState: this.state.countryState,
-      image: 'images/default.png',
-      refId: referralIdPersistence.getIdToRegister()
+      image: 'images/default.png'
     };
 
     this.clearLocalStorage();
@@ -150,8 +129,7 @@ class RegisterManager extends React.Component {
           signUpEmail={this.state.signUpEmail} 
           signUpFirstName={this.state.signUpFirstName} 
           signUpLastName={this.state.signUpLastName} 
-          signUpPassword={this.state.signUpPassword} 
-          countries={this.state.countries} 
+          signUpPassword={this.state.signUpPassword}
           country={this.state.country} 
           states={this.state.states} 
           onChange={this.onChange} 

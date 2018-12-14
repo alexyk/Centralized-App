@@ -16,25 +16,94 @@ body {
 }
 
 //default button
+.button {
+	display: inline-block;
+	vertical-align: middle;
+	text-align: center;
+	background: $moderate-red;
+	color: $white;
+	border-radius: 4px;
+	padding: 10px 30px;
+	font-size: 1em;
+	font-weight: 300;
+  letter-spacing: -0.03em;
+  min-width: 160px;
+  font-weight: 400;
+	@include media(">=desktop") {
+		padding: 15px 30px;
+		font-size: 1.2em;
+	}
+	&:hover {
+    background: #EA8C73;
+  }
+  &:active {
+    background: #C36148;
+  }
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.7;
+  }
+
+  -webkit-transition-property: none;
+  -moz-transition-property: none;
+  -o-transition-property: none;
+  transition-property: none;
+}
+
+.button-block {
+	display: block;
+	text-align: center;
+	width: 100%;
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	padding: 15px;
+	background: $white;
+	box-shadow: 0px -3px 9px 0px rgba(0, 0, 0, 0.1);
+	@include media(">=desktop") {
+		display: none;
+	}
+	a {
+		font-size: 18px;
+		color: $white;
+		background: $moderate-red;
+		width: 100%;
+		display: block;
+		padding: 13px;
+		@include media(">=desktop") {
+			color: $moderate-red;
+			background: none;
+			font-weight: 400;
+		}
+		&:hover {
+			color: $light-cyan;
+		}
+	}
+}
+
 .btn {
 	display: inline-block;
 	vertical-align: middle;
 	text-align: center;
 	background: $moderate-red;
 	color: $white;
-	border-radius: 3px;
-	padding: 10px;
+	border-radius: 4px;
+	padding: 10px 30px;
 	font-size: 14px;
-	font-weight: 200;
-	letter-spacing: -0.03em;
+	font-weight: 300;
+  letter-spacing: -0.03em;
+  min-width: 160px;
 	@include media(">=desktop") {
-		padding: 17px;
+		padding: 12px 30px;
 		font-size: 18px;
 		font-weight: 400;
 	}
 	&:hover {
-		background: $light-cyan;
-	}
+    background: #EA8C73;
+  }
+  &:active {
+    background: #C36148;
+  }
 	&-dark {
 		font-size: 12px;
 		padding: 10px;
@@ -144,7 +213,7 @@ select {
 
 .content {
 	width: 100%;
-	padding-bottom: 25px;
+	// padding-bottom: 25px;
 	@include media(">=desktop") {
 		width: 72%;
 		padding-bottom: 0;
@@ -165,7 +234,7 @@ select {
 	h2 {
 		font-family: $base-font-cursive;
 	}
-	.btn {
+	.button {
 		min-width: 170px;
 		margin-bottom: 25px;
 		@include media(">=desktop") {

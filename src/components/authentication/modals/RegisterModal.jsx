@@ -16,6 +16,7 @@ import { Modal } from 'react-bootstrap';
 import { NotificationManager } from 'react-notifications';
 import PropTypes from 'prop-types';
 import React from 'react';
+import { connect } from 'react-redux';
 import StringUtils from '../../../services/utilities/stringUtilities.js';
 import requester from '../../../requester';
 import validator from 'validator';
@@ -51,7 +52,7 @@ function RegisterModal(props) {
     });
   };
 
-  const countryHasMandatoryState = ['Canada', 'India', 'United States of America'].includes(props.country.name);
+  const countryHasMandatoryState = props.country && ['Canada', 'India', 'United States of America'].includes(props.country.name);
 
   return (
     <React.Fragment>
@@ -98,7 +99,7 @@ function RegisterModal(props) {
               <input type="password" required="required" name="signUpPassword" value={props.signUpPassword} onChange={props.onChange} className="with-icon" placeholder="Password" />
             </div>
             <div className="clearfix"></div>
-            <button type="submit" className="btn btn-primary">Proceed</button>
+            <button type="submit" className="button">Proceed</button>
           </form>
           <div className="signup-rights">
             <p>By creating an account, you are agreeing with our Terms and Conditions and Privacy Statement.</p>
@@ -114,8 +115,7 @@ RegisterModal.propTypes = {
   signUpFirstName: PropTypes.string,
   signUpLastName: PropTypes.string,
   signUpPassword: PropTypes.string,
-  countries: PropTypes.array,
-  country: PropTypes.string,
+  country: PropTypes.object,
   states: PropTypes.array,
   countryState: PropTypes.number,
   onChange: PropTypes.func,
@@ -124,6 +124,17 @@ RegisterModal.propTypes = {
   isActive: PropTypes.bool,
   handleRegister: PropTypes.func,
   handleChangeCountry: PropTypes.func,
+
+  // Redux props
+  countries: PropTypes.array
 };
 
-export default RegisterModal;
+const mapStateToProps = (state) => {
+  const { countriesInfo } = state;
+
+  return {
+    countries: countriesInfo.countries
+  };
+};
+
+export default connect(mapStateToProps)(RegisterModal);

@@ -23,6 +23,7 @@ import { withRouter } from 'react-router-dom';
 import { NotificationManager } from 'react-notifications';
 import { LONG } from '../../../constants/notificationDisplayTimes';
 import { FILTERED_UNAVAILABLE_HOTELS } from '../../../constants/infoMessages';
+import AsideContentPage from '../../common/asideContentPage/AsideContentPage';
 
 const DEBUG_SOCKET = false;
 const DELAY_INTERVAL = 100;
@@ -47,7 +48,7 @@ class StaticHotelsSearchPage extends React.Component {
       showUnavailable: false,
       orderBy: 'rank,desc',
       stars: [false, false, false, false, false],
-      priceRange: [0, 5000],
+      priceRange: { min: 0, max: 5000},
       city: '',
       hotels: [],
       mapInfo: [],
@@ -132,7 +133,7 @@ class StaticHotelsSearchPage extends React.Component {
       const regionId = searchParams.region;
       const region = { id: regionId };
       const page = searchParams.page;
-      
+
       this.props.dispatch(asyncSetStartDate(startDate));
       this.props.dispatch(asyncSetEndDate(endDate));
       this.props.dispatch(setHotelsSearchInfo(region, rooms, adults, hasChildren));
@@ -177,7 +178,7 @@ class StaticHotelsSearchPage extends React.Component {
     if (messageBody.allElements) {
       this.setState({ allElements: true });
       this.unsubscribe();
-      this.applyFilters(() => {
+      this.applyFilters(false, () => {
         NotificationManager.info(FILTERED_UNAVAILABLE_HOTELS, '', LONG);
       });
     } else {
@@ -311,15 +312,14 @@ class StaticHotelsSearchPage extends React.Component {
     this.setState({ loading: true, });
     const orderBy = event.target.value;
     this.setState({ orderBy, showMap: false, page: 0 }, () => {
-      this.applyFilters();
+      this.applyFilters(true);
     });
   }
 
-  handlePriceRangeSelect(event) {
-    this.setState({ loading: true, });
-    const priceRange = event.target.value;
+  handlePriceRangeSelect(value) {
+    const priceRange = value;
     this.setState({ priceRange, showMap: false, page: 0 }, () => {
-      this.applyFilters();
+      this.applyFilters(true);
     });
   }
 
@@ -327,7 +327,7 @@ class StaticHotelsSearchPage extends React.Component {
     // this.setState({ loading: true, });
     const hotelName = event.target.value;
     this.setState({ hotelName, showMap: false, page: 0 }, () => {
-      this.applyFilters();
+      this.applyFilters(true);
     });
   }
 
@@ -336,15 +336,14 @@ class StaticHotelsSearchPage extends React.Component {
     const stars = this.state.stars;
     stars[star] = !stars[star];
     this.setState({ stars, showMap: false, page: 0 }, () => {
-      this.applyFilters();
+      this.applyFilters(true);
     });
   }
 
   handleShowUnavailable() {
-    // this.setState({ loading: true, });
     const showUnavailable = !this.state.showUnavailable;
     this.setState({ showUnavailable, showMap: false, page: 0 }, () => {
-      this.applyFilters();
+      this.applyFilters(true);
     });
   }
 
@@ -392,14 +391,17 @@ class StaticHotelsSearchPage extends React.Component {
     this.setState({
       hotelName: filters.name,
       showUnavailable: filters.showUnavailable,
-      priceRange: [filters.minPrice, filters.maxPrice],
+      priceRange: { min: filters.minPrice, max: filters.maxPrice},
       stars: stars,
       orderBy: params.sort,
       page: params.page ? Number(params.page) : 0
     });
   }
 
-  applyFilters(onSuccess) {
+  applyFilters(setLoading, onSuccess) {
+    if (setLoading) {
+      this.setState({ loading: true, });
+    }
     const baseUrl = this.props.location.pathname.indexOf('/mobile') !== -1 ? '/mobile/hotels/listings' : '/hotels/listings';
     const search = this.getSearchString();
     const filters = this.getFilterString();
@@ -416,9 +418,8 @@ class StaticHotelsSearchPage extends React.Component {
           });
         });
       } else {
-        // console.log('Search expired');
+        this.setState({ loading: false, });
       }
-
     });
   }
 
@@ -436,8 +437,8 @@ class StaticHotelsSearchPage extends React.Component {
     const filtersObj = {
       showUnavailable: this.state.showUnavailable,
       name: this.state.hotelName,
-      minPrice: this.state.priceRange[0],
-      maxPrice: this.state.priceRange[1],
+      minPrice: this.state.priceRange.min,
+      maxPrice: this.state.priceRange.max,
       stars: this.mapStars(this.state.stars)
     };
 
@@ -455,11 +456,11 @@ class StaticHotelsSearchPage extends React.Component {
       showUnavailable: false,
       orderBy: 'rank,desc',
       stars: [false, false, false, false, false],
-      priceRange: [0, 5000],
+      priceRange: { min: 0, max: 5000},
       showMap: false,
       loading: true
     }, () => {
-      this.applyFilters();
+      this.applyFilters(true);
     });
   }
 
@@ -557,7 +558,7 @@ class StaticHotelsSearchPage extends React.Component {
     window.scrollTo(0, 0);
 
     if (this.isSearchReady()) {
-      this.applyFilters();
+      this.applyFilters(true);
     } else {
       requester.getStaticHotels(region, page - 1).then(res => {
         res.body.then(data => {
@@ -617,14 +618,12 @@ class StaticHotelsSearchPage extends React.Component {
     const nights = this.props.searchDatesInfo.endDate.diff(this.props.searchDatesInfo.startDate, 'days');
 
     return (
-      <div>
+      <React.Fragment>
         <div className="container">
           <HotelsSearchBar search={this.search} />
-        </div>
-        <section id="hotel-box">
-          <div className="container">
-            <div className="row">
-              <div className="hotels-search-sidebar col-md-3">
+          <AsideContentPage>
+            <AsideContentPage.Aside>
+              <div className="hotels-search-sidebar">
                 <FilterPanel
                   windowWidth={this.state.windowWidth}
                   showFiltersMobile={this.state.showFiltersMobile}
@@ -649,51 +648,50 @@ class StaticHotelsSearchPage extends React.Component {
                   </div>
                 </div>
               </div>
-              <div className="col-md-9">
-                <div>
-                  {this.state.showMap
-                    ? <div>
-                      {this.state.mapLoading
-                        ? <div className="loader"></div>
-                        : <MultiMarkerGoogleMap
-                          lat={this.state.lat}
-                          lon={this.state.lon}
-                          hotels={hotels}
-                          mapInfo={this.state.mapInfo}
-                          isLogged={this.props.userInfo.isLogged}
-                          nights={nights}
-                          loading={this.state.loading}
-                        />
-                      }
-                    </div>
-                    : <div>
-                      {this.state.loading
-                        ? <div className="loader"></div>
-                        : <ResultsHolder
-                          hotels={hotels}
-                          allElements={this.state.allElements}
-                          nights={nights}
-                          loading={this.state.loading}
-                        />
-                      }
+            </AsideContentPage.Aside>
 
-                      {!this.state.loading &&
-                        <Pagination
-                          loading={this.state.loading}
-                          onPageChange={this.onPageChange}
-                          currentPage={this.state.page + 1}
-                          pageSize={10}
-                          totalElements={totalElements}
-                        />
-                      }
-                    </div>
+            <AsideContentPage.Content>
+              {this.state.showMap
+                ? <div>
+                  {this.state.mapLoading
+                    ? <div className="loader"></div>
+                    : <MultiMarkerGoogleMap
+                      lat={this.state.lat}
+                      lon={this.state.lon}
+                      hotels={hotels}
+                      mapInfo={this.state.mapInfo}
+                      isLogged={this.props.userInfo.isLogged}
+                      nights={nights}
+                      loading={this.state.loading}
+                    />
                   }
                 </div>
-              </div>
-            </div>
-          </div>
-        </section>
-      </div>
+                : <div>
+                  {this.state.loading
+                    ? <div className="loader"></div>
+                    : <ResultsHolder
+                      hotels={hotels}
+                      allElements={this.state.allElements}
+                      nights={nights}
+                      loading={this.state.loading}
+                    />
+                  }
+
+                  {!this.state.loading &&
+                    <Pagination
+                      loading={this.state.loading}
+                      onPageChange={this.onPageChange}
+                      currentPage={this.state.page + 1}
+                      pageSize={10}
+                      totalElements={totalElements}
+                    />
+                  }
+                </div>
+              }
+            </AsideContentPage.Content>
+          </AsideContentPage>
+        </div>
+      </React.Fragment>
     );
   }
 }
