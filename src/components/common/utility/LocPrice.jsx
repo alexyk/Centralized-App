@@ -59,7 +59,6 @@ class LocPrice extends PureComponent {
   }
 
   render() {
-    console.log('render');
     const { isUserLogged, brackets, locAmount } = this.props;
 
     const bracket = brackets && isUserLogged;
