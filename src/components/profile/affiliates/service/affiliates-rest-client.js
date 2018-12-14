@@ -109,24 +109,26 @@ const requests = {
       //     "2018-10-16T00:00:00.000+0000": 0
       //   }
       // };
-      let givenAffiliatesDailyStats = turnKeysIntoTimestamps(
-        response.affiliates
-      );
-      let givenRevenueDailyStats = turnKeysIntoTimestamps(response.revenue);
 
-      let revenueChartData = [];
       let initialData = moment(response.initialData);
       let today = moment();
       let totalDaysWithAffiliates = today.diff(initialData, "days");
-      for (let day = 0; day <= totalDaysWithAffiliates; day += 1) {
-        let timeStampOfCurrentDay = initialData.add(day, "day").time();
-        if (givenRevenueDailyStats.hasOwnProperty(timeStampOfCurrentDay)) {
-          let revenue = givenRevenueDailyStats[timeStampOfCurrentDay];
-          revenueChartData.push([day, revenue]);
-        } else {
-          revenueChartData.push([day, 0]);
-        }
-      }
+
+      let givenAffiliatesDailyStats = turnKeysIntoTimestamps(
+        response.affiliates
+      );
+      let affiliatesChartData = _.times(i => {
+        let stamp = initialData.add(i, "days").time();
+        let affiliates = givenAffiliatesDailyStats[stamp] || 0;
+        return [i, 0];
+      }, totalDaysWithAffiliates);
+
+      let givenRevenueDailyStats = turnKeysIntoTimestamps(response.revenue);
+      let revenueChartData = _.times(i => {
+        let stamp = initialData.add(i, "days").time();
+        let affiliates = givenRevenueDailyStats[stamp] || 0;
+        return [i, 0];
+      }, totalDaysWithAffiliates);
 
       function turnKeysIntoTimestamps(originalObject) {
         return Object.keys(originalObject).reduce((acc, date) => {
@@ -137,7 +139,7 @@ const requests = {
         }, {});
       }
       let result = {
-        affiliatesChartData: [[0, 5], [1, 12]],
+        affiliatesChartData: affiliatesChartData,
         revenueChartData: revenueChartData
       };
 
