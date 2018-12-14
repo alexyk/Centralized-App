@@ -8,6 +8,7 @@ import { isLogged } from '../../../selectors/userInfo';
 import { getCurrencyExchangeRates } from '../../../selectors/exchangeRatesInfo.js';
 import { getCurrency, getCurrencySign } from '../../../selectors/paymentInfo.js';
 import { getStartDate, getEndDate } from '../../../selectors/searchDatesInfo';
+import { getGuests } from '../../../selectors/homesSearchInfo';
 import { LOGIN } from '../../../constants/modals.js';
 import Datepicker from '../../common/datepicker';
 import moment from 'moment';
@@ -39,7 +40,7 @@ class HomeDetailsBookingPanel extends React.Component {
       return <div className="loader"></div>;
     }
 
-    const { calendar, currencyCode, cleaningFee, currency, currencySign, startDate, endDate, homesSearchInfo, isUserLogged, match, guestArray } = this.props;
+    const { calendar, currencyCode, cleaningFee, currency, currencySign, startDate, endDate, guests, isUserLogged, match, guestArray } = this.props;
     
     const nights = this.calculateNights(startDate, endDate);
     const price = getPriceForPeriod(startDate, nights, calendar);
@@ -73,7 +74,7 @@ class HomeDetailsBookingPanel extends React.Component {
         </div>
         <div className="booking-guests">
           <select
-            value={homesSearchInfo.guests}
+            value={guests}
             onChange={e => this.props.dispatch(setGuests(e.target.value))}
           >
             {guestArray.map((item, i) => {
@@ -97,7 +98,7 @@ class HomeDetailsBookingPanel extends React.Component {
         </div>
         <hr />
         {isUserLogged ?
-          <Link to={`/homes/listings/${match.params.id}/book?startDate=${startDate.format('DD/MM/YYYY')}&endDate=${endDate.format('DD/MM/YYYY')}&guests=${homesSearchInfo.guests}`} onClick={e => invalidRange && e.preventDefault()} className={[invalidRange ? 'disabled' : null, 'button'].join(' ')}>Request Booking</Link> :
+          <Link to={`/homes/listings/${match.params.id}/book?startDate=${startDate.format('DD/MM/YYYY')}&endDate=${endDate.format('DD/MM/YYYY')}&guests=${guests}`} onClick={e => invalidRange && e.preventDefault()} className={[invalidRange ? 'disabled' : null, 'button'].join(' ')}>Request Booking</Link> :
           <button className="button" onClick={(e) => this.props.dispatch(openModal(LOGIN, e))}>Login</button>}
         <p className="booking-helper">You won&#39;t be charged yet</p>
       </div>
@@ -120,7 +121,7 @@ HomeDetailsBookingPanel.propTypes = {
   currencySign: PropTypes.string,
   currencyExchangeRates: PropTypes.object,
   isUserLogged: PropTypes.bool,
-  homesSearchInfo: PropTypes.object,
+  guests: PropTypes.string,
   startDate: PropTypes.object,
   endDate: PropTypes.object
 };
@@ -133,7 +134,7 @@ function mapStateToProps(state) {
     currencySign: getCurrencySign(paymentInfo),
     currencyExchangeRates: getCurrencyExchangeRates(exchangeRatesInfo),
     isUserLogged: isLogged(userInfo),
-    homesSearchInfo,
+    guests: getGuests(homesSearchInfo),
     startDate: getStartDate(searchDatesInfo),
     endDate: getEndDate(searchDatesInfo)
   };

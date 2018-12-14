@@ -4,6 +4,8 @@ import PropTypes from 'prop-types';
 import { CurrencyConverter } from '../../../services/utilities/currencyConverter';
 import { RoomsXMLCurrency } from '../../../services/utilities/roomsXMLCurrency';
 import { isLogged } from '../../../selectors/userInfo';
+import { getLocAmountById } from '../../../selectors/locAmountsInfo';
+import { getCurrencyExchangeRates, getLocEurRate, getLocRateFiatAmount } from '../../../selectors/exchangeRatesInfo';
 
 const DEFAULT_CRYPTO_CURRENCY = 'EUR';
 
@@ -25,7 +27,6 @@ class LocPrice extends PureComponent {
 }
 
 LocPrice.defaultProps = {
-  params: {},
   brackets: true
 };
 
@@ -40,14 +41,14 @@ LocPrice.propTypes = {
 
 function mapStateToProps(state, ownProps) {
   const { fiat } = ownProps;
-
   const { userInfo, locAmountsInfo, exchangeRatesInfo } = state;
-  const { currencyExchangeRates, locRateFiatAmount, locEurRate } = exchangeRatesInfo;
 
+  const currencyExchangeRates = getCurrencyExchangeRates(exchangeRatesInfo);
   const fiatInEur = currencyExchangeRates && CurrencyConverter.convert(currencyExchangeRates, RoomsXMLCurrency.get(), DEFAULT_CRYPTO_CURRENCY, fiat);
-
-  let rateLocAmount = locAmountsInfo.locAmounts[locRateFiatAmount] && locAmountsInfo.locAmounts[locRateFiatAmount].locAmount;
-
+  const locEurRate = getLocEurRate(exchangeRatesInfo);
+  const locRateFiatAmount = getLocRateFiatAmount(exchangeRatesInfo);
+  let rateLocAmount = getLocAmountById(locAmountsInfo, locRateFiatAmount);
+  
   if (!rateLocAmount) {
     rateLocAmount = locRateFiatAmount / locEurRate;
   }

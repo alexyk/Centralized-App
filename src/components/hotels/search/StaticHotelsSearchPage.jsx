@@ -3,6 +3,7 @@ import '../../../styles/css/components/hotels_search/sidebar/sidebar.css';
 import { setRegion, setHotelsSearchInfo } from '../../../actions/hotelsSearchInfo';
 import { asyncSetStartDate, asyncSetEndDate } from '../../../actions/searchDatesInfo';
 import { getStartDate, getEndDate } from '../../../selectors/searchDatesInfo';
+import { getRegion } from '../../../selectors/hotelsSearchInfo';
 
 import { Config } from '../../../config';
 import FilterPanel from './filter/FilterPanel';
@@ -287,7 +288,7 @@ class StaticHotelsSearchPage extends React.Component {
 
     this.props.history.push('/hotels/listings' + queryString);
 
-    const region = this.props.hotelsSearchInfo.region.id;
+    const region = this.props.region.id;
 
     this.getCityLocation(region);
 
@@ -708,7 +709,7 @@ StaticHotelsSearchPage.propTypes = {
   dispatch: PropTypes.func,
   currency: PropTypes.string,
   isUserLogged: PropTypes.bool,
-  hotelsSearchInfo: PropTypes.object,
+  region: PropTypes.object,
   startDate: PropTypes.object,
   endDate: PropTypes.object
 };
@@ -719,7 +720,7 @@ function mapStateToProps(state) {
   return {
     currency: getCurrency(paymentInfo),
     isUserLogged: isLogged(userInfo),
-    hotelsSearchInfo,
+    region: getRegion(hotelsSearchInfo),
     startDate: getStartDate(searchDatesInfo),
     endDate: getEndDate(searchDatesInfo)
   };

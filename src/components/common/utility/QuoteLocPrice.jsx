@@ -9,6 +9,8 @@ import { removeLocAmount } from '../../../actions/locAmountsInfo';
 import { isLogged } from '../../../selectors/userInfo';
 import { isExchangerWebsocketConnected } from '../../../selectors/exchangerSocketInfo';
 import { LONG } from '../../../constants/notificationDisplayTimes.js';
+import { getQuoteLocError, getLocAmountById } from '../../../selectors/locAmountsInfo';
+import { getCurrencyExchangeRates, getLocEurRate } from '../../../selectors/exchangeRatesInfo';
 
 const DEFAULT_CRYPTO_CURRENCY = 'EUR';
 const DEFAULT_QUOTE_LOC_ID = 'quote';
@@ -21,26 +23,26 @@ class QuoteLocPrice extends PureComponent {
     this.isQuoteLocRendered = false;
     this.quoteLocSendAttempts = 0;
 
-    this.sendWebsocketMessage(null, null, this.props.params);
+    this.sendWebsocketMessage(null, { bookingId: this.props.bookingId });
   }
 
   componentDidUpdate(prevProps) {
     if (this.props.isExchangerWebsocketConnected &&
       this.props.isExchangerWebsocketConnected !== prevProps.isExchangerWebsocketConnected) {
-      this.sendWebsocketMessage(null, null, prevProps.params);
+      this.sendWebsocketMessage(null, { bookingId: prevProps.bookingId });
     }
   }
 
   componentWillUnmount() {
-    this.sendWebsocketMessage(null, 'unsubscribe');
+    this.sendWebsocketMessage('unsubscribe');
     this.props.invalidateQuoteLoc();
     if (this.props.locAmount) {
       this.props.dispatch(removeLocAmount(DEFAULT_QUOTE_LOC_ID));
     }
   }
 
-  sendWebsocketMessage(id, method, params) {
-    ExchangerWebsocket.sendMessage(id || DEFAULT_QUOTE_LOC_ID, method || DEFAULT_QUOTE_LOC_METHOD, params);
+  sendWebsocketMessage(method, params) {
+    ExchangerWebsocket.sendMessage(DEFAULT_QUOTE_LOC_ID, method || DEFAULT_QUOTE_LOC_METHOD, params);
   }
 
   redirectToHotelDetailsPage() {
@@ -49,7 +51,7 @@ class QuoteLocPrice extends PureComponent {
   }
 
   render() {
-    const { brackets, locAmount, quoteLocError, isUserLogged, params } = this.props;
+    const { brackets, locAmount, quoteLocError, isUserLogged, bookingId } = this.props;
 
     if (!this.isQuoteLocRendered && locAmount) {
       this.isQuoteLocRendered = true;
@@ -59,7 +61,7 @@ class QuoteLocPrice extends PureComponent {
         this.redirectToHotelDetailsPage();
       } else {
         this.quoteLocSendAttempts += 1;
-        this.sendWebsocketMessage(null, null, params);
+        this.sendWebsocketMessage(null, { bookingId });
       }
     } else if (this.isQuoteLocRendered && quoteLocError) {
       this.redirectToHotelDetailsPage();
@@ -82,14 +84,12 @@ class QuoteLocPrice extends PureComponent {
 }
 
 QuoteLocPrice.defaultProps = {
-  params: {},
   brackets: true
 };
 
 QuoteLocPrice.propTypes = {
   brackets: PropTypes.bool,
-  method: PropTypes.string,
-  params: PropTypes.object,
+  bookingId: PropTypes.number,
   invalidateQuoteLoc: PropTypes.func,
   redirectToHotelDetailsPage: PropTypes.func,
 
@@ -103,24 +103,25 @@ QuoteLocPrice.propTypes = {
 };
 
 function mapStateToProps(state, ownProps) {
-  const { fiat } = ownProps;
-
   const { userInfo, exchangerSocketInfo, locAmountsInfo, exchangeRatesInfo } = state;
 
-  let locAmount = locAmountsInfo.locAmounts[DEFAULT_QUOTE_LOC_ID] && locAmountsInfo.locAmounts[DEFAULT_QUOTE_LOC_ID].locAmount && (locAmountsInfo.locAmounts[DEFAULT_QUOTE_LOC_ID].locAmount).toFixed(2);
-  const quoteLocError = locAmountsInfo.locAmounts[DEFAULT_QUOTE_LOC_ID] && locAmountsInfo.locAmounts[DEFAULT_QUOTE_LOC_ID].error;
+  let locAmount = getLocAmountById(locAmountsInfo, DEFAULT_QUOTE_LOC_ID);
 
+  // LocAmount back up value if exchanger socket connection is closed.
   if (!locAmount) {
-    const fiatInEur = exchangeRatesInfo.currencyExchangeRates && CurrencyConverter.convert(exchangeRatesInfo.currencyExchangeRates, RoomsXMLCurrency.get(), DEFAULT_CRYPTO_CURRENCY, fiat);
+    const { fiat } = ownProps;
+    const currencyExchangeRates = getCurrencyExchangeRates(exchangeRatesInfo);
+    const locEurRate = getLocEurRate(exchangeRatesInfo);
+    const fiatInEur = currencyExchangeRates && CurrencyConverter.convert(currencyExchangeRates, RoomsXMLCurrency.get(), DEFAULT_CRYPTO_CURRENCY, fiat);
 
-    locAmount = (fiatInEur / exchangeRatesInfo.locEurRate).toFixed(2);
+    locAmount = fiatInEur / locEurRate;
   }
 
   return {
     isUserLogged: isLogged(userInfo),
     isExchangerWebsocketConnected: isExchangerWebsocketConnected(exchangerSocketInfo),
-    locAmount,
-    quoteLocError
+    locAmount: (locAmount).toFixed(2),
+    quoteLocError: getQuoteLocError(locAmountsInfo)
   };
 }
 

@@ -6,6 +6,7 @@ import { CurrencyConverter } from '../../../services/utilities/currencyConverter
 import { getCurrency } from '../../../selectors/paymentInfo';
 import { getCurrencyExchangeRates, getLocEurRate, getLocRateFiatAmount } from '../../../selectors/exchangeRatesInfo';
 import { isExchangerWebsocketConnected } from '../../../selectors/exchangerSocketInfo';
+import { getLocAmountById } from '../../../selectors/locAmountsInfo';
 
 const DEFAULT_CRYPTO_CURRENCY = 'EUR';
 
@@ -31,10 +32,10 @@ class LocRate extends PureComponent {
   }
 
   render() {
-    const { currency, currencyExchangeRates, locRateFiatAmount, locEurRate, locAmountsInfo } = this.props;
+    const { currency, currencyExchangeRates, locRateFiatAmount, locEurRate, locRateLocAmount } = this.props;
 
     const fiat = currencyExchangeRates && CurrencyConverter.convert(currencyExchangeRates, DEFAULT_CRYPTO_CURRENCY, currency, locRateFiatAmount);
-    let locAmount = locAmountsInfo.locAmounts[locRateFiatAmount] && locAmountsInfo.locAmounts[locRateFiatAmount].locAmount;
+    let locAmount = locRateLocAmount;
     if (!locAmount) {
       locAmount = locRateFiatAmount / locEurRate;
     }
@@ -59,20 +60,21 @@ LocRate.propTypes = {
   currency: PropTypes.string,
   isExchangerWebsocketConnected: PropTypes.bool,
   currencyExchangeRates: PropTypes.object,
-  locEurRate: PropTypes.string,
+  locEurRate: PropTypes.number,
   locRateFiatAmount: PropTypes.number,
-  locAmountsInfo: PropTypes.object
+  locRateLocAmount: PropTypes.number
 };
 
 function mapStateToProps(state) {
   const { exchangerSocketInfo, exchangeRatesInfo, locAmountsInfo, paymentInfo } = state;
+  const locRateFiatAmount = getLocRateFiatAmount(exchangeRatesInfo);
 
   return {
     isExchangerWebsocketConnected: isExchangerWebsocketConnected(exchangerSocketInfo),
     currencyExchangeRates: getCurrencyExchangeRates(exchangeRatesInfo),
     locEurRate: getLocEurRate(exchangeRatesInfo),
-    locRateFiatAmount: getLocRateFiatAmount(exchangeRatesInfo),
-    locAmountsInfo,
+    locRateFiatAmount,
+    locRateLocAmount: getLocAmountById(locAmountsInfo, locRateFiatAmount),
     currency: getCurrency(paymentInfo)
   };
 }

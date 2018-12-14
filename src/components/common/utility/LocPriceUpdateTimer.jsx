@@ -18,7 +18,9 @@ class LocPriceUpdateTimer extends PureComponent {
   }
 
   componentWillUnmount() {
-    clearInterval(this.timer);
+    if (this.timer) {
+      clearInterval(this.timer);
+    }
     this.props.dispatch(reset());
   }
 

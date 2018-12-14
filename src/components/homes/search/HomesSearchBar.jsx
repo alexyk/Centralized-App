@@ -8,6 +8,7 @@ import Datepicker from '../../common/datepicker';
 import { setCountry, setGuests } from '../../../actions/homesSearchInfo';
 import { getCountries } from '../../../selectors/countriesInfo';
 import { getStartDate, getEndDate } from '../../../selectors/searchDatesInfo';
+import { getCountry, getGuests } from '../../../selectors/homesSearchInfo';
 import Select from 'react-select';
 import { NotificationManager } from 'react-notifications';
 
@@ -103,7 +104,7 @@ function HomesSearchBar(props) {
 
   let options = [];
   if (countries) {
-    options = countries && countries.map((item, i) => {
+    options = countries && countries.map((item) => {
       return {
         value: item.id,
         label: StringUtils.shorten(item.name, 30)
@@ -190,8 +191,8 @@ const mapStateToProps = (state) => {
   const { homesSearchInfo, searchDatesInfo, countriesInfo } = state;
 
   return {
-    countryId: homesSearchInfo.country,
-    guests: homesSearchInfo.guests,
+    countryId: getCountry(homesSearchInfo),
+    guests: getGuests(homesSearchInfo),
     startDate: getStartDate(searchDatesInfo),
     endDate: getEndDate(searchDatesInfo),
     countries: getCountries(countriesInfo)

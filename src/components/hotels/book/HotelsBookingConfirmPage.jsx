@@ -20,10 +20,12 @@ import QuoteLocPrice from '../../common/utility/QuoteLocPrice';
 import QuoteLocPricePP from '../../common/utility/QuoteLocPricePP';
 import LocPriceUpdateTimer from '../../common/utility/LocPriceUpdateTimer';
 import { closeModal, openModal } from '../../../actions/modalsInfo.js';
+import { reset } from '../../../actions/locPriceUpdateTimerInfo';
 import { isActive } from '../../../selectors/modalsInfo.js';
 import { getCurrency, getCurrencySign } from '../../../selectors/paymentInfo';
 import { getLocEurRate, getCurrencyExchangeRates } from '../../../selectors/exchangeRatesInfo.js';
 import { getSeconds } from '../../../selectors/locPriceUpdateTimerInfo.js';
+import { getLocAmountById, getQuotePPFiatAmount, getQuotePPFundsSufficient } from '../../../selectors/locAmountsInfo.js';
 import RecoverWallerPassword from '../../common/utility/RecoverWallerPassword';
 import { ExchangerWebsocket } from '../../../services/socket/exchangerWebsocket';
 
@@ -44,6 +46,8 @@ class HotelsBookingConfirmPage extends Component {
   constructor(props) {
     super(props);
 
+    this.timer = null;
+
     this.state = {
       password: '',
       isQuoteStopped: false,
@@ -63,6 +67,15 @@ class HotelsBookingConfirmPage extends Component {
   componentDidMount() {
     this.requestSafechargeMode();
     this.props.requestCreateReservation();
+
+    this.timer = setInterval(this.tick, 1000);
+  }
+
+  componentWillUnmount() {
+    if (this.timer) {
+      clearInterval(this.timer);
+    }
+    this.props.dispatch(reset());
   }
 
   requestSafechargeMode() {
@@ -143,20 +156,15 @@ class HotelsBookingConfirmPage extends Component {
   }
 
   payWithCard(fiatAmount) {
-    const { reservation, currency, location, match, locAmountsInfo } = this.props;
-    const { locAmounts } = locAmountsInfo;
-
-    const locAmount = locAmounts[DEFAULT_QUOTE_LOC_PP_ID].locAmount;
+    const { reservation, currency, location, match, quotePPLocAmount } = this.props;
 
     const paymentInfo = {
       fiatAmount,
-      locAmount,
+      locAmount: quotePPLocAmount,
       currency,
       bookingId: reservation.preparedBookingId,
       backUrl: this.createBackUrl(),
     };
-
-    // console.log(paymentInfo);
 
     const id = match.params.id;
     const isWebView = location.pathname.indexOf('/mobile') !== -1;
@@ -284,15 +292,10 @@ class HotelsBookingConfirmPage extends Component {
 
     this.props.requestLockOnQuoteId('privateWallet').then(() => {
       const { password } = this.state;
-      const { reservation } = this.props;
-      const { locAmounts } = this.props.locAmountsInfo;
+      const { reservation, quoteLocAmount } = this.props;
       const preparedBookingId = reservation.preparedBookingId;
 
-      const locAmount = (locAmounts[DEFAULT_QUOTE_LOC_ID] && locAmounts[DEFAULT_QUOTE_LOC_ID].locAmount) ||
-        TEST_FIAT_AMOUNT_IN_EUR / this.props.locEurRate;
-
-      // console.log('LOC',locAmounts[DEFAULT_QUOTE_LOC_ID]);
-      // console.log('LOC',locAmounts[DEFAULT_QUOTE_LOC_ID].locAmount);
+      const locAmount = quoteLocAmount || TEST_FIAT_AMOUNT_IN_EUR / this.props.locEurRate;
 
       const wei = (this.tokensToWei(locAmount.toString()));
       // console.log(wei);
@@ -358,10 +361,10 @@ class HotelsBookingConfirmPage extends Component {
             });
           }, 1000);
         });
-      }).catch(e => {
+      }).catch(() => {
         this.restartQuote();
       });
-    }).catch(e => {
+    }).catch(() => {
       this.restartQuote();
     });
   }
@@ -501,14 +504,13 @@ class HotelsBookingConfirmPage extends Component {
       return <div className="loader"></div>;
     }
 
-    const { reservation, isActive, currency, currencySign, locAmountsInfo, currencyExchangeRates, userInfo, seconds } = this.props;
+    const { reservation, isActive, currency, currencySign, quoteLocAmount, quotePPFiatAmount, quotePPFundsSufficient, currencyExchangeRates, userInfo, seconds } = this.props;
     const { userConfirmedPaymentWithLOC, password, isQuoteStopped, safeChargeMode } = this.state;
     const hasLocAddress = !!userInfo.locAddress;
 
     const booking = reservation && reservation.booking.hotelBooking;
-    const { locAmounts } = locAmountsInfo;
-
-    const fiatAmountPP = currencyExchangeRates && locAmounts[DEFAULT_QUOTE_LOC_PP_ID] && CurrencyConverter.convert(currencyExchangeRates, DEFAULT_CRYPTO_CURRENCY, currency, locAmounts[DEFAULT_QUOTE_LOC_PP_ID].fiatAmount);
+    
+    const fiatAmountPP = currencyExchangeRates && quotePPFiatAmount && CurrencyConverter.convert(currencyExchangeRates, DEFAULT_CRYPTO_CURRENCY, currency, quotePPFiatAmount);
     const fiatPriceInUserCurrency = currencyExchangeRates && CurrencyConverter.convert(currencyExchangeRates, reservation.currency, currency, reservation.fiatPrice).toFixed(2);
 
     return (
@@ -559,9 +561,9 @@ class HotelsBookingConfirmPage extends Component {
                 <div className="payment-methods">
                   <div className="hide">
                     {this.props.isQuoteLocValid &&
-                      <QuoteLocPricePP fiat={reservation.fiatPrice} params={{ bookingId: reservation.preparedBookingId + PAYMENT_PROCESSOR_IDENTIFICATOR }} brackets={false} invalidateQuoteLoc={this.props.invalidateQuoteLoc} redirectToHotelDetailsPage={this.props.redirectToHotelDetailsPage} />}
+                      <QuoteLocPricePP fiat={reservation.fiatPrice} bookingId={reservation.preparedBookingId + PAYMENT_PROCESSOR_IDENTIFICATOR} brackets={false} invalidateQuoteLoc={this.props.invalidateQuoteLoc} redirectToHotelDetailsPage={this.props.redirectToHotelDetailsPage} />}
                   </div>
-                  {locAmounts[DEFAULT_QUOTE_LOC_PP_ID] && locAmounts[DEFAULT_QUOTE_LOC_PP_ID].fundsSufficient && safeChargeMode &&
+                  {quotePPFundsSufficient && safeChargeMode &&
                     <div className="payment-methods-card">
                       <div className="details">
                         <p className="booking-card-price">
@@ -591,8 +593,8 @@ class HotelsBookingConfirmPage extends Component {
                   <div className="payment-methods-loc">
                     <div className="details">
                       <p>Pay Directly With LOC: <span className="important">{currencySign}{currencyExchangeRates && fiatPriceInUserCurrency}</span></p>
-                      <p>Order Total: <span className="important">{this.props.isQuoteLocValid && <QuoteLocPrice fiat={reservation.fiatPrice} params={{ bookingId: reservation.preparedBookingId }} brackets={false} invalidateQuoteLoc={this.props.invalidateQuoteLoc} redirectToHotelDetailsPage={this.props.redirectToHotelDetailsPage} />}</span></p>
-                      {locAmounts[DEFAULT_QUOTE_LOC_ID] &&
+                      <p>Order Total: <span className="important">{this.props.isQuoteLocValid && <QuoteLocPrice fiat={reservation.fiatPrice} bookingId={ reservation.preparedBookingId} brackets={false} invalidateQuoteLoc={this.props.invalidateQuoteLoc} redirectToHotelDetailsPage={this.props.redirectToHotelDetailsPage} />}</span></p>
+                      {quoteLocAmount &&
                         <div className="price-update-timer" tooltip="Seconds until we update your quoted price">
                           {!isQuoteStopped ? <span>LOC price will update in <i className="fa fa-clock-o" aria-hidden="true"></i>&nbsp;{seconds} sec &nbsp;</span> : 'Price will not update during payment'}
                         </div>}
@@ -652,9 +654,12 @@ HotelsBookingConfirmPage.propTypes = {
   currency: PropTypes.string,
   currencySign: PropTypes.string,
   isActive: PropTypes.object,
-  locEurRate: PropTypes.string,
+  locEurRate: PropTypes.number,
   currencyExchangeRates: PropTypes.object,
-  locAmountsInfo: PropTypes.object,
+  quoteLocAmount: PropTypes.number,
+  quotePPLocAmount: PropTypes.number,
+  quotePPFiatAmount: PropTypes.number,
+  quotePPFundsSufficient: PropTypes.bool,
   seconds: PropTypes.number
 };
 
@@ -667,7 +672,10 @@ function mapStateToProps(state) {
     isActive: isActive(modalsInfo),
     locEurRate: getLocEurRate(exchangeRatesInfo),
     currencyExchangeRates: getCurrencyExchangeRates(exchangeRatesInfo),
-    locAmountsInfo,
+    quoteLocAmount: getLocAmountById(locAmountsInfo, DEFAULT_QUOTE_LOC_ID),
+    quotePPLocAmount: getLocAmountById(locAmountsInfo, DEFAULT_QUOTE_LOC_PP_ID),
+    quotePPFiatAmount: getQuotePPFiatAmount(locAmountsInfo),
+    quotePPFundsSufficient: getQuotePPFundsSufficient(locAmountsInfo),
     seconds: getSeconds(locPriceUpdateTimerInfo)
   };
 }

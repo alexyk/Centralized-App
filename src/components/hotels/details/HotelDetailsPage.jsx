@@ -20,6 +20,7 @@ import { setHotelsSearchInfo } from '../../../actions/hotelsSearchInfo';
 import { asyncSetStartDate, asyncSetEndDate } from '../../../actions/searchDatesInfo';
 import { getCurrency } from '../../../selectors/paymentInfo';
 import { getStartDate, getEndDate } from '../../../selectors/searchDatesInfo';
+import { getRegion, getRooms } from '../../../selectors/hotelsSearchInfo';
 import { withRouter } from 'react-router-dom';
 import queryString from 'query-string';
 
@@ -90,7 +91,7 @@ class HotelDetailsPage extends React.Component {
 
       this.props.dispatch(asyncSetStartDate(startDate));
       this.props.dispatch(asyncSetEndDate(endDate));
-      this.props.dispatch(setHotelsSearchInfo(this.props.hotelsSearchInfo.region, rooms, adults, hasChildren));
+      this.props.dispatch(setHotelsSearchInfo(this.props.region, rooms, adults, hasChildren));
     }
   }
 
@@ -233,7 +234,7 @@ class HotelDetailsPage extends React.Component {
   }
 
   // checkAvailability(quoteId) {
-  //   const rooms = this.props.hotelsSearchInfo.rooms.map((room) => {
+  //   const rooms = this.props.rooms.map((room) => {
   //     const adults = [];
   //     const children = room.children;
   //     for (let j = 0; j < room.adults; j++) {
@@ -276,11 +277,11 @@ class HotelDetailsPage extends React.Component {
   // }
 
   handleBookRoom(roomsResults) {
-    const { currency, hotelsSearchInfo } = this.props;
+    const { currency } = this.props;
 
     this.setState({ loadingRooms: true });
     NotificationManager.info(CHECKING_ROOM_AVAILABILITY, '', LONG);
-    const rooms = hotelsSearchInfo.rooms.map((room) => {
+    const rooms = this.props.rooms.map((room) => {
       const adults = [];
       const children = room.children;
       for (let j = 0; j < room.adults; j++) {
@@ -486,7 +487,8 @@ HotelDetailsPage.propTypes = {
   // start Redux props
   dispatch: PropTypes.func,
   currency: PropTypes.string,
-  hotelsSearchInfo: PropTypes.object,
+  region: PropTypes.object,
+  rooms: PropTypes.array,
   startDate: PropTypes.object,
   endDate: PropTypes.object
 };
@@ -496,7 +498,8 @@ function mapStateToProps(state) {
 
   return {
     currency: getCurrency(paymentInfo),
-    hotelsSearchInfo,
+    region: getRegion(hotelsSearchInfo),
+    rooms: getRooms(hotelsSearchInfo),
     startDate: getStartDate(searchDatesInfo),
     endDate: getEndDate(searchDatesInfo)
   };

@@ -11,6 +11,7 @@ import Pagination from '../../common/pagination/Pagination';
 import requester from '../../../requester';
 import { asyncSetStartDate, asyncSetEndDate } from '../../../actions/searchDatesInfo';
 import { setHomesSearchInfo } from '../../../actions/homesSearchInfo';
+import { getCountry } from '../../../selectors/homesSearchInfo';
 import AsideContentPage from '../../common/asideContentPage';
 import _ from 'lodash';
 
@@ -278,7 +279,7 @@ class HomesSearchPage extends React.Component {
                   propertyTypesToggled={this.state.filters.propertyTypes}
                   priceValue={this.state.filters.priceValue}
                   setPriceValue={this.setFilterPriceValue}
-                  countryId={this.props.homesSearchInfo.country}
+                  countryId={this.props.countryId}
                   handleSearch={this.handleFilter}
                   toggleFilter={this.toggleFilter}
                   clearFilters={this.clearFilters}
@@ -310,14 +311,14 @@ HomesSearchPage.propTypes = {
 
   // Redux props
   dispatch: PropTypes.func,
-  homesSearchInfo: PropTypes.object
+  countryId: PropTypes.string
 };
 
 const mapStateToProps = (state) => {
   const { homesSearchInfo } = state;
 
   return {
-    homesSearchInfo
+    countryId: getCountry(homesSearchInfo)
   };
 };
 

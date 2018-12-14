@@ -149,7 +149,7 @@ MultiMarkerGoogleMap.propTypes = {
   // start Redux props
   currency: PropTypes.string,
   currencySign: PropTypes.string,
-  locEurRate: PropTypes.string,
+  locEurRate: PropTypes.number,
   currencyExchangeRates: PropTypes.object
 };
 
