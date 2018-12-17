@@ -38,22 +38,17 @@ function ListingSafetyFacilities(props) {
     <div id="listing-safety-amenities">
       <ListingCrudNav progress='33%' />
       <div className="container">
-        <div className="row">
-          <div className="listings create">
-            <div className="col-md-3">
-              <BasicsAside routes={props.routes} />
-            </div>
+        <div className="listings create">
+          <BasicsAside routes={props.routes} />
+          <section>
+            <h2>What safety amenities do you offer to your guests?</h2>
 
-            <div className="col-md-9">
-              <h2>What safety amenities do you offer to your guests?</h2>
-
-              <div className="form-group">
-                <div className="filter-check-box">
-                  {safetyAmenities}
-                </div>
+            <div className="form-group">
+              <div className="filter-check-box">
+                {safetyAmenities}
               </div>
             </div>
-          </div>
+          </section>
         </div>
       </div>
       <FooterNav next={props.next} prev={props.prev} handleClickNext={props.updateProgress} step={4} />
@@ -67,6 +62,7 @@ ListingSafetyFacilities.propTypes = {
   prev: PropTypes.string,
   next: PropTypes.string,
   routes: PropTypes.object,
+  toggle: PropTypes.func
 };
 
 export default ListingSafetyFacilities;

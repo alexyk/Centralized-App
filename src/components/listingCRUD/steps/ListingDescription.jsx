@@ -23,55 +23,51 @@ function ListingDescription(props) {
     <div>
       <ListingCrudNav progress='66%' />
       <div className="container">
-        <div className="row">
-          <div className="listings create">
-            <div className="col-md-3">
-              <PlaceDescriptionAside routes={props.routes} />
+        <div className="listings create">
+          <PlaceDescriptionAside routes={props.routes} />
+          <div id="reservation-hotel-review-room">
+            <h2>Tell your guests about your place</h2>
+            <hr />
+
+            <div className="row">
+              <div className="col-md-12">
+                <div className="form-group">
+                  <label>Summary</label>
+                  <Textarea
+                    name="text"
+                    value={text}
+                    placeholder="Describe your place..."
+                    rows={5}
+                    onChange={props.onChange}
+                  />
+                </div>
+              </div>
+              <div className="clearfix"></div>
             </div>
-            <div id="reservation-hotel-review-room" className="col-md-9">
-              <h2>Tell your guests about your place</h2>
-              <hr />
 
-              <div className="row">
-                <div className="col-md-12">
-                  <div className="form-group">
-                    <label>Summary</label>
-                    <Textarea
-                      name="text"
-                      value={text}
-                      placeholder="Describe your place..."
-                      rows={5}
-                      onChange={props.onChange}
-                    />
-                  </div>
+            <h2>Tell your guests about the neighborhood</h2>
+            <hr />
+
+            <div className="row">
+              <div className="col-md-12">
+                <div className="form-group">
+                  <label>The neighborhood (optional)</label>
+                  <Textarea
+                    name="interaction"
+                    value={interaction}
+                    placeholder="Describe what's near by, how to get around, etc..."
+                    rows={5}
+                    onChange={props.onChange}
+                  />
                 </div>
-                <div className="clearfix"></div>
               </div>
-
-              <h2>Tell your guests about the neighborhood</h2>
-              <hr />
-
-              <div className="row">
-                <div className="col-md-12">
-                  <div className="form-group">
-                    <label>The neighborhood (optional)</label>
-                    <Textarea
-                      name="interaction"
-                      value={interaction}
-                      placeholder="Describe what's near by, how to get around, etc..."
-                      rows={5}
-                      onChange={props.onChange}
-                    />
-                  </div>
-                </div>
-                <div className="clearfix"></div>
-              </div>
+              <div className="clearfix"></div>
             </div>
           </div>
         </div>
       </div>
       <FooterNav next={next} prev={props.prev} handleClickNext={handleClickNext} step={6} />
-    </div>
+    </div >
   );
 }
 
