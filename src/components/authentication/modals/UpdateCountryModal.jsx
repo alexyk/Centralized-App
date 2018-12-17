@@ -3,6 +3,8 @@ import React from 'react';
 import { UPDATE_COUNTRY } from '../../../constants/modals.js';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
+import { getCountries } from '../../../selectors/countriesInfo';
+import { isActive } from '../../../selectors/modalsInfo';
 
 function UpdateCountryModal(props) {
 
@@ -18,7 +20,7 @@ function UpdateCountryModal(props) {
 
   return (
     <React.Fragment>
-      <Modal show={props.modalsInfo.isActive[UPDATE_COUNTRY]} onHide={() => props.closeModal(UPDATE_COUNTRY)} className="modal fade myModal">
+      <Modal show={props.isActiveModal[UPDATE_COUNTRY]} onHide={() => props.closeModal(UPDATE_COUNTRY)} className="modal fade myModal">
         <Modal.Header>
           <h1>Where are you from?</h1>
           <button type="button" className="close" onClick={() => props.closeModal(UPDATE_COUNTRY)}>&times;</button>
@@ -68,14 +70,14 @@ UpdateCountryModal.propTypes = {
   isLogging: PropTypes.bool,
 
   // Redux props
-  modalsInfo: PropTypes.object,
+  isActiveModal: PropTypes.object,
   countries: PropTypes.array
 };
 
 
 const mapStateToProps = (state) => ({
-  modalsInfo: state.modalsInfo,
-  countries: state.countriesInfo.countries
+  isActiveModal: isActive(state.modalsInfo),
+  countries: getCountries(state.countriesInfo)
 });
 
 export default connect(mapStateToProps)(UpdateCountryModal);

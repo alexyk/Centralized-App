@@ -6,6 +6,7 @@ import { connect } from 'react-redux';
 import { NotificationManager } from 'react-notifications';
 import { LONG } from '../../constants/notificationDisplayTimes.js';
 import { closeModal, openModal } from '../../actions/modalsInfo';
+import { isActive } from '../../selectors/modalsInfo';
 import RegisterModal from './modals/RegisterModal';
 import { executeWithToken } from '../../services/grecaptcha/grecaptcha';
 
@@ -123,7 +124,7 @@ class RegisterManager extends React.Component {
     return (
       <React.Fragment>
         <RegisterModal 
-          isActive={this.props.modalsInfo.isActive[REGISTER]} 
+          isActive={this.props.isActive[REGISTER]} 
           openModal={this.openModal} 
           closeModal={this.closeModal} 
           signUpEmail={this.state.signUpEmail} 
@@ -148,16 +149,13 @@ RegisterManager.propTypes = {
 
   // start Redux props
   dispatch: PropTypes.func,
-  userInfo: PropTypes.object,
-  modalsInfo: PropTypes.object,
+  isActive: PropTypes.object,
 };
 
 function mapStateToProps(state) {
-  const { userInfo, modalsInfo, airdropInfo } = state;
+  const { modalsInfo } = state;
   return {
-    userInfo,
-    modalsInfo,
-    airdropInfo
+    isActive: isActive(modalsInfo),
   };
 }
 

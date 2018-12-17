@@ -12,6 +12,7 @@ import PropTypes from 'prop-types';
 import Select from '../../common/google/GooglePlacesAutocomplete';
 import moment from 'moment';
 import requester from '../../../requester';
+import { getCountries } from '../../../selectors/countriesInfo';
 
 class ProfileEditForm extends React.Component {
   constructor(props) {
@@ -349,7 +350,7 @@ const mapStateToProps = (state) => {
   const { countriesInfo } = state;
 
   return {
-    countries: countriesInfo.countries
+    countries: getCountries(countriesInfo)
   };
 };
 

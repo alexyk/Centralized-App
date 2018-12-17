@@ -16,11 +16,12 @@ import WalletPage from './wallet/WalletIndexPage';
 import AirdropPage from './airdrop/AirdropPage';
 import BuyLocPage from './buyloc/BuyLocPage';
 import { connect } from 'react-redux';
+import { isLogged } from '../../selectors/userInfo';
 
 function ProfilePage(props) {
   return (
     <React.Fragment>
-      {props.isLogged && <ProfileNav />}
+      {props.isUserLogged && <ProfileNav />}
       <Switch>
         <Route exact path="/profile/dashboard" render={() => <DashboardPage />} />
         <Route exact path="/profile/listings" render={() => <MyListingsPage />} />
@@ -41,10 +42,13 @@ function ProfilePage(props) {
 
 ProfilePage.propTypes = {
   location: PropTypes.object,
+
+  // Redux props
+  isUserLogged: PropTypes.bool
 };
 
 const mapStateToProps = ({ userInfo }) => ({
-  isLogged: userInfo.isLogged,
+  isUserLogged: isLogged(userInfo),
 });
 
 export default withRouter(connect(mapStateToProps)(ProfilePage));

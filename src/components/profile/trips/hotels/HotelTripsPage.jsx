@@ -1,4 +1,5 @@
 import { closeModal, openModal } from '../../../../actions/modalsInfo.js';
+import { isActive } from '../../../../selectors/modalsInfo.js';
 
 import { BOOKING_REQUEST_SENT } from '../../../../constants/successMessages.js';
 import { CANCELLATION_NOT_POSSIBLE } from '../../../../constants/warningMessages.js';
@@ -154,7 +155,7 @@ class HotelTripsPage extends React.Component {
         </section>
 
         <WalletPasswordModal
-          isActive={this.props.modalsInfo.isActive[PASSWORD_PROMPT]}
+          isActive={this.props.isActive[PASSWORD_PROMPT]}
           text={'Enter your wallet password'}
           placeholder={'Wallet password'}
           handleSubmit={() => this.handleCancelTrip()}
@@ -172,13 +173,13 @@ class HotelTripsPage extends React.Component {
 HotelTripsPage.propTypes = {
   location: PropTypes.object,
   dispatch: PropTypes.func,
-  modalsInfo: PropTypes.object
+  isActive: PropTypes.object
 };
 
 function mapStateToProps(state) {
   const { modalsInfo } = state;
   return {
-    modalsInfo,
+    isActive: isActive(modalsInfo),
   };
 }
 

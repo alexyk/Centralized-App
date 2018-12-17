@@ -18,6 +18,9 @@ import { parse } from 'query-string';
 import requester from '../../../requester';
 import { setHotelsSearchInfo } from '../../../actions/hotelsSearchInfo';
 import { asyncSetStartDate, asyncSetEndDate } from '../../../actions/searchDatesInfo';
+import { getCurrency } from '../../../selectors/paymentInfo';
+import { getStartDate, getEndDate } from '../../../selectors/searchDatesInfo';
+import { getRegion, getRooms } from '../../../selectors/hotelsSearchInfo';
 import { withRouter } from 'react-router-dom';
 import queryString from 'query-string';
 
@@ -49,8 +52,7 @@ class HotelDetailsPage extends React.Component {
       lightboxIsOpen: false,
       currentImage: 0,
       prices: null,
-      oldCurrency: this.props.paymentInfo.currency,
-      userInfo: null,
+      oldCurrency: this.props.currency,
       loading: true,
       isShownContactHostModal: false,
       hotelRooms: null,
@@ -89,7 +91,7 @@ class HotelDetailsPage extends React.Component {
 
       this.props.dispatch(asyncSetStartDate(startDate));
       this.props.dispatch(asyncSetEndDate(endDate));
-      this.props.dispatch(setHotelsSearchInfo(this.props.hotelsSearchInfo.region, rooms, adults, hasChildren));
+      this.props.dispatch(setHotelsSearchInfo(this.props.region, rooms, adults, hasChildren));
     }
   }
 
@@ -232,7 +234,7 @@ class HotelDetailsPage extends React.Component {
   }
 
   // checkAvailability(quoteId) {
-  //   const rooms = this.props.hotelsSearchInfo.rooms.map((room) => {
+  //   const rooms = this.props.rooms.map((room) => {
   //     const adults = [];
   //     const children = room.children;
   //     for (let j = 0; j < room.adults; j++) {
@@ -251,7 +253,7 @@ class HotelDetailsPage extends React.Component {
   //     };
   //   });
 
-  //   const currency = this.props.paymentInfo.currency;
+  //   const currency = this.props.currency;
   //   const booking = {
   //     quoteId: quoteId,
   //     rooms: rooms,
@@ -275,9 +277,11 @@ class HotelDetailsPage extends React.Component {
   // }
 
   handleBookRoom(roomsResults) {
+    const { currency } = this.props;
+
     this.setState({ loadingRooms: true });
     NotificationManager.info(CHECKING_ROOM_AVAILABILITY, '', LONG);
-    const rooms = this.props.hotelsSearchInfo.rooms.map((room) => {
+    const rooms = this.props.rooms.map((room) => {
       const adults = [];
       const children = room.children;
       for (let j = 0; j < room.adults; j++) {
@@ -295,8 +299,6 @@ class HotelDetailsPage extends React.Component {
         children: children
       };
     });
-
-    const currency = this.props.paymentInfo.currency;
 
     const booking = {
       rooms: rooms,
@@ -395,7 +397,7 @@ class HotelDetailsPage extends React.Component {
       ]
     };
 
-    const { searchDatesInfo } = this.props;
+    const { startDate, endDate } = this.props;
 
     return (
       <div>
@@ -463,7 +465,7 @@ class HotelDetailsPage extends React.Component {
             <HotelDetailsInfoSection
               hotel={this.state.hotel}
               hotelRooms={this.state.hotelRooms}
-              nights={searchDatesInfo.endDate.diff(searchDatesInfo.startDate, 'days')}
+              nights={endDate.diff(startDate, 'days')}
               loading={this.state.loading}
               handleBookRoom={this.handleBookRoom}
               loadingRooms={this.state.loadingRooms}
@@ -484,20 +486,22 @@ HotelDetailsPage.propTypes = {
 
   // start Redux props
   dispatch: PropTypes.func,
-  userInfo: PropTypes.object,
-  paymentInfo: PropTypes.object,
-  hotelsSearchInfo: PropTypes.object,
-  searchDatesInfo: PropTypes.object
+  currency: PropTypes.string,
+  region: PropTypes.object,
+  rooms: PropTypes.array,
+  startDate: PropTypes.object,
+  endDate: PropTypes.object
 };
 
 function mapStateToProps(state) {
-  const { userInfo, paymentInfo, modalsInfo, hotelsSearchInfo, searchDatesInfo } = state;
+  const { paymentInfo, hotelsSearchInfo, searchDatesInfo } = state;
+
   return {
-    userInfo,
-    paymentInfo,
-    modalsInfo,
-    hotelsSearchInfo,
-    searchDatesInfo
+    currency: getCurrency(paymentInfo),
+    region: getRegion(hotelsSearchInfo),
+    rooms: getRooms(hotelsSearchInfo),
+    startDate: getStartDate(searchDatesInfo),
+    endDate: getEndDate(searchDatesInfo)
   };
 }
 
