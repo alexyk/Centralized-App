@@ -8,7 +8,7 @@ import { NotificationManager } from 'react-notifications';
 import { LONG } from '../../constants/notificationDisplayTimes.js';
 import LoginModal from './modals/LoginModal';
 import { closeModal, openModal } from '../../actions/modalsInfo';
-import { setIsLogged, setUserInfo } from '../../actions/userInfo';
+import { setUserInfo } from '../../actions/userInfo';
 import { Wallet } from '../../services/blockchain/wallet.js';
 import { VERIFICATION_EMAIL_SENT } from '../../constants/infoMessages.js';
 import UpdateCountryModal from './modals/UpdateCountryModal';
@@ -33,6 +33,7 @@ import {
   LOGIN,
   UPDATE_COUNTRY
 } from '../../constants/modals.js';
+import * as _ from 'ramda';
 
 class LoginManager extends React.Component {
   constructor(props) {
@@ -57,15 +58,12 @@ class LoginManager extends React.Component {
     this.handleChangeCountry = this.handleChangeCountry.bind(this);
     this.handleUpdateCountry = this.handleUpdateCountry.bind(this);
     this.requestStates = this.requestStates.bind(this);
+    this.getQueryString = this.getQueryString.bind(this);
   }
 
   componentDidMount() {
-    if (
-      localStorage[Config.getValue('domainPrefix') + '.auth.locktrip'] &&
-      localStorage[Config.getValue('domainPrefix') + '.auth.username']
-    ) {
-      this.setUserInfo();
-    }
+    this.handleWebAuthorization();
+    this.handleMobileAuthorization();
 
     const queryParams = queryString.parse(this.props.location.search);
     if (queryParams.token) {
@@ -174,6 +172,39 @@ class LoginManager extends React.Component {
     });
   }
 
+  handleWebAuthorization() {
+    if (localStorage[Config.getValue('domainPrefix') + '.auth.username']
+      && localStorage[Config.getValue('domainPrefix') + '.auth.locktrip']) {
+      this.setUserInfo();
+    }
+  }
+
+
+  handleMobileAuthorization() {
+    const queryStringParameters = queryString.parse(this.props.location.search);
+    const { authEmail, authToken } = queryStringParameters;
+    if (authEmail && authToken) {
+      localStorage[Config.getValue('domainPrefix') + '.auth.username'] = authEmail;
+      localStorage[Config.getValue('domainPrefix') + '.auth.locktrip'] = decodeURI(authToken);
+      this.setUserInfo();
+      const url = this.props.location.pathname;
+      const search = this.getQueryString(queryStringParameters);
+      this.props.history.push(url + search);
+    }
+  }
+
+  getQueryString(queryStringParameters) {
+    let queryString = '?';
+    queryString += 'region=' + encodeURI(queryStringParameters.region);
+    queryString += '&currency=' + encodeURI(queryStringParameters.currency);
+    queryString += '&startDate=' + encodeURI(queryStringParameters.startDate);
+    queryString += '&endDate=' + encodeURI(queryStringParameters.endDate);
+    queryString += '&rooms=' + encodeURI(queryStringParameters.rooms);
+    return queryString;
+  }
+
+
+
   handleLoginErrors(res) {
     res.errors.then(res => {
       const errors = res.errors;
@@ -216,25 +247,33 @@ class LoginManager extends React.Component {
   }
 
   setUserInfo() {
-    this.props.dispatch(setIsLogged(true));
     requester.getUserInfo().then(res => {
-      res.body.then(data => {
+      res.body.then(_data => {
+        let data = _.pick([ "firstName", "lastName", "phoneNumber", "email", "locAddress", "gender", "isEmailVerified", "id"], _data)
+        const isAdmin = _data.roles.findIndex((r) => r.name === 'ADMIN') !== -1;
+
         if (data.locAddress) {
           Wallet.getBalance(data.locAddress).then(eth => {
             const ethBalance = eth / (Math.pow(10, 18));
             Wallet.getTokenBalance(data.locAddress).then(loc => {
               const locBalance = loc / (Math.pow(10, 18));
-              const { firstName, lastName, phoneNumber, email, locAddress, gender, isEmailVerified } = data;
-              const isAdmin = data.roles.findIndex((r) => r.name === 'ADMIN') !== -1;
-              this.props.dispatch(setUserInfo(firstName, lastName, phoneNumber, email, locAddress, ethBalance, locBalance, gender, isEmailVerified, isAdmin));
+              this.props.dispatch(setUserInfo({
+                ...data,
+                ethBalance,
+                locBalance,
+                isAdmin
+              }));
             });
           });
         } else {
           const ethBalance = 0;
           const locBalance = 0;
-          const { firstName, lastName, phoneNumber, email, locAddress, gender, isEmailVerified } = data;
-          const isAdmin = data.roles.findIndex((r) => r.name === 'ADMIN') !== -1;
-          this.props.dispatch(setUserInfo(firstName, lastName, phoneNumber, email, locAddress, ethBalance, locBalance, gender, isEmailVerified, isAdmin));
+          this.props.dispatch(setUserInfo({
+            ...data,
+            ethBalance,
+            locBalance,
+            isAdmin
+          }));
         }
       });
     });

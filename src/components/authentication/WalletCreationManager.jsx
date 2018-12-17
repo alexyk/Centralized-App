@@ -6,7 +6,7 @@ import { connect } from 'react-redux';
 import { NotificationManager } from 'react-notifications';
 import { LONG } from '../../constants/notificationDisplayTimes.js';
 import { closeModal, openModal } from '../../actions/modalsInfo';
-import { setIsLogged, setUserInfo } from '../../actions/userInfo';
+import { setUserInfo } from '../../actions/userInfo';
 import { Wallet } from '../../services/blockchain/wallet.js';
 import moment from 'moment';
 
@@ -69,7 +69,6 @@ class WalletCreationManager extends React.Component {
   }
 
   setUserInfo() {
-    this.props.dispatch(setIsLogged(true));
     requester.getUserInfo().then(res => {
       res.body.then(data => {
         if (data.locAddress) {
@@ -77,17 +76,10 @@ class WalletCreationManager extends React.Component {
             const ethBalance = eth / (Math.pow(10, 18));
             Wallet.getTokenBalance(data.locAddress).then(loc => {
               const locBalance = loc / (Math.pow(10, 18));
-              const { firstName, lastName, phoneNumber, email, locAddress, gender, isEmailVerified } = data;
-              const isAdmin = data.roles.findIndex((r) => r.name === 'ADMIN') !== -1;
-              this.props.dispatch(setUserInfo(firstName, lastName, phoneNumber, email, locAddress, ethBalance, locBalance, gender, isEmailVerified, isAdmin));
+              const { locAddress } = data;
+              this.props.dispatch(setUserInfo({ethBalance, locBalance, locAddress}));
             });
           });
-        } else {
-          const ethBalance = 0;
-          const locBalance = 0;
-          const { firstName, lastName, phoneNumber, email, locAddress, gender, isEmailVerified } = data;
-          const isAdmin = data.roles.findIndex((r) => r.name === 'ADMIN') !== -1;
-          this.props.dispatch(setUserInfo(firstName, lastName, phoneNumber, email, locAddress, ethBalance, locBalance, gender, isEmailVerified, isAdmin));
         }
       });
     });

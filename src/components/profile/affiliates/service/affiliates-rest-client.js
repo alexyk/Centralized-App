@@ -16,26 +16,36 @@ const HOST = "";
 
 const requests = {
   async getBookings(_page = 1) {
+    /*
     let page = _page - 1;
     let pages = [page1, page2, page3];
     return adaptBookings(pages[page]);
+    */
     // real
-    const query = `?page=${page}&size=20`;
+    const query = `?page=${_page - 1}&size=20`;
     return superagent
       .get(`${HOST}/me/affiliates/bookings${query}`)
       .then(response => {
-        return adaptBookings(response);
+        if (!response.body) {
+          return [];
+        }
+        return adaptBookings(response.body);
       });
   },
   async getGeneralAffiliateData() {
-    return mockedGeneralStats;
+    //return mockedGeneralStats;
     return superagent.get(`${HOST}/me/affiliates/stats`);
   },
   async getChartData() {
-    return adaptChartData(mockedChartData);
-    return superagent
-      .get(`${HOST}me/affiliates/statistics`)
-      .then(adaptChartData);
+    //return adaptChartData(mockedChartData);
+    return superagent.get(`${HOST}me/affiliates/statistics`).then(response => {
+      return response.body
+        ? adaptChartData(response.body)
+        : {
+            affiliatesChartData: [],
+            revenueChartData: []
+          };
+    });
   }
 };
 
@@ -55,22 +65,26 @@ function adaptBookings(response) {
 }
 
 function adaptChartData(response) {
-  debugger;
   let initialDate = moment.utc(response.initialDate);
   let today = moment();
   let totalDaysWithAffiliates = today.diff(initialDate, "days");
 
   let givenAffiliatesDailyStats = turnKeysIntoTimestamps(response.affiliates);
   let affiliatesChartData = _.times(i => {
-    let stamp = initialDate.add(i, "days").utc();
+    let stamp = moment(initialDate)
+      .add(i, "days")
+      .unix();
     let affiliates = givenAffiliatesDailyStats[stamp] || 0;
     return [i, affiliates];
   }, totalDaysWithAffiliates);
 
   let givenRevenueDailyStats = turnKeysIntoTimestamps(response.revenue);
   let revenueChartData = _.times(i => {
-    let stamp = initialDate.add(i, "days").time();
+    let stamp = moment(initialDate)
+      .add(i, "days")
+      .unix();
     let revenue = givenRevenueDailyStats[stamp] || 0;
+    debugger;
     return [i, revenue];
   }, totalDaysWithAffiliates);
 
@@ -78,7 +92,7 @@ function adaptChartData(response) {
     return Object.keys(originalObject).reduce((acc, date) => {
       return {
         ...acc,
-        [new Date(date).getTime()]: originalObject[date]
+        [moment(date).unix()]: originalObject[date]
       };
     }, {});
   }

@@ -3,6 +3,7 @@ import React from "react";
 import "./affiliates.css";
 import { ensureNaturalNumber } from "./helpers";
 import BookingsAndStats from "./BookingsAndStats";
+import Clipboard from "react-clipboard.js";
 
 import type {
   AffiliateBooking,
@@ -27,9 +28,35 @@ export default class AffiliatesDashboard extends React.Component<Props> {
     let totalAffiliates = ensureNaturalNumber(this.props.totalAffiliates);
     let totalRevenue = ensureNaturalNumber(this.props.totalRevenue);
     let thresholdMessage = "minimum withdrawal threshold is $50";
+
     return (
       <div className={"container"}>
-        <h2>My Affiliates</h2>
+        <div style={{ display: "flex", justifyContent: "space-between" }}>
+          <h2>My Affiliates</h2>
+
+          <div style={{ display: "flex", alignItems: "center" }}>
+            <span>Invite people with this link: </span>
+            <span
+              id="foo"
+              style={{
+                padding: "0 10px",
+                background: "white"
+              }}
+            >
+              https://github.com/zenorocha/clipboard.js.git
+            </span>
+
+            <Clipboard
+              data-clipboard-text="I'll be copied"
+              button-title="I'm a tooltip"
+            >
+              <img
+                src={require("./images/assignment-icon.svg")}
+                alt="Copy to clipboard"
+              />
+            </Clipboard>
+          </div>
+        </div>
         <hr />
         <div>
           <h3>
@@ -50,8 +77,8 @@ export default class AffiliatesDashboard extends React.Component<Props> {
             >
               Withdraw Revenue
             </button>
-            <span className={"threshold-message"}>{thresholdMessage}</span>
           </div>
+
           <div>
             <BookingsAndStats
               list={this.props.affiliateBookings}

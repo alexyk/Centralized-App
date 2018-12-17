@@ -95,7 +95,6 @@ export default class PopulatedAffiliatesPage extends React.Component<
         affiliatesChartData={this.state.affiliatesChartData}
         revenueChartData={this.state.revenueChartData}
         noBookingsText={"Sorry, no bookings yet!"}
-        // onPageChange={this.toggleItemsRefresh}
         bookingPaginationOptions={bookingPaginationOptions}
         onWithdraw={console.log}
       />

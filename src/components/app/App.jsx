@@ -1,8 +1,6 @@
 import '../../styles/css/main.css';
 import '../../styles/css/components/captcha/captcha-container.css';
-
 import { Redirect, Route, Switch, withRouter } from 'react-router-dom';
-import { setIsLogged, setUserInfo } from '../../actions/userInfo';
 import { setCurrencyExchangeRates, setLocEurRate } from '../../actions/exchangeRatesInfo';
 
 import Balance from '../external/Balance';
@@ -18,11 +16,9 @@ import { NotificationContainer } from 'react-notifications';
 import ProfilePage from '../profile/ProfilePage';
 import PropTypes from 'prop-types';
 import React from 'react';
-import { Wallet } from '../../services/blockchain/wallet.js';
 import WorldKuCoinCampaign from '../external/WorldKuCoinCampaign';
 import { connect } from 'react-redux';
 import moment from 'moment';
-import queryString from 'query-string';
 import requester from '../../requester';
 import GooglePlaces from '../common/GooglePlaces';
 import HelpPage from '../static/HelpPage';
@@ -41,9 +37,6 @@ class App extends React.Component {
   }
 
   componentDidMount() {
-    this.handleInternalAuthorization();
-    this.handleExternalAuthorization();
-
     this.requestExchangeRates();
     this.requestLocEurRate();
     this.requestCountries();
@@ -55,51 +48,6 @@ class App extends React.Component {
       return true;
     }
     return false;
-  }
-
-  setUserInfo() {
-    this.props.dispatch(setIsLogged(true));
-    requester.getUserInfo().then(res => {
-      res.body.then(data => {
-        if (data.locAddress) {
-          Wallet.getBalance(data.locAddress).then(eth => {
-            const ethBalance = eth / (Math.pow(10, 18));
-            Wallet.getTokenBalance(data.locAddress).then(loc => {
-              const locBalance = loc / (Math.pow(10, 18));
-              const { firstName, lastName, phoneNumber, email, locAddress, gender, isEmailVerified } = data;
-              const isAdmin = data.roles.findIndex((r) => r.name === 'ADMIN') !== -1;
-              this.props.dispatch(setUserInfo(firstName, lastName, phoneNumber, email, locAddress, ethBalance, locBalance, gender, isEmailVerified, isAdmin));
-            });
-          });
-        } else {
-          const ethBalance = 0;
-          const locBalance = 0;
-          const { firstName, lastName, phoneNumber, email, locAddress, gender, isEmailVerified } = data;
-          const isAdmin = data.roles.findIndex((r) => r.name === 'ADMIN') !== -1;
-          this.props.dispatch(setUserInfo(firstName, lastName, phoneNumber, email, locAddress, ethBalance, locBalance, gender, isEmailVerified, isAdmin));
-        }
-      });
-    });
-  }
-
-  handleInternalAuthorization() {
-    if (localStorage[Config.getValue('domainPrefix') + '.auth.username']
-      && localStorage[Config.getValue('domainPrefix') + '.auth.locktrip']) {
-      this.setUserInfo();
-    }
-  }
-
-  handleExternalAuthorization() {
-    const queryStringParameters = queryString.parse(this.props.location.search);
-    const { authEmail, authToken } = queryStringParameters;
-    if (authEmail && authToken) {
-      localStorage[Config.getValue('domainPrefix') + '.auth.username'] = authEmail;
-      localStorage[Config.getValue('domainPrefix') + '.auth.locktrip'] = decodeURI(authToken);
-      this.setUserInfo();
-      const url = this.props.location.pathname;
-      const search = this.getQueryString(queryStringParameters);
-      this.props.history.push(url + search);
-    }
   }
 
   requestExchangeRates() {
@@ -121,16 +69,6 @@ class App extends React.Component {
 
   requestCountries() {
     this.props.dispatch(fetchCountries());
-  }
-
-  getQueryString(queryStringParameters) {
-    let queryString = '?';
-    queryString += 'region=' + encodeURI(queryStringParameters.region);
-    queryString += '&currency=' + encodeURI(queryStringParameters.currency);
-    queryString += '&startDate=' + encodeURI(queryStringParameters.startDate);
-    queryString += '&endDate=' + encodeURI(queryStringParameters.endDate);
-    queryString += '&rooms=' + encodeURI(queryStringParameters.rooms);
-    return queryString;
   }
 
   render() {
