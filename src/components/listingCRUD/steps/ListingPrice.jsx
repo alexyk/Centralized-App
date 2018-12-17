@@ -14,63 +14,59 @@ function ListingPrice(props) {
     <div id="listing-price-container">
       <ListingCrudNav progress='100%' />
       <div className="container">
-        <div className="row">
-          <div className="listings create">
-            <div className="col-md-3">
-              <GuestSettingsAside routes={props.routes} />
-            </div>
+        <div className="listings create">
+          <GuestSettingsAside routes={props.routes} />
 
-            {!props.values.loading ? <div className="col-md-9">
-              <div className="form-group">
-                <h2>Default nightly rate</h2>
-                <hr />
-                <div className="col-md-12">
-                  <div className="col-md-6">
-                    <div className="form-group">
-                      <label htmlFor="city">Currency</label>
-                      <div className='select'>
-                        <select
-                          onChange={props.onChange}
+          {!props.values.loading ? <div id="reservation-hotel-review-room">
+            <div className="form-group">
+              <h2>Default nightly rate</h2>
+              <hr />
+              <div className="col-md-12">
+                <div className="col-md-6">
+                  <div className="form-group">
+                    <label htmlFor="city">Currency</label>
+                    <div className='select'>
+                      <select
+                        onChange={props.onChange}
 
-                          name="currency"
-                          value={currency}
-                          required="required"
-                          id="currency">
-                          {currencies.map((item, i) => {
-                            return <option key={i} value={item.id}>{item.code}</option>;
-                          })}
-                        </select>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div className="col-md-12">
-                  <div className="col-md-6">
-                    <div className="form-group">
-                      <label htmlFor="defaultDailyPrice">Price per Night</label>
-                      <input onChange={props.onChange} type="number" id="defaultDailyPrice" name="defaultDailyPrice" value={defaultDailyPrice} />
-                    </div>
-                  </div>
-                </div>
-                <div className="col-md-12">
-                  <div className="col-md-6">
-                    <div className="form-group">
-                      <label htmlFor="cleaningFee">Cleaning Fee</label>
-                      <input onChange={props.onChange} type="number" id="cleaningFee" name="cleaningFee" value={cleaningFee} />
-                    </div>
-                  </div>
-                </div>
-                <div className="col-md-12">
-                  <div className="col-md-6">
-                    <div className="form-group">
-                      <label htmlFor="depositRate">Deposit Required</label>
-                      <input onChange={props.onChange} type="number" id="depositRate" name="depositRate" value={depositRate} />
+                        name="currency"
+                        value={currency}
+                        required="required"
+                        id="currency">
+                        {currencies.map((item, i) => {
+                          return <option key={i} value={item.id}>{item.code}</option>;
+                        })}
+                      </select>
                     </div>
                   </div>
                 </div>
               </div>
-            </div> : <div className="loader"></div>}
-          </div>
+              <div className="col-md-12">
+                <div className="col-md-6">
+                  <div className="form-group">
+                    <label htmlFor="defaultDailyPrice">Price per Night</label>
+                    <input onChange={props.onChange} type="number" id="defaultDailyPrice" name="defaultDailyPrice" value={defaultDailyPrice} />
+                  </div>
+                </div>
+              </div>
+              <div className="col-md-12">
+                <div className="col-md-6">
+                  <div className="form-group">
+                    <label htmlFor="cleaningFee">Cleaning Fee</label>
+                    <input onChange={props.onChange} type="number" id="cleaningFee" name="cleaningFee" value={cleaningFee} />
+                  </div>
+                </div>
+              </div>
+              <div className="col-md-12">
+                <div className="col-md-6">
+                  <div className="form-group">
+                    <label htmlFor="depositRate">Deposit Required</label>
+                    <input onChange={props.onChange} type="number" id="depositRate" name="depositRate" value={depositRate} />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div> : <div className="loader"></div>}
         </div>
       </div>
       <FooterNav next={'#'} prev={props.prev} handleClickNext={props.finish} step={10} />

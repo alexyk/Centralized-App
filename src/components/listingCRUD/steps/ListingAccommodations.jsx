@@ -52,34 +52,31 @@ function ListingAccommodations(props) {
     <div>
       <ListingCrudNav progress='33%' />
       <div className="container">
-        <div className="row">
-          <div className="listings create">
-            <div className="col-md-3">
-              <BasicsAside routes={props.routes} />
+        <div className="listings create">
+          <BasicsAside routes={props.routes} />
+          <div id="reservation-hotel-review-room">
+
+            <div>
+              <h2>Accommodation</h2>
+              <hr />
             </div>
-            <div id="reservation-hotel-review-room" className="col-md-9">
 
-              <div>
-                <h2>Accommodation</h2>
-                <hr />
-              </div>
+            <div>
+              <h3>How many guests can stay in your place?</h3>
+              <label>
+                <span className="counter-label">Guests:</span>
+                <Counter
+                  name="guestsIncluded"
+                  value={guestsIncluded}
+                  onChange={props.updateCounter} />
+              </label>
+            </div>
 
-              <div>
-                <h3>How many guests can stay in your place?</h3>
-                <label>
-                  <span className="counter-label">Guests:</span>
-                  <Counter
-                    name="guestsIncluded"
-                    value={guestsIncluded}
-                    onChange={props.updateCounter} />
-                </label>
-              </div>
+            <br />
 
-              <br />
-
-              <div className="bedroom-container-place-type">
-                <h3>How many bedrooms can your guests use?</h3>
-                <div className='select'>
+            <div className="bedroom-container-place-type">
+              <h3>How many bedrooms can your guests use?</h3>
+              <div className='select'>
                 <Dropdown
                   className="bedroom-counter l-select"
                   name="bedroomCount"
@@ -88,30 +85,29 @@ function ListingAccommodations(props) {
                   onChange={props.updateBedrooms}
                 />
               </div>
-              </div>
-              <div>
-                <h2>Sleeping arrangement</h2>
-                <hr />
-                {bedroomRows}
-              </div>
-
-              <div>
-                <h2>Bathrooms</h2>
-                <hr />
-                <h3>How many bathrooms can your guests use?</h3>
-
-                <label>
-                  <span className="counter-label">Bathrooms:</span>
-                  <Counter
-                    name="bathrooms"
-                    value={bathrooms}
-                    onChange={props.updateCounter} />
-                </label>
-              </div>
-
-              <br />
-
             </div>
+            <div>
+              <h2>Sleeping arrangement</h2>
+              <hr />
+              {bedroomRows}
+            </div>
+
+            <div>
+              <h2>Bathrooms</h2>
+              <hr />
+              <h3>How many bathrooms can your guests use?</h3>
+
+              <label>
+                <span className="counter-label">Bathrooms:</span>
+                <Counter
+                  name="bathrooms"
+                  value={bathrooms}
+                  onChange={props.updateCounter} />
+              </label>
+            </div>
+
+            <br />
+
           </div>
         </div>
       </div>

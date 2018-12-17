@@ -18,7 +18,7 @@ import '../../../styles/css/components/profile/listings/listing-photos.css';
 
 function ListingPhotos(props) {
   const SortableItem = SortableElement(({ value, i }) =>
-    <div className="uploaded-small-picture col-md-4" >
+    <div className="uploaded-small-picture" >
       <button onClick={props.removePhoto} className="close">
         <img className="inactiveLink" src={Config.getValue('basePath') + 'images/icon-delete.png'} alt="remove" />
       </button>
@@ -28,9 +28,9 @@ function ListingPhotos(props) {
 
   const SortableList = SortableContainer(({ items }) => {
     return (
-      <div className="col-md-12">
+      <div className="pictures-preview">
         {items.map((value, index) => (
-          <SortableItem key={`item-${index}`} index={index} value={Config.getValue('imgHost') + value} />
+          <SortableItem key={`item-${index}`} index={index} value={value} />
         ))}
       </div>
     );
@@ -45,37 +45,31 @@ function ListingPhotos(props) {
     <div>
       <ListingCrudNav progress='66%' />
       <div className="container">
-        <div className="row">
-          <div className="listings create">
-            <div className="col-md-3">
-              <PlaceDescriptionAside routes={props.routes} />
-            </div>
-            <div id="reservation-hotel-review-room" className="col-md-9">
-              <h2>Upload photos of your place</h2>
-              <hr />
+        <div className="listings create">
+          <PlaceDescriptionAside routes={props.routes} />
+          <div id="reservation-hotel-review-room">
+            <h2>Upload photos of your place</h2>
+            <hr />
 
-              <Dropzone
-                className="pictures-upload"
-                multiple={true}
-                maxSize={10485760}
-                accept="image/jpg, image/jpeg, image/png"
-                onDrop={props.onImageDrop}
-                onDropRejected={onDropRejected}>
-                <p>Drop files to upload</p>
-                <button className="button">Choose file</button>
-              </Dropzone>
+            <Dropzone
+              className="pictures-upload"
+              multiple={true}
+              maxSize={10485760}
+              accept="image/jpg, image/jpeg, image/png"
+              onDrop={props.onImageDrop}
+              onDropRejected={onDropRejected}>
+              <p>Drop files to upload</p>
+              <button className="button">Choose file</button>
+            </Dropzone>
 
-              <div className="pictures-preview col-md-12">
-                {props.values.uploadedFilesUrls.length === 0
-                  ? null
-                  : <SortableList
-                    axis={'xy'}
-                    lockToContainerEdges={true}
-                    items={props.values.uploadedFilesUrls}
-                    onSortEnd={props.onSortEnd} />
-                }
-              </div>
-            </div>
+            {props.values.uploadedFilesUrls.length === 0
+              ? null
+              : <SortableList
+                axis={'xy'}
+                lockToContainerEdges={true}
+                items={props.values.uploadedFilesUrls}
+                onSortEnd={props.onSortEnd} />
+            }
           </div>
         </div>
       </div>
