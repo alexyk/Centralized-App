@@ -2,7 +2,9 @@
 import React from "react";
 import AffiliatesDashboard from "./AffiliatesComponent";
 import { AffiliatesService } from "./service/affiliates-rest-client";
-
+import { selectors } from "../../../reducers/userInfo";
+import { connect } from "react-redux";
+import { withRouter } from "react-router-dom";
 import type {
   AffiliateBooking,
   RevenueChartData,
@@ -19,10 +21,7 @@ type State = {
 
 type Props = {};
 
-export default class PopulatedAffiliatesPage extends React.Component<
-  Props,
-  State
-> {
+class PopulatedAffiliatesPage extends React.Component<Props, State> {
   toggleItemsRefresh: Function;
   getGeneralAffiliatesData: Function;
   getChartData: Function;
@@ -86,7 +85,9 @@ export default class PopulatedAffiliatesPage extends React.Component<
       initialPage: 1,
       pageSize: 10
     };
-
+    let referralLink = this.props.userId
+      ? `${window.location.origin}/?refId=${this.props.userId}`
+      : "";
     return (
       <AffiliatesDashboard
         totalAffiliates={this.state.totalAffiliates}
@@ -97,7 +98,13 @@ export default class PopulatedAffiliatesPage extends React.Component<
         noBookingsText={"Sorry, no bookings yet!"}
         bookingPaginationOptions={bookingPaginationOptions}
         onWithdraw={console.log}
+        affiliateLink={referralLink}
       />
     );
   }
 }
+export default connect(function mapStateToProps(state) {
+  return {
+    userId: selectors.getUserId(state.userInfo)
+  };
+})(withRouter(PopulatedAffiliatesPage));

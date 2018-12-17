@@ -1,6 +1,7 @@
 // import { DropdownButton, MenuItem } from 'react-bootstrap';
 
 import { setCurrency } from '../../actions/paymentInfo';
+import { getCurrency } from '../../selectors/paymentInfo';
 
 import PropTypes from 'prop-types';
 import React from 'react';
@@ -8,14 +9,14 @@ import { connect } from 'react-redux';
 
 class AttachedFooter extends React.Component {
   componentDidMount() {
-    const { currency } = this.props.paymentInfo;
+    const { currency } = this.props;
     if (localStorage['currency']) setCurrency(localStorage['currency']);
     else localStorage['currency'] = currency;
   }
 
   componentDidUpdate(prevProps) {
-    const prevCurrency = prevProps.paymentInfo.currency;
-    const { currency } = this.props.paymentInfo;
+    const prevCurrency = prevProps.currency;
+    const { currency } = this.props;
     if (prevCurrency !== currency) {
       localStorage['currency'] = currency;
     }
@@ -46,7 +47,7 @@ class AttachedFooter extends React.Component {
             <div className="col-md-2">
               <select
                 onChange={(e) => this.props.dispatch(setCurrency(e.target.value))}
-                value={this.props.paymentInfo.currency}
+                value={this.props.currency}
                 className="currency-switcher">
                 <option value="GBP">£ GBP</option>
                 <option value="EUR">€ EUR</option>
@@ -69,13 +70,13 @@ class AttachedFooter extends React.Component {
 AttachedFooter.propTypes = {
   // start Redux props
   dispatch: PropTypes.func,
-  paymentInfo: PropTypes.object
+  currency: PropTypes.string
 };
 
 function mapStateToProps(state) {
   const { paymentInfo } = state;
   return {
-    paymentInfo
+    currency: getCurrency(paymentInfo)
   };
 }
 

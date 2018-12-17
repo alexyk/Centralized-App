@@ -8,8 +8,8 @@ const initialState = {
   phoneNumber: "",
   email: "",
   locAddress: "",
-  locBalance: "",
-  ethBalance: "",
+  locBalance: 0,
+  ethBalance: 0,
   gender: "",
   isEmailVerified: false,
   isAdmin: false
@@ -45,3 +45,9 @@ export default function reducer(state = initialState, action) {
       return state;
   }
 }
+
+export const selectors = {
+  getUserId(state) {
+    return state.id;
+  }
+};

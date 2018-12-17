@@ -66,6 +66,7 @@
     "recompose": "^0.30.0",
     "redux": "^3.7.2",
     "redux-thunk": "^2.3.0",
+    "reselect": "^4.0.0",
     "scrypt": "^6.0.3",
     "searchkit": "^2.3.2",
     "slick-carousel": "^1.8.1",

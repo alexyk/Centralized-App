@@ -16,7 +16,6 @@ type Props = {
   totalRevenue: number,
   affiliateBookings: Array<AffiliateBooking>,
   noBookingsText: string,
-  // onPageChange: Function,
   bookingPaginationOptions: Object,
   onWithdraw: Function,
   affiliatesChartData: AffiliatesChartData,
@@ -43,7 +42,7 @@ export default class AffiliatesDashboard extends React.Component<Props> {
                 background: "white"
               }}
             >
-              https://github.com/zenorocha/clipboard.js.git
+              {this.props.affiliateLink}
             </span>
 
             <Clipboard

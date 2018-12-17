@@ -4,9 +4,9 @@ import moment from "moment";
 import * as _ from "ramda";
 import { AffiliatesServiceInterface } from "./affiliates-rest-client.flow";
 import type {
-  AffiliateBooking,
-  RevenueChartData,
-  AffiliatesChartData
+  AffiliateBooking
+  // RevenueChartData,
+  // AffiliatesChartData
 } from "../AffiliatesComponent.flow";
 
 import mockedGeneralStats from "./example-responses/get-general-stats";

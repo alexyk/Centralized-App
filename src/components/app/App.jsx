@@ -28,7 +28,7 @@ import RegisterManager from '../authentication/RegisterManager';
 import WalletCreationManager from '../authentication/WalletCreationManager';
 import PasswordRecoveryManager from '../authentication/PasswordRecoveryManager';
 import { fetchCountries } from '../../actions/countriesInfo';
-
+import referralIdPersister from "../profile/affiliates/service/persist-referral-id";
 class App extends React.Component {
   constructor(props) {
     super(props);
@@ -40,6 +40,7 @@ class App extends React.Component {
     this.requestExchangeRates();
     this.requestLocEurRate();
     this.requestCountries();
+
   }
 
   isAuthenticated() {
@@ -92,7 +93,11 @@ class App extends React.Component {
         <NotificationContainer />
 
         <Switch>
-          <Route exact path="/" render={() => <HomeRouterPage />} />
+          <Route exact path="/" render={(props) => {
+            debugger;
+            referralIdPersister.tryToSetFromSearch(props.location.search);
+            return <HomeRouterPage />
+          }}/>
           <Route exact path="/profile/listings/edit/:step/:id" render={() => !this.isAuthenticated() ? <Redirect to="/" /> : <EditListingPage />} />
           <Route exact path="/users/resetPassword/:confirm" render={() => <HomeRouterPage />} />
           <Route path="/homes" render={() => <HomeRouterPage />} />
@@ -127,14 +132,6 @@ App.propTypes = {
 
   // start Redux props
   dispatch: PropTypes.func,
-  paymentInfo: PropTypes.object
 };
 
-function mapStateToProps(state) {
-  const { paymentInfo } = state;
-  return {
-    paymentInfo
-  };
-}
-
-export default withRouter(connect(mapStateToProps)(App));
+export default withRouter(connect()(App));

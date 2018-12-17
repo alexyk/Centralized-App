@@ -54,7 +54,7 @@ class ListingLocation extends React.Component {
 
   onChange(selectedOption) {
     if (selectedOption) {
-      this.props.onChange({ target: { name: 'selectedOption', value: selectedOption }});
+      this.props.onChange({ target: { name: 'selectedOption', value: selectedOption } });
       this.geocode(selectedOption.value);
     }
   }
@@ -76,7 +76,7 @@ class ListingLocation extends React.Component {
         if (!predictions) {
           return [];
         }
-        
+
         return predictions.map(c => ({
           value: c.place_id,
           label: c.description
@@ -91,7 +91,7 @@ class ListingLocation extends React.Component {
         if (data.status === 'OK') {
           const { lat, lng } = data.result.geometry.location;
           const address = this.getAddressComponents(data.result.address_components);
-          console.log(data)
+          console.log(data);
           this.props.onChange({ target: { name: 'street', value: this.props.values.selectedOption.label } });
           this.props.onChange({ target: { name: 'country', value: address.country } });
           this.props.onChange({ target: { name: 'state', value: address.state } });
@@ -133,7 +133,7 @@ class ListingLocation extends React.Component {
 
     return address;
   }
-  
+
 
   render() {
 
@@ -152,54 +152,50 @@ class ListingLocation extends React.Component {
       <div id="create-listing-location">
         <ListingCrudNav progress='33%' />
         <div className="container">
-          <div className="row">
-            <div className="listings create">
-              <div className="col-md-3">
-                <BasicsAside routes={this.props.routes} />
-              </div>
-              <div className="col-md-9">
-                <div className="form-group">
-                  <h2>Where&rsquo;s your place located?</h2>
-                  <hr />
-                  <div className="col-md-12">
-                    <div className="form-group">
-                      <label htmlFor="street">Street address</label>
-                      <AsyncSelect
-                        value={selectedOption}
-                        styles={customStyles}
-                        loadOptions={this.loadOptions}
-                        onInputChange={this.onInputChange}
-                        onChange={this.onChange}
-                        placeholder={'e.g. 123 Easy Street'}
-                        isClearable
-                        required
-                      />
-                    </div>
-                    <div className="form-group">
-                      <label htmlFor="country">Country/Region</label>
-                      <input id="country" name="country" onChange={this.props.onChange} value={country} placeholder="-- Select country/region --" />
-                    </div>
-                    <div className="form-group">
-                      <label htmlFor="city">City</label>
-                      <input id="city" name="city" onChange={this.props.onChange} value={city} />
-                    </div>
-
-                    <div className="form-group">
-                      <label htmlFor="country">State</label>
-                      <input id="state" name="state" onChange={this.props.onChange} value={state} />
-                    </div>
-                    <div className="protection-message">
-                      <p><i className="fa fa-2x fa-lightbulb-o" aria-hidden="true"></i>Your exact address will only be shared with confirmed guests.</p>
-                    </div>
-                    {this.props.values.lat && this.props.values.lng && <LocationPicker
-                      containerElement={<div style={{ height: '100%' }} />}
-                      mapElement={<div style={{ height: '400px' }} />}
-                      defaultPosition={defaultPosition}
-                      onChange={this.props.handleLocationChange}
-                      radius={-1}
-                      zoom={16}
-                    />}
+          <div className="listings create">
+            <BasicsAside routes={this.props.routes} />
+            <div id="reservation-hotel-review-room">
+              <div className="form-group">
+                <h2>Where&rsquo;s your place located?</h2>
+                <hr />
+                <div className="col-md-12">
+                  <div className="form-group">
+                    <label htmlFor="street">Street address</label>
+                    <AsyncSelect
+                      value={selectedOption}
+                      styles={customStyles}
+                      loadOptions={this.loadOptions}
+                      onInputChange={this.onInputChange}
+                      onChange={this.onChange}
+                      placeholder={'e.g. 123 Easy Street'}
+                      isClearable
+                      required
+                    />
                   </div>
+                  <div className="form-group">
+                    <label htmlFor="country">Country/Region</label>
+                    <input id="country" name="country" onChange={this.props.onChange} value={country} placeholder="-- Select country/region --" />
+                  </div>
+                  <div className="form-group">
+                    <label htmlFor="city">City</label>
+                    <input id="city" name="city" onChange={this.props.onChange} value={city} />
+                  </div>
+
+                  <div className="form-group">
+                    <label htmlFor="country">State</label>
+                    <input id="state" name="state" onChange={this.props.onChange} value={state} />
+                  </div>
+                  <div className="protection-message">
+                    <p><i className="fa fa-2x fa-lightbulb-o" aria-hidden="true"></i>Your exact address will only be shared with confirmed guests.</p>
+                  </div>
+                  {this.props.values.lat && this.props.values.lng && <LocationPicker
+                    containerElement={<div style={{ height: '100%' }} />}
+                    mapElement={<div style={{ height: '400px' }} />}
+                    defaultPosition={defaultPosition}
+                    onChange={this.props.handleLocationChange}
+                    radius={-1}
+                    zoom={16}
+                  />}
                 </div>
               </div>
             </div>

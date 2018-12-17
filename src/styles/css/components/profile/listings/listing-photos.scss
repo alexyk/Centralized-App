@@ -1,21 +1,79 @@
-@import '../../../vendors/include-media';
-#reservation-hotel-review-room {
-  .pictures-upload {
-    width: 100%;
-    padding: 50px 0;
-    text-align: center;
-    background: #FFFFFF;
-    border: 2px dashed #CCCCCC;
-    border-radius: 3px;
-    margin: 0 auto;
-    @include media('>=tablet') {
-      width: 30%;
+$breakpoints: (
+  "phone": 480px,
+  "tablet": 768px,
+  "desktop": 1024px
+);
+
+@import "../../../vendors/include-media";
+@import "../../../base/variables";
+
+.listings {
+  display: flex;
+  &.landing {
+    justify-content: space-around;
+  }
+  &.create {
+    min-height: 400px;
+  }
+  @include media("<desktop") {
+    flex-wrap: wrap;
+  }
+  .basics-aside,
+  .guest-settings-aside,
+  .place-description-aside {
+    width: 25%;
+    padding: 0 15px;
+    @include media("<desktop") {
+      width: 100%;
     }
-}
-.listings.create {
-  min-height: 400px;
-}
-.pictures-upload p {
-    font-size: 20px;
-}
+  }
+  #reservation-hotel-review-room {
+    width: 75%;
+    padding: 0 15px;
+    @include media("<desktop") {
+      width: 100%;
+    }
+    .pictures-upload {
+      width: 100%;
+      padding: 50px 0;
+      text-align: center;
+      background: #ffffff;
+      border: 2px dashed #cccccc;
+      border-radius: 3px;
+      margin: 0 auto;
+      @include media(">=tablet") {
+        width: 30%;
+      }
+      p {
+        font-size: 20px;
+      }
+      .host-step {
+        margin-bottom: 10px;
+        a {
+          font-size: 16px;
+          display: block;
+        }
+      }
+    }
+    .pictures-preview {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      @include media("<phone") {
+        justify-content: space-around;
+      }
+      margin: 20px 0;
+      .uploaded-small-picture {
+        width: 30%;
+        position: relative;
+        text-align: center;
+        @include media("<tablet") {
+          width: 45%;
+        }
+        @include media("<phone") {
+          width: 90%;
+        }
+      }
+    }
+  }
 }

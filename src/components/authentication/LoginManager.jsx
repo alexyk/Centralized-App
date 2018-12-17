@@ -8,6 +8,7 @@ import { NotificationManager } from 'react-notifications';
 import { LONG } from '../../constants/notificationDisplayTimes.js';
 import LoginModal from './modals/LoginModal';
 import { closeModal, openModal } from '../../actions/modalsInfo';
+import { isActive } from '../../selectors/modalsInfo';
 import { setUserInfo } from '../../actions/userInfo';
 import { Wallet } from '../../services/blockchain/wallet.js';
 import { VERIFICATION_EMAIL_SENT } from '../../constants/infoMessages.js';
@@ -298,7 +299,7 @@ class LoginManager extends React.Component {
     return (
       <React.Fragment>
         <LoginModal
-          isActive={this.props.modalsInfo.isActive[LOGIN]}
+          isActive={this.props.isActive[LOGIN]}
           openModal={this.openModal}
           closeModal={this.closeModal}
           loginEmail={this.state.loginEmail}
@@ -308,7 +309,7 @@ class LoginManager extends React.Component {
           isLogging={this.state.isLogging}
         />
         <UpdateCountryModal 
-          isActive={this.props.modalsInfo.isActive[UPDATE_COUNTRY]} 
+          isActive={this.props.isActive[UPDATE_COUNTRY]}
           openModal={this.openModal} 
           closeModal={this.closeModal} 
           onChange={this.onChange} 
@@ -320,21 +321,21 @@ class LoginManager extends React.Component {
           isLogging={this.state.isLogging}
         />
         <EmailVerificationModal 
-          isActive={this.props.modalsInfo.isActive[EMAIL_VERIFICATION]} 
+          isActive={this.props.isActive[EMAIL_VERIFICATION]}
           openModal={this.openModal} 
           closeModal={this.closeModal} 
           onChange={this.onChange} 
           requestVerificationEmail={this.requestVerificationEmail} 
         />
         <EnterEmailVerificationTokenModal 
-          isActive={this.props.modalsInfo.isActive[ENTER_EMAIL_VERIFICATION_SECURITY_TOKEN]} 
+          isActive={this.props.isActive[ENTER_EMAIL_VERIFICATION_SECURITY_TOKEN]}
           openModal={this.openModal} 
           closeModal={this.closeModal} 
           onChange={this.onChange} 
           handleLogin={() => executeWithToken(this.login)} 
           emailVerificationToken={this.state.emailVerificationToken} 
         />
-        {/* <AirdropLoginModal isActive={this.props.modalsInfo.isActive[AIRDROP_LOGIN]} openModal={this.openModal} closeModal={this.closeModal} loginEmail={this.state.loginEmail} loginPassword={this.state.loginPassword} onChange={this.onChange} handleLogin={this.handleAirdropLogin} /> */}
+        {/* <AirdropLoginModal isActive={this.props.isActive[AIRDROP_LOGIN]} openModal={this.openModal} closeModal={this.closeModal} loginEmail={this.state.loginEmail} loginPassword={this.state.loginPassword} onChange={this.onChange} handleLogin={this.handleAirdropLogin} /> */}
       </React.Fragment>
     );
   }
@@ -347,16 +348,13 @@ LoginManager.propTypes = {
 
   // start Redux props
   dispatch: PropTypes.func,
-  userInfo: PropTypes.object,
-  modalsInfo: PropTypes.object,
+  isActive: PropTypes.object,
 };
 
 function mapStateToProps(state) {
-  const { userInfo, modalsInfo, airdropInfo } = state;
+  const { modalsInfo } = state;
   return {
-    userInfo,
-    modalsInfo,
-    airdropInfo
+    isActive: isActive(modalsInfo)
   };
 }
 

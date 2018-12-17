@@ -6,6 +6,7 @@ import { connect } from 'react-redux';
 import { NotificationManager } from 'react-notifications';
 import { LONG } from '../../constants/notificationDisplayTimes.js';
 import { closeModal, openModal } from '../../actions/modalsInfo';
+import { isActive } from '../../selectors/modalsInfo';
 import { setUserInfo } from '../../actions/userInfo';
 import { Wallet } from '../../services/blockchain/wallet.js';
 import moment from 'moment';
@@ -136,7 +137,7 @@ class WalletCreationManager extends React.Component {
           userName={this.state.userName} 
           walletPassword={this.state.walletPassword} 
           repeatWalletPassword={this.state.repeatWalletPassword} 
-          isActive={this.props.modalsInfo.isActive[CREATE_WALLET]} 
+          isActive={this.props.isActive[CREATE_WALLET]}
           openModal={this.openModal} 
           closeModal={this.closeModal} 
           onChange={this.onChange} 
@@ -145,13 +146,13 @@ class WalletCreationManager extends React.Component {
           setUserInfo={this.setUserInfo} 
           userToken={this.state.userToken} 
           userName={this.state.userName} 
-          isActive={this.props.modalsInfo.isActive[SAVE_WALLET]} 
+          isActive={this.props.isActive[SAVE_WALLET]}
           openModal={this.openModal} 
           closeModal={this.closeModal} 
           onChange={this.onChange} 
         />
         <ConfirmWalletModal 
-          isActive={this.props.modalsInfo.isActive[CONFIRM_WALLET]} 
+          isActive={this.props.isActive[CONFIRM_WALLET]}
           openModal={this.openModal} 
           closeModal={this.closeModal} 
           handleMnemonicWordsChange={this.handleMnemonicWordsChange} 
@@ -171,16 +172,13 @@ WalletCreationManager.propTypes = {
 
   // start Redux props
   dispatch: PropTypes.func,
-  userInfo: PropTypes.object,
-  modalsInfo: PropTypes.object,
+  isActive: PropTypes.object,
 };
 
 function mapStateToProps(state) {
-  const { userInfo, modalsInfo, airdropInfo } = state;
+  const { modalsInfo } = state;
   return {
-    userInfo,
-    modalsInfo,
-    airdropInfo
+    isActive: isActive(modalsInfo)
   };
 }
 
