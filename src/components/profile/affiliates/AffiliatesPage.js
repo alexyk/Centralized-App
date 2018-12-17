@@ -51,6 +51,7 @@ class PopulatedAffiliatesPage extends React.Component<Props, State> {
   getGeneralAffiliatesData() {
     AffiliatesService.getGeneralAffiliateData().then(
       ({ totalAffiliates, totalRevenue }) => {
+        debugger;
         this.setState({
           totalAffiliates,
           totalRevenue

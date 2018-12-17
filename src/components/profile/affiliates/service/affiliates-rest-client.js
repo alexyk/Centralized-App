@@ -12,7 +12,7 @@ import type {
 import mockedGeneralStats from "./example-responses/get-general-stats";
 import { page1, page2, page3 } from "./example-responses/get-bookings";
 import mockedChartData from "./example-responses/get-affiliate-revenue-chart-data";
-const HOST = "";
+const HOST = "https://dev.locktrip.com/api";
 
 const requests = {
   async getBookings(_page = 1) {
@@ -25,6 +25,7 @@ const requests = {
     const query = `?page=${_page - 1}&size=20`;
     return superagent
       .get(`${HOST}/me/affiliates/bookings${query}`)
+      .set("authorization", localStorage.getItem("rc.auth.locktrip"))
       .then(response => {
         if (!response.body) {
           return [];
@@ -34,18 +35,26 @@ const requests = {
   },
   async getGeneralAffiliateData() {
     //return mockedGeneralStats;
-    return superagent.get(`${HOST}/me/affiliates/stats`);
+    return superagent
+      .get(`${HOST}/me/affiliates/stats`)
+      .set("authorization", localStorage.getItem("rc.auth.locktrip"))
+      .then(response => {
+        return response.body;
+      });
   },
   async getChartData() {
     //return adaptChartData(mockedChartData);
-    return superagent.get(`${HOST}me/affiliates/statistics`).then(response => {
-      return response.body
-        ? adaptChartData(response.body)
-        : {
-            affiliatesChartData: [],
-            revenueChartData: []
-          };
-    });
+    return superagent
+      .get(`${HOST}/me/affiliates/statistics`)
+      .set("authorization", localStorage.getItem("rc.auth.locktrip"))
+      .then(response => {
+        return response.body
+          ? adaptChartData(response.body)
+          : {
+              affiliatesChartData: [],
+              revenueChartData: []
+            };
+      });
   }
 };
 
@@ -65,7 +74,9 @@ function adaptBookings(response) {
 }
 
 function adaptChartData(response) {
-  let initialDate = moment.utc(response.initialDate);
+  debugger;
+  let initialDate = moment(response.initialDate).toISOString();
+  let iu = moment(initialDate).unix();
   let today = moment();
   let totalDaysWithAffiliates = today.diff(initialDate, "days");
 
@@ -76,7 +87,7 @@ function adaptChartData(response) {
       .unix();
     let affiliates = givenAffiliatesDailyStats[stamp] || 0;
     return [i, affiliates];
-  }, totalDaysWithAffiliates);
+  }, totalDaysWithAffiliates || 1);
 
   let givenRevenueDailyStats = turnKeysIntoTimestamps(response.revenue);
   let revenueChartData = _.times(i => {
@@ -86,13 +97,15 @@ function adaptChartData(response) {
     let revenue = givenRevenueDailyStats[stamp] || 0;
     debugger;
     return [i, revenue];
-  }, totalDaysWithAffiliates);
+  }, totalDaysWithAffiliates || 1);
 
   function turnKeysIntoTimestamps(originalObject) {
     return Object.keys(originalObject).reduce((acc, date) => {
+      let initialDate = moment.utc(date);
+      let iu = moment(initialDate).unix();
       return {
         ...acc,
-        [moment(date).unix()]: originalObject[date]
+        [iu]: originalObject[date]
       };
     }, {});
   }

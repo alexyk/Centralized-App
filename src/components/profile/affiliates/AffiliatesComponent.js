@@ -46,8 +46,8 @@ export default class AffiliatesDashboard extends React.Component<Props> {
             </span>
 
             <Clipboard
-              data-clipboard-text="I'll be copied"
-              button-title="I'm a tooltip"
+              data-clipboard-text={this.props.affiliateLink}
+              button-title="Copy link"
             >
               <img
                 src={require("./images/assignment-icon.svg")}

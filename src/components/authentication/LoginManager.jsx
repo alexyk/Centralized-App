@@ -32,7 +32,7 @@ import {
 } from '../../constants/successMessages.js';
 import {
   LOGIN,
-  UPDATE_COUNTRY
+  UPDATE_COUNTRY, REGISTER
 } from '../../constants/modals.js';
 import * as _ from 'ramda';
 
@@ -67,11 +67,16 @@ class LoginManager extends React.Component {
     this.handleMobileAuthorization();
 
     const queryParams = queryString.parse(this.props.location.search);
+    if(queryParams.refId){
+      this.openModal(REGISTER)
+    }
+
     if (queryParams.token) {
       this.setState({ recoveryToken: queryParams.token });
       this.openModal(ENTER_RECOVERY_TOKEN);
     }
 
+    /*
     if (queryParams.emailVerificationSecurityCode) {
       const { emailVerificationSecurityCode } = queryParams;
       requester.verifyEmailSecurityCode({ emailVerificationSecurityCode })
@@ -85,8 +90,10 @@ class LoginManager extends React.Component {
 
       this.removeVerificationCodeFromURL();
     }
+    */
   }
 
+  /*
   removeVerificationCodeFromURL() {
     const path = this.props.location.pathname;
     const search = this.props.location.search;
@@ -94,7 +101,7 @@ class LoginManager extends React.Component {
     const pushURL = path + search.substring(0, indexOfSecurityCode);
     this.props.history.push(pushURL);
   }
-
+*/
   requestStates(id) {
     requester.getStates(id)
       .then(response => response.body)
