@@ -1,6 +1,6 @@
 import '../../../../styles/css/components/modals/modal.css';
 
-import { PENDING_BOOKING_LOC, PASSWORD_PROMPT } from '../../../../constants/modals.js';
+import { PENDING_BOOKING_LOC, CONFIRM_PAYMENT_WITH_LOC } from '../../../../constants/modals.js';
 
 import { Modal } from 'react-bootstrap';
 import PropTypes from 'prop-types';
@@ -14,7 +14,7 @@ function PendingBookingLocModal(props) {
     }
 
     props.closeModal(PENDING_BOOKING_LOC, e);
-    props.openModal(PASSWORD_PROMPT, e);
+    props.openModal(CONFIRM_PAYMENT_WITH_LOC, e);
   };
 
   return (
