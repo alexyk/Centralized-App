@@ -19,7 +19,6 @@ import MainNav from '../mainNav/MainNav';
 import LocalizationNav from '../profile/LocalizationNav';
 import { NotificationContainer } from 'react-notifications';
 import ProfilePage from '../profile/ProfilePage';
-import PropTypes from 'prop-types';
 import React from 'react';
 import { Wallet } from '../../services/blockchain/wallet.js';
 import WorldKuCoinCampaign from '../external/WorldKuCoinCampaign';
@@ -184,16 +183,6 @@ class App extends React.Component {
     );
   }
 }
-
-App.propTypes = {
-  // start Router props
-  location: PropTypes.object,
-  history: PropTypes.object,
-
-  // start Redux props
-  dispatch: PropTypes.func,
-  paymentInfo: PropTypes.object
-};
 
 function mapStateToProps(state) {
   const { paymentInfo } = state;

@@ -123,6 +123,7 @@ class HotelsBookingRouterPage extends React.Component {
       return new Promise((resolve, reject) => {
         if (res.success) {
           res.body.then(reservation => {
+            console.log(reservation)
             const quoteBookingCandidate = { bookingId: reservation.preparedBookingId };
             requester.quoteBooking(quoteBookingCandidate)
               .then((res) => {
