@@ -27,6 +27,7 @@ import '../../../styles/css/components/hotels/book/hotel-booking-confirm-page.cs
 import ConfirmPaymentWithLocModal from './modals/ConfirmPaymentWithLocModal';
 import PendingBookingLocModal from './modals/PendingBookingLocModal';
 import PendingBookingFiatModal from './modals/PendingBookingFiatModal';
+import Tx from 'ethereumjs-tx';
 
 const ERROR_MESSAGE_TIME = 20000;
 const DEFAULT_CRYPTO_CURRENCY = 'EUR';
@@ -54,6 +55,7 @@ class HotelBookingConfirmPage extends React.Component {
     this.createBackUrl = this.createBackUrl.bind(this);
     this.requestSafechargeMode = this.requestSafechargeMode.bind(this);
     this.handlePayWithLOC = this.handlePayWithLOC.bind(this);
+    this.payWithLocSignedTransaction = this.payWithLocSignedTransaction.bind(this);
   }
 
   componentDidMount() {
@@ -307,6 +309,108 @@ class HotelBookingConfirmPage extends React.Component {
           setTimeout(() => {
             // console.log('HotelBookingConfirmPage.jsx, wei:', wei.toString());
             // console.log('HotelBookingConfirmPage.jsx, end date:', endDate.unix().toString());
+
+            HotelReservation.createSimpleReservationSingleWithdrawer(
+              data.jsonFile,
+              password,
+              wei.toString(),
+              endDate.unix().toString(),
+            ).then(transaction => {
+              // console.log('transaction', transaction);
+              const bookingConfirmObj = {
+                bookingId: preparedBookingId,
+                transactionHash: transaction.hash,
+                queryString: queryString,
+                locAmount
+              };
+
+              requester.confirmBooking(bookingConfirmObj).then(() => {
+                NotificationManager.success('LOC Payment has been initiated. We will send you a confirmation message once it has been processed by the Blockchain.', '', LONG);
+                window.removeEventListener('beforeunload', this.showLeavePagePromt);
+                setTimeout(() => {
+                  this.props.history.push('/profile/trips/hotels');
+                }, 2000);
+              }).catch(error => {
+                this.restartQuote();
+                NotificationManager.success('Something with your transaction went wrong...', '', LONG);
+                window.removeEventListener('beforeunload', this.showLeavePagePromt);
+                console.log(error);
+              });
+            }).catch(error => {
+              this.restartQuote();
+              if (error.hasOwnProperty('message')) {
+                if (error.message === 'nonce too low') {
+                  NotificationManager.warning('You have a pending transaction. Please try again later.', 'Transactions', ERROR_MESSAGE_TIME);
+                } else {
+                  NotificationManager.warning(error.message, 'Transactions', ERROR_MESSAGE_TIME);
+                }
+              } else if (error.hasOwnProperty('err') && error.err.hasOwnProperty('message')) {
+                NotificationManager.warning(error.err.message, 'Transactions', ERROR_MESSAGE_TIME);
+              } else if (typeof x === 'string') {
+                NotificationManager.warning(error, 'Transactions', ERROR_MESSAGE_TIME);
+              } else {
+                NotificationManager.warning(error, 'Transactions', ERROR_MESSAGE_TIME);
+              }
+
+              this.setState({ userConfirmedPaymentWithLOC: false });
+              window.removeEventListener('beforeunload', this.showLeavePagePromt);
+            });
+          }, 1000);
+        });
+      }).catch(e => {
+        this.restartQuote();
+      });
+    }).catch(e => {
+      this.restartQuote();
+    });
+  }
+
+  payWithLocSignedTransaction() {
+    window.addEventListener('beforeunload', this.showLeavePagePromt);
+
+    this.props.requestLockOnQuoteId('privateWallet').then(() => {
+      const { password } = this.state;
+      const { reservation } = this.props;
+      const { locAmounts } = this.props.locAmountsInfo;
+      const preparedBookingId = reservation.preparedBookingId;
+
+      const locAmount = (locAmounts[DEFAULT_QUOTE_LOC_ID] && locAmounts[DEFAULT_QUOTE_LOC_ID].locAmount) ||
+        TEST_FIAT_AMOUNT_IN_EUR / this.props.exchangeRatesInfo.locEurRate;
+
+      // console.log('LOC',locAmounts[DEFAULT_QUOTE_LOC_ID]);
+      // console.log('LOC',locAmounts[DEFAULT_QUOTE_LOC_ID].locAmount);
+
+      const wei = (this.tokensToWei(locAmount.toString()));
+      // console.log(wei);
+      const booking = reservation.booking.hotelBooking;
+      const endDate = moment.utc(booking[0].arrivalDate, 'YYYY-MM-DD').add(booking[0].nights, 'days');
+
+      NotificationManager.info(PROCESSING_TRANSACTION, 'Transactions', 60000);
+      this.setState({ userConfirmedPaymentWithLOC: true });
+      this.closeModal(CONFIRM_PAYMENT_WITH_LOC);
+
+      const queryString = this.props.location.search;
+
+      requester.getMyJsonFile().then(res => {
+        res.body.then(data => {
+          setTimeout(() => {
+            // console.log('HotelBookingConfirmPage.jsx, wei:', wei.toString());
+            // console.log('HotelBookingConfirmPage.jsx, end date:', endDate.unix().toString());
+
+            const dataTx = HotelReservation.methods.createSimpleReservationSingleWithdrawer(
+              data.jsonFile,
+              password,
+              wei.toString(),
+              endDate.unix().toString()
+            ).encodeABI();
+
+            const rawTx = {
+              to: Config.getValue('SimpleReservationSingleWithdrawer'), // contract address
+              data:dataTx 
+            }
+
+            const tx = new Tx(rawTx);
+            tx.sign(data.jsonFile); // this needs private key
 
             HotelReservation.createSimpleReservationSingleWithdrawer(
               data.jsonFile,
