@@ -58,7 +58,7 @@ class HotelTrip extends React.Component {
   }
 
   isFutureDate(today, date) {
-    const startDateMoment = moment(date, 'YYYY-MM-DD');
+    const startDateMoment = moment(date).utc();
     const todayMoment = moment(today, 'YYYY-MM-DD');
     const isFutureDate = todayMoment.diff(startDateMoment) < 0;
     return isFutureDate;
@@ -72,6 +72,9 @@ class HotelTrip extends React.Component {
     const { hotel_photo, hotel_name, hostEmail, hostPhone } = this.props.trip;
 
     const isCompleted = status === 'COMPLETE' && this.isFutureDate(moment().format('YYYY-MM-DD'), this.props.trip.arrival_date);
+    console.log(status);
+    console.log(this.isFutureDate(moment().format('YYYY-MM-DD'), this.props.trip.arrival_date));
+    console.log(isCompleted);
 
     return (
       <ProfileFlexContainer styleClass={`flex-container-row ${this.props.styleClass}`}>
