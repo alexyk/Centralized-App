@@ -292,10 +292,10 @@ class HotelsBookingConfirmPage extends Component {
 
     this.props.requestLockOnQuoteId('privateWallet').then(() => {
       const { password } = this.state;
-      const { reservation, quoteLocAmount } = this.props;
+      const { reservation, quoteLocAmount, locEurRate, currencyExchangeRates } = this.props;
       const preparedBookingId = reservation.preparedBookingId;
 
-      const locAmount = quoteLocAmount || TEST_FIAT_AMOUNT_IN_EUR / this.props.locEurRate;
+      const locAmount = quoteLocAmount || CurrencyConverter.convert(currencyExchangeRates, reservation.currency, DEFAULT_CRYPTO_CURRENCY, reservation.fiatPrice) / locEurRate;
 
       const wei = (this.tokensToWei(locAmount.toString()));
       // console.log(wei);
