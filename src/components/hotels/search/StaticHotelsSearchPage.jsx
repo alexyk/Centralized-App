@@ -2,7 +2,6 @@ import '../../../styles/css/components/hotels_search/sidebar/sidebar.css';
 
 import { setRegion, setHotelsSearchInfo } from '../../../actions/hotelsSearchInfo';
 import { asyncSetStartDate, asyncSetEndDate } from '../../../actions/searchDatesInfo';
-import { getStartDate, getEndDate } from '../../../selectors/searchDatesInfo';
 import { getRegion } from '../../../selectors/hotelsSearchInfo';
 
 import { Config } from '../../../config';
@@ -17,7 +16,7 @@ import Stomp from 'stompjs';
 import _ from 'lodash';
 import { connect } from 'react-redux';
 import moment from 'moment';
-import queryString from 'query-string';
+import { parse } from 'query-string';
 import requester from '../../../requester';
 import { setCurrency } from '../../../actions/paymentInfo';
 import { isLogged } from '../../../selectors/userInfo';
@@ -37,7 +36,7 @@ class StaticHotelsSearchPage extends React.Component {
   constructor(props) {
     super(props);
 
-    let queryParams = queryString.parse(this.props.location.search);
+    let queryParams = parse(this.props.location.search);
 
     this.client = null;
     this.subscription = null;
@@ -52,13 +51,14 @@ class StaticHotelsSearchPage extends React.Component {
       showUnavailable: false,
       orderBy: 'rank,desc',
       stars: [false, false, false, false, false],
-      priceRange: { min: 0, max: 5000},
+      priceRange: { min: 0, max: 5000 },
       city: '',
       hotels: [],
       mapInfo: [],
       searchParams: null,
       loading: true,
       page: !queryParams.page ? 0 : Number(queryParams.page),
+      nights: null,
       showMap: false,
       windowWidth: 0,
       showFiltersMobile: false
@@ -100,7 +100,7 @@ class StaticHotelsSearchPage extends React.Component {
 
   componentDidMount() {
     const query = this.props.location.search;
-    const queryParams = queryString.parse(query);
+    const queryParams = parse(query);
 
     this.distributeSearchParameters();
 
@@ -128,7 +128,7 @@ class StaticHotelsSearchPage extends React.Component {
 
   distributeSearchParameters() {
     if (this.props.location.search) {
-      const searchParams = queryString.parse(this.props.location.search);
+      const searchParams = parse(this.props.location.search);
       const rooms = JSON.parse(decodeURI(searchParams.rooms));
       const adults = this.getAdults(rooms);
       const hasChildren = this.getHasChildren(rooms);
@@ -148,6 +148,7 @@ class StaticHotelsSearchPage extends React.Component {
 
       this.setState({
         page: page ? Number(page) : 0,
+        nights: endDate.diff(startDate, 'days')
       });
 
       this.getCityLocation(regionId);
@@ -292,10 +293,15 @@ class StaticHotelsSearchPage extends React.Component {
 
     this.getCityLocation(region);
 
+    const searchParams = parse(queryString);
+    const startDate = moment(searchParams.startDate, 'DD/MM/YYYY');
+    const endDate = moment(searchParams.endDate, 'DD/MM/YYYY');
+
     this.setState({
       loading: true,
       childrenModal: false,
       page: 0,
+      nights: endDate.diff(startDate, 'days'),
       hotels: [],
       mapInfo: [],
       allElements: false,
@@ -381,7 +387,7 @@ class StaticHotelsSearchPage extends React.Component {
   }
 
   populateFilters() {
-    const params = queryString.parse(this.props.location.search);
+    const params = parse(this.props.location.search);
     const filters = JSON.parse(params.filters);
     const stars = [false, false, false, false, false];
     if (filters.stars.length < 6) {
@@ -395,7 +401,7 @@ class StaticHotelsSearchPage extends React.Component {
     this.setState({
       hotelName: filters.name,
       showUnavailable: filters.showUnavailable,
-      priceRange: { min: filters.minPrice, max: filters.maxPrice},
+      priceRange: { min: filters.minPrice, max: filters.maxPrice },
       stars: stars,
       orderBy: params.sort,
       page: params.page ? Number(params.page) : 0
@@ -428,7 +434,7 @@ class StaticHotelsSearchPage extends React.Component {
   }
 
   getSearchString() {
-    const queryParams = queryString.parse(this.props.location.search);
+    const queryParams = parse(this.props.location.search);
     let search = `?region=${encodeURI(queryParams.region)}`;
     search += `&currency=${encodeURI(queryParams.currency)}`;
     search += `&startDate=${encodeURI(queryParams.startDate)}`;
@@ -460,7 +466,7 @@ class StaticHotelsSearchPage extends React.Component {
       showUnavailable: false,
       orderBy: 'rank,desc',
       stars: [false, false, false, false, false],
-      priceRange: { min: 0, max: 5000},
+      priceRange: { min: 0, max: 5000 },
       showMap: false,
       loading: true
     }, () => {
@@ -556,7 +562,7 @@ class StaticHotelsSearchPage extends React.Component {
     });
 
     const query = this.props.location.search;
-    const searchParams = queryString.parse(query);
+    const searchParams = parse(query);
     const { region } = searchParams;
 
     window.scrollTo(0, 0);
@@ -618,8 +624,7 @@ class StaticHotelsSearchPage extends React.Component {
   }
 
   render() {
-    const { hotels, totalElements } = this.state;
-    const nights = this.props.endDate.diff(this.props.startDate, 'days');
+    const { hotels, totalElements, nights } = this.state;
 
     return (
       <React.Fragment>
@@ -710,19 +715,15 @@ StaticHotelsSearchPage.propTypes = {
   currency: PropTypes.string,
   isUserLogged: PropTypes.bool,
   region: PropTypes.object,
-  startDate: PropTypes.object,
-  endDate: PropTypes.object
 };
 
 
 function mapStateToProps(state) {
-  const { paymentInfo, userInfo, hotelsSearchInfo, searchDatesInfo } = state;
+  const { paymentInfo, userInfo, hotelsSearchInfo } = state;
   return {
     currency: getCurrency(paymentInfo),
     isUserLogged: isLogged(userInfo),
     region: getRegion(hotelsSearchInfo),
-    startDate: getStartDate(searchDatesInfo),
-    endDate: getEndDate(searchDatesInfo)
   };
 }
 
