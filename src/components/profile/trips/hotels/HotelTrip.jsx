@@ -104,10 +104,10 @@ class HotelTrip extends React.Component {
           <div className="flex-row-child trips-actions">
             {(isCompleted || this.props.trip.has_details === 1) && <i className="fa fa-bolt icon" />}
             <div className="content-row">
+              {this.props.trip.has_details === 1 && <Link to={`/profile/trips/hotels/${this.props.trip.id}`}>Details</Link>}
               {isCompleted &&
                 <button type="submit" onClick={e => { e.preventDefault(); this.props.onTripSelect(this.props.trip.id); this.props.handleCancelReservation(); }}>Cancel Trip</button>
               }
-              {this.props.trip.has_details === 1 && <Link to={`/profile/trips/hotels/${this.props.trip.id}`}>Details</Link>}
             </div>
           </div>
           <div className="flex-row-child trips-status">
