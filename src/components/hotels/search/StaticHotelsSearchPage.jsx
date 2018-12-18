@@ -46,6 +46,11 @@ class StaticHotelsSearchPage extends React.Component {
     this.intervalCounter = 0;
     this.delayIntervals = [];
 
+    
+    const startDate = moment(queryParams.startDate, 'DD/MM/YYYY');
+    const endDate = moment(queryParams.endDate, 'DD/MM/YYYY');
+    const nights = endDate.diff(startDate, 'days');
+
     this.state = {
       allElements: false,
       hotelName: '',
@@ -61,7 +66,8 @@ class StaticHotelsSearchPage extends React.Component {
       page: !queryParams.page ? 0 : Number(queryParams.page),
       showMap: false,
       windowWidth: 0,
-      showFiltersMobile: false
+      showFiltersMobile: false,
+      nights
     };
 
     this.onPageChange = this.onPageChange.bind(this);
@@ -279,18 +285,22 @@ class StaticHotelsSearchPage extends React.Component {
     return false;
   }
 
-  search(queryString) {
+  search(query) {
     this.unsubscribe();
     this.disconnect();
     this.clearIntervals();
     this.hotelInfoById = {};
     this.hotelInfo = [];
 
-    this.props.history.push('/hotels/listings' + queryString);
+    this.props.history.push('/hotels/listings' + query);
 
     const region = this.props.region.id;
 
     this.getCityLocation(region);
+    const queryParams = queryString.parse(query);
+    const startDate = moment(queryParams.startDate, 'DD/MM/YYYY');
+    const endDate = moment(queryParams.endDate, 'DD/MM/YYYY');
+    const nights = endDate.diff(startDate, 'days');
 
     this.setState({
       loading: true,
@@ -299,7 +309,8 @@ class StaticHotelsSearchPage extends React.Component {
       hotels: [],
       mapInfo: [],
       allElements: false,
-      stars: [false, false, false, false, false]
+      stars: [false, false, false, false, false],
+      nights
     }, () => {
       requester.getStaticHotels(region).then(res => {
         res.body.then(data => {
@@ -619,7 +630,7 @@ class StaticHotelsSearchPage extends React.Component {
 
   render() {
     const { hotels, totalElements } = this.state;
-    const nights = this.props.endDate.diff(this.props.startDate, 'days');
+    const { nights } = this.state;
 
     return (
       <React.Fragment>
