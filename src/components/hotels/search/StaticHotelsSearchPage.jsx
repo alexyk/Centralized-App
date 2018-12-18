@@ -45,6 +45,11 @@ class StaticHotelsSearchPage extends React.Component {
     this.intervalCounter = 0;
     this.delayIntervals = [];
 
+    
+    const startDate = moment(queryParams.startDate, 'DD/MM/YYYY');
+    const endDate = moment(queryParams.endDate, 'DD/MM/YYYY');
+    const nights = endDate.diff(startDate, 'days');
+
     this.state = {
       allElements: false,
       hotelName: '',
@@ -58,10 +63,10 @@ class StaticHotelsSearchPage extends React.Component {
       searchParams: null,
       loading: true,
       page: !queryParams.page ? 0 : Number(queryParams.page),
-      nights: null,
       showMap: false,
       windowWidth: 0,
-      showFiltersMobile: false
+      showFiltersMobile: false,
+      nights
     };
 
     this.onPageChange = this.onPageChange.bind(this);
@@ -296,6 +301,7 @@ class StaticHotelsSearchPage extends React.Component {
     const searchParams = parse(queryString);
     const startDate = moment(searchParams.startDate, 'DD/MM/YYYY');
     const endDate = moment(searchParams.endDate, 'DD/MM/YYYY');
+    const nights = endDate.diff(startDate, 'days');
 
     this.setState({
       loading: true,

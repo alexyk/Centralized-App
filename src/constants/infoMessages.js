@@ -8,6 +8,6 @@ export const SIMILAR_ROOM_GIVEN = 'The room you have requested is no longer avai
 export const VERIFICATION_EMAIL_SENT = 'Verification email has been sent. Please follow the link to confirm your email.';
 export const MESSAGE_SENT = 'Message sent.';
 export const CANCELLING_RESERVATION = 'Your reservation is being cancelled...';
-export const RESERVATION_CANCELLED = 'Your reservation has been cancelled. You will receive an email confirming your cancellation.';
+export const RESERVATION_CANCELLED = 'Cancellation request has been sent. You will receive an email confirming your cancellation.';
 export const FILTERED_UNAVAILABLE_HOTELS = 'We have filtered out the unavailable hotels for your dates.';
 export const WITHDRAW_REQUEST_SUCCESSFUL = 'You have successfully issued a withdraw request.';
