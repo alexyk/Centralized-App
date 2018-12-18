@@ -13,7 +13,7 @@ function ListItem(props) {
     pictures.push({ thumbnail: `${Config.getValue('imgHost')}${DEFAULT_LISTING_IMAGE_URL}` });
   }
 
-  const SlickButton = ({ ...props }) => (
+  const SlickButton = ({ currentSlide, slideCount, ...props }) => (
     <button {...props} />
   );
 

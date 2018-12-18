@@ -2,6 +2,8 @@ import '../../../styles/css/components/hotels_search/sidebar/sidebar.css';
 
 import { setRegion, setHotelsSearchInfo } from '../../../actions/hotelsSearchInfo';
 import { asyncSetStartDate, asyncSetEndDate } from '../../../actions/searchDatesInfo';
+import { getStartDate, getEndDate } from '../../../selectors/searchDatesInfo';
+import { getRegion } from '../../../selectors/hotelsSearchInfo';
 
 import { Config } from '../../../config';
 import FilterPanel from './filter/FilterPanel';
@@ -18,6 +20,8 @@ import moment from 'moment';
 import queryString from 'query-string';
 import requester from '../../../requester';
 import { setCurrency } from '../../../actions/paymentInfo';
+import { isLogged } from '../../../selectors/userInfo';
+import { getCurrency } from '../../../selectors/paymentInfo';
 import uuid from 'uuid';
 import { withRouter } from 'react-router-dom';
 import { NotificationManager } from 'react-notifications';
@@ -100,7 +104,7 @@ class StaticHotelsSearchPage extends React.Component {
 
     this.distributeSearchParameters();
 
-    if (!this.props.paymentInfo.currency) {
+    if (!this.props.currency) {
       this.props.dispatch(setCurrency(queryParams.currency));
     }
 
@@ -284,7 +288,7 @@ class StaticHotelsSearchPage extends React.Component {
 
     this.props.history.push('/hotels/listings' + queryString);
 
-    const region = this.props.hotelsSearchInfo.region.id;
+    const region = this.props.region.id;
 
     this.getCityLocation(region);
 
@@ -615,7 +619,7 @@ class StaticHotelsSearchPage extends React.Component {
 
   render() {
     const { hotels, totalElements } = this.state;
-    const nights = this.props.searchDatesInfo.endDate.diff(this.props.searchDatesInfo.startDate, 'days');
+    const nights = this.props.endDate.diff(this.props.startDate, 'days');
 
     return (
       <React.Fragment>
@@ -660,7 +664,7 @@ class StaticHotelsSearchPage extends React.Component {
                       lon={this.state.lon}
                       hotels={hotels}
                       mapInfo={this.state.mapInfo}
-                      isLogged={this.props.userInfo.isLogged}
+                      isLogged={this.props.isUserLogged}
                       nights={nights}
                       loading={this.state.loading}
                     />
@@ -703,20 +707,22 @@ StaticHotelsSearchPage.propTypes = {
 
   // start Redux props
   dispatch: PropTypes.func,
-  paymentInfo: PropTypes.object,
-  userInfo: PropTypes.object,
-  hotelsSearchInfo: PropTypes.object,
-  searchDatesInfo: PropTypes.object
+  currency: PropTypes.string,
+  isUserLogged: PropTypes.bool,
+  region: PropTypes.object,
+  startDate: PropTypes.object,
+  endDate: PropTypes.object
 };
 
 
 function mapStateToProps(state) {
   const { paymentInfo, userInfo, hotelsSearchInfo, searchDatesInfo } = state;
   return {
-    paymentInfo,
-    userInfo,
-    hotelsSearchInfo,
-    searchDatesInfo
+    currency: getCurrency(paymentInfo),
+    isUserLogged: isLogged(userInfo),
+    region: getRegion(hotelsSearchInfo),
+    startDate: getStartDate(searchDatesInfo),
+    endDate: getEndDate(searchDatesInfo)
   };
 }
 

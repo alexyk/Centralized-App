@@ -4,7 +4,6 @@ const initialState = {
   rooms: [{ adults: '2', children: [] }],
   adults: '2',
   hasChildren: false,
-  guests: null,
   region: null
 };
 

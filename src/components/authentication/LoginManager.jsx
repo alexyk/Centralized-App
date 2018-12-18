@@ -9,6 +9,7 @@ import { LONG } from '../../constants/notificationDisplayTimes.js';
 import LoginModal from './modals/LoginModal';
 import { closeModal, openModal } from '../../actions/modalsInfo';
 import { setIsLogged, setUserInfo } from '../../actions/userInfo';
+import { isActive } from '../../selectors/modalsInfo';
 import { Wallet } from '../../services/blockchain/wallet.js';
 import { VERIFICATION_EMAIL_SENT } from '../../constants/infoMessages.js';
 import UpdateCountryModal from './modals/UpdateCountryModal';
@@ -41,8 +42,7 @@ class LoginManager extends React.Component {
     this.state = {
       loginEmail: '',
       loginPassword: '',
-      countries: [],
-      country: '',
+      country: null,
       states: [],
       countryState: '',
       recoveryToken: '',
@@ -57,7 +57,6 @@ class LoginManager extends React.Component {
     this.handleLoginClick = this.handleLoginClick.bind(this);
     this.handleChangeCountry = this.handleChangeCountry.bind(this);
     this.handleUpdateCountry = this.handleUpdateCountry.bind(this);
-    this.requestCountries = this.requestCountries.bind(this);
     this.requestStates = this.requestStates.bind(this);
   }
 
@@ -98,12 +97,6 @@ class LoginManager extends React.Component {
     this.props.history.push(pushURL);
   }
 
-  requestCountries() {
-    requester.getCountries()
-      .then(response => response.body)
-      .then(data => this.setState({ countries: data }));
-  }
-
   requestStates(id) {
     requester.getStates(id)
       .then(response => response.body)
@@ -116,7 +109,7 @@ class LoginManager extends React.Component {
 
   handleChangeCountry(e) {
     if (!e.target.value) {
-      this.setState({ country: '' });
+      this.setState({ country: null });
     } else {
       const countryHasMandatoryState = ['Canada', 'India', 'United States of America'].includes(JSON.parse(e.target.value).name);
       this.setState({ country: JSON.parse(e.target.value) });
@@ -164,7 +157,7 @@ class LoginManager extends React.Component {
       }
 
       this.closeModal(UPDATE_COUNTRY);
-      this.setState({ isUpdatingCountry: false, country: '', countryState: '' });
+      this.setState({ isUpdatingCountry: false, country: null, countryState: '' });
     }
 
     requester.login(user, captchaToken).then(res => {
@@ -187,8 +180,7 @@ class LoginManager extends React.Component {
       const errors = res.errors;
       if (errors.hasOwnProperty('CountryNull')) {
         NotificationManager.warning(errors['CountryNull'].message, '', LONG);
-        this.requestCountries();
-        this.setState({ isUpdatingCountry: true }, () => {
+        this.setState({ isUpdatingCountry: true, isLogging: false }, () => {
           this.closeModal(LOGIN);
           this.openModal(UPDATE_COUNTRY);
         });
@@ -215,8 +207,9 @@ class LoginManager extends React.Component {
       if (['Canada', 'India', 'United States of America'].includes(this.state.country.name) && !this.state.countryState) {
         NotificationManager.error('Please select a valid state.', '', LONG);
       } else {
-        this.closeModal(UPDATE_COUNTRY);
-        this.captcha.execute();
+        this.setState({ isLogging: true }, () => {
+          executeWithToken(this.login);
+        });
       }
     } else {
       NotificationManager.error('Please select a valid country.', '', LONG);
@@ -267,44 +260,43 @@ class LoginManager extends React.Component {
     return (
       <React.Fragment>
         <LoginModal
-          isActive={this.props.modalsInfo.isActive[LOGIN]}
+          isActive={this.props.isActive[LOGIN]}
           openModal={this.openModal}
           closeModal={this.closeModal}
           loginEmail={this.state.loginEmail}
           loginPassword={this.state.loginPassword}
           onChange={this.onChange}
           handleLogin={this.handleLoginClick}
-          requestCountries={this.requestCountries}
           isLogging={this.state.isLogging}
         />
         <UpdateCountryModal 
-          isActive={this.props.modalsInfo.isActive[UPDATE_COUNTRY]} 
+          isActive={this.props.isActive[UPDATE_COUNTRY]} 
           openModal={this.openModal} 
           closeModal={this.closeModal} 
           onChange={this.onChange} 
-          country={this.state.country} 
-          countries={this.state.countries} 
+          country={this.state.country}
           states={this.state.states} 
           countryState={this.state.countryState} 
           handleUpdateCountry={this.handleUpdateCountry} 
           handleChangeCountry={this.handleChangeCountry} 
+          isLogging={this.state.isLogging}
         />
         <EmailVerificationModal 
-          isActive={this.props.modalsInfo.isActive[EMAIL_VERIFICATION]} 
+          isActive={this.props.isActive[EMAIL_VERIFICATION]} 
           openModal={this.openModal} 
           closeModal={this.closeModal} 
           onChange={this.onChange} 
           requestVerificationEmail={this.requestVerificationEmail} 
         />
         <EnterEmailVerificationTokenModal 
-          isActive={this.props.modalsInfo.isActive[ENTER_EMAIL_VERIFICATION_SECURITY_TOKEN]} 
+          isActive={this.props.isActive[ENTER_EMAIL_VERIFICATION_SECURITY_TOKEN]} 
           openModal={this.openModal} 
           closeModal={this.closeModal} 
           onChange={this.onChange} 
           handleLogin={() => executeWithToken(this.login)} 
           emailVerificationToken={this.state.emailVerificationToken} 
         />
-        {/* <AirdropLoginModal isActive={this.props.modalsInfo.isActive[AIRDROP_LOGIN]} openModal={this.openModal} closeModal={this.closeModal} loginEmail={this.state.loginEmail} loginPassword={this.state.loginPassword} onChange={this.onChange} handleLogin={this.handleAirdropLogin} /> */}
+        {/* <AirdropLoginModal isActive={this.props.isActive[AIRDROP_LOGIN]} openModal={this.openModal} closeModal={this.closeModal} loginEmail={this.state.loginEmail} loginPassword={this.state.loginPassword} onChange={this.onChange} handleLogin={this.handleAirdropLogin} /> */}
       </React.Fragment>
     );
   }
@@ -317,16 +309,13 @@ LoginManager.propTypes = {
 
   // start Redux props
   dispatch: PropTypes.func,
-  userInfo: PropTypes.object,
-  modalsInfo: PropTypes.object,
+  isActive: PropTypes.object,
 };
 
 function mapStateToProps(state) {
-  const { userInfo, modalsInfo, airdropInfo } = state;
+  const { modalsInfo } = state;
   return {
-    userInfo,
-    modalsInfo,
-    airdropInfo
+    isActive: isActive(modalsInfo)
   };
 }
 

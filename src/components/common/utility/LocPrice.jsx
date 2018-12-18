@@ -3,17 +3,20 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { CurrencyConverter } from '../../../services/utilities/currencyConverter';
 import { RoomsXMLCurrency } from '../../../services/utilities/roomsXMLCurrency';
+import { isLogged } from '../../../selectors/userInfo';
+import { getLocAmountById } from '../../../selectors/locAmountsInfo';
+import { getCurrencyExchangeRates, getLocEurRate, getLocRateFiatAmount } from '../../../selectors/exchangeRatesInfo';
 
 const DEFAULT_CRYPTO_CURRENCY = 'EUR';
 
 class LocPrice extends PureComponent {
   render() {
-    const isLogged = this.props.userInfo.isLogged;
+    const { isUserLogged } = this.props;
     const { brackets, locAmount } = this.props;
 
-    const bracket = brackets && isLogged;
+    const bracket = brackets && isUserLogged;
 
-    if (isLogged === undefined) {
+    if (isUserLogged === undefined) {
       return null;
     }
 
@@ -24,7 +27,6 @@ class LocPrice extends PureComponent {
 }
 
 LocPrice.defaultProps = {
-  params: {},
   brackets: true
 };
 
@@ -33,20 +35,20 @@ LocPrice.propTypes = {
   brackets: PropTypes.bool,
 
   // Redux props
-  userInfo: PropTypes.object,
+  isUserLogged: PropTypes.bool,
   locAmount: PropTypes.string
 };
 
 function mapStateToProps(state, ownProps) {
   const { fiat } = ownProps;
-
   const { userInfo, locAmountsInfo, exchangeRatesInfo } = state;
-  const { currencyExchangeRates, locRateFiatAmount, locEurRate } = exchangeRatesInfo;
 
+  const currencyExchangeRates = getCurrencyExchangeRates(exchangeRatesInfo);
   const fiatInEur = currencyExchangeRates && CurrencyConverter.convert(currencyExchangeRates, RoomsXMLCurrency.get(), DEFAULT_CRYPTO_CURRENCY, fiat);
-
-  let rateLocAmount = locAmountsInfo.locAmounts[locRateFiatAmount] && locAmountsInfo.locAmounts[locRateFiatAmount].locAmount;
-
+  const locEurRate = getLocEurRate(exchangeRatesInfo);
+  const locRateFiatAmount = getLocRateFiatAmount(exchangeRatesInfo);
+  let rateLocAmount = getLocAmountById(locAmountsInfo, locRateFiatAmount);
+  
   if (!rateLocAmount) {
     rateLocAmount = locRateFiatAmount / locEurRate;
   }
@@ -56,7 +58,7 @@ function mapStateToProps(state, ownProps) {
   let locAmount = (fiatInEur / locRate).toFixed(2);
 
   return {
-    userInfo,
+    isUserLogged: isLogged(userInfo),
     locAmount
   };
 }

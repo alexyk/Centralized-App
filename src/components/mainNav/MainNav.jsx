@@ -166,15 +166,7 @@ MainNav.propTypes = {
   history: PropTypes.object,
 
   // start Redux props
-  dispatch: PropTypes.func,
-  userInfo: PropTypes.object,
+  dispatch: PropTypes.func
 };
 
-function mapStateToProps(state) {
-  const { userInfo } = state;
-  return {
-    userInfo
-  };
-}
-
-export default withRouter(connect(mapStateToProps)(MainNav));
+export default withRouter(connect()(MainNav));

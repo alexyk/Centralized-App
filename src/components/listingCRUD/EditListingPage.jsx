@@ -71,7 +71,6 @@ class EditListingPage extends React.Component {
       name: '',
       text: '',
       interaction: '',
-      uploadedFiles: [],
       uploadedFilesUrls: [],
       uploadedFilesThumbUrls: [],
       suitableForChildren: 'false',
@@ -110,9 +109,6 @@ class EditListingPage extends React.Component {
     this.addHouseRule = this.addHouseRule.bind(this);
     this.removeHouseRule = this.removeHouseRule.bind(this);
     this.editListing = this.editListing.bind(this);
-    this.updateCountries = this.updateCountries.bind(this);
-    this.updateCities = this.updateCities.bind(this);
-    this.onImageDrop = this.onImageDrop.bind(this);
     this.handleImageUpload = this.handleImageUpload.bind(this);
     this.removePhoto = this.removePhoto.bind(this);
     this.populateFileUrls = this.populateFileUrls.bind(this);
@@ -372,12 +368,6 @@ class EditListingPage extends React.Component {
     };
   }
 
-  updateCities() {
-  }
-
-  updateCountries() {
-  }
-
   onSelect(name, option) {
     this.setState({
       [name]: option.value
@@ -443,7 +433,7 @@ class EditListingPage extends React.Component {
           res.errors.then(data => {
             const errors = data.errors;
             for (let key in errors) {
-              console.log("error")
+              console.log('error');
               if (typeof errors[key] !== 'function') {
                 NotificationManager.warning(errors[key].message, '', LONG);
               }
@@ -553,14 +543,6 @@ class EditListingPage extends React.Component {
     return listing;
   }
 
-  onImageDrop(files) {
-    this.handleImageUpload(files);
-
-    this.setState({
-      uploadedFiles: files
-    });
-  }
-
   handleImageUpload(files) {
     files.forEach((file) => {
       let upload = request.post(LOCKTRIP_UPLOAD_URL)
@@ -573,8 +555,8 @@ class EditListingPage extends React.Component {
         }
         if (response.body.secure_url !== '') {
           this.setState(previousState => ({
-            uploadedFilesUrls: [...previousState.uploadedFilesUrls, response.body.original],
-            uploadedFilesThumbUrls: [...previousState.uploadedFilesThumbUrls, response.body.thumbnail]
+            uploadedFilesUrls: [...previousState.uploadedFilesUrls, Config.getValue('imgHost') + response.body.original],
+            uploadedFilesThumbUrls: [...previousState.uploadedFilesThumbUrls, Config.getValue('imgHost') + response.body.thumbnail]
           }));
         }
       });
@@ -700,8 +682,6 @@ class EditListingPage extends React.Component {
             values={this.state}
             onChange={this.onChange}
             onSelect={this.onSelect}
-            updateCountries={this.updateCountries}
-            updateCities={this.updateCities}
             updateProgress={this.updateProgress}
             routes={routes}
             prev={routes.safetyamenities}
@@ -717,7 +697,7 @@ class EditListingPage extends React.Component {
             next={routes.photos} />} />
           <Route exact path={routes.photos} render={() => <ListingPhotos
             values={this.state}
-            onImageDrop={this.onImageDrop}
+            onImageDrop={this.handleImageUpload}
             removePhoto={this.removePhoto}
             onSortEnd={this.onSortEnd}
             updateProgress={this.updateProgress}

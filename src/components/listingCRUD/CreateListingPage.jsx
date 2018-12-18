@@ -35,6 +35,7 @@ import { CREATE_WALLET } from '../../constants/modals';
 import ProfileNav from '../profile/ProfileNav';
 import { connect } from 'react-redux';
 import { openModal } from '../../actions/modalsInfo';
+import { getLocAddress } from '../../selectors/userInfo';
 
 const host = Config.getValue('apiHost');
 const LOCKTRIP_UPLOAD_URL = `${host}images/upload`;
@@ -66,7 +67,6 @@ class CreateListingPage extends React.Component {
       name: '',
       text: '',
       interaction: '',
-      uploadedFiles: [],
       uploadedFilesUrls: [],
       uploadedFilesThumbUrls: [],
       suitableForChildren: 'false',
@@ -104,9 +104,6 @@ class CreateListingPage extends React.Component {
     this.addHouseRule = this.addHouseRule.bind(this);
     this.removeHouseRule = this.removeHouseRule.bind(this);
     this.createListing = this.createListing.bind(this);
-    this.updateCountries = this.updateCountries.bind(this);
-    this.updateCities = this.updateCities.bind(this);
-    this.onImageDrop = this.onImageDrop.bind(this);
     this.handleImageUpload = this.handleImageUpload.bind(this);
     this.removePhoto = this.removePhoto.bind(this);
     this.createProgress = this.createProgress.bind(this);
@@ -237,12 +234,6 @@ class CreateListingPage extends React.Component {
       doubleBedCount: 0,
       kingBedCount: 0,
     };
-  }
-
-  updateCities() {
-  }
-
-  updateCountries() {
   }
 
   onSelect(name, option) {
@@ -410,14 +401,6 @@ class CreateListingPage extends React.Component {
     return listing;
   }
 
-  onImageDrop(files) {
-    this.handleImageUpload(files);
-
-    this.setState({
-      uploadedFiles: files
-    });
-  }
-
   handleImageUpload(files) {
     files.forEach((file) => {
       let upload = request.post(LOCKTRIP_UPLOAD_URL)
@@ -426,8 +409,8 @@ class CreateListingPage extends React.Component {
       upload.end((err, response) => {
         if (response.body.secure_url !== '') {
           this.setState(previousState => ({
-            uploadedFilesUrls: [...previousState.uploadedFilesUrls, response.body.original],
-            uploadedFilesThumbUrls: [...previousState.uploadedFilesThumbUrls, response.body.thumbnail]
+            uploadedFilesUrls: [...previousState.uploadedFilesUrls, Config.getValue('imgHost') + response.body.original],
+            uploadedFilesThumbUrls: [...previousState.uploadedFilesThumbUrls, Config.getValue('imgHost') + response.body.thumbnail]
           }));
         }
       });
@@ -473,7 +456,7 @@ class CreateListingPage extends React.Component {
   }
 
   finish() {
-    console.log('finish')
+    console.log('finish');
     const { name, street, city, country, text, uploadedFilesUrls } = this.state;
     if (name.length < 2) {
       NotificationManager.warning(INVALID_TITLE, '', LONG);
@@ -494,8 +477,8 @@ class CreateListingPage extends React.Component {
       NotificationManager.warning(MISSING_PICTURE, '', LONG);
       this.props.history.push('/profile/listings/create/photos/');
     } else {
-    console.log('create')
-    this.createListing();
+      console.log('create');
+      this.createListing();
     }
   }
 
@@ -508,13 +491,13 @@ class CreateListingPage extends React.Component {
   }
 
   render() {
-    if (this.state.countries === [] || this.state.currencies === [] ||
+    if (!this.props.userInfo.email || this.state.countries === [] || this.state.currencies === [] ||
       this.state.propertyTypes === [] || this.state.categories === [] ||
       this.state.cities === []) {
       return <div className="loader"></div>;
     }
 
-    if (!this.props.userInfo.locAddress) {
+    if (!this.props.userLocAddress) {
       return (
         <React.Fragment>
           <ProfileNav />
@@ -578,8 +561,6 @@ class CreateListingPage extends React.Component {
             onChangeLocation={this.onChangeLocation}
             onChange={this.onChange}
             onSelect={this.onSelect}
-            updateCountries={this.updateCountries}
-            updateCities={this.updateCities}
             updateProgress={this.updateProgress}
             routes={routes}
             prev={routes.safetyamenities}
@@ -595,7 +576,7 @@ class CreateListingPage extends React.Component {
             next={routes.photos} />} />
           <Route exact path={routes.photos} render={() => <ListingPhotos
             values={this.state}
-            onImageDrop={this.onImageDrop}
+            onImageDrop={this.handleImageUpload}
             removePhoto={this.removePhoto}
             onSortEnd={this.onSortEnd}
             updateProgress={this.updateProgress}
@@ -652,9 +633,9 @@ CreateListingPage.propTypes = {
 
   // Redux props
   dispatch: PropTypes.func,
-  userInfo: PropTypes.object
+  userLocAddress: PropTypes.string
 };
 
-const mapStateToProps = ({ userInfo }) => ({ userInfo });
+const mapStateToProps = ({ userInfo }) => ({ userLocAddress: getLocAddress(userInfo) });
 
 export default withRouter(connect(mapStateToProps)(CreateListingPage));

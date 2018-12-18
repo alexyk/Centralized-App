@@ -7,12 +7,13 @@ import HotelsBookingRouterPage from './book/HotelsBookingRouterPage';
 import StaticHotelsSearchPage from './search/StaticHotelsSearchPage';
 
 import { setCurrency } from '../../actions/paymentInfo';
+import { getCurrency } from '../../selectors/paymentInfo';
 import { connect } from 'react-redux';
 
 function HotelsRouterPage(props) {
-
-  const isMobile = props.location.pathname.indexOf('/mobile') !== -1;
-  const showBackButton = props.location.pathname !== '/mobile/hotels/listings';
+  const { location, history, currency } = props;
+  const isMobile = location.pathname.indexOf('/mobile') !== -1;
+  const showBackButton = location.pathname !== '/mobile/hotels/listings';
 
   return (
     <Fragment>
@@ -31,11 +32,11 @@ function HotelsRouterPage(props) {
       {/* MOBILE ONLY START */}
       {isMobile &&
         <div className="container">
-          {showBackButton && <button className="btn" style={{ 'width': '100%', 'marginBottom': '20px' }} onClick={(e) => props.history.goBack()}>Back</button>}
+          {showBackButton && <button className="btn" style={{ 'width': '100%', 'marginBottom': '20px' }} onClick={() => history.goBack()}>Back</button>}
           <div className="select">
             <select
               className="currency"
-              value={props.paymentInfo.currency}
+              value={currency}
               style={{ 'height': '40px', 'margin': '10px 0', 'textAlignLast': 'right', 'paddingRight': '45%', 'direction': 'rtl' }}
               onChange={(e) => props.dispatch(setCurrency(e.target.value))}
             >
@@ -52,20 +53,21 @@ function HotelsRouterPage(props) {
 }
 
 HotelsRouterPage.propTypes = {
-  listings: PropTypes.array,
-  hotels: PropTypes.array,
-
   // Router props
   location: PropTypes.object,
   history: PropTypes.object,
 
   // Redux props
-  paymentInfo: PropTypes.object,
+  currency: PropTypes.string,
   dispatch: PropTypes.func,
 };
 
-const mapStateToProps = (state) => ({
-  paymentInfo: state.paymentInfo
-}); 
+const mapStateToProps = (state) => {
+  const { paymentInfo } = state;
+
+  return {
+    currency: getCurrency(paymentInfo)
+  };
+};
 
 export default withRouter(connect(mapStateToProps)(HotelsRouterPage));

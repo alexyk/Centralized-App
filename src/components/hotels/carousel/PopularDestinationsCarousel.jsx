@@ -4,36 +4,38 @@ import React from 'react';
 import Slider from 'react-slick';
 import { connect } from 'react-redux';
 import moment from 'moment';
+import { getCurrency } from '../../../selectors/paymentInfo';
 
 function PopularDestinationsCarousel(props) {
+  const { currency } = props;
   const pictures = [
     {
       id: 52612,
       countryId: 2,
       query: 'London',
       image: `${Config.getValue('basePath')}images/destinations/London.png`,
-      searchUrl: `hotels/listings?region=52612&currency=${props.paymentInfo.currency}&startDate=${moment().add(1, 'days').format('DD/MM/YYYY')}&endDate=${moment().add(2, 'days').format('DD/MM/YYYY')}&rooms=%5B%7B"adults":2,"children":%5B%5D%7D%5D`,
+      searchUrl: `hotels/listings?region=52612&currency=${currency}&startDate=${moment().add(1, 'days').format('DD/MM/YYYY')}&endDate=${moment().add(2, 'days').format('DD/MM/YYYY')}&rooms=%5B%7B"adults":2,"children":%5B%5D%7D%5D`,
     },
     {
       id: 18417,
       countryId: 3,
       query: 'Madrid',
       image: `${Config.getValue('basePath')}images/destinations/Madrid.png`,
-      searchUrl: `hotels/listings?region=18417&currency=${props.paymentInfo.currency}&startDate=${moment().add(1, 'days').format('DD/MM/YYYY')}&endDate=${moment().add(2, 'days').format('DD/MM/YYYY')}&rooms=%5B%7B"adults":2,"children":%5B%5D%7D%5D`,
+      searchUrl: `hotels/listings?region=18417&currency=${currency}&startDate=${moment().add(1, 'days').format('DD/MM/YYYY')}&endDate=${moment().add(2, 'days').format('DD/MM/YYYY')}&rooms=%5B%7B"adults":2,"children":%5B%5D%7D%5D`,
     },
     {
       id: 16471,
       countryId: 6,
       query: 'Paris',
       image: `${Config.getValue('basePath')}images/destinations/Paris.png`,
-      searchUrl: `hotels/listings?region=16471&currency=${props.paymentInfo.currency}&startDate=${moment().add(1, 'days').format('DD/MM/YYYY')}&endDate=${moment().add(2, 'days').format('DD/MM/YYYY')}&rooms=%5B%7B"adults":2,"children":%5B%5D%7D%5D`,
+      searchUrl: `hotels/listings?region=16471&currency=${currency}&startDate=${moment().add(1, 'days').format('DD/MM/YYYY')}&endDate=${moment().add(2, 'days').format('DD/MM/YYYY')}&rooms=%5B%7B"adults":2,"children":%5B%5D%7D%5D`,
     },
     {
       id: 15375,
       countryId: 24,
       query: 'Sydney',
       image: `${Config.getValue('basePath')}images/destinations/Sydney.png`,
-      searchUrl: `hotels/listings?region=15375&currency=${props.paymentInfo.currency}&startDate=${moment().add(1, 'days').format('DD/MM/YYYY')}&endDate=${moment().add(2, 'days').format('DD/MM/YYYY')}&rooms=%5B%7B"adults":2,"children":%5B%5D%7D%5D`,
+      searchUrl: `hotels/listings?region=15375&currency=${currency}&startDate=${moment().add(1, 'days').format('DD/MM/YYYY')}&endDate=${moment().add(2, 'days').format('DD/MM/YYYY')}&rooms=%5B%7B"adults":2,"children":%5B%5D%7D%5D`,
     },
   ];
 
@@ -91,13 +93,13 @@ function PopularDestinationsCarousel(props) {
 
 PopularDestinationsCarousel.propTypes = {
   // Redux props
-  paymentInfo: PropTypes.object,
+  currency: PropTypes.string,
 };
 
 function mapStateToProps(state) {
   const { paymentInfo } = state;
   return {
-    paymentInfo
+    currency: getCurrency(paymentInfo)
   };
 }
 

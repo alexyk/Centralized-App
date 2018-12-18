@@ -18,6 +18,8 @@ import LocPrice from '../../common/utility/LocPrice';
 import xregexp from 'xregexp';
 import { DEFAULT_LISTING_IMAGE_URL } from '../../../constants/images';
 import AsideContentPage from '../../common/asideContentPage';
+import { getCurrency, getCurrencySign } from '../../../selectors/paymentInfo';
+import { getCurrencyExchangeRates } from '../../../selectors/exchangeRatesInfo';
 
 class HotelsBookingPage extends React.Component {
   constructor(props) {
@@ -110,7 +112,7 @@ class HotelsBookingPage extends React.Component {
       return (<div className="loader"></div>);
     }
 
-    if (!this.props.exchangeRatesInfo.currencyExchangeRates) {
+    if (!this.props.currencyExchangeRates) {
       return (<div className="loader"></div>);
     }
 
@@ -118,16 +120,13 @@ class HotelsBookingPage extends React.Component {
       return (<div className="loader"></div>);
     }
 
-    const { hotel, rooms, guests } = this.props;
-    const { handleAdultChange, handleChildAgeChange } = this.props;
-    const { currency, currencySign } = this.props.paymentInfo;
-    const { currencyExchangeRates } = this.props.exchangeRatesInfo;
+    const { hotel, rooms, guests, currency, currencySign, currencyExchangeRates, handleAdultChange, handleChildAgeChange, location } = this.props;
     const city = hotel.city;
     const address = hotel.additionalInfo.mainAddress;
     const roomsTotalPrice = this.calculateRoomsTotalPrice(rooms);
     const hotelPicUrl = hotel.hotelPhotos && hotel.hotelPhotos.length > 0 ? hotel.hotelPhotos[0].url : DEFAULT_LISTING_IMAGE_URL;
     const priceInSelectedCurrency = Number(CurrencyConverter.convert(currencyExchangeRates, RoomsXMLCurrency.get(), currency, roomsTotalPrice)).toFixed(2);
-    const nights = this.calculateReservationTotalNights(this.props.location.search);
+    const nights = this.calculateReservationTotalNights(location.search);
 
     return (
       <div>
@@ -232,15 +231,17 @@ HotelsBookingPage.propTypes = {
 
   // start Redux props
   dispatch: PropTypes.func,
-  paymentInfo: PropTypes.object,
-  exchangeRatesInfo: PropTypes.object
+  currency: PropTypes.string,
+  currencySign: PropTypes.string,
+  currencyExchangeRates: PropTypes.object
 };
 
 function mapStateToProps(state) {
   const { paymentInfo, exchangeRatesInfo } = state;
   return {
-    paymentInfo,
-    exchangeRatesInfo
+    currency: getCurrency(paymentInfo),
+    currencySign: getCurrencySign(paymentInfo),
+    currencyExchangeRates: getCurrencyExchangeRates(exchangeRatesInfo)
   };
 }
 
