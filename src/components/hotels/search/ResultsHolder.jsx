@@ -39,7 +39,8 @@ function ResultsHolder(props) {
 ResultsHolder.propTypes = {
   hotels: PropTypes.any,
   allElements: PropTypes.bool,
-  nights: PropTypes.number
+  nights: PropTypes.number,
+  loading: PropTypes.bool
 };
 
 export default ResultsHolder;
