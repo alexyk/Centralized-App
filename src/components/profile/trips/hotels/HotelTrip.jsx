@@ -58,7 +58,7 @@ class HotelTrip extends React.Component {
   }
 
   isFutureDate(today, date) {
-    const startDateMoment = moment(date, 'YYYY-MM-DD');
+    const startDateMoment = moment(date).utc();
     const todayMoment = moment(today, 'YYYY-MM-DD');
     const isFutureDate = todayMoment.diff(startDateMoment) < 0;
     return isFutureDate;
