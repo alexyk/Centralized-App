@@ -13,19 +13,16 @@ function ListingChecking(props) {
     <div id="listing-ckecking-container">
       <ListingCrudNav progress='100%' />
       <div className="container">
-        <div className="row">
-          <div className="listings create">
-            <div className="col-md-3">
-              <GuestSettingsAside routes={props.routes} />
-            </div>
-            <div className="col-md-9">
-              <h2>When can guests check-in?</h2>
-              <hr />
-              <div className="check-in-container col-md-12">
-                <div className="col-md-6">
-                  <div className="form-group">
-                    <label htmlFor="checkinStart">from:</label>
-                    <div className='select'>
+        <div className="listings create">
+          <GuestSettingsAside routes={props.routes} />
+          <div id="reservation-hotel-review-room">
+            <h2>When can guests check-in?</h2>
+            <hr />
+            <div className="check-in-container col-md-12">
+              <div className="col-md-6">
+                <div className="form-group">
+                  <label htmlFor="checkinStart">from:</label>
+                  <div className='select'>
                     <select
                       onChange={props.updateDropdown}
 
@@ -38,12 +35,12 @@ function ListingChecking(props) {
                       })}
                     </select>
                   </div>
-                  </div>
                 </div>
-                <div className="col-md-6">
-                  <div className="form-group">
-                    <label htmlFor="checkinEnd">to:</label>
-                    <div className='select'>
+              </div>
+              <div className="col-md-6">
+                <div className="form-group">
+                  <label htmlFor="checkinEnd">to:</label>
+                  <div className='select'>
                     <select
                       onChange={props.updateDropdown}
 
@@ -55,18 +52,18 @@ function ListingChecking(props) {
                         return <option key={i} value={item}>{item}</option>;
                       })}
                     </select>
-                    </div>
                   </div>
                 </div>
               </div>
+            </div>
 
-              <h2>When can guests check-out?</h2>
-              <hr />
-              <div className="col-md-12">
-                <div className="col-md-6">
-                  <div className="form-group">
-                    <label htmlFor="checkoutStart">from:</label>
-                    <div className='select'>
+            <h2>When can guests check-out?</h2>
+            <hr />
+            <div className="col-md-12">
+              <div className="col-md-6">
+                <div className="form-group">
+                  <label htmlFor="checkoutStart">from:</label>
+                  <div className='select'>
                     <select
                       onChange={props.updateDropdown}
 
@@ -79,12 +76,12 @@ function ListingChecking(props) {
                       })}
                     </select>
                   </div>
-                  </div>
                 </div>
-                <div className="col-md-6">
-                  <div className="form-group">
-                    <label htmlFor="checkoutEnd">to:</label>
-                    <div className='select'>
+              </div>
+              <div className="col-md-6">
+                <div className="form-group">
+                  <label htmlFor="checkoutEnd">to:</label>
+                  <div className='select'>
                     <select
                       onChange={props.updateDropdown}
 
@@ -96,7 +93,6 @@ function ListingChecking(props) {
                         return <option key={i} value={item}>{item}</option>;
                       })}
                     </select>
-                    </div>
                   </div>
                 </div>
               </div>

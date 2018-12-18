@@ -1,5 +1,9 @@
 import { closeModal, openModal } from '../../../actions/modalsInfo.js';
 import { setAdults, setChildren, setRegion, setRooms, setRoomsByCountOfRooms } from '../../../actions/hotelsSearchInfo';
+import { isActive } from '../../../selectors/modalsInfo.js';
+import { getCurrency } from '../../../selectors/paymentInfo';
+import { getStartDate, getEndDate } from '../../../selectors/searchDatesInfo';
+import { getRooms, getAdults, getRegion, hasChildren } from '../../../selectors/hotelsSearchInfo.js';
 
 import { CHILDREN } from '../../../constants/modals';
 import ChildrenModal from '../modals/ChildrenModal';
@@ -99,12 +103,13 @@ function HotelsSearchBar(props) {
   };
 
   const getQueryString = () => {
+    const { region, rooms, currency, startDate, endDate } = props;
     let queryString = '?';
-    queryString += 'region=' + props.hotelsSearchInfo.region.id;
-    queryString += '&currency=' + props.paymentInfo.currency;
-    queryString += '&startDate=' + props.searchDatesInfo.startDate.format('DD/MM/YYYY');
-    queryString += '&endDate=' + props.searchDatesInfo.endDate.format('DD/MM/YYYY');
-    queryString += '&rooms=' + encodeURI(JSON.stringify(props.hotelsSearchInfo.rooms));
+    queryString += 'region=' + region.id;
+    queryString += '&currency=' + currency;
+    queryString += '&startDate=' + startDate.format('DD/MM/YYYY');
+    queryString += '&endDate=' + endDate.format('DD/MM/YYYY');
+    queryString += '&rooms=' + encodeURI(JSON.stringify(rooms));
     return queryString;
   };
 
@@ -113,8 +118,8 @@ function HotelsSearchBar(props) {
   };
 
   const distributeAdults = async () => {
-    let adults = Number(props.hotelsSearchInfo.adults);
-    let rooms = props.hotelsSearchInfo.rooms.slice(0);
+    let adults = Number(props.adults);
+    let rooms = props.rooms.slice(0);
     if (adults < rooms.length) {
       rooms = rooms.slice(0, adults);
     }
@@ -154,12 +159,12 @@ function HotelsSearchBar(props) {
       e.preventDefault();
     }
 
-    if (!props.hotelsSearchInfo.region) {
+    if (!props.region) {
       select.focus();
       NotificationManager.info('Please choose a location.');
     } else {
       distributeAdults().then((rooms) => {
-        if (props.hotelsSearchInfo.hasChildren) {
+        if (props.hasChildren) {
           openChildrenModal(CHILDREN);
         } else {
           props.search(getQueryString(rooms), e);
@@ -168,7 +173,7 @@ function HotelsSearchBar(props) {
     }
   };
 
-  const region = props.hotelsSearchInfo.region;
+  const region = props.region;
   let selectedOption = null;
   if (region) {
     selectedOption = {
@@ -196,7 +201,7 @@ function HotelsSearchBar(props) {
 
       <div className="check-wrap source-panel-item">
         <ChildrenModal
-          isActive={props.modalsInfo.isActive[CHILDREN]}
+          isActive={props.isActive[CHILDREN]}
           closeModal={closeChildrenModal}
           handleSubmit={handleSubmitModal}
         />
@@ -207,12 +212,12 @@ function HotelsSearchBar(props) {
 
         <div className="days-of-stay">
           <span className="icon-moon"></span>
-          <span>{props.searchDatesInfo.endDate.diff(props.searchDatesInfo.startDate, 'days')} nights</span>
+          <span>{props.endDate.diff(props.startDate, 'days')} nights</span>
         </div>
       </div>
 
       <div className="guest-wrap guests source-panel-item">
-        <select className="guest-select " name={'rooms'} value={props.hotelsSearchInfo.rooms.length} onChange={e => props.dispatch(setRoomsByCountOfRooms(e.target.value))}>
+        <select className="guest-select " name={'rooms'} value={props.rooms.length} onChange={e => props.dispatch(setRoomsByCountOfRooms(e.target.value))}>
           <option value="1">1 room</option>
           <option value="2">2 rooms</option>
           <option value="3">3 rooms</option>
@@ -224,7 +229,7 @@ function HotelsSearchBar(props) {
           <option value="9">9 rooms</option>
           <option value="10">10 rooms</option>
         </select>
-        <select name={'adults'} value={props.hotelsSearchInfo.adults} onChange={e => props.dispatch(setAdults(e.target.value))}>
+        <select name={'adults'} value={props.adults} onChange={e => props.dispatch(setAdults(e.target.value))}>
           <option value="1">1 adult</option>
           <option value="2">2 adults</option>
           <option value="3">3 adults</option>
@@ -238,7 +243,7 @@ function HotelsSearchBar(props) {
         </select>
         <div className="select-children" onClick={() => props.dispatch(setChildren())}>
           <div>
-            {!props.hotelsSearchInfo.hasChildren
+            {!props.hasChildren
               ? 'No children'
               : 'With children'
             }
@@ -258,19 +263,28 @@ HotelsSearchBar.propTypes = {
 
   // Redux props
   dispatch: PropTypes.func,
-  hotelsSearchInfo: PropTypes.object,
-  searchDatesInfo: PropTypes.object,
-  paymentInfo: PropTypes.object,
-  modalsInfo: PropTypes.object
+  rooms: PropTypes.array,
+  adults: PropTypes.string,
+  hasChildren: PropTypes.bool,
+  region: PropTypes.object,
+  startDate: PropTypes.object,
+  endDate: PropTypes.object,
+  currency: PropTypes.string,
+  isActive: PropTypes.object
 };
 
 function mapStateToProps(state) {
   const { hotelsSearchInfo, searchDatesInfo, paymentInfo, modalsInfo } = state;
+
   return {
-    hotelsSearchInfo,
-    searchDatesInfo,
-    paymentInfo,
-    modalsInfo
+    rooms: getRooms(hotelsSearchInfo),
+    adults: getAdults(hotelsSearchInfo),
+    hasChildren: hasChildren(hotelsSearchInfo),
+    region: getRegion(hotelsSearchInfo),
+    startDate: getStartDate(searchDatesInfo),
+    endDate: getEndDate(searchDatesInfo),
+    currency: getCurrency(paymentInfo),
+    isActive: isActive(modalsInfo)
   };
 }
 

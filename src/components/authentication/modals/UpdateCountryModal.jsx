@@ -3,6 +3,8 @@ import React from 'react';
 import { UPDATE_COUNTRY } from '../../../constants/modals.js';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
+import { getCountries } from '../../../selectors/countriesInfo';
+import { isActive } from '../../../selectors/modalsInfo';
 
 function UpdateCountryModal(props) {
 
@@ -14,11 +16,11 @@ function UpdateCountryModal(props) {
     return `${name.substring(0, length)}...`;
   };
 
-  const countryHasMandatoryState = ['Canada', 'India', 'United States of America'].includes(props.country.name);
+  const countryHasMandatoryState = props.country && ['Canada', 'India', 'United States of America'].includes(props.country.name);
 
   return (
     <React.Fragment>
-      <Modal show={props.modalsInfo.isActive[UPDATE_COUNTRY]} onHide={() => props.closeModal(UPDATE_COUNTRY)} className="modal fade myModal">
+      <Modal show={props.isActiveModal[UPDATE_COUNTRY]} onHide={() => props.closeModal(UPDATE_COUNTRY)} className="modal fade myModal">
         <Modal.Header>
           <h1>Where are you from?</h1>
           <button type="button" className="close" onClick={() => props.closeModal(UPDATE_COUNTRY)}>&times;</button>
@@ -46,7 +48,7 @@ function UpdateCountryModal(props) {
               </div>
             </div>}
 
-            <button type="submit" className="button">Save</button>
+            <button type="submit" className="button" disabled={props.isLogging}>{props.isLogging ? 'Logging in...' : 'Save'}</button>
             <div className="clearfix"></div>
           </form>
         </Modal.Body>
@@ -56,8 +58,7 @@ function UpdateCountryModal(props) {
 }
 
 UpdateCountryModal.propTypes = {
-  countries: PropTypes.array,
-  country: PropTypes.string,
+  country: PropTypes.object,
   states: PropTypes.array,
   countryState: PropTypes.string,
   onChange: PropTypes.func,
@@ -66,14 +67,17 @@ UpdateCountryModal.propTypes = {
   isActive: PropTypes.bool,
   handleChangeCountry: PropTypes.func,
   handleUpdateCountry: PropTypes.func,
+  isLogging: PropTypes.bool,
 
   // Redux props
-  modalsInfo: PropTypes.object
+  isActiveModal: PropTypes.object,
+  countries: PropTypes.array
 };
 
 
 const mapStateToProps = (state) => ({
-  modalsInfo: state.modalsInfo
+  isActiveModal: isActive(state.modalsInfo),
+  countries: getCountries(state.countriesInfo)
 });
 
 export default connect(mapStateToProps)(UpdateCountryModal);

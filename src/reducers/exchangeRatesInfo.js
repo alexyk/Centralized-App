@@ -2,7 +2,7 @@ import { exchangeRatesInfo } from '../actions/actionTypes';
 
 const initialState = {
   currencyExchangeRates: null,
-  locEurRate: null,
+  locEurRate: 0,
   locRateFiatAmount: 300
 };
 

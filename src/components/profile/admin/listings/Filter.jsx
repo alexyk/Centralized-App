@@ -3,19 +3,66 @@ import '../../../../styles/css/components/profile/admin/filter.css';
 import PropTypes from 'prop-types';
 import React from 'react';
 import Select from 'react-select';
+import { connect } from 'react-redux';
+import { getCountries } from '../../../../selectors/countriesInfo';
+
+const customStyles = {
+  container: (styles) => ({
+    ...styles,
+    flex: '1 1 0',
+    outline: 'none',
+    cursor: 'pointer',
+    marginRight: '10px'
+  }),
+  valueContainer: (styles) => ({
+    ...styles,
+    fontSize: '1.2em',
+    height: '60px'
+  }),
+  input: (styles) => ({
+    ...styles,
+    outline: 'none',
+  }),
+  control: (styles) => ({
+    ...styles,
+    padding: '0 10px',
+    cursor: 'pointer',
+    boxShadow: 'none',
+    border: 0,
+  }),
+  indicatorSeparator: (styles) => ({
+    ...styles,
+    display: 'none'
+  }),
+  menu: (styles) => ({
+    ...styles,
+    marginTop: '20px'
+  }),
+  option: (styles, { data, isFocused, isSelected }) => {
+    const color = isSelected ? '#d87a61' : 'black';
+    return {
+      ...styles,
+      fontSize: '1.2em',
+      textAlign: 'left',
+      cursor: 'pointer',
+      backgroundColor: isFocused
+        ? '#f0f1f3'
+        : 'none',
+      color: isSelected
+        ? color
+        : data.color,
+      fontWeight: isSelected && '400',
+      paddingLeft: isSelected && '30px',
+    };
+  },
+};
 
 function Filter(props) {
-  if (props.loading) {
+  const { countries, cities } = props;
+
+  if (!countries) {
     return <div className="loader"></div>;
   }
-
-  const renderCountries = props.countries.map((item) => {
-    return { value: item.id, label: item.name };
-  });
-
-  const renderCities = props.cities.map((item) => {
-    return { value: item.id, label: item.name };
-  });
 
   return (
     <div className="filter">
@@ -33,24 +80,20 @@ function Filter(props) {
           value={props.hostEmail}
           onChange={props.onChange} />
         <Select
-          name="country"
-          placeholder="Country"
-          onSelectResetsInput={true}
-          clearable={true}
-          className="filter_select"
-          style={{ border: 'none', boxShadow: 'none' }}
-          value={props.country}
+          styles={customStyles}
+          placeholder={'Country'}
+          value={props.country.id && props.country}
+          getOptionLabel={(option) => option.name}
+          getOptionValue={(option) => option.id}
           onChange={props.handleSelectCountry}
-          options={renderCountries}
+          options={countries}
         />
         <Select
-          name="city"
+          styles={customStyles}
           placeholder="City"
-          className="filter_select"
-          style={{ border: 'none', boxShadow: 'none' }}
           value={props.city}
           onChange={props.handleSelectCity}
-          options={renderCities}
+          options={cities}
         />
         <button type="submit" className="button">Search</button>
       </form>
@@ -61,16 +104,26 @@ function Filter(props) {
 Filter.propTypes = {
   onSelect: PropTypes.func,
   city: PropTypes.string,
-  country: PropTypes.string,
+  country: PropTypes.object,
   name: PropTypes.string,
   handleSelectCountry: PropTypes.func,
   handleSelectCity: PropTypes.func,
-  countries: PropTypes.array,
   cities: PropTypes.array,
   hostEmail: PropTypes.string,
   loading: PropTypes.bool,
   onSearch: PropTypes.func,
-  onChange: PropTypes.func
+  onChange: PropTypes.func,
+
+  // Redux props
+  countries: PropTypes.array
 };
 
-export default Filter;
+const mapStateToProps = (state) => {
+  const { countriesInfo } = state;
+
+  return {
+    countries: getCountries(countriesInfo)
+  };
+};
+
+export default connect(mapStateToProps)(Filter);

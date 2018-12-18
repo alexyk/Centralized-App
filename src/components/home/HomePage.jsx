@@ -7,6 +7,7 @@ import React, { Fragment } from 'react';
 import Slider from 'react-slick';
 import { connect } from 'react-redux';
 import { setRegion } from '../../actions/hotelsSearchInfo';
+import { getCurrency } from '../../selectors/paymentInfo';
 import { withRouter, Link } from 'react-router-dom';
 import HomePageContentItem from './HomePageContentItem';
 import moment from 'moment';
@@ -80,7 +81,7 @@ class HomePage extends React.Component {
     let slider = itemsType === 'hotels' ? this.sliderHotels : this.sliderListings;
 
     if (itemsType === 'hotels') {
-      allLink = items && `/hotels/listings?region=${items[0].region}&currency=${this.props.paymentInfo.currency}&startDate=${moment(new Date(new Date().setHours(24)), 'DD/MM/YYYY').format('DD/MM/YYYY')}&endDate=${moment(new Date(new Date().setHours(48)), 'DD/MM/YYYY').format('DD/MM/YYYY')}&rooms=%5B%7B"adults":2,"children":%5B%5D%7D%5D`;
+      allLink = items && `/hotels/listings?region=${items[0].region}&currency=${this.props.currency}&startDate=${moment(new Date(new Date().setHours(24)), 'DD/MM/YYYY').format('DD/MM/YYYY')}&endDate=${moment(new Date(new Date().setHours(48)), 'DD/MM/YYYY').format('DD/MM/YYYY')}&rooms=%5B%7B"adults":2,"children":%5B%5D%7D%5D`;
     } else {
       allLink = `/homes/listings?countryId=2&startDate=${moment(new Date(new Date().setHours(24)), 'DD/MM/YYYY').format('DD/MM/YYYY')}&endDate=${moment(new Date(new Date().setHours(48)), 'DD/MM/YYYY').format('DD/MM/YYYY')}&guests=2`;
     }
@@ -92,7 +93,7 @@ class HomePage extends React.Component {
           {items.map((item, i) => {
             let itemLink = '';
             if (itemsType === 'hotels') {
-              itemLink = `/hotels/listings/${item.id}?region=${item.region}&currency=${this.props.paymentInfo.currency}&startDate=${moment(new Date(new Date().setHours(24)), 'DD/MM/YYYY').format('DD/MM/YYYY')}&endDate=${moment(new Date(new Date().setHours(48)), 'DD/MM/YYYY').format('DD/MM/YYYY')}&rooms=%5B%7B"adults":1,"children":%5B%5D%7D%5D`;
+              itemLink = `/hotels/listings/${item.id}?region=${item.region}&currency=${this.props.currency}&startDate=${moment(new Date(new Date().setHours(24)), 'DD/MM/YYYY').format('DD/MM/YYYY')}&endDate=${moment(new Date(new Date().setHours(48)), 'DD/MM/YYYY').format('DD/MM/YYYY')}&rooms=%5B%7B"adults":1,"children":%5B%5D%7D%5D`;
             } else {
               itemLink = `/homes/listings/${item.id}?startDate=${moment(new Date(new Date().setHours(24)), 'DD/MM/YYYY').format('DD/MM/YYYY')}&endDate=${moment(new Date(new Date().setHours(48)), 'DD/MM/YYYY').format('DD/MM/YYYY')}&guests=2`;
             }
@@ -187,13 +188,14 @@ HomePage.propTypes = {
 
   // Redux props
   dispatch: PropTypes.func,
-  paymentInfo: PropTypes.object
+  currency: PropTypes.string
 };
 
 function mapStateToProps(state) {
   const { paymentInfo } = state;
+
   return {
-    paymentInfo
+    currency: getCurrency(paymentInfo)
   };
 }
 
