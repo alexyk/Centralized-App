@@ -75,7 +75,10 @@ function adaptBookings(response) {
 
 function adaptChartData(response) {
   debugger;
-  let initialDate = moment(response.initialDate).toISOString();
+  // let initialDate = moment(response.initialDate).subtract(1, "days");
+  let initialDate = moment(response.initialDate)
+    .utcOffset(0)
+    .set({ hour: 0, minute: 0, second: 0, millisecond: 0 });
   let iu = moment(initialDate).unix();
   let today = moment();
   let totalDaysWithAffiliates = today.diff(initialDate, "days");
@@ -87,7 +90,7 @@ function adaptChartData(response) {
       .unix();
     let affiliates = givenAffiliatesDailyStats[stamp] || 0;
     return [i, affiliates];
-  }, totalDaysWithAffiliates || 1);
+  }, totalDaysWithAffiliates + 1);
 
   let givenRevenueDailyStats = turnKeysIntoTimestamps(response.revenue);
   let revenueChartData = _.times(i => {
@@ -95,9 +98,8 @@ function adaptChartData(response) {
       .add(i, "days")
       .unix();
     let revenue = givenRevenueDailyStats[stamp] || 0;
-    debugger;
     return [i, revenue];
-  }, totalDaysWithAffiliates || 1);
+  }, totalDaysWithAffiliates + 1);
 
   function turnKeysIntoTimestamps(originalObject) {
     return Object.keys(originalObject).reduce((acc, date) => {
