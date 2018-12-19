@@ -123,6 +123,9 @@ export function getAdapters() {
         let affiliates = givenAffiliatesDailyStats[stamp] || 0;
         return [String(i + 1), affiliates];
       }, totalDaysWithAffiliates + 1);
+      if (_.isEmpty(body.affiliates)) {
+        affiliatesChartData = [];
+      }
 
       let givenRevenueDailyStats = turnKeysIntoTimestamps(body.revenue);
       let revenueChartData = _.times(i => {
@@ -132,7 +135,9 @@ export function getAdapters() {
         let revenue = givenRevenueDailyStats[stamp] || 0;
         return [String(i + 1), revenue];
       }, totalDaysWithAffiliates + 1);
-
+      if (_.isEmpty(body.revenue)) {
+        revenueChartData = [];
+      }
       function turnKeysIntoTimestamps(originalObject) {
         return Object.keys(originalObject).reduce((acc, date) => {
           let initialDate = moment.utc(date);
