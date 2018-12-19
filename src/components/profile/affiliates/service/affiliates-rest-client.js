@@ -51,7 +51,7 @@ function getRequests() {
   };
 }
 
-function getAdapters() {
+export function getAdapters() {
   return {
     getBookings(response) {
       if (!response.body) {
@@ -76,7 +76,7 @@ function getAdapters() {
         bookings
       };
     },
-    getChartData(response) {
+    getChartData(response, _today) {
       let body = response.body;
       if (!body) {
         return {
@@ -88,7 +88,7 @@ function getAdapters() {
       let initialDate = moment(body.initialDate)
         .utcOffset(0)
         .set({ hour: 0, minute: 0, second: 0, millisecond: 0 });
-      let today = moment();
+      let today = moment(_today || undefined);
       let totalDaysWithAffiliates = today.diff(initialDate, "days");
 
       let givenAffiliatesDailyStats = turnKeysIntoTimestamps(body.affiliates);
