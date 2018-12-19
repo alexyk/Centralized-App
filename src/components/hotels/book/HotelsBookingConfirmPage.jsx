@@ -36,7 +36,7 @@ import PendingBookingFiatModal from './modals/PendingBookingFiatModal';
 
 const ERROR_MESSAGE_TIME = 20000;
 const DEFAULT_CRYPTO_CURRENCY = 'EUR';
-const TEST_FIAT_AMOUNT_IN_EUR = 15;
+// const TEST_FIAT_AMOUNT_IN_EUR = 15;
 const PAYMENT_PROCESSOR_IDENTIFICATOR = '-PP';
 const DEFAULT_QUOTE_LOC_ID = 'quote';
 const DEFAULT_QUOTE_LOC_PP_ID = DEFAULT_QUOTE_LOC_ID + PAYMENT_PROCESSOR_IDENTIFICATOR;
@@ -292,10 +292,10 @@ class HotelsBookingConfirmPage extends Component {
 
     this.props.requestLockOnQuoteId('privateWallet').then(() => {
       const { password } = this.state;
-      const { reservation, quoteLocAmount } = this.props;
+      const { reservation, quoteLocAmount, locEurRate, currencyExchangeRates } = this.props;
       const preparedBookingId = reservation.preparedBookingId;
 
-      const locAmount = quoteLocAmount || TEST_FIAT_AMOUNT_IN_EUR / this.props.locEurRate;
+      const locAmount = quoteLocAmount || CurrencyConverter.convert(currencyExchangeRates, reservation.currency, DEFAULT_CRYPTO_CURRENCY, reservation.fiatPrice) / locEurRate;
 
       const wei = (this.tokensToWei(locAmount.toString()));
       // console.log(wei);
@@ -373,6 +373,7 @@ class HotelsBookingConfirmPage extends Component {
     if (e) {
       e.preventDefault();
     }
+    console.log(modal);
 
     this.props.dispatch(openModal(modal));
   }

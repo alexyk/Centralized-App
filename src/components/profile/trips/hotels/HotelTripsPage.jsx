@@ -6,7 +6,7 @@ import { CANCELLATION_NOT_POSSIBLE } from '../../../../constants/warningMessages
 import HotelTripsList from './HotelTripsList';
 import { LONG } from '../../../../constants/notificationDisplayTimes.js';
 import { NotificationManager } from 'react-notifications';
-import { PASSWORD_PROMPT } from '../../../../constants/modals.js';
+import { PASSWORD_PROMPT, CANCEL_TRIP_MODAL } from '../../../../constants/modals.js';
 import Pagination from '../../../common/pagination/Pagination';
 import WalletPasswordModal from '../../../common/modals/WalletPasswordModal';
 import PropTypes from 'prop-types';
@@ -16,6 +16,7 @@ import { connect } from 'react-redux';
 import requester from '../../../../requester';
 import { withRouter } from 'react-router-dom';
 import RecoverWallerPassword from '../../../common/utility/RecoverWallerPassword';
+import CancelTripModal from '../../../common/modals/CancelTripModal';
 
 class HotelTripsPage extends React.Component {
   constructor(props) {
@@ -29,6 +30,7 @@ class HotelTripsPage extends React.Component {
       currentTripId: null,
       bookingPrepareId: 0,
       password: '',
+      cancellationText: ''
     };
 
     this.onPageChange = this.onPageChange.bind(this);
@@ -79,10 +81,12 @@ class HotelTripsPage extends React.Component {
   }
 
   handleCancelTrip() {
+    console.log("CANCEL");
     requester.cancelBooking({ bookingId: this.state.bookingPrepareId })
       .then(res => res.body)
       .then(data => {
-        if (data.isCancellationSuccessful) {
+        console.log(data);
+        if (data.isCancellationRequested) {
           NotificationManager.info(RESERVATION_CANCELLED, '', LONG);
         } else {
           NotificationManager.warning(CANCELLATION_NOT_POSSIBLE, '', LONG);
@@ -141,7 +145,7 @@ class HotelTripsPage extends React.Component {
               trips={this.state.trips}
               currentTripId={this.state.currentTripId}
               onTripSelect={this.onTripSelect}
-              handleCancelReservation={() => this.openModal(PASSWORD_PROMPT)}
+              handleCancelReservation={() => this.openModal(CANCEL_TRIP_MODAL)}
               loading={this.state.loading}
             />
 
@@ -154,17 +158,12 @@ class HotelTripsPage extends React.Component {
           </div>
         </section>
 
-        <WalletPasswordModal
-          isActive={this.props.isActive[PASSWORD_PROMPT]}
-          text={'Enter your wallet password'}
-          placeholder={'Wallet password'}
-          handleSubmit={() => this.handleCancelTrip()}
-          openModal={this.openModal}
-          closeModal={this.closeModal}
-          password={this.state.password}
+        <CancelTripModal
+          cancellationText={this.state.cancellationText}
           onChange={this.onChange}
-        />
-        <RecoverWallerPassword />
+          isActive={this.props.isActive[CANCEL_TRIP_MODAL]}
+          onClose={this.closeModal}
+          handleCancelTrip={this.handleCancelTrip} />
       </div>
     );
   }
