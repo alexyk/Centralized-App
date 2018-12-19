@@ -110,6 +110,21 @@ describe("services", () => {
           expect(revenueChartData.length).toBe(9);
         });
 
+        test("correct number of days with no revenue & no affiliates", async () => {
+          const emptyResponse = {
+            body: {
+              initialDate: new Date("2018-12-10T00:00:00.000+0000").getTime(), //1544400000000
+              affiliates: {},
+              revenue: {}
+            }
+          };
+
+          let adaptedResponse = adapters.getChartData(emptyResponse, today);
+          let { affiliatesChartData, revenueChartData } = adaptedResponse;
+          expect(affiliatesChartData.length).toBe(0);
+          expect(revenueChartData.length).toBe(0);
+        });
+
         test("correct numbers in affiliates", async () => {
           let adaptedResponse = adapters.getChartData(response, today);
           let { affiliatesChartData, revenueChartData } = adaptedResponse;
