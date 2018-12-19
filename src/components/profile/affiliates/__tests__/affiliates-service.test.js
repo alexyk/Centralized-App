@@ -1,11 +1,6 @@
 import referralIdPersister from "../service/persist-referral-id";
-import { mockedRequests } from "../service/affiliates-rest-client-mocks";
-import {
-  AffiliatesServiceClass,
-  getAdapters
-} from "../service/affiliates-rest-client";
+import { getAdapters } from "../service/affiliates-rest-client";
 
-import { page1 } from "../service/example-responses/get-bookings";
 import moment from "moment";
 
 describe("services", () => {
@@ -139,7 +134,7 @@ describe("services", () => {
       });
     });
   });
-  describe("local storage - referral id", () => {
+  describe("referralIdPersister - local storage", () => {
     test("", async () => {});
   });
 });
