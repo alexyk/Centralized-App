@@ -59,35 +59,15 @@ export default class BookingsAndStats extends React.Component<Props, State> {
 
     let {
       noBookingsText,
-      onPageChange,
       list,
       revenueChartData,
       affiliatesChartData
     } = this.props;
     return (
       <div>
-        <div className={"controls-container"}>
-          <button
-            className={`btn ${bookingsAreActive && "active"}`}
-            onClick={this.showBookingsPanel}
-            data-testid="show-list"
-          >
-            Bookings
-          </button>
-
-          <button
-            className={`btn ${statsAreActive && "active"}`}
-            onClick={this.showStatsPanel}
-            data-testid="show-stats"
-          >
-            Statistics
-          </button>
-        </div>
-
         <BookingsListPanel
           list={list}
           noBookingsText={noBookingsText}
-          // onPageChange={onPageChange}
           bookingPaginationOptions={this.props.bookingPaginationOptions}
         />
         <StatisticsPanel

@@ -25,10 +25,11 @@ const defaultBookingPaginationOptions = {
 export default class BookingsListPanel extends React.Component<Props, State> {
   constructor(props) {
     super(props);
+
+    let bookingPaginationOptions =
+      props.bookingPaginationOptions || defaultBookingPaginationOptions;
     this.state = {
-      currentPage:
-        props.bookingPaginationOptions.initialPage ||
-        defaultBookingPaginationOptions.initialPage
+      currentPage: bookingPaginationOptions.initialPage
     };
 
     this.onBookingsPageChange = this.onBookingsPageChange.bind(this);

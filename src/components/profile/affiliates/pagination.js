@@ -2,9 +2,14 @@ import RCPagination from "rc-pagination";
 import PropTypes from "prop-types";
 import React from "react";
 
-export const DEFAULT_PAGE_SIZE = 10;
+type Props = {
+  pageSize: number,
+  onPageChange: Function,
+  currentPage: number,
+  totalElements: number
+};
 
-function Pagination(props) {
+function Pagination(props: Props) {
   const textItemRender = (current, type, element) => {
     if (type === "prev") {
       return (
@@ -29,16 +34,17 @@ function Pagination(props) {
     return element;
   };
 
+  let pageSize = props.pageSize;
+  let totalElements = props.totalElements;
+
   return (
     <div className="pagination-box">
       <div className="pagination-box">
-        {DEFAULT_PAGE_SIZE < props.totalElements && (
+        {pageSize < totalElements && (
           <RCPagination
             itemRender={textItemRender}
             className="pagination"
-            defaultPageSize={
-              props.pageSize ? props.pageSize : DEFAULT_PAGE_SIZE
-            }
+            defaultPageSize={pageSize}
             showTitle={false}
             onChange={props.onPageChange}
             current={props.currentPage}
