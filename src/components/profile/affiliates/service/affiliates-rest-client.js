@@ -1,7 +1,7 @@
 // @flow
 import { AffiliatesServiceInterface } from "./affiliates-rest-client.flow";
 import type {
-  AffiliateBooking,
+  AffiliateBooking
   // RevenueChartData,
   // AffiliatesChartData
 } from "../AffiliatesComponent.flow";

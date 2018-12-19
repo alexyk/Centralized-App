@@ -1,15 +1,15 @@
-import { userInfo } from '../actions/actionTypes';
+import { userInfo } from "../actions/actionTypes";
 
 const initialState = {
   isLogged: false,
-  firstName: '',
-  lastName: '',
-  phoneNumber: '',
-  email: '',
-  locAddress: '',
+  firstName: "",
+  lastName: "",
+  phoneNumber: "",
+  email: "",
+  locAddress: "",
   locBalance: 0,
   ethBalance: 0,
-  gender: '',
+  gender: "",
   isEmailVerified: false,
   isAdmin: false
 };
