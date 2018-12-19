@@ -63,15 +63,14 @@ export function getAdapters() {
         return {
           affiliateId: booking.id,
           revenue: booking.revenue,
-          date: booking.date // format is MM/YYYY
+          date: moment(booking.date).format("DD/MM/YYYY") // format is MM/YYYY
         };
       });
 
-      let result = _.omit(["content"], response);
       return {
         pagination: {
-          totalElements: result.totalElements,
-          pageSize: result.size
+          totalElements: body.totalElements,
+          pageSize: body.size
         },
         bookings
       };

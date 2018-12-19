@@ -3,52 +3,52 @@ export const page1 = {
     {
       id: 0,
       date: 1539698779000,
-      revenue: 0
+      revenue: 10
     },
     {
       id: 1,
       date: 1539698779000,
-      revenue: 0
+      revenue: 12
     },
     {
       id: 3,
       date: 1539698779000,
-      revenue: 0
+      revenue: 14
     },
     {
       id: 4,
       date: 1539698779000,
-      revenue: 0
+      revenue: 16
     },
     {
       id: 5,
       date: 1539698779000,
-      revenue: 0
+      revenue: 10
     },
     {
       id: 6,
       date: 1539698779000,
-      revenue: 0
+      revenue: 12
     },
     {
       id: 7,
       date: 1539698779000,
-      revenue: 0
+      revenue: 14
     },
     {
       id: 8,
       date: 1539698779000,
-      revenue: 0
+      revenue: 16
     },
     {
       id: 9,
       date: 1539698779000,
-      revenue: 0
+      revenue: 10
     },
     {
       id: 10,
       date: 1539698779000,
-      revenue: 0
+      revenue: 12
     }
   ],
   totalPages: 3,
