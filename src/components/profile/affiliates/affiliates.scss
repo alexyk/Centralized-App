@@ -21,6 +21,14 @@
   padding: 10px 0;
 }
 
+.withdraw-button-wrapper {
+  padding: 20px 0;
+
+  .threshold-message {
+    padding: 10px
+  }
+}
+
 .threshold-message  {
   margin-left: 20px
 }
@@ -35,5 +43,6 @@
 
   .stats-controls {
     width: 300px;
+    padding: 0 10px
   }
 }

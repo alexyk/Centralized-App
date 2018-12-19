@@ -69,7 +69,7 @@ export default class AffiliatesDashboard extends React.Component<Props> {
             <span data-testid="total-revenue">{totalRevenue}</span>
           </h3>
 
-          <div>
+          <div className="withdraw-button-wrapper">
             <button
               data-testid="withdraw-button"
               className="btn"
@@ -77,7 +77,7 @@ export default class AffiliatesDashboard extends React.Component<Props> {
             >
               Withdraw Revenue
             </button>
-            <span>{thresholdMessage}</span>
+            <span className={"threshold-message"}>{thresholdMessage}</span>
           </div>
 
           <div>
