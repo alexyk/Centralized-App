@@ -122,11 +122,11 @@ class MainNav extends React.Component {
                 </Link>
                 <DropdownMenu buttonText={localStorage[Config.getValue('domainPrefix') + '.auth.username']}>
                   <Link className="dropdown-menu-item" to="/profile/dashboard">Dashboard</Link>
+                  <Link className="dropdown-menu-item" to="/profile/affiliates">My Affiliates</Link>
                   <Link className="dropdown-menu-item" to="/profile/listings">My Listings</Link>
                   <Link className="dropdown-menu-item" to="/profile/trips">My Trips</Link>
                   <Link className="dropdown-menu-item" to="/profile/reservations">My Guests</Link>
                   <Link className="dropdown-menu-item" to="/profile/me/edit">Profile</Link>
-                  <Link className="dropdown-menu-item" to="/airdrop">Airdrop</Link>
                   <Link className="dropdown-menu-item" to="/" onClick={this.logout}>Logout</Link>
                 </DropdownMenu>
               </ListMenu>
@@ -139,13 +139,13 @@ class MainNav extends React.Component {
             {this.props.isLogged
               ? <BurgerMenu>
                 <Link className="menu-item" to="/profile/dashboard">Dashboard</Link>
+                <Link className="menu-item" to="/profile/affiliates">My Affiliates</Link>
                 <Link className="menu-item" to="/profile/reservations">My Guests</Link>
                 <Link className="menu-item" to="/profile/trips">My Trips</Link>
                 <Link className="menu-item" to="/profile/listings">My Listings</Link>
                 <Link className="menu-item" to="/profile/wallet">Wallet</Link>
                 <Link className="menu-item" to="/profile/messages">Messages</Link>
                 <Link className="menu-item" to="/profile/me/edit">Profile</Link>
-                <Link className="menu-item" to="/airdrop">Airdrop</Link>
                 <Link className="menu-item" to="/" onClick={this.logout}>Logout</Link>
               </BurgerMenu>
               : <BurgerMenu>

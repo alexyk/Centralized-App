@@ -15,11 +15,6 @@ export const modalsInfo = {
   CLOSE_MODAL: "CLOSE_MODAL"
 };
 
-// airdrop action
-export const airdropInfo = {
-  SET_AIRDROP_INFO: "SET_AIRDROP_INFO"
-};
-
 // hotels searchInfo actions
 export const hotelsSearchInfo = {
   SET_REGION: "SET_REGION",
