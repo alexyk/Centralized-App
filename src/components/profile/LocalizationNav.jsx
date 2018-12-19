@@ -30,7 +30,6 @@ class LocalizationNav extends PureComponent {
               && (location.pathname.indexOf('/hotels/listings/book') === -1
               && location.pathname.indexOf('/homes/listings/book') === -1
               && location.pathname.indexOf('/profile') === -1)
-              && location.pathname.indexOf('/airdrop') === -1
               && location.pathname.indexOf('/buyloc') === -1
               ? <ul className="tabset">
                 <li><NavLink to='/hotels' activeClassName="active">HOTELS</NavLink></li>
