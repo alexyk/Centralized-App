@@ -125,6 +125,7 @@ class MainNav extends React.Component {
                   <Link className="dropdown-menu-item" to="/profile/listings">My Listings</Link>
                   <Link className="dropdown-menu-item" to="/profile/trips">My Trips</Link>
                   <Link className="dropdown-menu-item" to="/profile/reservations">My Guests</Link>
+                  <Link className="dropdown-menu-item" to="/profile/tickets">My Air Tickets</Link>
                   <Link className="dropdown-menu-item" to="/profile/me/edit">Profile</Link>
                   <Link className="dropdown-menu-item" to="/airdrop">Airdrop</Link>
                   <Link className="dropdown-menu-item" to="/" onClick={this.logout}>Logout</Link>

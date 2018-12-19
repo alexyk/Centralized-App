@@ -13,8 +13,7 @@ import AsyncSelect from 'react-select/lib/Async';
 import { connect } from 'react-redux';
 import requester from '../../../requester';
 import { withRouter } from 'react-router-dom';
-import Datepicker from '../../common/datepicker';
-import moment from 'moment';
+import HotelsDatepickerWrapper from './HotelsDatepickerWrapper';
 import { NotificationManager } from 'react-notifications';
 
 const customStyles = {
@@ -208,7 +207,7 @@ function HotelsSearchBar(props) {
         />
 
         <div className="check">
-          <Datepicker minDate={moment()} enableRanges />
+          <HotelsDatepickerWrapper />
         </div>
 
         <div className="days-of-stay">

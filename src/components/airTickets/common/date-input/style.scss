@@ -1,0 +1,36 @@
+@import "../../../../styles/css/base/variables";
+
+.check-in {
+  padding: 5px;
+  width: 130px;
+  display: inline-flex;
+  justify-content: center;
+  border-bottom: 2px solid $white;
+
+  .icon-calendar {
+    display: flex;
+    align-items: center;
+    margin-right: 10px;
+    font-size: 0.9em;
+    color: $moderate-gray;
+  }
+  .date-container {
+    margin: 0;
+    .text {
+      text-align: left;
+    }
+    .date {
+      min-width: 80px;
+      font-size: 0.8em;
+      font-weight: 400;
+      text-align: left;
+      span {
+        color: #a2c5bf;
+      }
+    }
+  }
+  &:hover, &.opened {
+    cursor: pointer;
+    border-bottom: 2px solid $moderate-red;
+  }
+}

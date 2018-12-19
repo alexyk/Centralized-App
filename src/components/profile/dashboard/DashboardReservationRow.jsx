@@ -14,19 +14,19 @@ function DashboardReservationRow(props) {
 
     const creationDate = {
       day: creationDateMoment.format('D'),
-      month: creationDateMoment.format('MMM').toLowerCase()
+      month: creationDateMoment.format('MMM')
     };
 
     const checkIn = {
       day: startDateMoment.format('DD'),
       year: startDateMoment.format('YYYY'),
-      month: startDateMoment.format('MMM').toLowerCase()
+      month: startDateMoment.format('MMM')
     };
 
     const checkOut = {
       day: endDateMoment.format('D'),
       year: endDateMoment.format('YYYY'),
-      month: endDateMoment.format('MMM').toLowerCase()
+      month: endDateMoment.format('MMM')
     };
 
     return { creationDate, checkIn, checkOut };

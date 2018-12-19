@@ -79,15 +79,15 @@ class HotelTripDetails extends React.Component {
 
     const checkIn = {
       day: startDateMoment.format('D'),
-      dayOfWeek: startDateMoment.format('ddd').toUpperCase(),
-      month: startDateMoment.format('MMM').toUpperCase(),
+      dayOfWeek: startDateMoment.format('ddd'),
+      month: startDateMoment.format('MMM'),
       hour: startDateHour,
     };
 
     const checkOut = {
       day: endDateMoment.format('D'),
-      dayOfWeek: endDateMoment.format('ddd').toUpperCase(),
-      month: endDateMoment.format('MMM').toUpperCase(),
+      dayOfWeek: endDateMoment.format('ddd'),
+      month: endDateMoment.format('MMM'),
       hour: endDateHour,
     };
 
@@ -122,7 +122,7 @@ class HotelTripDetails extends React.Component {
     if(!Array.isArray(roomTypes)){
       return (<h5>{roomTypes}</h5>);
     } else {
-      const types = roomTypes.map((rt) => <h5>{rt}</h5>);
+      const types = roomTypes.map((rt, rtIndex) => <h5 key={rtIndex}>{rt}</h5>);
       return ( <div>{types}</div> );
     }
   }
@@ -131,7 +131,7 @@ class HotelTripDetails extends React.Component {
     if(!Array.isArray(roomBoards)){
       return (<h5>{roomBoards}</h5>);
     } else {
-      const boards = roomBoards.map((rt) => <h5>{rt}</h5>);
+      const boards = roomBoards.map((rt, rtIndex) => <h5 key={rtIndex}>{rt}</h5>);
       return ( <div>{boards}</div> );
     }
   }
@@ -159,7 +159,7 @@ class HotelTripDetails extends React.Component {
 
     if (safeChargeMode === 'success') {
       return (
-        <section className="details-view safecharge-success" id="details">
+        <section className="details-view safecharge-success">
           <h2>Thank you! Your payment has been successfully received.</h2>
           <p>Your reservation has been initiated to the hotel and is pending confirmation. </p>
           <p>Confirmation usually takes few minutes but in some rare occasions could take up to several hours.</p>
@@ -174,7 +174,7 @@ class HotelTripDetails extends React.Component {
 
     if (safeChargeMode === 'error') {
       return (
-        <section className="details-view safecharge-error" id="details">
+        <section className="details-view safecharge-error">
           <h2>Something wrong with your credit card payment request!</h2>
         </section>
       );
@@ -182,7 +182,7 @@ class HotelTripDetails extends React.Component {
 
     return (
       <div>
-        <section className="details-view" id="details">
+        <section className="details-view">
           <div className="with-padding">
             <div className="logo-container">
               <img width="200" src={`${LogoLockTrip}`} alt="lock-trip-logo" />

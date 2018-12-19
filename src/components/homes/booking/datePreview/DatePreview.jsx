@@ -14,7 +14,7 @@ function DatePreview({ checkin, checkout }) {
         <div className="date-container">
           <div className="text">Check-in</div>
           <div className="date">
-            <span>{checkin.format('DD')} </span>{checkin.format('MMM, ddd').toUpperCase()}
+            <span>{checkin.format('DD')} </span>{checkin.format('MMM, ddd')}
           </div>
         </div>
       </div>
@@ -24,7 +24,7 @@ function DatePreview({ checkin, checkout }) {
         <div className="date-container">
           <div className="text">Check-out</div>
           <div className="date">
-            <span>{checkout.format('DD')} </span>{checkout.format('MMM, ddd').toUpperCase()}
+            <span>{checkout.format('DD')} </span>{checkout.format('MMM, ddd')}
           </div>
         </div>
       </div>

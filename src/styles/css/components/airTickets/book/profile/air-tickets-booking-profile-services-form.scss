@@ -1,0 +1,12 @@
+.air-tickets-services-form {
+  .service {
+    display: flex;
+    .service-title {
+      width: 50%;
+      font-size: 20px;
+    }
+    .select {
+      width: 50%;
+    }
+  }
+}

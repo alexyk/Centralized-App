@@ -1,0 +1,60 @@
+@import "../../../../vendors/include-media";
+@import "../../../../base/variables";
+
+.air-tickets-contact-edit-form {
+  width: 100%;
+  .contact-name-wrapper {
+    display: flex;
+    justify-content: space-between;
+    @include media("<tablet") {
+      flex-direction: column;
+    }
+    .contact-title {
+      width: 15%;
+    }
+    .contact-name {
+      width: 40%;
+    }
+    .contact-title,
+    .contact-name {
+      @include media("<tablet") {
+        width: 100%;
+      }
+    }
+  }
+  .address-info {
+    display: flex;
+    justify-content: space-between;
+    .country-code,
+    .zip-code {
+      width: 25%;
+    }
+    .city {
+      width: 44.5%;
+    }
+    @include media("<tablet") {
+      flex-direction: column;
+      margin-bottom: 0;
+      .country-code,
+      .zip-code,
+      .city {
+        width: 100%;
+      }
+    }
+  }
+  .button-wrapper {
+    display: flex;
+    justify-content: flex-end;
+    .btn-back {
+      display: flex;
+      align-items: center;
+      &:hover {
+        color: #333;
+      }
+    }
+    .btn {
+      padding: 15px 70px;
+      margin: 20px 0;
+    }
+  }
+}

@@ -7,7 +7,7 @@ import moment from 'moment';
 import { Config } from '../../../config.js';
 import requester from '../../../requester';
 import { LONG } from '../../../constants/notificationDisplayTimes';
-import BookingSteps from '../../common/utility/BookingSteps';
+import BookingSteps from '../../common/bookingSteps';
 import Select from '../../common/google/GooglePlacesAutocomplete';
 import StringUtils from '../../../services/utilities/stringUtilities';
 import { getCountries } from '../../../selectors/countriesInfo';

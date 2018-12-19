@@ -11,13 +11,13 @@ function MyGuestsReservations(props) {
     const checkIn = {
       day: startDateMoment.format('D'),
       year: startDateMoment.format('YYYY'),
-      month: startDateMoment.format('MMM').toLowerCase()
+      month: startDateMoment.format('MMM')
     };
 
     const checkOut = {
       day: endDateMoment.format('D'),
       year: endDateMoment.format('YYYY'),
-      month: endDateMoment.format('MMM').toLowerCase()
+      month: endDateMoment.format('MMM')
     };
 
     return { checkIn, checkOut };
@@ -46,7 +46,7 @@ function MyGuestsReservations(props) {
             <div className="host-name">{guestName}</div>
             <div className="email">{guestEmail}</div>
             <div className="phone-number">{guestPhone}</div>
-            {guestLocAddress ? <div className="loc-address"><a href={`https://etherscan.io/address/${guestLocAddress}`} target="_blank">Loc Address</a></div> : ''}
+            {guestLocAddress ? <div className="loc-address"><a href={`https://etherscan.io/address/${guestLocAddress}`} target="_blank" rel="noopener noreferrer">Loc Address</a></div> : ''}
             {guestEmail ? <div className="send-message"><span className="send-message-icon"></span><a href={`mailto:${guestEmail}`}>Send Message</a></div> : ''}
           </div>
         </div>

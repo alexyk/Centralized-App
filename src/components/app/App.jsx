@@ -23,6 +23,7 @@ import requester from '../../requester';
 import GooglePlaces from '../common/GooglePlaces';
 import HelpPage from '../static/HelpPage';
 import AboutUsPage from '../static/AboutUsPage';
+import { hot } from 'react-hot-loader';
 import LoginManager from '../authentication/LoginManager';
 import RegisterManager from '../authentication/RegisterManager';
 import WalletCreationManager from '../authentication/WalletCreationManager';
@@ -134,4 +135,4 @@ App.propTypes = {
   dispatch: PropTypes.func,
 };
 
-export default withRouter(connect()(App));
+export default hot(module)(withRouter(connect()(App)));

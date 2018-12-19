@@ -42,7 +42,6 @@ function Pagination(props) {
 }
 
 Pagination.propTypes = {
-  loading: PropTypes.bool,
   onPageChange: PropTypes.func,
   currentPage: PropTypes.number,
   pageSize: PropTypes.number,
