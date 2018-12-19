@@ -71,6 +71,7 @@ export default class AffiliatesDashboard extends React.Component<Props> {
 
           <div className="withdraw-button-wrapper">
             <button
+              disabled
               data-testid="withdraw-button"
               className="btn"
               onClick={this.props.onWithdraw}

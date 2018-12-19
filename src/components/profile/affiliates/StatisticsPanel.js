@@ -78,7 +78,7 @@ export default class StatisticsPanel extends React.Component<Props, State> {
   }
 }
 
-export function MyRevenue({ data }: { data: RevenueChartData }) {
+export function MyRevenue({ data = [] }: { data: RevenueChartData }) {
   debugger;
   let chart = data.length ? (
     <Chart chartType="Line" data={[["Days", "Revenue"], ...data]} />
@@ -93,7 +93,7 @@ export function MyRevenue({ data }: { data: RevenueChartData }) {
     </div>
   );
 }
-export function MyAffiliates({ data }: { data: AffiliatesChartData }) {
+export function MyAffiliates({ data = [] }: { data: AffiliatesChartData }) {
   let chart = data.length ? (
     <Chart chartType="Line" data={[["Days", "New Affiliates"], ...data]} />
   ) : (
