@@ -92,43 +92,6 @@ describe("Affiliate Dashboard", () => {
     });
   });
 
-  // describe("list/stats controls", () => {
-  //   const SHOW_AS_STATS = "show-stats";
-  //   const SHOW_AS_LIST = "show-list";
-  //   const LIST_VIEW = "list-view";
-  //   const STATS_VIEW = "stats-view";
-  //   test("switches list/stats correctly", async () => {
-  //     let bookings = createAListOf(100);
-  //     let pageChangeHandler = jest.fn(() => {});
-  //     const { getByTestId } = render(
-  //       <AffiliatesDashboard
-  //         affiliateBookings={bookings}
-  //         onPageChange={pageChangeHandler}
-  //       />
-  //     );
-  //     let showAsStatsControl = await waitForElement(() =>
-  //       getByTestId(SHOW_AS_STATS)
-  //     );
-  //     let showAsListControl = await waitForElement(() =>
-  //       getByTestId(SHOW_AS_LIST)
-  //     );
-  //
-  //     // by default the list view is presented
-  //     await waitForElement(() => getByTestId(LIST_VIEW));
-  //
-  //     fireEvent.click(showAsStatsControl);
-  //     // verify the stats view is presented
-  //     await waitForElement(() => getByTestId(STATS_VIEW));
-  //
-  //     fireEvent.click(showAsListControl);
-  //     await waitForElement(() => getByTestId(LIST_VIEW));
-  //
-  //     fireEvent.click(showAsStatsControl);
-  //     // verify the stats view is presented
-  //     await waitForElement(() => getByTestId(STATS_VIEW));
-  //   });
-  // });
-
   describe("bookings list", () => {
     describe("renders correctly", () => {
       const LIST_ITEM_ID = "bookings-list-item";

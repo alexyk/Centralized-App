@@ -19,44 +19,8 @@ type Props = {
   bookingPaginationOptions: Object
 };
 
-type State = {
-  showAsStats: boolean
-};
-
-export default class BookingsAndStats extends React.Component<Props, State> {
-  constructor(props: Props) {
-    super(props);
-    this.state = {
-      showAsStats: false
-    };
-
-    this.showStatsPanel = this.showStatsPanel.bind(this);
-    this.showBookingsPanel = this.showBookingsPanel.bind(this);
-  }
-
-  /**
-   * Show Stats Panel
-   */
-  // Toggle
-  showStatsPanel() {
-    this.setState({
-      showAsStats: true
-    });
-  }
-
-  /**
-   * Show Bookings Panel
-   */
-  showBookingsPanel() {
-    this.setState({
-      showAsStats: false
-    });
-  }
-
+export default class BookingsAndStats extends React.Component<Props> {
   render() {
-    let { showAsStats: statsAreActive } = this.state;
-    let bookingsAreActive = !statsAreActive;
-
     let {
       noBookingsText,
       list,

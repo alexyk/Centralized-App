@@ -77,6 +77,7 @@ export default class AffiliatesDashboard extends React.Component<Props> {
             >
               Withdraw Revenue
             </button>
+            <span>{thresholdMessage}</span>
           </div>
 
           <div>
