@@ -36,5 +36,3 @@ export const INVALID_LOC_ADDRESS =
 export const INVALID_PICTURE =
   "Maximum file upload size is 10MB. Supported media formats are jpg, jpeg, png.";
 export const MISSING_NAMES = "Name is required!";
-export const MISSING_AIRDROP_INFO =
-  "We can\t find airdrop information about this profile.";

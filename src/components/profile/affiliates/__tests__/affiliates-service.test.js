@@ -116,7 +116,7 @@ describe("services", () => {
 
           affiliatesChartData.forEach((cd, i) => {
             let [day, affiliates] = cd;
-            expect(day).toBe(i);
+            expect(day).toBe(String(i + 1));
             expect(affiliatesPerDays[i]).toBe(affiliates);
           });
         });
@@ -127,7 +127,7 @@ describe("services", () => {
 
           revenueChartData.forEach((cd, i) => {
             let [day, revenue] = cd;
-            expect(day).toBe(i);
+            expect(day).toBe(String(i + 1));
             expect(revenuePerDays[i]).toBe(revenue);
           });
         });

@@ -121,7 +121,7 @@ export function getAdapters() {
           .add(i, "days")
           .unix();
         let affiliates = givenAffiliatesDailyStats[stamp] || 0;
-        return [i, affiliates];
+        return [String(i + 1), affiliates];
       }, totalDaysWithAffiliates + 1);
 
       let givenRevenueDailyStats = turnKeysIntoTimestamps(body.revenue);
@@ -130,7 +130,7 @@ export function getAdapters() {
           .add(i, "days")
           .unix();
         let revenue = givenRevenueDailyStats[stamp] || 0;
-        return [i, revenue];
+        return [String(i + 1), revenue];
       }, totalDaysWithAffiliates + 1);
 
       function turnKeysIntoTimestamps(originalObject) {

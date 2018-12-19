@@ -61,7 +61,6 @@ class PopulatedAffiliatesPage extends React.Component<Props, State> {
   getGeneralAffiliatesData() {
     AffiliatesService.getGeneralAffiliateData().then(
       ({ totalAffiliates, totalRevenue }) => {
-        debugger;
         this.setState({
           totalAffiliates,
           totalRevenue
@@ -83,7 +82,6 @@ class PopulatedAffiliatesPage extends React.Component<Props, State> {
 
   toggleItemsRefresh(page: number = 1) {
     AffiliatesService.getBookings(page).then(affiliateBookings => {
-      debugger;
       this.setState({
         affiliateBookings: affiliateBookings.bookings,
         bookingPaginationOptions: affiliateBookings.pagination
@@ -106,7 +104,7 @@ class PopulatedAffiliatesPage extends React.Component<Props, State> {
         affiliateBookings={this.state.affiliateBookings}
         affiliatesChartData={this.state.affiliatesChartData}
         revenueChartData={this.state.revenueChartData}
-        noBookingsText={"Sorry, no bookings yet!"}
+        noBookingsText={"There are no affiliate bookings yet!"}
         bookingPaginationOptions={bookingPaginationOptions}
         onWithdraw={console.log}
         affiliateLink={referralLink}

@@ -61,7 +61,11 @@ export default class BookingsListPanel extends React.Component<Props, State> {
 
     return (
       <div data-testid="list-view">
-        {isEmpty && <div data-testid="no-bookings-text">{noBookingsText}</div>}
+        {isEmpty && (
+          <div data-testid="no-bookings-text" className={"single-booking"}>
+            {noBookingsText}
+          </div>
+        )}
         {hasEntries && this.listEntries()}
 
         <Pagination

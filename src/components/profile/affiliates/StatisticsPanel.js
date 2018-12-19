@@ -64,7 +64,8 @@ export default class StatisticsPanel extends React.Component<Props, State> {
           </div>
           <div>
             <button
-              className={`btn ${showStatsForRevenue && "active"}`}
+              className={`btn ${showStatsForRevenue &&
+                "active"} revenue-button`}
               onClick={this.showRevenueStats}
               data-testid="stats-controls-revenue"
             >
@@ -78,16 +79,29 @@ export default class StatisticsPanel extends React.Component<Props, State> {
 }
 
 export function MyRevenue({ data = [] }: { data: RevenueChartData }) {
+  debugger;
+  let chart = data.length ? (
+    <Chart chartType="Line" data={[["Days", "Revenue"], ...data]} />
+  ) : (
+    <div className={"chart-no-entries-message"}>
+      No affiliate revenue made yet!
+    </div>
+  );
   return (
-    <div data-testid="panels-chart-revenue">
-      <Chart chartType="Line" data={[["Days", "Revenue"], ...data]} />
+    <div data-testid="panels-chart-revenue" className={"chart-panel"}>
+      {chart}
     </div>
   );
 }
 export function MyAffiliates({ data = [] }: { data: AffiliatesChartData }) {
+  let chart = data.length ? (
+    <Chart chartType="Line" data={[["Days", "New Affiliates"], ...data]} />
+  ) : (
+    <div className={"chart-no-entries-message"}>No affiliates yet!</div>
+  );
   return (
-    <div data-testid="panels-chart-affiliates">
-      <Chart chartType="Line" data={[["Days", "New Affiliates"], ...data]} />
+    <div data-testid="panels-chart-affiliates" className={"chart-panel"}>
+      {chart}
     </div>
   );
 }
