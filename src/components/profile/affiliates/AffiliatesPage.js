@@ -16,7 +16,12 @@ type State = {
   totalRevenue: number,
   affiliateBookings: Array<AffiliateBooking>,
   affiliatesChartData: AffiliatesChartData,
-  revenueChartData: RevenueChartData
+  revenueChartData: RevenueChartData,
+  bookingPaginationOptions: {
+    totalElements: number,
+    initialPage: number,
+    pageSize: number
+  }
 };
 
 type Props = {};
@@ -38,7 +43,12 @@ class PopulatedAffiliatesPage extends React.Component<Props, State> {
       totalRevenue: 0,
       affiliateBookings: [],
       affiliatesChartData: [],
-      revenueChartData: []
+      revenueChartData: [],
+      bookingPaginationOptions: {
+        totalElements: 0,
+        initialPage: 1,
+        pageSize: 10
+      }
     };
   }
 
@@ -73,18 +83,18 @@ class PopulatedAffiliatesPage extends React.Component<Props, State> {
 
   toggleItemsRefresh(page: number = 1) {
     AffiliatesService.getBookings(page).then(affiliateBookings => {
+      debugger;
       this.setState({
-        affiliateBookings: affiliateBookings.bookings
+        affiliateBookings: affiliateBookings.bookings,
+        bookingPaginationOptions: affiliateBookings.pagination
       });
     });
   }
 
   render() {
     const bookingPaginationOptions = {
-      onPageChange: this.toggleItemsRefresh,
-      totalElements: 22,
-      initialPage: 1,
-      pageSize: 10
+      ...this.state.bookingPaginationOptions,
+      onPageChange: this.toggleItemsRefresh
     };
     let referralLink = this.props.userId
       ? `${window.location.origin}/?refId=${this.props.userId}`

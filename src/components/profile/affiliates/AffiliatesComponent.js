@@ -19,7 +19,8 @@ type Props = {
   bookingPaginationOptions: Object,
   onWithdraw: Function,
   affiliatesChartData: AffiliatesChartData,
-  revenueChartData: RevenueChartData
+  revenueChartData: RevenueChartData,
+  affiliateLink: string
 };
 
 export default class AffiliatesDashboard extends React.Component<Props> {
@@ -81,7 +82,6 @@ export default class AffiliatesDashboard extends React.Component<Props> {
           <div>
             <BookingsAndStats
               list={this.props.affiliateBookings}
-              // onPageChange={this.props.onPageChange}
               noBookingsText={this.props.noBookingsText}
               affiliatesChartData={this.props.affiliatesChartData}
               revenueChartData={this.props.revenueChartData}

@@ -83,20 +83,17 @@ export default class BookingsAndStats extends React.Component<Props, State> {
             Statistics
           </button>
         </div>
-        {statsAreActive && (
-          <StatisticsPanel
-            revenueChartData={revenueChartData}
-            affiliatesChartData={affiliatesChartData}
-          />
-        )}
-        {bookingsAreActive && (
-          <BookingsListPanel
-            list={list}
-            noBookingsText={noBookingsText}
-            // onPageChange={onPageChange}
-            bookingPaginationOptions={this.props.bookingPaginationOptions}
-          />
-        )}
+
+        <BookingsListPanel
+          list={list}
+          noBookingsText={noBookingsText}
+          // onPageChange={onPageChange}
+          bookingPaginationOptions={this.props.bookingPaginationOptions}
+        />
+        <StatisticsPanel
+          revenueChartData={revenueChartData}
+          affiliatesChartData={affiliatesChartData}
+        />
       </div>
     );
   }

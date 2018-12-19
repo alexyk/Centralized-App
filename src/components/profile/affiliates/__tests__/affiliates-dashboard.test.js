@@ -6,7 +6,7 @@ import {
   waitForElement
 } from "react-testing-library";
 
-import AffiliatesDashboard from "./AffiliatesComponent";
+import AffiliatesDashboard from "../AffiliatesComponent";
 
 afterEach(cleanup);
 

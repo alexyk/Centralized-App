@@ -68,9 +68,13 @@ function adaptBookings(response) {
   });
 
   let result = _.omit(["content"], response);
-  result.bookings = bookings;
-
-  return result;
+  return {
+    pagination: {
+      totalElements: result.totalElements,
+      pageSize: result.size
+    },
+    bookings
+  };
 }
 
 function adaptChartData(response) {
