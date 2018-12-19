@@ -30,7 +30,7 @@ export default class AffiliatesDashboard extends React.Component<Props> {
     let thresholdMessage = "minimum withdrawal threshold is $50";
 
     return (
-      <div className={"container"}>
+      <div className={"container affiliates-container"}>
         <div style={{ display: "flex", justifyContent: "space-between" }}>
           <h2>My Affiliates</h2>
 
