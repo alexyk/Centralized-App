@@ -1,6 +1,6 @@
 {
   "name": "locktrip",
-  "version": "0.1.1-0",
+  "version": "0.1.1-1",
   "private": true,
   "dependencies": {
     "axios": "^0.18.0",
@@ -95,7 +95,8 @@
     "build/dev": "sh -ac '. ./.env.dev; npm run build'",
     "build-css": "node-sass-chokidar ./src/ --output ./src/",
     "watch-css": "node-sass-chokidar ./src/ --output ./src/ --watch",
-    "all": "npm-run-all --parallel watch-css start-js"
+    "all": "npm-run-all --parallel watch-css start-js",
+    "postversion": "git push && git push --tags"
   },
   "devDependencies": {
     "babel-eslint": "^8.2.6",
