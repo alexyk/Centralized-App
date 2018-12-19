@@ -45,6 +45,17 @@
 
   .chart-container {
     width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    .chart-panel {
+      width: 100%;
+    }
+
+    .chart-no-entries-message {
+      text-align: center;
+    }
   }
 
   .stats-controls {

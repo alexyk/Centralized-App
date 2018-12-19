@@ -106,7 +106,7 @@ class PopulatedAffiliatesPage extends React.Component<Props, State> {
         affiliateBookings={this.state.affiliateBookings}
         affiliatesChartData={this.state.affiliatesChartData}
         revenueChartData={this.state.revenueChartData}
-        noBookingsText={"Sorry, no bookings yet!"}
+        noBookingsText={"There are no affiliate bookings yet!"}
         bookingPaginationOptions={bookingPaginationOptions}
         onWithdraw={console.log}
         affiliateLink={referralLink}
