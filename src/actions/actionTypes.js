@@ -1,6 +1,6 @@
 // userInfo actions
 export const userInfo = {
-  SET_IS_LOGGED: "SET_IS_LOGGED",
+  LOG_OUT: "LOG_OUT",
   SET_USER_INFO: "SET_USER_INFO"
 };
 

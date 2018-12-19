@@ -1,5 +1,9 @@
 @import "../../../styles/css/base/_variables.scss";
 
+.affiliates-container {
+  padding-bottom: 20px
+}
+
 .btn {
   min-width: 200px;
 }
@@ -21,6 +25,14 @@
   padding: 10px 0;
 }
 
+.withdraw-button-wrapper {
+  padding: 20px 0;
+
+  .threshold-message {
+    padding: 10px
+  }
+}
+
 .threshold-message  {
   margin-left: 20px
 }
@@ -28,12 +40,17 @@
 .stats-chart {
   display: flex;
   justify-content: space-between;
+  background: white;
+  padding: 20px;
 
   .chart-container {
     width: 100%;
   }
 
   .stats-controls {
-    width: 300px;
+    padding: 0 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
   }
 }

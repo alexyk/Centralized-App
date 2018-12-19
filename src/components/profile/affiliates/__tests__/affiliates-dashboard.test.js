@@ -6,7 +6,7 @@ import {
   waitForElement
 } from "react-testing-library";
 
-import AffiliatesDashboard from "./AffiliatesComponent";
+import AffiliatesDashboard from "../AffiliatesComponent";
 
 afterEach(cleanup);
 
@@ -92,43 +92,6 @@ describe("Affiliate Dashboard", () => {
     });
   });
 
-  describe("list/stats controls", () => {
-    const SHOW_AS_STATS = "show-stats";
-    const SHOW_AS_LIST = "show-list";
-    const LIST_VIEW = "list-view";
-    const STATS_VIEW = "stats-view";
-    test("switches list/stats correctly", async () => {
-      let bookings = createAListOf(100);
-      let pageChangeHandler = jest.fn(() => {});
-      const { getByTestId } = render(
-        <AffiliatesDashboard
-          affiliateBookings={bookings}
-          onPageChange={pageChangeHandler}
-        />
-      );
-      let showAsStatsControl = await waitForElement(() =>
-        getByTestId(SHOW_AS_STATS)
-      );
-      let showAsListControl = await waitForElement(() =>
-        getByTestId(SHOW_AS_LIST)
-      );
-
-      // by default the list view is presented
-      await waitForElement(() => getByTestId(LIST_VIEW));
-
-      fireEvent.click(showAsStatsControl);
-      // verify the stats view is presented
-      await waitForElement(() => getByTestId(STATS_VIEW));
-
-      fireEvent.click(showAsListControl);
-      await waitForElement(() => getByTestId(LIST_VIEW));
-
-      fireEvent.click(showAsStatsControl);
-      // verify the stats view is presented
-      await waitForElement(() => getByTestId(STATS_VIEW));
-    });
-  });
-
   describe("bookings list", () => {
     describe("renders correctly", () => {
       const LIST_ITEM_ID = "bookings-list-item";
@@ -164,7 +127,12 @@ describe("Affiliate Dashboard", () => {
         const { getByTestId } = render(
           <AffiliatesDashboard
             affiliateBookings={bookings}
-            onPageChange={pageChangeHandler}
+            bookingPaginationOptions={{
+              onPageChange: pageChangeHandler,
+              pageSize: 10,
+              initialPage: 1,
+              totalElements: 200
+            }}
           />
         );
 
@@ -172,10 +140,10 @@ describe("Affiliate Dashboard", () => {
           getByTestId(NEXT_PAGE_ID)
         );
         fireEvent.click(nextPageControl);
-        expect(pageChangeHandler).toHaveBeenCalledWith(1);
+        expect(pageChangeHandler).toHaveBeenCalledWith(2);
 
         fireEvent.click(nextPageControl);
-        expect(pageChangeHandler).toHaveBeenCalledWith(2);
+        expect(pageChangeHandler).toHaveBeenCalledWith(3);
       });
 
       test("previous page", async () => {
@@ -186,7 +154,12 @@ describe("Affiliate Dashboard", () => {
         const { getByTestId } = render(
           <AffiliatesDashboard
             affiliateBookings={bookings}
-            onPageChange={pageChangeHandler}
+            bookingPaginationOptions={{
+              onPageChange: pageChangeHandler,
+              pageSize: 10,
+              initialPage: 5,
+              totalElements: 200
+            }}
           />
         );
 
@@ -196,15 +169,10 @@ describe("Affiliate Dashboard", () => {
         let prevPageControl = await waitForElement(() =>
           getByTestId(PREV_PAGE_ID)
         );
-        fireEvent.click(nextPageControl);
-        fireEvent.click(nextPageControl);
-        fireEvent.click(nextPageControl);
+        fireEvent.click(prevPageControl);
+        expect(pageChangeHandler).toHaveBeenCalledWith(4);
+        fireEvent.click(prevPageControl);
         expect(pageChangeHandler).toHaveBeenCalledWith(3);
-
-        fireEvent.click(prevPageControl);
-        expect(pageChangeHandler).toHaveBeenCalledWith(2);
-        fireEvent.click(prevPageControl);
-        expect(pageChangeHandler).toHaveBeenCalledWith(1);
       });
     });
   });
@@ -219,10 +187,6 @@ describe("Affiliate Dashboard", () => {
 
       test("switches correctly", async () => {
         const { getByTestId } = render(<AffiliatesDashboard />);
-        const SHOW_AS_STATS = "show-stats";
-
-        // navigate to stats
-        fireEvent.click(await getByTestId(SHOW_AS_STATS));
 
         let affiliatesButton = await waitForElement(() =>
           getByTestId(STATS_CONTROLS_AFFILIATE)
