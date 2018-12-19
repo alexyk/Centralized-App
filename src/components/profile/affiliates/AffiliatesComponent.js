@@ -22,7 +22,7 @@ type Props = {
   revenueChartData: RevenueChartData,
   affiliateLink: string
 };
-
+//test
 export default class AffiliatesDashboard extends React.Component<Props> {
   render() {
     let totalAffiliates = ensureNaturalNumber(this.props.totalAffiliates);
