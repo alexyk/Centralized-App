@@ -79,9 +79,8 @@ export default class StatisticsPanel extends React.Component<Props, State> {
 }
 
 export function MyRevenue({ data = [] }: { data: RevenueChartData }) {
-  debugger;
   let chart = data.length ? (
-    <Chart chartType="Line" data={[["Days", "Revenue"], ...data]} />
+    <Chart chartType="LineChart" data={[["Days", "Revenue"], ...data]} />
   ) : (
     <div className={"chart-no-entries-message"}>
       No affiliate revenue made yet!
@@ -95,7 +94,15 @@ export function MyRevenue({ data = [] }: { data: RevenueChartData }) {
 }
 export function MyAffiliates({ data = [] }: { data: AffiliatesChartData }) {
   let chart = data.length ? (
-    <Chart chartType="Line" data={[["Days", "New Affiliates"], ...data]} />
+    <Chart
+      chartType="LineChart"
+      options={{
+        explorer: {
+          actions: ["dragToZoom", "rightClickToReset"]
+        }
+      }}
+      data={[["Days", "New Affiliates"], ...data]}
+    />
   ) : (
     <div className={"chart-no-entries-message"}>No affiliates yet!</div>
   );
