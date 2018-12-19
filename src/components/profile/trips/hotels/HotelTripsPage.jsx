@@ -8,14 +8,12 @@ import { LONG } from '../../../../constants/notificationDisplayTimes.js';
 import { NotificationManager } from 'react-notifications';
 import { PASSWORD_PROMPT, CANCEL_TRIP_MODAL } from '../../../../constants/modals.js';
 import Pagination from '../../../common/pagination/Pagination';
-import WalletPasswordModal from '../../../common/modals/WalletPasswordModal';
 import PropTypes from 'prop-types';
 import { RESERVATION_CANCELLED } from '../../../../constants/infoMessages.js';
 import React from 'react';
 import { connect } from 'react-redux';
 import requester from '../../../../requester';
 import { withRouter } from 'react-router-dom';
-import RecoverWallerPassword from '../../../common/utility/RecoverWallerPassword';
 import CancelTripModal from '../../../common/modals/CancelTripModal';
 
 class HotelTripsPage extends React.Component {

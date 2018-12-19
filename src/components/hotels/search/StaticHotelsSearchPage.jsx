@@ -307,7 +307,7 @@ class StaticHotelsSearchPage extends React.Component {
       loading: true,
       childrenModal: false,
       page: 0,
-      nights: endDate.diff(startDate, 'days'),
+      nights,
       hotels: [],
       mapInfo: [],
       allElements: false,

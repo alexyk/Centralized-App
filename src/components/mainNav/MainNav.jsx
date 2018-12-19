@@ -7,6 +7,7 @@ import {
 import { Link, withRouter } from 'react-router-dom';
 import { closeModal, openModal } from '../../actions/modalsInfo';
 import { setIsLogged } from '../../actions/userInfo';
+import { isLogged } from '../../selectors/userInfo';
 
 import { Config } from '../../config';
 import PropTypes from 'prop-types';
@@ -98,6 +99,7 @@ class MainNav extends React.Component {
   }
 
   render() {
+    const { isUserLogged } = this.props;
     const { unreadMessages } = this.state;
     return (
       <nav id="main-nav" className="navbar">
@@ -106,7 +108,7 @@ class MainNav extends React.Component {
             <Link className="navbar-logo" to="/">
               <img src={Config.getValue('basePath') + 'images/locktrip_logo.svg'} alt='logo' />
             </Link>
-            {localStorage[Config.getValue('domainPrefix') + '.auth.locktrip']
+            {isUserLogged || localStorage[Config.getValue('domainPrefix') + '.auth.locktrip']
               ? <ListMenu>
                 <Link className="list-menu-item" to="/profile/reservations">Hosting</Link>
                 <Link className="list-menu-item" to="/profile/trips">Traveling</Link>
@@ -165,7 +167,16 @@ MainNav.propTypes = {
   history: PropTypes.object,
 
   // start Redux props
-  dispatch: PropTypes.func
+  dispatch: PropTypes.func,
+  isUserLogged: PropTypes.bool
 };
 
-export default withRouter(connect()(MainNav));
+const mapStateToProps = (state) => {
+  const { userInfo } = state;
+
+  return {
+    isUserLogged: isLogged(userInfo)
+  };
+};
+
+export default withRouter(connect(mapStateToProps)(MainNav));
