@@ -1,1 +1,2 @@
-export const isExchangerWebsocketConnected = (state) => state.isExchangerWebsocketConnected;
+export const isExchangerWebsocketConnected = state =>
+  state.isExchangerWebsocketConnected;

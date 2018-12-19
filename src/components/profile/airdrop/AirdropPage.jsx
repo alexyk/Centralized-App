@@ -21,7 +21,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import requester from '../../../requester';
 import { setAirdropInfo } from '../../../actions/airdropInfo';
-import { setIsLogged } from '../../../actions/userInfo';
+import { logOut } from '../../../actions/userInfo';
 import validator from 'validator';
 import { withRouter } from 'react-router-dom';
 
@@ -172,7 +172,7 @@ class AirdropPage extends Component {
     localStorage.removeItem(Config.getValue('domainPrefix') + '.auth.username');
 
     // reflect that the user is logged out, both in Redux and in the local component state
-    this.props.dispatch(setIsLogged(false));
+    this.props.dispatch(logOut());
   }
 
   handleAppUser() {

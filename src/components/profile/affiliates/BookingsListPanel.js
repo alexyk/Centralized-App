@@ -1,11 +1,35 @@
 import React from "react";
 import Pagination from "./pagination";
+import { AffiliateBooking } from "./AffiliatesComponent.flow";
 
-export default class BookingsListPanel extends React.Component {
+type Props = {
+  bookingPaginationOptions: {
+    onPageChange: Function,
+    totalElements: number,
+    initialPage: number,
+    pageSize: number
+  },
+  list: [AffiliateBooking]
+};
+
+type State = {
+  currentPage: number
+};
+
+const defaultBookingPaginationOptions = {
+  totalElements: 0,
+  initialPage: 1,
+  pageSize: 10
+};
+
+export default class BookingsListPanel extends React.Component<Props, State> {
   constructor(props) {
     super(props);
+
+    let bookingPaginationOptions =
+      props.bookingPaginationOptions || defaultBookingPaginationOptions;
     this.state = {
-      currentPage: 0
+      currentPage: bookingPaginationOptions.initialPage
     };
 
     this.onBookingsPageChange = this.onBookingsPageChange.bind(this);
@@ -18,7 +42,11 @@ export default class BookingsListPanel extends React.Component {
         currentPage: page
       },
       () => {
-        this.props.onPageChange(this.state.currentPage);
+        if (this.props.bookingPaginationOptions) {
+          this.props.bookingPaginationOptions.onPageChange(
+            this.state.currentPage
+          );
+        }
       }
     );
   }
@@ -28,6 +56,8 @@ export default class BookingsListPanel extends React.Component {
     let { list = [], noBookingsText } = this.props;
     let isEmpty = !list.length;
     let hasEntries = !isEmpty;
+    let paginationProps =
+      this.props.bookingPaginationOptions || defaultBookingPaginationOptions;
 
     return (
       <div data-testid="list-view">
@@ -37,9 +67,9 @@ export default class BookingsListPanel extends React.Component {
         <Pagination
           currentPage={currentPage}
           onPageChange={this.onBookingsPageChange}
-          pageSize={20}
+          pageSize={paginationProps.pageSize}
           loading={false}
-          totalElements={200}
+          totalElements={paginationProps.totalElements}
         />
       </div>
     );

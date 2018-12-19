@@ -6,7 +6,7 @@ import {
 } from '../../constants/modals.js';
 import { Link, withRouter } from 'react-router-dom';
 import { closeModal, openModal } from '../../actions/modalsInfo';
-import { setIsLogged } from '../../actions/userInfo';
+import { logOut } from '../../actions/userInfo';
 import { isLogged } from '../../selectors/userInfo';
 
 import { Config } from '../../config';
@@ -54,7 +54,7 @@ class MainNav extends React.Component {
     localStorage.removeItem(Config.getValue('domainPrefix') + '.auth.locktrip');
     localStorage.removeItem(Config.getValue('domainPrefix') + '.auth.username');
 
-    this.props.dispatch(setIsLogged(false));
+    this.props.dispatch(logOut());
 
     this.props.history.push('/');
   }

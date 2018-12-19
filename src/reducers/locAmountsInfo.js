@@ -1,4 +1,4 @@
-import { locAmountsInfo } from '../actions/actionTypes';
+import { locAmountsInfo } from "../actions/actionTypes";
 
 const initialState = {
   locAmounts: {}
@@ -8,7 +8,12 @@ export default function reducer(state = initialState, action) {
   switch (action.type) {
     case locAmountsInfo.UPDATE_LOC_AMOUNTS:
       if (action.params) {
-        if (validateLocAmountsUpdate(action.params, state.locAmounts[action.fiatAmount])) {
+        if (
+          validateLocAmountsUpdate(
+            action.params,
+            state.locAmounts[action.fiatAmount]
+          )
+        ) {
           return {
             ...state,
             locAmounts: {
@@ -56,5 +61,10 @@ export default function reducer(state = initialState, action) {
 }
 
 function validateLocAmountsUpdate(params, locAmountObject) {
-  return !locAmountObject || locAmountObject.locAmount !== params.locAmount || locAmountObject.fundsSufficient !== params.fundsSufficient || locAmountObject.fiatAmount !== params.fiatAmount;
+  return (
+    !locAmountObject ||
+    locAmountObject.locAmount !== params.locAmount ||
+    locAmountObject.fundsSufficient !== params.fundsSufficient ||
+    locAmountObject.fiatAmount !== params.fiatAmount
+  );
 }

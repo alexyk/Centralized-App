@@ -12,9 +12,7 @@ type AffiliateStats = {
 
 export interface AffiliatesServiceInterface {
   getBookings(page: number): Promise<Array<AffiliateBooking>>;
-  getGeneralAffiliateData(): Promise<
-    AffiliateStats & { affiliateBookings: Array<AffiliateBooking> }
-  >;
+  getGeneralAffiliateData(): Promise<AffiliateStats>;
   getChartData(): Promise<{
     affiliatesChartData: AffiliatesChartData,
     revenueChartData: RevenueChartData

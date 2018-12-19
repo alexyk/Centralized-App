@@ -1,1 +1,1 @@
-export const isShowMenu = (state) => state.showMenu;
+export const isShowMenu = state => state.showMenu;
