@@ -12,6 +12,8 @@ import DateInput from '../../../common/date-input';
 import { Config } from '../../../../../config';
 import { LONG } from '../../../../../constants/notificationDisplayTimes';
 import { setMultiStopsDestinations } from '../../../../../actions/airTicketsSearchInfo';
+import { selectFlightRouting, selectMultiStopsDestinations } from '../../../../../selectors/airTicketsSearchSelector';
+import { getStartDate } from '../../../../../selectors/searchDatesInfo';
 
 import './style.css';
 import 'react-datepicker/dist/react-datepicker.css';
@@ -87,7 +89,7 @@ class MultiStopsPopup extends PureComponent {
         {
           origin: '',
           destination: '',
-          date: moment(this.props.searchDatesInfo.startDate)
+          date: moment(this.props.startDate)
         }
       ];
     }
@@ -117,8 +119,8 @@ class MultiStopsPopup extends PureComponent {
         showPopup: true
       });
     }
-    if ((prevProps.searchDatesInfo.startDate).format() !== (this.props.searchDatesInfo.startDate).format() && this.state.destinations[0].date.isBefore(this.props.searchDatesInfo.startDate)) {
-      this.handleDateChange(this.props.searchDatesInfo.startDate, 0);
+    if ((prevProps.startDate).format() !== (this.props.startDate).format() && this.state.destinations[0].date.isBefore(this.props.startDate)) {
+      this.handleDateChange(this.props.startDate, 0);
     }
   }
 
@@ -210,8 +212,8 @@ class MultiStopsPopup extends PureComponent {
 
   validateMultiStopsDates(index, destinations) {
     for (let i = index; i < destinations.length; i++) {
-      if (i === 0 && destinations[i].date.isBefore(this.props.searchDatesInfo.startDate)) {
-        destinations[i].date = this.props.searchDatesInfo.startDate;
+      if (i === 0 && destinations[i].date.isBefore(this.props.startDate)) {
+        destinations[i].date = this.props.startDate;
       }
       if (i > 0 && destinations[i].date.isBefore(destinations[i - 1].date)) {
         destinations[i].date = destinations[i - 1].date;
@@ -339,16 +341,17 @@ MultiStopsPopup.propTypes = {
   // Redux props
   dispatch: PropTypes.func,
   flightRouting: PropTypes.string,
-  destinations: PropTypes.array
+  destinations: PropTypes.array,
+  startDate: PropTypes.object
 };
 
 const mapStateToProps = (state) => {
   const { airTicketsSearchInfo, searchDatesInfo } = state;
 
   return {
-    flightRouting: airTicketsSearchInfo.flightRouting,
-    destinations: airTicketsSearchInfo.multiStopsDestinations,
-    searchDatesInfo
+    flightRouting: selectFlightRouting(airTicketsSearchInfo),
+    destinations: selectMultiStopsDestinations(airTicketsSearchInfo),
+    startDate: getStartDate(searchDatesInfo)
   };
 };
 

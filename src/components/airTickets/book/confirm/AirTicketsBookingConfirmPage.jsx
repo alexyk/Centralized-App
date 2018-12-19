@@ -5,10 +5,13 @@ import { NotificationManager } from 'react-notifications';
 import PropTypes from 'prop-types';
 import BookingSteps from '../../../common/bookingSteps';
 import { Config } from '../../../../config';
-import { CREATE_WALLET } from '../../../../constants/modals.js';
+// import { CREATE_WALLET } from '../../../../constants/modals.js';
 import { CurrencyConverter } from '../../../../services/utilities/currencyConverter';
 import LocPrice from '../../../common/utility/LocPrice';
 import { LONG } from '../../../../constants/notificationDisplayTimes';
+import { getLocAddress } from '../../../../selectors/userInfo';
+import { getCurrencyExchangeRates } from '../../../../selectors/exchangeRatesInfo';
+import { getCurrency, getCurrencySign } from '../../../../selectors/paymentInfo';
 
 import '../../../../styles/css/components/airTickets/book/confirm/air-tickets-booking-confirm-page.css';
 
@@ -93,11 +96,11 @@ class AirTicketsBookingConfirmPage extends Component {
   }
 
   render() {
+    const { currency, currencySign, currencyExchangeRates } = this.props;
     const { bookingDetails } = this.state;
-    const hasLocAddress = !!this.props.userInfo.locAddress;
-    const currentCurrency = this.props.paymentInfo.currency;
-    const { currencyExchangeRates } = this.props.exchangeRatesInfo;
-    const userConfirmedPaymentWithLOC = false;
+    // const hasLocAddress = !!userLocAddress;
+    const currentCurrency = currency;
+    // const userConfirmedPaymentWithLOC = false;
 
     if (!bookingDetails) {
       return <div className="loader"></div>;
@@ -469,6 +472,9 @@ class AirTicketsBookingConfirmPage extends Component {
                         );
                       })}
                     </div>
+                    <div className="passengers-edit-button-holder">
+                      <Link className="button" to={`/tickets/results/initBook/${this.props.match.params.id}/profile/passengers${this.props.location.search}`}>Edit</Link>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -478,38 +484,38 @@ class AirTicketsBookingConfirmPage extends Component {
                     <div className="air-tickets-price">
                       <div className="price-label">Base price:</div>
                       <div className="price-amount important">
-                        <div>{this.props.paymentInfo.currencySign}{currencyExchangeRates && (netTotalPriceInUserCurrency).toFixed(2)}</div>
+                        <div>{currencySign}{currencyExchangeRates && (netTotalPriceInUserCurrency).toFixed(2)}</div>
                         <div><LocPrice fiat={netTotalPriceInUserCurrency} /></div>
                       </div>
                     </div>
                     <div className="air-tickets-price">
                       <div className="price-label">Services price:</div>
                       <div className="price-amount important">
-                        <div>{this.props.paymentInfo.currencySign}{currencyExchangeRates && (servicesPriceInUserCurrency).toFixed(2)}</div>
+                        <div>{currencySign}{currencyExchangeRates && (servicesPriceInUserCurrency).toFixed(2)}</div>
                         <div><LocPrice fiat={servicesPriceInUserCurrency} /></div>
                       </div>
                     </div>
                     <div className="air-tickets-price">
                       <div className="price-label">Tax price:</div>
                       <div className="price-amount important">
-                        <div>{this.props.paymentInfo.currencySign}{currencyExchangeRates && (taxPriceInUserCurrency).toFixed(2)}</div>
+                        <div>{currencySign}{currencyExchangeRates && (taxPriceInUserCurrency).toFixed(2)}</div>
                         <div><LocPrice fiat={taxPriceInUserCurrency} /></div>
                       </div>
                     </div>
                     <div className="air-tickets-price">
                       <div className="price-label">Total price:</div>
                       <div className="price-amount important">
-                        <div>{this.props.paymentInfo.currencySign}{currencyExchangeRates && (totalFiatPriceInUserCurrency).toFixed(2)}</div>
+                        <div>{currencySign}{currencyExchangeRates && (totalFiatPriceInUserCurrency).toFixed(2)}</div>
                         <div><LocPrice fiat={totalFiatPriceInUserCurrency} /></div>
                       </div>
                     </div>
                     <p>(Click <a href="">here</a> to learn how you can buy LOC directly to enjoy cheaper travel)</p>
-                    {userConfirmedPaymentWithLOC
+                    {/* {userConfirmedPaymentWithLOC
                       ? <button className="btn btn-primary" disabled>Processing Payment...</button>
                       : hasLocAddress
                         ? <button className="btn btn-primary" onClick={this.handlePayWithLOC}>Pay with LOC Tokens</button>
                         : <button className="btn btn-primary" onClick={(e) => this.openModal(CREATE_WALLET, e)}>Create Wallet</button>
-                    }
+                    } */}
                     <p>You can pay <Link to="/profile/tickets">later</Link>, until {flightProperties.properties.deadline}.</p>
                   </div>
                   <div className="logos">
@@ -534,17 +540,19 @@ AirTicketsBookingConfirmPage.propTypes = {
   history: PropTypes.object,
 
   // Redux props
-  userInfo: PropTypes.object,
-  exchangeRatesInfo: PropTypes.object,
-  paymentInfo: PropTypes.object
+  userLocAddress: PropTypes.string,
+  currencyExchangeRates: PropTypes.object,
+  currency: PropTypes.string,
+  currencySign: PropTypes.string
 };
 
 const mapStateToProps = (state) => {
   const { userInfo, exchangeRatesInfo, paymentInfo } = state;
   return {
-    userInfo,
-    exchangeRatesInfo,
-    paymentInfo
+    userLocAddress: getLocAddress(userInfo),
+    currencyExchangeRates: getCurrencyExchangeRates(exchangeRatesInfo),
+    currency: getCurrency(paymentInfo),
+    currencySign: getCurrencySign(paymentInfo)
   };
 };
 

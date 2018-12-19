@@ -1,5 +1,4 @@
 import React, { Fragment } from 'react';
-import { connect } from 'react-redux';
 import { withRouter, Route, Switch, Redirect } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import BookingSteps from '../../../common/bookingSteps';
@@ -132,4 +131,4 @@ AirTicketsBookingProfileRouterPage.propTypes = {
   location: PropTypes.object
 };
 
-export default withRouter(connect()(AirTicketsBookingProfileRouterPage));
+export default withRouter(AirTicketsBookingProfileRouterPage);

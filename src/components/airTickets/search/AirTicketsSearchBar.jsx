@@ -5,6 +5,7 @@ import { components } from 'react-select';
 import AsyncSelect from 'react-select/lib/Async';
 import PropTypes from 'prop-types';
 import { setFlightClass, setStops, setDepartureTime, setOrigin, setDestination, setFlexSearch } from '../../../actions/airTicketsSearchInfo';
+import { selectOrigin, selectDestination, selectFlightRouting, selectMultiStopsDestinations, selectFlightClass, selectStops, selectDepartureTime, selectFlexSearch, selectChildren, selectAdultsCount } from '../../../selectors/airTicketsSearchSelector';
 import SelectFlex from '../../common/select';
 import AirTicketsDatepickerWrapper from './AirTicketsDatepickerWrapper';
 import { Config } from '../../../config';
@@ -12,6 +13,7 @@ import PassengersPopup from './common/passengersPopup';
 import MultiStopsPopup from './common/multiStopsPopup';
 
 import '../../../styles/css/components/airTickets/search/air-tickets-search-bar.css';
+import { getStartDate, getEndDate } from '../../../selectors/searchDatesInfo';
 
 const customStyles = {
   container: (styles) => ({
@@ -117,23 +119,22 @@ class AirTicketsSearchBar extends Component {
   }
 
   getDestinations() {
-    const { airTicketsSearchInfo, searchDatesInfo } = this.props;
-    const { origin, destination, flightRouting, multiStopsDestinations } = airTicketsSearchInfo;
+    const { origin, destination, flightRouting, multiStopsDestinations, startDate, endDate } = this.props;
 
     let destinations;
 
     if (flightRouting === '1') {
       destinations = [
-        { origin: origin.code, destination: destination.code, date: searchDatesInfo.startDate.format('DD/MM/YYYY') }
+        { origin: origin.code, destination: destination.code, date: startDate.format('DD/MM/YYYY') }
       ];
     } else if (flightRouting === '2') {
       destinations = [
-        { origin: origin.code, destination: destination.code, date: searchDatesInfo.startDate.format('DD/MM/YYYY') },
-        { origin: destination.code, destination: origin.code, date: searchDatesInfo.endDate.format('DD/MM/YYYY') }
+        { origin: origin.code, destination: destination.code, date: startDate.format('DD/MM/YYYY') },
+        { origin: destination.code, destination: origin.code, date: endDate.format('DD/MM/YYYY') }
       ];
     } else if (flightRouting === '3') {
       destinations = [
-        { origin: origin.code, destination: destination.code, date: searchDatesInfo.startDate.format('DD/MM/YYYY') }
+        { origin: origin.code, destination: destination.code, date: startDate.format('DD/MM/YYYY') }
       ];
 
       multiStopsDestinations.forEach((destination) => {
@@ -147,7 +148,7 @@ class AirTicketsSearchBar extends Component {
   }
 
   getQueryString() {
-    const { flexSearch, adultsCount, children, departureTime, stops, flightClass, flightRouting } = this.props.airTicketsSearchInfo;
+    const { flexSearch, adultsCount, children, departureTime, stops, flightClass, flightRouting } = this.props;
     let queryString = '?';
 
     queryString += 'destinations=' + encodeURI(JSON.stringify(this.getDestinations()));
@@ -201,7 +202,7 @@ class AirTicketsSearchBar extends Component {
       return null;
     }
 
-    const { origin, destination, flexSearch, adultsCount, children, departureTime, stops, flightClass } = this.props.airTicketsSearchInfo;
+    const { origin, destination, flexSearch, adultsCount, children, departureTime, stops, flightClass } = this.props;
     const { showMultiStopsPopup } = this.state;
 
     return (
@@ -331,20 +332,36 @@ AirTicketsSearchBar.propTypes = {
 
   // Redux props
   dispatch: PropTypes.func,
-  airTicketsSearchInfo: PropTypes.object,
-  searchDatesInfo: PropTypes.object,
-  paymentInfo: PropTypes.object,
-  modalsInfo: PropTypes.object
+  origin: PropTypes.object,
+  destination: PropTypes.object,
+  flightRouting: PropTypes.string,
+  multiStopsDestinations: PropTypes.array,
+  flightClass: PropTypes.string,
+  stops: PropTypes.string,
+  departureTime: PropTypes.string,
+  adultsCount: PropTypes.string,
+  children: PropTypes.array,
+  flexSearch: PropTypes.bool,
+  startDate: PropTypes.object,
+  endDate: PropTypes.object
 };
 
 function mapStateToProps(state) {
-  const { airTicketsSearchInfo, searchDatesInfo, paymentInfo, modalsInfo } = state;
+  const { airTicketsSearchInfo, searchDatesInfo } = state;
 
   return {
-    airTicketsSearchInfo,
-    searchDatesInfo,
-    paymentInfo,
-    modalsInfo
+    origin: selectOrigin(airTicketsSearchInfo),
+    destination: selectDestination(airTicketsSearchInfo),
+    flightRouting: selectFlightRouting(airTicketsSearchInfo),
+    multiStopsDestinations: selectMultiStopsDestinations(airTicketsSearchInfo),
+    flightClass: selectFlightClass(airTicketsSearchInfo),
+    stops: selectStops(airTicketsSearchInfo),
+    departureTime: selectDepartureTime(airTicketsSearchInfo),
+    adultsCount: selectAdultsCount(airTicketsSearchInfo),
+    children: selectChildren(airTicketsSearchInfo),
+    flexSearch: selectFlexSearch(airTicketsSearchInfo),
+    startDate: getStartDate(searchDatesInfo),
+    endDate: getEndDate(searchDatesInfo)
   };
 }
 

@@ -10,6 +10,7 @@ import { asyncSetStartDate, asyncSetEndDate } from '../../../../actions/searchDa
 import AirTicketsDetailsInfoSection from './AirTicketsDetailsInfoSection';
 import AirTicketsSearchBar from '../../search/AirTicketsSearchBar';
 import BookingSteps from '../../../common/bookingSteps';
+import { isLogged } from '../../../../selectors/userInfo';
 
 class AirTicketsDetailsPage extends Component {
   constructor(props) {
@@ -87,7 +88,7 @@ class AirTicketsDetailsPage extends Component {
       const adultsCount = searchParams.adults;
       const children = JSON.parse(searchParams.children);
       const page = searchParams.page;
-      const flexSearch = searchParams.flexSearch;
+      const flexSearch = Boolean(searchParams.flexSearch);
 
       this.props.dispatch(asyncSetStartDate(departureDate));
       this.props.dispatch(asyncSetEndDate(returnDate));
@@ -106,7 +107,7 @@ class AirTicketsDetailsPage extends Component {
   }
 
   render() {
-    const { result } = this.props;
+    const { result, fareRules, isUserLogged } = this.props;
 
     return (
       <div>
@@ -116,9 +117,10 @@ class AirTicketsDetailsPage extends Component {
         <BookingSteps steps={['Search', 'Details', 'Prepare Booking', 'Confirm & Pay']} currentStepIndex={1} />
         <div className="home-details-container">
           <AirTicketsDetailsInfoSection
-            isLogged={this.props.userInfo.isLogged}
+            isLogged={isUserLogged}
             openModal={this.openModal}
             result={result}
+            fareRules={fareRules}
           />
         </div>
       </div>
@@ -128,6 +130,7 @@ class AirTicketsDetailsPage extends Component {
 
 AirTicketsDetailsPage.propTypes = {
   result: PropTypes.object,
+  fareRules: PropTypes.array,
 
   // start Router props
   match: PropTypes.object,
@@ -136,15 +139,14 @@ AirTicketsDetailsPage.propTypes = {
 
   // start Redux props
   dispatch: PropTypes.func,
-  userInfo: PropTypes.object,
-  paymentInfo: PropTypes.object
+  isUserLogged: PropTypes.bool
 };
 
 function mapStateToProps(state) {
-  const { userInfo, paymentInfo } = state;
+  const { userInfo } = state;
+
   return {
-    userInfo,
-    paymentInfo
+    isUserLogged: isLogged(userInfo)
   };
 }
 

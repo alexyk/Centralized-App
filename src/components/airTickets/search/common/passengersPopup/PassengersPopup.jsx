@@ -48,7 +48,7 @@ class PassengersPopup extends Component {
     }
     this.passengersTimeOut = setTimeout(() => {
       const passengers = {
-        adults: adultsCount < 1 ? 1 : Number(adultsCount),
+        adults: !adultsCount || adultsCount < 1 ? 1 : Number(adultsCount),
         children: children
       };
       this.setState({

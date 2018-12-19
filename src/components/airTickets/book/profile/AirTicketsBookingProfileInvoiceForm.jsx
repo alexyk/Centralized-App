@@ -1,9 +1,63 @@
 import React, { Component } from 'react';
 import { withRouter, NavLink } from 'react-router-dom';
 import PropTypes from 'prop-types';
+import ReactSelect from 'react-select';
 import Select from '../../../common/google/GooglePlacesAutocomplete';
 
 import '../../../../styles/css/components/airTickets/book/profile/air-tickets-booking-profile-invoice-form.css';
+
+const customStyles = {
+  container: (styles) => ({
+    ...styles,
+    flex: '1 1 0',
+    outline: 'none',
+    cursor: 'pointer',
+    border: '1px solid #cfcfcf',
+    borderRadius: '5px',
+    backgroundColor: 'white',
+    padding: '5.5px 15px',
+    width: '100%',
+  }),
+  valueContainer: (styles) => ({
+    ...styles,
+    fontSize: '1.2em'
+  }),
+  input: (styles) => ({
+    ...styles,
+    outline: 'none',
+  }),
+  control: (styles) => ({
+    ...styles,
+    cursor: 'pointer',
+    boxShadow: 'none',
+    border: 0,
+  }),
+  indicatorSeparator: (styles) => ({
+    ...styles,
+    display: 'none'
+  }),
+  menu: (styles) => ({
+    ...styles,
+    marginTop: '20px'
+  }),
+  option: (styles, { data, isFocused, isSelected }) => {
+    const color = isSelected ? '#d87a61' : 'black';
+    return {
+      ...styles,
+      fontSize: '1.2em',
+      textAlign: 'left',
+      cursor: 'pointer',
+      backgroundColor: isFocused
+        ? '#f0f1f3'
+        : 'none',
+      color: isSelected
+        ? color
+        : data.color,
+      fontWeight: isSelected && '400',
+      paddingLeft: isSelected && '30px',
+    };
+  },
+};
 
 class AirTicketsBookingProfileInvoiceForm extends Component {
   constructor(props) {
@@ -11,6 +65,7 @@ class AirTicketsBookingProfileInvoiceForm extends Component {
 
     this.onChange = this.onChange.bind(this);
     this.handleCitySelect = this.handleCitySelect.bind(this);
+    this.handleChangeCountry = this.handleChangeCountry.bind(this);
   }
 
   onChange(e) {
@@ -19,6 +74,10 @@ class AirTicketsBookingProfileInvoiceForm extends Component {
 
   handleCitySelect(place) {
     this.props.onChange('city', place.formatted_address);
+  }
+
+  handleChangeCountry(selectedOption) {
+    this.props.onChange('country', selectedOption);
   }
 
   render() {
@@ -37,14 +96,15 @@ class AirTicketsBookingProfileInvoiceForm extends Component {
           <div className="company-city">
             <div className="country-code">
               <label htmlFor="invoiceCompanyCountry">Country</label>
-              <div className="select">
-                <select id="invoiceCompanyCountry" name="country" value={country || ''} onChange={this.onChange}>
-                  <option defaultValue="" disabled hidden></option>
-                  {countries && countries.map((country, countryIndex) => {
-                    return <option key={countryIndex} value={country.code} onChange={this.onChange}>{country.name}</option>;
-                  })}
-                </select>
-              </div>
+              <ReactSelect
+                styles={customStyles}
+                value={country}
+                onChange={this.handleChangeCountry}
+                options={countries}
+                getOptionLabel={(option) => option.name}
+                getOptionValue={(option) => option.code}
+                placeholder=""
+              />
             </div>
             <div className="zip-code">
               <label htmlFor="invoiceCompanyZip">Zip Code</label>
@@ -60,7 +120,7 @@ class AirTicketsBookingProfileInvoiceForm extends Component {
                 name="city"
                 onPlaceSelected={this.handleCitySelect}
                 types={['(cities)']}
-                componentRestrictions={{ country: (country && country.toLowerCase()) || '' }}
+                componentRestrictions={{ country: (country && country.code.toLowerCase()) || '' }}
                 disabled={!country}
                 placeholder=""
               />

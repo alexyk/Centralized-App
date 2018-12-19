@@ -7,9 +7,13 @@ import moment from 'moment';
 import { CurrencyConverter } from '../../../services/utilities/currencyConverter';
 import { RoomsXMLCurrency } from '../../../services/utilities/roomsXMLCurrency';
 import LocPrice from '../../common/utility/LocPrice';
+import { getCurrencyExchangeRates } from '../../../selectors/exchangeRatesInfo';
+import { getCurrency, getCurrencySign } from '../../../selectors/paymentInfo';
+import { selectFlightRouting } from '../../../selectors/airTicketsSearchSelector';
 import TimeIcon from '../../../styles/images/time-icon.png';
 
 import '../../../styles/css/components/airTickets/search/air-tickets-search-result.css';
+import { isLogged } from '../../../selectors/userInfo';
 
 const SCREEN_SIZE_SMALL = 'SMALL';
 const SCREEN_SIZE_MEDIUM = 'MEDIUM';
@@ -201,7 +205,7 @@ class AirTicketsSearchResult extends Component {
     if (returnInfo.length === 0) {
       return;
     }
-    
+
     const returnDate = this.extractDatesData(returnInfo);
 
     let middleStopsBulets = [];
@@ -281,8 +285,8 @@ class AirTicketsSearchResult extends Component {
   }
 
   render() {
-    const { exchangeRatesInfo, paymentInfo, userInfo, result, allElements, flightRouting } = this.props;
-
+    const { currencyExchangeRates, currency, currencySign, isUserLogged, result, allElements, flightRouting } = this.props;
+    
     const departureInfo = result.segments.filter(s => s.group === '0');
     const returnInfo = result.segments.filter(s => s.group === '1');
 
@@ -290,8 +294,8 @@ class AirTicketsSearchResult extends Component {
     const price = priceInfo.total;
 
     const isPriceLoaded = !!price;
-    const priceForLoc = exchangeRatesInfo.currencyExchangeRates && CurrencyConverter.convert(exchangeRatesInfo.currencyExchangeRates, priceInfo.currency, RoomsXMLCurrency.get(), price);
-    const priceInSelectedCurrency = exchangeRatesInfo.currencyExchangeRates && (CurrencyConverter.convert(exchangeRatesInfo.currencyExchangeRates, priceInfo.currency, paymentInfo.currency, price)).toFixed(2);
+    const priceForLoc = currencyExchangeRates && CurrencyConverter.convert(currencyExchangeRates, priceInfo.currency, RoomsXMLCurrency.get(), price);
+    const priceInSelectedCurrency = currencyExchangeRates && (CurrencyConverter.convert(currencyExchangeRates, priceInfo.currency, currency, price)).toFixed(2);
 
     const isMobile = this.props.location.pathname.indexOf('mobile') !== -1;
 
@@ -306,6 +310,7 @@ class AirTicketsSearchResult extends Component {
     return (
       <div className="air-tickets-result" >
         <form className="air-tickets-result-content">
+          <div style={{ marginBottom: '10px' }}><strong>Is Low Cost: {result.isLowCost ? 'Yes' : 'No'}</strong></div>
           {flightRouting !== '3' ?
             <Fragment>
               {this.getDepartureInfo(departureInfo)}
@@ -318,7 +323,7 @@ class AirTicketsSearchResult extends Component {
           <div className="air-tickets-result-mobile-pricing">
             {!isPriceLoaded
               ? (!allElements ? <div className="price">Loading price...</div> : <div></div>)
-              : <div className="price">{userInfo.isLogged && `${paymentInfo.currencySign} ${priceInSelectedCurrency}`}</div>
+              : <div className="price">{isUserLogged && `${currencySign} ${priceInSelectedCurrency}`}</div>
             }
             {isPriceLoaded && <div className="price">Total price: <LocPrice fiat={priceForLoc} /></div>}
             <div>
@@ -337,10 +342,10 @@ class AirTicketsSearchResult extends Component {
           </div>
           {!isPriceLoaded
             ? (!allElements ? <div className="loader" style={{ width: '100%' }}></div> : <span style={{ padding: '20px 10px 10px 10px' }}>Unavailable</span>)
-            : <span className="price">{userInfo.isLogged && priceInSelectedCurrency && `${paymentInfo.currencySign} ${priceInSelectedCurrency}`}</span>
+            : <span className="price">{isUserLogged && priceInSelectedCurrency && `${currencySign} ${priceInSelectedCurrency}`}</span>
           }
           {isPriceLoaded && <LocPrice fiat={priceForLoc} />}
-          {!isPriceLoaded && allElements
+          {!allElements
             ? <button disabled className="btn">Unavailable</button>
             : <Link className="btn" to={`${redirectURL}/${result.id}/details${search.substr(0, endOfSearch)}`}>Book now</Link>
           }
@@ -359,9 +364,10 @@ AirTicketsSearchResult.propTypes = {
   location: PropTypes.object,
 
   // Redux props
-  exchangeRatesInfo: PropTypes.object,
-  paymentInfo: PropTypes.object,
-  userInfo: PropTypes.object,
+  currencyExchangeRates: PropTypes.object,
+  currency: PropTypes.string,
+  currencySign: PropTypes.string,
+  isUserLogged: PropTypes.bool,
   flightRouting: PropTypes.string
 };
 
@@ -369,10 +375,11 @@ const mapStateToProps = (state) => {
   const { exchangeRatesInfo, paymentInfo, userInfo, airTicketsSearchInfo } = state;
 
   return {
-    exchangeRatesInfo,
-    paymentInfo,
-    userInfo,
-    flightRouting: airTicketsSearchInfo.flightRouting
+    currencyExchangeRates: getCurrencyExchangeRates(exchangeRatesInfo),
+    currency: getCurrency(paymentInfo),
+    currencySign: getCurrencySign(paymentInfo),
+    isUserLogged: isLogged(userInfo),
+    flightRouting: selectFlightRouting(airTicketsSearchInfo)
   };
 };
 

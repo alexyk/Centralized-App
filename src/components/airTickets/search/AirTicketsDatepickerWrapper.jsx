@@ -4,10 +4,12 @@ import { connect } from 'react-redux';
 import moment from 'moment';
 import DatePicker from '../../common/datepicker';
 import { asyncSetEndDate } from '../../../actions/searchDatesInfo';
+import { getStartDate, getEndDate } from '../../../selectors/searchDatesInfo';
 import { setFlightRouting } from '../../../actions/airTicketsSearchInfo';
 import SelectFlex from '../../common/select';
 
 import '../../../styles/css/components/airTickets/search/air-tickets-datepicker-wrapper.css';
+import { selectFlightRouting } from '../../../selectors/airTicketsSearchSelector';
 
 class AirTicketsDatepickerWrapper extends Component {
   constructor(props) {
@@ -25,8 +27,8 @@ class AirTicketsDatepickerWrapper extends Component {
   }
 
   validateDates() {
-    const { startDate, endDate } = this.props.searchDatesInfo;
-    if (endDate.isBefore(startDate, 'day') || (endDate.isAfter(startDate, 'day') && this.props.airTicketsSearchInfo.flightRouting === '1')) {
+    const { startDate, endDate } = this.props;
+    if (endDate.isBefore(startDate, 'day') || (endDate.isAfter(startDate, 'day') && this.props.flightRouting === '1')) {
       this.props.dispatch(asyncSetEndDate(moment(startDate)));
     }
   }
@@ -41,7 +43,7 @@ class AirTicketsDatepickerWrapper extends Component {
   }
 
   render() {
-    const { flightRouting } = this.props.airTicketsSearchInfo;
+    const { flightRouting } = this.props;
 
     return (
       <div className="check">
@@ -80,16 +82,18 @@ AirTicketsDatepickerWrapper.propTypes = {
 
   // Redux props
   dispatch: PropTypes.func,
-  airTicketsSearchInfo: PropTypes.object,
-  searchDatesInfo: PropTypes.object
+  flightRouting: PropTypes.string,
+  startDate: PropTypes.object,
+  endDate: PropTypes.object
 };
 
 const mapStateToProps = (state) => {
   const { airTicketsSearchInfo, searchDatesInfo } = state;
 
   return {
-    airTicketsSearchInfo,
-    searchDatesInfo
+    flightRouting: selectFlightRouting(airTicketsSearchInfo),
+    startDate: getStartDate(searchDatesInfo),
+    endDate: getEndDate(searchDatesInfo)
   };
 };
 

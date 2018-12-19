@@ -7,17 +7,22 @@ import LocPrice from '../../../common/utility/LocPrice';
 import { CurrencyConverter } from '../../../../services/utilities/currencyConverter';
 import { RoomsXMLCurrency } from '../../../../services/utilities/roomsXMLCurrency';
 import { openModal } from '../../../../actions/modalsInfo.js';
+import { getCurrency, getCurrencySign } from '../../../../selectors/paymentInfo';
+import { getCurrencyExchangeRates } from '../../../../selectors/exchangeRatesInfo';
+import { isLogged } from '../../../../selectors/userInfo';
+import { selectFlightRouting } from '../../../../selectors/airTicketsSearchSelector';
+import { getStartDate, getEndDate } from '../../../../selectors/searchDatesInfo';
 import { LOGIN } from '../../../../constants/modals.js';
 
 function AirTicketsDetailsBookingPanel(props) {
 
-  const { currencyExchangeRates } = props.exchangeRatesInfo;
+  const { currencyExchangeRates } = props;
+
   if (!currencyExchangeRates) {
     return <div className="loader"></div>;
   }
 
-  const { result, userInfo, paymentInfo, flightRouting } = props;
-  const { currency, currencySign } = paymentInfo;
+  const { result, isUserLogged, currency, currencySign, flightRouting, startDate, endDate } = props;
 
   const currencyCode = result.price.currency;
   const price = result.price.total;
@@ -39,7 +44,7 @@ function AirTicketsDetailsBookingPanel(props) {
           <div className="date-container">
             <div className="text">Return</div>
             <div className="date">
-              <span>{props.searchDatesInfo.endDate.format('DD')} </span>{props.searchDatesInfo.endDate.format('MMM, ddd')}
+              <span>{endDate.format('DD')} </span>{endDate.format('MMM, ddd')}
             </div>
           </div>
         </Fragment>
@@ -58,7 +63,7 @@ function AirTicketsDetailsBookingPanel(props) {
             <div className="check">
               <DateInput
                 text="Departure"
-                date={props.searchDatesInfo.startDate}
+                date={startDate}
               />
               <div className="choose-roundtrip">
                 <span className="icon-arrow-right arrow"></span>
@@ -71,19 +76,19 @@ function AirTicketsDetailsBookingPanel(props) {
           <div className="without-fees">
             <p>Passengers</p>
             <span className="icon-question" tooltip={'Some message'}></span>
-            <p>{userInfo.isLogged && `${currencySign} ${(fiatPriceInCurrentCurrency - taxPriceInCurrentCurrency).toFixed(2)}`} <LocPrice fiat={fiatPriceInRoomsXMLCurrency - taxPriceInRoomsXMLCurrency} /></p>
+            <p>{isUserLogged && `${currencySign} ${(fiatPriceInCurrentCurrency - taxPriceInCurrentCurrency).toFixed(2)}`} <LocPrice fiat={fiatPriceInRoomsXMLCurrency - taxPriceInRoomsXMLCurrency} /></p>
           </div>
           <div className="cleaning-fee">
             <p>Taxes and fees</p>
             <span className="icon-question" tooltip={'Some message'}></span>
-            <p>{userInfo.isLogged && `${currencySign} ${(taxPriceInCurrentCurrency.toFixed(2))}`} <LocPrice fiat={taxPriceInRoomsXMLCurrency} /></p>
+            <p>{isUserLogged && `${currencySign} ${(taxPriceInCurrentCurrency.toFixed(2))}`} <LocPrice fiat={taxPriceInRoomsXMLCurrency} /></p>
           </div>
           <div className="total">
             <p>Total</p>
-            <p>{userInfo.isLogged && `${currencySign} ${(fiatPriceInCurrentCurrency.toFixed(2))}`} <LocPrice fiat={fiatPriceInRoomsXMLCurrency} /></p>
+            <p>{isUserLogged && `${currencySign} ${(fiatPriceInCurrentCurrency.toFixed(2))}`} <LocPrice fiat={fiatPriceInRoomsXMLCurrency} /></p>
           </div>
         </div>
-        {userInfo.isLogged ?
+        {isUserLogged ?
           <Link to={`/tickets/results/initBook/${props.match.params.id}/profile${props.location.search}`} className="pay-in">Request Booking</Link> :
           <button className="pay-in" onClick={(e) => props.dispatch(openModal(LOGIN, e))}>Login</button>}
         <hr />
@@ -102,21 +107,26 @@ AirTicketsDetailsBookingPanel.propTypes = {
 
   // Redux props
   dispatch: PropTypes.func,
-  exchangeRatesInfo: PropTypes.object,
-  paymentInfo: PropTypes.object,
-  userInfo: PropTypes.object,
-  searchDatesInfo: PropTypes.object,
+  currencyExchangeRates: PropTypes.object,
+  currency: PropTypes.string,
+  currencySign: PropTypes.string,
+  isUserLogged: PropTypes.bool,
+  startDate: PropTypes.object,
+  endDate: PropTypes.object,
   flightRouting: PropTypes.string
 };
 
 function mapStateToProps(state) {
   const { paymentInfo, exchangeRatesInfo, userInfo, searchDatesInfo, airTicketsSearchInfo } = state;
+
   return {
-    paymentInfo,
-    exchangeRatesInfo,
-    userInfo,
-    searchDatesInfo,
-    flightRouting: airTicketsSearchInfo.flightRouting
+    currency: getCurrency(paymentInfo),
+    currencySign: getCurrencySign(paymentInfo),
+    currencyExchangeRates: getCurrencyExchangeRates(exchangeRatesInfo),
+    isUserLogged: isLogged(userInfo),
+    startDate: getStartDate(searchDatesInfo),
+    endDate: getEndDate(searchDatesInfo),
+    flightRouting: selectFlightRouting(airTicketsSearchInfo)
   };
 }
 

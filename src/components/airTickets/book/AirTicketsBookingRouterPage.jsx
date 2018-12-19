@@ -6,6 +6,7 @@ import PropTypes from 'prop-types';
 // import { parse } from 'query-string';
 import AirTicketsDetailsPage from './details/AirTicketsDetailsPage';
 import AirTicketsBookingProfileRouterPage from './profile/AirTicketsBookingProfileRouterPage';
+import AirTicketsBookingConfirmPage from './confirm/AirTicketsBookingConfirmPage';
 import { Config } from '../../../config';
 import { LONG } from '../../../constants/notificationDisplayTimes';
 
@@ -21,6 +22,7 @@ class AirTicketsBookingRouterPage extends Component {
 
     this.state = {
       result: null,
+      fareRules: null,
       contactInfo: {
         address: 'Krasno selo 212',
         city: 'Sofia, Bulgaria',
@@ -35,7 +37,7 @@ class AirTicketsBookingRouterPage extends Component {
       invoiceInfo: {
         address: 'Tintqva 15-17',
         city: 'Sofia, Bulgaria',
-        country: 'BG',
+        country: { name: 'Bulgaria', code: 'BG', currency: 'BGN', phoneCode: '359' },
         name: 'Codexio LTD',
         zip: '1000',
       },
@@ -55,6 +57,7 @@ class AirTicketsBookingRouterPage extends Component {
 
     this.searchAirTickets = this.searchAirTickets.bind(this);
     this.requestSelectFlight = this.requestSelectFlight.bind(this);
+    this.requestFareRules = this.requestFareRules.bind(this);
     this.requestAllCountries = this.requestAllCountries.bind(this);
     this.requestPrepareBooking = this.requestPrepareBooking.bind(this);
     this.requestBooking = this.requestBooking.bind(this);
@@ -70,6 +73,7 @@ class AirTicketsBookingRouterPage extends Component {
 
   componentDidMount() {
     this.requestSelectFlight();
+    this.requestFareRules();
     this.requestAllCountries();
     this.populatePassengersInfo();
   }
@@ -85,6 +89,26 @@ class AirTicketsBookingRouterPage extends Component {
             } else {
               this.setState({
                 result: data
+              });
+            }
+          });
+        } else {
+          this.searchAirTickets(this.props.location.search);
+        }
+      });
+  }
+
+  requestFareRules() {
+    fetch(`${Config.getValue('apiHost')}flight/fareRules?flightId=${this.props.match.params.id}`)
+      .then(res => {
+        if (res.ok) {
+          res.json().then((data) => {
+            if (data.success === false) {
+              NotificationManager.warning(data.message, '', LONG);
+              this.searchAirTickets(this.props.location.search);
+            } else {
+              this.setState({
+                fareRules: data.rules
               });
             }
           });
@@ -111,10 +135,11 @@ class AirTicketsBookingRouterPage extends Component {
 
   requestPrepareBooking(initBooking) {
     return new Promise((resolve, reject) => {
-      fetch(`${Config.getValue('apiHost')}flight/prepareBooking`, {
+      fetch(`${Config.getValue('apiHost')}flight/new/prepareBooking`, {
         method: 'POST',
         headers: {
-          'Content-type': 'application/json'
+          'Content-type': 'application/json',
+          'Authorization': localStorage[Config.getValue('domainPrefix') + '.auth.locktrip']
         },
         body: JSON.stringify(initBooking)
       })
@@ -128,7 +153,10 @@ class AirTicketsBookingRouterPage extends Component {
               }
             });
           } else {
-            reject();
+            res.json().then((err) => {
+              console.log(err);
+              reject(err);
+            });
             console.log(res);
           }
         });
@@ -287,6 +315,9 @@ class AirTicketsBookingRouterPage extends Component {
 
     const { contactInfo, invoiceInfo, servicesInfo, passengersInfo } = this.state;
 
+    const invoice = Object.assign({}, invoiceInfo);
+    invoice.country = invoiceInfo.country.code;
+
     const passengers = [];
     for (let i = 0; i < passengersInfo.length; i++) {
       const passengerInfo = passengersInfo[i];
@@ -310,7 +341,7 @@ class AirTicketsBookingRouterPage extends Component {
     const initBooking = {
       flightId: this.props.match.params.id,
       contact: contactInfo,
-      invoice: invoiceInfo,
+      invoice,
       options: servicesInfo,
       passengers
     };
@@ -319,43 +350,48 @@ class AirTicketsBookingRouterPage extends Component {
       .then((data) => {
         console.log('Success prepare booking.');
         console.log(data);
-        this.requestBooking()
-          .then((data) => {
-            this.setState({
-              isBookingProccess: false
-            }, () => {
-              console.log('Success booking.');
-              console.log(data);
-              if (data.bookingStatus === 'Unsuccessful booking or no booking has made') {
-                this.searchAirTickets(this.props.location.search);
-                NotificationManager.warning(data.bookingStatus, '', LONG);
-              } else {
-                this.props.history.push(`/tickets/results/book/${this.props.match.params.id}`);
-                NotificationManager.success(data.bookingStatus, '', LONG);
-              }
-            });
-          })
-          .catch((err) => {
-            err.json().then((data) => {
-              console.log(data);
-            });
-          });
-      })
-      .catch((err) => {
-        NotificationManager.warning(err.message, '', LONG);
         this.setState({
           isBookingProccess: false
         });
+        this.props.history.push(`/tickets/results/initBook/${this.props.match.params.id}/confirm${this.props.location.search}`);
+        // this.requestBooking()
+        //   .then((data) => {
+        //     this.setState({
+        //       isBookingProccess: false
+        //     }, () => {
+        //       console.log('Success booking.');
+        //       console.log(data);
+        //       if (data.bookingStatus === 'Unsuccessful booking or no booking has made') {
+        //         this.searchAirTickets(this.props.location.search);
+        //         NotificationManager.warning(data.bookingStatus, '', LONG);
+        //       } else {
+        //         this.props.history.push(`/tickets/results/book/${this.props.match.params.id}`);
+        //         NotificationManager.success(data.bookingStatus, '', LONG);
+        //       }
+        //     });
+        //   })
+        //   .catch((err) => {
+        //     err.json().then((data) => {
+        //       console.log(data);
+        //     });
+        //   });
+      })
+      .catch((err) => {
+        NotificationManager.warning(err.messageResponse, '', LONG);
+        this.setState({
+          isBookingProccess: false
+        });
+        this.searchAirTickets(this.props.location.search);
       });
   }
 
   render() {
-    const { result, contactInfo, invoiceInfo, servicesInfo, passengersInfo, countries, confirmInfo, isBookingProccess } = this.state;
+    const { result, fareRules, contactInfo, invoiceInfo, servicesInfo, passengersInfo, countries, confirmInfo, isBookingProccess } = this.state;
 
     return (
       <Fragment>
         <Switch>
-          <Route exact path="/tickets/results/initBook/:id/details" render={() => <AirTicketsDetailsPage result={result} />} />
+          <Route exact path="/tickets/results/initBook/:id/details" render={() => <AirTicketsDetailsPage result={result} fareRules={fareRules} />} />
           <Route path="/tickets/results/initBook/:id/profile" render={() => {
             return (
               <AirTicketsBookingProfileRouterPage
@@ -378,6 +414,7 @@ class AirTicketsBookingRouterPage extends Component {
             );
           }}
           />
+          <Route exact path="/tickets/results/initBook/:id/confirm" render={() => <AirTicketsBookingConfirmPage />} />
         </Switch>
       </Fragment>
     );

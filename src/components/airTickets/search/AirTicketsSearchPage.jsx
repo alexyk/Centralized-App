@@ -183,7 +183,8 @@ class AirTicketsSearchPage extends Component {
               loading: true,
               page: 0,
               currentPageResults: '',
-              allElements: false
+              allElements: false,
+              totalElements: 0
             }, () => this.connectSocketFilters());
           });
         } else {
@@ -277,7 +278,7 @@ class AirTicketsSearchPage extends Component {
       const adultsCount = searchParams.adults;
       const children = JSON.parse(searchParams.children);
       const page = searchParams.page;
-      const flexSearch = searchParams.flexSearch;
+      const flexSearch = Boolean(searchParams.flexSearch);
 
 
       this.props.dispatch(asyncSetStartDate(departureDate));
