@@ -1,3 +1,3 @@
-import AsideContentPage from './AsideContentPage';
+import AsideContentPage from "./AsideContentPage";
 
 export default AsideContentPage;

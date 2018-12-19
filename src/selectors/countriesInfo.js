@@ -1,1 +1,1 @@
-export const getCountries = (state) => state.countries;
+export const getCountries = state => state.countries;

@@ -13,6 +13,7 @@ function ProfileNav(props) {
       <div className="container">
         <ul className="navbar-profile">
           <li><NavLink exact activeClassName="active" to="/profile/dashboard">Dashboard</NavLink></li>
+          <li><NavLink exact activeClassName="active" to="/profile/affiliates">My Affiliates</NavLink></li>
           <li><NavLink exact activeClassName="active" to="/profile/listings">My Listings</NavLink></li>
           <li><NavLink activeClassName="active" to="/profile/trips">My Trips</NavLink></li>
           <li><NavLink activeClassName="active" to="/profile/reservations">My Guests</NavLink></li>

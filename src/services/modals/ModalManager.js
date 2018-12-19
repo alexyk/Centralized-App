@@ -1,4 +1,4 @@
-import { openModal, closeModal } from '../../actions/modalsInfo';
+import { openModal, closeModal } from "../../actions/modalsInfo";
 
 export default class ModalManager {
   static open(modal, dispatch) {

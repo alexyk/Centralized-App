@@ -1,3 +1,3 @@
-import NumberRangeSlider from './NumberRangeSlider';
+import NumberRangeSlider from "./NumberRangeSlider";
 
 export default NumberRangeSlider;

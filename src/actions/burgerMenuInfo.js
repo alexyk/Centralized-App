@@ -1,4 +1,4 @@
-import { burgerMenuInfo } from './actionTypes';
+import { burgerMenuInfo } from "./actionTypes";
 
 export function setShowMenu(showMenu) {
   return {

@@ -9,7 +9,7 @@ import { closeModal, openModal } from '../../actions/modalsInfo';
 import { isActive } from '../../selectors/modalsInfo';
 import RegisterModal from './modals/RegisterModal';
 import { executeWithToken } from '../../services/grecaptcha/grecaptcha';
-
+import referralIdPersister from "../profile/affiliates/service/persist-referral-id";
 import {
   REGISTER
 } from '../../constants/modals.js';
@@ -89,7 +89,8 @@ class RegisterManager extends React.Component {
       password: this.state.signUpPassword,
       country: this.state.country.id,
       countryState: this.state.countryState,
-      image: 'images/default.png'
+      image: 'images/default.png',
+      refId: referralIdPersister.getIdToRegister()
     };
 
     this.clearLocalStorage();
