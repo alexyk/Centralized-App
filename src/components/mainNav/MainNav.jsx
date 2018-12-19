@@ -6,7 +6,7 @@ import {
 } from '../../constants/modals.js';
 import { Link, withRouter } from 'react-router-dom';
 import { closeModal, openModal } from '../../actions/modalsInfo';
-import { setIsLogged } from '../../actions/userInfo';
+import { logOut } from '../../actions/userInfo';
 
 import { Config } from '../../config';
 import PropTypes from 'prop-types';
@@ -17,6 +17,8 @@ import BurgerMenu from './burger-menu';
 import DropdownMenu from './dropdown-menu';
 import ListMenu from './list-menu';
 import { setShowMenu } from '../../actions/burgerMenuInfo.js';
+
+import {selectors as UserSelectors} from "../../reducers/userInfo"
 
 class MainNav extends React.Component {
   constructor(props) {
@@ -53,7 +55,7 @@ class MainNav extends React.Component {
     localStorage.removeItem(Config.getValue('domainPrefix') + '.auth.locktrip');
     localStorage.removeItem(Config.getValue('domainPrefix') + '.auth.username');
 
-    this.props.dispatch(setIsLogged(false));
+    this.props.dispatch(logOut());
 
     this.props.history.push('/');
   }
@@ -106,7 +108,7 @@ class MainNav extends React.Component {
             <Link className="navbar-logo" to="/">
               <img src={Config.getValue('basePath') + 'images/locktrip_logo.svg'} alt='logo' />
             </Link>
-            {localStorage[Config.getValue('domainPrefix') + '.auth.locktrip']
+            {this.props.isLogged
               ? <ListMenu>
                 <Link className="list-menu-item" to="/profile/reservations">Hosting</Link>
                 <Link className="list-menu-item" to="/profile/trips">Traveling</Link>
@@ -134,7 +136,7 @@ class MainNav extends React.Component {
               </ListMenu>
             }
 
-            {localStorage[Config.getValue('domainPrefix') + '.auth.locktrip']
+            {this.props.isLogged
               ? <BurgerMenu>
                 <Link className="menu-item" to="/profile/dashboard">Dashboard</Link>
                 <Link className="menu-item" to="/profile/reservations">My Guests</Link>
@@ -163,9 +165,14 @@ MainNav.propTypes = {
   // start Router props
   location: PropTypes.object,
   history: PropTypes.object,
+  isLogged: PropTypes.bool,
 
   // start Redux props
   dispatch: PropTypes.func
 };
 
-export default withRouter(connect()(MainNav));
+export default withRouter(connect(function mapStateToProps(state){
+  return {
+    isLogged: UserSelectors.getUserId(state.userInfo)
+  }
+})(MainNav));

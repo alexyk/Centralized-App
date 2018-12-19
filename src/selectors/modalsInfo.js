@@ -1,1 +1,1 @@
-export const isActive = (state) => state.isActive;
+export const isActive = state => state.isActive;

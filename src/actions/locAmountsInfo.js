@@ -1,4 +1,4 @@
-import { locAmountsInfo } from './actionTypes';
+import { locAmountsInfo } from "./actionTypes";
 
 export function updateLocAmounts(fiatAmount, params, error) {
   return {

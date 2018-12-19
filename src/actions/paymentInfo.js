@@ -1,4 +1,4 @@
-import { paymentInfo } from './actionTypes';
+import { paymentInfo } from "./actionTypes";
 
 export function setCurrency(currency) {
   return {

@@ -1,4 +1,4 @@
-import { locPriceUpdateTimerInfo } from './actionTypes';
+import { locPriceUpdateTimerInfo } from "./actionTypes";
 
 export function setSeconds(seconds) {
   return {
