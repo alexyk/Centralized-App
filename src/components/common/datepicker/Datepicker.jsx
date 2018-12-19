@@ -1,9 +1,11 @@
 import React, { Component } from 'react';
 import DatePicker from 'react-datepicker';
 import moment from 'moment';
+import PropTypes from 'prop-types';
 import DateInput from './date-input';
 import { connect } from 'react-redux';
 import { asyncSetStartDate, asyncSetEndDate } from '../../../actions/searchDatesInfo.js';
+import { getStartDate, getEndDate } from '../../../selectors/searchDatesInfo.js';
 
 import 'react-datepicker/dist/react-datepicker.css';
 import './style.css';
@@ -92,7 +94,18 @@ class Datepicker extends Component {
           excludeDates={this.props.excludedDates}
           withPortal={isMobile}
           monthsShown={monthsToShow}
-          fixedHeight
+          popperPlacement='bottom-start'
+          popperModifiers={{
+            flip: {
+              behavior: ['bottom-start'] // don't allow it to flip to be above
+            },
+            preventOverflow: {
+              enabled: false
+            },
+            hide: {
+              enabled: false
+            }
+          }}
           {...this.props}
         />
 
@@ -112,6 +125,17 @@ class Datepicker extends Component {
             withPortal={isMobile}
             monthsShown={monthsToShow}
             fixedHeight
+            popperModifiers={{
+              flip: {
+                behavior: ['bottom-start']
+              },
+              preventOverflow: {
+                enabled: false
+              },
+              hide: {
+                enabled: false
+              }
+            }}
             {...this.props}
           />
         }
@@ -125,12 +149,22 @@ Datepicker.defaultProps = {
   intervalEndText: 'Check-out',
   enableRanges: false,
   enableSameDates: false,
-  excludedDates: []
+  excludedDates: [],
 };
 
-const mapStateToProps = (state) => ({
-  startDate: state.searchDatesInfo.startDate,
-  endDate: state.searchDatesInfo.endDate
-});
+DatePicker.propTypes = {
+  // Redux props
+  startDate: PropTypes.object,
+  endDate: PropTypes.object,
+};
+
+const mapStateToProps = (state) => {
+  const { searchDatesInfo } = state;
+
+  return {
+    startDate: getStartDate(searchDatesInfo),
+    endDate: getEndDate(searchDatesInfo)
+  };
+};
 
 export default connect(mapStateToProps)(Datepicker);

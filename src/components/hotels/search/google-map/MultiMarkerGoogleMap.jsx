@@ -6,6 +6,8 @@ import PropTypes from 'prop-types';
 import MarkerInfoWindow from './MarkerInfoWindow';
 import { CurrencyConverter } from '../../../../services/utilities/currencyConverter';
 import { RoomsXMLCurrency } from '../../../../services/utilities/roomsXMLCurrency';
+import { getCurrency, getCurrencySign } from '../../../../selectors/paymentInfo';
+import { getLocEurRate, getCurrencyExchangeRates } from '../../../../selectors/exchangeRatesInfo';
 
 class MultiMarkerGoogleMap extends Component {
   componentDidMount() {
@@ -27,21 +29,17 @@ class MultiMarkerGoogleMap extends Component {
     this.closeAll = this.closeAll.bind(this);
   }
 
-  shouldComponentUpdate() {
-    return false;
-  }
-
-  componentWillReceiveProps(props) {
-    const hasNewCoordinates = props.lat && props.lon && (props.lat !== this.lat || props.lon !== this.lon);
+  componentDidUpdate() {
+    const hasNewCoordinates = this.props.lat && this.props.lon && (this.props.lat !== this.lat || this.props.lon !== this.lon);
     if (hasNewCoordinates) {
       this.clearAll();
-      this.lat = props.lat;
-      this.lon = props.lon;
-      const latLng = new window.google.maps.LatLng(props.lat, props.lon);
+      this.lat = this.props.lat;
+      this.lon = this.props.lon;
+      const latLng = new window.google.maps.LatLng(this.props.lat, this.props.lon);
       this.mapInstance.panTo(latLng);
-      this.placeMarkers(props.mapInfo, this.infoWindows);
-    } else if (props.mapInfo && props.mapInfo.length > 0) {
-      this.placeSingleMarker(props.mapInfo[props.mapInfo.length - 1], this.infoWindows);
+      this.placeMarkers(this.props.mapInfo, this.infoWindows);
+    } else if (this.props.mapInfo && this.props.mapInfo.length > 0) {
+      this.placeSingleMarker(this.props.mapInfo[this.props.mapInfo.length - 1], this.infoWindows);
     }
   }
 
@@ -108,12 +106,10 @@ class MultiMarkerGoogleMap extends Component {
   }
 
   createInfoWindow(hotel) {
-    const { isLogged, nights } = this.props;
-    const { locEurRate, currencyExchangeRates } = this.props.exchangeRatesInfo;
-    const { currency, currencySign } = this.props.paymentInfo;
-    const locPrice = ((hotel.price / locEurRate) / this.props.nights).toFixed(2);
+    const { isLogged, nights, currency, currencySign, locEurRate, currencyExchangeRates, location } = this.props;
+    const locPrice = ((hotel.price / locEurRate) / nights).toFixed(2);
     const fiatPrice = currencyExchangeRates && ((CurrencyConverter.convert(currencyExchangeRates, RoomsXMLCurrency.get(), currency, hotel.price)) / nights).toFixed(2);
-    const isMobile = this.props.location.pathname.indexOf('/mobile') !== -1;
+    const isMobile = location.pathname.indexOf('/mobile') !== -1;
     const rootUrl = isMobile ? '/mobile/details' : '/hotels/listings';
 
     const content = ReactDOMServer.renderToString(
@@ -124,7 +120,7 @@ class MultiMarkerGoogleMap extends Component {
         fiatPrice={fiatPrice}
         isLogged={isLogged}
         rootUrl={rootUrl}
-        search={this.props.location.search}
+        search={location.search}
       />
     );
 
@@ -147,21 +143,24 @@ MultiMarkerGoogleMap.propTypes = {
   isLogged: PropTypes.bool,
   nights: PropTypes.number,
 
-
   // start Router props
   location: PropTypes.object,
 
   // start Redux props
-  paymentInfo: PropTypes.object,
-  exchangeRatesInfo: PropTypes.object,
+  currency: PropTypes.string,
+  currencySign: PropTypes.string,
+  locEurRate: PropTypes.number,
+  currencyExchangeRates: PropTypes.object
 };
 
 
 function mapStateToProps(state) {
   const { paymentInfo, exchangeRatesInfo } = state;
   return {
-    paymentInfo,
-    exchangeRatesInfo,
+    currency: getCurrency(paymentInfo),
+    currencySign: getCurrencySign(paymentInfo),
+    locEurRate: getLocEurRate(exchangeRatesInfo),
+    currencyExchangeRates: getCurrencyExchangeRates(exchangeRatesInfo),
   };
 }
 

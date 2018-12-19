@@ -1,0 +1,46 @@
+@import '../../../styles/css/vendors/include-media';
+@import '../../../styles/css/base/variables';
+
+#second-nav {
+  height: 37px;
+  
+  @include media("<desktop") {
+    height: 31px;
+    margin-top: 50px;
+  }
+}
+
+#second-nav ul {
+  display: flex;
+  background: none;
+  list-style: none;
+}
+
+#second-nav ul li a {
+  padding: 10px 15px;
+  font-size: 1.2em;
+  border-radius: 0;
+  font-weight: 300;
+  border-bottom: 4px solid transparent;
+  background: none;
+  color: $white;
+
+  @include media("<desktop") {
+    color: $black;
+    font-size: 1em;
+    padding: 10px 10px;
+  }
+}
+
+#second-nav ul li a.active {
+  font-size: 1em;
+  color: $text-black;
+  font-weight: 400;
+  border-bottom: 2px solid $moderate-red;
+  
+  @include media(">=desktop") {
+    font-size: 1.2em;
+    color: $white;
+    border-bottom: 4px solid $moderate-red;
+  }
+}

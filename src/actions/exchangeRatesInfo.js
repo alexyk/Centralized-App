@@ -1,4 +1,4 @@
-import { exchangeRatesInfo } from './actionTypes';
+import { exchangeRatesInfo } from "./actionTypes";
 
 export function setCurrencyExchangeRates(currencyExchangeRates) {
   return {

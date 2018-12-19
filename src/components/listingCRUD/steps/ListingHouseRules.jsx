@@ -13,12 +13,10 @@ function ListingHouseRules(props) {
     <div>
       <ListingCrudNav progress='100%' />
       <div className="container">
-        <div className="row">
-          <div id="listing-house-rules-container" className="listings create">
-            <div className="col-md-3">
-              <GuestSettingsAside routes={props.routes} />
-            </div>
-            <div className="rules-container col-md-9">
+        <div id="listing-house-rules-container" className="listings create">
+          <GuestSettingsAside routes={props.routes} />
+          <div id="reservation-hotel-review-room">
+            <div className="rules-container">
               <h2>House Rules</h2>
               <hr />
               <div className="form-group">
@@ -148,11 +146,11 @@ function ListingHouseRules(props) {
                 </div>
                 <div className="col-md-9 other-rules">
                   <div className="form-group">
-                    <input onChange={props.onChange} placeholder="Type rule here" id="other-rules"  name="otherRuleText" value={otherRuleText} />
+                    <input onChange={props.onChange} placeholder="Type rule here" id="other-rules" name="otherRuleText" value={otherRuleText} />
                   </div>
                 </div>
                 <div className="button-add-container col-md-3">
-                  <button className="btn btn-primary" onClick={() => props.addRule()}> Add</button>
+                  <button className="button" onClick={() => props.addRule()}> Add</button>
                 </div>
 
                 <div>
@@ -183,7 +181,7 @@ function ListingHouseRules(props) {
         </div>
       </div> */}
       <FooterNav next={props.next} prev={props.prev} handleClickNext={props.updateProgress} step={8} />
-    </div>
+    </div >
   );
 }
 
@@ -195,6 +193,7 @@ ListingHouseRules.propTypes = {
   prev: PropTypes.string,
   next: PropTypes.string,
   routes: PropTypes.object,
+  removeRule: PropTypes.func
 };
 
 export default ListingHouseRules;

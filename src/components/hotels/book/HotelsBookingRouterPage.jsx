@@ -13,6 +13,7 @@ import { LONG } from '../../../constants/notificationDisplayTimes.js';
 import requester from '../../../requester';
 import _ from 'lodash';
 import validator from 'validator';
+import { getCurrency } from '../../../selectors/paymentInfo';
 
 const QUOTE_ID_POLLING_INTERVAL_TIME = 10000;
 
@@ -212,7 +213,7 @@ class HotelsBookingRouterPage extends React.Component {
 
                     const booking = {
                       rooms: this.state.guests,
-                      currency: this.props.paymentInfo.currency,
+                      currency: this.props.currency,
                       quoteId: newQuoteId
                     };
 
@@ -414,14 +415,14 @@ HotelsBookingRouterPage.propTypes = {
   history: PropTypes.object,
 
   // Redux props
-  paymentInfo: PropTypes.object
+  currency: PropTypes.string
 };
 
 const mapStateToProps = (state) => {
   const { paymentInfo } = state;
 
   return {
-    paymentInfo
+    currency: getCurrency(paymentInfo)
   };
 };
 

@@ -1,3 +1,5 @@
+import '../../../styles/css/components/hotels/book/hotel-booking-page.css';
+
 import { LONG } from '../../../constants/notificationDisplayTimes.js';
 import { INVALID_CHILD_AGE, INVALID_GUEST_NAME } from '../../../constants/warningMessages.js';
 
@@ -15,6 +17,9 @@ import { RoomsXMLCurrency } from '../../../services/utilities/roomsXMLCurrency';
 import LocPrice from '../../common/utility/LocPrice';
 import xregexp from 'xregexp';
 import { DEFAULT_LISTING_IMAGE_URL } from '../../../constants/images';
+import AsideContentPage from '../../common/asideContentPage';
+import { getCurrency, getCurrencySign } from '../../../selectors/paymentInfo';
+import { getCurrencyExchangeRates } from '../../../selectors/exchangeRatesInfo';
 
 class HotelsBookingPage extends React.Component {
   constructor(props) {
@@ -107,7 +112,7 @@ class HotelsBookingPage extends React.Component {
       return (<div className="loader"></div>);
     }
 
-    if (!this.props.exchangeRatesInfo.currencyExchangeRates) {
+    if (!this.props.currencyExchangeRates) {
       return (<div className="loader"></div>);
     }
 
@@ -115,25 +120,21 @@ class HotelsBookingPage extends React.Component {
       return (<div className="loader"></div>);
     }
 
-    const { hotel, rooms, guests } = this.props;
-    const { handleAdultChange, handleChildAgeChange } = this.props;
-    const { currency, currencySign } = this.props.paymentInfo;
-    const { currencyExchangeRates } = this.props.exchangeRatesInfo;
+    const { hotel, rooms, guests, currency, currencySign, currencyExchangeRates, handleAdultChange, handleChildAgeChange, location } = this.props;
     const city = hotel.city;
     const address = hotel.additionalInfo.mainAddress;
     const roomsTotalPrice = this.calculateRoomsTotalPrice(rooms);
     const hotelPicUrl = hotel.hotelPhotos && hotel.hotelPhotos.length > 0 ? hotel.hotelPhotos[0].url : DEFAULT_LISTING_IMAGE_URL;
     const priceInSelectedCurrency = Number(CurrencyConverter.convert(currencyExchangeRates, RoomsXMLCurrency.get(), currency, roomsTotalPrice)).toFixed(2);
-    const nights = this.calculateReservationTotalNights(this.props.location.search);
+    const nights = this.calculateReservationTotalNights(location.search);
 
     return (
       <div>
         <BookingSteps steps={['Provide Guest Information', 'Review Room Details', 'Confirm and Pay']} currentStepIndex={1} />
-
-        <div>
-          <section id="room-book">
-            <div className="container">
-              <div className="col-md-5" style={{ 'padding': '0', 'margin': '0' }}>
+        <section id="room-book">
+          <div className="container">
+            <AsideContentPage>
+              <AsideContentPage.Aside width={'30%'}>
                 <div className="hotel-info">
                   <div className="hotel-picture">
                     <img src={`${Config.getValue('imgHost')}${hotelPicUrl}`} alt="Hotel" />
@@ -144,7 +145,7 @@ class HotelsBookingPage extends React.Component {
                   {rooms.map((room, index) => {
                     return (
                       <h6 key={index}>
-                        {room.name}, {nights} nights: {currencySign}{currencyExchangeRates && (CurrencyConverter.convert(currencyExchangeRates , RoomsXMLCurrency.get(), currency, room.price)).toFixed(2)} <LocPrice fiat={room.price} />
+                        {room.name}, {nights} nights: {currencySign}{currencyExchangeRates && (CurrencyConverter.convert(currencyExchangeRates, RoomsXMLCurrency.get(), currency, room.price)).toFixed(2)} <LocPrice fiat={room.price} />
                       </h6>
                     );
                   })}
@@ -154,63 +155,63 @@ class HotelsBookingPage extends React.Component {
                   </h6>
                   <div className="clearfix"></div>
                 </div>
-              </div>
-              <div className="col-md-7" style={{ 'padding': '0', 'margin': '20px 0' }}>
-                {guests.map((room, roomIndex) => {
-                  return (
-                    <div className="form-group" key={roomIndex}>
-                      <h4>Room</h4>
-                      <hr className="sm-none" />
-                      {room && room.adults.map((adult, adultIndex) => {
-                        return (
-                          <div className="form-row" key={adultIndex}>
-                            <label htmlFor="title">Guest</label>
-                            <select
-                              className="title-select"
-                              name="title"
-                              value={guests[roomIndex].adults[adultIndex].title}
-                              onChange={(e) => { handleAdultChange(e, roomIndex, adultIndex); }}
-                            >
-                              <option value="Mr">Mr</option>
-                              <option value="Mrs">Mrs</option>
-                            </select>
+              </AsideContentPage.Aside>
+              <AsideContentPage.Content width={'65%'}>
+                <div className="rooms">
+                  {guests.map((room, roomIndex) => {
+                    return (
+                      <div className="room" key={roomIndex}>
+                        <h4>Room</h4>
+                        <hr className="sm-none" />
+                        {room && room.adults.map((adult, adultIndex) => {
+                          return (
+                            <div className="guest" key={adultIndex}>
+                              <label htmlFor="title">Guest</label>
+                              <select
+                                className="title-select"
+                                name="title"
+                                value={guests[roomIndex].adults[adultIndex].title}
+                                onChange={(e) => { handleAdultChange(e, roomIndex, adultIndex); }}
+                              >
+                                <option value="Mr">Mr</option>
+                                <option value="Mrs">Mrs</option>
+                              </select>
 
-                            <input className="guest-name"
-                              type="text"
-                              placeholder="First Name"
-                              name="firstName"
-                              value={guests[roomIndex].adults[adultIndex].firstName || ''}
-                              onChange={(e) => { handleAdultChange(e, roomIndex, adultIndex); }}
-                            />
-                            <input
-                              className="guest-name"
-                              type="text"
-                              placeholder="Last Name"
-                              value={guests[roomIndex].adults[adultIndex].lastName || ''}
-                              name="lastName" onChange={(e) => { handleAdultChange(e, roomIndex, adultIndex); }}
-                            />
-                          </div>
-                        );
-                      })}
+                              <input className="guest-name"
+                                type="text"
+                                placeholder="First Name"
+                                name="firstName"
+                                value={guests[roomIndex].adults[adultIndex].firstName || ''}
+                                onChange={(e) => { handleAdultChange(e, roomIndex, adultIndex); }}
+                              />
+                              <input
+                                className="guest-name"
+                                type="text"
+                                placeholder="Last Name"
+                                value={guests[roomIndex].adults[adultIndex].lastName || ''}
+                                name="lastName" onChange={(e) => { handleAdultChange(e, roomIndex, adultIndex); }}
+                              />
+                            </div>
+                          );
+                        })}
 
-                      {room && room.children.map((child, childIndex) => {
-                        return (
-                          <div className="form-row" key={childIndex}>
-                            <label htmlFor="age">Child (age)</label>
-                            <input className="child-age" type="number" value={guests[roomIndex].children[childIndex].age} placeholder="Age" name="age" onChange={(e) => { handleChildAgeChange(e, roomIndex, childIndex); }} />
-                          </div>
-                        );
-                      })}
-                    </div>
-                  );
-                })}
-              </div>
-              <div className="col col-md-12" style={{ 'padding': '0', 'margin': '10px 0' }}>
-                <button className="btn btn-primary btn-book" onClick={this.handleSubmit}>Proceed</button>
-              </div>
-            </div>
-          </section>
-        </div>
+                        {room && room.children.map((child, childIndex) => {
+                          return (
+                            <div className="guest" key={childIndex}>
+                              <label htmlFor="age">Child (age)</label>
+                              <input className="child-age" type="number" value={guests[roomIndex].children[childIndex].age} placeholder="Age" name="age" onChange={(e) => { handleChildAgeChange(e, roomIndex, childIndex); }} />
+                            </div>
+                          );
+                        })}
+                      </div>
+                    );
+                  })}
+                </div>
+                <button className="button btn-book" onClick={this.handleSubmit}>Proceed</button>
+              </AsideContentPage.Content>
+            </AsideContentPage>
+          </div>
+        </section>
       </div>
     );
   }
@@ -230,15 +231,17 @@ HotelsBookingPage.propTypes = {
 
   // start Redux props
   dispatch: PropTypes.func,
-  paymentInfo: PropTypes.object,
-  exchangeRatesInfo: PropTypes.object
+  currency: PropTypes.string,
+  currencySign: PropTypes.string,
+  currencyExchangeRates: PropTypes.object
 };
 
 function mapStateToProps(state) {
   const { paymentInfo, exchangeRatesInfo } = state;
   return {
-    paymentInfo,
-    exchangeRatesInfo
+    currency: getCurrency(paymentInfo),
+    currencySign: getCurrencySign(paymentInfo),
+    currencyExchangeRates: getCurrencyExchangeRates(exchangeRatesInfo)
   };
 }
 

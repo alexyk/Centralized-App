@@ -2,6 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { setShowMenu } from '../../../actions/burgerMenuInfo.js';
+import { isShowMenu } from '../../../selectors/burgerMenuInfo.js';
 
 import './style.css';
 
@@ -43,7 +44,7 @@ BurgerMenu.propTypes = {
 };
 
 const mapStateToProps = (state) => ({
-  showMenu: state.burgerMenuInfo.showMenu 
+  showMenu: isShowMenu(state.burgerMenuInfo) 
 });
 
 export default connect(mapStateToProps)(BurgerMenu);

@@ -7,6 +7,7 @@ import React, { Fragment } from 'react';
 import Slider from 'react-slick';
 import { connect } from 'react-redux';
 import { setRegion } from '../../actions/hotelsSearchInfo';
+import { getCurrency } from '../../selectors/paymentInfo';
 import { withRouter, Link } from 'react-router-dom';
 import HomePageContentItem from './HomePageContentItem';
 import moment from 'moment';
@@ -45,10 +46,10 @@ class HomePage extends React.Component {
 
   getSlider(items, itemsType) {
     const settings = {
-      infinite: false,
+      infinite: true,
       draggable: false,
       lazyLoad: 'ondemand',
-      speed: 500,
+      speed: 400,
       slidesToShow: 4,
       slidesToScroll: 1,
       nextArrow: <SlickButton />,
@@ -80,7 +81,7 @@ class HomePage extends React.Component {
     let slider = itemsType === 'hotels' ? this.sliderHotels : this.sliderListings;
 
     if (itemsType === 'hotels') {
-      allLink = items && `/hotels/listings?region=${items[0].region}&currency=${this.props.paymentInfo.currency}&startDate=${moment(new Date(new Date().setHours(24)), 'DD/MM/YYYY').format('DD/MM/YYYY')}&endDate=${moment(new Date(new Date().setHours(48)), 'DD/MM/YYYY').format('DD/MM/YYYY')}&rooms=%5B%7B"adults":2,"children":%5B%5D%7D%5D`;
+      allLink = items && `/hotels/listings?region=${items[0].region}&currency=${this.props.currency}&startDate=${moment(new Date(new Date().setHours(24)), 'DD/MM/YYYY').format('DD/MM/YYYY')}&endDate=${moment(new Date(new Date().setHours(48)), 'DD/MM/YYYY').format('DD/MM/YYYY')}&rooms=%5B%7B"adults":2,"children":%5B%5D%7D%5D`;
     } else {
       allLink = `/homes/listings?countryId=2&startDate=${moment(new Date(new Date().setHours(24)), 'DD/MM/YYYY').format('DD/MM/YYYY')}&endDate=${moment(new Date(new Date().setHours(48)), 'DD/MM/YYYY').format('DD/MM/YYYY')}&guests=2`;
     }
@@ -92,7 +93,7 @@ class HomePage extends React.Component {
           {items.map((item, i) => {
             let itemLink = '';
             if (itemsType === 'hotels') {
-              itemLink = `/hotels/listings/${item.id}?region=${item.region}&currency=${this.props.paymentInfo.currency}&startDate=${moment(new Date(new Date().setHours(24)), 'DD/MM/YYYY').format('DD/MM/YYYY')}&endDate=${moment(new Date(new Date().setHours(48)), 'DD/MM/YYYY').format('DD/MM/YYYY')}&rooms=%5B%7B"adults":1,"children":%5B%5D%7D%5D`;
+              itemLink = `/hotels/listings/${item.id}?region=${item.region}&currency=${this.props.currency}&startDate=${moment(new Date(new Date().setHours(24)), 'DD/MM/YYYY').format('DD/MM/YYYY')}&endDate=${moment(new Date(new Date().setHours(48)), 'DD/MM/YYYY').format('DD/MM/YYYY')}&rooms=%5B%7B"adults":1,"children":%5B%5D%7D%5D`;
             } else {
               itemLink = `/homes/listings/${item.id}?startDate=${moment(new Date(new Date().setHours(24)), 'DD/MM/YYYY').format('DD/MM/YYYY')}&endDate=${moment(new Date(new Date().setHours(48)), 'DD/MM/YYYY').format('DD/MM/YYYY')}&guests=2`;
             }
@@ -111,7 +112,7 @@ class HomePage extends React.Component {
         <div className="carousel-nav">
           <ul>
             <li><button className="icon-arrow-left" onClick={() => this.prev(slider)}></button></li>
-            <li><Link to={allLink} className="btn">See all</Link></li>
+            <li><Link to={allLink} className="button">See all</Link></li>
             <li><button className="icon-arrow-right" onClick={() => this.next(slider)}></button></li>
           </ul>
         </div>
@@ -166,8 +167,9 @@ class HomePage extends React.Component {
           </HomePageContentItem>
           <section className="get-started">
             <h2>Host on LocKtrip</h2>
-            <div className="get-started-content">Easily list your home or hotel on Locktrip and start earning money</div>
-            <Link to="/profile/listings/create/landing" className="btn">Get started</Link>
+            <div className="get-started-content">Easily list your home or hotel on</div>
+            <div className="get-started-content">Locktrip and start earning money</div>
+            <Link to="/profile/listings/create/landing" className="button">Get started</Link>
             <div className="get-started-graphic" />
           </section>
         </section>
@@ -186,13 +188,14 @@ HomePage.propTypes = {
 
   // Redux props
   dispatch: PropTypes.func,
-  paymentInfo: PropTypes.object
+  currency: PropTypes.string
 };
 
 function mapStateToProps(state) {
   const { paymentInfo } = state;
+
   return {
-    paymentInfo
+    currency: getCurrency(paymentInfo)
   };
 }
 

@@ -1,9 +1,9 @@
-import { searchDatesInfo } from '../actions/actionTypes';
-import moment from 'moment';
+import { searchDatesInfo } from "../actions/actionTypes";
+import moment from "moment";
 
 const initialState = {
   startDate: moment(),
-  endDate: moment().add(1, 'days')
+  endDate: moment().add(1, "days")
 };
 
 export default function reducer(state = initialState, action) {
@@ -14,7 +14,9 @@ export default function reducer(state = initialState, action) {
       });
     case searchDatesInfo.SET_END_DATE:
       return Object.assign({}, state, {
-        endDate: action.endDate.isAfter(state.startDate) ? action.endDate : moment(state.startDate).add(1, 'day'),
+        endDate: action.endDate.isAfter(state.startDate)
+          ? action.endDate
+          : moment(state.startDate).add(1, "day")
       });
     default:
       return state;

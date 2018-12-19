@@ -12,17 +12,19 @@ import ProfileEditPage from './me/ProfileEditPage';
 import PropTypes from 'prop-types';
 import React from 'react';
 import TripsRouter from './trips/TripsRouter';
+import AffiliatesPage from './affiliates/AffiliatesPage';
 import WalletPage from './wallet/WalletIndexPage';
-import AirdropPage from './airdrop/AirdropPage';
 import BuyLocPage from './buyloc/BuyLocPage';
 import { connect } from 'react-redux';
+import { isLogged } from '../../selectors/userInfo';
 
 function ProfilePage(props) {
   return (
     <React.Fragment>
-      {props.isLogged && <ProfileNav />}
+      {props.isUserLogged && <ProfileNav />}
       <Switch>
         <Route exact path="/profile/dashboard" render={() => <DashboardPage />} />
+        <Route exact path="/profile/affiliates" render={() => <AffiliatesPage />} />
         <Route exact path="/profile/listings" render={() => <MyListingsPage />} />
         <Route exact path="/profile/listings/calendar/:id" render={() => <CalendarPage />} />
         <Route exact path="/profile/messages" render={() => <MessagesPage />} />
@@ -31,7 +33,6 @@ function ProfilePage(props) {
         <Route path="/profile/reservations" render={() => <MyGuestsPage />} />
         <Route path="/profile/me" render={() => <ProfileEditPage />} />
         <Route path="/profile/wallet" render={() => <WalletPage />} />
-        <Route path="/airdrop" render={() => <AirdropPage />} />
         <Route path="/buyloc" render={() => <BuyLocPage />} />
         <Route path="/profile/admin" render={() => <AdminPage />} />
       </Switch>
@@ -41,10 +42,13 @@ function ProfilePage(props) {
 
 ProfilePage.propTypes = {
   location: PropTypes.object,
+
+  // Redux props
+  isUserLogged: PropTypes.bool
 };
 
 const mapStateToProps = ({ userInfo }) => ({
-  isLogged: userInfo.isLogged,
+  isUserLogged: isLogged(userInfo),
 });
 
 export default withRouter(connect(mapStateToProps)(ProfilePage));

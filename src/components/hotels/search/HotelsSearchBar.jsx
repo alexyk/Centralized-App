@@ -1,41 +1,116 @@
 import { closeModal, openModal } from '../../../actions/modalsInfo.js';
 import { setAdults, setChildren, setRegion, setRooms, setRoomsByCountOfRooms } from '../../../actions/hotelsSearchInfo';
+import { isActive } from '../../../selectors/modalsInfo.js';
+import { getCurrency } from '../../../selectors/paymentInfo';
+import { getStartDate, getEndDate } from '../../../selectors/searchDatesInfo';
+import { getRooms, getAdults, getRegion, hasChildren } from '../../../selectors/hotelsSearchInfo.js';
 
 import { CHILDREN } from '../../../constants/modals';
 import ChildrenModal from '../modals/ChildrenModal';
 import PropTypes from 'prop-types';
 import React from 'react';
-import Select from 'react-select';
+import AsyncSelect from 'react-select/lib/Async';
 import { connect } from 'react-redux';
 import requester from '../../../requester';
 import { withRouter } from 'react-router-dom';
 import Datepicker from '../../common/datepicker';
 import moment from 'moment';
+import { NotificationManager } from 'react-notifications';
+
+const customStyles = {
+  container: (styles) => ({
+    ...styles,
+    flex: '1 1 0',
+    outline: 'none',
+  }),
+  valueContainer: (styles) => ({
+    ...styles,
+    fontSize: '1.2em'
+  }),
+  input: (styles) => ({
+    ...styles,
+    outline: 'none',
+  }),
+  control: (styles) => ({
+    ...styles,
+    padding: '0 10px',
+    cursor: 'pointer',
+    boxShadow: 'none',
+    border: 0,
+  }),
+  indicatorSeparator: (styles) => ({
+    ...styles,
+    display: 'none'
+  }),
+  menu: (styles) => ({
+    ...styles,
+    marginTop: '20px'
+  }),
+  option: (styles, { data, isFocused, isSelected }) => {
+    const color = isSelected ? '#d87a61' : 'black';
+    return {
+      ...styles,
+      fontSize: '1.2em',
+      textAlign: 'left',
+      cursor: 'pointer',
+      backgroundColor: isFocused
+        ? '#f0f1f3'
+        : 'none',
+      color: isSelected
+        ? color
+        : data.color,
+      fontWeight: isSelected && '400',
+      paddingLeft: isSelected && '30px',
+    };
+  },
+};
 
 function HotelsSearchBar(props) {
+
+  let select = null;
+
   if (props.location.pathname.indexOf('/mobile') !== -1) {
     return null;
   }
 
-  const getRegions = (param) => {
-    if (!param) {
-      return Promise.resolve({ options: [] });
-    }
+  const loadOptions = (input = '', callback) => {
+    fetchCities(input).then(cities => callback(cities));
+  };
 
-    return requester.getRegionsBySearchParameter([`query=${param}`]).then(res => {
+  const fetchCities = (input = '') => {
+    return requester.getRegionsBySearchParameter([`query=${input}`]).then(res => {
       return res.body.then(data => {
-        return { options: data };
+        if (!data) {
+          return [];
+        }
+
+        return data.map(region => ({
+          value: region.id,
+          label: region.query
+        }));
       });
     });
   };
 
+  const changeRegion = (selectedOption) => {
+    if (selectedOption) {
+      const region = {
+        id: selectedOption.value,
+        query: selectedOption.label
+      };
+
+      props.dispatch(setRegion(region));
+    }
+  };
+
   const getQueryString = () => {
+    const { region, rooms, currency, startDate, endDate } = props;
     let queryString = '?';
-    queryString += 'region=' + props.hotelsSearchInfo.region.id;
-    queryString += '&currency=' + props.paymentInfo.currency;
-    queryString += '&startDate=' + props.searchDatesInfo.startDate.format('DD/MM/YYYY');
-    queryString += '&endDate=' + props.searchDatesInfo.endDate.format('DD/MM/YYYY');
-    queryString += '&rooms=' + encodeURI(JSON.stringify(props.hotelsSearchInfo.rooms));
+    queryString += 'region=' + region.id;
+    queryString += '&currency=' + currency;
+    queryString += '&startDate=' + startDate.format('DD/MM/YYYY');
+    queryString += '&endDate=' + endDate.format('DD/MM/YYYY');
+    queryString += '&rooms=' + encodeURI(JSON.stringify(rooms));
     return queryString;
   };
 
@@ -44,8 +119,8 @@ function HotelsSearchBar(props) {
   };
 
   const distributeAdults = async () => {
-    let adults = Number(props.hotelsSearchInfo.adults);
-    let rooms = props.hotelsSearchInfo.rooms.slice(0);
+    let adults = Number(props.adults);
+    let rooms = props.rooms.slice(0);
     if (adults < rooms.length) {
       rooms = rooms.slice(0, adults);
     }
@@ -85,52 +160,65 @@ function HotelsSearchBar(props) {
       e.preventDefault();
     }
 
-    distributeAdults().then((rooms) => {
-      if (props.hotelsSearchInfo.hasChildren) {
-        openChildrenModal(CHILDREN);
-      } else {
-        props.search(getQueryString(rooms), e);
-      }
-    });
+    if (!props.region) {
+      select.focus();
+      NotificationManager.info('Please choose a location.');
+    } else {
+      distributeAdults().then((rooms) => {
+        if (props.hasChildren) {
+          openChildrenModal(CHILDREN);
+        } else {
+          props.search(getQueryString(rooms), e);
+        }
+      });
+    }
   };
+
+  const region = props.region;
+  let selectedOption = null;
+  if (region) {
+    selectedOption = {
+      value: region.id,
+      label: region.query
+    };
+  }
 
   return (
     <form className="source-panel" onSubmit={handleSearch}>
-      <div className="source-panel-select source-panel-item">
-        <Select.Async
-          placeholder="Choose a location"
-          required
-          style={{ boxShadow: 'none', border: 'none' }}
-          value={props.hotelsSearchInfo.region}
-          onChange={value => props.dispatch(setRegion(value))}
-          valueKey={'id'}
-          labelKey={'query'}
-          loadOptions={getRegions}
+      <div className="select-wrap source-panel-item">
+        <AsyncSelect
+          ref={(node) => select = node}
+          styles={customStyles}
+          value={selectedOption}
+          onChange={changeRegion}
+          loadOptions={loadOptions}
           backspaceRemoves={true}
           arrowRenderer={null}
           onSelectResetsInput={false}
+          placeholder="Choose a location"
+          required={true}
         />
       </div>
 
       <div className="check-wrap source-panel-item">
         <ChildrenModal
-          isActive={props.modalsInfo.isActive[CHILDREN]}
+          isActive={props.isActive[CHILDREN]}
           closeModal={closeChildrenModal}
           handleSubmit={handleSubmitModal}
         />
-        
+
         <div className="check">
           <Datepicker minDate={moment()} enableRanges />
         </div>
 
         <div className="days-of-stay">
           <span className="icon-moon"></span>
-          <span>{props.searchDatesInfo.endDate.diff(props.searchDatesInfo.startDate, 'days')} nights</span>
+          <span>{props.endDate.diff(props.startDate, 'days')} nights</span>
         </div>
       </div>
 
       <div className="guest-wrap guests source-panel-item">
-        <select className="guest-select " name={'rooms'} value={props.hotelsSearchInfo.rooms.length} onChange={e => props.dispatch(setRoomsByCountOfRooms(e.target.value))}>
+        <select className="guest-select " name={'rooms'} value={props.rooms.length} onChange={e => props.dispatch(setRoomsByCountOfRooms(e.target.value))}>
           <option value="1">1 room</option>
           <option value="2">2 rooms</option>
           <option value="3">3 rooms</option>
@@ -142,7 +230,7 @@ function HotelsSearchBar(props) {
           <option value="9">9 rooms</option>
           <option value="10">10 rooms</option>
         </select>
-        <select name={'adults'} value={props.hotelsSearchInfo.adults} onChange={e => props.dispatch(setAdults(e.target.value))}>
+        <select name={'adults'} value={props.adults} onChange={e => props.dispatch(setAdults(e.target.value))}>
           <option value="1">1 adult</option>
           <option value="2">2 adults</option>
           <option value="3">3 adults</option>
@@ -156,14 +244,14 @@ function HotelsSearchBar(props) {
         </select>
         <div className="select-children" onClick={() => props.dispatch(setChildren())}>
           <div>
-            {!props.hotelsSearchInfo.hasChildren
+            {!props.hasChildren
               ? 'No children'
               : 'With children'
             }
           </div>
         </div>
       </div>
-      <button type="submit" className="btn btn-primary btn-search">Search</button>
+      <button type="submit" className="button">Search</button>
     </form>
   );
 }
@@ -176,19 +264,28 @@ HotelsSearchBar.propTypes = {
 
   // Redux props
   dispatch: PropTypes.func,
-  hotelsSearchInfo: PropTypes.object,
-  searchDatesInfo: PropTypes.object,
-  paymentInfo: PropTypes.object,
-  modalsInfo: PropTypes.object
+  rooms: PropTypes.array,
+  adults: PropTypes.string,
+  hasChildren: PropTypes.bool,
+  region: PropTypes.object,
+  startDate: PropTypes.object,
+  endDate: PropTypes.object,
+  currency: PropTypes.string,
+  isActive: PropTypes.object
 };
 
 function mapStateToProps(state) {
   const { hotelsSearchInfo, searchDatesInfo, paymentInfo, modalsInfo } = state;
+
   return {
-    hotelsSearchInfo,
-    searchDatesInfo,
-    paymentInfo,
-    modalsInfo
+    rooms: getRooms(hotelsSearchInfo),
+    adults: getAdults(hotelsSearchInfo),
+    hasChildren: hasChildren(hotelsSearchInfo),
+    region: getRegion(hotelsSearchInfo),
+    startDate: getStartDate(searchDatesInfo),
+    endDate: getEndDate(searchDatesInfo),
+    currency: getCurrency(paymentInfo),
+    isActive: isActive(modalsInfo)
   };
 }
 

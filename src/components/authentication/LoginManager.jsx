@@ -8,7 +8,8 @@ import { NotificationManager } from 'react-notifications';
 import { LONG } from '../../constants/notificationDisplayTimes.js';
 import LoginModal from './modals/LoginModal';
 import { closeModal, openModal } from '../../actions/modalsInfo';
-import { setIsLogged, setUserInfo } from '../../actions/userInfo';
+import { isActive } from '../../selectors/modalsInfo';
+import { setUserInfo } from '../../actions/userInfo';
 import { Wallet } from '../../services/blockchain/wallet.js';
 import { VERIFICATION_EMAIL_SENT } from '../../constants/infoMessages.js';
 import UpdateCountryModal from './modals/UpdateCountryModal';
@@ -31,8 +32,9 @@ import {
 } from '../../constants/successMessages.js';
 import {
   LOGIN,
-  UPDATE_COUNTRY
+  UPDATE_COUNTRY, REGISTER
 } from '../../constants/modals.js';
+import * as _ from 'ramda';
 
 class LoginManager extends React.Component {
   constructor(props) {
@@ -41,8 +43,7 @@ class LoginManager extends React.Component {
     this.state = {
       loginEmail: '',
       loginPassword: '',
-      countries: [],
-      country: '',
+      country: null,
       states: [],
       countryState: '',
       recoveryToken: '',
@@ -57,24 +58,25 @@ class LoginManager extends React.Component {
     this.handleLoginClick = this.handleLoginClick.bind(this);
     this.handleChangeCountry = this.handleChangeCountry.bind(this);
     this.handleUpdateCountry = this.handleUpdateCountry.bind(this);
-    this.requestCountries = this.requestCountries.bind(this);
     this.requestStates = this.requestStates.bind(this);
+    this.getQueryString = this.getQueryString.bind(this);
   }
 
   componentDidMount() {
-    if (
-      localStorage[Config.getValue('domainPrefix') + '.auth.locktrip'] &&
-      localStorage[Config.getValue('domainPrefix') + '.auth.username']
-    ) {
-      this.setUserInfo();
-    }
+    this.handleWebAuthorization();
+    this.handleMobileAuthorization();
 
     const queryParams = queryString.parse(this.props.location.search);
+    if(queryParams.refId){
+      this.openModal(REGISTER)
+    }
+
     if (queryParams.token) {
       this.setState({ recoveryToken: queryParams.token });
       this.openModal(ENTER_RECOVERY_TOKEN);
     }
 
+    /*
     if (queryParams.emailVerificationSecurityCode) {
       const { emailVerificationSecurityCode } = queryParams;
       requester.verifyEmailSecurityCode({ emailVerificationSecurityCode })
@@ -88,8 +90,10 @@ class LoginManager extends React.Component {
 
       this.removeVerificationCodeFromURL();
     }
+    */
   }
 
+  /*
   removeVerificationCodeFromURL() {
     const path = this.props.location.pathname;
     const search = this.props.location.search;
@@ -97,13 +101,7 @@ class LoginManager extends React.Component {
     const pushURL = path + search.substring(0, indexOfSecurityCode);
     this.props.history.push(pushURL);
   }
-
-  requestCountries() {
-    requester.getCountries()
-      .then(response => response.body)
-      .then(data => this.setState({ countries: data }));
-  }
-
+*/
   requestStates(id) {
     requester.getStates(id)
       .then(response => response.body)
@@ -116,7 +114,7 @@ class LoginManager extends React.Component {
 
   handleChangeCountry(e) {
     if (!e.target.value) {
-      this.setState({ country: '' });
+      this.setState({ country: null });
     } else {
       const countryHasMandatoryState = ['Canada', 'India', 'United States of America'].includes(JSON.parse(e.target.value).name);
       this.setState({ country: JSON.parse(e.target.value) });
@@ -164,7 +162,7 @@ class LoginManager extends React.Component {
       }
 
       this.closeModal(UPDATE_COUNTRY);
-      this.setState({ isUpdatingCountry: false, country: '', countryState: '' });
+      this.setState({ isUpdatingCountry: false, country: null, countryState: '' });
     }
 
     requester.login(user, captchaToken).then(res => {
@@ -182,13 +180,45 @@ class LoginManager extends React.Component {
     });
   }
 
+  handleWebAuthorization() {
+    if (localStorage[Config.getValue('domainPrefix') + '.auth.username']
+      && localStorage[Config.getValue('domainPrefix') + '.auth.locktrip']) {
+      this.setUserInfo();
+    }
+  }
+
+
+  handleMobileAuthorization() {
+    const queryStringParameters = queryString.parse(this.props.location.search);
+    const { authEmail, authToken } = queryStringParameters;
+    if (authEmail && authToken) {
+      localStorage[Config.getValue('domainPrefix') + '.auth.username'] = authEmail;
+      localStorage[Config.getValue('domainPrefix') + '.auth.locktrip'] = decodeURI(authToken);
+      this.setUserInfo();
+      const url = this.props.location.pathname;
+      const search = this.getQueryString(queryStringParameters);
+      this.props.history.push(url + search);
+    }
+  }
+
+  getQueryString(queryStringParameters) {
+    let queryString = '?';
+    queryString += 'region=' + encodeURI(queryStringParameters.region);
+    queryString += '&currency=' + encodeURI(queryStringParameters.currency);
+    queryString += '&startDate=' + encodeURI(queryStringParameters.startDate);
+    queryString += '&endDate=' + encodeURI(queryStringParameters.endDate);
+    queryString += '&rooms=' + encodeURI(queryStringParameters.rooms);
+    return queryString;
+  }
+
+
+
   handleLoginErrors(res) {
     res.errors.then(res => {
       const errors = res.errors;
       if (errors.hasOwnProperty('CountryNull')) {
         NotificationManager.warning(errors['CountryNull'].message, '', LONG);
-        this.requestCountries();
-        this.setState({ isUpdatingCountry: true }, () => {
+        this.setState({ isUpdatingCountry: true, isLogging: false }, () => {
           this.closeModal(LOGIN);
           this.openModal(UPDATE_COUNTRY);
         });
@@ -215,8 +245,9 @@ class LoginManager extends React.Component {
       if (['Canada', 'India', 'United States of America'].includes(this.state.country.name) && !this.state.countryState) {
         NotificationManager.error('Please select a valid state.', '', LONG);
       } else {
-        this.closeModal(UPDATE_COUNTRY);
-        this.captcha.execute();
+        this.setState({ isLogging: true }, () => {
+          executeWithToken(this.login);
+        });
       }
     } else {
       NotificationManager.error('Please select a valid country.', '', LONG);
@@ -224,25 +255,33 @@ class LoginManager extends React.Component {
   }
 
   setUserInfo() {
-    this.props.dispatch(setIsLogged(true));
     requester.getUserInfo().then(res => {
-      res.body.then(data => {
+      res.body.then(_data => {
+        let data = _.pick([ "firstName", "lastName", "phoneNumber", "email", "locAddress", "gender", "isEmailVerified", "id"], _data)
+        const isAdmin = _data.roles.findIndex((r) => r.name === 'ADMIN') !== -1;
+
         if (data.locAddress) {
           Wallet.getBalance(data.locAddress).then(eth => {
             const ethBalance = eth / (Math.pow(10, 18));
             Wallet.getTokenBalance(data.locAddress).then(loc => {
               const locBalance = loc / (Math.pow(10, 18));
-              const { firstName, lastName, phoneNumber, email, locAddress, gender, isEmailVerified } = data;
-              const isAdmin = data.roles.findIndex((r) => r.name === 'ADMIN') !== -1;
-              this.props.dispatch(setUserInfo(firstName, lastName, phoneNumber, email, locAddress, ethBalance, locBalance, gender, isEmailVerified, isAdmin));
+              this.props.dispatch(setUserInfo({
+                ...data,
+                ethBalance,
+                locBalance,
+                isAdmin
+              }));
             });
           });
         } else {
           const ethBalance = 0;
           const locBalance = 0;
-          const { firstName, lastName, phoneNumber, email, locAddress, gender, isEmailVerified } = data;
-          const isAdmin = data.roles.findIndex((r) => r.name === 'ADMIN') !== -1;
-          this.props.dispatch(setUserInfo(firstName, lastName, phoneNumber, email, locAddress, ethBalance, locBalance, gender, isEmailVerified, isAdmin));
+          this.props.dispatch(setUserInfo({
+            ...data,
+            ethBalance,
+            locBalance,
+            isAdmin
+          }));
         }
       });
     });
@@ -267,44 +306,43 @@ class LoginManager extends React.Component {
     return (
       <React.Fragment>
         <LoginModal
-          isActive={this.props.modalsInfo.isActive[LOGIN]}
+          isActive={this.props.isActive[LOGIN]}
           openModal={this.openModal}
           closeModal={this.closeModal}
           loginEmail={this.state.loginEmail}
           loginPassword={this.state.loginPassword}
           onChange={this.onChange}
           handleLogin={this.handleLoginClick}
-          requestCountries={this.requestCountries}
           isLogging={this.state.isLogging}
         />
         <UpdateCountryModal 
-          isActive={this.props.modalsInfo.isActive[UPDATE_COUNTRY]} 
+          isActive={this.props.isActive[UPDATE_COUNTRY]}
           openModal={this.openModal} 
           closeModal={this.closeModal} 
           onChange={this.onChange} 
-          country={this.state.country} 
-          countries={this.state.countries} 
+          country={this.state.country}
           states={this.state.states} 
           countryState={this.state.countryState} 
           handleUpdateCountry={this.handleUpdateCountry} 
           handleChangeCountry={this.handleChangeCountry} 
+          isLogging={this.state.isLogging}
         />
         <EmailVerificationModal 
-          isActive={this.props.modalsInfo.isActive[EMAIL_VERIFICATION]} 
+          isActive={this.props.isActive[EMAIL_VERIFICATION]}
           openModal={this.openModal} 
           closeModal={this.closeModal} 
           onChange={this.onChange} 
           requestVerificationEmail={this.requestVerificationEmail} 
         />
         <EnterEmailVerificationTokenModal 
-          isActive={this.props.modalsInfo.isActive[ENTER_EMAIL_VERIFICATION_SECURITY_TOKEN]} 
+          isActive={this.props.isActive[ENTER_EMAIL_VERIFICATION_SECURITY_TOKEN]}
           openModal={this.openModal} 
           closeModal={this.closeModal} 
           onChange={this.onChange} 
           handleLogin={() => executeWithToken(this.login)} 
           emailVerificationToken={this.state.emailVerificationToken} 
         />
-        {/* <AirdropLoginModal isActive={this.props.modalsInfo.isActive[AIRDROP_LOGIN]} openModal={this.openModal} closeModal={this.closeModal} loginEmail={this.state.loginEmail} loginPassword={this.state.loginPassword} onChange={this.onChange} handleLogin={this.handleAirdropLogin} /> */}
+        {/* <AirdropLoginModal isActive={this.props.isActive[AIRDROP_LOGIN]} openModal={this.openModal} closeModal={this.closeModal} loginEmail={this.state.loginEmail} loginPassword={this.state.loginPassword} onChange={this.onChange} handleLogin={this.handleAirdropLogin} /> */}
       </React.Fragment>
     );
   }
@@ -317,16 +355,13 @@ LoginManager.propTypes = {
 
   // start Redux props
   dispatch: PropTypes.func,
-  userInfo: PropTypes.object,
-  modalsInfo: PropTypes.object,
+  isActive: PropTypes.object,
 };
 
 function mapStateToProps(state) {
-  const { userInfo, modalsInfo, airdropInfo } = state;
+  const { modalsInfo } = state;
   return {
-    userInfo,
-    modalsInfo,
-    airdropInfo
+    isActive: isActive(modalsInfo)
   };
 }
 

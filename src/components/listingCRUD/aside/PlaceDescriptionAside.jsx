@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 
 function PlaceDescriptionAside(props) {
   return (
-    <div>
+    <div className="place-description-aside">
       <div className="host-step"><NavLink exact activeClassName="active" to={props.routes.description}>Description</NavLink></div>
       <div className="host-step"><NavLink exact activeClassName="active" to={props.routes.photos}>Photos</NavLink></div>
     </div>

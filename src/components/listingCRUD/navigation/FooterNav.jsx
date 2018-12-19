@@ -10,9 +10,9 @@ function FooterNav(props) {
         <div className="footer-navigation__content">
           <div className="footer-navigation__content__aside"></div>
           <div className="footer-navigation__content__main">
-            <NavLink to={props.next} className="btn btn-primary btn-next" onClick={() => props.handleClickNext(props.step)} >Next</NavLink>
+            <NavLink to={props.next} className="button button-next" onClick={() => props.handleClickNext(props.step)} >Next</NavLink>
             {props.prev &&
-              <NavLink to={props.prev} className="btn btn-default btn-back">
+              <NavLink to={props.prev} className="button button-back">
                 <i className="fa fa-long-arrow-left" aria-hidden="true"></i>&nbsp;Back
               </NavLink>
             }

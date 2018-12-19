@@ -1,10 +1,8 @@
-import {
-  homesSearchInfo
-} from '../actions/actionTypes';
+import { homesSearchInfo } from "../actions/actionTypes";
 
 const initialState = {
-  country: '',
-  guests: '2'
+  country: "",
+  guests: "2"
 };
 
 export default function reducer(state = initialState, action) {

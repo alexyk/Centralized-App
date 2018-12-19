@@ -46,27 +46,21 @@ function ListingFacilities(props) {
     <div id="listing-facilicites">
       <ListingCrudNav progress='33%' />
       <div className="container">
-        <div className="row">
-          <div className="listings create">
-            <div className="col-md-3">
-              <BasicsAside routes={props.routes} />
+        <div className="listings create">
+          <BasicsAside routes={props.routes} />
+          <div className="form-group">
+            <h2>What facilities do you offer to your guests</h2>
+
+            <div className="col-md-4">
+              {columns[0]}
             </div>
-            <div className="col-md-9">
-              <div className="form-group">
-                <h2>What facilities do you offer to your guests</h2>
 
-                <div className="col-md-4">
-                  {columns[0]}
-                </div>
+            <div className="col-md-4">
+              {columns[1]}
+            </div>
 
-                <div className="col-md-4">
-                  {columns[1]}
-                </div>
-
-                <div className="col-md-4">
-                  {columns[2]}
-                </div>
-              </div>
+            <div className="col-md-4">
+              {columns[2]}
             </div>
           </div>
         </div>
@@ -82,6 +76,7 @@ ListingFacilities.propTypes = {
   prev: PropTypes.string,
   next: PropTypes.string,
   routes: PropTypes.object,
+  toggle: PropTypes.func
 };
 
 export default ListingFacilities;

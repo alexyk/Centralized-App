@@ -7,9 +7,12 @@ import { NotificationManager } from 'react-notifications';
 import { PROFILE_SUCCESSFULLY_UPDATED } from '../../../constants/successMessages.js';
 import { PROFILE_UPDATE_ERROR } from '../../../constants/errorMessages.js';
 import React from 'react';
+import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
 import Select from '../../common/google/GooglePlacesAutocomplete';
 import moment from 'moment';
 import requester from '../../../requester';
+import { getCountries } from '../../../selectors/countriesInfo';
 
 class ProfileEditForm extends React.Component {
   constructor(props) {
@@ -34,7 +37,6 @@ class ProfileEditForm extends React.Component {
       jsonFile: '',
       currencies: [],
       cities: [],
-      countries: [],
       states: [],
       loading: true
     };
@@ -48,11 +50,6 @@ class ProfileEditForm extends React.Component {
   }
 
   async componentDidMount() {
-    requester.getCountries()
-      .then(res => res.body)
-      .then(data => this.setState({ countries: data }))
-      .catch(error => console.log(error));
-
     requester.getUserInfo()
       .then(res => res.body)
       .then(data => {
@@ -111,22 +108,24 @@ class ProfileEditForm extends React.Component {
       e.preventDefault();
     }
 
-    let birthday = `${this.state.day}/${this.state.month}/${this.state.year}`;
+    const { day, month, year, firstName, lastName, phoneNumber, preferredLanguage, preferredCurrency, gender, country, city, countryState, address, locAddress, jsonFile, zipCode } = this.state;
+
+    let birthday = `${day}/${month}/${year}`;
     let userInfo = {
-      firstName: this.state.firstName,
-      lastName: this.state.lastName,
-      phoneNumber: this.state.phoneNumber,
-      preferredLanguage: this.state.preferredLanguage,
-      preferredCurrency: parseInt(this.state.preferredCurrency, 10),
-      gender: this.state.gender,
-      country: parseInt(this.state.country.id, 10),
-      city: this.state.city,
-      countryState: parseInt(this.state.countryState, 10),
-      address: this.state.address,
-      birthday: birthday,
-      locAddress: this.state.locAddress,
-      jsonFile: this.state.jsonFile,
-      zipCode: this.state.zipCode,
+      firstName,
+      lastName,
+      phoneNumber,
+      preferredLanguage,
+      preferredCurrency: parseInt(preferredCurrency, 10),
+      gender,
+      country: parseInt(country.id, 10),
+      city,
+      countryState: parseInt(countryState, 10),
+      address,
+      birthday,
+      locAddress,
+      jsonFile,
+      zipCode,
     };
 
     Object.keys(userInfo).forEach((key) => (userInfo[key] === null || userInfo[key] === '') && delete userInfo[key]);
@@ -170,9 +169,11 @@ class ProfileEditForm extends React.Component {
       return <div className="loader"></div>;
     }
 
+    const { countries } = this.props;
+    const { firstName, lastName, month, day, year, gender, phoneNumber, locAddress, preferredLanguage, preferredCurrency, currencies, country, states, city, countryState, address, zipCode } = this.state;
     let years = [];
 
-    for (let i = (new Date()).getFullYear(); i >= 1940; i--) {
+    for (let i = (new Date()).getFullYear(); i >= 1900; i--) {
       years.push(<option key={i} value={i}>{i}</option>);
     }
 
@@ -184,11 +185,11 @@ class ProfileEditForm extends React.Component {
           <div className="name">
             <div className="first">
               <label htmlFor="fname">First name <span className="mandatory">*</span></label>
-              <input id="fname" name="firstName" value={this.state.firstName} onChange={this.onChange} type="text" required />
+              <input id="fname" name="firstName" value={firstName} onChange={this.onChange} type="text" required />
             </div>
             <div className="last">
               <label htmlFor="lname">Last name <span className="mandatory">*</span></label>
-              <input id="lname" name="lastName" value={this.state.lastName} onChange={this.onChange} type="text" required />
+              <input id="lname" name="lastName" value={lastName} onChange={this.onChange} type="text" required />
             </div>
             <br className="clear-both" />
           </div>
@@ -197,7 +198,7 @@ class ProfileEditForm extends React.Component {
             <div className="bmonth option-field">
               <label htmlFor="bmonth">Birthdate <img src={Config.getValue('basePath') + 'images/icon-lock.png'} className="lock" alt="lock-o" /></label>
               <div className='select select-profile-edit-form'>
-                <select name="month" id="bmonth" onChange={this.onChange} value={this.state.month}>
+                <select name="month" id="bmonth" onChange={this.onChange} value={month}>
                   <option disabled value="">Month</option>
                   <option value="01">January</option>
                   <option value="02">February</option>
@@ -217,7 +218,7 @@ class ProfileEditForm extends React.Component {
             <div className="bday option-field">
               <label htmlFor="bday">&nbsp;</label>
               <div className='select'>
-                <select name="day" id="bday" onChange={this.onChange} value={this.state.day}>
+                <select name="day" id="bday" onChange={this.onChange} value={day}>
                   <option disabled value="">Day</option>
                   {Array.apply(null, Array(32)).map(function (item, i) {
                     return i > 0 && <option key={i} value={i}>{i}</option>;
@@ -228,7 +229,7 @@ class ProfileEditForm extends React.Component {
             <div className="byear option-field">
               <label htmlFor="byear">&nbsp;</label>
               <div className='select'>
-                <select name="year" id="byear" onChange={this.onChange} value={this.state.year}>
+                <select name="year" id="byear" onChange={this.onChange} value={year}>
                   <option disabled value="">Year</option>
                   {years}
                 </select>
@@ -237,7 +238,7 @@ class ProfileEditForm extends React.Component {
             <div className="sex option-field">
               <label htmlFor="sex">Gender <img src={Config.getValue('basePath') + 'images/icon-lock.png'} className="lock" alt="lock-o" /></label>
               <div className='select'>
-                <select name="gender" id="sex" onChange={this.onChange} value={this.state.gender}>
+                <select name="gender" id="sex" onChange={this.onChange} value={gender}>
                   <option disabled value="">Gender</option>
                   <option value="male">Male</option>
                   <option value="female">Female</option>
@@ -250,13 +251,13 @@ class ProfileEditForm extends React.Component {
           <div className="text"><span>We user this data for analysis and never share it with other users.</span></div>
           <div className="phone">
             <label htmlFor="phone">Phone number <span className="mandatory">*</span><img src={Config.getValue('basePath') + 'images/icon-lock.png'} className="lock" alt="lock-o" /></label>
-            <input id="phone" name="phoneNumber" value={this.state.phoneNumber} onChange={this.onChange} type="text" />
+            <input id="phone" name="phoneNumber" value={phoneNumber} onChange={this.onChange} type="text" />
           </div>
           <div className="text"><span>We won&#39;t share your phone number with other LockTrip users.</span></div>
 
           <div className="loc-address">
             <label htmlFor="loc-address">ETH/LOC address <img src={Config.getValue('basePath') + 'images/icon-lock.png'} className="lock" alt="lock-o" /></label>
-            <input id="loc-address" name="locAddress" value={this.state.locAddress} onChange={this.onChange} type="text" disabled="disabled" />
+            <input id="loc-address" name="locAddress" value={locAddress} onChange={this.onChange} type="text" disabled="disabled" />
           </div>
 
           <div className="language-currency">
@@ -264,7 +265,7 @@ class ProfileEditForm extends React.Component {
 
               <label htmlFor="language">Preferred language</label>
               <div className='select'>
-                <select name="preferredLanguage" id="language" onChange={this.onChange} value={this.state.preferredLanguage}>
+                <select name="preferredLanguage" id="language" onChange={this.onChange} value={preferredLanguage}>
                   <option value="1">English</option>
                 </select>
               </div>
@@ -273,9 +274,9 @@ class ProfileEditForm extends React.Component {
 
               <label htmlFor="currency">Preferred currency</label>
               <div className='select'>
-                <select name="preferredCurrency" id="currency" onChange={this.onChange} value={this.state.preferredCurrency}>
+                <select name="preferredCurrency" id="currency" onChange={this.onChange} value={preferredCurrency}>
                   <option disabled value="">Currency</option>
-                  {this.state.currencies.map((item, i) => {
+                  {currencies.map((item, i) => {
                     return <option key={i} value={item.id}>{item.code}</option>;
                   })}
                 </select>
@@ -287,9 +288,9 @@ class ProfileEditForm extends React.Component {
             <div className="address">
               <label htmlFor="address">Where do you live <span className="mandatory">*</span></label>
               <div className='select'>
-                <select name="country" id="address" onChange={this.updateCountry} value={JSON.stringify(this.state.country)}>
+                <select name="country" id="address" onChange={this.updateCountry} value={JSON.stringify(country)}>
                   <option disabled value="">Country</option>
-                  {this.state.countries.map((item, i) => {
+                  {countries && countries.map((item, i) => {
                     return <option key={i} value={JSON.stringify(item)}>{item.name}</option>;
                   })}
                 </select>
@@ -299,25 +300,25 @@ class ProfileEditForm extends React.Component {
               <label htmlFor="city">Which city <span className="mandatory">*</span></label>
               <Select
                 style={{ width: '100%' }}
-                value={this.state.city}
+                value={city}
                 onChange={this.onChange}
                 name="city"
                 onPlaceSelected={this.handleCitySelect}
                 types={['(cities)']}
-                componentRestrictions={{ country: this.state.country.code.toLowerCase() }}
-                disabled={!this.state.country}
+                componentRestrictions={{ country: country.code.toLowerCase() }}
+                disabled={!country}
                 placeholder='Choose your city'
               />
             </div>
             <br className="clear-both" />
           </div>
 
-          {['Canada', 'India', 'United States of America'].includes(this.state.country.name) ? <div className="countryState">
-            <label htmlFor="countryState">State <span className="mandatory">*</span></label>
+          {['Canada', 'India', 'United States of America'].includes(country.name) ? <div className="countryState">
+            <label htmlFor="countryState">{country.name === 'Canada' ? 'Provice' : 'State'} <span className="mandatory">*</span></label>
             <div className='select'>
-              <select name="countryState" id="countryState" onChange={this.onChange} value={this.state.countryState}>
-                <option disabled value="">State</option>
-                {this.state.states.map((item, i) => {
+              <select name="countryState" id="countryState" onChange={this.onChange} value={countryState}>
+                <option disabled value="">{country.name === 'Canada' ? 'Provice' : 'State'}</option>
+                {states.map((item, i) => {
                   return <option key={i} value={item.id}>{item.name}</option>;
                 })}
               </select>
@@ -326,21 +327,34 @@ class ProfileEditForm extends React.Component {
 
           <div className="address">
             <label htmlFor="address">Address <span className="mandatory">*</span></label>
-            <input id="address" name="address" value={this.state.address} onChange={this.onChange} type="text" placeholder='Enter your address' />
+            <input id="address" name="address" value={address} onChange={this.onChange} type="text" placeholder='Enter your address' />
           </div>
 
           <div className="zip-code">
-            <label htmlFor="zip-code">Zip Code <span className="mandatory">*</span></label>
-            <input id="zip-code" name="zipCode" value={this.state.zipCode} onChange={this.onChange} type="text" placeholder='Enter your zip code' />
+            <label htmlFor="zip-code">{country.name === 'United Kingdom' ? 'Postal Code' : 'Zip Code'} <span className="mandatory">*</span></label>
+            <input id="zip-code" name="zipCode" value={zipCode} onChange={this.onChange} type="text" placeholder={`Enter your ${country.name === 'United Kingdom' ? 'postal' : 'zip'} code`} />
           </div>
 
           <p className="text"><span className="mandatory">*</span> Fields mandatory for payment with Credit Card</p>
 
-          <button type="submit" className="btn">Save</button>
+          <button type="submit" className="button">Save</button>
         </form>
       </div>
     );
   }
 }
 
-export default ProfileEditForm;
+ProfileEditForm.propTypes = {
+  // Redux props
+  countries: PropTypes.array
+};
+
+const mapStateToProps = (state) => {
+  const { countriesInfo } = state;
+
+  return {
+    countries: getCountries(countriesInfo)
+  };
+};
+
+export default connect(mapStateToProps)(ProfileEditForm);

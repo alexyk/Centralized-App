@@ -1,7 +1,6 @@
 import React, { Fragment } from 'react';
 import { withRouter } from 'react-router-dom';
 import { NotificationManager } from 'react-notifications';
-import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { parse } from 'query-string';
 import requester from '../../../requester';
@@ -137,7 +136,7 @@ class HomesBookingConfirmPage extends React.Component {
                       <label>Email</label>
                       <input type="email" name="email" value={this.state.email} onChange={this.handleChange} required />
                     </div>
-                    <button type="submit" className="btn">Request Booking</button>
+                    <button type="submit" className="button">Request Booking</button>
                   </form>
                 </Fragment> : <div className="loader"></div>}
             </div>
@@ -156,16 +155,6 @@ HomesBookingConfirmPage.propTypes = {
   location: PropTypes.object,
   history: PropTypes.object,
   match: PropTypes.object,
-
-  // Redux props
-  userInfo: PropTypes.object,
 };
 
-function mapStateToProps(state) {
-  const { userInfo } = state;
-  return {
-    userInfo
-  };
-}
-
-export default withRouter(connect(mapStateToProps)(HomesBookingConfirmPage));
+export default withRouter(HomesBookingConfirmPage);

@@ -179,7 +179,6 @@ class HomeDetailsPage extends React.Component {
     const hasHouseRules = eventsAllowed || smokingAllowed || suitableForPets || suitableForInfants || house_rules;
     const houseRules = house_rules && house_rules.split('\r\n');
 
-    const { startDate, endDate } = this.props.searchDatesInfo;
     const checks = this.calculateCheckInOuts(listing);
 
     const guestArray = [];
@@ -255,7 +254,7 @@ class HomeDetailsPage extends React.Component {
                 <p><img alt="save" src={`${Config.getValue('basePath')}/images/icon-heart.png`} /> Save</p>
               </div>
               <div className="contact-box">
-                <button onClick={this.openModal}>Contact Host</button>
+                <button onClick={this.openModal} className="button">Contact Host</button>
               </div>
             </div>
           </nav>
@@ -330,8 +329,6 @@ class HomeDetailsPage extends React.Component {
                 </div>
 
                 <HomeDetailsBookingPanel
-                  startDate={startDate}
-                  endDate={endDate}
                   calendar={calendar}
                   guestArray={guestArray}
                   cleaningFee={cleaningFee}
@@ -354,19 +351,7 @@ HomeDetailsPage.propTypes = {
   location: PropTypes.object,
 
   // start Redux props
-  dispatch: PropTypes.func,
-  userInfo: PropTypes.object,
-  paymentInfo: PropTypes.object,
-  searchDatesInfo: PropTypes.object
+  dispatch: PropTypes.func
 };
 
-function mapStateToProps(state) {
-  const { userInfo, paymentInfo, searchDatesInfo } = state;
-  return {
-    userInfo,
-    paymentInfo,
-    searchDatesInfo
-  };
-}
-
-export default withRouter(connect(mapStateToProps)(HomeDetailsPage));
+export default withRouter(connect()(HomeDetailsPage));

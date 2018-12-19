@@ -6,9 +6,10 @@ import { connect } from 'react-redux';
 import { NotificationManager } from 'react-notifications';
 import { LONG } from '../../constants/notificationDisplayTimes.js';
 import { closeModal, openModal } from '../../actions/modalsInfo';
+import { isActive } from '../../selectors/modalsInfo';
 import RegisterModal from './modals/RegisterModal';
 import { executeWithToken } from '../../services/grecaptcha/grecaptcha';
-
+import referralIdPersister from "../profile/affiliates/service/persist-referral-id";
 import {
   REGISTER
 } from '../../constants/modals.js';
@@ -29,8 +30,7 @@ class RegisterManager extends React.Component {
       signUpLastName: '',
       signUpPassword: '',
       signUpLocAddress: '',
-      country: '',
-      countries: [],
+      country: null,
       states: []
     };
 
@@ -38,19 +38,8 @@ class RegisterManager extends React.Component {
     this.handleChangeCountry = this.handleChangeCountry.bind(this);
     this.openModal = this.openModal.bind(this);
     this.closeModal = this.closeModal.bind(this);
-    this.requestCountries = this.requestCountries.bind(this);
     this.requestStates = this.requestStates.bind(this);
     this.handleRegister = this.handleRegister.bind(this);
-  }
-
-  componentDidMount() {
-    this.requestCountries();
-  }
-
-  requestCountries() {
-    requester.getCountries()
-      .then(response => response.body)
-      .then(data => this.setState({ countries: data }));
   }
 
   requestStates(id) {
@@ -65,7 +54,7 @@ class RegisterManager extends React.Component {
 
   handleChangeCountry(e) {
     if (!e.target.value) {
-      this.setState({ country: '' });
+      this.setState({ country: null });
     } else {
       const countryHasMandatoryState = ['Canada', 'India', 'United States of America'].includes(JSON.parse(e.target.value).name);
       this.setState({ country: JSON.parse(e.target.value) });
@@ -100,7 +89,8 @@ class RegisterManager extends React.Component {
       password: this.state.signUpPassword,
       country: this.state.country.id,
       countryState: this.state.countryState,
-      image: 'images/default.png'
+      image: 'images/default.png',
+      refId: referralIdPersister.getIdToRegister()
     };
 
     this.clearLocalStorage();
@@ -135,14 +125,13 @@ class RegisterManager extends React.Component {
     return (
       <React.Fragment>
         <RegisterModal 
-          isActive={this.props.modalsInfo.isActive[REGISTER]} 
+          isActive={this.props.isActive[REGISTER]} 
           openModal={this.openModal} 
           closeModal={this.closeModal} 
           signUpEmail={this.state.signUpEmail} 
           signUpFirstName={this.state.signUpFirstName} 
           signUpLastName={this.state.signUpLastName} 
-          signUpPassword={this.state.signUpPassword} 
-          countries={this.state.countries} 
+          signUpPassword={this.state.signUpPassword}
           country={this.state.country} 
           states={this.state.states} 
           onChange={this.onChange} 
@@ -161,16 +150,13 @@ RegisterManager.propTypes = {
 
   // start Redux props
   dispatch: PropTypes.func,
-  userInfo: PropTypes.object,
-  modalsInfo: PropTypes.object,
+  isActive: PropTypes.object,
 };
 
 function mapStateToProps(state) {
-  const { userInfo, modalsInfo, airdropInfo } = state;
+  const { modalsInfo } = state;
   return {
-    userInfo,
-    modalsInfo,
-    airdropInfo
+    isActive: isActive(modalsInfo),
   };
 }
 
