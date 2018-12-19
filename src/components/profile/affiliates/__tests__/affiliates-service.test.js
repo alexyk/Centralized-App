@@ -127,7 +127,7 @@ describe("services", () => {
 
           revenueChartData.forEach((cd, i) => {
             let [day, revenue] = cd;
-            expect(day).toBe(i + 1);
+            expect(day).toBe(String(i + 1));
             expect(revenuePerDays[i]).toBe(revenue);
           });
         });
