@@ -18,9 +18,10 @@ class LocPrice extends PureComponent {
     super(props);
     let isLocPriceRendered = false;
     let fiatInEur;
-    if (this.props.currencyExchangeRates) {
-      fiatInEur = this.props.currencyExchangeRates && CurrencyConverter.convert(this.props.currencyExchangeRates, RoomsXMLCurrency.get(), DEFAULT_CRYPTO_CURRENCY, this.props.fiat);
-      this.sendWebsocketMessage(fiatInEur, null, Object.assign(this.props.params, { fiatAmount: fiatInEur }));
+    const { currencyExchangeRates, fiat } = this.props;
+    if (currencyExchangeRates) {
+      fiatInEur = currencyExchangeRates && CurrencyConverter.convert(currencyExchangeRates, RoomsXMLCurrency.get(), DEFAULT_CRYPTO_CURRENCY, fiat);
+      this.sendWebsocketMessage(fiatInEur, null, { fiatAmount: fiatInEur });
       isLocPriceRendered = true;
     }
     this.state = {
@@ -32,11 +33,11 @@ class LocPrice extends PureComponent {
   componentDidUpdate(prevProps) {
     if (this.props.isExchangerWebsocketConnected &&
       this.props.isExchangerWebsocketConnected !== prevProps.isExchangerWebsocketConnected) {
-      this.sendWebsocketMessage(this.state.fiatInEur, null, Object.assign(prevProps.params, { fiatAmount: this.state.fiatInEur }));
+      this.sendWebsocketMessage(this.state.fiatInEur, null, { fiatAmount: this.state.fiatInEur });
     }
     if (this.props.currencyExchangeRates && !this.state.isLocPriceRendered) {
       const fiatInEur = this.props.currencyExchangeRates && CurrencyConverter.convert(this.props.currencyExchangeRates, RoomsXMLCurrency.get(), DEFAULT_CRYPTO_CURRENCY, prevProps.fiat);
-      this.sendWebsocketMessage(fiatInEur, null, Object.assign(prevProps.params, { fiatAmount: fiatInEur }));
+      this.sendWebsocketMessage(fiatInEur, null, { fiatAmount: fiatInEur });
       this.setState({
         isLocPriceRendered: true,
         fiatInEur
@@ -58,8 +59,7 @@ class LocPrice extends PureComponent {
   }
 
   render() {
-    const { isUserLogged } = this.props;
-    const { brackets, locAmount } = this.props;
+    const { isUserLogged, brackets, locAmount } = this.props;
 
     const bracket = brackets && isUserLogged;
 
@@ -80,8 +80,6 @@ LocPrice.defaultProps = {
 LocPrice.propTypes = {
   fiat: PropTypes.number,
   brackets: PropTypes.bool,
-  method: PropTypes.string,
-  params: PropTypes.object,
 
   // Redux props
   dispatch: PropTypes.func,
