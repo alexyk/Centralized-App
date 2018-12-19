@@ -106,7 +106,6 @@ class App extends React.Component {
           <Route path="/mobile" render={() => <HomeRouterPage />} />
           <Route path="/profile/listings/create" render={() => !this.isAuthenticated() ? <Redirect to="/" /> : <CreateListingPage />} />
           <Route path="/profile/" render={() => !this.isAuthenticated() ? <Redirect to="/" /> : <ProfilePage location={this.props.location} />} />
-          <Route path="/airdrop" render={() => <ProfilePage />} />
           <Route path="/buyloc" render={() => <ProfilePage />} />
           <Route path="/softuni" render={() => <WorldKuCoinCampaign />} />
           <Route path="/vote" render={() => <WorldKuCoinCampaign />} />
