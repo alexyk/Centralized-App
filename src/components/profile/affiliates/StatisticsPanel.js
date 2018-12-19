@@ -64,7 +64,8 @@ export default class StatisticsPanel extends React.Component<Props, State> {
           </div>
           <div>
             <button
-              className={`btn ${showStatsForRevenue && "active"}`}
+              className={`btn ${showStatsForRevenue &&
+                "active"} revenue-button`}
               onClick={this.showRevenueStats}
               data-testid="stats-controls-revenue"
             >
