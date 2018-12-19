@@ -341,7 +341,7 @@ class AirTicketsBookingRouterPage extends Component {
     const initBooking = {
       flightId: this.props.match.params.id,
       contact: contactInfo,
-      invoice,
+      // invoice,
       options: servicesInfo,
       passengers
     };
