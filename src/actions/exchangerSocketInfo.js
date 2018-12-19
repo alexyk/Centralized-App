@@ -1,4 +1,4 @@
-import { exchangerSocketInfo } from './actionTypes';
+import { exchangerSocketInfo } from "./actionTypes";
 
 export function setExchangerWebsocketConnection(isExchangerWebsocketConnected) {
   return {

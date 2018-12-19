@@ -1,4 +1,4 @@
-import { homesSearchInfo } from './actionTypes';
+import { homesSearchInfo } from "./actionTypes";
 
 export function setCountry(country) {
   return {

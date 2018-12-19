@@ -1,4 +1,4 @@
-import { exchangerSocketInfo } from '../actions/actionTypes';
+import { exchangerSocketInfo } from "../actions/actionTypes";
 
 const initialState = {
   isExchangerWebsocketConnected: false

@@ -1,4 +1,4 @@
-import { locPriceUpdateTimerInfo } from '../actions/actionTypes';
+import { locPriceUpdateTimerInfo } from "../actions/actionTypes";
 
 const initialState = {
   seconds: null
