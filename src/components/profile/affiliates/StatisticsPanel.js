@@ -59,7 +59,7 @@ export default class StatisticsPanel extends React.Component<Props, State> {
               onClick={this.showAffiliateStats}
               data-testid="stats-controls-affiliates"
             >
-              Affiliates
+              Referrals
             </button>
           </div>
           <div>

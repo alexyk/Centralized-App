@@ -31,11 +31,38 @@ import PasswordRecoveryManager from '../authentication/PasswordRecoveryManager';
 import { fetchCountries } from '../../actions/countriesInfo';
 import referralIdPersister from "../profile/affiliates/service/persist-referral-id";
 
+import AppComponent from "./AppComponent"
+
+const defaultProps = {
+  persistReferralId: search => referralIdPersister.tryToSetFromSearch(search),
+  initCalendar: () =>  BigCalendar.setLocalizer(BigCalendar.momentLocalizer(moment.utc())),
+  isAuthenticated: () => localStorage.getItem(Config.getValue('domainPrefix') + '.auth.locktrip'),
+  requestExchangeRates: ()=>{
+    requester.getCurrencyRates().then(res => {
+      res.body.then(currencyExchangeRates => {
+        dispatch(setCurrencyExchangeRates(currencyExchangeRates));
+      });
+    });
+  },
+  requestLocEurRate: ()=>{
+    const baseCurrency = 'EUR';
+    requester.getLocRateByCurrency(baseCurrency).then(res => {
+      res.body.then(data => {
+        dispatch(setLocEurRate(Number(data[0][`price_${(baseCurrency).toLowerCase()}`])));
+      });
+    });
+  },
+  requestCountries: ()=>{
+    dispatch(fetchCountries());
+  }
+}
+
+
 type Props = {
   persistReferralId: (search?: string)=>void
 }
 
-class App extends React.Component<Props> {
+class AppREF extends React.Component<Props> {
   constructor(props) {
     super(props);
     
@@ -43,7 +70,6 @@ class App extends React.Component<Props> {
   }
 
   componentDidMount() {
-    referralIdPersister.tryToSetFromSearch(this.props.location.search);
     this.requestExchangeRates();
     this.requestLocEurRate();
     this.requestCountries();
@@ -80,6 +106,7 @@ class App extends React.Component<Props> {
   }
 
   render() {
+    referralIdPersister.tryToSetFromSearch(this.props.location.search);
     const isWebView = this.props.location.pathname.indexOf('/mobile') !== -1;
 
     return (
@@ -126,7 +153,7 @@ class App extends React.Component<Props> {
   }
 }
 
-App.propTypes = {
+AppREF.propTypes = {
   // start Router props
   location: PropTypes.object,
   history: PropTypes.object,
@@ -141,4 +168,4 @@ export default withRouter(connect(function mapStateToProps(){
       referralIdPersister.tryToSetFromSearch(search)
     }
   }
-})(App));
+})(AppREF));

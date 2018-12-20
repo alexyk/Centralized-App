@@ -1,11 +1,7 @@
 import '../../styles/css/main.css';
 import '../../styles/css/components/captcha/captcha-container.css';
-import { Redirect, Route, Switch, withRouter } from 'react-router-dom';
-import { setCurrencyExchangeRates, setLocEurRate } from '../../actions/exchangeRatesInfo';
-
+import { Redirect, Route, Switch } from 'react-router-dom';
 import Balance from '../external/Balance';
-import BigCalendar from 'react-big-calendar';
-import { Config } from '../../config';
 import CreateListingPage from '../listingCRUD/CreateListingPage';
 import EditListingPage from '../listingCRUD/EditListingPage';
 import Footer from '../footer/Footer';
@@ -14,13 +10,8 @@ import MainNav from '../mainNav/MainNav';
 import LocalizationNav from '../profile/LocalizationNav';
 import { NotificationContainer } from 'react-notifications';
 import ProfilePage from '../profile/ProfilePage';
-import PropTypes from 'prop-types';
 import React from 'react';
-import { Wallet } from '../../services/blockchain/wallet.js';
 import WorldKuCoinCampaign from '../external/WorldKuCoinCampaign';
-import { connect } from 'react-redux';
-import moment from 'moment';
-import requester from '../../requester';
 import GooglePlaces from '../common/GooglePlaces';
 import HelpPage from '../static/HelpPage';
 import AboutUsPage from '../static/AboutUsPage';
@@ -28,22 +19,23 @@ import LoginManager from '../authentication/LoginManager';
 import RegisterManager from '../authentication/RegisterManager';
 import WalletCreationManager from '../authentication/WalletCreationManager';
 import PasswordRecoveryManager from '../authentication/PasswordRecoveryManager';
-import { fetchCountries } from '../../actions/countriesInfo';
-import referralIdPersister from "../profile/affiliates/service/persist-referral-id";
 
 type Props = {
-  persistReferralId: (search?: string)=>void
+  persistReferralId: (search?: string)=>void,
+  initCalendar: Function,
+  isAuthenticated: ()=>boolean,
+  requestExchangeRates: Function,
+  requestLocEurRate: Function,
+  requestCountries: Function,
 }
 
-class App extends React.Component<Props> {
+export default class App extends React.Component<Props> {
   constructor(props) {
     super(props);
-    
-    BigCalendar.setLocalizer(BigCalendar.momentLocalizer(moment.utc()));
+    props.initCalendar();
   }
 
   componentDidMount() {
-    referralIdPersister.tryToSetFromSearch(this.props.location.search);
     this.requestExchangeRates();
     this.requestLocEurRate();
     this.requestCountries();
@@ -51,35 +43,23 @@ class App extends React.Component<Props> {
 
 
   isAuthenticated() {
-    let token = localStorage.getItem(Config.getValue('domainPrefix') + '.auth.locktrip');
-    if (token) {
-      return true;
-    }
-    return false;
+   return this.props.isAuthenticated();
   }
 
   requestExchangeRates() {
-    requester.getCurrencyRates().then(res => {
-      res.body.then(currencyExchangeRates => {
-        this.props.dispatch(setCurrencyExchangeRates(currencyExchangeRates));
-      });
-    });
+    this.props.requestExchangeRates();
   }
 
   requestLocEurRate() {
-    const baseCurrency = 'EUR';
-    requester.getLocRateByCurrency(baseCurrency).then(res => {
-      res.body.then(data => {
-        this.props.dispatch(setLocEurRate(Number(data[0][`price_${(baseCurrency).toLowerCase()}`])));
-      });
-    });
+    this.props.requestLocEurRate();
   }
 
   requestCountries() {
-    this.props.dispatch(fetchCountries());
+    this.props.requestCountries();
   }
 
   render() {
+    this.props.persistReferralId(this.props.location.search);
     const isWebView = this.props.location.pathname.indexOf('/mobile') !== -1;
 
     return (
@@ -125,20 +105,3 @@ class App extends React.Component<Props> {
     );
   }
 }
-
-App.propTypes = {
-  // start Router props
-  location: PropTypes.object,
-  history: PropTypes.object,
-
-  // start Redux props
-  dispatch: PropTypes.func,
-};
-
-export default withRouter(connect(function mapStateToProps(){
-  return {
-    persistReferralId(search){
-      referralIdPersister.tryToSetFromSearch(search)
-    }
-  }
-})(App));
