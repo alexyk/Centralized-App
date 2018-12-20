@@ -2,10 +2,6 @@ import queryString from "query-string";
 const REFERRAL_ID = "referralId";
 
 export default {
-  hasId() {
-    let id = localStorage.getItem(REFERRAL_ID);
-    return typeof id === "string";
-  },
   getIdToRegister() {
     return getCookie(REFERRAL_ID);
   },
