@@ -7,10 +7,10 @@ export const DEFAULT_PAGE_SIZE = 10;
 function Pagination(props) {
   const textItemRender = (current, type, element) => {
     if (type === 'prev') {
-      return <div className="rc-prev">&lsaquo;</div>;
+      return <div data-testid="previous-page" className="rc-prev">&lsaquo;</div>;
     }
     if (type === 'next') {
-      return <div className="rc-next">&rsaquo;</div>;
+      return <div data-testid="next-page" className="rc-next">&rsaquo;</div>;
     }
     if (type === 'jump-next') {
       return <div className="jump-next"> ••• </div>;

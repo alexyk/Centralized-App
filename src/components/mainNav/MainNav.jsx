@@ -100,6 +100,7 @@ class MainNav extends React.Component {
   }
 
   render() {
+    const { isUserLogged } = this.props;
     const { unreadMessages } = this.state;
     return (
       <nav id="main-nav" className="navbar">
@@ -169,7 +170,8 @@ MainNav.propTypes = {
   isLogged: PropTypes.bool,
 
   // start Redux props
-  dispatch: PropTypes.func
+  dispatch: PropTypes.func,
+  isUserLogged: PropTypes.bool
 };
 
 export default withRouter(connect(function mapStateToProps(state){
