@@ -43,7 +43,10 @@ export default class AffiliatesDashboard extends React.Component<Props> {
 
     return (
       <div className={"container affiliates-container"}>
-        <div style={{ display: "flex", justifyContent: "space-between" }}>
+        <div
+          style={{ display: "flex", justifyContent: "space-between" }}
+          className={"affiliates-head-section"}
+        >
           <h2>My Affiliates</h2>
 
           <div style={{ display: "flex", alignItems: "center" }}>

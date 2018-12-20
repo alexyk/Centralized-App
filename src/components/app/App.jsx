@@ -31,9 +31,6 @@ import PasswordRecoveryManager from '../authentication/PasswordRecoveryManager';
 import { fetchCountries } from '../../actions/countriesInfo';
 import referralIdPersister from "../profile/affiliates/service/persist-referral-id";
 
-type Props = {
-  persistReferralId: (search?: string)=>void
-}
 
 class App extends React.Component<Props> {
   constructor(props) {

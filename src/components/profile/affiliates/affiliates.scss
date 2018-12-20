@@ -2,7 +2,16 @@
 @import '../../../styles/css/vendors/include-media';
 
 .affiliates-container {
-  padding-bottom: 20px
+  padding-bottom: 20px;
+
+  .affiliates-head-section {
+    display: flex;
+    justify-content: space-between;
+
+    @include media("<=tablet") {
+      flex-direction: column;
+    }
+  }
 }
 
 .btn {
@@ -38,6 +47,8 @@
 
 .withdraw-button-wrapper {
   padding: 20px 0;
+  display: flex;
+  align-items: center;
 
   .threshold-message {
     //padding: 10px
