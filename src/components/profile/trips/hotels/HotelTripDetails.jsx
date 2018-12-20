@@ -74,8 +74,8 @@ class HotelTripDetails extends React.Component {
     let startDateHour = startDateMoment.hour();
     let endDateHour = endDateMoment.hour();
 
-    startDateHour = startDateMoment.format('h') + ((startDateMoment.hour() >= 12 ? 'PM' : 'AM'));
-    endDateHour = endDateMoment.format('h') + ((endDateMoment.hour() >= 12 ? 'PM' : 'AM'));
+    startDateHour = '2:00 PM';
+    endDateHour = '12:00 PM';
 
     const checkIn = {
       day: startDateMoment.format('D'),
@@ -196,18 +196,24 @@ class HotelTripDetails extends React.Component {
             {this.renderHotelStars(bookingData.hotelScore)}
             <hr />
             <div className="visit-info">
-              <h3 className="check-in-header">Check In</h3>
-              <h3 className="check-out-header">Check Out</h3>
-              <h3 className="guests-header">Guests</h3>
-              <h5 className="check-in-content">
-                <div style={{ marginBottom: '5%' }}><span className="date-in-day">{checkInData.day}</span> {checkInData.month}, {checkInData.dayOfWeek}</div>
-                <div>{checkInData.hour}</div>
-              </h5>
-              <h5 className="check-out-content">
-                <div style={{ marginBottom: '5%' }}><span className="date-out-day">{checkOutData.day}</span> {checkOutData.month}, {checkOutData.dayOfWeek}</div>
-                <div>by {checkOutData.hour}</div>
-              </h5>
-              <h5 className="guests-content">{bookingData.guestsCount}</h5>
+              <div className="check-in">
+                <h3 className="check-in-header">Check In</h3> 
+                <h5 className="check-in-content">
+                  <div style={{ marginBottom: '5%' }}><span className="date-in-day">{checkInData.day}</span> {checkInData.month}, {checkInData.dayOfWeek}</div>
+                  <div>After {checkInData.hour}</div>
+                </h5>
+              </div>
+              <div className="check-out">
+                <h3 className="check-out-header">Check Out</h3>
+                <h5 className="check-out-content">
+                  <div style={{ marginBottom: '5%' }}><span className="date-out-day">{checkOutData.day}</span> {checkOutData.month}, {checkOutData.dayOfWeek}</div>
+                  <div>Before {checkOutData.hour}</div>
+                </h5>
+              </div>
+              <div className="guests">
+                <h3 className="guests-header">Guests</h3>
+                <h5 className="guests-content">{bookingData.guestsCount}</h5>
+              </div>
             </div>
             <h3>Room Type</h3>
             {/*<h5 style={{ marginBottom: '5%' }}>{bookingData.roomType}</h5>*/}
