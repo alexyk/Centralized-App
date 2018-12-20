@@ -5,6 +5,7 @@ import {
   cleanup,
   waitForElement
 } from "react-testing-library";
+import {BrowserRouter} from "react-router-dom"
 
 import AffiliatesDashboard from "../AffiliatesComponent";
 
@@ -29,7 +30,7 @@ describe("Affiliate Dashboard", () => {
     [0, 22, 100, 10000].forEach(value => {
       test(`displays ${value}`, async () => {
         const { getByTestId } = render(
-          <AffiliatesDashboard totalAffiliates={value} />
+          <BrowserRouter><AffiliatesDashboard totalAffiliates={value} /></BrowserRouter>
         );
 
         let node = await waitForElement(() => getByTestId(TEST_ID));
@@ -41,7 +42,7 @@ describe("Affiliate Dashboard", () => {
     [Infinity, -Infinity, NaN, "some string", function() {}].forEach(value => {
       test(`displays 0 when not given a number, but ${typeof value}: ${value}`, async () => {
         const { getByTestId } = render(
-          <AffiliatesDashboard totalAffiliates={value} />
+          <BrowserRouter><AffiliatesDashboard totalAffiliates={value} /></BrowserRouter>
         );
 
         let node = await waitForElement(() => getByTestId(TEST_ID));
@@ -56,7 +57,7 @@ describe("Affiliate Dashboard", () => {
     [0, 22, 100, 10000].forEach(value => {
       test(`displays ${value}`, async () => {
         const { getByTestId } = render(
-          <AffiliatesDashboard totalRevenue={value} />
+          <BrowserRouter><AffiliatesDashboard totalRevenue={value} /></BrowserRouter>
         );
 
         let node = await waitForElement(() => getByTestId(TEST_ID));
@@ -68,7 +69,7 @@ describe("Affiliate Dashboard", () => {
     [Infinity, -Infinity, NaN, "some string", function() {}].forEach(value => {
       test(`displays 0 when not given a number, but ${typeof value}: ${value}`, async () => {
         const { getByTestId } = render(
-          <AffiliatesDashboard totalRevenue={value} />
+          <BrowserRouter><AffiliatesDashboard totalRevenue={value} /></BrowserRouter>
         );
 
         let node = await waitForElement(() => getByTestId(TEST_ID));
@@ -83,7 +84,7 @@ describe("Affiliate Dashboard", () => {
       const WITDRAW_BUTTON = "withdraw-button";
       const withdrawHandler = jest.fn(() => {});
       const { getByTestId } = render(
-        <AffiliatesDashboard onWithdraw={withdrawHandler} />
+        <BrowserRouter><AffiliatesDashboard onWithdraw={withdrawHandler} /></BrowserRouter>
       );
 
       let button = await waitForElement(() => getByTestId(WITDRAW_BUTTON));
@@ -99,7 +100,7 @@ describe("Affiliate Dashboard", () => {
         let items = createAListOf(number);
         test("renders the right number of items : " + number, async () => {
           const { getAllByText, getAllByTestId } = render(
-            <AffiliatesDashboard affiliateBookings={items} />
+            <BrowserRouter><AffiliatesDashboard affiliateBookings={items} /></BrowserRouter>
           );
 
           let nodes = await waitForElement(() => getAllByTestId(LIST_ITEM_ID));
@@ -111,7 +112,7 @@ describe("Affiliate Dashboard", () => {
         const NO_BOOKINGS_ID = "no-bookings-text";
         let message = "Sorry, no bookings yet";
         const { getByTestId } = render(
-          <AffiliatesDashboard noBookingsText={message} />
+          <BrowserRouter><AffiliatesDashboard noBookingsText={message} /></BrowserRouter>
         );
 
         let node = await waitForElement(() => getByTestId(NO_BOOKINGS_ID));
@@ -125,7 +126,7 @@ describe("Affiliate Dashboard", () => {
         let bookings = createAListOf(100);
         let pageChangeHandler = jest.fn(() => {});
         const { getByTestId } = render(
-          <AffiliatesDashboard
+          <BrowserRouter><AffiliatesDashboard
             affiliateBookings={bookings}
             bookingPaginationOptions={{
               onPageChange: pageChangeHandler,
@@ -133,7 +134,7 @@ describe("Affiliate Dashboard", () => {
               initialPage: 1,
               totalElements: 200
             }}
-          />
+          /></BrowserRouter>
         );
 
         let nextPageControl = await waitForElement(() =>
@@ -152,7 +153,7 @@ describe("Affiliate Dashboard", () => {
         let bookings = createAListOf(100);
         let pageChangeHandler = jest.fn(() => {});
         const { getByTestId } = render(
-          <AffiliatesDashboard
+          <BrowserRouter><AffiliatesDashboard
             affiliateBookings={bookings}
             bookingPaginationOptions={{
               onPageChange: pageChangeHandler,
@@ -160,7 +161,7 @@ describe("Affiliate Dashboard", () => {
               initialPage: 5,
               totalElements: 200
             }}
-          />
+          /></BrowserRouter>
         );
 
         let nextPageControl = await waitForElement(() =>
@@ -186,7 +187,7 @@ describe("Affiliate Dashboard", () => {
       const REVENUE_CHART = "panels-chart-revenue";
 
       test("switches correctly", async () => {
-        const { getByTestId } = render(<AffiliatesDashboard />);
+        const { getByTestId } = render(<BrowserRouter><AffiliatesDashboard /></BrowserRouter>);
 
         let affiliatesButton = await waitForElement(() =>
           getByTestId(STATS_CONTROLS_AFFILIATE)
