@@ -30,7 +30,7 @@ import WalletCreationManager from '../authentication/WalletCreationManager';
 import PasswordRecoveryManager from '../authentication/PasswordRecoveryManager';
 import { fetchCountries } from '../../actions/countriesInfo';
 import referralIdPersister from "../profile/affiliates/service/persist-referral-id";
-
+import AffiliateTerms from "../static/AffiliateTerms"
 
 class App extends React.Component<Props> {
   constructor(props) {
@@ -85,7 +85,7 @@ class App extends React.Component<Props> {
           <MainNav />
         }
 
-        {!isWebView &&
+        {!isWebView && this.props.location.pathname !== "/affiliate-terms" &&
           <LocalizationNav />
         }
 
@@ -96,6 +96,7 @@ class App extends React.Component<Props> {
         <NotificationContainer />
 
         <Switch>
+          <Route exact path="/affiliate-terms" render={(props) =><AffiliateTerms/>}/>
           <Route exact path="/" render={(props) =><HomeRouterPage />}/>
           <Route exact path="/profile/listings/edit/:step/:id" render={() => !this.isAuthenticated() ? <Redirect to="/" /> : <EditListingPage />} />
           <Route exact path="/users/resetPassword/:confirm" render={() => <HomeRouterPage />} />
