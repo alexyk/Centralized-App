@@ -19,7 +19,7 @@ export default class Terms extends React.Component {
 
       <div className="uCalc_160923"></div>
 
-      <div style={{whiteSpace: "pre-line"}}>{`
+      {/*<div style={{whiteSpace: "pre-line"}}>{`
 LOCKTRIP AFFILIATE AGREEMENT
 PLEASE READ THE ENTIRE AGREEMENT.
 YOU MAY PRINT THIS PAGE FOR YOUR RECORDS.
@@ -80,7 +80,7 @@ You hereby agree to indemnify and hold harmless LOCKTRIP.com, and its subsidiari
 11.2. This Agreement represents the entire agreement between us and you, and shall supersede all prior agreements and communications of the parties, oral or written.
 12.3. The headings and titles contained in this Agreement are included for convenience only, and shall not limit or otherwise affect the terms of this Agreement.
 11.4. If any provision of this Agreement is held to be invalid or unenforceable, that provision shall be eliminated or limited to the minimum extent necessary such that the intent of the parties is effectuated, and the remainder of this agreement shall have full force and effect.
-`}</div>
+`}</div> */}
     </div>;
   }
 }

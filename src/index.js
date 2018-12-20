@@ -1,7 +1,7 @@
 import "babel-polyfill";
 
-import App from "./components/app/App.BAK";
-// import App from "./components/app/App.REF";
+// import App from "./components/app/App.BAK";
+import App from "./components/app/App.REF";
 import { BrowserRouter } from "react-router-dom";
 import React from "react";
 import { render } from "react-dom";
