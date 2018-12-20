@@ -31,6 +31,7 @@ import PasswordRecoveryManager from '../authentication/PasswordRecoveryManager';
 import { fetchCountries } from '../../actions/countriesInfo';
 import referralIdPersister from "../profile/affiliates/service/persist-referral-id";
 
+
 class App extends React.Component<Props> {
   constructor(props) {
     super(props);

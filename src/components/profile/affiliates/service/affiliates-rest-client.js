@@ -37,22 +37,25 @@ export class AffiliatesServiceClass {
 }
 
 function getRequests() {
+  const getToken = () =>
+    localStorage.getItem(Config.getValue("domainPrefix") + ".auth.locktrip");
+
   return {
     async getBookings(_page = 1) {
       const query = `?page=${_page - 1}&size=20`;
       return superagent
         .get(`${HOST}/me/affiliates/bookings${query}`)
-        .set("authorization", localStorage.getItem("rc.auth.locktrip"));
+        .set("authorization", getToken());
     },
     async getGeneralAffiliateData() {
       return superagent
         .get(`${HOST}/me/affiliates/stats`)
-        .set("authorization", localStorage.getItem("rc.auth.locktrip"));
+        .set("authorization", getToken());
     },
     async getChartData() {
       return superagent
         .get(`${HOST}/me/affiliates/statistics`)
-        .set("authorization", localStorage.getItem("rc.auth.locktrip"));
+        .set("authorization", getToken());
     }
   };
 }
