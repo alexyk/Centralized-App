@@ -4,7 +4,7 @@ import "./affiliates.css";
 import { ensureNaturalNumber } from "./helpers";
 import BookingsAndStats from "./BookingsAndStats";
 import Clipboard from "react-clipboard.js";
-
+import {Link} from "react-router-dom"
 import type {
   AffiliateBooking,
   AffiliatesChartData,
@@ -49,23 +49,28 @@ export default class AffiliatesDashboard extends React.Component<Props> {
         >
           <h2>My Affiliates</h2>
 
-          <div style={{ display: "flex", alignItems: "center" }}>
-            <span>Invite people with this link: </span>
-            <span id="foo" className={"referral-link"}>
-              {this.props.affiliateLink}
-            </span>
+          <div style={{maxWidth: "500px"}}>
+            <div style={{ display: "flex", alignItems: "center" }}>
+              <span>Invite people with this link: </span>
+              <span id="foo" className={"referral-link"}>
+                {this.props.affiliateLink}
+              </span>
 
-            <Clipboard
-              data-clipboard-text={this.props.affiliateLink}
-              button-title="Copy link"
-            >
-              <img
-                src={require("./images/assignment-icon.svg")}
-                alt="Copy to clipboard"
-              />
-            </Clipboard>
+              <Clipboard
+                data-clipboard-text={this.props.affiliateLink}
+                button-title="Copy link"
+              >
+                <img
+                  src={require("./images/assignment-icon.svg")}
+                  alt="Copy to clipboard"
+                />
+              </Clipboard>
+            </div>
+            <div style={{    padding: "10px 0", fontSize: "10px"}}><Link to={"/affiliate-terms"}>By copying and/or distributing this unique reference URL, you automatically agree with the affiliate program terms and conditions[link].</Link></div>
+
           </div>
         </div>
+
         <hr />
         <div>
           <h3>
