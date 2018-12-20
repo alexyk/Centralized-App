@@ -67,9 +67,7 @@ class LoginManager extends React.Component {
     this.handleMobileAuthorization();
 
     const queryParams = queryString.parse(this.props.location.search);
-    if(queryParams.refId){
-      this.openModal(REGISTER)
-    }
+
 
     if (queryParams.token) {
       this.setState({ recoveryToken: queryParams.token });

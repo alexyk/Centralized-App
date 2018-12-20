@@ -122,7 +122,7 @@ class MainNav extends React.Component {
                 </Link>
                 <DropdownMenu buttonText={localStorage[Config.getValue('domainPrefix') + '.auth.username']}>
                   <Link className="dropdown-menu-item" to="/profile/dashboard">Dashboard</Link>
-                  <Link className="dropdown-menu-item" to="/profile/affiliates">My Affiliates</Link>
+                  <Link className="dropdown-menu-item" to="/profile/affiliates">Affiliate</Link>
                   <Link className="dropdown-menu-item" to="/profile/listings">My Listings</Link>
                   <Link className="dropdown-menu-item" to="/profile/trips">My Trips</Link>
                   <Link className="dropdown-menu-item" to="/profile/reservations">My Guests</Link>
@@ -139,7 +139,7 @@ class MainNav extends React.Component {
             {this.props.isLogged
               ? <BurgerMenu>
                 <Link className="menu-item" to="/profile/dashboard">Dashboard</Link>
-                <Link className="menu-item" to="/profile/affiliates">My Affiliates</Link>
+                <Link className="menu-item" to="/profile/affiliates">Affiliate</Link>
                 <Link className="menu-item" to="/profile/reservations">My Guests</Link>
                 <Link className="menu-item" to="/profile/trips">My Trips</Link>
                 <Link className="menu-item" to="/profile/listings">My Listings</Link>

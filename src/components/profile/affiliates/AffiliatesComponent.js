@@ -24,6 +24,18 @@ type Props = {
 };
 
 export default class AffiliatesDashboard extends React.Component<Props> {
+  constructor(props) {
+    super(props);
+  }
+
+  componentDidMount() {
+    window.addEventListener("resize", this.forceUpdate);
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener("resize", this.forceUpdate);
+  }
+
   render() {
     let totalAffiliates = ensureNaturalNumber(this.props.totalAffiliates);
     let totalRevenue = ensureNaturalNumber(this.props.totalRevenue);
@@ -36,13 +48,7 @@ export default class AffiliatesDashboard extends React.Component<Props> {
 
           <div style={{ display: "flex", alignItems: "center" }}>
             <span>Invite people with this link: </span>
-            <span
-              id="foo"
-              style={{
-                padding: "0 10px",
-                background: "white"
-              }}
-            >
+            <span id="foo" className={"referral-link"}>
               {this.props.affiliateLink}
             </span>
 
