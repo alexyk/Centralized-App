@@ -88,7 +88,7 @@ describe("Affiliate Dashboard", () => {
 
       let button = await waitForElement(() => getByTestId(WITDRAW_BUTTON));
       fireEvent.click(button);
-      expect(withdrawHandler).toHaveBeenCalledTimes(1);
+      expect(withdrawHandler).toHaveBeenCalledTimes(0);
     });
   });
 
