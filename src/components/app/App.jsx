@@ -1,8 +1,6 @@
 import '../../styles/css/main.css';
 import '../../styles/css/components/captcha/captcha-container.css';
-
 import { Redirect, Route, Switch, withRouter } from 'react-router-dom';
-import { setIsLogged, setUserInfo } from '../../actions/userInfo';
 import { setCurrencyExchangeRates, setLocEurRate } from '../../actions/exchangeRatesInfo';
 
 import Balance from '../external/Balance';
@@ -33,7 +31,7 @@ import RegisterManager from '../authentication/RegisterManager';
 import WalletCreationManager from '../authentication/WalletCreationManager';
 import PasswordRecoveryManager from '../authentication/PasswordRecoveryManager';
 import { fetchCountries } from '../../actions/countriesInfo';
-
+import referralIdPersister from "../profile/affiliates/service/persist-referral-id";
 class App extends React.Component {
   constructor(props) {
     super(props);
@@ -42,12 +40,10 @@ class App extends React.Component {
   }
 
   componentDidMount() {
-    this.handleInternalAuthorization();
-    this.handleExternalAuthorization();
-
     this.requestExchangeRates();
     this.requestLocEurRate();
     this.requestCountries();
+
   }
 
   isAuthenticated() {
@@ -56,51 +52,6 @@ class App extends React.Component {
       return true;
     }
     return false;
-  }
-
-  setUserInfo() {
-    this.props.dispatch(setIsLogged(true));
-    requester.getUserInfo().then(res => {
-      res.body.then(data => {
-        if (data.locAddress) {
-          Wallet.getBalance(data.locAddress).then(eth => {
-            const ethBalance = eth / (Math.pow(10, 18));
-            Wallet.getTokenBalance(data.locAddress).then(loc => {
-              const locBalance = loc / (Math.pow(10, 18));
-              const { firstName, lastName, phoneNumber, email, locAddress, gender, isEmailVerified } = data;
-              const isAdmin = data.roles.findIndex((r) => r.name === 'ADMIN') !== -1;
-              this.props.dispatch(setUserInfo(firstName, lastName, phoneNumber, email, locAddress, ethBalance, locBalance, gender, isEmailVerified, isAdmin));
-            });
-          });
-        } else {
-          const ethBalance = 0;
-          const locBalance = 0;
-          const { firstName, lastName, phoneNumber, email, locAddress, gender, isEmailVerified } = data;
-          const isAdmin = data.roles.findIndex((r) => r.name === 'ADMIN') !== -1;
-          this.props.dispatch(setUserInfo(firstName, lastName, phoneNumber, email, locAddress, ethBalance, locBalance, gender, isEmailVerified, isAdmin));
-        }
-      });
-    });
-  }
-
-  handleInternalAuthorization() {
-    if (localStorage[Config.getValue('domainPrefix') + '.auth.username']
-      && localStorage[Config.getValue('domainPrefix') + '.auth.locktrip']) {
-      this.setUserInfo();
-    }
-  }
-
-  handleExternalAuthorization() {
-    const queryStringParameters = queryString.parse(this.props.location.search);
-    const { authEmail, authToken } = queryStringParameters;
-    if (authEmail && authToken) {
-      localStorage[Config.getValue('domainPrefix') + '.auth.username'] = authEmail;
-      localStorage[Config.getValue('domainPrefix') + '.auth.locktrip'] = decodeURI(authToken);
-      this.setUserInfo();
-      const url = this.props.location.pathname;
-      const search = this.getQueryString(queryStringParameters);
-      this.props.history.push(url + search);
-    }
   }
 
   requestExchangeRates() {
@@ -124,16 +75,6 @@ class App extends React.Component {
     this.props.dispatch(fetchCountries());
   }
 
-  getQueryString(queryStringParameters) {
-    let queryString = '?';
-    queryString += 'region=' + encodeURI(queryStringParameters.region);
-    queryString += '&currency=' + encodeURI(queryStringParameters.currency);
-    queryString += '&startDate=' + encodeURI(queryStringParameters.startDate);
-    queryString += '&endDate=' + encodeURI(queryStringParameters.endDate);
-    queryString += '&rooms=' + encodeURI(queryStringParameters.rooms);
-    return queryString;
-  }
-
   render() {
 
     const isWebView = this.props.location.pathname.indexOf('/mobile') !== -1;
@@ -155,7 +96,10 @@ class App extends React.Component {
         <NotificationContainer />
 
         <Switch>
-          <Route exact path="/" render={() => <HomeRouterPage />} />
+          <Route exact path="/" render={(props) => {
+            referralIdPersister.tryToSetFromSearch(props.location.search);
+            return <HomeRouterPage />
+          }}/>
           <Route exact path="/profile/listings/edit/:step/:id" render={() => !this.isAuthenticated() ? <Redirect to="/" /> : <EditListingPage />} />
           <Route exact path="/users/resetPassword/:confirm" render={() => <HomeRouterPage />} />
           <Route path="/homes" render={() => <HomeRouterPage />} />
@@ -163,7 +107,6 @@ class App extends React.Component {
           <Route path="/mobile" render={() => <HomeRouterPage />} />
           <Route path="/profile/listings/create" render={() => !this.isAuthenticated() ? <Redirect to="/" /> : <CreateListingPage />} />
           <Route path="/profile/" render={() => !this.isAuthenticated() ? <Redirect to="/" /> : <ProfilePage location={this.props.location} />} />
-          <Route path="/airdrop" render={() => <ProfilePage />} />
           <Route path="/buyloc" render={() => <ProfilePage />} />
           <Route path="/softuni" render={() => <WorldKuCoinCampaign />} />
           <Route path="/vote" render={() => <WorldKuCoinCampaign />} />

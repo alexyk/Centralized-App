@@ -1,4 +1,4 @@
-import { hotelsSearchInfo } from './actionTypes';
+import { hotelsSearchInfo } from "./actionTypes";
 
 export function setRegion(value) {
   return {

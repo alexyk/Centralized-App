@@ -1,4 +1,4 @@
-import { modalsInfo } from './actionTypes';
+import { modalsInfo } from "./actionTypes";
 
 export function openModal(modal) {
   return {
@@ -10,14 +10,6 @@ export function openModal(modal) {
 export function closeModal(modal) {
   return {
     type: modalsInfo.CLOSE_MODAL,
-    payload: modal
-  };
-}
-
-
-export function airdropModals(modal) {
-  return {
-    type: modalsInfo.AIRDROP_MODALS,
     payload: modal
   };
 }

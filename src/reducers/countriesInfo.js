@@ -1,4 +1,4 @@
-import { countriesInfo } from '../actions/actionTypes';
+import { countriesInfo } from "../actions/actionTypes";
 
 const initialState = {
   countries: null
@@ -6,10 +6,10 @@ const initialState = {
 
 const countriesReducer = (state = initialState, action = {}) => {
   switch (action.type) {
-    case (countriesInfo.RECEIVE_COUNTRIES):
-      return ({
+    case countriesInfo.RECEIVE_COUNTRIES:
+      return {
         countries: action.countries
-      });
+      };
     default:
       return state;
   }

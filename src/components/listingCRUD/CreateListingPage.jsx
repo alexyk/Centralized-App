@@ -35,7 +35,7 @@ import { CREATE_WALLET } from '../../constants/modals';
 import ProfileNav from '../profile/ProfileNav';
 import { connect } from 'react-redux';
 import { openModal } from '../../actions/modalsInfo';
-import { getLocAddress } from '../../selectors/userInfo';
+import { getLocAddress, getEmail } from '../../selectors/userInfo';
 
 const host = Config.getValue('apiHost');
 const LOCKTRIP_UPLOAD_URL = `${host}images/upload`;
@@ -491,7 +491,7 @@ class CreateListingPage extends React.Component {
   }
 
   render() {
-    if (!this.props.userInfo.email || this.state.countries === [] || this.state.currencies === [] ||
+    if (!this.props.email || this.state.countries === [] || this.state.currencies === [] ||
       this.state.propertyTypes === [] || this.state.categories === [] ||
       this.state.cities === []) {
       return <div className="loader"></div>;
@@ -636,6 +636,9 @@ CreateListingPage.propTypes = {
   userLocAddress: PropTypes.string
 };
 
-const mapStateToProps = ({ userInfo }) => ({ userLocAddress: getLocAddress(userInfo) });
+const mapStateToProps = ({ userInfo }) => ({ 
+  userLocAddress: getLocAddress(userInfo),
+  email: getEmail(userInfo)
+});
 
 export default withRouter(connect(mapStateToProps)(CreateListingPage));

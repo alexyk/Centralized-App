@@ -1,7 +1,7 @@
-import { searchDatesInfo } from './actionTypes';
+import { searchDatesInfo } from "./actionTypes";
 
 export function asyncSetStartDate(startDate) {
-  return function (dispatch) {
+  return function(dispatch) {
     return Promise.resolve(dispatch(setStartDate(startDate)));
   };
 }
@@ -9,12 +9,12 @@ export function asyncSetStartDate(startDate) {
 function setStartDate(startDate) {
   return {
     type: searchDatesInfo.SET_START_DATE,
-    startDate: startDate,
+    startDate: startDate
   };
 }
 
 export function asyncSetEndDate(endDate) {
-  return function (dispatch) {
+  return function(dispatch) {
     return Promise.resolve(dispatch(setEndDate(endDate)));
   };
 }

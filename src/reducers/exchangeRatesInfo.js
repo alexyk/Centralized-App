@@ -1,4 +1,4 @@
-import { exchangeRatesInfo } from '../actions/actionTypes';
+import { exchangeRatesInfo } from "../actions/actionTypes";
 
 const initialState = {
   currencyExchangeRates: null,

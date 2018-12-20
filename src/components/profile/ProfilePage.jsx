@@ -12,8 +12,8 @@ import MyListingsPage from './listings/MyListingsPage';
 import ProfileNav from './ProfileNav';
 import ProfileEditPage from './me/ProfileEditPage';
 import TripsRouter from './trips/TripsRouter';
+import AffiliatesPage from './affiliates/AffiliatesPage';
 import WalletPage from './wallet/WalletIndexPage';
-import AirdropPage from './airdrop/AirdropPage';
 import BuyLocPage from './buyloc/BuyLocPage';
 import ProfileAirTicketsRouter from './airTickets/ProfileAirTicketsRouter';
 import { isLogged } from '../../selectors/userInfo';
@@ -24,6 +24,7 @@ function ProfilePage(props) {
       {props.isUserLogged && <ProfileNav />}
       <Switch>
         <Route exact path="/profile/dashboard" render={() => <DashboardPage />} />
+        <Route exact path="/profile/affiliates" render={() => <AffiliatesPage />} />
         <Route exact path="/profile/listings" render={() => <MyListingsPage />} />
         <Route exact path="/profile/listings/calendar/:id" render={() => <CalendarPage />} />
         <Route exact path="/profile/messages" render={() => <MessagesPage />} />
@@ -33,7 +34,6 @@ function ProfilePage(props) {
         <Route path="/profile/tickets" render={() => <ProfileAirTicketsRouter />} />
         <Route path="/profile/me" render={() => <ProfileEditPage />} />
         <Route path="/profile/wallet" render={() => <WalletPage />} />
-        <Route path="/airdrop" render={() => <AirdropPage />} />
         <Route path="/buyloc" render={() => <BuyLocPage />} />
         <Route path="/profile/admin" render={() => <AdminPage />} />
       </Switch>

@@ -1,9 +1,9 @@
-import { searchDatesInfo } from '../actions/actionTypes';
-import moment from 'moment';
+import { searchDatesInfo } from "../actions/actionTypes";
+import moment from "moment";
 
 const initialState = {
   startDate: moment(),
-  endDate: moment().add(1, 'days')
+  endDate: moment().add(1, "days")
 };
 
 export default function reducer(state = initialState, action) {
