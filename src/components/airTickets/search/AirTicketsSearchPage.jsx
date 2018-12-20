@@ -278,8 +278,7 @@ class AirTicketsSearchPage extends Component {
       const adultsCount = searchParams.adults;
       const children = JSON.parse(searchParams.children);
       const page = searchParams.page;
-      const flexSearch = Boolean(searchParams.flexSearch);
-
+      const flexSearch = searchParams.flexSearch === true;
 
       this.props.dispatch(asyncSetStartDate(departureDate));
       this.props.dispatch(asyncSetEndDate(returnDate));

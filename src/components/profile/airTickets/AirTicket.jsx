@@ -7,8 +7,8 @@ import PlaneIcon from '../../../styles/images/plane-icon.png';
 
 class AirTicket extends Component {
   extractDatesData(segments) {
-    const startDateMoment = moment(segments[0].originDate).utc();
-    const endDateMoment = moment(segments[segments.length - 1].destinationDate).utc();
+    const startDateMoment = moment(segments[0].originDate);
+    const endDateMoment = moment(segments[segments.length - 1].destinationDate);
 
     const departure = {
       day: startDateMoment.format('D'),

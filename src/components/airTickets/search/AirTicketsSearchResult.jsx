@@ -96,8 +96,8 @@ class AirTicketsSearchResult extends Component {
   }
 
   extractDatesData(segments) {
-    const startDateMoment = moment(segments[0].origin.date).utc();
-    const endDateMoment = moment(segments[segments.length - 1].destination.date).utc();
+    const startDateMoment = moment(segments[0].origin.date);
+    const endDateMoment = moment(segments[segments.length - 1].destination.date);
 
     const departure = {
       day: startDateMoment.format('D'),
