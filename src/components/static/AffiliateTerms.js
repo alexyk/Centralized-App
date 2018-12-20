@@ -13,7 +13,7 @@ export default class Terms extends React.Component {
   render(){
     return <div style={{padding: "30px"}}>
 
-      <h1>LockTrip Affiliate Program</h1>
+      {/*<h1>LockTrip Affiliate Program</h1>*/}
 
       <div ref={el=>{this.calculator = el}}></div>
 
