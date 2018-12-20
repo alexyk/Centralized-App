@@ -14,7 +14,6 @@ import ProfileEditPage from './me/ProfileEditPage';
 import TripsRouter from './trips/TripsRouter';
 import AffiliatesPage from './affiliates/AffiliatesPage';
 import WalletPage from './wallet/WalletIndexPage';
-import AirdropPage from './airdrop/AirdropPage';
 import BuyLocPage from './buyloc/BuyLocPage';
 import ProfileAirTicketsRouter from './airTickets/ProfileAirTicketsRouter';
 import { isLogged } from '../../selectors/userInfo';
@@ -35,7 +34,6 @@ function ProfilePage(props) {
         <Route path="/profile/tickets" render={() => <ProfileAirTicketsRouter />} />
         <Route path="/profile/me" render={() => <ProfileEditPage />} />
         <Route path="/profile/wallet" render={() => <WalletPage />} />
-        <Route path="/airdrop" render={() => <AirdropPage />} />
         <Route path="/buyloc" render={() => <BuyLocPage />} />
         <Route path="/profile/admin" render={() => <AdminPage />} />
       </Switch>

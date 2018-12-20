@@ -1,7 +1,7 @@
 // userInfo actions
 export const userInfo = {
-  LOG_OUT: "LOG_OUT",
-  SET_USER_INFO: "SET_USER_INFO"
+  SET_USER_INFO: "SET_USER_INFO",
+  LOG_OUT: "LOG_OUT"
 };
 
 // paymentInfo actions
@@ -13,11 +13,6 @@ export const paymentInfo = {
 export const modalsInfo = {
   OPEN_MODAL: "OPEN_MODAL",
   CLOSE_MODAL: "CLOSE_MODAL"
-};
-
-// airdrop action
-export const airdropInfo = {
-  SET_AIRDROP_INFO: "SET_AIRDROP_INFO"
 };
 
 // hotels searchInfo actions

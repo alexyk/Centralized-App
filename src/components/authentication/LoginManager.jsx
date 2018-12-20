@@ -342,7 +342,6 @@ class LoginManager extends React.Component {
           handleLogin={() => executeWithToken(this.login)} 
           emailVerificationToken={this.state.emailVerificationToken} 
         />
-        {/* <AirdropLoginModal isActive={this.props.isActive[AIRDROP_LOGIN]} openModal={this.openModal} closeModal={this.closeModal} loginEmail={this.state.loginEmail} loginPassword={this.state.loginPassword} onChange={this.onChange} handleLogin={this.handleAirdropLogin} /> */}
       </React.Fragment>
     );
   }

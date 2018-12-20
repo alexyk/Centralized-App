@@ -310,7 +310,7 @@ class AirTicketsSearchResult extends Component {
     return (
       <div className="air-tickets-result" >
         <form className="air-tickets-result-content">
-          <div style={{ marginBottom: '10px' }}><strong>Is Low Cost: {result.isLowCost ? 'Yes' : 'No'}</strong></div>
+          <div style={{ marginBottom: '10px' }}><strong>{result.isLowCost && 'Low Cost'}</strong></div>
           {flightRouting !== '3' ?
             <Fragment>
               {this.getDepartureInfo(departureInfo)}
@@ -346,8 +346,8 @@ class AirTicketsSearchResult extends Component {
           }
           {isPriceLoaded && <LocPrice fiat={priceForLoc} />}
           {!allElements
-            ? <button disabled className="btn">Unavailable</button>
-            : <Link className="btn" to={`${redirectURL}/${result.id}/details${search.substr(0, endOfSearch)}`}>Book now</Link>
+            ? <button disabled className="button">Unavailable</button>
+            : <Link className="button" to={`${redirectURL}/${result.id}/details${search.substr(0, endOfSearch)}`}>Book now</Link>
           }
         </div>
       </div>

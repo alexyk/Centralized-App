@@ -3,18 +3,17 @@ import { Route, Switch, withRouter } from 'react-router-dom';
 import { NotificationManager } from 'react-notifications';
 import update from 'react-addons-update';
 import PropTypes from 'prop-types';
-// import { parse } from 'query-string';
+import { parse } from 'query-string';
 import AirTicketsDetailsPage from './details/AirTicketsDetailsPage';
 import AirTicketsBookingProfileRouterPage from './profile/AirTicketsBookingProfileRouterPage';
 import AirTicketsBookingConfirmPage from './confirm/AirTicketsBookingConfirmPage';
 import { Config } from '../../../config';
 import { LONG } from '../../../constants/notificationDisplayTimes';
 
-// const PASSENGER_TYPES_CODES = {
-//   adult: 'ADT',
-//   child: 'CHD',
-//   infant: 'INF'
-// };
+const PASSENGER_TYPES_CODES = {
+  adult: 'ADT',
+  child: 'CHD'
+};
 
 class AirTicketsBookingRouterPage extends Component {
   constructor(props) {
@@ -41,9 +40,7 @@ class AirTicketsBookingRouterPage extends Component {
         name: 'Codexio LTD',
         zip: '1000',
       },
-      servicesInfo: [
-
-      ],
+      servicesInfo: [],
       passengersInfo: [],
       countries: [],
       confirmInfo: {
@@ -190,37 +187,67 @@ class AirTicketsBookingRouterPage extends Component {
   }
 
   populatePassengersInfo() {
-    // const queryParams = parse(this.props.location.search);
-    // const adults = Number(queryParams.adults);
-    // const children = JSON.parse(queryParams.children);
+    const queryParams = parse(this.props.location.search);
+    const adults = Number(queryParams.adults);
+    const children = JSON.parse(queryParams.children);
 
     const passengersInfo = [...this.state.passengersInfo];
 
-    // for (let i = 0; i < adults; i++) {
-    //   passengersInfo.push({ type: PASSENGER_TYPES_CODES.adult, options: [] });
-    // }
-
-    // for (let i = 0; i < children.length; i++) {
-    //   passengersInfo.push({ type: PASSENGER_TYPES_CODES.child, age: children[i].age, options: [] });
-    // }
-
     passengersInfo.push({
-      birthDate: '1952-01-02',
-      birthdateYear: '1984',
-      birthdateMonth: '09',
-      birthdateDay: '23',
+      title: 'Mr',
       firstName: 'Hristo',
       lastName: 'Skipernov',
+      birthdateMonth: '09',
+      birthdateDay: '23',
+      birthdateYear: '1984',
+      birthDate: '1984-09-23',
+      type: PASSENGER_TYPES_CODES.adult,
       nationality: 'BG',
       passportNumber: '1247987654324',
       passportIssueCountry: 'BG',
-      passportExpYear: '2022',
       passportExpMonth: '05',
       passportExpDay: '16',
-      title: 'Mr',
-      type: 'ADT',
+      passportExpYear: '2022',
       options: []
     });
+
+    for (let i = 0; i < adults - 1; i++) {
+      passengersInfo.push({
+        title: '',
+        firstName: '',
+        lastName: '',
+        birthdateMonth: '',
+        birthdateDay: '',
+        birthdateYear: '',
+        type: PASSENGER_TYPES_CODES.adult,
+        nationality: '',
+        passportNumber: '',
+        passportIssueCountry: '',
+        passportExpMonth: '',
+        passportExpDay: '',
+        passportExpYear: '',
+        options: []
+      });
+    }
+
+    for (let i = 0; i < children.length; i++) {
+      passengersInfo.push({ 
+        title: '',
+        firstName: '',
+        lastName: '',
+        birthdateMonth: '',
+        birthdateDay: '',
+        birthdateYear: '',
+        type: PASSENGER_TYPES_CODES.child,
+        nationality: '',
+        passportNumber: '',
+        passportIssueCountry: '',
+        passportExpMonth: '',
+        passportExpDay: '',
+        passportExpYear: '',
+        age: children[i].age, options: []
+      });
+    }
 
     this.setState({
       passengersInfo

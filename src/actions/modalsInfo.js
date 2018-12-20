@@ -13,10 +13,3 @@ export function closeModal(modal) {
     payload: modal
   };
 }
-
-export function airdropModals(modal) {
-  return {
-    type: modalsInfo.AIRDROP_MODALS,
-    payload: modal
-  };
-}

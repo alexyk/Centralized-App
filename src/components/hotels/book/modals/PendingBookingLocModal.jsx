@@ -31,8 +31,8 @@ function PendingBookingLocModal(props) {
               Please, proceed <span className="important-text">ONLY</span> if you are trying to book a different stay. Otherwise you might generate a duplicate booking which might result in double spending of your LOC tokens.
               Please, confirm if you want to book a different stay from the one which is currently Pending.
             </p>
-            <button type="submit" className="btn btn-primary">Yes, I want to book a different stay</button>
-            <button className="btn btn-primary" onClick={(e) => props.closeModal(PENDING_BOOKING_LOC, e, true)}>Cancel</button>
+            <button type="submit" className="button">Yes, I want to book a different stay</button>
+            <button className="button" onClick={(e) => props.closeModal(PENDING_BOOKING_LOC, e, true)}>Cancel</button>
             <div className="clearfix"></div>
           </form>
         </Modal.Body>

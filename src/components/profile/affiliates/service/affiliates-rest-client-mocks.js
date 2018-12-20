@@ -5,13 +5,13 @@ import mockedChartData from "./example-responses/get-affiliate-revenue-chart-dat
 
 export const mockedRequests = {
   async getBookings(_page = 1) {
-    return [page1, page2, page3][_page - 1];
+    return { body: [page1, page2, page3][_page - 1] };
   },
   async getGeneralAffiliateData() {
-    return mockedGeneralStats;
+    return { body: mockedGeneralStats };
   },
   async getChartData() {
-    return mockedChartData;
+    return { body: mockedChartData };
   }
 };
 
