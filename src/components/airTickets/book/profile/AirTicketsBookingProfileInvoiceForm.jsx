@@ -131,10 +131,10 @@ class AirTicketsBookingProfileInvoiceForm extends Component {
             <input id="invoiceCompanyAddress" name="address" value={address || ''} onChange={this.onChange} type="text" />
           </div>
           <div className="buttons-wrapper">
-            <NavLink to={{ pathname: `/tickets/results/book/${this.props.match.params.id}/profile`, search: this.props.location.search }} className="btn-back" id="btn-continue">
+            <NavLink to={{ pathname: `/tickets/results/initBook/${this.props.match.params.id}/profile`, search: this.props.location.search }} className="btn-back" id="btn-continue">
               <i className="fa fa-long-arrow-left" aria-hidden="true"></i>
               &nbsp;Back</NavLink>
-            <button type="submit" className="btn">Next</button>
+            <button type="submit" className="button">Next</button>
           </div>
         </form>
       </div>

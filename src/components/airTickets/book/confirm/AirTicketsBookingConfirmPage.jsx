@@ -511,10 +511,10 @@ class AirTicketsBookingConfirmPage extends Component {
                     </div>
                     <p>(Click <a href="">here</a> to learn how you can buy LOC directly to enjoy cheaper travel)</p>
                     {/* {userConfirmedPaymentWithLOC
-                      ? <button className="btn btn-primary" disabled>Processing Payment...</button>
+                      ? <button className="button" disabled>Processing Payment...</button>
                       : hasLocAddress
-                        ? <button className="btn btn-primary" onClick={this.handlePayWithLOC}>Pay with LOC Tokens</button>
-                        : <button className="btn btn-primary" onClick={(e) => this.openModal(CREATE_WALLET, e)}>Create Wallet</button>
+                        ? <button className="button" onClick={this.handlePayWithLOC}>Pay with LOC Tokens</button>
+                        : <button className="button" onClick={(e) => this.openModal(CREATE_WALLET, e)}>Create Wallet</button>
                     } */}
                     <p>You can pay <Link to="/profile/tickets">later</Link>, until {flightProperties.properties.deadline}.</p>
                   </div>

@@ -291,8 +291,8 @@ class AirTicketsSearchFilterPanel extends Component {
             />
           </div>}
         <div className="buttons-holder">
-          <button onClick={() => this.props.applyFilters(this.state)} className="btn btn">Apply Filters</button>
-          <button onClick={this.clearFilters} className="btn btn">Clear Filters</button>
+          <button onClick={() => this.props.applyFilters(this.state)} className="button">Apply Filters</button>
+          <button onClick={this.clearFilters} className="button">Clear Filters</button>
         </div>
       </div>
     );
