@@ -23,6 +23,7 @@ import AppFunctionality from "./AppFunctionality.REF"
 import connect from 'react-redux/es/connect/connect';
 import {fetchCountries} from '../../actions/countriesInfo';
 import {fetchCurrencyRates, fetchLocEurRate} from '../../actions/exchangeRatesInfo';
+import AffiliateTerms from '../static/AffiliateTerms';
 
 class App extends AppFunctionality<Props> {
   render() {
@@ -33,7 +34,7 @@ class App extends AppFunctionality<Props> {
           <MainNav />
         }
 
-        {!isWebView &&
+        {!isWebView && this.props.location.pathname !== "/affiliate-terms" &&
           <LocalizationNav />
         }
 
@@ -45,6 +46,7 @@ class App extends AppFunctionality<Props> {
 
         <Switch>
           <Route exact path="/" render={(props) =><HomeRouterPage />}/>
+          <Route exact path="/affiliate-terms" render={(props) =><AffiliateTerms/>}/>
           <Route exact path="/profile/listings/edit/:step/:id" render={() => !this.props.isAuthenticated() ? <Redirect to="/" /> : <EditListingPage />} />
           <Route exact path="/users/resetPassword/:confirm" render={() => <HomeRouterPage />} />
           <Route path="/homes" render={() => <HomeRouterPage />} />
