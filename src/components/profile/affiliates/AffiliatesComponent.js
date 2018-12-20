@@ -66,7 +66,7 @@ export default class AffiliatesDashboard extends React.Component<Props> {
                 />
               </Clipboard>
             </div>
-            <div style={{    padding: "10px 0", fontSize: "10px"}}><Link to={"/affiliate-terms"}>By copying and/or distributing this unique reference URL, you automatically agree with the affiliate program terms and conditions[link].</Link></div>
+            <div className={"affiliate-terms"}><Link to={"/affiliate-terms"} className={"link"}>By copying and/or distributing this unique reference URL, you automatically agree with the affiliate program terms and conditions.</Link></div>
 
           </div>
         </div>

@@ -28,6 +28,14 @@
   background: white;
   font-weight: 500;
 }
+.affiliate-terms {
+  padding: 10px 0;
+  font-size: 10px;
+  .link {
+    color: $moderate-red;
+
+  }
+}
 
 .bookings-list-holder {
   padding: 20px 0;
