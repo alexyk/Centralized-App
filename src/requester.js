@@ -1,4 +1,4 @@
-import Requester from 'locktrip-service-layer';
+import Requester from 'locktrip-svc-layer';
 import { Config } from './config';
 
 let config = {

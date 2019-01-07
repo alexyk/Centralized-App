@@ -5,6 +5,7 @@ import PropTypes from 'prop-types';
 import PublishedList from './listings/PublishedList';
 import UnpublishedList from './listings/UnpublishedList';
 import UnverifiedList from './users/UnverifiedList';
+import EraseUser from './users/EraseUser';
 import VerifiedList from './users/VerifiedList';
 import AdminSafecharge from './safecharge/AdminSafecharge';
 import AdminReservationsRouter from './reservations/AdminReservationsRouter';
@@ -67,6 +68,7 @@ class AdminPage extends Component {
         <Route exact path="/profile/admin/listings/unpublished" render={() => <UnpublishedList />} />
         <Route exact path="/profile/admin/users/verified" render={() => <VerifiedList />} />
         <Route exact path="/profile/admin/users/unverified" render={() => <UnverifiedList />} />
+        <Route exact path="/profile/admin/users/eraseprofile" render={() => <EraseUser />} />
         <Route exact path="/profile/admin/safecharge" render={() => <AdminSafecharge configVars={configVars} onChangeConfigVars={this.onChangeConfigVars} />} />
         <Route path="/profile/admin/reservation/booking" render={() => <AdminReservationsRouter />} />
       </Switch>

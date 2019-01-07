@@ -98,6 +98,7 @@ class UnverifiedList extends React.Component {
           <div>
             <li><NavLink exact activeClassName="active" to="/profile/admin/users/unverified"><h2>Unverified</h2></NavLink></li>
             <li><NavLink exact activeClassName="active" to="/profile/admin/users/verified"><h2>Verified</h2></NavLink></li>
+            <li><NavLink exact activeClassName="active" to="/profile/admin/users/eraseprofile"><h2>Delete User</h2></NavLink></li>
           </div>
         </AdminNav>
         <div className="my-reservations">

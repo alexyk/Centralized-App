@@ -95,7 +95,7 @@ class AdminReservationsEditForm extends Component {
           <div className="transaction-hash">{`Transaction hash: ${booking.transactionHash}`}</div>
           <div className="booking-ref-id">
             <label htmlFor="bookingRefId">Booking ID</label>
-            <input id="bookingRefId" name="bookingRefId" value={booking.bookingRefId || ''} onChange={this.onChange} type="number" required />
+            <input id="bookingRefId" name="bookingRefId" value={booking.bookingRefId || ''} onChange={this.onChange} type="text" required />
           </div>
           <div className="status">
             <label htmlFor="status">Current booking status:</label>
