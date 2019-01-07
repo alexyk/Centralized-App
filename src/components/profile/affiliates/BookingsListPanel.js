@@ -60,7 +60,7 @@ export default class BookingsListPanel extends React.Component<Props, State> {
       this.props.bookingPaginationOptions || defaultBookingPaginationOptions;
 
     return (
-      <div data-testid="list-view">
+      <div data-testid="list-view" className={"bookings-list-holder"}>
         {isEmpty && (
           <div data-testid="no-bookings-text" className={"single-booking"}>
             {noBookingsText}

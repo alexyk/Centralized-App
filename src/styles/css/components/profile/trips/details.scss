@@ -1,3 +1,5 @@
+@import '../../../vendors/include-media';
+
 @mixin withPadding() {
   padding: 0 5%;
 }
@@ -71,14 +73,13 @@
       display: flex;
       flex-wrap: wrap;
       margin-bottom: 5%;
-      .check-in-header,
-      .check-out-header,
-      .guests-header,
-      .check-in-content,
-      .check-out-content,
-      .guests-content {
+      .check-in, .check-out, .guests {
         flex-grow: 1;
         width: 33%;
+        @include media("<=tablet") {
+          width: 100%;
+          margin-bottom: 20px;
+        }
       }
       .check-in-content {
         .date-in-day {
@@ -153,14 +154,6 @@
 }
 
 @media screen and (max-width: 650px) {
-  .check-in-header,
-  .check-out-header,
-  .guests-header,
-  .check-in-content,
-  .check-out-content,
-  .guests-content {
-    width: 50%;
-  }
   .check-in-content {
     order: 1;
   }

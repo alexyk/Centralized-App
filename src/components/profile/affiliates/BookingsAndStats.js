@@ -29,14 +29,14 @@ export default class BookingsAndStats extends React.Component<Props> {
     } = this.props;
     return (
       <div>
+        <StatisticsPanel
+          revenueChartData={revenueChartData}
+          affiliatesChartData={affiliatesChartData}
+        />
         <BookingsListPanel
           list={list}
           noBookingsText={noBookingsText}
           bookingPaginationOptions={this.props.bookingPaginationOptions}
-        />
-        <StatisticsPanel
-          revenueChartData={revenueChartData}
-          affiliatesChartData={affiliatesChartData}
         />
       </div>
     );

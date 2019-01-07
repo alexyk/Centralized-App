@@ -4,7 +4,7 @@ import "./affiliates.css";
 import { ensureNaturalNumber } from "./helpers";
 import BookingsAndStats from "./BookingsAndStats";
 import Clipboard from "react-clipboard.js";
-
+import {Link} from "react-router-dom"
 import type {
   AffiliateBooking,
   AffiliatesChartData,
@@ -24,6 +24,18 @@ type Props = {
 };
 
 export default class AffiliatesDashboard extends React.Component<Props> {
+  constructor(props) {
+    super(props);
+  }
+
+  componentDidMount() {
+    window.addEventListener("resize", this.forceUpdate);
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener("resize", this.forceUpdate);
+  }
+
   render() {
     let totalAffiliates = ensureNaturalNumber(this.props.totalAffiliates);
     let totalRevenue = ensureNaturalNumber(this.props.totalRevenue);
@@ -31,32 +43,34 @@ export default class AffiliatesDashboard extends React.Component<Props> {
 
     return (
       <div className={"container affiliates-container"}>
-        <div style={{ display: "flex", justifyContent: "space-between" }}>
+        <div
+          style={{ display: "flex", justifyContent: "space-between" }}
+          className={"affiliates-head-section"}
+        >
           <h2>My Affiliates</h2>
 
-          <div style={{ display: "flex", alignItems: "center" }}>
-            <span>Invite people with this link: </span>
-            <span
-              id="foo"
-              style={{
-                padding: "0 10px",
-                background: "white"
-              }}
-            >
-              {this.props.affiliateLink}
-            </span>
+          <div style={{maxWidth: "500px"}}>
+            <div style={{ display: "flex", alignItems: "center" }}>
+              <span>Invite people with this link: </span>
+              <span id="foo" className={"referral-link"}>
+                {this.props.affiliateLink}
+              </span>
 
-            <Clipboard
-              data-clipboard-text={this.props.affiliateLink}
-              button-title="Copy link"
-            >
-              <img
-                src={require("./images/assignment-icon.svg")}
-                alt="Copy to clipboard"
-              />
-            </Clipboard>
+              <Clipboard
+                data-clipboard-text={this.props.affiliateLink}
+                button-title="Copy link"
+              >
+                <img
+                  src={require("./images/assignment-icon.svg")}
+                  alt="Copy to clipboard"
+                />
+              </Clipboard>
+            </div>
+            <div className={"affiliate-terms"}><Link to={"/affiliate-terms"} className={"link"}>By copying and/or distributing this unique reference URL, you automatically agree with the affiliate program terms and conditions.</Link></div>
+
           </div>
         </div>
+
         <hr />
         <div>
           <h3>
