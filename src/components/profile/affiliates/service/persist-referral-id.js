@@ -9,6 +9,7 @@ export default {
     let params = queryString.parse(search);
     let { refId } = params;
     if (refId) {
+      deleteCookie(REFERRAL_ID);
       let monthInMinutes = 60 * 24 * 30;
       setCookie(REFERRAL_ID, refId, monthInMinutes);
     }
@@ -34,4 +35,8 @@ function getCookie(cname) {
     }
   }
   return "";
+}
+
+function deleteCookie( name ) {
+  document.cookie = name + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
 }
