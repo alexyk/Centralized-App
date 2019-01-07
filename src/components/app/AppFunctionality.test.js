@@ -14,8 +14,8 @@ test("calls referralIdPersister with the refId", () => {
       requestExchangeRates={() => {}}
       requestLocEurRate={() => {}}
       initCalendar={() => {}}
-      location={{ search: "whatever?refId=123" }}
+      location={{ search: "?refId=123" }}
     />
   );
-  expect(mockedRefIdPersister).toHaveBeenCalledWith("whatever?refId=123");
+  expect(mockedRefIdPersister).toHaveBeenCalledWith("?refId=123");
 });
