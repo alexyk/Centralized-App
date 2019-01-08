@@ -1,23 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import moment from 'moment';
 import ProfileFlexContainer from '../flexContainer/ProfileFlexContainer';
 import { Config } from '../../../config';
 import HotelIcon from '../../../styles/images/icon-hotel.png';
 
 import '../../../styles/css/components/profile/dashboard/dashboard-trips.css';
 import {parseAccommodationDates} from "../utils/parse-accomodation-dates";
-const STATUS = {
-  DONE: 'COMPLETE',
-  CONFIRMED: 'PENDING',
-  FAIL: 'BOOKING FAILED',
-  FAILED: 'BOOKING FAILED',
-  PENDING: 'PENDING',
-  QUEUED: 'PENDING',
-  QUEUED_FOR_CONFIRMATION: 'PENDING',
-  CANCELLED: 'CANCELLED',
-  PENDING_SAFECHARGE_CONFIRMATION: 'PENDING'
-};
+import {parseBookingStatus} from "../utils/parse-booking-status";
 
 const STATUS_TOOLTIP = {
   'COMPLETE': 'Your reservation is complete',
@@ -27,22 +16,43 @@ const STATUS_TOOLTIP = {
 };
 
 function DashboardTripRow(props) {
-  const getHostName = (name) => {
+  const getHostName = props.getHostName || ((name) => {
     if (name.length <= 50) {
       return name;
     }
     return `${name.substring(0, 50)}...`;
-  };
+  });
 
-  const status = STATUS[props.trip.status];
-  const statusMessage = STATUS_TOOLTIP[status];
-  const { hostName, userImage, listingName, error, booking_id } = props.trip; 
-  try {
-    var _dates = parseAccommodationDates(props.trip.arrival_date, props.trip.nights);
-    console.log(_dates)
-  } catch (e) {
-    console.log(e);
+  function getDates(){
+    try {
+      const _parseAccommodationDates = props.parseAccommodationDates || parseAccommodationDates;
+      return _parseAccommodationDates(props.trip.arrival_date, props.trip.nights);
+    } catch (e) {
+      return {
+        startDates: {
+          date: "",
+          month: "",
+          year: "",
+          day: "",
+        },
+        endDate: {
+          date: "",
+          month: "",
+          year: "",
+          day: "",
+        }
+      };
+    }
   }
+
+  // const status = STATUS[props.trip.status] || STATUS.FAIL;
+  const _parseBookingStatus = props.parseBookingStatus || parseBookingStatus;
+  const status = _parseBookingStatus(props.trip.status);
+  console.log(props.trip.status, status)
+  const statusMessage = STATUS_TOOLTIP[status];
+  const { hostName, userImage, listingName, error, booking_id } = props.trip;
+  var _dates = getDates();
+
 
   return (
     <ProfileFlexContainer styleClass={`flex-container-row ${props.styleClass}`}>
@@ -64,7 +74,7 @@ function DashboardTripRow(props) {
       </div>
       <div className="flex-row-child dashboard-status">
         {status &&
-          <span className="status">{status}</span>
+          <span className="status" data-testid="status-field">{status}</span>
         }
         {status &&
           <span className="icon-question" tooltip={error ? error : statusMessage}></span>
@@ -80,7 +90,9 @@ function DashboardTripRow(props) {
 DashboardTripRow.propTypes = {
   trip: PropTypes.object,
   capitalize: PropTypes.func,
-  styleClass: PropTypes.string
+  styleClass: PropTypes.string,
+  parseAccommodationDates: PropTypes.func,
+  getHostName: PropTypes.func,
 };
 
 export default DashboardTripRow;

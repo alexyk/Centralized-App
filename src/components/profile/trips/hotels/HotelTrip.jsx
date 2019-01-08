@@ -7,18 +7,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import moment from 'moment';
 import {parseAccommodationDates} from "../../utils/parse-accomodation-dates";
-
-const STATUS = {
-  DONE: 'COMPLETE',
-  CONFIRMED: 'PENDING',
-  FAIL: 'BOOKING FAILED',
-  FAILED: 'BOOKING FAILED',
-  PENDING: 'PENDING',
-  QUEUED: 'PENDING',
-  QUEUED_FOR_CONFIRMATION: 'PENDING',
-  CANCELLED: 'CANCELLED',
-  PENDING_SAFECHARGE_CONFIRMATION: 'PENDING'
-};
+import {parseBookingStatus} from "../../utils/parse-booking-status";
 
 const STATUS_TOOLTIP = {
   'COMPLETE': 'Your reservation is complete',
@@ -33,6 +22,10 @@ class HotelTrip extends React.Component {
   }
 
   getHostName(name) {
+    if(this.props.getHostName){
+      return this.props.getHostName(name)
+    }
+
     if (name.length <= 50) {
       return name;
     }
@@ -47,17 +40,36 @@ class HotelTrip extends React.Component {
     return isFutureDate;
   }
 
+  getDates(){
+    try {
+      return parseAccommodationDates(this.props.trip.arrival_date, this.props.trip.nights)
+    } catch (e) {
+      return {
+        startDate: {
+          date: "",
+          month: "",
+          year: "",
+          day: "",
+        },
+        endDate: {
+          date: "",
+          month: "",
+          year: "",
+          day: "",
+        }
+      }
+    }
+  }
+
   render() {
-    const status = STATUS[this.props.trip.status];
+    const _parseBookingStatus = this.props.parseBookingStatus || parseBookingStatus
+    // const status = STATUS[this.props.trip.status];
+    const status = _parseBookingStatus(this.props.trip.status)
     const statusMessage = STATUS_TOOLTIP[status];
 
     const { hotel_photo, hotel_name, hostEmail, hostPhone } = this.props.trip;
     const isCompleted = status === 'COMPLETE' && this.isFutureDate(this.props.trip.arrival_date);
-    try {
-      var _dates = parseAccommodationDates(this.props.trip.arrival_date, this.props.trip.nights)
-    } catch (e) {
-      console.log(e);
-    }
+    var _dates = this.getDates()
     return (
       <ProfileFlexContainer styleClass={`flex-container-row ${this.props.styleClass}`}>
         <div className="tablet-col-1">
@@ -96,9 +108,7 @@ class HotelTrip extends React.Component {
             </div>
           </div>
           <div className="flex-row-child trips-status">
-            {this.props.trip.status &&
-              <span className="status">{status}</span>
-            }
+              <span className="status" data-testid="status-field">{status}</span>
             {this.props.trip.status &&
               <span className="icon-question" tooltip={this.props.trip.error ? this.props.trip.error : statusMessage}></span>
             }
@@ -118,7 +128,9 @@ HotelTrip.propTypes = {
   afterTomorrow: PropTypes.string, // format (DD/MM/YYYY)
   styleClass: PropTypes.string,
   handleCancelReservation: PropTypes.func,
-  onTripSelect: PropTypes.func
+  onTripSelect: PropTypes.func,
+  parseBookingStatus: PropTypes.func,
+  getHostName: PropTypes.func,
 };
 
 export default HotelTrip;
