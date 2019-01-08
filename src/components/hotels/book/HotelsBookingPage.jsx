@@ -1,7 +1,7 @@
 import '../../../styles/css/components/hotels/book/hotel-booking-page.css';
 
 import { LONG } from '../../../constants/notificationDisplayTimes.js';
-import { INVALID_CHILD_AGE, INVALID_GUEST_NAME } from '../../../constants/warningMessages.js';
+import { INVALID_CHILD_AGE, INVALID_GUEST_NAME, REPEATING_NAMES } from '../../../constants/warningMessages.js';
 
 import { Config } from '../../../config';
 import { CurrencyConverter } from '../../../services/utilities/currencyConverter';
@@ -45,18 +45,33 @@ class HotelsBookingPage extends React.Component {
     return end.diff(start, 'days');
   }
 
+  processSubmit() {
+    const queryParams = queryString.parse(this.props.location.search);
+    const id = this.props.match.params.id;
+    const query = this.getQueryString(queryParams);
+    const isWebView = this.props.location.pathname.indexOf('/mobile') !== -1;
+    const rootURL = !isWebView ? `/hotels/listings/book/${id}/confirm` : `/mobile/hotels/listings/book/${id}/confirm`;
+    this.props.history.push(`${rootURL}${query}`);
+  }
+
   handleSubmit() {
+    let proceed = true;
     if (!this.isValidNames()) {
+      proceed = false;
       NotificationManager.warning(INVALID_GUEST_NAME, '', LONG);
-    } else if (!this.isValidAges()) {
+    }
+    if (!this.isValidAges()) {
+      proceed = false;
       NotificationManager.warning(INVALID_CHILD_AGE, '', LONG);
-    } else {
-      const queryParams = queryString.parse(this.props.location.search);
-      const id = this.props.match.params.id;
-      const query = this.getQueryString(queryParams);
-      const isWebView = this.props.location.pathname.indexOf('/mobile') !== -1;
-      const rootURL = !isWebView ? `/hotels/listings/book/${id}/confirm` : `/mobile/hotels/listings/book/${id}/confirm`;
-      this.props.history.push(`${rootURL}${query}`);
+    }
+    if (this.isRepeatingNames()) {
+      proceed = false;
+      NotificationManager.error(REPEATING_NAMES, '', LONG * 2, () => {
+        this.processSubmit();
+      });
+    }
+    if (proceed) {
+      this.processSubmit();
     }
   }
 
@@ -86,6 +101,27 @@ class HotelsBookingPage extends React.Component {
     }
 
     return true;
+  }
+
+  isRepeatingNames() {
+    const rooms = this.props.guests;
+    for (let i = 0; i < rooms.length; i++) {
+      const adults = rooms[i].adults;
+      for (let j = 0; j < adults.length; j++) {
+        const first = adults[j].firstName;
+        const last = adults[j].lastName;
+        for (let z = i + 1; z < rooms.length; z++) {
+          const _adults = rooms[z].adults;
+          for (let m = 0; m < _adults.length; m++) {
+            if (_adults[m].firstName == first && _adults[m].lastName == last) {
+              return true;
+            }
+          }
+        }
+      }
+    }
+
+    return false;
   }
 
   isValidAges() {
