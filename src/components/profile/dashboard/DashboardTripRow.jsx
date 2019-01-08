@@ -6,7 +6,7 @@ import { Config } from '../../../config';
 import HotelIcon from '../../../styles/images/icon-hotel.png';
 
 import '../../../styles/css/components/profile/dashboard/dashboard-trips.css';
-
+import {parseAccommodationDates} from "../utils/parse-accomodation-dates";
 const STATUS = {
   DONE: 'COMPLETE',
   CONFIRMED: 'PENDING',
@@ -34,29 +34,15 @@ function DashboardTripRow(props) {
     return `${name.substring(0, 50)}...`;
   };
 
-  const extractDatesData = (trip) => {
-    const startDateMoment = moment(trip.displayStartDate, 'DD MMM, YYYY').utc();
-    const endDateMoment = moment(trip.displayEndDate, 'DD MMM, YYYY').utc();
-
-    const checkIn = {
-      day: startDateMoment.format('DD'),
-      year: startDateMoment.format('YYYY'),
-      month: startDateMoment.format('MMM').toLowerCase()
-    };
-
-    const checkOut = {
-      day: endDateMoment.format('D'),
-      year: endDateMoment.format('YYYY'),
-      month: endDateMoment.format('MMM').toLowerCase()
-    };
-
-    return { checkIn, checkOut };
-  };
-
-  const dates = extractDatesData(props.trip);
   const status = STATUS[props.trip.status];
   const statusMessage = STATUS_TOOLTIP[status];
   const { hostName, userImage, listingName, error, booking_id } = props.trip; 
+  try {
+    var _dates = parseAccommodationDates(props.trip.arrival_date, props.trip.nights);
+    console.log(_dates)
+  } catch (e) {
+    console.log(e);
+  }
 
   return (
     <ProfileFlexContainer styleClass={`flex-container-row ${props.styleClass}`}>
@@ -73,7 +59,7 @@ function DashboardTripRow(props) {
       <div className="flex-row-child dashboard-dates">
         <span className="icon-calendar icon" />
         <div className="content-row">
-          <span className="date-in-day">{dates.checkIn.day}</span> {dates.checkIn.month}, {dates.checkIn.year} <i aria-hidden="true" className="fa fa-long-arrow-right" /> <span className="date-out-day">{dates.checkOut.day}</span> {dates.checkOut.month}, {dates.checkOut.year}
+          <span className="date-in-day">{_dates.startDate.date}</span> {_dates.startDate.month}, {_dates.startDate.year} <i aria-hidden="true" className="fa fa-long-arrow-right" /> <span className="date-out-day">{_dates.endDate.day}</span> {_dates.endDate.month}, {_dates.endDate.year}
         </div>
       </div>
       <div className="flex-row-child dashboard-status">

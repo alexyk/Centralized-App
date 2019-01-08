@@ -8,9 +8,9 @@ import '../../../styles/css/components/profile/dashboard/dashboard-reservations.
 
 function DashboardReservationRow(props) {
   const extractDatesData = (reservation) => {
-    const startDateMoment = moment(reservation.startDate, 'DD/MM/YYYY').utc();
-    const endDateMoment = moment(reservation.endDate, 'DD/MM/YYYY').utc();
-    const creationDateMoment = moment(reservation.creationDate).utc();
+    const startDateMoment = moment(reservation.startDate, 'DD/MM/YYYY')
+    const endDateMoment = moment(reservation.endDate, 'DD/MM/YYYY')
+    const creationDateMoment = moment(reservation.creationDate)
 
     const creationDate = {
       day: creationDateMoment.format('D'),

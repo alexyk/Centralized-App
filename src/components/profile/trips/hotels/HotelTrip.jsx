@@ -6,6 +6,7 @@ import ProfileFlexContainer from '../../flexContainer/ProfileFlexContainer';
 import PropTypes from 'prop-types';
 import React from 'react';
 import moment from 'moment';
+import {parseAccommodationDates} from "../../utils/parse-accomodation-dates";
 
 const STATUS = {
   DONE: 'COMPLETE',
@@ -31,25 +32,6 @@ class HotelTrip extends React.Component {
     return string.charAt(0).toUpperCase() + string.slice(1);
   }
 
-  extractDatesData(trip) {
-    const startDateMoment = moment(trip.arrival_date).utc();
-    const endDateMoment = moment(trip.arrival_date).add(trip.nights, 'days').utc();
-    
-    const checkIn = {
-      day: startDateMoment.format('D'),
-      year: startDateMoment.format('YYYY'),
-      month: startDateMoment.format('MMM').toLowerCase()
-    };
-
-    const checkOut = {
-      day: endDateMoment.format('D'),
-      year: endDateMoment.format('YYYY'),
-      month: endDateMoment.format('MMM').toLowerCase()
-    };
-
-    return { checkIn, checkOut };
-  }
-
   getHostName(name) {
     if (name.length <= 50) {
       return name;
@@ -57,7 +39,8 @@ class HotelTrip extends React.Component {
     return `${name.substring(0, 50)}...`;
   }
 
-  isFutureDate(today, date) {
+  isFutureDate(date) {
+    const today = moment().format('YYYY-MM-DD');
     const startDateMoment = moment(date).utc();
     const todayMoment = moment(today, 'YYYY-MM-DD');
     const isFutureDate = todayMoment.diff(startDateMoment) < 0;
@@ -68,11 +51,13 @@ class HotelTrip extends React.Component {
     const status = STATUS[this.props.trip.status];
     const statusMessage = STATUS_TOOLTIP[status];
 
-    const dates = this.extractDatesData(this.props.trip);
     const { hotel_photo, hotel_name, hostEmail, hostPhone } = this.props.trip;
-
-    const isCompleted = status === 'COMPLETE' && this.isFutureDate(moment().format('YYYY-MM-DD'), this.props.trip.arrival_date);
-
+    const isCompleted = status === 'COMPLETE' && this.isFutureDate(this.props.trip.arrival_date);
+    try {
+      var _dates = parseAccommodationDates(this.props.trip.arrival_date, this.props.trip.nights)
+    } catch (e) {
+      console.log(e);
+    }
     return (
       <ProfileFlexContainer styleClass={`flex-container-row ${this.props.styleClass}`}>
         <div className="tablet-col-1">
@@ -98,7 +83,7 @@ class HotelTrip extends React.Component {
           <div className="flex-row-child trips-dates">
             <span className="icon-calendar icon" />
             <div className="content-row">
-              <span className="date-in-day">{dates.checkIn.day}</span> {dates.checkIn.month}, {dates.checkIn.year} <i aria-hidden="true" className="fa fa-long-arrow-right" /> <span className="date-out-day">{dates.checkOut.day}</span> {dates.checkOut.month}, {dates.checkOut.year}
+              <span className="date-in-day">{_dates.startDate.date}</span> {_dates.startDate.month}, {_dates.startDate.year} <i aria-hidden="true" className="fa fa-long-arrow-right" /> <span className="date-out-day">{_dates.endDate.date}</span> {_dates.endDate.month}, {_dates.endDate.year}
             </div>
           </div>
           <div className="flex-row-child trips-actions">
