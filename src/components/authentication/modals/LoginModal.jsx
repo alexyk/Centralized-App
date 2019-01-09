@@ -2,7 +2,6 @@ import { Config } from '../../../config';
 import { Modal } from 'react-bootstrap';
 import PropTypes from 'prop-types';
 import React from 'react';
-import { LOGIN, REGISTER, SEND_RECOVERY_EMAIL } from '../../../constants/modals.js';
 
 import '../../../styles/css/components/modals/modal.css';
 
@@ -10,10 +9,10 @@ function LoginModal(props) {
   const { isLogging } = props; 
   return (
     <React.Fragment>
-      <Modal show={props.isActive} onHide={() => props.closeModal(LOGIN)} className="modal fade myModal">
+      <Modal show={props.isActive} onHide={props.onHide} className="modal fade myModal">
         <Modal.Header>
           <h1>Login</h1>
-          <button type="button" className="close" onClick={() => props.closeModal(LOGIN)}>&times;</button>
+          <button type="button" className="close" onClick={props.onClose}>&times;</button>
         </Modal.Header>
         <Modal.Body>
           <form onSubmit={(e) => { e.preventDefault(); props.handleLogin(); }}>
@@ -34,8 +33,8 @@ function LoginModal(props) {
 
           <hr />
           <div className="login-sign">
-            Don’t have an account? <a onClick={() => { props.closeModal(LOGIN); props.openModal(REGISTER); }}>Sign up</a>
-            . Forgot your password? <a onClick={(e) => { props.closeModal(LOGIN, e); props.openModal(SEND_RECOVERY_EMAIL, e); }}>Recover</a>
+            Don’t have an account? <a onClick={props.onSignupClicked}>Sign up</a>
+            . Forgot your password? <a onClick={props.onRecoverPasswordClicked}>Recover</a>
           </div>
         </Modal.Body>
       </Modal>
@@ -46,6 +45,10 @@ function LoginModal(props) {
 LoginModal.propTypes = {
   loginEmail: PropTypes.string,
   loginPassword: PropTypes.string,
+  onHide: PropTypes.func,
+  onClose: PropTypes.func,
+  onRecoverPasswordClicked: PropTypes.func,
+  onSignupClicked: PropTypes.func,
   handleLogin: PropTypes.func,
   onChange: PropTypes.func,
   openModal: PropTypes.func,

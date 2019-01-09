@@ -20,13 +20,14 @@ import RegisterManager from '../authentication/RegisterManager';
 import WalletCreationManager from '../authentication/WalletCreationManager';
 import PasswordRecoveryManager from '../authentication/PasswordRecoveryManager';
 import AppFunctionality from "./AppFunctionality.REF"
-import connect from 'react-redux/es/connect/connect';
+import {connect} from 'react-redux';
 import {fetchCountries} from '../../actions/countriesInfo';
 import {fetchCurrencyRates, fetchLocEurRate} from '../../actions/exchangeRatesInfo';
 import AffiliateTerms from '../static/AffiliateTerms';
 
-class App extends AppFunctionality<Props> {
+export default class App extends AppFunctionality<Props> {
   render() {
+
     const isWebView = this.props.location.pathname.indexOf('/mobile') !== -1;
     return (
       <div data-testid="app">
@@ -38,11 +39,14 @@ class App extends AppFunctionality<Props> {
           <LocalizationNav />
         }
 
-        <LoginManager />
-        <RegisterManager />
-        <WalletCreationManager />
-        <PasswordRecoveryManager />
-        <NotificationContainer />
+        <Switch>
+          <Route exact path="/recover" render={(props) =><LoginManager openRecoveryOnMount={true}/>}/>
+          <Route render={(props) =><LoginManager />}/>
+        </Switch>
+        {/*<RegisterManager />*/}
+        {/*<WalletCreationManager />*/}
+        {/*<PasswordRecoveryManager />*/}
+        {/*<NotificationContainer />*/}
 
         <Switch>
           <Route exact path="/" render={(props) =><HomeRouterPage />}/>
@@ -73,17 +77,17 @@ class App extends AppFunctionality<Props> {
   }
 }
 
-function mapDispatchToProps(dispatch){
-  return {
-    requestExchangeRates() {
-      dispatch(fetchCurrencyRates())
-    },
-    requestLocEurRate() {
-      dispatch(fetchLocEurRate())
-    },
-    requestCountries() {
-      dispatch(fetchCountries());
-    }
-  }
-}
-export default withRouter(connect(null, mapDispatchToProps)(App));
+// function mapDispatchToProps(dispatch){
+//   return {
+//     requestExchangeRates() {
+//       dispatch(fetchCurrencyRates())
+//     },
+//     requestLocEurRate() {
+//       dispatch(fetchLocEurRate())
+//     },
+//     requestCountries() {
+//       dispatch(fetchCountries());
+//     }
+//   }
+// }
+// export default withRouter(connect(null, mapDispatchToProps)(App));

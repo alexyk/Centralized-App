@@ -27,14 +27,13 @@ import {
 import {
   ENTER_EMAIL_VERIFICATION_SECURITY_TOKEN,
 } from '../../constants/modals.js';
-import {
-  EMAIL_VERIFIED
-} from '../../constants/successMessages.js';
+
 import {
   LOGIN,
   UPDATE_COUNTRY, REGISTER
 } from '../../constants/modals.js';
 import * as _ from 'ramda';
+import {SEND_RECOVERY_EMAIL} from '../../constants/modals';
 
 class LoginManager extends React.Component {
   constructor(props) {
@@ -60,14 +59,21 @@ class LoginManager extends React.Component {
     this.handleUpdateCountry = this.handleUpdateCountry.bind(this);
     this.requestStates = this.requestStates.bind(this);
     this.getQueryString = this.getQueryString.bind(this);
+    this.tryToOpenRecoveryModalOnMount = this.tryToOpenRecoveryModalOnMount.bind(this);
+  }
+
+  tryToOpenRecoveryModalOnMount(){
+    if(this.props.openRecoveryOnMount){
+      this.openModal(SEND_RECOVERY_EMAIL);
+    }
   }
 
   componentDidMount() {
     this.handleWebAuthorization();
     this.handleMobileAuthorization();
+    this.tryToOpenRecoveryModalOnMount();
 
     const queryParams = queryString.parse(this.props.location.search);
-
 
     if (queryParams.token) {
       this.setState({ recoveryToken: queryParams.token });
@@ -306,6 +312,10 @@ class LoginManager extends React.Component {
         <LoginModal
           isActive={this.props.isActive[LOGIN]}
           openModal={this.openModal}
+          onRecoverPasswordClicked={(e) => { this.closeModal(LOGIN, e); this.openModal(SEND_RECOVERY_EMAIL, e); }}
+          onSignupClicked={() => { this.closeModal(LOGIN); this.openModal(REGISTER); }}
+          onHide={() => this.closeModal(LOGIN)}
+          onClose={() => this.closeModal(LOGIN)}
           closeModal={this.closeModal}
           loginEmail={this.state.loginEmail}
           loginPassword={this.state.loginPassword}
@@ -353,6 +363,7 @@ LoginManager.propTypes = {
   // start Redux props
   dispatch: PropTypes.func,
   isActive: PropTypes.object,
+  openRecoveryOnMount: PropTypes.bool,
 };
 
 function mapStateToProps(state) {
