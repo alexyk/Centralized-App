@@ -12,7 +12,7 @@ export default LoginManager;
 
 // MainNave
 const MainNave = jest.fn(() => {
-  return <div data-testid="main-nav" />;
+  return <div />;
 });
 
 jest.doMock("../mainNav/MainNav", () => {
@@ -21,8 +21,16 @@ jest.doMock("../mainNav/MainNav", () => {
 
 // LocalizationNav
 const LocalizationNav = jest.fn(() => {
-  return <div data-testid="main-nav" />;
+  return <div />;
 });
 jest.doMock("../profile/LocalizationNav", () => {
   return LocalizationNav;
+});
+
+// RegisterManager
+const RegisterManager = jest.fn(() => {
+  return <div />;
+});
+jest.doMock("../authentication/RegisterManager", () => {
+  return RegisterManager;
 });

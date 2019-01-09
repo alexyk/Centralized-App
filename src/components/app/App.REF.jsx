@@ -43,7 +43,7 @@ export default class App extends AppFunctionality<Props> {
           <Route exact path="/recover" render={(props) =><LoginManager openRecoveryOnMount={true}/>}/>
           <Route render={(props) =><LoginManager />}/>
         </Switch>
-        {/*<RegisterManager />*/}
+        <RegisterManager />
         {/*<WalletCreationManager />*/}
         {/*<PasswordRecoveryManager />*/}
         {/*<NotificationContainer />*/}
