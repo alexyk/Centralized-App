@@ -33,8 +33,8 @@ function LoginModal(props) {
 
           <hr />
           <div className="login-sign">
-            Don’t have an account? <a onClick={props.onSignupClicked}>Sign up</a>
-            . Forgot your password? <a onClick={props.onRecoverPasswordClicked}>Recover</a>
+            Don’t have an account? <a onClick={e=>{e.preventDefault(); props.onSignupClicked();}}>Sign up</a>
+            . Forgot your password? <a onClick={e=>{ e.preventDefault(); props.onRecoverPasswordClicked();}}>Recover</a>
           </div>
         </Modal.Body>
       </Modal>
@@ -51,7 +51,6 @@ LoginModal.propTypes = {
   onSignupClicked: PropTypes.func,
   handleLogin: PropTypes.func,
   onChange: PropTypes.func,
-  openModal: PropTypes.func,
   closeModal: PropTypes.func,
   isActive: PropTypes.bool,
   isLogging: PropTypes.bool

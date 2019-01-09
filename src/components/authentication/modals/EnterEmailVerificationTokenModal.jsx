@@ -31,7 +31,6 @@ function EmailVerificationModal(props) {
 EmailVerificationModal.propTypes = {
   emailVerificationToken: PropTypes.string,
   onChange: PropTypes.func,
-  openModal: PropTypes.func,
   closeModal: PropTypes.func,
   handleLogin: PropTypes.func,
   isActive: PropTypes.bool

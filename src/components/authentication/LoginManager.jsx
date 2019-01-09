@@ -35,7 +35,7 @@ import {
 import * as _ from 'ramda';
 import {SEND_RECOVERY_EMAIL} from '../../constants/modals';
 
-class LoginManager extends React.Component {
+export class LoginManager extends React.Component {
   constructor(props) {
     super(props);
 
@@ -63,8 +63,12 @@ class LoginManager extends React.Component {
   }
 
   tryToOpenRecoveryModalOnMount(){
+    console.log("tryToOpenRecoveryModalOnMount")
     if(this.props.openRecoveryOnMount){
-      this.openModal(SEND_RECOVERY_EMAIL);
+      console.log("openRecoveryOnMount")
+
+      // this.openModal(SEND_RECOVERY_EMAIL);
+      this.props.openRecoveryEmailModal();
     }
   }
 
@@ -77,7 +81,8 @@ class LoginManager extends React.Component {
 
     if (queryParams.token) {
       this.setState({ recoveryToken: queryParams.token });
-      this.openModal(ENTER_RECOVERY_TOKEN);
+      // this.openModal(ENTER_RECOVERY_TOKEN);
+      this.openRecoveryTokenModal();
     }
 
     /*
@@ -132,8 +137,7 @@ class LoginManager extends React.Component {
     if (e) {
       e.preventDefault();
     }
-
-    this.props.dispatch(openModal(modal));
+    this.props.openModal(modal);
   }
 
   closeModal(modal, e) {
@@ -141,7 +145,7 @@ class LoginManager extends React.Component {
       e.preventDefault();
     }
 
-    this.props.dispatch(closeModal(modal));
+    this.props.closeModal(modal);
   }
 
 
@@ -224,7 +228,8 @@ class LoginManager extends React.Component {
         NotificationManager.warning(errors['CountryNull'].message, '', LONG);
         this.setState({ isUpdatingCountry: true, isLogging: false }, () => {
           this.closeModal(LOGIN);
-          this.openModal(UPDATE_COUNTRY);
+          // this.openModal(UPDATE_COUNTRY);
+          this.openUpdateCountryModal();
         });
       } else {
         for (let key in errors) {
@@ -269,24 +274,23 @@ class LoginManager extends React.Component {
             const ethBalance = eth / (Math.pow(10, 18));
             Wallet.getTokenBalance(data.locAddress).then(loc => {
               const locBalance = loc / (Math.pow(10, 18));
-              debugger;
-              this.props.dispatch(setUserInfo({
+              this.props.setUserInfo({
                 ...data,
                 ethBalance,
                 locBalance,
                 isAdmin
-              }));
+              });
             });
           });
         } else {
           const ethBalance = 0;
           const locBalance = 0;
-          this.props.dispatch(setUserInfo({
+          this.props.setUserInfo({
             ...data,
             ethBalance,
             locBalance,
             isAdmin
-          }));
+          });
         }
       });
     });
@@ -312,8 +316,7 @@ class LoginManager extends React.Component {
       <React.Fragment>
         <LoginModal
           isActive={this.props.isActive[LOGIN]}
-          openModal={this.openModal}
-          onRecoverPasswordClicked={(e) => { this.closeModal(LOGIN, e); this.openModal(SEND_RECOVERY_EMAIL, e); }}
+          onRecoverPasswordClicked={() => { this.closeModal(LOGIN); this.openModal(SEND_RECOVERY_EMAIL); }}
           onSignupClicked={() => { this.closeModal(LOGIN); this.openModal(REGISTER); }}
           onHide={() => this.closeModal(LOGIN)}
           onClose={() => this.closeModal(LOGIN)}
@@ -326,8 +329,7 @@ class LoginManager extends React.Component {
         />
         <UpdateCountryModal 
           isActive={this.props.isActive[UPDATE_COUNTRY]}
-          openModal={this.openModal} 
-          closeModal={this.closeModal} 
+          closeModal={this.closeModal}
           onChange={this.onChange} 
           country={this.state.country}
           states={this.state.states} 
@@ -338,15 +340,13 @@ class LoginManager extends React.Component {
         />
         <EmailVerificationModal 
           isActive={this.props.isActive[EMAIL_VERIFICATION]}
-          openModal={this.openModal} 
-          closeModal={this.closeModal} 
+          closeModal={this.closeModal}
           onChange={this.onChange} 
           requestVerificationEmail={this.requestVerificationEmail} 
         />
         <EnterEmailVerificationTokenModal 
           isActive={this.props.isActive[ENTER_EMAIL_VERIFICATION_SECURITY_TOKEN]}
-          openModal={this.openModal} 
-          closeModal={this.closeModal} 
+          closeModal={this.closeModal}
           onChange={this.onChange} 
           handleLogin={() => executeWithToken(this.login)} 
           emailVerificationToken={this.state.emailVerificationToken} 
@@ -362,7 +362,6 @@ LoginManager.propTypes = {
   history: PropTypes.object,
 
   // start Redux props
-  dispatch: PropTypes.func,
   isActive: PropTypes.object,
   openRecoveryOnMount: PropTypes.bool,
 };
@@ -374,4 +373,16 @@ function mapStateToProps(state) {
   };
 }
 
-export default withRouter(connect(mapStateToProps)(LoginManager));
+function mapDispatchToProps(dispatch){
+  return {
+    openRecoveryEmailModal: ()=>dispatch(openModal(SEND_RECOVERY_EMAIL)),
+    openRecoveryTokenModal: ()=>dispatch(openModal(ENTER_RECOVERY_TOKEN)),
+    openUpdateCountryModal: ()=>dispatch(openModal(UPDATE_COUNTRY)),
+    onRecoverPasswordClicked: ()=>{},
+    openModal: modal=>dispatch(openModal(modal)),
+    closeModal: modal=>dispatch(closeModal(modal)),
+    setUserInfo: (info)=>dispatch(setUserInfo(info)),
+  }
+}
+
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(LoginManager));

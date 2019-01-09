@@ -7,10 +7,6 @@ const localStorageMock = {
 };
 global.localStorage = localStorageMock;
 
-jest.doMock("react-slick", () => {
-  const ComponentToMock = () => <div />;
-  return ComponentToMock;
-});
 jest.doMock("react-redux", () => {
   const connect = () =>
     function(mapStateToProps, mapDispatchToPros) {
@@ -21,4 +17,17 @@ jest.doMock("react-redux", () => {
   return { connect };
 });
 
-global.WebSocket = class WebSocket {};
+const mocks = {
+  requester: jest.fn(),
+  NotificationManager: jest.fn(),
+  EnterEmailVerificationTokenModal: jest.fn(),
+  EmailVerificationModal: jest.fn(),
+  UpdateCountryModal: jest.fn(),
+  openModal: jest.fn()
+};
+
+export default mocks;
+
+jest.doMock("../../requester", () => {
+  return jest.fn();
+});
