@@ -269,6 +269,7 @@ class LoginManager extends React.Component {
             const ethBalance = eth / (Math.pow(10, 18));
             Wallet.getTokenBalance(data.locAddress).then(loc => {
               const locBalance = loc / (Math.pow(10, 18));
+              debugger;
               this.props.dispatch(setUserInfo({
                 ...data,
                 ethBalance,

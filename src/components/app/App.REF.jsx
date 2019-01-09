@@ -49,24 +49,24 @@ export default class App extends AppFunctionality<Props> {
         {/*<NotificationContainer />*/}
 
         <Switch>
-          <Route exact path="/" render={(props) =><HomeRouterPage />}/>
+          {/*<Route exact path="/" render={(props) =><HomeRouterPage />}/>*/}
           <Route exact path="/affiliate-terms" render={(props) =><AffiliateTerms/>}/>
-          <Route exact path="/profile/listings/edit/:step/:id" render={() => !this.props.isAuthenticated() ? <Redirect to="/" /> : <EditListingPage />} />
-          <Route exact path="/users/resetPassword/:confirm" render={() => <HomeRouterPage />} />
-          <Route path="/homes" render={() => <HomeRouterPage />} />
-          <Route path="/hotels" render={() => <HomeRouterPage />} />
-          <Route path="/mobile" render={() => <HomeRouterPage />} />
-          <Route path="/profile/listings/create" render={() => !this.props.isAuthenticated() ? <Redirect to="/" /> : <CreateListingPage />} />
-          <Route path="/profile/" render={() => !this.props.isAuthenticated() ? <Redirect to="/" /> : <ProfilePage location={this.props.location} />} />
-          <Route path="/buyloc" render={() => <ProfilePage />} />
-          <Route path="/softuni" render={() => <WorldKuCoinCampaign />} />
-          <Route path="/vote" render={() => <WorldKuCoinCampaign />} />
-          <Route path="/campaigns/balance/check" render={() => <Balance />} />
-          <Route path="/google" render={() => <GooglePlaces />} />
-          <Route path="/help" render={() => <HelpPage />} />
-          <Route path="/about" render={() => <AboutUsPage />} />
+          {/*<Route exact path="/profile/listings/edit/:step/:id" render={() => !this.props.isAuthenticated() ? <Redirect to="/" /> : <EditListingPage />} />*/}
+          {/*<Route exact path="/users/resetPassword/:confirm" render={() => <HomeRouterPage />} />*/}
+          {/*<Route path="/homes" render={() => <HomeRouterPage />} />*/}
+          {/*<Route path="/hotels" render={() => <HomeRouterPage />} />*/}
+          {/*<Route path="/mobile" render={() => <HomeRouterPage />} />*/}
+          {/*<Route path="/profile/listings/create" render={() => !this.props.isAuthenticated() ? <Redirect to="/" /> : <CreateListingPage />} />*/}
+          {/*<Route path="/profile/" render={() => !this.props.isAuthenticated() ? <Redirect to="/" /> : <ProfilePage location={this.props.location} />} />*/}
+          {/*<Route path="/buyloc" render={() => <ProfilePage />} />*/}
+          {/*<Route path="/softuni" render={() => <WorldKuCoinCampaign />} />*/}
+          {/*<Route path="/vote" render={() => <WorldKuCoinCampaign />} />*/}
+          {/*<Route path="/campaigns/balance/check" render={() => <Balance />} />*/}
+          {/*<Route path="/google" render={() => <GooglePlaces />} />*/}
+          {/*<Route path="/help" render={() => <HelpPage />} />*/}
+          {/*<Route path="/about" render={() => <AboutUsPage />} />*/}
 
-          <Route render={() => <HomeRouterPage />} />
+          {/*<Route render={() => <HomeRouterPage />} />*/}
         </Switch>
 
         {!isWebView &&

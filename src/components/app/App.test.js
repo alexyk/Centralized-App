@@ -29,5 +29,4 @@ test("Renders the LoginManager with the correct prop", async () => {
     </BrowserRouter>
   );
   let node = await waitForElement(() => getByTestId("login-manager"));
-  console.log("node", node);
 });
