@@ -2,7 +2,7 @@
 import '../../../styles/css/components/profile/listings/listing-location.css';
 
 import { INVALID_ADDRESS, MISSING_CITY, MISSING_COUNTRY } from '../../../constants/warningMessages.js';
-
+import {Config} from "../../../config";
 import BasicsAside from '../aside/BasicsAside';
 import FooterNav from '../navigation/FooterNav';
 import { LONG } from '../../../constants/notificationDisplayTimes.js';
@@ -17,8 +17,8 @@ import _ from 'lodash';
 
 const GOOGLE_MAPS_API_AUTOCOMPLETE_URL = 'https://maps.googleapis.com/maps/api/place/autocomplete/json';
 const GOOGLE_MAPS_API_PLACE_DETAILS_URL = 'https://maps.googleapis.com/maps/api/place/details/json';
-const GOOGLE_API_KEY = 'AIzaSyBLMYRyzRm83mQIUj3hsO-UVz8-yzfAvmU';
-
+// const GOOGLE_API_KEY = 'AIzaSyBLMYRyzRm83mQIUj3hsO-UVz8-yzfAvmU';
+const GOOGLE_API_KEY = Config.getValue("GOOGLE_API_KEY");
 const customStyles = {
   container: (styles) => ({
     ...styles,
