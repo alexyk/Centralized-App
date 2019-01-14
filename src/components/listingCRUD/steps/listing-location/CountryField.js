@@ -48,7 +48,18 @@ class GoogleClient {
   }
 }
 
-export default class CountryField extends React.Component {
+type Props = {
+  initialCountryValue?: {
+    countryName: string
+  },
+  onCountrySelected: ({
+    countryCode: string,
+    countryName: string
+  }) => void
+};
+type State = {};
+
+export default class CountryField extends React.Component<Props, State> {
   constructor(props) {
     super(props);
 
@@ -60,8 +71,8 @@ export default class CountryField extends React.Component {
     this.adaptCountriesForReactSelect = this.adaptCountriesForReactSelect.bind(
       this
     );
-    this.loadOptions = this.loadOptions.bind(this);
-    this.onChange = this.onChange.bind(this);
+    this.loadOptionsInDropdown = this.loadOptionsInDropdown.bind(this);
+    this.onSelectedCountryChange = this.onSelectedCountryChange.bind(this);
     this.tryToSetCountryNameToInitialValue = this.tryToSetCountryNameToInitialValue.bind(
       this
     );
@@ -69,7 +80,7 @@ export default class CountryField extends React.Component {
 
   componentDidMount() {
     this.googleClient = new GoogleClient(this.hiddenMapInputField);
-    this.tryToSetStateToInitialValue();
+    this.tryToSetCountryNameToInitialValue();
   }
 
   tryToSetCountryNameToInitialValue() {
@@ -84,17 +95,6 @@ export default class CountryField extends React.Component {
     }
   }
 
-  async loadOptions(input, callback) {
-    if (!input) return;
-    let predictedCountries = await this.googleClient.fetchPredictedCountriesForInput(
-      input
-    );
-    let adaptedPredictedCountries = this.adaptCountriesForReactSelect(
-      predictedCountries
-    );
-    callback(adaptedPredictedCountries);
-  }
-
   adaptCountriesForReactSelect(countries) {
     return (countries || []).map(country => ({
       value: country.place_id,
@@ -102,7 +102,7 @@ export default class CountryField extends React.Component {
     }));
   }
 
-  onChange(selectedOption) {
+  onSelectedCountryChange(selectedOption) {
     if (!selectedOption) return;
     this.googleClient
       .getCountryCodeAndCountryNameForPlaceId(selectedOption.value)
@@ -117,6 +117,17 @@ export default class CountryField extends React.Component {
     this.setState({ selectedOption });
   }
 
+  async loadOptionsInDropdown(input, callback) {
+    if (!input) return;
+    let predictedCountries = await this.googleClient.fetchPredictedCountriesForInput(
+      input
+    );
+    let adaptedPredictedCountries = this.adaptCountriesForReactSelect(
+      predictedCountries
+    );
+    callback(adaptedPredictedCountries);
+  }
+
   render() {
     let { selectedOption } = this.state;
     return (
@@ -124,8 +135,8 @@ export default class CountryField extends React.Component {
         <AsyncSelect
           value={selectedOption}
           styles={customStyles}
-          loadOptions={this.loadOptions}
-          onChange={this.onChange}
+          loadOptions={this.loadOptionsInDropdown}
+          onChange={this.onSelectedCountryChange}
           placeholder={"-- Select Country --"}
           isClearable
           required

@@ -2,7 +2,21 @@ import React from "react";
 import AsyncSelect from "react-select/lib/Async";
 import customStyles from "./react-select-styles";
 
-class GoogleClient {
+interface CityGoogleClient {
+  fetchCitiesForInput(
+    input: string,
+    countryCode: string
+  ): [
+    {
+      place_id: string,
+      description: string
+    }
+  ];
+
+  getCityAndStateOfPlaceWithId(placeId: string): string;
+}
+
+class GoogleClient implements CityGoogleClient {
   constructor(field) {
     this.autocompleteService = new window.google.maps.places.AutocompleteService();
     this.placesService = new window.google.maps.places.PlacesService(field);
@@ -55,6 +69,8 @@ class GoogleClient {
 }
 
 export default class CityField extends React.Component {
+  googleClient: CityGoogleClient;
+
   constructor(props) {
     super(props);
 
@@ -112,7 +128,7 @@ export default class CityField extends React.Component {
   async loadOptions(input, callback) {
     if (!input) return;
 
-    let predictedCities = await GoogleClient.fetchCitiesForInput(
+    let predictedCities = await googleClient.fetchCitiesForInput(
       input,
       this.props.countryCode
     );
