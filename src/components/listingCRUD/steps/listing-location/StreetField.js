@@ -1,19 +1,16 @@
 import React from "react";
 import LocationPicker from "react-location-picker";
 
-type Props = {
-  initialStreetValue?: string,
-  onStreetChange: Function,
-  onClearStreetField: Function
-};
+export interface StreetGoogleClient {
+  getLocationOfAddress(
+    address: string,
+    countryCode?: string
+  ): undefined | { lat: number, lng: number };
 
-type State = {
-  mapLocation: null | {
-    lat: number,
-    lng: number
-  },
-  inputValue: string
-};
+  getLocationForStreetPlaceId(
+    placeId: string
+  ): undefined | { lat: number, lng: number };
+}
 
 class GoogleClient {
   constructor(field) {
@@ -87,7 +84,23 @@ class GoogleClient {
   }
 }
 
+type Props = {
+  initialStreetValue?: string,
+  onStreetChange: Function,
+  onClearStreetField: Function
+};
+
+type State = {
+  mapLocation: null | {
+    lat: number,
+    lng: number
+  },
+  inputValue: string
+};
+
 export default class StreetField extends React.Component<Props, State> {
+  googleClient: StreetGoogleClient;
+
   constructor(props) {
     super(props);
 

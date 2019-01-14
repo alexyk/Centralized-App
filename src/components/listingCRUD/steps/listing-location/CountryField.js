@@ -3,7 +3,22 @@ import * as R from "ramda";
 import AsyncSelect from "react-select/lib/Async";
 import customStyles from "./react-select-styles";
 
-class GoogleClient {
+interface CityGoogleClient {
+  fetchPredictedCountriesForInput(
+    input: string
+  ): [
+    {
+      place_id: string,
+      description: string
+    }
+  ];
+
+  getCountryCodeAndCountryNameForPlaceId(
+    placeId: string
+  ): { countryCode: string, countryName: string };
+}
+
+class GoogleClient implements CityGoogleClient {
   constructor(field) {
     this.autocompleteService = new window.google.maps.places.AutocompleteService();
     this.placesService = new window.google.maps.places.PlacesService(field);
@@ -22,6 +37,9 @@ class GoogleClient {
           input: input
         },
         (predictions, status) => {
+          if (status !== "OK") {
+            return resolve([]);
+          }
           resolve(predictions);
         }
       );
@@ -60,6 +78,8 @@ type Props = {
 type State = {};
 
 export default class CountryField extends React.Component<Props, State> {
+  googleClient: CityGoogleClient;
+
   constructor(props) {
     super(props);
 

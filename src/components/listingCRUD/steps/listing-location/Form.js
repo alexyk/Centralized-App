@@ -5,7 +5,26 @@ import CityField from "./CityField";
 import CountryField from "./CountryField";
 import StreetField from "./StreetField";
 
-export default class Form extends React.Component {
+type Props = {
+  initialCountryValue: {
+    countryCode: string,
+    countryName: string
+  },
+  onCountryChange: ({ countryCode: string, countryName: string }) => void,
+
+  onCityChange: (city: string) => void,
+  initialCityValue?: string,
+  onClearCityField: () => void,
+
+  onStreetChange: Function,
+  initialStreetValue?: string,
+  onClearStreetField: Function
+};
+type State = {
+  countryCode: string
+};
+
+export default class Form extends React.Component<Props, State> {
   constructor(props) {
     super(props);
 

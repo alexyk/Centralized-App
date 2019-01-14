@@ -44,6 +44,10 @@ class GoogleClient implements CityGoogleClient {
     });
   }
 
+  static filterCountries(predictions) {
+    return (predictions || []).filter(p => p.types.includes("locality"));
+  }
+
   getCityAndStateOfPlaceWithId(placeId) {
     return new Promise((resolve, reject) => {
       this.placesService.getDetails(
@@ -61,10 +65,6 @@ class GoogleClient implements CityGoogleClient {
         }
       );
     });
-  }
-
-  static filterCountries(predictions) {
-    return (predictions || []).filter(p => p.types.includes("locality"));
   }
 }
 
@@ -128,7 +128,7 @@ export default class CityField extends React.Component {
   async loadOptions(input, callback) {
     if (!input) return;
 
-    let predictedCities = await googleClient.fetchCitiesForInput(
+    let predictedCities = await this.googleClient.fetchCitiesForInput(
       input,
       this.props.countryCode
     );
