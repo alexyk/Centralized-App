@@ -1,6 +1,6 @@
 import React from "react";
 import AsyncSelect from "react-select/lib/Async";
-import customStyles from "./react-select-styles";
+import customStyles from "../react-select-styles";
 
 interface CityGoogleClient {
   fetchCitiesForInput(
@@ -107,7 +107,8 @@ export default class CityField extends React.Component<Props, State> {
   }
 
   componentDidMount() {
-    this.googleClient = new GoogleClient(this.hiddenMapInputField);
+    this.googleClient =
+      this.props.googleClient || new GoogleClient(this.hiddenMapInputField);
     this.tryToSetStateToInitialValue();
   }
 
@@ -126,18 +127,16 @@ export default class CityField extends React.Component<Props, State> {
   }
 
   clearStateIfCountryHasChanged(prevProps) {
-    if (prevProps.countryCode) {
-      if (this.props.countryCode !== prevProps.countryCode) {
-        this.setState(
-          {
-            selectedOption: null,
-            input: ""
-          },
-          () => {
-            this.props.onClearCityField();
-          }
-        );
-      }
+    if (this.props.countryCode !== prevProps.countryCode) {
+      this.setState(
+        {
+          selectedOption: null,
+          input: ""
+        },
+        () => {
+          this.props.onClearCityField();
+        }
+      );
     }
   }
 

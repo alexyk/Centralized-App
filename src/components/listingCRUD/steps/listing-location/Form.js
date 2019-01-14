@@ -1,7 +1,7 @@
 import React from "react";
 import * as R from "ramda";
 
-import CityField from "./CityField";
+import CityField from "./city-field/CityField";
 import CountryField from "./CountryField";
 import StreetField from "./StreetField";
 
