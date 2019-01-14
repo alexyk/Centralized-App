@@ -28,22 +28,6 @@ describe("CityField", () => {
   // 6.2.1 calls googleClient.getCityAndStateOfPlaceWithId with the right value
   // 6.2.2 displays the value correctly
   // 6.2.3 calls onCityChange with the correct value
-
-  // it("sets the value and passes it to the select component", async () => {
-  //   // using a mocked input field to bypass react-select
-  //   jest.doMock("react-select/lib/Async", () => {
-  //     return function MockedAsyncSelect(props) {
-  //       return <div data-testid="mock">{(props.value || {}).label}</div>;
-  //     };
-  //   });
-  //   const CityField = require("./CityField").default;
-  //   const initialCityValue = "some city";
-  //   const { getByText } = render(
-  //     <CityField googleClient={{}} initialCityValue={initialCityValue} />
-  //   );
-  //   await waitForElement(() => getByText(initialCityValue));
-  // });
-  // -----------------------------------------------------------------------
   const TEST_ID = "mock";
   jest.doMock("react-select/lib/Async", () => {
     return function MockedAsyncSelect(props) {
@@ -55,20 +39,30 @@ describe("CityField", () => {
     };
   });
   const CityField = require("./CityField").default;
+  // -----------------------------------------------------------------------
 
   describe("Clears the state if the selected country from props changes", () => {
-    it("Sets the state to its defaults", async () => {
-      const initialCityValue = "some city";
-      const { rerender, getByTestId } = render(
+    const initialCityValue = "some city";
+    let rerender, getByText, getByTestId;
+    beforeEach(async function() {
+      const {
+        rerender: _rerender,
+        getByTestId: _getByTestId,
+        getByText: _getByText
+      } = render(
         <CityField googleClient={{}} initialCityValue={initialCityValue} />
       );
+      rerender = _rerender;
+      getByTestId = _getByTestId;
+      getByText = _getByText;
+    });
 
-      let before = await waitForElement(() => getByTestId("mock"));
-      expect(before.innerHTML).toBe(initialCityValue);
+    it("sets the value and passes it to the select component", async () => {
+      await waitForElement(() => getByText(initialCityValue));
+    });
 
-      // update the props, passing the new country code
+    it("Sets the state to its defaults", async () => {
       const onClearCityField = jest.fn();
-
       rerender(
         <CityField
           googleClient={{}}
@@ -80,51 +74,62 @@ describe("CityField", () => {
 
       let node = await waitForElement(() => getByTestId("mock"));
       expect(node.innerHTML).toBe("");
-      expect(onClearCityField).toHaveBeenCalledTimes(1);
     });
-    it("Notifies the parent component of the change", () => {});
-  });
-  // -----------------------------------------------------------------------
-  describe("When loading options, calls fetchCitiesForInput with the input from the state", () => {
-    it("on 'load options'", async () => {
-      // mock the google client
-      const mockedGoogleClient = {
-        fetchCitiesForInput: jest.fn(() => {
-          new Promise(resolve => {
-            setTimeout(() => {
-              resolve([
-                { place_id: "", description: "" },
-                { place_id: "", description: "" }
-              ]);
-            }, 1000);
-          });
-        })
-      };
-
-      const countryCode = "some country";
-      const initialCityValue = "some initial city";
-
-      const { rerender, getByTestId } = render(
+    it("Notifies the parent component of the change", () => {
+      const onClearCityField = jest.fn();
+      rerender(
         <CityField
-          googleClient={mockedGoogleClient}
-          countryCode={countryCode}
+          googleClient={{}}
           initialCityValue={initialCityValue}
+          onClearCityField={onClearCityField}
+          countryCode={"TEST"}
         />
       );
-      let node = await waitForElement(() => getByTestId(TEST_ID));
-      fireEvent.click(node);
-      // makes a call to its method 'fetchCitiesForInput'
-      expect(mockedGoogleClient.fetchCitiesForInput).toHaveBeenCalledTimes(1);
-      // the countryCode from props and the input
-      expect(mockedGoogleClient.fetchCitiesForInput).toHaveBeenCalledWith([
-        initialCityValue,
-        countryCode
-      ]);
-      // assuming the method returns [{place_id, description}, {place_id, description}], validate the argument of the 'callback function'
-    });
 
-    it("on selected entry change", () => {});
+      expect(onClearCityField).toHaveBeenCalledTimes(1);
+    });
   });
+  // -----------------------------------------------------------------------
+  // describe("When loading options, calls fetchCitiesForInput with the input from the state", () => {
+  //   it("on 'load options'", async () => {
+  //     // mock the google client
+  //     const mockedGoogleClient = {
+  //       fetchCitiesForInput: jest.fn(() => {
+  //         new Promise(resolve => {
+  //           setTimeout(() => {
+  //             resolve([
+  //               { place_id: "", description: "" },
+  //               { place_id: "", description: "" }
+  //             ]);
+  //           }, 1000);
+  //         });
+  //       })
+  //     };
+  //
+  //     const countryCode = "some country";
+  //     const initialCityValue = "some initial city";
+  //
+  //     const { rerender, getByTestId } = render(
+  //       <CityField
+  //         googleClient={mockedGoogleClient}
+  //         countryCode={countryCode}
+  //         initialCityValue={initialCityValue}
+  //       />
+  //     );
+  //     let node = await waitForElement(() => getByTestId(TEST_ID));
+  //     fireEvent.click(node);
+  //     // makes a call to its method 'fetchCitiesForInput'
+  //     expect(mockedGoogleClient.fetchCitiesForInput).toHaveBeenCalledTimes(1);
+  //     // the countryCode from props and the input
+  //     expect(mockedGoogleClient.fetchCitiesForInput).toHaveBeenCalledWith([
+  //       initialCityValue,
+  //       countryCode
+  //     ]);
+  //     // assuming the method returns [{place_id, description}, {place_id, description}], validate the argument of the 'callback function'
+  //   });
+  //
+  //   it("on selected entry change", () => {});
+  // });
 });
 
 describe("CityGoogleClient", () => {});
