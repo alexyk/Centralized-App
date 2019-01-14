@@ -1,101 +1,51 @@
 import React from "react";
 import LocationPicker from "react-location-picker";
 
-export default class StreetField extends React.Component {
-  constructor(props) {
-    super(props);
+type Props = {
+  initialStreetValue?: string,
+  onStreetChange: Function,
+  onClearStreetField: Function
+};
 
-    this.state = {
-      input: "",
-      mapLocation: null
-    };
+type State = {
+  mapLocation: null | {
+    lat: number,
+    lng: number
+  },
+  inputValue: string
+};
 
-    this.onInputChange = this.onInputChange.bind(this);
-    this.updateMapData = this.updateMapData.bind(this);
-    this.clearStateIfCountryHasChanged = this.clearStateIfCountryHasChanged.bind(
-      this
-    );
-    this.fetchPredictionsForAddress = this.fetchPredictionsForAddress.bind(
-      this
-    );
-    this.getPlaceIdOfFirstStreetPrediction = this.getPlaceIdOfFirstStreetPrediction.bind(
-      this
-    );
-    this.getLocationForStreetPlaceId = this.getLocationForStreetPlaceId.bind(
-      this
-    );
-  }
-
-  componentDidMount() {
+class GoogleClient {
+  constructor(field) {
+    this.placesService = new window.google.maps.places.PlacesService(field);
     this.autocompleteService = new window.google.maps.places.AutocompleteService();
-    this.placesService = new window.google.maps.places.PlacesService(
-      this.mapInputField
+  }
+
+  async getLocationOfAddress(address, countryCode) {
+    var predictions = await this.fetchPredictionsForAddress(
+      address,
+      countryCode
     );
-
-    if (this.props.initialStreetValue) {
-      this.setState(
-        {
-          input: this.props.initialStreetValue
-        },
-        () => {
-          this.updateMapData(this.state.input);
-        }
-      );
-    }
-  }
-
-  componentDidUpdate(prevProps) {
-    this.clearStateIfCountryHasChanged(prevProps);
-  }
-
-  clearStateIfCountryHasChanged(prevProps) {
-    if (prevProps.countryCode) {
-      if (this.props.countryCode !== prevProps.countryCode) {
-        this.setState(
-          {
-            mapLocation: null,
-            input: ""
-          },
-          () => {
-            this.props.onClearStreetField();
-          }
-        ); //
-      }
-    }
-  }
-
-  onInputChange(e) {
-    this.setState({ input: e.target.value }, async () => {
-      this.updateMapData(this.state.input);
-      this.props.onStreetChange(this.state.input);
-    });
-  }
-
-  async updateMapData() {
-    var predictions = await this.fetchPredictionsForAddress(this.state.input);
-    let idOfFirstStreet = this.getPlaceIdOfFirstStreetPrediction(predictions);
+    let idOfFirstStreet = GoogleClient.getPlaceIdOfFirstStreetPrediction(
+      predictions
+    );
     if (idOfFirstStreet) {
       let locationOfStreet = await this.getLocationForStreetPlaceId(
-        idOfFirstStreet
+        idOfFirstStreet,
+        countryCode
       );
-      this.setState({
-        mapLocation: locationOfStreet || null
-      });
-    } else {
-      this.setState({
-        mapLocation: null
-      });
+      return locationOfStreet;
     }
+    return undefined;
   }
 
-  fetchPredictionsForAddress(input) {
-    const as = this.autocompleteService;
+  fetchPredictionsForAddress(address, countryCode) {
     return new Promise(resolve => {
-      as.getPlacePredictions(
+      this.autocompleteService.getPlacePredictions(
         {
-          input: input,
+          input: address,
           componentRestrictions: {
-            country: this.props.countryCode
+            country: countryCode
           }
         },
         (predictions, status) => {
@@ -103,16 +53,6 @@ export default class StreetField extends React.Component {
         }
       );
     });
-  }
-
-  getPlaceIdOfFirstStreetPrediction(predictions) {
-    let firstStreet = (predictions || []).find(
-      p => p.types.includes("street_address") || p.types.includes("route")
-    );
-    if (firstStreet) {
-      return firstStreet.place_id;
-    }
-    return undefined;
   }
 
   getLocationForStreetPlaceId(placeId) {
@@ -136,6 +76,102 @@ export default class StreetField extends React.Component {
     });
   }
 
+  static getPlaceIdOfFirstStreetPrediction(predictions) {
+    let firstStreet = (predictions || []).find(
+      p => p.types.includes("street_address") || p.types.includes("route")
+    );
+    if (firstStreet) {
+      return firstStreet.place_id;
+    }
+    return undefined;
+  }
+}
+
+export default class StreetField extends React.Component<Props, State> {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      inputValue: "",
+      mapLocation: null
+    };
+
+    this.onInputChange = this.onInputChange.bind(this);
+    this.updateMapBasedOnInputValue = this.updateMapBasedOnInputValue.bind(
+      this
+    );
+    this.tryToSetInitialInputValue = this.tryToSetInitialInputValue.bind(this);
+    this.clearStateIfCountryHasChanged = this.clearStateIfCountryHasChanged.bind(
+      this
+    );
+
+    this.getLocationForStreetPlaceId = this.getLocationForStreetPlaceId.bind(
+      this
+    );
+  }
+
+  componentDidMount() {
+    this.googleClient = new GoogleClient(this.mapInputField);
+    this.tryToSetInitialInputValue();
+  }
+
+  componentDidUpdate(prevProps) {
+    this.clearStateIfCountryHasChanged(prevProps);
+  }
+
+  tryToSetInitialInputValue() {
+    if (this.props.initialStreetValue) {
+      this.setState(
+        {
+          inputValue: this.props.initialStreetValue
+        },
+        () => {
+          this.updateMapBasedOnInputValue(this.state.inputValue);
+        }
+      );
+    }
+  }
+
+  clearStateIfCountryHasChanged(prevProps) {
+    if (prevProps.countryCode) {
+      if (this.props.countryCode !== prevProps.countryCode) {
+        this.setState(
+          {
+            mapLocation: null,
+            inputValue: ""
+          },
+          () => {
+            this.props.onClearStreetField();
+          }
+        );
+      }
+    }
+  }
+
+  onInputChange(e) {
+    this.setState({ inputValue: e.target.value }, async () => {
+      this.updateMapBasedOnInputValue(this.state.inputValue);
+      this.props.onStreetChange(this.state.inputValue);
+    });
+  }
+
+  async updateMapBasedOnInputValue() {
+    let locationOfStreet = await this.googleClient.getLocationOfAddress(
+      this.state.inputValue,
+      this.props.countryCode
+    );
+    this.setState({
+      mapLocation: locationOfStreet || null
+    });
+  }
+
+  getLocationForStreetPlaceId(placeId) {
+    return this.googleClient.getLocationForStreetPlaceId(
+      placeId,
+      this.props.countryCode
+    );
+  }
+
   render() {
     return (
       <React.Fragment>
@@ -145,7 +181,7 @@ export default class StreetField extends React.Component {
             this.mapInputField = el;
           }}
           onChange={this.onInputChange}
-          value={this.state.input}
+          value={this.state.inputValue}
         />
 
         {this.state.mapLocation && (
