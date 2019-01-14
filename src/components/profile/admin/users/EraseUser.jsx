@@ -44,6 +44,7 @@ class EraseUser extends React.Component {
     if (window.confirm('Are you sure you wish to delete ' + this.state.userEmail + ' from the LockTrip Plarform?'))
       requester.eraseUserByEmail(this.state.userEmail)
         .then((res) => {
+          console.log('RES = ' + JSON.stringify(res));
           if (res.success) {
             res.body.then((data) => {
               if (data.success) {
@@ -54,8 +55,13 @@ class EraseUser extends React.Component {
               this.props.history.push('/profile/admin/users/eraseprofile');
             });
           } else {
-            NotificationManager.error(USER_SERVERROR, 'Contact the dev support.', LONG);
-            console.log(res);
+            res.errors.then((err) => {
+              if (err["errors"]["UnsuccessfulOperation"]["message"] != null) {
+                NotificationManager.warning(USER_SERVERROR, err["errors"]["UnsuccessfulOperation"]["message"], LONG);
+              } else {
+                NotificationManager.error(USER_SERVERROR, 'Contact the dev support.', LONG);
+              }
+            });
           }
         });
   }
