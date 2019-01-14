@@ -23,10 +23,13 @@ export default class Form extends React.Component {
   }
 
   setCountryCodeToInitialValue() {
-    let cc = R.path(["props", "initialCountryValue", "countryCode"], this);
-    if (cc) {
+    let initialCuntryCode = R.path(
+      ["props", "initialCountryValue", "countryCode"],
+      this
+    );
+    if (initialCuntryCode) {
       this.setState({
-        countryCode: cc
+        countryCode: initialCuntryCode
       });
     }
   }
