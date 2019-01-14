@@ -8,7 +8,7 @@ import { BrowserRouter } from "react-router-dom";
 import React from "react";
 import "./ListingLocation.test.mocks";
 import { shallow, mount } from "enzyme";
-import { ListingLocation } from "./ListingLocation";
+import { ListingLocation } from "./listing-location/ListingLocation";
 
 afterEach(cleanup);
 

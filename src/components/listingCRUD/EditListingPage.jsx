@@ -10,7 +10,7 @@ import ListingDescription from "./steps/ListingDescription";
 import ListingFacilities from "./steps/ListingFacilities";
 import ListingHouseRules from "./steps/ListingHouseRules";
 import ListingLandingPage from "./steps/ListingLandingPage";
-import ListingLocation from "./steps/ListingLocation";
+import ListingLocation from "./steps/listing-location/ListingLocation";
 import ListingPhotos from "./steps/ListingPhotos";
 import ListingPlaceType from "./steps/ListingPlaceType";
 import ListingPrice from "./steps/ListingPrice";
