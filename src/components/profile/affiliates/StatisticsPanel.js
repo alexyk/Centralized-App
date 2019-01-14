@@ -79,7 +79,6 @@ export default class StatisticsPanel extends React.Component<Props, State> {
 }
 
 export function MyRevenue({ data = [] }: { data: RevenueChartData }) {
-  debugger;
   let chart = data.length ? (
     <Chart
       options={{

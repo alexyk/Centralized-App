@@ -162,7 +162,6 @@ class StaticHotelsSearchPage extends React.Component {
 
   requestStaticHotels(queryParams) {
     const { region } = queryParams;
-    debugger;
     requester.getStaticHotels(region).then(res => {
       res.body.then(data => {
         const { content } = data;
@@ -252,7 +251,6 @@ class StaticHotelsSearchPage extends React.Component {
 
   getCityLocation(regionId) {
     this.geocoder = new window.google.maps.Geocoder();
-    debugger;
     requester.getRegionNameById(regionId).then(res => {
       res.body.then(data => {
         this.props.dispatch(setRegion(data));
@@ -314,7 +312,6 @@ class StaticHotelsSearchPage extends React.Component {
       stars: [false, false, false, false, false],
       nights
     }, () => {
-      debugger;
       requester.getStaticHotels(region).then(res => {
         res.body.then(data => {
           const hotels = data.content;
@@ -424,7 +421,6 @@ class StaticHotelsSearchPage extends React.Component {
     const search = this.getSearchString();
     const filters = this.getFilterString();
     const page = this.state.page ? this.state.page : 0;
-    debugger;
     requester.getLastSearchHotelResultsByFilter(search, filters).then(res => {
       if (res.success) {
         res.body.then(data => {
@@ -505,7 +501,6 @@ class StaticHotelsSearchPage extends React.Component {
       });
       return;
     }
-    debugger;
     requester.getMapInfo(this.props.location.search).then(res => {
       res.body.then(data => {
         if (!data.isCacheExpired) {
@@ -531,7 +526,6 @@ class StaticHotelsSearchPage extends React.Component {
           const filters = this.getFilterString();
           const page = this.state.page ? this.state.page : 0;
           this.setState({ loading: true });
-          debugger;
           requester.getLastSearchHotelResultsByFilter(search, filters).then(res => {
             if (res.success) {
               res.body.then(data => {
@@ -580,7 +574,6 @@ class StaticHotelsSearchPage extends React.Component {
     if (this.isSearchReady()) {
       this.applyFilters(true);
     } else {
-      debugger;
       requester.getStaticHotels(region, page - 1).then(res => {
         res.body.then(data => {
           const listings = data.content;

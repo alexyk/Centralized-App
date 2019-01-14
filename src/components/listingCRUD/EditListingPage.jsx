@@ -1,44 +1,44 @@
-import { Route, Switch, withRouter } from 'react-router-dom';
+import { Route, Switch, withRouter } from "react-router-dom";
 
-import { Config } from '../../config';
-import DefaultListing from './DefaultListing';
-import { LISTING_UPDATED } from '../../constants/successMessages.js';
-import { LONG } from '../../constants/notificationDisplayTimes.js';
-import ListingAccommodations from './steps/ListingAccommodations';
-import ListingChecking from './steps/ListingChecking';
-import ListingDescription from './steps/ListingDescription';
-import ListingFacilities from './steps/ListingFacilities';
-import ListingHouseRules from './steps/ListingHouseRules';
-import ListingLandingPage from './steps/ListingLandingPage';
-import ListingLocation from './steps/ListingLocation';
-import ListingPhotos from './steps/ListingPhotos';
-import ListingPlaceType from './steps/ListingPlaceType';
-import ListingPrice from './steps/ListingPrice';
-import ListingSafetyFacilities from './steps/ListingSafetyFacilities';
-import { NotificationManager } from 'react-notifications';
-import PropTypes from 'prop-types';
-import React from 'react';
-import { arrayMove } from 'react-sortable-hoc';
-import moment from 'moment';
-import request from 'superagent';
-import requester from '../../requester';
-import update from 'react-addons-update';
+import { Config } from "../../config";
+import DefaultListing from "./DefaultListing";
+import { LISTING_UPDATED } from "../../constants/successMessages.js";
+import { LONG } from "../../constants/notificationDisplayTimes.js";
+import ListingAccommodations from "./steps/ListingAccommodations";
+import ListingChecking from "./steps/ListingChecking";
+import ListingDescription from "./steps/ListingDescription";
+import ListingFacilities from "./steps/ListingFacilities";
+import ListingHouseRules from "./steps/ListingHouseRules";
+import ListingLandingPage from "./steps/ListingLandingPage";
+import ListingLocation from "./steps/ListingLocation";
+import ListingPhotos from "./steps/ListingPhotos";
+import ListingPlaceType from "./steps/ListingPlaceType";
+import ListingPrice from "./steps/ListingPrice";
+import ListingSafetyFacilities from "./steps/ListingSafetyFacilities";
+import { NotificationManager } from "react-notifications";
+import PropTypes from "prop-types";
+import React from "react";
+import { arrayMove } from "react-sortable-hoc";
+import moment from "moment";
+import request from "superagent";
+import requester from "../../requester";
+import update from "react-addons-update";
 
-const host = Config.getValue('apiHost');
+const host = Config.getValue("apiHost");
 const LOCKTRIP_UPLOAD_URL = `${host}images/upload`;
 
 const steps = {
-  '1': 'landing',
-  '2': 'placetype',
-  '3': 'accommodation',
-  '4': 'facilities',
-  '5': 'safetyamenities',
-  '6': 'location',
-  '7': 'description',
-  '8': 'photos',
-  '9': 'houserules',
-  '10': 'checking',
-  '11': 'price',
+  "1": "landing",
+  "2": "placetype",
+  "3": "accommodation",
+  "4": "facilities",
+  "5": "safetyamenities",
+  "6": "location",
+  "7": "description",
+  "8": "photos",
+  "9": "houserules",
+  "10": "checking",
+  "11": "price"
 };
 
 class EditListingPage extends React.Component {
@@ -59,35 +59,35 @@ class EditListingPage extends React.Component {
       dedicatedSpace: DefaultListing.dedicatedSpace,
       propertySize: DefaultListing.size,
       guestsIncluded: 1,
-      bedroomsCount: '1 bedroom',
-      bedrooms: [this.createBedroom(),],
+      bedroomsCount: "1 bedroom",
+      bedrooms: [this.createBedroom()],
       bathrooms: 1,
       facilities: new Set(),
       selectedOption: null,
-      street: '',
-      city: '',
-      state: '',
-      countryCode: '',
-      name: '',
-      text: '',
-      interaction: '',
+      street: "",
+      city: "",
+      state: "",
+      countryCode: "",
+      name: "",
+      text: "",
+      interaction: "",
       uploadedFilesUrls: [],
       uploadedFilesThumbUrls: [],
-      suitableForChildren: 'false',
-      suitableForInfants: 'false',
-      suitableForPets: 'false',
-      smokingAllowed: 'false',
-      eventsAllowed: 'false',
-      otherRuleText: '',
+      suitableForChildren: "false",
+      suitableForInfants: "false",
+      suitableForPets: "false",
+      smokingAllowed: "false",
+      eventsAllowed: "false",
+      otherRuleText: "",
       otherHouseRules: new Set(),
-      checkinStart: '14:00',
-      checkinEnd: '20:00',
-      checkoutStart: '00:00',
-      checkoutEnd: '13:00',
-      defaultDailyPrice: '0',
-      cleaningFee: '0',
-      securityDeposit: '0',
-      currency: '2',
+      checkinStart: "14:00",
+      checkinEnd: "20:00",
+      checkoutStart: "00:00",
+      checkoutEnd: "13:00",
+      defaultDailyPrice: "0",
+      cleaningFee: "0",
+      securityDeposit: "0",
+      currency: "2",
       loading: false,
       propertyTypes: [],
       countries: [],
@@ -95,7 +95,7 @@ class EditListingPage extends React.Component {
       cities: [],
       currencies: [],
 
-      isAddressSelected: false,
+      isAddressSelected: false
     };
 
     this.onChange = this.onChange.bind(this);
@@ -157,17 +157,17 @@ class EditListingPage extends React.Component {
 
   setPageRoutes(id) {
     return {
-      landing: '/profile/listings/edit/landing/' + id,
-      placetype: '/profile/listings/edit/placetype/' + id,
-      accommodation: '/profile/listings/edit/accommodation/' + id,
-      facilities: '/profile/listings/edit/facilities/' + id,
-      safetyamenities: '/profile/listings/edit/safetyamenities/' + id,
-      location: '/profile/listings/edit/location/' + id,
-      description: '/profile/listings/edit/description/' + id,
-      photos: '/profile/listings/edit/photos/' + id,
-      houserules: '/profile/listings/edit/houserules/' + id,
-      checking: '/profile/listings/edit/checking/' + id,
-      price: '/profile/listings/edit/price/' + id,
+      landing: "/profile/listings/edit/landing/" + id,
+      placetype: "/profile/listings/edit/placetype/" + id,
+      accommodation: "/profile/listings/edit/accommodation/" + id,
+      facilities: "/profile/listings/edit/facilities/" + id,
+      safetyamenities: "/profile/listings/edit/safetyamenities/" + id,
+      location: "/profile/listings/edit/location/" + id,
+      description: "/profile/listings/edit/description/" + id,
+      photos: "/profile/listings/edit/photos/" + id,
+      houserules: "/profile/listings/edit/houserules/" + id,
+      checking: "/profile/listings/edit/checking/" + id,
+      price: "/profile/listings/edit/price/" + id
     };
   }
 
@@ -178,7 +178,7 @@ class EditListingPage extends React.Component {
       requester.getListingProgress(id).then(res => {
         res.body.then(data => {
           this.setListingData(JSON.parse(data.data));
-          const step = steps[search.split('=')[1]];
+          const step = steps[search.split("=")[1]];
           const path = `/profile/listings/edit/${step}/${id}`;
           this.props.history.push(path);
         });
@@ -194,7 +194,7 @@ class EditListingPage extends React.Component {
   }
 
   setListingData(data) {
-    const location = data.location.split(', ');
+    const location = data.location.split(", ");
     const city = location[0];
     const state = location[1];
     const country = location[2];
@@ -209,13 +209,23 @@ class EditListingPage extends React.Component {
       countryCode: countryCode,
       isAddressSelected: isAddressSelected,
       propertyType: data.type.toString(),
-      roomType: data.details.roomType ? data.details.roomType : this.getDetailValue(data, 'roomType'),
-      dedicatedSpace: data.details.dedicatedSpace ? data.details.dedicatedSpace : this.getDetailValue(data, 'dedicatedSpace'),
-      propertySize: data.details.size ? data.details.size : this.getDetailValue(data, 'size'),
+      roomType: data.details.roomType
+        ? data.details.roomType
+        : this.getDetailValue(data, "roomType"),
+      dedicatedSpace: data.details.dedicatedSpace
+        ? data.details.dedicatedSpace
+        : this.getDetailValue(data, "dedicatedSpace"),
+      propertySize: data.details.size
+        ? data.details.size
+        : this.getDetailValue(data, "size"),
       guestsIncluded: data.guestsIncluded ? data.guestsIncluded : 0,
-      bedroomsCount: data.details.bedroomsCount ? data.details.bedroomsCount : this.getDetailValue(data, 'bedroomsCount'),
+      bedroomsCount: data.details.bedroomsCount
+        ? data.details.bedroomsCount
+        : this.getDetailValue(data, "bedroomsCount"),
       bedrooms: data.rooms,
-      bathrooms: data.details.bathrooms ? Number(data.details.bathrooms) : this.getDetailValue(data, 'bathrooms'),
+      bathrooms: data.details.bathrooms
+        ? Number(data.details.bathrooms)
+        : this.getDetailValue(data, "bathrooms"),
       facilities: data.amenities ? new Set(this.getAmenities(data)) : new Set(),
       street: data.description.street,
       name: data.name,
@@ -223,16 +233,26 @@ class EditListingPage extends React.Component {
       interaction: data.description.interaction,
       uploadedFilesUrls: this.populateFileUrls(data.pictures),
       uploadedFilesThumbUrls: this.populateFileThumbUrls(data.pictures),
-      suitableForChildren: data.details.suitableForChildren ? data.details.suitableForChildren : this.getDetailValue(data, 'suitableForChildren'),
-      suitableForInfants: data.details.suitableForInfants ? data.details.suitableForInfants : this.getDetailValue(data, 'suitableForInfants'),
-      suitableForPets: data.details.suitableForPets ? data.details.suitableForPets : this.getDetailValue(data, 'suitableForPets'),
-      smokingAllowed: data.details.smokingAllowed ? data.details.smokingAllowed : this.getDetailValue(data, 'smokingAllowed'),
-      eventsAllowed: data.details.eventsAllowed ? data.details.eventsAllowed : this.getDetailValue(data, 'eventsAllowed'),
+      suitableForChildren: data.details.suitableForChildren
+        ? data.details.suitableForChildren
+        : this.getDetailValue(data, "suitableForChildren"),
+      suitableForInfants: data.details.suitableForInfants
+        ? data.details.suitableForInfants
+        : this.getDetailValue(data, "suitableForInfants"),
+      suitableForPets: data.details.suitableForPets
+        ? data.details.suitableForPets
+        : this.getDetailValue(data, "suitableForPets"),
+      smokingAllowed: data.details.smokingAllowed
+        ? data.details.smokingAllowed
+        : this.getDetailValue(data, "smokingAllowed"),
+      eventsAllowed: data.details.eventsAllowed
+        ? data.details.eventsAllowed
+        : this.getDetailValue(data, "eventsAllowed"),
       otherHouseRules: this.getOtherHouseRules(data),
-      checkinStart: moment(data.checkinStart, 'HH:mm:ss').format('HH:mm'),
-      checkinEnd: moment(data.checkinEnd, 'HH:mm:ss').format('HH:mm'),
-      checkoutStart: moment(data.checkoutStart, 'HH:mm:ss').format('HH:mm'),
-      checkoutEnd: moment(data.checkoutEnd, 'HH:mm:ss').format('HH:mm'),
+      checkinStart: moment(data.checkinStart, "HH:mm:ss").format("HH:mm"),
+      checkinEnd: moment(data.checkinEnd, "HH:mm:ss").format("HH:mm"),
+      checkoutStart: moment(data.checkoutStart, "HH:mm:ss").format("HH:mm"),
+      checkoutEnd: moment(data.checkoutEnd, "HH:mm:ss").format("HH:mm"),
       defaultDailyPrice: data.defaultDailyPrice,
       cleaningFee: data.cleaningFee,
       depositRate: data.depositRate,
@@ -243,9 +263,11 @@ class EditListingPage extends React.Component {
   }
 
   getOtherHouseRules(data) {
-    const houseRules = data.houseRules ? data.houseRules : data.description.houseRules;
+    const houseRules = data.houseRules
+      ? data.houseRules
+      : data.description.houseRules;
     if (houseRules && houseRules.length > 0) {
-      return new Set(houseRules.split('\r\n'));
+      return new Set(houseRules.split("\r\n"));
     }
 
     return new Set();
@@ -253,7 +275,7 @@ class EditListingPage extends React.Component {
 
   onChange(event) {
     this.setState({
-      [event.target.name]: event.target.value,
+      [event.target.name]: event.target.value
     });
   }
 
@@ -274,14 +296,18 @@ class EditListingPage extends React.Component {
   updateCounter(event) {
     const name = event.target.name;
     let value = Number(event.target.value);
-    if (value < 1) { value = 1; }
+    if (value < 1) {
+      value = 1;
+    }
     this.setState({ [name]: value });
   }
 
   updateBedrooms(event) {
-    let bedroomsCount = Number(this.state.bedroomsCount.split(' ')[0]);
-    let value = Number(event.target.value.split(' ')[0]);
-    if (value < 0) { value = 0; }
+    let bedroomsCount = Number(this.state.bedroomsCount.split(" ")[0]);
+    let value = Number(event.target.value.split(" ")[0]);
+    if (value < 0) {
+      value = 0;
+    }
 
     let newBedrooms = JSON.parse(JSON.stringify(this.state.bedrooms));
 
@@ -297,8 +323,8 @@ class EditListingPage extends React.Component {
     // console.log(newBedrooms);
 
     this.setState({
-      bedroomsCount: value + ' ' + event.target.value.split(' ')[1],
-      bedrooms: newBedrooms,
+      bedroomsCount: value + " " + event.target.value.split(" ")[1],
+      bedrooms: newBedrooms
     });
   }
 
@@ -306,10 +332,12 @@ class EditListingPage extends React.Component {
     const bedrooms = JSON.parse(JSON.stringify(this.state.bedrooms));
     const name = e.target.name;
     let value = Number(e.target.value);
-    if (value < 0) { value = 0; }
+    if (value < 0) {
+      value = 0;
+    }
     bedrooms[bedroom][name] = value;
     this.setState({
-      bedrooms: bedrooms,
+      bedrooms: bedrooms
     });
   }
 
@@ -322,17 +350,16 @@ class EditListingPage extends React.Component {
     }
 
     this.setState({
-      facilities: facilities,
+      facilities: facilities
     });
   }
 
   getText(text) {
     if (text) {
-      let index = text.indexOf('Neighborhood:');
+      let index = text.indexOf("Neighborhood:");
       if (index >= 0) {
         return text.substr(0, index).trim();
-      }
-      else {
+      } else {
         return text.trim();
       }
     }
@@ -347,7 +374,7 @@ class EditListingPage extends React.Component {
       rules.add(value);
       this.setState({
         otherHouseRules: rules,
-        otherRuleText: '',
+        otherRuleText: ""
       });
     }
   }
@@ -356,7 +383,7 @@ class EditListingPage extends React.Component {
     const rules = this.state.otherHouseRules;
     rules.delete(value);
     this.setState({
-      otherHouseRules: rules,
+      otherHouseRules: rules
     });
   }
 
@@ -364,7 +391,7 @@ class EditListingPage extends React.Component {
     return {
       singleBedCount: 0,
       doubleBedCount: 0,
-      kingBedCount: 0,
+      kingBedCount: 0
     };
   }
 
@@ -412,7 +439,11 @@ class EditListingPage extends React.Component {
   }
 
   handleLocationChange({ position, address }) {
-    this.setState({ lat: position.lat, lng: position.lng, mapAddress: address });
+    this.setState({
+      lat: position.lat,
+      lng: position.lng,
+      mapAddress: address
+    });
   }
 
   editListing() {
@@ -427,15 +458,14 @@ class EditListingPage extends React.Component {
             const path = `/profile/listings/calendar/${id}`;
             this.props.history.push(path);
           });
-        }
-        else {
+        } else {
           this.setState({ loading: false });
           res.errors.then(data => {
             const errors = data.errors;
             for (let key in errors) {
-              console.log('error');
-              if (typeof errors[key] !== 'function') {
-                NotificationManager.warning(errors[key].message, '', LONG);
+              console.log("error");
+              if (typeof errors[key] !== "function") {
+                NotificationManager.warning(errors[key].message, "", LONG);
               }
             }
           });
@@ -445,16 +475,19 @@ class EditListingPage extends React.Component {
       requester.editListing(this.state.listingId, listing).then(res => {
         if (res.success) {
           this.setState({ loading: false });
-          this.props.history.push('/profile/listings');
-          NotificationManager.success(LISTING_UPDATED, 'Listing Operations', LONG);
-
+          this.props.history.push("/profile/listings");
+          NotificationManager.success(
+            LISTING_UPDATED,
+            "Listing Operations",
+            LONG
+          );
         } else {
           this.setState({ loading: false });
           res.errors.then(data => {
             const errors = data.errors;
             for (let key in errors) {
-              if (typeof errors[key] !== 'function') {
-                NotificationManager.warning(errors[key].message, '', LONG);
+              if (typeof errors[key] !== "function") {
+                NotificationManager.warning(errors[key].message, "", LONG);
               }
             }
           });
@@ -468,95 +501,109 @@ class EditListingPage extends React.Component {
       progressId: this.state.progressId,
       listingType: this.state.listingType,
       type: this.state.propertyType,
-      location: `${this.state.city}, ${this.state.state}, ${this.state.country}, ${this.state.countryCode}`,
+      location: `${this.state.city}, ${this.state.state}, ${
+        this.state.country
+      }, ${this.state.countryCode}`,
       details: [
         {
           value: this.state.roomType,
-          detail: { name: 'roomType' }
+          detail: { name: "roomType" }
         },
         {
           value: this.state.propertySize,
-          detail: { name: 'size' }
+          detail: { name: "size" }
         },
         {
           value: this.state.bedroomsCount,
-          detail: { name: 'bedroomsCount' }
+          detail: { name: "bedroomsCount" }
         },
         {
           value: this.state.bathrooms,
-          detail: { name: 'bathrooms' }
+          detail: { name: "bathrooms" }
         },
         {
           value: this.state.suitableForChildren,
-          detail: { name: 'suitableForChildren' }
+          detail: { name: "suitableForChildren" }
         },
         {
           value: this.state.suitableForInfants,
-          detail: { name: 'suitableForInfants' }
+          detail: { name: "suitableForInfants" }
         },
         {
           value: this.state.suitableForPets,
-          detail: { name: 'suitableForPets' }
+          detail: { name: "suitableForPets" }
         },
         {
           value: this.state.smokingAllowed,
-          detail: { name: 'smokingAllowed' }
+          detail: { name: "smokingAllowed" }
         },
         {
           value: this.state.eventsAllowed,
-          detail: { name: 'eventsAllowed' }
+          detail: { name: "eventsAllowed" }
         },
         {
           value: this.state.dedicatedSpace,
-          detail: { name: 'dedicatedSpace' }
+          detail: { name: "dedicatedSpace" }
         },
         {
           value: this.state.lng,
-          detail: { name: 'lng' }
+          detail: { name: "lng" }
         },
         {
           value: this.state.lat,
-          detail: { name: 'lat' }
-        },
+          detail: { name: "lat" }
+        }
       ],
       description: {
         street: this.state.street,
         text: this.state.text,
         interaction: this.state.interaction,
-        houseRules: Array.from(this.state.otherHouseRules).join('\r\n'),
+        houseRules: Array.from(this.state.otherHouseRules).join("\r\n")
       },
       guestsIncluded: this.state.guestsIncluded,
       rooms: this.state.bedrooms,
       amenities: this.state.facilities,
       name: this.state.name,
       pictures: this.getPhotos(),
-      checkinStart: moment(this.state.checkinStart, 'HH:mm').format('YYYY-MM-DDTHH:mm:ss.SSS'),
-      checkinEnd: moment(this.state.checkinEnd, 'HH:mm').format('YYYY-MM-DDTHH:mm:ss.SSS'),
-      checkoutStart: moment(this.state.checkoutStart, 'HH:mm').format('YYYY-MM-DDTHH:mm:ss.SSS'),
-      checkoutEnd: moment(this.state.checkoutEnd, 'HH:mm').format('YYYY-MM-DDTHH:mm:ss.SSS'),
+      checkinStart: moment(this.state.checkinStart, "HH:mm").format(
+        "YYYY-MM-DDTHH:mm:ss.SSS"
+      ),
+      checkinEnd: moment(this.state.checkinEnd, "HH:mm").format(
+        "YYYY-MM-DDTHH:mm:ss.SSS"
+      ),
+      checkoutStart: moment(this.state.checkoutStart, "HH:mm").format(
+        "YYYY-MM-DDTHH:mm:ss.SSS"
+      ),
+      checkoutEnd: moment(this.state.checkoutEnd, "HH:mm").format(
+        "YYYY-MM-DDTHH:mm:ss.SSS"
+      ),
       defaultDailyPrice: this.state.defaultDailyPrice,
       cleaningFee: this.state.cleaningFee,
       depositRate: this.state.depositRate,
-      currency: this.state.currency,
+      currency: this.state.currency
     };
 
     return listing;
   }
 
   handleImageUpload(files) {
-    files.forEach((file) => {
-      let upload = request.post(LOCKTRIP_UPLOAD_URL)
-        .field('image', file);
-
+    files.forEach(file => {
+      let upload = request.post(LOCKTRIP_UPLOAD_URL).field("image", file);
 
       upload.end((err, response) => {
         if (err) {
           console.error(err);
         }
-        if (response.body.secure_url !== '') {
+        if (response.body.secure_url !== "") {
           this.setState(previousState => ({
-            uploadedFilesUrls: [...previousState.uploadedFilesUrls, Config.getValue('imgHost') + response.body.original],
-            uploadedFilesThumbUrls: [...previousState.uploadedFilesThumbUrls, Config.getValue('imgHost') + response.body.thumbnail]
+            uploadedFilesUrls: [
+              ...previousState.uploadedFilesUrls,
+              Config.getValue("imgHost") + response.body.original
+            ],
+            uploadedFilesThumbUrls: [
+              ...previousState.uploadedFilesThumbUrls,
+              Config.getValue("imgHost") + response.body.thumbnail
+            ]
           }));
         }
       });
@@ -569,11 +616,17 @@ class EditListingPage extends React.Component {
     let imageUrl = e.target.nextSibling;
 
     if (imageUrl.src !== null) {
-      let indexOfImage = this.state.uploadedFilesUrls.indexOf(imageUrl.getAttribute('src'));
+      let indexOfImage = this.state.uploadedFilesUrls.indexOf(
+        imageUrl.getAttribute("src")
+      );
 
       this.setState({
-        uploadedFilesUrls: update(this.state.uploadedFilesUrls, { $splice: [[indexOfImage, 1]] }),
-        uploadedFilesThumbUrls: update(this.state.uploadedFilesThumbUrls, { $splice: [[indexOfImage, 1]] })
+        uploadedFilesUrls: update(this.state.uploadedFilesUrls, {
+          $splice: [[indexOfImage, 1]]
+        }),
+        uploadedFilesThumbUrls: update(this.state.uploadedFilesThumbUrls, {
+          $splice: [[indexOfImage, 1]]
+        })
       });
     }
   }
@@ -584,7 +637,7 @@ class EditListingPage extends React.Component {
       let listing = this.createListingObject();
       let data = {
         step: step,
-        data: JSON.stringify(listing),
+        data: JSON.stringify(listing)
       };
 
       requester.updateListingProgress(progressId, data);
@@ -603,7 +656,7 @@ class EditListingPage extends React.Component {
   }
 
   getAmenities(data) {
-    if (data.amenities[0] && data.amenities[0].hasOwnProperty('id')) {
+    if (data.amenities[0] && data.amenities[0].hasOwnProperty("id")) {
       return data.amenities.map(x => x.id);
     } else {
       return data.amenities;
@@ -612,8 +665,16 @@ class EditListingPage extends React.Component {
 
   onSortEnd({ oldIndex, newIndex }) {
     this.setState({
-      uploadedFilesUrls: arrayMove(this.state.uploadedFilesUrls, oldIndex, newIndex),
-      uploadedFilesThumbUrls: arrayMove(this.state.uploadedFilesThumbUrls, oldIndex, newIndex)
+      uploadedFilesUrls: arrayMove(
+        this.state.uploadedFilesUrls,
+        oldIndex,
+        newIndex
+      ),
+      uploadedFilesThumbUrls: arrayMove(
+        this.state.uploadedFilesThumbUrls,
+        oldIndex,
+        newIndex
+      )
     });
   }
 
@@ -623,7 +684,6 @@ class EditListingPage extends React.Component {
     let addressComponentsArr = [];
 
     for (let i = 0; i < addressComponents.length; i++) {
-
       let addressComponent = {
         name: addressComponents[i].long_name,
         shortName: addressComponents[i].short_name,
@@ -640,92 +700,170 @@ class EditListingPage extends React.Component {
     return (
       <div>
         <Switch>
-          <Route path={routes.landing} render={() => <ListingLandingPage
-            values={this.state}
-            onChange={this.onChange}
-            updateProgress={this.updateProgress}
-            routes={routes}
-            next={routes.placetype} />} />
-          <Route exact path={routes.placetype} render={() => <ListingPlaceType
-            values={this.state}
-            toggleCheckbox={this.toggleCheckbox}
-            onChange={this.onChange}
-            onNumberChange={this.onNumberChange}
-            updateProgress={this.updateProgress}
-            routes={routes}
-            prev={routes.landing}
-            next={routes.accommodation} />} />
-          <Route exact path={routes.accommodation} render={() => <ListingAccommodations
-            values={this.state}
-            updateCounter={this.updateCounter}
-            updateBedrooms={this.updateBedrooms}
-            updateBedCount={this.updateBedCount}
-            updateProgress={this.updateProgress}
-            routes={routes}
-            prev={routes.placetype}
-            next={routes.facilities} />} />
-          <Route exact path={routes.facilities} render={() => <ListingFacilities
-            values={this.state}
-            toggle={this.toggleFacility}
-            updateProgress={this.updateProgress}
-            routes={routes}
-            prev={routes.accommodation}
-            next={routes.safetyamenities} />} />
-          <Route exact path={routes.safetyamenities} render={() => <ListingSafetyFacilities
-            values={this.state}
-            toggle={this.toggleFacility}
-            updateProgress={this.updateProgress}
-            routes={routes}
-            prev={routes.facilities}
-            next={routes.location} />} />
-          <Route exact path={routes.location} render={() => <ListingLocation
-            values={this.state}
-            onChange={this.onChange}
-            onSelect={this.onSelect}
-            updateProgress={this.updateProgress}
-            routes={routes}
-            prev={routes.safetyamenities}
-            next={routes.description}
-            handleLocationChange={this.handleLocationChange}
-            convertGoogleApiAddressComponents={this.convertGoogleApiAddressComponents} />} />
-          <Route exact path={routes.description} render={() => <ListingDescription
-            values={this.state}
-            onChange={this.onChange}
-            updateProgress={this.updateProgress}
-            routes={routes}
-            prev={routes.location}
-            next={routes.photos} />} />
-          <Route exact path={routes.photos} render={() => <ListingPhotos
-            values={this.state}
-            onImageDrop={this.handleImageUpload}
-            removePhoto={this.removePhoto}
-            onSortEnd={this.onSortEnd}
-            updateProgress={this.updateProgress}
-            routes={routes}
-            prev={routes.description}
-            next={routes.houserules} />} />
-          <Route exact path={routes.houserules} render={() => <ListingHouseRules
-            values={this.state}
-            onChange={this.onChange}
-            addRule={this.addHouseRule}
-            removeRule={this.removeHouseRule}
-            updateProgress={this.updateProgress}
-            routes={routes}
-            prev={routes.photos}
-            next={routes.checking} />} />
-          <Route exact path={routes.checking} render={() => <ListingChecking
-            values={this.state}
-            updateDropdown={this.onChange}
-            updateProgress={this.updateProgress}
-            routes={routes}
-            prev={routes.houserules}
-            next={routes.price} />} />
-          <Route exact path={routes.price} render={() => <ListingPrice
-            values={this.state}
-            onChange={this.onChange}
-            finish={this.editListing}
-            routes={routes}
-            prev={routes.checking} />} />
+          <Route
+            path={routes.landing}
+            render={() => (
+              <ListingLandingPage
+                values={this.state}
+                onChange={this.onChange}
+                updateProgress={this.updateProgress}
+                routes={routes}
+                next={routes.placetype}
+              />
+            )}
+          />
+          <Route
+            exact
+            path={routes.placetype}
+            render={() => (
+              <ListingPlaceType
+                values={this.state}
+                toggleCheckbox={this.toggleCheckbox}
+                onChange={this.onChange}
+                onNumberChange={this.onNumberChange}
+                updateProgress={this.updateProgress}
+                routes={routes}
+                prev={routes.landing}
+                next={routes.accommodation}
+              />
+            )}
+          />
+          <Route
+            exact
+            path={routes.accommodation}
+            render={() => (
+              <ListingAccommodations
+                values={this.state}
+                updateCounter={this.updateCounter}
+                updateBedrooms={this.updateBedrooms}
+                updateBedCount={this.updateBedCount}
+                updateProgress={this.updateProgress}
+                routes={routes}
+                prev={routes.placetype}
+                next={routes.facilities}
+              />
+            )}
+          />
+          <Route
+            exact
+            path={routes.facilities}
+            render={() => (
+              <ListingFacilities
+                values={this.state}
+                toggle={this.toggleFacility}
+                updateProgress={this.updateProgress}
+                routes={routes}
+                prev={routes.accommodation}
+                next={routes.safetyamenities}
+              />
+            )}
+          />
+          <Route
+            exact
+            path={routes.safetyamenities}
+            render={() => (
+              <ListingSafetyFacilities
+                values={this.state}
+                toggle={this.toggleFacility}
+                updateProgress={this.updateProgress}
+                routes={routes}
+                prev={routes.facilities}
+                next={routes.location}
+              />
+            )}
+          />
+          <Route
+            exact
+            path={routes.location}
+            render={() => (
+              <ListingLocation
+                values={this.state}
+                onChange={this.onChange}
+                onSelect={this.onSelect}
+                updateProgress={this.updateProgress}
+                routes={routes}
+                prev={routes.safetyamenities}
+                next={routes.description}
+                handleLocationChange={this.handleLocationChange}
+                convertGoogleApiAddressComponents={
+                  this.convertGoogleApiAddressComponents
+                }
+              />
+            )}
+          />
+          <Route
+            exact
+            path={routes.description}
+            render={() => (
+              <ListingDescription
+                values={this.state}
+                onChange={this.onChange}
+                updateProgress={this.updateProgress}
+                routes={routes}
+                prev={routes.location}
+                next={routes.photos}
+              />
+            )}
+          />
+          <Route
+            exact
+            path={routes.photos}
+            render={() => (
+              <ListingPhotos
+                values={this.state}
+                onImageDrop={this.handleImageUpload}
+                removePhoto={this.removePhoto}
+                onSortEnd={this.onSortEnd}
+                updateProgress={this.updateProgress}
+                routes={routes}
+                prev={routes.description}
+                next={routes.houserules}
+              />
+            )}
+          />
+          <Route
+            exact
+            path={routes.houserules}
+            render={() => (
+              <ListingHouseRules
+                values={this.state}
+                onChange={this.onChange}
+                addRule={this.addHouseRule}
+                removeRule={this.removeHouseRule}
+                updateProgress={this.updateProgress}
+                routes={routes}
+                prev={routes.photos}
+                next={routes.checking}
+              />
+            )}
+          />
+          <Route
+            exact
+            path={routes.checking}
+            render={() => (
+              <ListingChecking
+                values={this.state}
+                updateDropdown={this.onChange}
+                updateProgress={this.updateProgress}
+                routes={routes}
+                prev={routes.houserules}
+                next={routes.price}
+              />
+            )}
+          />
+          <Route
+            exact
+            path={routes.price}
+            render={() => (
+              <ListingPrice
+                values={this.state}
+                onChange={this.onChange}
+                finish={this.editListing}
+                routes={routes}
+                prev={routes.checking}
+              />
+            )}
+          />
         </Switch>
       </div>
     );
