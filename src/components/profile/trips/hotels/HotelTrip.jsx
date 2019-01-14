@@ -6,6 +6,8 @@ import ProfileFlexContainer from '../../flexContainer/ProfileFlexContainer';
 import PropTypes from 'prop-types';
 import React from 'react';
 import moment from 'moment';
+import { NotificationManager } from 'react-notifications';
+import { LONG } from '../../../../constants/notificationDisplayTimes.js';
 
 const STATUS = {
   DONE: 'COMPLETE',
@@ -105,7 +107,8 @@ class HotelTrip extends React.Component {
             {(isCompleted || this.props.trip.has_details === 1) && <i className="fa fa-bolt icon" />}
             <div className="content-row">
               {isCompleted &&
-                <button type="submit" onClick={e => { e.preventDefault(); this.props.onTripSelect(this.props.trip.id); this.props.handleCancelReservation(); }}>Cancel Trip</button>
+                /* <button type="submit" onClick={e => { e.preventDefault(); this.props.onTripSelect(this.props.trip.id); this.props.handleCancelReservation(); }}>Cancel Trip</button> */
+                <button type="submit" onClick={e => { e.preventDefault(); NotificationManager.warning('Please, contact the user support.', 'Temporarily disabled.', LONG); }}>Cancel Trip</button>
               }
               {this.props.trip.has_details === 1 && <Link to={`/profile/trips/hotels/${this.props.trip.id}`}>Details</Link>}
             </div>

@@ -113,6 +113,8 @@ class MainNav extends React.Component {
                 <Link className="list-menu-item" to="/profile/reservations">Hosting</Link>
                 <Link className="list-menu-item" to="/profile/trips">Traveling</Link>
                 <Link className="list-menu-item" to="/profile/wallet">Wallet</Link>
+                <a href="https://locktrip.zendesk.com/hc/en-us" target="_blank" rel="noopener noreferrer" class="list-menu-item">FAQ</a>
+                <a href="https://locktrip.zendesk.com/hc/en-us" target="_blank" rel="noopener noreferrer" class="list-menu-item">Support</a>
                 <Link className="list-menu-item" to="/profile/messages">
                   <div className="messages">
                     <span className="fa fa-envelope-o mailbox"></span>

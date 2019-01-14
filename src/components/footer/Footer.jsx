@@ -36,6 +36,8 @@ class Footer extends React.Component {
                       <h5>LockTrip</h5>
                     </li>
                     <li><Link to="/help">Help</Link></li>
+                    <li><a href="https://locktrip.zendesk.com/hc/en-us" target="_blank" rel="noopener noreferrer">FAQ</a></li>
+                    <li><a href="https://locktrip.zendesk.com/hc/en-us" target="_blank" rel="noopener noreferrer">Support</a></li>
                     <li><a href="https://locktrip.com/terms.html" target="_blank" rel="noopener noreferrer">Terms and Conditions</a></li>
                     <li><a href="https://locktrip.com/terms.html" target="_blank" rel="noopener noreferrer">Legal Information</a></li>
                     <li><a href="https://locktrip.com/privacy.html" target="_blank" rel="noopener noreferrer">Privacy Policy</a></li>
