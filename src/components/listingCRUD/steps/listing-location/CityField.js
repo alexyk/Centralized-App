@@ -16,7 +16,7 @@ interface CityGoogleClient {
   getCityAndStateOfPlaceWithId(placeId: string): string;
 }
 
-class GoogleClient implements CityGoogleClient {
+export class GoogleClient implements CityGoogleClient {
   constructor(field) {
     this.autocompleteService = new window.google.maps.places.AutocompleteService();
     this.placesService = new window.google.maps.places.PlacesService(field);
@@ -68,7 +68,23 @@ class GoogleClient implements CityGoogleClient {
   }
 }
 
-export default class CityField extends React.Component {
+type Props = {
+  onCityChange: Function,
+  onClearCityField: Function,
+  initialCityValue?: string,
+  countryCode?: string
+};
+type State = {
+  selectedOption: null | ReactSelectOption,
+  input: string
+};
+
+type ReactSelectOption = {
+  label: string,
+  value: string
+};
+
+export default class CityField extends React.Component<Props, State> {
   googleClient: CityGoogleClient;
 
   constructor(props) {
@@ -87,7 +103,7 @@ export default class CityField extends React.Component {
       this
     );
     this.loadOptions = this.loadOptions.bind(this);
-    this.onChange = this.onChange.bind(this);
+    this.onSelectedCityChange = this.onSelectedCityChange.bind(this);
   }
 
   componentDidMount() {
@@ -146,7 +162,7 @@ export default class CityField extends React.Component {
     }));
   }
 
-  onChange(selectedOption) {
+  onSelectedCityChange(selectedOption) {
     if (!selectedOption || !selectedOption.value) return;
     this.googleClient
       .getCityAndStateOfPlaceWithId(selectedOption.value)
@@ -157,14 +173,13 @@ export default class CityField extends React.Component {
   }
 
   render() {
-    let { selectedOption } = this.state;
     return (
       <React.Fragment>
         <AsyncSelect
-          value={selectedOption}
+          value={this.state.selectedOption}
           styles={customStyles}
           loadOptions={this.loadOptions}
-          onChange={this.onChange}
+          onChange={this.onSelectedCityChange}
           placeholder={"-- Select City --"}
           isClearable
           required

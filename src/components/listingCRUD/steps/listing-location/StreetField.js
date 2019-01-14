@@ -12,7 +12,7 @@ export interface StreetGoogleClient {
   ): undefined | { lat: number, lng: number };
 }
 
-class GoogleClient {
+class GoogleClient implements StreetGoogleClient {
   constructor(field) {
     this.placesService = new window.google.maps.places.PlacesService(field);
     this.autocompleteService = new window.google.maps.places.AutocompleteService();
