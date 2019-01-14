@@ -2,6 +2,58 @@ import React from "react";
 import AsyncSelect from "react-select/lib/Async";
 import customStyles from "./react-select-styles";
 
+class GoogleClient {
+  constructor(field) {
+    this.autocompleteService = new window.google.maps.places.AutocompleteService();
+    this.placesService = new window.google.maps.places.PlacesService(field);
+  }
+
+  async fetchCitiesForInput(input, countryCode) {
+    var predictions = await this.fetchPredictionsForInput(input, countryCode);
+    let predictedCountries = GoogleClient.filterCountries(predictions);
+    return predictedCountries;
+  }
+
+  fetchPredictionsForInput(input, countryCode) {
+    return new Promise(resolve => {
+      this.autocompleteService.getPlacePredictions(
+        {
+          input: input,
+          componentRestrictions: {
+            country: countryCode
+          }
+        },
+        (predictions, status) => {
+          resolve(predictions);
+        }
+      );
+    });
+  }
+
+  getCityAndStateOfPlaceWithId(placeId) {
+    return new Promise((resolve, reject) => {
+      this.placesService.getDetails(
+        {
+          placeId
+        },
+        (data, status) => {
+          const ac = data.address_components;
+          const city = ac.find(a => a.types.includes("locality"));
+          const state = ac.find(a =>
+            a.types.includes("administrative_area_level_1")
+          );
+
+          resolve(city.long_name + ", " + state.long_name);
+        }
+      );
+    });
+  }
+
+  static filterCountries(predictions) {
+    return (predictions || []).filter(p => p.types.includes("locality"));
+  }
+}
+
 export default class CityField extends React.Component {
   constructor(props) {
     super(props);
@@ -12,7 +64,6 @@ export default class CityField extends React.Component {
     };
 
     this.adaptCitiesForReactSelect = this.adaptCitiesForReactSelect.bind(this);
-    this.filterCountries = this.filterCountries.bind(this);
     this.tryToSetStateToInitialValue = this.tryToSetStateToInitialValue.bind(
       this
     );
@@ -21,15 +72,10 @@ export default class CityField extends React.Component {
     );
     this.loadOptions = this.loadOptions.bind(this);
     this.onChange = this.onChange.bind(this);
-    this.getDetails = this.getDetails.bind(this);
   }
 
   componentDidMount() {
-    this.autocompleteService = new window.google.maps.places.AutocompleteService();
-    this.placesService = new window.google.maps.places.PlacesService(
-      this.hiddenMapInputField
-    );
-
+    this.googleClient = new GoogleClient(this.hiddenMapInputField);
     this.tryToSetStateToInitialValue();
   }
 
@@ -65,32 +111,16 @@ export default class CityField extends React.Component {
 
   async loadOptions(input, callback) {
     if (!input) return;
-    var a = await this.fetchOptions(input);
-    let b = this.filterCountries(a);
-    let c = this.adaptCitiesForReactSelect(b);
-    console.log("c", c);
-    callback(c);
-  }
 
-  fetchOptions(input) {
-    const as = this.autocompleteService;
-    return new Promise(resolve => {
-      as.getPlacePredictions(
-        {
-          input: input,
-          componentRestrictions: {
-            country: this.props.countryCode
-          }
-        },
-        (predictions, status) => {
-          resolve(predictions);
-        }
-      );
-    });
-  }
+    let predictedCities = await GoogleClient.fetchCitiesForInput(
+      input,
+      this.props.countryCode
+    );
 
-  filterCountries(predictions) {
-    return (predictions || []).filter(p => p.types.includes("locality"));
+    let adaptedPredictedCities = this.adaptCitiesForReactSelect(
+      predictedCities
+    );
+    callback(adaptedPredictedCities);
   }
 
   adaptCitiesForReactSelect(cities) {
@@ -102,29 +132,12 @@ export default class CityField extends React.Component {
 
   onChange(selectedOption) {
     if (!selectedOption || !selectedOption.value) return;
-    this.getDetails(selectedOption.value).then(label => {
-      this.setState({ selectedOption: { ...selectedOption, label } });
-      this.props.onCityChange(label);
-    });
-  }
-
-  getDetails(placeId) {
-    return new Promise((resolve, reject) => {
-      this.placesService.getDetails(
-        {
-          placeId: placeId
-        },
-        (data, status) => {
-          const ac = data.address_components;
-          const city = ac.find(a => a.types.includes("locality"));
-          const state = ac.find(a =>
-            a.types.includes("administrative_area_level_1")
-          );
-
-          resolve(city.long_name + ", " + state.long_name);
-        }
-      );
-    });
+    this.googleClient
+      .getCityAndStateOfPlaceWithId(selectedOption.value)
+      .then(label => {
+        this.setState({ selectedOption: { ...selectedOption, label } });
+        this.props.onCityChange(label);
+      });
   }
 
   render() {

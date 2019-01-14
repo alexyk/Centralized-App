@@ -3,51 +3,21 @@ import * as R from "ramda";
 import AsyncSelect from "react-select/lib/Async";
 import customStyles from "./react-select-styles";
 
-export default class CountryField extends React.Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      selectedOption: null,
-      input: ""
-    };
-
-    this.adaptCountriesForReactSelect = this.adaptCountriesForReactSelect.bind(
-      this
-    );
-    this.filterCountries = this.filterCountries.bind(this);
-    this.loadOptions = this.loadOptions.bind(this);
-    this.onChange = this.onChange.bind(this);
-    this.getCountryCode = this.getCountryCode.bind(this);
-  }
-
-  componentDidMount() {
+class GoogleClient {
+  constructor(field) {
     this.autocompleteService = new window.google.maps.places.AutocompleteService();
-    this.placesService = new window.google.maps.places.PlacesService(
-      this.hiddenMapInputField
-    );
-    let cn = R.path(["props", "initialCountryValue", "countryName"], this);
-    if (cn) {
-      console.log(this.props);
-      this.setState({
-        selectedOption: { label: cn }
-      });
-    }
+    this.placesService = new window.google.maps.places.PlacesService(field);
   }
 
-  async loadOptions(input, callback) {
-    if (!input) return;
-    var a = await this.fetchOptions(input);
-    let b = this.filterCountries(a);
-    let c = this.adaptCountriesForReactSelect(b);
-    console.log("c", c);
-    callback(c);
+  async fetchPredictedCountriesForInput(input) {
+    var predictionsForInput = await this.fetchPredictionsForInput(input);
+    let predictedCountries = GoogleClient.filterCountries(predictionsForInput);
+    return predictedCountries;
   }
 
-  fetchOptions(input) {
-    const as = this.autocompleteService;
+  fetchPredictionsForInput(input) {
     return new Promise(resolve => {
-      as.getPlacePredictions(
+      this.autocompleteService.getPlacePredictions(
         {
           input: input
         },
@@ -58,33 +28,11 @@ export default class CountryField extends React.Component {
     });
   }
 
-  filterCountries(predictions) {
+  static filterCountries(predictions) {
     return (predictions || []).filter(p => p.types.includes("country"));
   }
 
-  adaptCountriesForReactSelect(countries) {
-    return (countries || []).map(country => ({
-      value: country.place_id,
-      label: country.description
-    }));
-  }
-
-  onChange(selectedOption) {
-    if (!selectedOption) return;
-    this.getCountryCode(selectedOption.value).then(
-      ({ countryCode, countryName }) => {
-        if (this.props.onCountrySelected) {
-          this.props.onCountrySelected({
-            countryCode,
-            countryName
-          });
-        }
-      }
-    );
-    this.setState({ selectedOption });
-  }
-
-  getCountryCode(placeId) {
+  getCountryCodeAndCountryNameForPlaceId(placeId) {
     return new Promise((resolve, reject) => {
       this.placesService.getDetails(
         {
@@ -98,6 +46,76 @@ export default class CountryField extends React.Component {
       );
     });
   }
+}
+
+export default class CountryField extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      selectedOption: null,
+      input: ""
+    };
+
+    this.adaptCountriesForReactSelect = this.adaptCountriesForReactSelect.bind(
+      this
+    );
+    this.loadOptions = this.loadOptions.bind(this);
+    this.onChange = this.onChange.bind(this);
+    this.tryToSetCountryNameToInitialValue = this.tryToSetCountryNameToInitialValue.bind(
+      this
+    );
+  }
+
+  componentDidMount() {
+    this.googleClient = new GoogleClient(this.hiddenMapInputField);
+    this.tryToSetStateToInitialValue();
+  }
+
+  tryToSetCountryNameToInitialValue() {
+    let countryName = R.path(
+      ["props", "initialCountryValue", "countryName"],
+      this
+    );
+    if (countryName) {
+      this.setState({
+        selectedOption: { label: countryName }
+      });
+    }
+  }
+
+  async loadOptions(input, callback) {
+    if (!input) return;
+    let predictedCountries = await this.googleClient.fetchPredictedCountriesForInput(
+      input
+    );
+    let adaptedPredictedCountries = this.adaptCountriesForReactSelect(
+      predictedCountries
+    );
+    callback(adaptedPredictedCountries);
+  }
+
+  adaptCountriesForReactSelect(countries) {
+    return (countries || []).map(country => ({
+      value: country.place_id,
+      label: country.description
+    }));
+  }
+
+  onChange(selectedOption) {
+    if (!selectedOption) return;
+    this.googleClient
+      .getCountryCodeAndCountryNameForPlaceId(selectedOption.value)
+      .then(({ countryCode, countryName }) => {
+        if (this.props.onCountrySelected) {
+          this.props.onCountrySelected({
+            countryCode,
+            countryName
+          });
+        }
+      });
+    this.setState({ selectedOption });
+  }
 
   render() {
     let { selectedOption } = this.state;
@@ -107,7 +125,6 @@ export default class CountryField extends React.Component {
           value={selectedOption}
           styles={customStyles}
           loadOptions={this.loadOptions}
-          // onInputChange={this.onInputChange}
           onChange={this.onChange}
           placeholder={"-- Select Country --"}
           isClearable
