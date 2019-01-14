@@ -17,7 +17,8 @@ import _ from 'lodash';
 
 const GOOGLE_MAPS_API_AUTOCOMPLETE_URL = 'https://maps.googleapis.com/maps/api/place/autocomplete/json';
 const GOOGLE_MAPS_API_PLACE_DETAILS_URL = 'https://maps.googleapis.com/maps/api/place/details/json';
-const GOOGLE_API_KEY = 'AIzaSyBLMYRyzRm83mQIUj3hsO-UVz8-yzfAvmU';
+//const GOOGLE_API_KEY = 'AIzaSyBLMYRyzRm83mQIUj3hsO-UVz8-yzfAvmU';
+const GOOGLE_API_KEY = 'AIzaSyChkMMG4T3hm2JyHHskUDCqLZWf9svbPGU';
 
 const customStyles = {
   container: (styles) => ({
