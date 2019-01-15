@@ -64,15 +64,18 @@ export class GoogleClient implements CityGoogleClient {
           if (status !== "OK") {
             return resolve(" , ");
           }
+          try {
+            const ac = data.address_components;
+            const city = (ac || []).find(a => a.types.includes("locality"));
+            const state = (ac || []).find(a =>
+              (a.types || []).includes("administrative_area_level_1")
+            );
 
-          const ac = data.address_components;
-          const city = (ac || []).find(a => a.types.includes("locality"));
-          const state = (ac || []).find(a =>
-            (a.types || []).includes("administrative_area_level_1")
-          );
-
-          const cityName = (city || {}).long_name || "";
-          const stateName = (state || {}).long_name || "";
+            var cityName = (city || {}).long_name || "";
+            var stateName = (state || {}).long_name || "";
+          } catch (e) {
+            return resolve(" , ");
+          }
 
           resolve(cityName + ", " + stateName);
         }
