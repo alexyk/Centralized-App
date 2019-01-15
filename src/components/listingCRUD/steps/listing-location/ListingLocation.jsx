@@ -29,12 +29,15 @@ export class ListingLocation extends React.Component {
           showErrors(this.props.values);
         };
 
+    const Form = this.props.Form || Form;
+    const Aside = this.props.BasicAside || BasicsAside;
+    const Footer = this.props.FooterNav || FooterNav;
     return (
       <div id="create-listing-location">
         <ListingCrudNav progress="33%" />
         <div className="container">
           <div className="listings create">
-            <BasicsAside routes={this.props.routes} />
+            <Aside routes={this.props.routes} />
             <div id="reservation-hotel-review-room">
               <div className="form-group">
                 <h2>Where&rsquo;s your place located?</h2>
@@ -91,7 +94,7 @@ export class ListingLocation extends React.Component {
             </div>
           </div>
         </div>
-        <FooterNav
+        <Footer
           next={next}
           prev={this.props.prev}
           handleClickNext={handleClickNext}

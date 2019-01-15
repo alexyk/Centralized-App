@@ -1,75 +1,265 @@
+import React from "react";
 import {
   render,
   fireEvent,
   cleanup,
   waitForElement
 } from "react-testing-library";
+import { ListingLocation } from "./ListingLocation";
 import { BrowserRouter } from "react-router-dom";
-import React from "react";
-import "./ListingLocation.test.mocks";
-import { shallow, mount } from "enzyme";
-import { ListingLocation } from "./listing-location/ListingLocation";
 
 afterEach(cleanup);
 
-const minimalProps = {
-  values: {
-    street: ""
-  },
-  routes: {
-    placetype: "",
-    accommodation: "",
-    facilities: "",
-    safetyamenities: "",
-    location: ""
-  },
-  location: {
-    pathname: ""
-  },
-  onChange() {}
-};
-
 describe("ListingLocation", () => {
-  describe("Street Address", () => {
-    describe("On typing", () => {
-      test("Updates the field correctly", async () => {
-        // mock the shitty react-select compoonent
-      });
-
-      test("sends a request to Autocomplete", () => {});
-
-      test("displays the options", () => {});
-    });
-    describe("On 'option selected'", () => {
-      test("updates the state", () => {});
-
-      test("the fields render correctly with the new state", () => {});
-
-      test("the map shows up", () => {});
-    });
+  let onChange;
+  beforeEach(async function() {
+    onChange = jest.fn();
   });
 
-  describe("simple fields update the state and render correctly", () => {
-    test("Country/Region", () => {});
-
-    test("City", () => {});
-
-    test("State", () => {});
-  });
-
-  describe("Next button - on click", () => {
-    test("it adapts the state for the request correctly and makes the request", () => {});
-  });
-
-  test(`displays`, async () => {
+  test("calls onCountryChange correctly", async () => {
+    const countryName = "some new country";
+    const countryCode = "some country code";
+    const Form = jest.fn(props => (
+      <div
+        data-testid="Form"
+        onClick={() => props.onCountryChange({ countryName, countryCode })}
+      />
+    ));
     const { getByTestId } = render(
       <BrowserRouter>
-        <ListingLocation {...minimalProps} />
+        <ListingLocation
+          routes={{
+            loc: "",
+            landing: "",
+            placetype: "",
+            accommodation: "",
+            facilities: "",
+            safetyamenities: "",
+            location: "",
+            description: "",
+            photos: "",
+            houserules: "",
+            checking: "",
+            price: ""
+          }}
+          location={{ pathname: "" }}
+          values={{ street: "asda sd as" }}
+          Form={Form}
+          onChange={onChange}
+        />
       </BrowserRouter>
     );
+    let node = await waitForElement(() => getByTestId("Form"));
+    fireEvent.click(node);
 
-    // let node = await waitForElement(() => getByTestId(TEST_ID));
-    // let displayedValue = node.innerHTML;
-    // expect(displayedValue).toBe(value + "");
+    expect(onChange).toHaveBeenCalledTimes(2);
+    expect(onChange.mock.calls[0][0]).toEqual({
+      target: { name: "country", value: countryName }
+    });
+    expect(onChange.mock.calls[1][0]).toEqual({
+      target: { name: "countryCode", value: countryCode }
+    });
   });
+
+  test("parses and passes initialCountryValue correctly", async () => {
+    const Form = jest.fn(props => (
+      <div
+        data-testid="Form"
+        onClick={() => props.onCountryChange({ countryName, countryCode })}
+      />
+    ));
+    const { getByTestId } = render(
+      <BrowserRouter>
+        <ListingLocation
+          routes={{
+            loc: "",
+            landing: "",
+            placetype: "",
+            accommodation: "",
+            facilities: "",
+            safetyamenities: "",
+            location: "",
+            description: "",
+            photos: "",
+            houserules: "",
+            checking: "",
+            price: ""
+          }}
+          location={{ pathname: "" }}
+          values={{
+            street: "asda sd as",
+            country: "Bulgaria",
+            countryCode: "BG"
+          }}
+          Form={Form}
+          onChange={onChange}
+        />
+      </BrowserRouter>
+    );
+    expect(
+      Form.mock.calls[Form.mock.calls.length - 1][0].initialCountryValue
+    ).toEqual({
+      countryName: "Bulgaria",
+      countryCode: "BG"
+    });
+  });
+
+  test("calls onCityChange correctly", async () => {
+    const cityAndState = "Some City, Some State";
+    const Form = jest.fn(props => (
+      <div
+        data-testid="Form"
+        onClick={() => props.onCityChange(cityAndState)}
+      />
+    ));
+    const { getByTestId } = render(
+      <BrowserRouter>
+        <ListingLocation
+          routes={{
+            loc: "",
+            landing: "",
+            placetype: "",
+            accommodation: "",
+            facilities: "",
+            safetyamenities: "",
+            location: "",
+            description: "",
+            photos: "",
+            houserules: "",
+            checking: "",
+            price: ""
+          }}
+          location={{ pathname: "" }}
+          values={{ street: "asda sd as" }}
+          Form={Form}
+          onChange={onChange}
+        />
+      </BrowserRouter>
+    );
+    let node = await waitForElement(() => getByTestId("Form"));
+    fireEvent.click(node);
+
+    expect(onChange).toHaveBeenCalledTimes(1);
+    expect(onChange.mock.calls[0][0]).toEqual({
+      target: { name: "city", value: cityAndState }
+    });
+  });
+  test("parses and passes initialCityValue correctly", async () => {
+    const Form = jest.fn(props => <div data-testid="Form" />);
+    const { getByTestId } = render(
+      <BrowserRouter>
+        <ListingLocation
+          routes={{
+            loc: "/",
+            landing: "/",
+            placetype: "/",
+            accommodation: "/",
+            facilities: "/",
+            safetyamenities: "/",
+            location: "/",
+            description: "/",
+            photos: "/",
+            houserules: "/",
+            checking: "/",
+            price: "/"
+          }}
+          location={{ pathname: "" }}
+          values={{
+            street: "asda sd as",
+            country: "Bulgaria",
+            countryCode: "BG",
+            city: "Sofia"
+          }}
+          Form={Form}
+          BasicAside={() => null}
+          FooterNav={() => null}
+          onChange={onChange}
+        />
+      </BrowserRouter>
+    );
+    expect(
+      Form.mock.calls[Form.mock.calls.length - 1][0].initialCityValue
+    ).toEqual("Sofia");
+  });
+
+  describe("calls onClearCityField correctly", () => {});
+  test("calls onStreetChange correctly", async () => {
+    const streetAddress = "Some street address";
+    const Form = jest.fn(props => (
+      <div
+        data-testid="Form"
+        onClick={() => props.onStreetChange(streetAddress)}
+      />
+    ));
+    const { getByTestId } = render(
+      <BrowserRouter>
+        <ListingLocation
+          routes={{
+            loc: "",
+            landing: "",
+            placetype: "",
+            accommodation: "",
+            facilities: "",
+            safetyamenities: "",
+            location: "",
+            description: "",
+            photos: "",
+            houserules: "",
+            checking: "",
+            price: ""
+          }}
+          location={{ pathname: "" }}
+          values={{ street: "asda sd as" }}
+          Form={Form}
+          onChange={onChange}
+        />
+      </BrowserRouter>
+    );
+    let node = await waitForElement(() => getByTestId("Form"));
+    fireEvent.click(node);
+
+    expect(onChange).toHaveBeenCalledTimes(1);
+    expect(onChange.mock.calls[0][0]).toEqual({
+      target: { name: "street", value: streetAddress }
+    });
+  });
+  test("parses and passes initialStreetValue correctly", () => {
+    const Form = jest.fn(props => <div data-testid="Form" />);
+    const { getByTestId } = render(
+      <BrowserRouter>
+        <ListingLocation
+          routes={{
+            loc: "/",
+            landing: "/",
+            placetype: "/",
+            accommodation: "/",
+            facilities: "/",
+            safetyamenities: "/",
+            location: "/",
+            description: "/",
+            photos: "/",
+            houserules: "/",
+            checking: "/",
+            price: "/"
+          }}
+          location={{ pathname: "" }}
+          values={{
+            street: "asda sd as",
+            country: "Bulgaria",
+            countryCode: "BG",
+            city: "Sofia",
+            street: "Some Street"
+          }}
+          Form={Form}
+          BasicAside={() => null}
+          FooterNav={() => null}
+          onChange={onChange}
+        />
+      </BrowserRouter>
+    );
+    expect(
+      Form.mock.calls[Form.mock.calls.length - 1][0].initialStreetValue
+    ).toEqual("Some Street");
+  });
+  describe("calls onClearStreetField correctly", () => {});
 });
