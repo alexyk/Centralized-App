@@ -17,7 +17,9 @@ class BancorConvertWidget extends Component {
   }
 
   componentWillUnmount() {
-    this.instance.deinit();
+    if (this.instance) {
+      this.instance.deinit();
+    }
   }
 
   render() {
