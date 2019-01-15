@@ -46,6 +46,9 @@ class GoogleClient implements StreetGoogleClient {
           }
         },
         (predictions, status) => {
+          if (status !== "OK") {
+            return resolve([]);
+          }
           resolve(predictions);
         }
       );
@@ -59,13 +62,17 @@ class GoogleClient implements StreetGoogleClient {
           placeId: placeId
         },
         (data, status) => {
-          if (!data) {
+          if (!data || status !== "OK") {
             return resolve(undefined);
           }
-          let location = {
-            lat: data.geometry.location.lat(),
-            lng: data.geometry.location.lng()
-          };
+          try {
+            var location = {
+              lat: data.geometry.location.lat(),
+              lng: data.geometry.location.lng()
+            };
+          } catch (e) {
+            var location = undefined;
+          }
 
           resolve(location);
         }

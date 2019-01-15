@@ -17,18 +17,21 @@ interface CityGoogleClient {
 }
 
 export class GoogleClient implements CityGoogleClient {
-  constructor(field) {
-    this.autocompleteService = new window.google.maps.places.AutocompleteService();
-    this.placesService = new window.google.maps.places.PlacesService(field);
+  constructor(field, autocompleteService, placesService) {
+    this.autocompleteService =
+      autocompleteService ||
+      new window.google.maps.places.AutocompleteService();
+    this.placesService =
+      placesService || new window.google.maps.places.PlacesService(field);
   }
 
   async fetchCitiesForInput(input, countryCode) {
-    var predictions = await this.fetchPredictionsForInput(input, countryCode);
-    let predictedCountries = GoogleClient.filterCountries(predictions);
-    return predictedCountries;
+    var predictions = await this._fetchPredictionsForInput(input, countryCode);
+    let predictedCities = GoogleClient.filterCities(predictions);
+    return predictedCities;
   }
 
-  fetchPredictionsForInput(input, countryCode) {
+  _fetchPredictionsForInput(input, countryCode) {
     return new Promise(resolve => {
       this.autocompleteService.getPlacePredictions(
         {
@@ -38,13 +41,16 @@ export class GoogleClient implements CityGoogleClient {
           }
         },
         (predictions, status) => {
+          if (status !== "OK") {
+            return resolve([]);
+          }
           resolve(predictions);
         }
       );
     });
   }
 
-  static filterCountries(predictions) {
+  static filterCities(predictions) {
     return (predictions || []).filter(p => p.types.includes("locality"));
   }
 
@@ -55,13 +61,20 @@ export class GoogleClient implements CityGoogleClient {
           placeId
         },
         (data, status) => {
+          if (status !== "OK") {
+            return resolve(" , ");
+          }
+
           const ac = data.address_components;
-          const city = ac.find(a => a.types.includes("locality"));
-          const state = ac.find(a =>
-            a.types.includes("administrative_area_level_1")
+          const city = (ac || []).find(a => a.types.includes("locality"));
+          const state = (ac || []).find(a =>
+            (a.types || []).includes("administrative_area_level_1")
           );
 
-          resolve(city.long_name + ", " + state.long_name);
+          const cityName = (city || {}).long_name || "";
+          const stateName = (state || {}).long_name || "";
+
+          resolve(cityName + ", " + stateName);
         }
       );
     });

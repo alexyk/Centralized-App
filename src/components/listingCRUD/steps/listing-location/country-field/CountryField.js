@@ -57,8 +57,24 @@ class GoogleClient implements CityGoogleClient {
           placeId: placeId
         },
         (data, status) => {
-          const countryCode = data.address_components[0].short_name;
-          const countryName = data.address_components[0].long_name;
+          if (status !== "OK" || !data) {
+            return resolve({
+              countryCode: "",
+              countryName: ""
+            });
+          }
+          const countryCode = R.pathOr(
+            "",
+            ["address_components", 0, "short_name"],
+            data
+          );
+          // const countryCode = data.address_components[0].short_name;
+          // const countryName = data.address_components[0].long_name;
+          const countryName = R.pathOr(
+            "",
+            ["address_components", 0, "long_name"],
+            data
+          );
           resolve({ countryCode, countryName });
         }
       );
