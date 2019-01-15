@@ -1,9 +1,9 @@
 import React from "react";
 import * as R from "ramda";
 import AsyncSelect from "react-select/lib/Async";
-import customStyles from "./react-select-styles";
+import customStyles from "../react-select-styles";
 
-interface CityGoogleClient {
+interface CountryGoogleClient {
   fetchPredictedCountriesForInput(
     input: string
   ): [
@@ -78,7 +78,7 @@ type Props = {
 type State = {};
 
 export default class CountryField extends React.Component<Props, State> {
-  googleClient: CityGoogleClient;
+  googleClient: CountryGoogleClient;
 
   constructor(props) {
     super(props);
@@ -99,7 +99,8 @@ export default class CountryField extends React.Component<Props, State> {
   }
 
   componentDidMount() {
-    this.googleClient = new GoogleClient(this.hiddenMapInputField);
+    this.googleClient =
+      this.props.googleClient || new GoogleClient(this.hiddenMapInputField);
     this.tryToSetCountryNameToInitialValue();
   }
 
@@ -150,9 +151,10 @@ export default class CountryField extends React.Component<Props, State> {
 
   render() {
     let { selectedOption } = this.state;
+    const SelectComponent = this.props.SelectComponent || AsyncSelect;
     return (
       <React.Fragment>
-        <AsyncSelect
+        <SelectComponent
           value={selectedOption}
           styles={customStyles}
           loadOptions={this.loadOptionsInDropdown}

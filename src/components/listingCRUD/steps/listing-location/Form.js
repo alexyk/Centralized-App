@@ -2,7 +2,7 @@ import React from "react";
 import * as R from "ramda";
 
 import CityField from "./city-field/CityField";
-import CountryField from "./CountryField";
+import CountryField from "./country-field/CountryField";
 import StreetField from "./StreetField";
 
 type Props = {
