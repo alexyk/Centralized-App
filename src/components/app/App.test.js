@@ -43,7 +43,6 @@ test("Renders the LoginManager with the correct prop", async () => {
     </MemoryRouter>
   );
   let node = await waitForElement(() => getByTestId("login-manager"));
-  console.log(mocks.LoginManager.mock.calls);
   expect(mocks.LoginManager).toHaveBeenCalledWith(
     {
       openRecoveryOnMount: true

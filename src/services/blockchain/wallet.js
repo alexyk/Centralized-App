@@ -12,7 +12,6 @@ const ERROR = require("./config/errors.json");
 class Wallet {
   static async getTokenBalance(address) {
     let balance = await LOCTokenContract.balanceOf(address);
-    debugger;
     return balance;
   }
 
