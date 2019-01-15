@@ -60,7 +60,7 @@ describe("CityField", () => {
       getByText = _getByText;
     });
 
-    it("sets the value and passes it to the select component", async () => {
+    it("sets the value and passes it to the select (dropdown) component", async () => {
       await waitForElement(() => getByText(initialCityValue));
     });
 
@@ -93,7 +93,7 @@ describe("CityField", () => {
     });
   });
   // -----------------------------------------------------------------------
-  describe("When loading options for the select component, calls fetchCitiesForInput correctly", () => {
+  describe("When loading options for the select component, calls fetchCitiesForInput correctly and adapts the data for the select component", () => {
     let mockedGoogleClient;
     const countryCode = "some country";
     const initialCityValue = "some initial city";
@@ -101,14 +101,10 @@ describe("CityField", () => {
     beforeEach(async function() {
       mockedGoogleClient = {
         fetchCitiesForInput: jest.fn(() => {
-          new Promise(resolve => {
-            setTimeout(() => {
-              resolve([
-                { place_id: "", description: "" },
-                { place_id: "", description: "" }
-              ]);
-            }, 1000);
-          });
+          return [
+            { place_id: "id1", description: "description 1" },
+            { place_id: "id2", description: "description 2" }
+          ];
         })
       };
 
@@ -135,10 +131,72 @@ describe("CityField", () => {
 
     it("adapts correctly", () => {
       // assuming the method returns [{place_id, description}, {place_id, description}], validate the argument of the 'callback function'
-      expect(cb).toHaveBeenCalledWith([]);
+      expect(cb).toHaveBeenCalledWith([
+        { value: "id1", label: "description 1" },
+        { value: "id2", label: "description 2" }
+      ]);
+    });
+  });
+  describe("When a new option is selected from the select component, the component works correctly", () => {
+    let mockedGoogleClient;
+    const countryCode = "some country";
+    const initialCityValue = "some initial city";
+    let rerender, getByTestId;
+    const selectedOption = {
+      value: "some place id",
+      label: "some city"
+    };
+    let onCityChange;
+    beforeEach(async function() {
+      mockedGoogleClient = {
+        fetchCitiesForInput: jest.fn(() => {
+          return [
+            { place_id: "id1", description: "description 1" },
+            { place_id: "id2", description: "description 2" }
+          ];
+        }),
+        getCityAndStateOfPlaceWithId: jest.fn(() =>
+          Promise.resolve("new display value")
+        )
+      };
+
+      onCityChange = jest.fn();
+
+      const SelectComponent = props => (
+        <div
+          data-testid={TEST_ID}
+          onClick={() => props.onChange(selectedOption)}
+        >
+          {(props.value || {}).label}
+        </div>
+      );
+
+      const { rerender: _rerender, getByTestId: _getByTestId } = render(
+        <CityField
+          googleClient={mockedGoogleClient}
+          countryCode={countryCode}
+          onCityChange={onCityChange}
+          SelectComponent={SelectComponent}
+        />
+      );
+      rerender = _rerender;
+      getByTestId = _getByTestId;
+      let node = await waitForElement(() => getByTestId(TEST_ID));
+      fireEvent.click(node, {});
     });
 
-    it("on selected entry change", () => {});
+    it("calls googleClient.getCityAndStateOfPlaceWithId correctly", () => {
+      expect(
+        mockedGoogleClient.getCityAndStateOfPlaceWithId
+      ).toHaveBeenCalledWith(selectedOption.value);
+    });
+    it("displays the selected value", async () => {
+      let node = await waitForElement(() => getByTestId(TEST_ID));
+      expect(node.innerHTML).toBe("new display value");
+    });
+    it("notifies the parent component of the change", () => {
+      expect(onCityChange).toHaveBeenCalledWith("new display value");
+    });
   });
 });
 

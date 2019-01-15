@@ -172,9 +172,10 @@ export default class CityField extends React.Component<Props, State> {
   }
 
   render() {
+    const SelectComponent = this.props.SelectComponent || AsyncSelect;
     return (
       <React.Fragment>
-        <AsyncSelect
+        <SelectComponent
           value={this.state.selectedOption}
           styles={customStyles}
           loadOptions={this.loadOptions}
