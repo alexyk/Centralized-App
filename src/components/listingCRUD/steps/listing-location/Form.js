@@ -29,41 +29,32 @@ export default class Form extends React.Component<Props, State> {
     super(props);
 
     this.state = {
-      countryCode: ""
+      countryCode: "",
+      initialMount: true
     };
-
-    this.setCountryCodeToInitialValue = this.setCountryCodeToInitialValue.bind(
-      this
-    );
   }
 
-  componentDidMount() {
-    this.setCountryCodeToInitialValue();
-  }
-
-  setCountryCodeToInitialValue() {
-    let initialCuntryCode = R.path(
-      ["props", "initialCountryValue", "countryCode"],
-      this
+  static getDerivedStateFromProps(props, state) {
+    const initialCountryCode = R.path(
+      ["initialCountryValue", "countryCode"],
+      props
     );
-    if (initialCuntryCode) {
-      this.setState({
-        countryCode: initialCuntryCode
-      });
+    if (state.initialMount && initialCountryCode) {
+      return { countryCode: initialCountryCode, initialMount: false };
     }
   }
 
   render() {
-    const CountryField = this.props.CountryField || CountryField;
-    const CityField = this.props.CityField || CityField;
-    const StreetField = this.props.StreetField || StreetField;
+    const Country = this.props.CountryField || CountryField;
+    const City = this.props.CityField || CityField;
+    const Street = this.props.StreetField || StreetField;
 
     return (
       <React.Fragment>
         <div className="col-md-12">
           <div className="form-group">
             <label htmlFor="country">Country</label>
-            <CountryField
+            <Country
               onCountrySelected={({ countryCode, countryName }) => {
                 this.setState({ countryCode });
                 this.props.onCountryChange({ countryCode, countryName });
@@ -73,7 +64,7 @@ export default class Form extends React.Component<Props, State> {
           </div>
           <div className="form-group">
             <label htmlFor="city">City/State</label>
-            <CityField
+            <City
               countryCode={this.state.countryCode}
               onCityChange={this.props.onCityChange}
               initialCityValue={this.props.initialCityValue}
@@ -82,7 +73,7 @@ export default class Form extends React.Component<Props, State> {
           </div>
           <div className="form-group" data-testid={"street-address"}>
             <label htmlFor="street">Street address</label>
-            <StreetField
+            <Street
               countryCode={this.state.countryCode}
               onStreetChange={this.props.onStreetChange}
               initialStreetValue={this.props.initialStreetValue}

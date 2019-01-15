@@ -187,7 +187,7 @@ export default class StreetField extends React.Component<Props, State> {
   }
 
   render() {
-    const LocationPicker = this.props.LocationPicker || LocationPicker;
+    const MapComponent = this.props.LocationPicker || LocationPicker;
     return (
       <React.Fragment>
         <input
@@ -201,7 +201,7 @@ export default class StreetField extends React.Component<Props, State> {
         />
 
         {this.state.mapLocation && (
-          <LocationPicker
+          <MapComponent
             containerElement={<div style={{ height: "100%" }} />}
             mapElement={<div style={{ height: "400px" }} />}
             defaultPosition={this.state.mapLocation}

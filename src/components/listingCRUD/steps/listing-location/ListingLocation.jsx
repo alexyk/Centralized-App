@@ -29,7 +29,7 @@ export class ListingLocation extends React.Component {
           showErrors(this.props.values);
         };
 
-    const Form = this.props.Form || Form;
+    const FormComponent = this.props.Form || Form;
     const Aside = this.props.BasicAside || BasicsAside;
     const Footer = this.props.FooterNav || FooterNav;
     return (
@@ -42,7 +42,7 @@ export class ListingLocation extends React.Component {
               <div className="form-group">
                 <h2>Where&rsquo;s your place located?</h2>
                 <hr />
-                <Form
+                <FormComponent
                   onCountryChange={({ countryName, countryCode }) => {
                     this.props.onChange({
                       target: { name: "country", value: countryName }
