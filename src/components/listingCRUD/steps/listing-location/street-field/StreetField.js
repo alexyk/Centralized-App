@@ -86,7 +86,7 @@ class GoogleClient implements StreetGoogleClient {
 
 type Props = {
   initialStreetValue?: string,
-  onStreetChange: Function,
+  onStreetChange?: Function,
   onClearStreetField: Function
 };
 
@@ -147,25 +147,25 @@ export default class StreetField extends React.Component<Props, State> {
   }
 
   clearStateIfCountryHasChanged(prevProps) {
-    if (prevProps.countryCode) {
-      if (this.props.countryCode !== prevProps.countryCode) {
-        this.setState(
-          {
-            mapLocation: null,
-            inputValue: ""
-          },
-          () => {
-            this.props.onClearStreetField();
-          }
-        );
-      }
+    if (this.props.countryCode !== prevProps.countryCode) {
+      this.setState(
+        {
+          mapLocation: null,
+          inputValue: ""
+        },
+        () => {
+          this.props.onClearStreetField();
+        }
+      );
     }
   }
 
   onInputChange(e) {
     this.setState({ inputValue: e.target.value }, async () => {
       this.updateMapBasedOnInputValue(this.state.inputValue);
-      this.props.onStreetChange(this.state.inputValue);
+      if (this.props.onStreetChange) {
+        this.props.onStreetChange(this.state.inputValue);
+      }
     });
   }
 
@@ -188,7 +188,6 @@ export default class StreetField extends React.Component<Props, State> {
 
   render() {
     const LocationPicker = this.props.LocationPicker || LocationPicker;
-
     return (
       <React.Fragment>
         <input
