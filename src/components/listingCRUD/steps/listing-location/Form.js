@@ -42,6 +42,7 @@ export default class Form extends React.Component<Props, State> {
     if (state.initialMount && initialCountryCode) {
       return { countryCode: initialCountryCode, initialMount: false };
     }
+    return state;
   }
 
   render() {

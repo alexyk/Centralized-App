@@ -199,4 +199,74 @@ describe("CityField", () => {
   });
 });
 
-describe("CityGoogleClient", () => {});
+describe("CityGoogleClient", () => {
+  const { GoogleClient } = require("./CityField");
+
+  let autocompleteService, placesService, googleClient;
+  beforeEach(async function() {
+    autocompleteService = {
+      getPlacePredictions: jest.fn()
+    };
+    placesService = {
+      getDetails: jest.fn()
+    };
+
+    const field = <input />;
+    googleClient = new GoogleClient(field, autocompleteService, placesService);
+  });
+
+  describe("fetchCitiesForInput", () => {
+    test("when called with input and countryCode, calls autocompleteService.getPlacePredictions correctly", () => {
+      const input = "some input";
+      const countryCode = "some country";
+      googleClient.fetchCitiesForInput(input, countryCode);
+
+      expect(autocompleteService.getPlacePredictions.mock.calls[0][0]).toEqual({
+        input: input,
+        componentRestrictions: {
+          country: countryCode
+        }
+      });
+    });
+  });
+  // describe("getCityAndStateOfPlaceWithId", () => {
+  //   test("", async () => {
+  //     const autocompleteService = {
+  //       getPlacePredictions: jest.fn()
+  //     };
+  //     const placesService = {
+  //       getDetails: jest.fn((options, callback) => {
+  //         const data = {
+  //           address_components: [
+  //             {
+  //               long_name: "Some City",
+  //               types: ["locality"]
+  //             },
+  //             {
+  //               long_name: "Some State",
+  //               types: ["administrative_area_level_1"]
+  //             }
+  //           ]
+  //         };
+  //         callback(data, "OK");
+  //       })
+  //     };
+  //
+  //     const field = <input />;
+  //     const googleClient = new GoogleClient(
+  //       field,
+  //       autocompleteService,
+  //       placesService
+  //     );
+  //     const input = "some input";
+  //     const countryCode = "some country";
+  //     let cities = await googleClient.fetchCitiesForInput(input, countryCode);
+  //     expect(cities).toEqual([
+  //       {
+  //         long_name: "Some City",
+  //         types: ["locality"]
+  //       }
+  //     ]);
+  //   });
+  // });
+});
