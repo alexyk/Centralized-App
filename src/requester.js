@@ -1,6 +1,6 @@
-import Requester from "locktrip-service-layer";
-import { Config } from "./config";
 import type { IRequester } from "./requester.flow";
+import Requester from "locktrip-svc-layer";
+import { Config } from "./config";
 
 let config = {
   domainPrefix: Config.getValue("domainPrefix"),
