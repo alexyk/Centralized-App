@@ -5,7 +5,6 @@ import {
   cleanup,
   waitForElement
 } from "react-testing-library";
-
 afterEach(cleanup);
 
 describe("CityField", () => {

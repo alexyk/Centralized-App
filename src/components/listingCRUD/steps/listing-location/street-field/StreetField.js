@@ -124,7 +124,8 @@ export default class StreetField extends React.Component<Props, State> {
   }
 
   componentDidMount() {
-    this.googleClient = new GoogleClient(this.mapInputField);
+    this.googleClient =
+      this.props.googleClient || new GoogleClient(this.mapInputField);
     this.tryToSetInitialInputValue();
   }
 
@@ -186,9 +187,12 @@ export default class StreetField extends React.Component<Props, State> {
   }
 
   render() {
+    const LocationPicker = this.props.LocationPicker || LocationPicker;
+
     return (
       <React.Fragment>
         <input
+          data-testid="street-address-input"
           type={"text"}
           ref={el => {
             this.mapInputField = el;

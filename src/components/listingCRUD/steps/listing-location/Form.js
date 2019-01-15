@@ -3,7 +3,7 @@ import * as R from "ramda";
 
 import CityField from "./city-field/CityField";
 import CountryField from "./country-field/CountryField";
-import StreetField from "./StreetField";
+import StreetField from "./street-field/StreetField";
 
 type Props = {
   initialCountryValue: {
