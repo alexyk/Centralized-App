@@ -54,6 +54,10 @@ export default class Form extends React.Component<Props, State> {
   }
 
   render() {
+    const CountryField = this.props.CountryField || CountryField;
+    const CityField = this.props.CityField || CityField;
+    const StreetField = this.props.StreetField || StreetField;
+
     return (
       <React.Fragment>
         <div className="col-md-12">
