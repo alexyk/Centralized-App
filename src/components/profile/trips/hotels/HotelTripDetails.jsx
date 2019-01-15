@@ -10,6 +10,8 @@ import Star from '../../../../styles/images/star.png';
 import moment from 'moment';
 import requester from '../../../../requester';
 
+import {parseAccommodationDates} from "../../utils/parse-accomodation-dates";
+
 class HotelTripDetails extends React.Component {
   constructor(props) {
     super(props);
@@ -39,6 +41,8 @@ class HotelTripDetails extends React.Component {
         safeChargeMode: '',
       }
     };
+
+    this.getDates = this.getDates.bind(this)
   }
 
   componentDidMount() {
@@ -152,10 +156,32 @@ class HotelTripDetails extends React.Component {
     }
   }
 
+  getDates(){
+    try {
+      return parseAccommodationDates(this.state.bookingData.startDate, null, this.state.bookingData.endDate);
+    } catch (e) {
+      return {
+        startDate: {
+          day: "",
+          date: "",
+          month: ""
+        },
+        endDate: {
+          day: "",
+          date: "",
+          month: ""
+        }
+      };
+    }
+
+  }
+
   render() {
     const { bookingData, safeChargeMode } = this.state;
     const checkInData = bookingData.checkIn;
     const checkOutData = bookingData.checkOut;
+
+    let _dates = this.getDates();
 
     if (safeChargeMode === 'success') {
       return (
@@ -199,14 +225,14 @@ class HotelTripDetails extends React.Component {
               <div className="check-in">
                 <h3 className="check-in-header">Check In</h3> 
                 <h5 className="check-in-content">
-                  <div style={{ marginBottom: '5%' }}><span className="date-in-day">{checkInData.day}</span> {checkInData.month}, {checkInData.dayOfWeek}</div>
+                  <div style={{ marginBottom: '5%' }}><span className="date-in-day">{_dates.startDate.date}</span> {_dates.startDate.month}, {_dates.startDate.day}</div>
                   <div>After {checkInData.hour}</div>
                 </h5>
               </div>
               <div className="check-out">
                 <h3 className="check-out-header">Check Out</h3>
                 <h5 className="check-out-content">
-                  <div style={{ marginBottom: '5%' }}><span className="date-out-day">{checkOutData.day}</span> {checkOutData.month}, {checkOutData.dayOfWeek}</div>
+                  <div style={{ marginBottom: '5%' }}><span className="date-out-day">{_dates.endDate.date}</span> {_dates.endDate.month}, {_dates.endDate.day}</div>
                   <div>Before {checkOutData.hour}</div>
                 </h5>
               </div>

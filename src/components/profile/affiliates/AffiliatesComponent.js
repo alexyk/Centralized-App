@@ -4,7 +4,7 @@ import "./affiliates.css";
 import { ensureNaturalNumber } from "./helpers";
 import BookingsAndStats from "./BookingsAndStats";
 import Clipboard from "react-clipboard.js";
-import {Link} from "react-router-dom"
+import { Link } from "react-router-dom";
 import type {
   AffiliateBooking,
   AffiliatesChartData,
@@ -49,7 +49,7 @@ export default class AffiliatesDashboard extends React.Component<Props> {
         >
           <h2>My Affiliates</h2>
 
-          <div style={{maxWidth: "500px"}}>
+          <div style={{ maxWidth: "500px" }}>
             <div style={{ display: "flex", alignItems: "center" }}>
               <span>Invite people with this link: </span>
               <span id="foo" className={"referral-link"}>
@@ -66,8 +66,13 @@ export default class AffiliatesDashboard extends React.Component<Props> {
                 />
               </Clipboard>
             </div>
-            <div className={"affiliate-terms"}><Link to={"/affiliate-terms"} className={"link"}>By copying and/or distributing this unique reference URL, you automatically agree with the affiliate program terms and conditions.</Link></div>
-
+            <div className={"affiliate-terms"}>
+              <Link to={"/affiliate-terms"} className={"link"}>
+                By copying and/or distributing this unique reference URL, you
+                automatically agree with the affiliate program terms and
+                conditions.
+              </Link>
+            </div>
           </div>
         </div>
 

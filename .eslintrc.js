@@ -22,7 +22,7 @@ module.exports = {
     maximumLineLength: 90,
     indent: ["warn", 2, { SwitchCase: 1 }],
     "linebreak-style": ["error", "windows"],
-    quotes: ["warn", "single"],
+    // quotes: ["warn", "single"],
     semi: ["error", "always"],
     "react/jsx-pascal-case": 0,
     "jsx-a11y/anchor-is-valid": 0,
