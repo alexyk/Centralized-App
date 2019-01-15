@@ -182,7 +182,46 @@ describe("ListingLocation", () => {
     ).toEqual("Sofia");
   });
 
-  describe("calls onClearCityField correctly", () => {});
+  test("calls onClearCityField correctly", async () => {
+    const countryName = "some new country";
+    const countryCode = "some country code";
+    const Form = jest.fn(props => (
+      <div data-testid="Form" onClick={() => props.onClearCityField()} />
+    ));
+    const { getByTestId } = render(
+      <BrowserRouter>
+        <ListingLocation
+          routes={{
+            loc: "",
+            landing: "",
+            placetype: "",
+            accommodation: "",
+            facilities: "",
+            safetyamenities: "",
+            location: "",
+            description: "",
+            photos: "",
+            houserules: "",
+            checking: "",
+            price: ""
+          }}
+          location={{ pathname: "" }}
+          values={{ street: "asda sd as" }}
+          Form={Form}
+          onChange={onChange}
+        />
+      </BrowserRouter>
+    );
+    let node = await waitForElement(() => getByTestId("Form"));
+    fireEvent.click(node);
+
+    expect(onChange).toHaveBeenCalledWith({
+      target: {
+        name: "city",
+        value: ""
+      }
+    });
+  });
   test("calls onStreetChange correctly", async () => {
     const streetAddress = "Some street address";
     const Form = jest.fn(props => (
@@ -261,5 +300,44 @@ describe("ListingLocation", () => {
       Form.mock.calls[Form.mock.calls.length - 1][0].initialStreetValue
     ).toEqual("Some Street");
   });
-  describe("calls onClearStreetField correctly", () => {});
+  test("calls onClearStreetField correctly", async () => {
+    const countryName = "some new country";
+    const countryCode = "some country code";
+    const Form = jest.fn(props => (
+      <div data-testid="Form" onClick={() => props.onClearStreetField()} />
+    ));
+    const { getByTestId } = render(
+      <BrowserRouter>
+        <ListingLocation
+          routes={{
+            loc: "",
+            landing: "",
+            placetype: "",
+            accommodation: "",
+            facilities: "",
+            safetyamenities: "",
+            location: "",
+            description: "",
+            photos: "",
+            houserules: "",
+            checking: "",
+            price: ""
+          }}
+          location={{ pathname: "" }}
+          values={{ street: "asda sd as" }}
+          Form={Form}
+          onChange={onChange}
+        />
+      </BrowserRouter>
+    );
+    let node = await waitForElement(() => getByTestId("Form"));
+    fireEvent.click(node);
+
+    expect(onChange).toHaveBeenCalledWith({
+      target: {
+        name: "street",
+        value: ""
+      }
+    });
+  });
 });
