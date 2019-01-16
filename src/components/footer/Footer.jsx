@@ -49,7 +49,7 @@ class Footer extends React.Component {
                     </li>
                     <li>
                       <a
-                        href="https://locktrip.zendesk.com/hc/en-us"
+                        href="https://locktrip.zendesk.com/hc/en-us/requests/new"
                         target="_blank"
                         rel="noopener noreferrer"
                       >
