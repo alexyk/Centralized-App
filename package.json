@@ -5,7 +5,7 @@
   "dependencies": {
     "axios": "^0.18.0",
     "b64-to-blob": "^1.2.19",
-    "big-rational": "^0.10.7",
+    "big-rational": "^0.10.9",
     "bootstrap-daterangepicker": "^2.1.30",
     "copy-to-clipboard": "^3.0.8",
     "create-react-class": "^15.6.3",
