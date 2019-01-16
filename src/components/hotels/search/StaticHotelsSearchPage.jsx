@@ -1,33 +1,39 @@
-import '../../../styles/css/components/hotels_search/sidebar/sidebar.css';
+import "../../../styles/css/components/hotels_search/sidebar/sidebar.css";
 
-import { setRegion, setHotelsSearchInfo } from '../../../actions/hotelsSearchInfo';
-import { asyncSetStartDate, asyncSetEndDate } from '../../../actions/searchDatesInfo';
-import { getStartDate, getEndDate } from '../../../selectors/searchDatesInfo';
-import { getRegion } from '../../../selectors/hotelsSearchInfo';
+import {
+  setRegion,
+  setHotelsSearchInfo
+} from "../../../actions/hotelsSearchInfo";
+import {
+  asyncSetStartDate,
+  asyncSetEndDate
+} from "../../../actions/searchDatesInfo";
+import { getStartDate, getEndDate } from "../../../selectors/searchDatesInfo";
+import { getRegion } from "../../../selectors/hotelsSearchInfo";
 
-import { Config } from '../../../config';
-import FilterPanel from './filter/FilterPanel';
-import HotelsSearchBar from './HotelsSearchBar';
-import MultiMarkerGoogleMap from './google-map/MultiMarkerGoogleMap';
-import Pagination from '../../common/pagination/Pagination';
-import PropTypes from 'prop-types';
-import React from 'react';
-import ResultsHolder from './ResultsHolder';
-import Stomp from 'stompjs';
-import _ from 'lodash';
-import { connect } from 'react-redux';
-import moment from 'moment';
-import queryString from 'query-string';
-import requester from '../../../requester';
-import { setCurrency } from '../../../actions/paymentInfo';
-import { isLogged } from '../../../selectors/userInfo';
-import { getCurrency } from '../../../selectors/paymentInfo';
-import uuid from 'uuid';
-import { withRouter } from 'react-router-dom';
-import { NotificationManager } from 'react-notifications';
-import { LONG } from '../../../constants/notificationDisplayTimes';
-import { FILTERED_UNAVAILABLE_HOTELS } from '../../../constants/infoMessages';
-import AsideContentPage from '../../common/asideContentPage/AsideContentPage';
+import { Config } from "../../../config";
+import FilterPanel from "./filter/FilterPanel";
+import HotelsSearchBar from "./HotelsSearchBar";
+import MultiMarkerGoogleMap from "./google-map/MultiMarkerGoogleMap";
+import Pagination from "../../common/pagination/Pagination";
+import PropTypes from "prop-types";
+import React from "react";
+import ResultsHolder from "./ResultsHolder";
+import Stomp from "stompjs";
+import _ from "lodash";
+import { connect } from "react-redux";
+import moment from "moment";
+import queryString from "query-string";
+import requester from "../../../requester";
+import { setCurrency } from "../../../actions/paymentInfo";
+import { isLogged } from "../../../selectors/userInfo";
+import { getCurrency } from "../../../selectors/paymentInfo";
+import uuid from "uuid";
+import { withRouter } from "react-router-dom";
+import { NotificationManager } from "react-notifications";
+import { LONG } from "../../../constants/notificationDisplayTimes";
+import { FILTERED_UNAVAILABLE_HOTELS } from "../../../constants/infoMessages";
+import AsideContentPage from "../../common/asideContentPage/AsideContentPage";
 
 const DEBUG_SOCKET = false;
 const DELAY_INTERVAL = 100;
@@ -46,19 +52,18 @@ class StaticHotelsSearchPage extends React.Component {
     this.intervalCounter = 0;
     this.delayIntervals = [];
 
-    
-    const startDate = moment(queryParams.startDate, 'DD/MM/YYYY');
-    const endDate = moment(queryParams.endDate, 'DD/MM/YYYY');
-    const nights = endDate.diff(startDate, 'days');
+    const startDate = moment(queryParams.startDate, "DD/MM/YYYY");
+    const endDate = moment(queryParams.endDate, "DD/MM/YYYY");
+    const nights = endDate.diff(startDate, "days");
 
     this.state = {
       allElements: false,
-      hotelName: '',
+      hotelName: "",
       showUnavailable: false,
-      orderBy: 'rank,desc',
+      orderBy: "rank,desc",
       stars: [false, false, false, false, false],
-      priceRange: { min: 0, max: 5000},
-      city: '',
+      priceRange: { min: 0, max: 5000 },
+      city: "",
       hotels: [],
       mapInfo: [],
       searchParams: null,
@@ -75,7 +80,10 @@ class StaticHotelsSearchPage extends React.Component {
 
     this.handlePriceRangeSelect = this.handlePriceRangeSelect.bind(this);
     this.handleOrderBy = this.handleOrderBy.bind(this);
-    this.applyFilters = _.debounce(this.applyFilters.bind(this), DEBOUNCE_INTERVAL);
+    this.applyFilters = _.debounce(
+      this.applyFilters.bind(this),
+      DEBOUNCE_INTERVAL
+    );
     this.handleToggleStar = this.handleToggleStar.bind(this);
     this.toggleMap = this.toggleMap.bind(this);
     this.getRandomInt = this.getRandomInt.bind(this);
@@ -91,7 +99,9 @@ class StaticHotelsSearchPage extends React.Component {
     this.getSearchString = this.getSearchString.bind(this);
     this.getFilterString = this.getFilterString.bind(this);
     this.removeAll = this.removeAll.bind(this);
-    this.distributeSearchParameters = this.distributeSearchParameters.bind(this);
+    this.distributeSearchParameters = this.distributeSearchParameters.bind(
+      this
+    );
 
     // SOCKET BINDINGS
     this.handleReceiveMessage = this.handleReceiveMessage.bind(this);
@@ -101,7 +111,10 @@ class StaticHotelsSearchPage extends React.Component {
     this.disconnect = this.disconnect.bind(this);
 
     // WINDOW WIDTH BINGINGS
-    this.updateWindowWidth = _.throttle(this.updateWindowWidth.bind(this), DEBOUNCE_INTERVAL);
+    this.updateWindowWidth = _.throttle(
+      this.updateWindowWidth.bind(this),
+      DEBOUNCE_INTERVAL
+    );
   }
 
   componentDidMount() {
@@ -121,7 +134,7 @@ class StaticHotelsSearchPage extends React.Component {
     this.requestStaticHotels(queryParams);
 
     this.updateWindowWidth();
-    window.addEventListener('resize', this.updateWindowWidth);
+    window.addEventListener("resize", this.updateWindowWidth);
   }
 
   componentWillUnmount() {
@@ -138,22 +151,24 @@ class StaticHotelsSearchPage extends React.Component {
       const rooms = JSON.parse(decodeURI(searchParams.rooms));
       const adults = this.getAdults(rooms);
       const hasChildren = this.getHasChildren(rooms);
-      const startDate = moment(searchParams.startDate, 'DD/MM/YYYY');
-      const endDate = moment(searchParams.endDate, 'DD/MM/YYYY');
+      const startDate = moment(searchParams.startDate, "DD/MM/YYYY");
+      const endDate = moment(searchParams.endDate, "DD/MM/YYYY");
       const regionId = searchParams.region;
       const region = { id: regionId };
       const page = searchParams.page;
 
       this.props.dispatch(asyncSetStartDate(startDate));
       this.props.dispatch(asyncSetEndDate(endDate));
-      this.props.dispatch(setHotelsSearchInfo(region, rooms, adults, hasChildren));
-      if (this.props.location.pathname.indexOf('/mobile') !== -1) {
+      this.props.dispatch(
+        setHotelsSearchInfo(region, rooms, adults, hasChildren)
+      );
+      if (this.props.location.pathname.indexOf("/mobile") !== -1) {
         const currency = searchParams.currency;
         this.props.dispatch(setCurrency(currency));
       }
 
       this.setState({
-        page: page ? Number(page) : 0,
+        page: page ? Number(page) : 0
       });
 
       this.getCityLocation(regionId);
@@ -172,9 +187,12 @@ class StaticHotelsSearchPage extends React.Component {
         });
 
         const hotels = content;
-        this.setState({ hotels, totalElements: data.totalElements, loading: false }, () => {
-          this.connectSocket();
-        });
+        this.setState(
+          { hotels, totalElements: data.totalElements, loading: false },
+          () => {
+            this.connectSocket();
+          }
+        );
       });
     });
   }
@@ -189,7 +207,7 @@ class StaticHotelsSearchPage extends React.Component {
       this.setState({ allElements: true });
       this.unsubscribe();
       this.applyFilters(false, () => {
-        NotificationManager.info(FILTERED_UNAVAILABLE_HOTELS, '', LONG);
+        NotificationManager.info(FILTERED_UNAVAILABLE_HOTELS, "", LONG);
       });
     } else {
       const { id } = messageBody;
@@ -197,7 +215,10 @@ class StaticHotelsSearchPage extends React.Component {
       this.hotelInfo.push(messageBody);
       this.updateMapInfo(messageBody);
       // const listing = this.state && this.state.hotels ? this.state.hotels.filter(h => h.id === id)[0] : null;
-      const index = this.state && this.state.hotels ? this.state.hotels.findIndex(h => h.id === id) : null;
+      const index =
+        this.state && this.state.hotels
+          ? this.state.hotels.findIndex(h => h.id === id)
+          : null;
       if (index !== -1) {
         const hotels = this.state.hotels.slice(0);
         hotels[index].price = this.hotelInfoById[id].price;
@@ -208,27 +229,34 @@ class StaticHotelsSearchPage extends React.Component {
   }
 
   connectSocket() {
-    if (!localStorage.getItem('uuid')) {
-      localStorage.setItem('uuid', `${uuid()}`);
+    if (!localStorage.getItem("uuid")) {
+      localStorage.setItem("uuid", `${uuid()}`);
     }
 
-    const url = Config.getValue('socketHost');
+    const url = Config.getValue("socketHost");
     this.client = Stomp.client(url);
 
     if (!DEBUG_SOCKET) {
-      this.client.debug = () => { };
+      this.client.debug = () => {};
     }
 
-    this.client.connect(null, null, this.subscribe);
+    this.client.connect(
+      null,
+      null,
+      this.subscribe
+    );
   }
 
   subscribe() {
-    const id = localStorage.getItem('uuid');
+    const id = localStorage.getItem("uuid");
     const rnd = this.getRandomInt();
     const search = this.props.location.search;
-    const endOfSearch = search.indexOf('&filters=') !== -1 ? search.indexOf('&filters=') : search.length;
+    const endOfSearch =
+      search.indexOf("&filters=") !== -1
+        ? search.indexOf("&filters=")
+        : search.length;
     const queueId = `${id}&${rnd}`;
-    const destination = 'search/' + queueId;
+    const destination = "search/" + queueId;
     const client = this.client;
     const handleReceiveHotelPrice = this.handleReceiveMessage;
 
@@ -236,14 +264,14 @@ class StaticHotelsSearchPage extends React.Component {
 
     const msgObject = {
       uuid: queueId,
-      query: search.substr(0, endOfSearch),
+      query: search.substr(0, endOfSearch)
     };
 
     const msg = JSON.stringify(msgObject);
 
-    const sendDestination = 'search';
+    const sendDestination = "search";
     const headers = {
-      'content-length': false
+      "content-length": false
     };
 
     client.send(sendDestination, headers, msg);
@@ -256,11 +284,11 @@ class StaticHotelsSearchPage extends React.Component {
         this.props.dispatch(setRegion(data));
         const address = data.query;
 
-        this.geocoder.geocode({ 'address': address }, (results, status) => {
+        this.geocoder.geocode({ address: address }, (results, status) => {
           if (status === window.google.maps.GeocoderStatus.OK) {
             this.setState({
               lat: results[0].geometry.location.lat(),
-              lon: results[0].geometry.location.lng(),
+              lon: results[0].geometry.location.lng()
             });
           }
         });
@@ -292,39 +320,45 @@ class StaticHotelsSearchPage extends React.Component {
     this.hotelInfoById = {};
     this.hotelInfo = [];
 
-    this.props.history.push('/hotels/listings' + query);
+    this.props.history.push("/hotels/listings" + query);
 
     const region = this.props.region.id;
 
     this.getCityLocation(region);
     const queryParams = queryString.parse(query);
-    const startDate = moment(queryParams.startDate, 'DD/MM/YYYY');
-    const endDate = moment(queryParams.endDate, 'DD/MM/YYYY');
-    const nights = endDate.diff(startDate, 'days');
+    const startDate = moment(queryParams.startDate, "DD/MM/YYYY");
+    const endDate = moment(queryParams.endDate, "DD/MM/YYYY");
+    const nights = endDate.diff(startDate, "days");
 
-    this.setState({
-      loading: true,
-      childrenModal: false,
-      page: 0,
-      hotels: [],
-      mapInfo: [],
-      allElements: false,
-      stars: [false, false, false, false, false],
-      nights
-    }, () => {
-      requester.getStaticHotels(region).then(res => {
-        res.body.then(data => {
-          const hotels = data.content;
-          this.setState({ hotels, totalElements: data.totalElements, loading: false }, () => {
-            this.connectSocket();
+    this.setState(
+      {
+        loading: true,
+        childrenModal: false,
+        page: 0,
+        hotels: [],
+        mapInfo: [],
+        allElements: false,
+        stars: [false, false, false, false, false],
+        nights
+      },
+      () => {
+        requester.getStaticHotels(region).then(res => {
+          res.body.then(data => {
+            const hotels = data.content;
+            this.setState(
+              { hotels, totalElements: data.totalElements, loading: false },
+              () => {
+                this.connectSocket();
+              }
+            );
           });
         });
-      });
-    });
+      }
+    );
   }
 
   handleOrderBy(event) {
-    this.setState({ loading: true, });
+    this.setState({ loading: true });
     const orderBy = event.target.value;
     this.setState({ orderBy, showMap: false, page: 0 }, () => {
       this.applyFilters(true);
@@ -347,7 +381,7 @@ class StaticHotelsSearchPage extends React.Component {
   }
 
   handleToggleStar(star) {
-    this.setState({ loading: true, });
+    this.setState({ loading: true });
     const stars = this.state.stars;
     stars[star] = !stars[star];
     this.setState({ stars, showMap: false, page: 0 }, () => {
@@ -406,7 +440,7 @@ class StaticHotelsSearchPage extends React.Component {
     this.setState({
       hotelName: filters.name,
       showUnavailable: filters.showUnavailable,
-      priceRange: { min: filters.minPrice, max: filters.maxPrice},
+      priceRange: { min: filters.minPrice, max: filters.maxPrice },
       stars: stars,
       orderBy: params.sort,
       page: params.page ? Number(params.page) : 0
@@ -415,9 +449,12 @@ class StaticHotelsSearchPage extends React.Component {
 
   applyFilters(setLoading, onSuccess) {
     if (setLoading) {
-      this.setState({ loading: true, });
+      this.setState({ loading: true });
     }
-    const baseUrl = this.props.location.pathname.indexOf('/mobile') !== -1 ? '/mobile/hotels/listings' : '/hotels/listings';
+    const baseUrl =
+      this.props.location.pathname.indexOf("/mobile") !== -1
+        ? "/mobile/hotels/listings"
+        : "/hotels/listings";
     const search = this.getSearchString();
     const filters = this.getFilterString();
     const page = this.state.page ? this.state.page : 0;
@@ -425,15 +462,23 @@ class StaticHotelsSearchPage extends React.Component {
       if (res.success) {
         res.body.then(data => {
           // console.log(data);
-          this.setState({ loading: false, hotels: data.content, page, totalElements: data.totalElements }, () => {
-            this.props.history.replace(baseUrl + search + filters);
-            if (onSuccess) {
-              onSuccess();
+          this.setState(
+            {
+              loading: false,
+              hotels: data.content,
+              page,
+              totalElements: data.totalElements
+            },
+            () => {
+              this.props.history.replace(baseUrl + search + filters);
+              if (onSuccess) {
+                onSuccess();
+              }
             }
-          });
+          );
         });
       } else {
-        this.setState({ loading: false, });
+        this.setState({ loading: false });
       }
     });
   }
@@ -461,22 +506,26 @@ class StaticHotelsSearchPage extends React.Component {
     const sort = this.state.orderBy;
     const pagination = `&page=${page}&sort=${sort}`;
 
-    const filters = `&filters=${encodeURI(JSON.stringify(filtersObj))}` + pagination;
+    const filters =
+      `&filters=${encodeURI(JSON.stringify(filtersObj))}` + pagination;
     return filters;
   }
 
   clearFilters() {
-    this.setState({
-      hotelName: '',
-      showUnavailable: false,
-      orderBy: 'rank,desc',
-      stars: [false, false, false, false, false],
-      priceRange: { min: 0, max: 5000},
-      showMap: false,
-      loading: true
-    }, () => {
-      this.applyFilters(true);
-    });
+    this.setState(
+      {
+        hotelName: "",
+        showUnavailable: false,
+        orderBy: "rank,desc",
+        stars: [false, false, false, false, false],
+        priceRange: { min: 0, max: 5000 },
+        showMap: false,
+        loading: true
+      },
+      () => {
+        this.applyFilters(true);
+      }
+    );
   }
 
   toggleMap(e) {
@@ -519,23 +568,30 @@ class StaticHotelsSearchPage extends React.Component {
 
           this.setState({
             mapInfo: mapInfo,
-            showMap: !showMap,
+            showMap: !showMap
           });
         } else {
           const search = this.getSearchString();
           const filters = this.getFilterString();
           const page = this.state.page ? this.state.page : 0;
           this.setState({ loading: true });
-          requester.getLastSearchHotelResultsByFilter(search, filters).then(res => {
-            if (res.success) {
-              res.body.then(data => {
-                this.setState({ loading: false, hotels: data.content, page, totalElements: data.totalElements });
-                this.toggleMap();
-              });
-            } else {
-              // console.log('Search expired');
-            }
-          });
+          requester
+            .getLastSearchHotelResultsByFilter(search, filters)
+            .then(res => {
+              if (res.success) {
+                res.body.then(data => {
+                  this.setState({
+                    loading: false,
+                    hotels: data.content,
+                    page,
+                    totalElements: data.totalElements
+                  });
+                  this.toggleMap();
+                });
+              } else {
+                // console.log('Search expired');
+              }
+            });
         }
       });
     });
@@ -595,7 +651,7 @@ class StaticHotelsSearchPage extends React.Component {
   }
 
   isSearchReady() {
-    return this.props.location.search.indexOf('&filters=') !== -1;
+    return this.props.location.search.indexOf("&filters=") !== -1;
   }
 
   getRandomInt() {
@@ -658,18 +714,21 @@ class StaticHotelsSearchPage extends React.Component {
 
                 <div className="map">
                   <div className="img-holder">
-                    <a href="" onClick={this.toggleMap}>See Results {this.state.showMap ? 'List' : 'on Map'}</a>
+                    <a href="" onClick={this.toggleMap}>
+                      See Results {this.state.showMap ? "List" : "on Map"}
+                    </a>
                   </div>
                 </div>
               </div>
             </AsideContentPage.Aside>
 
             <AsideContentPage.Content>
-              {this.state.showMap
-                ? <div>
-                  {this.state.mapLoading
-                    ? <div className="loader"></div>
-                    : <MultiMarkerGoogleMap
+              {this.state.showMap ? (
+                <div>
+                  {this.state.mapLoading ? (
+                    <div className="loader" />
+                  ) : (
+                    <MultiMarkerGoogleMap
                       lat={this.state.lat}
                       lon={this.state.lon}
                       hotels={hotels}
@@ -678,20 +737,22 @@ class StaticHotelsSearchPage extends React.Component {
                       nights={nights}
                       loading={this.state.loading}
                     />
-                  }
+                  )}
                 </div>
-                : <div>
-                  {this.state.loading
-                    ? <div className="loader"></div>
-                    : <ResultsHolder
+              ) : (
+                <div>
+                  {this.state.loading ? (
+                    <div className="loader" />
+                  ) : (
+                    <ResultsHolder
                       hotels={hotels}
                       allElements={this.state.allElements}
                       nights={nights}
                       loading={this.state.loading}
                     />
-                  }
+                  )}
 
-                  {!this.state.loading &&
+                  {!this.state.loading && (
                     <Pagination
                       loading={this.state.loading}
                       onPageChange={this.onPageChange}
@@ -699,9 +760,9 @@ class StaticHotelsSearchPage extends React.Component {
                       pageSize={10}
                       totalElements={totalElements}
                     />
-                  }
+                  )}
                 </div>
-              }
+              )}
             </AsideContentPage.Content>
           </AsideContentPage>
         </div>
@@ -723,7 +784,6 @@ StaticHotelsSearchPage.propTypes = {
   startDate: PropTypes.object,
   endDate: PropTypes.object
 };
-
 
 function mapStateToProps(state) {
   const { paymentInfo, userInfo, hotelsSearchInfo, searchDatesInfo } = state;

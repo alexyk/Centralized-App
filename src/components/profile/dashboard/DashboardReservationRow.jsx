@@ -1,46 +1,53 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import moment from 'moment';
-import ProfileFlexContainer from '../flexContainer/ProfileFlexContainer';
-import { Config } from '../../../config';
+import React from "react";
+import PropTypes from "prop-types";
+import moment from "moment";
+import ProfileFlexContainer from "../flexContainer/ProfileFlexContainer";
+import { Config } from "../../../config";
 
-import '../../../styles/css/components/profile/dashboard/dashboard-reservations.css';
+import "../../../styles/css/components/profile/dashboard/dashboard-reservations.css";
 
 function DashboardReservationRow(props) {
-  const extractDatesData = (reservation) => {
-    const startDateMoment = moment(reservation.startDate, 'DD/MM/YYYY')
-    const endDateMoment = moment(reservation.endDate, 'DD/MM/YYYY')
-    const creationDateMoment = moment(reservation.creationDate)
+  const extractDatesData = reservation => {
+    const startDateMoment = moment(reservation.startDate, "DD/MM/YYYY");
+    const endDateMoment = moment(reservation.endDate, "DD/MM/YYYY");
+    const creationDateMoment = moment(reservation.creationDate);
 
     const creationDate = {
-      day: creationDateMoment.format('D'),
-      month: creationDateMoment.format('MMM').toLowerCase()
+      day: creationDateMoment.format("D"),
+      month: creationDateMoment.format("MMM").toLowerCase()
     };
 
     const checkIn = {
-      day: startDateMoment.format('DD'),
-      year: startDateMoment.format('YYYY'),
-      month: startDateMoment.format('MMM').toLowerCase()
+      day: startDateMoment.format("DD"),
+      year: startDateMoment.format("YYYY"),
+      month: startDateMoment.format("MMM").toLowerCase()
     };
 
     const checkOut = {
-      day: endDateMoment.format('D'),
-      year: endDateMoment.format('YYYY'),
-      month: endDateMoment.format('MMM').toLowerCase()
+      day: endDateMoment.format("D"),
+      year: endDateMoment.format("YYYY"),
+      month: endDateMoment.format("MMM").toLowerCase()
     };
 
     return { creationDate, checkIn, checkOut };
   };
 
   const dates = extractDatesData(props.reservation);
-  const nights = moment(props.reservation.endDate, 'DD/MM/YYYY').diff(moment(props.reservation.startDate, 'DD/MM/YYYY'), 'days');
+  const nights = moment(props.reservation.endDate, "DD/MM/YYYY").diff(
+    moment(props.reservation.startDate, "DD/MM/YYYY"),
+    "days"
+  );
   const guests = props.reservation.guests;
 
   return (
     <ProfileFlexContainer styleClass={`flex-container-row ${props.styleClass}`}>
       <div className="tablet-col-1">
         <div className="flex-row-child dashboard-image">
-          <img className="image-host" src={`${Config.getValue('imgHost')}${props.reservation.userImage}`} alt="booker" />
+          <img
+            className="image-host"
+            src={`${Config.getValue("imgHost")}${props.reservation.userImage}`}
+            alt="booker"
+          />
         </div>
         <div className="flex-row-child dashboard-booker">
           <div className="content-row">
@@ -53,19 +60,30 @@ function DashboardReservationRow(props) {
         <div className="flex-row-child dashboard-dates">
           <span className="icon-calendar icon" />
           <div className="content-row">
-            <span className="date-in-day">{dates.checkIn.day}</span> {dates.checkIn.month}, {dates.checkIn.year} <i aria-hidden="true" className="fa fa-long-arrow-right" /> <span className="date-out-day">{dates.checkOut.day}</span> {dates.checkOut.month}, {dates.checkOut.year}
+            <span className="date-in-day">{dates.checkIn.day}</span>{" "}
+            {dates.checkIn.month}, {dates.checkIn.year}{" "}
+            <i aria-hidden="true" className="fa fa-long-arrow-right" />{" "}
+            <span className="date-out-day">{dates.checkOut.day}</span>{" "}
+            {dates.checkOut.month}, {dates.checkOut.year}
           </div>
         </div>
         <div className="flex-row-child dashboard-nights">
           <span className="icon-moon icon" />
           <div className="content-row">
-            <span>{nights} {nights > 1 ? 'nights' : 'night'} &bull; {guests} {guests > 1 ? 'guests' : 'guest'}</span>
+            <span>
+              {nights} {nights > 1 ? "nights" : "night"} &bull; {guests}{" "}
+              {guests > 1 ? "guests" : "guest"}
+            </span>
           </div>
         </div>
         <div className="flex-row-child dashboard-status">
-          <span className="status">{props.reservation.accepted ? 'Accepted' : 'Pending'}</span>
+          <span className="status">
+            {props.reservation.accepted ? "Accepted" : "Pending"}
+          </span>
           <span> - </span>
-          <span>{props.reservation.currencyCode} {props.reservation.price}</span>
+          <span>
+            {props.reservation.currencyCode} {props.reservation.price}
+          </span>
         </div>
         {/* <div className="flex-row-child dashboard-date tablet-none">
           {props.reservation.creationDate && <p>{dates.creationDate.day} {dates.creationDate.month}</p>}
