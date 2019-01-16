@@ -42,7 +42,7 @@ class ExchangerWS {
         const seconds = Math.round(data.params.secondsLeft / 1000);
         store.dispatch(setSeconds(seconds));
       }
-  
+
       store.dispatch(updateLocAmounts(data.id, data.params, data.error));
     }
   }

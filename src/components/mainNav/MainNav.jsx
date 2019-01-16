@@ -1,31 +1,28 @@
-import '../../styles/css/components/main_nav/main_nav.css';
+import "../../styles/css/components/main_nav/main_nav.css";
 
-import {
-  LOGIN,
-  REGISTER,
-} from '../../constants/modals.js';
-import { Link, withRouter } from 'react-router-dom';
-import { closeModal, openModal } from '../../actions/modalsInfo';
-import { logOut } from '../../actions/userInfo';
+import { LOGIN, REGISTER } from "../../constants/modals.js";
+import { Link, withRouter } from "react-router-dom";
+import { closeModal, openModal } from "../../actions/modalsInfo";
+import { logOut } from "../../actions/userInfo";
 
-import { Config } from '../../config';
-import PropTypes from 'prop-types';
-import React from 'react';
-import { connect } from 'react-redux';
-import requester from '../../requester';
-import BurgerMenu from './burger-menu';
-import DropdownMenu from './dropdown-menu';
-import ListMenu from './list-menu';
-import { setShowMenu } from '../../actions/burgerMenuInfo.js';
+import { Config } from "../../config";
+import PropTypes from "prop-types";
+import React from "react";
+import { connect } from "react-redux";
+import requester from "../../requester";
+import BurgerMenu from "./burger-menu";
+import DropdownMenu from "./dropdown-menu";
+import ListMenu from "./list-menu";
+import { setShowMenu } from "../../actions/burgerMenuInfo.js";
 
-import {selectors as UserSelectors} from "../../reducers/userInfo"
+import { selectors as UserSelectors } from "../../reducers/userInfo";
 
 class MainNav extends React.Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      unreadMessages: '',
+      unreadMessages: ""
     };
 
     this.onChange = this.onChange.bind(this);
@@ -34,7 +31,9 @@ class MainNav extends React.Component {
     this.openModal = this.openModal.bind(this);
     this.closeModal = this.closeModal.bind(this);
 
-    this.setMessageListenerPollingInterval = this.setMessageListenerPollingInterval.bind(this);
+    this.setMessageListenerPollingInterval = this.setMessageListenerPollingInterval.bind(
+      this
+    );
     this.getCountOfMessages = this.getCountOfMessages.bind(this);
     this.showMenu = this.showMenu.bind(this);
   }
@@ -52,12 +51,12 @@ class MainNav extends React.Component {
       e.preventDefault();
     }
 
-    localStorage.removeItem(Config.getValue('domainPrefix') + '.auth.locktrip');
-    localStorage.removeItem(Config.getValue('domainPrefix') + '.auth.username');
+    localStorage.removeItem(Config.getValue("domainPrefix") + ".auth.locktrip");
+    localStorage.removeItem(Config.getValue("domainPrefix") + ".auth.username");
 
     this.props.dispatch(logOut());
 
-    this.props.history.push('/');
+    this.props.history.push("/");
   }
 
   openModal(modal, e) {
@@ -85,8 +84,9 @@ class MainNav extends React.Component {
 
   getCountOfMessages() {
     if (
-      localStorage[Config.getValue('domainPrefix') + '.auth.locktrip']
-      && localStorage[Config.getValue('domainPrefix') + '.auth.username']) {
+      localStorage[Config.getValue("domainPrefix") + ".auth.locktrip"] &&
+      localStorage[Config.getValue("domainPrefix") + ".auth.username"]
+    ) {
       requester.getCountOfMyUnreadMessages().then(res => {
         res.body.then(data => {
           this.setState({ unreadMessages: data.count });
@@ -106,57 +106,166 @@ class MainNav extends React.Component {
         <div className="container">
           <div className="nav-container">
             <Link className="navbar-logo" to="/">
-              <img src={Config.getValue('basePath') + 'images/locktrip_logo.svg'} alt='logo' />
+              <img
+                src={Config.getValue("basePath") + "images/locktrip_logo.svg"}
+                alt="logo"
+              />
             </Link>
-            {this.props.isLogged
-              ? <ListMenu>
-                <Link className="list-menu-item" to="/profile/reservations">Hosting</Link>
-                <Link className="list-menu-item" to="/profile/trips">Traveling</Link>
-                <Link className="list-menu-item" to="/profile/wallet">Wallet</Link>
-                <a href="https://locktrip.zendesk.com/hc/en-us" target="_blank" rel="noopener noreferrer" class="list-menu-item">FAQ</a>
-                <a href="https://locktrip.zendesk.com/hc/en-us" target="_blank" rel="noopener noreferrer" class="list-menu-item">Support</a>
+            {this.props.isLogged ? (
+              <ListMenu>
+                <Link className="list-menu-item" to="/profile/reservations">
+                  Hosting
+                </Link>
+                <Link className="list-menu-item" to="/profile/trips">
+                  Traveling
+                </Link>
+                <Link className="list-menu-item" to="/profile/wallet">
+                  Wallet
+                </Link>
+                <a
+                  href="https://locktrip.zendesk.com/hc/en-us"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="list-menu-item"
+                >
+                  FAQ
+                </a>
+                <a
+                  href="https://locktrip.zendesk.com/hc/en-us"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="list-menu-item"
+                >
+                  Support
+                </a>
                 <Link className="list-menu-item" to="/profile/messages">
                   <div className="messages">
-                    <span className="fa fa-envelope-o mailbox"></span>
-                    {unreadMessages > 0 && <span className="fa fa-circle count-background"></span>}
-                    {unreadMessages > 0 && <span className="count">{unreadMessages > 9 ? 9 : unreadMessages}</span>}
+                    <span className="fa fa-envelope-o mailbox" />
+                    {unreadMessages > 0 && (
+                      <span className="fa fa-circle count-background" />
+                    )}
+                    {unreadMessages > 0 && (
+                      <span className="count">
+                        {unreadMessages > 9 ? 9 : unreadMessages}
+                      </span>
+                    )}
                   </div>
                 </Link>
-                <DropdownMenu buttonText={localStorage[Config.getValue('domainPrefix') + '.auth.username']}>
-                  <Link className="dropdown-menu-item" to="/profile/dashboard">Dashboard</Link>
-                  <Link className="dropdown-menu-item" to="/profile/affiliates">Affiliate</Link>
-                  <Link className="dropdown-menu-item" to="/profile/listings">My Listings</Link>
-                  <Link className="dropdown-menu-item" to="/profile/trips">My Trips</Link>
-                  <Link className="dropdown-menu-item" to="/profile/reservations">My Guests</Link>
-                  <Link className="dropdown-menu-item" to="/profile/me/edit">Profile</Link>
-                  <Link className="dropdown-menu-item" to="/" onClick={this.logout}>Logout</Link>
+                <DropdownMenu
+                  buttonText={
+                    localStorage[
+                      Config.getValue("domainPrefix") + ".auth.username"
+                    ]
+                  }
+                >
+                  <Link className="dropdown-menu-item" to="/profile/dashboard">
+                    Dashboard
+                  </Link>
+                  <Link className="dropdown-menu-item" to="/profile/affiliates">
+                    Affiliate
+                  </Link>
+                  <Link className="dropdown-menu-item" to="/profile/listings">
+                    My Listings
+                  </Link>
+                  <Link className="dropdown-menu-item" to="/profile/trips">
+                    My Trips
+                  </Link>
+                  <Link
+                    className="dropdown-menu-item"
+                    to="/profile/reservations"
+                  >
+                    My Guests
+                  </Link>
+                  <Link className="dropdown-menu-item" to="/profile/me/edit">
+                    Profile
+                  </Link>
+                  <Link
+                    className="dropdown-menu-item"
+                    to="/"
+                    onClick={this.logout}
+                  >
+                    Logout
+                  </Link>
                 </DropdownMenu>
               </ListMenu>
-              : <ListMenu>
-                <div className="list-menu-item" onClick={() => { this.openModal(LOGIN); }}>Login</div>
-                <div className="list-menu-item" onClick={() => { this.openModal(REGISTER); }}>Register</div>
+            ) : (
+              <ListMenu>
+                <div
+                  className="list-menu-item"
+                  onClick={() => {
+                    this.openModal(LOGIN);
+                  }}
+                >
+                  Login
+                </div>
+                <div
+                  className="list-menu-item"
+                  onClick={() => {
+                    this.openModal(REGISTER);
+                  }}
+                >
+                  Register
+                </div>
               </ListMenu>
-            }
+            )}
 
-            {this.props.isLogged
-              ? <BurgerMenu>
-                <Link className="menu-item" to="/profile/dashboard">Dashboard</Link>
-                <Link className="menu-item" to="/profile/affiliates">Affiliate</Link>
-                <Link className="menu-item" to="/profile/reservations">My Guests</Link>
-                <Link className="menu-item" to="/profile/trips">My Trips</Link>
-                <Link className="menu-item" to="/profile/listings">My Listings</Link>
-                <Link className="menu-item" to="/profile/wallet">Wallet</Link>
-                <Link className="menu-item" to="/profile/messages">Messages</Link>
-                <Link className="menu-item" to="/profile/me/edit">Profile</Link>
-                <Link className="menu-item" to="/" onClick={this.logout}>Logout</Link>
+            {this.props.isLogged ? (
+              <BurgerMenu>
+                <Link className="menu-item" to="/profile/dashboard">
+                  Dashboard
+                </Link>
+                <Link className="menu-item" to="/profile/affiliates">
+                  Affiliate
+                </Link>
+                <Link className="menu-item" to="/profile/reservations">
+                  My Guests
+                </Link>
+                <Link className="menu-item" to="/profile/trips">
+                  My Trips
+                </Link>
+                <Link className="menu-item" to="/profile/listings">
+                  My Listings
+                </Link>
+                <Link className="menu-item" to="/profile/wallet">
+                  Wallet
+                </Link>
+                <Link className="menu-item" to="/profile/messages">
+                  Messages
+                </Link>
+                <Link className="menu-item" to="/profile/me/edit">
+                  Profile
+                </Link>
+                <Link className="menu-item" to="/" onClick={this.logout}>
+                  Logout
+                </Link>
               </BurgerMenu>
-              : <BurgerMenu>
-                <div className="menu-item" onClick={() => { this.openModal(LOGIN); }}>Login</div>
-                <div className="menu-item" onClick={() => { this.openModal(REGISTER); }}>Register</div>
+            ) : (
+              <BurgerMenu>
+                <div
+                  className="menu-item"
+                  onClick={() => {
+                    this.openModal(LOGIN);
+                  }}
+                >
+                  Login
+                </div>
+                <div
+                  className="menu-item"
+                  onClick={() => {
+                    this.openModal(REGISTER);
+                  }}
+                >
+                  Register
+                </div>
               </BurgerMenu>
-            }
+            )}
           </div>
-          <button className="slider-menu-toggle-button mb-only" onClick={this.showMenu}><span className="fa fa-bars"></span></button>
+          <button
+            className="slider-menu-toggle-button mb-only"
+            onClick={this.showMenu}
+          >
+            <span className="fa fa-bars" />
+          </button>
         </div>
       </nav>
     );
@@ -173,8 +282,10 @@ MainNav.propTypes = {
   dispatch: PropTypes.func
 };
 
-export default withRouter(connect(function mapStateToProps(state){
-  return {
-    isLogged: UserSelectors.getUserId(state.userInfo)
-  }
-})(MainNav));
+export default withRouter(
+  connect(function mapStateToProps(state) {
+    return {
+      isLogged: UserSelectors.getUserId(state.userInfo)
+    };
+  })(MainNav)
+);

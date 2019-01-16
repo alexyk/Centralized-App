@@ -35,7 +35,7 @@ function DashboardTripRow(props) {
       );
     } catch (e) {
       return {
-        startDates: {
+        startDate: {
           date: "",
           month: "",
           year: "",
