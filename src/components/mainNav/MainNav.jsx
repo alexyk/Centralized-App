@@ -188,24 +188,11 @@ class MainNav extends React.Component {
                   </Link>
                 </DropdownMenu>
               </ListMenu>
-            ) : (
-              <ListMenu>
-                <div
-                  className="list-menu-item"
-                  onClick={() => {
-                    this.openModal(LOGIN);
-                  }}
-                >
-                  Login
-                </div>
-                <div
-                  className="list-menu-item"
-                  onClick={() => {
-                    this.openModal(REGISTER);
-                  }}
-                >
-                  Register
-                </div>
+              : <ListMenu>
+                <a href="https://locktrip.zendesk.com/hc/en-us" target="_blank" rel="noopener noreferrer" class="list-menu-item">FAQ</a>
+                <a href="https://locktrip.zendesk.com/hc/en-us" target="_blank" rel="noopener noreferrer" class="list-menu-item">Support</a>
+                <div className="list-menu-item" onClick={() => { this.openModal(LOGIN); }}>Login</div>
+                <div className="list-menu-item" onClick={() => { this.openModal(REGISTER); }}>Register</div>
               </ListMenu>
             )}
 
