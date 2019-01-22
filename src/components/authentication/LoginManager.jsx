@@ -51,7 +51,6 @@ export class LoginManager extends React.Component {
     this.handleChangeCountry = this.handleChangeCountry.bind(this);
     this.handleUpdateCountry = this.handleUpdateCountry.bind(this);
     this.requestStates = this.requestStates.bind(this);
-    this.getQueryString = this.getQueryString.bind(this);
     this.tryToOpenRecoveryModalOnMount = this.tryToOpenRecoveryModalOnMount.bind(
       this
     );
@@ -216,18 +215,22 @@ export class LoginManager extends React.Component {
       ] = decodeURI(authToken);
       this.setUserInfo();
       const url = this.props.location.pathname;
-      const search = this.getQueryString(queryStringParameters);
+      const search = LoginManager.getQueryStringForMobile(queryStringParameters);
       this.props.history.push(url + search);
     }
   }
 
-  getQueryString(queryStringParameters) {
+  static getQueryStringForMobile(queryStringParameters) {
     let queryString = "?";
-    queryString += "region=" + encodeURI(queryStringParameters.region);
-    queryString += "&currency=" + encodeURI(queryStringParameters.currency);
-    queryString += "&startDate=" + encodeURI(queryStringParameters.startDate);
-    queryString += "&endDate=" + encodeURI(queryStringParameters.endDate);
-    queryString += "&rooms=" + encodeURI(queryStringParameters.rooms);
+
+    const {region,currency,startDate,endDate,rooms,guests} = queryStringParameters;
+    if (region)    queryString += "region="     + encodeURI(region);
+    if (currency)  queryString += "&currency="  + encodeURI(currency);
+    if (startDate) queryString += "&startDate=" + encodeURI(startDate);
+    if (endDate)   queryString += "&endDate="   + encodeURI(endDate);
+    if (rooms)     queryString += "&rooms="     + encodeURI(rooms);
+    if (guests)    queryString += "&guests="    + encodeURI(guests);
+
     return queryString;
   }
 
