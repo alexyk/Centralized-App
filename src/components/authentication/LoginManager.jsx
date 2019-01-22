@@ -221,17 +221,17 @@ export class LoginManager extends React.Component {
   }
 
   static getQueryStringForMobile(queryStringParameters) {
-    let queryString = "?";
+    let result = "?";
 
     const {region,currency,startDate,endDate,rooms,guests} = queryStringParameters;
-    if (region)    queryString += "region="     + encodeURI(region);
-    if (currency)  queryString += "&currency="  + encodeURI(currency);
-    if (startDate) queryString += "&startDate=" + encodeURI(startDate);
-    if (endDate)   queryString += "&endDate="   + encodeURI(endDate);
-    if (rooms)     queryString += "&rooms="     + encodeURI(rooms);
-    if (guests)    queryString += "&guests="    + encodeURI(guests);
+    if (region)    result += "region="     + encodeURI(region);
+    if (currency)  result += "&currency="  + encodeURI(currency);
+    if (startDate) result += "&startDate=" + encodeURI(startDate);
+    if (endDate)   result += "&endDate="   + encodeURI(endDate);
+    if (rooms)     result += "&rooms="     + encodeURI(rooms);
+    if (guests)    result += "&guests="    + encodeURI(guests);
 
-    return queryString;
+    return result;
   }
 
   handleLoginErrors(res) {
