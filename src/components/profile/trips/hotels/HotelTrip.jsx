@@ -89,6 +89,7 @@ class HotelTrip extends React.Component {
     const isCompleted =
       status === "COMPLETE" && this.isFutureDate(this.props.trip.arrival_date);
     var _dates = this.getDates();
+    if (this.props.trip.status === "PENDING_SAFECHARGE_CONFIRMATION") return null;
     return (
       <ProfileFlexContainer
         styleClass={`flex-container-row ${this.props.styleClass}`}

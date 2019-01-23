@@ -47,6 +47,7 @@ class QuoteLocPrice extends PureComponent {
 
   redirectToHotelDetailsPage() {
     NotificationManager.warning(this.props.quoteLocError, '', LONG);
+    debugger;
     this.props.redirectToHotelDetailsPage();
   }
 
