@@ -1,14 +1,14 @@
-import { NavLink, withRouter } from 'react-router-dom';
+import { NavLink, withRouter } from "react-router-dom";
 
-import AdminNav from '../AdminNav';
-import ListItem from './ListItem';
-import NoEntriesMessage from '../../../common/messages/NoEntriesMessage';
-import { NotificationManager } from 'react-notifications';
-import Pagination from '../../../common/pagination/Pagination';
-import PropTypes from 'prop-types';
-import React from 'react';
-import queryString from 'query-string';
-import requester from '../../../../requester';
+import AdminNav from "../AdminNav";
+import ListItem from "./ListItem";
+import NoEntriesMessage from "../../../common/messages/NoEntriesMessage";
+import { NotificationManager } from "react-notifications";
+import Pagination from "../../../common/pagination/Pagination";
+import PropTypes from "prop-types";
+import React from "react";
+import queryString from "query-string";
+import requester from "../../../../requester";
 
 class VerifiedList extends React.Component {
   constructor(props) {
@@ -19,7 +19,7 @@ class VerifiedList extends React.Component {
       users: [],
       loading: true,
       totalElements: 0,
-      currentPage: !searchMap.page ? 0 : Number(searchMap.page),
+      currentPage: !searchMap.page ? 0 : Number(searchMap.page)
     };
 
     this.onPageChange = this.onPageChange.bind(this);
@@ -30,18 +30,20 @@ class VerifiedList extends React.Component {
   componentDidMount() {
     requester.getAllVerifiedUsers().then(res => {
       res.body.then(data => {
-        this.setState({ users: data.content, loading: false, totalElements: data.totalElements });
+        this.setState({
+          users: data.content,
+          loading: false,
+          totalElements: data.totalElements
+        });
       });
     });
   }
-
 
   onChange(e) {
     this.setState({
       [e.target.name]: e.target.value
     });
   }
-
 
   onPageChange(page) {
     this.setState({
@@ -72,7 +74,7 @@ class VerifiedList extends React.Component {
 
     requester.changeUserStatus(userObj).then(res => {
       if (res.success) {
-        NotificationManager.info('User unverified');
+        NotificationManager.info("User unverified");
         const allUsers = this.state.users;
         const newUsers = allUsers.filter(x => x.id !== id);
         const totalElements = this.state.totalElements;
@@ -80,32 +82,57 @@ class VerifiedList extends React.Component {
         if (newUsers.length === 0 && totalElements > 0) {
           this.onPageChange(1);
         }
-      }
-      else {
-        NotificationManager.error('Something went wrong', 'Users Operations');
+      } else {
+        NotificationManager.error("Something went wrong", "Users Operations");
       }
     });
   }
 
   render() {
     if (this.state.loading) {
-      return <div className="loader" style={{ 'marginBottom': '40px' }}></div>;
+      return <div className="loader" style={{ marginBottom: "40px" }} />;
     }
 
     return (
       <div className="container">
         <AdminNav>
           <div>
-            <li><NavLink exact activeClassName="active" to="/profile/admin/users/unverified"><h2>Unverified</h2></NavLink></li>
-            <li><NavLink exact activeClassName="active" to="/profile/admin/users/verified"><h2>Verified</h2></NavLink></li>
+            <li>
+              <NavLink
+                exact
+                activeClassName="active"
+                to="/profile/admin/users/unverified"
+              >
+                <h2>Unverified</h2>
+              </NavLink>
+            </li>
+            <li>
+              <NavLink
+                exact
+                activeClassName="active"
+                to="/profile/admin/users/verified"
+              >
+                <h2>Verified</h2>
+              </NavLink>
+            </li>
+            <li>
+              <NavLink
+                exact
+                activeClassName="active"
+                to="/profile/admin/users/eraseprofile"
+              >
+                <h2>Delete User</h2>
+              </NavLink>
+            </li>
           </div>
         </AdminNav>
         <div className="my-reservations">
           <section id="profile-my-reservations">
             <div>
-              {this.state.users.length === 0
-                ? <NoEntriesMessage text="No users to show" />
-                : <div>
+              {this.state.users.length === 0 ? (
+                <NoEntriesMessage text="No users to show" />
+              ) : (
+                <div>
                   {this.state.users.map((item, i) => {
                     return (
                       <ListItem
@@ -117,7 +144,7 @@ class VerifiedList extends React.Component {
                     );
                   })}
                 </div>
-              }
+              )}
 
               <Pagination
                 loading={this.state.totalReservations === 0}
@@ -136,7 +163,7 @@ class VerifiedList extends React.Component {
 
 VerifiedList.propTypes = {
   location: PropTypes.object,
-  history: PropTypes.object,
+  history: PropTypes.object
 };
 
 export default withRouter(VerifiedList);

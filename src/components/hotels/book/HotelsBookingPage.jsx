@@ -1,25 +1,29 @@
-import '../../../styles/css/components/hotels/book/hotel-booking-page.css';
+import "../../../styles/css/components/hotels/book/hotel-booking-page.css";
 
-import { LONG } from '../../../constants/notificationDisplayTimes.js';
-import { INVALID_CHILD_AGE, INVALID_GUEST_NAME } from '../../../constants/warningMessages.js';
+import { LONG } from "../../../constants/notificationDisplayTimes.js";
+import {
+  INVALID_CHILD_AGE,
+  INVALID_GUEST_NAME,
+  REPEATING_NAMES
+} from "../../../constants/warningMessages.js";
 
-import { Config } from '../../../config';
-import { CurrencyConverter } from '../../../services/utilities/currencyConverter';
-import { NotificationManager } from 'react-notifications';
-import PropTypes from 'prop-types';
-import React from 'react';
-import { connect } from 'react-redux';
-import moment from 'moment';
-import queryString from 'query-string';
-import { withRouter } from 'react-router-dom';
-import BookingSteps from '../../common/bookingSteps';
-import { RoomsXMLCurrency } from '../../../services/utilities/roomsXMLCurrency';
-import LocPrice from '../../common/utility/LocPrice';
-import xregexp from 'xregexp';
-import { DEFAULT_LISTING_IMAGE_URL } from '../../../constants/images';
-import AsideContentPage from '../../common/asideContentPage';
-import { getCurrency, getCurrencySign } from '../../../selectors/paymentInfo';
-import { getCurrencyExchangeRates } from '../../../selectors/exchangeRatesInfo';
+import { Config } from "../../../config";
+import { CurrencyConverter } from "../../../services/utilities/currencyConverter";
+import { NotificationManager } from "react-notifications";
+import PropTypes from "prop-types";
+import React from "react";
+import { connect } from "react-redux";
+import moment from "moment";
+import queryString from "query-string";
+import { withRouter } from "react-router-dom";
+import BookingSteps from "../../common/utility/BookingSteps";
+import { RoomsXMLCurrency } from "../../../services/utilities/roomsXMLCurrency";
+import LocPrice from "../../common/utility/LocPrice";
+import xregexp from "xregexp";
+import { DEFAULT_LISTING_IMAGE_URL } from "../../../constants/images";
+import AsideContentPage from "../../common/asideContentPage";
+import { getCurrency, getCurrencySign } from "../../../selectors/paymentInfo";
+import { getCurrencyExchangeRates } from "../../../selectors/exchangeRatesInfo";
 
 class HotelsBookingPage extends React.Component {
   constructor(props) {
@@ -40,40 +44,57 @@ class HotelsBookingPage extends React.Component {
 
   calculateReservationTotalNights(search) {
     const searchParams = queryString.parse(search);
-    const start = moment(searchParams.startDate, 'DD/MM/YYYY');
-    const end = moment(searchParams.endDate, 'DD/MM/YYYY');
-    return end.diff(start, 'days');
+    const start = moment(searchParams.startDate, "DD/MM/YYYY");
+    const end = moment(searchParams.endDate, "DD/MM/YYYY");
+    return end.diff(start, "days");
+  }
+
+  processSubmit() {
+    const queryParams = queryString.parse(this.props.location.search);
+    const id = this.props.match.params.id;
+    const query = this.getQueryString(queryParams);
+    const isWebView = this.props.location.pathname.indexOf("/mobile") !== -1;
+    const rootURL = !isWebView
+      ? `/hotels/listings/book/${id}/confirm`
+      : `/mobile/hotels/listings/book/${id}/confirm`;
+    this.props.history.push(`${rootURL}${query}`);
   }
 
   handleSubmit() {
+    let proceed = true;
     if (!this.isValidNames()) {
-      NotificationManager.warning(INVALID_GUEST_NAME, '', LONG);
-    } else if (!this.isValidAges()) {
-      NotificationManager.warning(INVALID_CHILD_AGE, '', LONG);
-    } else {
-      const queryParams = queryString.parse(this.props.location.search);
-      const id = this.props.match.params.id;
-      const query = this.getQueryString(queryParams);
-      const isWebView = this.props.location.pathname.indexOf('/mobile') !== -1;
-      const rootURL = !isWebView ? `/hotels/listings/book/${id}/confirm` : `/mobile/hotels/listings/book/${id}/confirm`;
-      this.props.history.push(`${rootURL}${query}`);
+      proceed = false;
+      NotificationManager.warning(INVALID_GUEST_NAME, "", LONG);
+    }
+    if (!this.isValidAges()) {
+      proceed = false;
+      NotificationManager.warning(INVALID_CHILD_AGE, "", LONG);
+    }
+    if (this.isRepeatingNames()) {
+      proceed = false;
+      NotificationManager.error(REPEATING_NAMES, "", LONG * 2, () => {
+        this.processSubmit();
+      });
+    }
+    if (proceed) {
+      this.processSubmit();
     }
   }
 
   getQueryString(queryStringParameters) {
-    let queryString = '?';
-    queryString += 'region=' + encodeURI(queryStringParameters.region);
-    queryString += '&currency=' + encodeURI(queryStringParameters.currency);
-    queryString += '&startDate=' + encodeURI(queryStringParameters.startDate);
-    queryString += '&endDate=' + encodeURI(queryStringParameters.endDate);
-    queryString += '&rooms=' + encodeURI(JSON.stringify(this.props.guests));
-    queryString += '&quoteId=' + encodeURI(queryStringParameters.quoteId);
+    let queryString = "?";
+    queryString += "region=" + encodeURI(queryStringParameters.region);
+    queryString += "&currency=" + encodeURI(queryStringParameters.currency);
+    queryString += "&startDate=" + encodeURI(queryStringParameters.startDate);
+    queryString += "&endDate=" + encodeURI(queryStringParameters.endDate);
+    queryString += "&rooms=" + encodeURI(JSON.stringify(this.props.guests));
+    queryString += "&quoteId=" + encodeURI(queryStringParameters.quoteId);
     return queryString;
   }
 
   isValidNames() {
     const rooms = this.props.guests;
-    const regexp = xregexp('^\\pL+([- \']?\\pL*)?([- \']?\\pL*)$');
+    const regexp = xregexp("^\\pL+([- ']?\\pL*)?([- ']?\\pL*)$");
     for (let i = 0; i < rooms.length; i++) {
       const adults = rooms[i].adults;
       for (let j = 0; j < adults.length; j++) {
@@ -86,6 +107,27 @@ class HotelsBookingPage extends React.Component {
     }
 
     return true;
+  }
+
+  isRepeatingNames() {
+    const rooms = this.props.guests;
+    for (let i = 0; i < rooms.length; i++) {
+      const adults = rooms[i].adults;
+      for (let j = 0; j < adults.length; j++) {
+        const first = adults[j].firstName;
+        const last = adults[j].lastName;
+        for (let z = i + 1; z < rooms.length; z++) {
+          const _adults = rooms[z].adults;
+          for (let m = 0; m < _adults.length; m++) {
+            if (_adults[m].firstName == first && _adults[m].lastName == last) {
+              return true;
+            }
+          }
+        }
+      }
+    }
+
+    return false;
   }
 
   isValidAges() {
@@ -105,109 +147,188 @@ class HotelsBookingPage extends React.Component {
 
   render() {
     if (!this.props.hotel) {
-      return (<div className="loader"></div>);
+      return <div className="loader" />;
     }
 
     if (!this.props.rooms) {
-      return (<div className="loader"></div>);
+      return <div className="loader" />;
     }
 
     if (!this.props.currencyExchangeRates) {
-      return (<div className="loader"></div>);
+      return <div className="loader" />;
     }
 
     if (!this.props.guests) {
-      return (<div className="loader"></div>);
+      return <div className="loader" />;
     }
 
-    const { hotel, rooms, guests, currency, currencySign, currencyExchangeRates, handleAdultChange, handleChildAgeChange, location } = this.props;
+    const {
+      hotel,
+      rooms,
+      guests,
+      currency,
+      currencySign,
+      currencyExchangeRates,
+      handleAdultChange,
+      handleChildAgeChange,
+      location
+    } = this.props;
     const city = hotel.city;
     const address = hotel.additionalInfo.mainAddress;
     const roomsTotalPrice = this.calculateRoomsTotalPrice(rooms);
-    const hotelPicUrl = hotel.hotelPhotos && hotel.hotelPhotos.length > 0 ? hotel.hotelPhotos[0].url : DEFAULT_LISTING_IMAGE_URL;
-    const priceInSelectedCurrency = Number(CurrencyConverter.convert(currencyExchangeRates, RoomsXMLCurrency.get(), currency, roomsTotalPrice)).toFixed(2);
+    const hotelPicUrl =
+      hotel.hotelPhotos && hotel.hotelPhotos.length > 0
+        ? hotel.hotelPhotos[0].url
+        : DEFAULT_LISTING_IMAGE_URL;
+    const priceInSelectedCurrency = Number(
+      CurrencyConverter.convert(
+        currencyExchangeRates,
+        RoomsXMLCurrency.get(),
+        currency,
+        roomsTotalPrice
+      )
+    ).toFixed(2);
     const nights = this.calculateReservationTotalNights(location.search);
 
     return (
       <div>
-        <BookingSteps steps={['Provide Guest Information', 'Review Room Details', 'Confirm and Pay']} currentStepIndex={1} />
+        <BookingSteps
+          steps={[
+            "Provide Guest Information",
+            "Review Room Details",
+            "Confirm and Pay"
+          ]}
+          currentStepIndex={1}
+        />
         <section id="room-book">
           <div className="container">
             <AsideContentPage>
-              <AsideContentPage.Aside width={'30%'}>
+              <AsideContentPage.Aside width={"30%"}>
                 <div className="hotel-info">
                   <div className="hotel-picture">
-                    <img src={`${Config.getValue('imgHost')}${hotelPicUrl}`} alt="Hotel" />
+                    <img
+                      src={`${Config.getValue("imgHost")}${hotelPicUrl}`}
+                      alt="Hotel"
+                    />
                   </div>
                   <h6>{hotel.name}</h6>
-                  <h6>{address}&nbsp;{city}</h6>
+                  <h6>
+                    {address}
+                    &nbsp;
+                    {city}
+                  </h6>
                   <hr />
                   {rooms.map((room, index) => {
                     return (
                       <h6 key={index}>
-                        {room.name}, {nights} nights: {currencySign}{currencyExchangeRates && (CurrencyConverter.convert(currencyExchangeRates, RoomsXMLCurrency.get(), currency, room.price)).toFixed(2)} <LocPrice fiat={room.price} />
+                        {room.name}, {nights} nights: {currencySign}
+                        {currencyExchangeRates &&
+                          CurrencyConverter.convert(
+                            currencyExchangeRates,
+                            RoomsXMLCurrency.get(),
+                            currency,
+                            room.price
+                          ).toFixed(2)}{" "}
+                        <LocPrice fiat={room.price} />
                       </h6>
                     );
                   })}
                   <hr />
                   <h6 className="total-price">
-                    Total: {currencySign}{priceInSelectedCurrency} {roomsTotalPrice && <LocPrice fiat={roomsTotalPrice} />}
+                    Total: {currencySign}
+                    {priceInSelectedCurrency}{" "}
+                    {roomsTotalPrice && <LocPrice fiat={roomsTotalPrice} />}
                   </h6>
-                  <div className="clearfix"></div>
+                  <div className="clearfix" />
                 </div>
               </AsideContentPage.Aside>
-              <AsideContentPage.Content width={'65%'}>
+              <AsideContentPage.Content width={"65%"}>
                 <div className="rooms">
                   {guests.map((room, roomIndex) => {
                     return (
                       <div className="room" key={roomIndex}>
                         <h4>Room</h4>
                         <hr className="sm-none" />
-                        {room && room.adults.map((adult, adultIndex) => {
-                          return (
-                            <div className="guest" key={adultIndex}>
-                              <label htmlFor="title">Guest</label>
-                              <select
-                                className="title-select"
-                                name="title"
-                                value={guests[roomIndex].adults[adultIndex].title}
-                                onChange={(e) => { handleAdultChange(e, roomIndex, adultIndex); }}
-                              >
-                                <option value="Mr">Mr</option>
-                                <option value="Mrs">Mrs</option>
-                              </select>
+                        {room &&
+                          room.adults.map((adult, adultIndex) => {
+                            return (
+                              <div className="guest" key={adultIndex}>
+                                <label htmlFor="title">Guest</label>
+                                <select
+                                  className="title-select"
+                                  name="title"
+                                  value={
+                                    guests[roomIndex].adults[adultIndex].title
+                                  }
+                                  onChange={e => {
+                                    handleAdultChange(e, roomIndex, adultIndex);
+                                  }}
+                                >
+                                  <option value="Mr">Mr</option>
+                                  <option value="Mrs">Mrs</option>
+                                </select>
 
-                              <input className="guest-name"
-                                type="text"
-                                placeholder="First Name"
-                                name="firstName"
-                                value={guests[roomIndex].adults[adultIndex].firstName || ''}
-                                onChange={(e) => { handleAdultChange(e, roomIndex, adultIndex); }}
-                              />
-                              <input
-                                className="guest-name"
-                                type="text"
-                                placeholder="Last Name"
-                                value={guests[roomIndex].adults[adultIndex].lastName || ''}
-                                name="lastName" onChange={(e) => { handleAdultChange(e, roomIndex, adultIndex); }}
-                              />
-                            </div>
-                          );
-                        })}
+                                <input
+                                  className="guest-name"
+                                  type="text"
+                                  placeholder="First Name"
+                                  name="firstName"
+                                  value={
+                                    guests[roomIndex].adults[adultIndex]
+                                      .firstName || ""
+                                  }
+                                  onChange={e => {
+                                    handleAdultChange(e, roomIndex, adultIndex);
+                                  }}
+                                />
+                                <input
+                                  className="guest-name"
+                                  type="text"
+                                  placeholder="Last Name"
+                                  value={
+                                    guests[roomIndex].adults[adultIndex]
+                                      .lastName || ""
+                                  }
+                                  name="lastName"
+                                  onChange={e => {
+                                    handleAdultChange(e, roomIndex, adultIndex);
+                                  }}
+                                />
+                              </div>
+                            );
+                          })}
 
-                        {room && room.children.map((child, childIndex) => {
-                          return (
-                            <div className="guest" key={childIndex}>
-                              <label htmlFor="age">Child (age)</label>
-                              <input className="child-age" type="number" value={guests[roomIndex].children[childIndex].age} placeholder="Age" name="age" onChange={(e) => { handleChildAgeChange(e, roomIndex, childIndex); }} />
-                            </div>
-                          );
-                        })}
+                        {room &&
+                          room.children.map((child, childIndex) => {
+                            return (
+                              <div className="guest" key={childIndex}>
+                                <label htmlFor="age">Child (age)</label>
+                                <input
+                                  className="child-age"
+                                  type="number"
+                                  value={
+                                    guests[roomIndex].children[childIndex].age
+                                  }
+                                  placeholder="Age"
+                                  name="age"
+                                  onChange={e => {
+                                    handleChildAgeChange(
+                                      e,
+                                      roomIndex,
+                                      childIndex
+                                    );
+                                  }}
+                                />
+                              </div>
+                            );
+                          })}
                       </div>
                     );
                   })}
                 </div>
-                <button className="button btn-book" onClick={this.handleSubmit}>Proceed</button>
+                <button className="button btn-book" onClick={this.handleSubmit}>
+                  Proceed
+                </button>
               </AsideContentPage.Content>
             </AsideContentPage>
           </div>

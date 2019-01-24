@@ -36,3 +36,5 @@ export const INVALID_LOC_ADDRESS =
 export const INVALID_PICTURE =
   "Maximum file upload size is 10MB. Supported media formats are jpg, jpeg, png.";
 export const MISSING_NAMES = "Name is required!";
+export const REPEATING_NAMES =
+  "SAME guest names for more than one room DETECTED! If these are different persons, please CLICK ON THIS MESSAGE TO CONTINUE ON YOU OWN RESPONSIBILITY! Otherwise, please enter different guest names for any of the rooms.";

@@ -16,6 +16,7 @@ import { NotificationContainer } from 'react-notifications';
 import ProfilePage from '../profile/ProfilePage';
 import PropTypes from 'prop-types';
 import React from 'react';
+import { Wallet } from '../../services/blockchain/wallet.js';
 import WorldKuCoinCampaign from '../external/WorldKuCoinCampaign';
 import { connect } from 'react-redux';
 import moment from 'moment';
@@ -23,14 +24,15 @@ import requester from '../../requester';
 import GooglePlaces from '../common/GooglePlaces';
 import HelpPage from '../static/HelpPage';
 import AboutUsPage from '../static/AboutUsPage';
-import { hot } from 'react-hot-loader';
 import LoginManager from '../authentication/LoginManager';
 import RegisterManager from '../authentication/RegisterManager';
 import WalletCreationManager from '../authentication/WalletCreationManager';
 import PasswordRecoveryManager from '../authentication/PasswordRecoveryManager';
 import { fetchCountries } from '../../actions/countriesInfo';
 import referralIdPersister from "../profile/affiliates/service/persist-referral-id";
-class App extends React.Component {
+import AffiliateTerms from "../static/AffiliateTerms"
+
+class App extends React.Component<Props> {
   constructor(props) {
     super(props);
     
@@ -38,11 +40,12 @@ class App extends React.Component {
   }
 
   componentDidMount() {
+    referralIdPersister.tryToSetFromSearch(this.props.location.search);
     this.requestExchangeRates();
     this.requestLocEurRate();
     this.requestCountries();
-
   }
+
 
   isAuthenticated() {
     let token = localStorage.getItem(Config.getValue('domainPrefix') + '.auth.locktrip');
@@ -74,16 +77,15 @@ class App extends React.Component {
   }
 
   render() {
-
     const isWebView = this.props.location.pathname.indexOf('/mobile') !== -1;
 
     return (
-      <div>
+      <div data-testid="app">
         {!isWebView &&
           <MainNav />
         }
 
-        {!isWebView &&
+        {!isWebView && this.props.location.pathname !== "/affiliate-terms" &&
           <LocalizationNav />
         }
 
@@ -94,10 +96,8 @@ class App extends React.Component {
         <NotificationContainer />
 
         <Switch>
-          <Route exact path="/" render={(props) => {
-            referralIdPersister.tryToSetFromSearch(props.location.search);
-            return <HomeRouterPage />
-          }}/>
+          <Route exact path="/affiliate-terms" render={(props) =><AffiliateTerms/>}/>
+          <Route exact path="/" render={(props) =><HomeRouterPage />}/>
           <Route exact path="/profile/listings/edit/:step/:id" render={() => !this.isAuthenticated() ? <Redirect to="/" /> : <EditListingPage />} />
           <Route exact path="/users/resetPassword/:confirm" render={() => <HomeRouterPage />} />
           <Route path="/homes" render={() => <HomeRouterPage />} />
@@ -133,4 +133,10 @@ App.propTypes = {
   dispatch: PropTypes.func,
 };
 
-export default hot(module)(withRouter(connect()(App)));
+export default withRouter(connect(function mapStateToProps(){
+  return {
+    persistReferralId(search){
+      referralIdPersister.tryToSetFromSearch(search)
+    }
+  }
+})(App));

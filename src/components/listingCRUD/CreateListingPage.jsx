@@ -1,96 +1,171 @@
+// @flow
 import {
   INVALID_ADDRESS,
   INVALID_SUMMARY,
   INVALID_TITLE,
   MISSING_CITY,
   MISSING_COUNTRY,
-  MISSING_PICTURE,
-} from '../../constants/warningMessages.js';
-import { Route, Switch, withRouter } from 'react-router-dom';
+  MISSING_PICTURE
+} from "../../constants/warningMessages.js";
+import { Route, Switch, withRouter } from "react-router-dom";
+//
+import { Config } from "../../config";
+import { LONG } from "../../constants/notificationDisplayTimes.js";
+import ListingAccommodations from "./steps/ListingAccommodations";
+import ListingChecking from "./steps/ListingChecking";
+import ListingDescription from "./steps/ListingDescription";
+import ListingFacilities from "./steps/ListingFacilities";
+import ListingHouseRules from "./steps/ListingHouseRules";
+import ListingLandingPage from "./steps/ListingLandingPage";
+import ListingLocAddress from "./steps/ListingLocAddress";
+import ListingLocation from "./steps/listing-location/ListingLocation";
+import ListingPhotos from "./steps/ListingPhotos";
+import ListingPlaceType from "./steps/ListingPlaceType";
+import ListingPrice from "./steps/ListingPrice";
+import ListingSafetyFacilities from "./steps/ListingSafetyFacilities";
+import { NotificationManager } from "react-notifications";
+import PropTypes from "prop-types";
+import React from "react";
+import { arrayMove } from "react-sortable-hoc";
+import moment from "moment";
+import request from "superagent";
+import requester from "../../requester";
+import update from "react-addons-update";
+import NoEntriesMessage from "../common/messages/NoEntriesMessage";
+import { CREATE_WALLET } from "../../constants/modals";
+import ProfileNav from "../profile/ProfileNav";
+import { connect } from "react-redux";
+import { openModal } from "../../actions/modalsInfo";
+import { getLocAddress, getEmail } from "../../selectors/userInfo";
 
-import { Config } from '../../config';
-import { LONG } from '../../constants/notificationDisplayTimes.js';
-import ListingAccommodations from './steps/ListingAccommodations';
-import ListingChecking from './steps/ListingChecking';
-import ListingDescription from './steps/ListingDescription';
-import ListingFacilities from './steps/ListingFacilities';
-import ListingHouseRules from './steps/ListingHouseRules';
-import ListingLandingPage from './steps/ListingLandingPage';
-import ListingLocAddress from './steps/ListingLocAddress';
-import ListingLocation from './steps/ListingLocation';
-import ListingPhotos from './steps/ListingPhotos';
-import ListingPlaceType from './steps/ListingPlaceType';
-import ListingPrice from './steps/ListingPrice';
-import ListingSafetyFacilities from './steps/ListingSafetyFacilities';
-import { NotificationManager } from 'react-notifications';
-import PropTypes from 'prop-types';
-import React from 'react';
-import { arrayMove } from 'react-sortable-hoc';
-import moment from 'moment';
-import request from 'superagent';
-import requester from '../../requester';
-import update from 'react-addons-update';
-import NoEntriesMessage from '../common/messages/NoEntriesMessage';
-import { CREATE_WALLET } from '../../constants/modals';
-import ProfileNav from '../profile/ProfileNav';
-import { connect } from 'react-redux';
-import { openModal } from '../../actions/modalsInfo';
-import { getLocAddress, getEmail } from '../../selectors/userInfo';
+// TPYES
+import type { CreateListingArg } from "../../requester.flow";
 
-const host = Config.getValue('apiHost');
+type State = {
+  progressId: ?number,
+  listingType: number,
+  country: string,
+  countryCode: string,
+  propertyType: number,
+  roomType: string,
+  dedicatedSpace: boolean,
+  propertySize: number,
+  guestsIncluded: number,
+  // bedroomsCount: '1 bedroom', -- REFACTOR!
+  bedroomsCount: number,
+  bedrooms: [
+    {
+      singleBedCount: number,
+      doubleBedCount: number,
+      kingBedCount: number
+    }
+  ],
+  bathrooms: number,
+  facilities: Set<number>,
+  // selectedOption: null, ???? WHAT OPTION ????
+  selectedOption: ?number,
+  street: string,
+  state: string,
+  city: string,
+  // apartment: '', ?????? WHAT IS THIS????
+  apartment: string,
+  zipCode: string,
+  name: string,
+  text: string,
+  // interaction: '', -- ??? WHAT IS THIS ????
+  interaction: string,
+  uploadedFilesUrls: [string],
+  uploadedFilesThumbUrls: [string],
+  suitableForChildren: boolean,
+  suitableForInfants: boolean,
+  suitableForPets: boolean,
+  smokingAllowed: boolean,
+  eventsAllowed: boolean,
+  otherRuleText: string,
+  otherHouseRules: Set<string>,
+  checkinStart: string,
+  checkinEnd: string,
+  checkoutStart: string,
+  checkoutEnd: string,
+  defaultDailyPrice: number,
+  cleaningFee: number,
+  depositRate: number,
+  currency: number,
+  loading: boolean, // LOADING WHAT ????
+  // countries: [], // REDUNDANT ???????
+  propertyTypes: [
+    {
+      id: number,
+      name: string
+    }
+  ],
+  // cities: [],
+  currencies: [
+    {
+      code: string,
+      id: number,
+      unicode: string
+    }
+  ],
+  locAddress: string
+};
+type Props = {};
+
+const host = Config.getValue("apiHost");
 const LOCKTRIP_UPLOAD_URL = `${host}images/upload`;
 
-class CreateListingPage extends React.Component {
+class CreateListingPage extends React.Component<Props, State> {
   constructor(props) {
     super(props);
 
     this.state = {
       progressId: null,
-      listingType: '1',
-      country: '',
-      countryCode: '',
-      propertyType: '1',
-      roomType: 'entire',
-      dedicatedSpace: 'true',
-      propertySize: '',
+      listingType: 1,
+      country: "",
+      countryCode: "",
+      propertyType: "1",
+      roomType: "entire",
+      dedicatedSpace: "true",
+      propertySize: "",
       guestsIncluded: 1,
-      bedroomsCount: '1 bedroom',
-      bedrooms: [this.createBedroom(),],
+      bedroomsCount: "1 bedroom",
+      bedrooms: [this.createBedroom()],
       bathrooms: 1,
       facilities: new Set(),
       selectedOption: null,
-      street: '',
-      state: '',
-      city: '',
-      apartment: '',
-      zipCode: '',
-      name: '',
-      text: '',
-      interaction: '',
+      street: "",
+      state: "",
+      city: "",
+      apartment: "",
+      zipCode: "",
+      name: "",
+      text: "",
+      // interaction: '', -- ??? WTF US THIS ????
+      interaction: "",
       uploadedFilesUrls: [],
       uploadedFilesThumbUrls: [],
-      suitableForChildren: 'false',
-      suitableForInfants: 'false',
-      suitableForPets: 'false',
-      smokingAllowed: 'false',
-      eventsAllowed: 'false',
-      otherRuleText: '',
+      suitableForChildren: "false",
+      suitableForInfants: "false",
+      suitableForPets: "false",
+      smokingAllowed: "false",
+      eventsAllowed: "false",
+      otherRuleText: "",
       otherHouseRules: new Set(),
-      checkinStart: '14:00',
-      checkinEnd: '20:00',
-      checkoutStart: '00:00',
-      checkoutEnd: '13:00',
-      defaultDailyPrice: '0',
-      cleaningFee: '0',
-      depositRate: '0',
-      currency: '2',
+      checkinStart: "14:00",
+      checkinEnd: "20:00",
+      checkoutStart: "00:00",
+      checkoutEnd: "13:00",
+      defaultDailyPrice: "0",
+      cleaningFee: "0",
+      depositRate: "0",
+      currency: "2",
       loading: false,
       countries: [],
       categories: [],
       propertyTypes: [],
       cities: [],
       currencies: [],
-      locAddress: ''
+      locAddress: ""
     };
 
     this.onChange = this.onChange.bind(this);
@@ -135,7 +210,7 @@ class CreateListingPage extends React.Component {
 
   onChange(event) {
     this.setState({
-      [event.target.name]: event.target.value,
+      [event.target.name]: event.target.value
     });
   }
 
@@ -156,14 +231,18 @@ class CreateListingPage extends React.Component {
   updateCounter(event) {
     const name = event.target.name;
     let value = Number(event.target.value);
-    if (value < 1) { value = 1; }
+    if (value < 1) {
+      value = 1;
+    }
     this.setState({ [name]: value });
   }
 
   updateBedrooms(event) {
-    let bedroomsCount = Number(this.state.bedroomsCount.split(' ')[0]);
-    let value = Number(event.target.value.split(' ')[0]);
-    if (value < 0) { value = 0; }
+    let bedroomsCount = Number(this.state.bedroomsCount.split(" ")[0]);
+    let value = Number(event.target.value.split(" ")[0]);
+    if (value < 0) {
+      value = 0;
+    }
 
     let newBedrooms = JSON.parse(JSON.stringify(this.state.bedrooms));
 
@@ -179,8 +258,8 @@ class CreateListingPage extends React.Component {
     // console.log(newBedrooms);
 
     this.setState({
-      bedroomsCount: value + ' ' + event.target.value.split(' ')[1],
-      bedrooms: newBedrooms,
+      bedroomsCount: value + " " + event.target.value.split(" ")[1],
+      bedrooms: newBedrooms
     });
   }
 
@@ -188,10 +267,12 @@ class CreateListingPage extends React.Component {
     const bedrooms = JSON.parse(JSON.stringify(this.state.bedrooms));
     const name = e.target.name;
     let value = Number(e.target.value);
-    if (value < 0) { value = 0; }
+    if (value < 0) {
+      value = 0;
+    }
     bedrooms[bedroom][name] = value;
     this.setState({
-      bedrooms: bedrooms,
+      bedrooms: bedrooms
     });
   }
 
@@ -204,7 +285,7 @@ class CreateListingPage extends React.Component {
     }
 
     this.setState({
-      facilities: fac,
+      facilities: fac
     });
   }
 
@@ -215,7 +296,7 @@ class CreateListingPage extends React.Component {
       rules.add(value);
       this.setState({
         otherHouseRules: rules,
-        otherRuleText: '',
+        otherRuleText: ""
       });
     }
   }
@@ -224,7 +305,7 @@ class CreateListingPage extends React.Component {
     const rules = this.state.otherHouseRules;
     rules.delete(value);
     this.setState({
-      otherHouseRules: rules,
+      otherHouseRules: rules
     });
   }
 
@@ -232,7 +313,7 @@ class CreateListingPage extends React.Component {
     return {
       singleBedCount: 0,
       doubleBedCount: 0,
-      kingBedCount: 0,
+      kingBedCount: 0
     };
   }
 
@@ -282,7 +363,7 @@ class CreateListingPage extends React.Component {
       let listing = this.createListingObject();
       let data = {
         step: step,
-        data: JSON.stringify(listing),
+        data: JSON.stringify(listing)
       };
 
       requester.updateListingProgress(progressId, data);
@@ -290,12 +371,15 @@ class CreateListingPage extends React.Component {
   }
 
   handleLocationChange({ position, address }) {
-    this.setState({ lat: position.lat, lng: position.lng, mapAddress: address });
+    this.setState({
+      lat: position.lat,
+      lng: position.lng,
+      mapAddress: address
+    });
   }
 
   createListing() {
-
-    let listing = this.createListingObject();
+    let listing: CreateListingArg = this.createListingObject();
     this.setState({ loading: true });
 
     requester.createListing(listing).then(res => {
@@ -306,14 +390,13 @@ class CreateListingPage extends React.Component {
           const path = `/profile/listings/calendar/${id}`;
           this.props.history.push(path);
         });
-      }
-      else {
+      } else {
         this.setState({ loading: false });
         res.errors.then(data => {
           const errors = data.errors;
           for (let key in errors) {
-            if (typeof errors[key] !== 'function') {
-              NotificationManager.warning(errors[key].message, '', LONG);
+            if (typeof errors[key] !== "function") {
+              NotificationManager.warning(errors[key].message, "", LONG);
             }
           }
         });
@@ -321,96 +404,111 @@ class CreateListingPage extends React.Component {
     });
   }
 
-  createListingObject() {
+  createListingObject(): CreateListingArg {
     let listing = {
       progressId: this.state.progressId,
       listingType: this.state.listingType,
       type: this.state.propertyType,
-      location: `${this.state.city}, ${this.state.state}, ${this.state.country}, ${this.state.countryCode}`,
+      location: `${this.state.city}, ${this.state.country}, ${
+        this.state.countryCode
+      }`,
       description: {
         street: this.state.street,
         text: this.state.text,
         interaction: this.state.interaction,
-        houseRules: Array.from(this.state.otherHouseRules).join('\r\n'),
+        houseRules: Array.from(this.state.otherHouseRules).join("\r\n")
       },
       details: [
         {
           value: this.state.roomType,
-          detail: { name: 'roomType' }
+          detail: { name: "roomType" }
         },
         {
           value: this.state.propertySize,
-          detail: { name: 'size' }
+          detail: { name: "size" }
         },
         {
           value: this.state.bedroomsCount,
-          detail: { name: 'bedroomsCount' }
+          detail: { name: "bedroomsCount" }
         },
         {
           value: this.state.bathrooms,
-          detail: { name: 'bathrooms' }
+          detail: { name: "bathrooms" }
         },
         {
           value: this.state.suitableForChildren,
-          detail: { name: 'suitableForChildren' }
+          detail: { name: "suitableForChildren" }
         },
         {
           value: this.state.suitableForInfants,
-          detail: { name: 'suitableForInfants' }
+          detail: { name: "suitableForInfants" }
         },
         {
           value: this.state.suitableForPets,
-          detail: { name: 'suitableForPets' }
+          detail: { name: "suitableForPets" }
         },
         {
           value: this.state.smokingAllowed,
-          detail: { name: 'smokingAllowed' }
+          detail: { name: "smokingAllowed" }
         },
         {
           value: this.state.eventsAllowed,
-          detail: { name: 'eventsAllowed' }
+          detail: { name: "eventsAllowed" }
         },
         {
           value: this.state.dedicatedSpace,
-          detail: { name: 'dedicatedSpace' }
+          detail: { name: "dedicatedSpace" }
         },
         {
           value: this.state.lng,
-          detail: { name: 'lng' }
+          detail: { name: "lng" }
         },
         {
           value: this.state.lat,
-          detail: { name: 'lat' }
-        },
+          detail: { name: "lat" }
+        }
       ],
       guestsIncluded: this.state.guestsIncluded,
       rooms: this.state.bedrooms,
       amenities: this.state.facilities,
       name: this.state.name,
       pictures: this.getPhotos(),
-      checkinStart: moment(this.state.checkinStart, 'HH:mm').format('YYYY-MM-DDTHH:mm:ss.SSS'),
-      checkinEnd: moment(this.state.checkinEnd, 'HH:mm').format('YYYY-MM-DDTHH:mm:ss.SSS'),
-      checkoutStart: moment(this.state.checkoutStart, 'HH:mm').format('YYYY-MM-DDTHH:mm:ss.SSS'),
-      checkoutEnd: moment(this.state.checkoutEnd, 'HH:mm').format('YYYY-MM-DDTHH:mm:ss.SSS'),
+      checkinStart: moment(this.state.checkinStart, "HH:mm").format(
+        "YYYY-MM-DDTHH:mm:ss.SSS"
+      ),
+      checkinEnd: moment(this.state.checkinEnd, "HH:mm").format(
+        "YYYY-MM-DDTHH:mm:ss.SSS"
+      ),
+      checkoutStart: moment(this.state.checkoutStart, "HH:mm").format(
+        "YYYY-MM-DDTHH:mm:ss.SSS"
+      ),
+      checkoutEnd: moment(this.state.checkoutEnd, "HH:mm").format(
+        "YYYY-MM-DDTHH:mm:ss.SSS"
+      ),
       defaultDailyPrice: this.state.defaultDailyPrice,
       cleaningFee: this.state.cleaningFee,
       depositRate: this.state.depositRate,
-      currency: this.state.currency,
+      currency: this.state.currency
     };
 
     return listing;
   }
 
   handleImageUpload(files) {
-    files.forEach((file) => {
-      let upload = request.post(LOCKTRIP_UPLOAD_URL)
-        .field('image', file);
+    files.forEach(file => {
+      let upload = request.post(LOCKTRIP_UPLOAD_URL).field("image", file);
 
       upload.end((err, response) => {
-        if (response.body.secure_url !== '') {
+        if (response.body.secure_url !== "") {
           this.setState(previousState => ({
-            uploadedFilesUrls: [...previousState.uploadedFilesUrls, Config.getValue('imgHost') + response.body.original],
-            uploadedFilesThumbUrls: [...previousState.uploadedFilesThumbUrls, Config.getValue('imgHost') + response.body.thumbnail]
+            uploadedFilesUrls: [
+              ...previousState.uploadedFilesUrls,
+              Config.getValue("imgHost") + response.body.original
+            ],
+            uploadedFilesThumbUrls: [
+              ...previousState.uploadedFilesThumbUrls,
+              Config.getValue("imgHost") + response.body.thumbnail
+            ]
           }));
         }
       });
@@ -423,19 +521,33 @@ class CreateListingPage extends React.Component {
     let imageUrl = e.target.nextSibling;
 
     if (imageUrl.src !== null) {
-      let indexOfImage = this.state.uploadedFilesUrls.indexOf(imageUrl.getAttribute('src'));
+      let indexOfImage = this.state.uploadedFilesUrls.indexOf(
+        imageUrl.getAttribute("src")
+      );
 
       this.setState({
-        uploadedFilesUrls: update(this.state.uploadedFilesUrls, { $splice: [[indexOfImage, 1]] }),
-        uploadedFilesThumbUrls: update(this.state.uploadedFilesThumbUrls, { $splice: [[indexOfImage, 1]] })
+        uploadedFilesUrls: update(this.state.uploadedFilesUrls, {
+          $splice: [[indexOfImage, 1]]
+        }),
+        uploadedFilesThumbUrls: update(this.state.uploadedFilesThumbUrls, {
+          $splice: [[indexOfImage, 1]]
+        })
       });
     }
   }
 
   onSortEnd({ oldIndex, newIndex }) {
     this.setState({
-      uploadedFilesUrls: arrayMove(this.state.uploadedFilesUrls, oldIndex, newIndex),
-      uploadedFilesThumbUrls: arrayMove(this.state.uploadedFilesThumbUrls, oldIndex, newIndex)
+      uploadedFilesUrls: arrayMove(
+        this.state.uploadedFilesUrls,
+        oldIndex,
+        newIndex
+      ),
+      uploadedFilesThumbUrls: arrayMove(
+        this.state.uploadedFilesThumbUrls,
+        oldIndex,
+        newIndex
+      )
     });
   }
 
@@ -456,28 +568,28 @@ class CreateListingPage extends React.Component {
   }
 
   finish() {
-    console.log('finish');
+    console.log("finish");
     const { name, street, city, country, text, uploadedFilesUrls } = this.state;
     if (name.length < 2) {
-      NotificationManager.warning(INVALID_TITLE, '', LONG);
-      this.props.history.push('/profile/listings/create/landing/');
+      NotificationManager.warning(INVALID_TITLE, "", LONG);
+      this.props.history.push("/profile/listings/create/landing/");
     } else if (street.length < 6) {
-      NotificationManager.warning(INVALID_ADDRESS, '', LONG);
-      this.props.history.push('/profile/listings/create/location/');
-    } else if (!city || city.trim() === '') {
-      NotificationManager.warning(MISSING_CITY, '', LONG);
-      this.props.history.push('/profile/listings/create/location/');
-    } else if (!country || country.trim() === '') {
-      NotificationManager.warning(MISSING_COUNTRY, '', LONG);
-      this.props.history.push('/profile/listings/create/location/');
+      NotificationManager.warning(INVALID_ADDRESS, "", LONG);
+      this.props.history.push("/profile/listings/create/location/");
+    } else if (!city || city.trim() === "") {
+      NotificationManager.warning(MISSING_CITY, "", LONG);
+      this.props.history.push("/profile/listings/create/location/");
+    } else if (!country || country.trim() === "") {
+      NotificationManager.warning(MISSING_COUNTRY, "", LONG);
+      this.props.history.push("/profile/listings/create/location/");
     } else if (text.length < 6) {
-      NotificationManager.warning(INVALID_SUMMARY, '', LONG);
-      this.props.history.push('/profile/listings/create/description/');
+      NotificationManager.warning(INVALID_SUMMARY, "", LONG);
+      this.props.history.push("/profile/listings/create/description/");
     } else if (uploadedFilesUrls.length < 1) {
-      NotificationManager.warning(MISSING_PICTURE, '', LONG);
-      this.props.history.push('/profile/listings/create/photos/');
+      NotificationManager.warning(MISSING_PICTURE, "", LONG);
+      this.props.history.push("/profile/listings/create/photos/");
     } else {
-      console.log('create');
+      console.log("create");
       this.createListing();
     }
   }
@@ -491,19 +603,31 @@ class CreateListingPage extends React.Component {
   }
 
   render() {
-    if (!this.props.email || this.state.countries === [] || this.state.currencies === [] ||
-      this.state.propertyTypes === [] || this.state.categories === [] ||
-      this.state.cities === []) {
-      return <div className="loader"></div>;
+    if (
+      !this.props.email ||
+      this.state.countries === [] ||
+      this.state.currencies === [] ||
+      this.state.propertyTypes === [] ||
+      this.state.categories === [] ||
+      this.state.cities === []
+    ) {
+      return <div className="loader" />;
     }
 
     if (!this.props.userLocAddress) {
       return (
         <React.Fragment>
           <ProfileNav />
-          <div className='container'>
-            <NoEntriesMessage text='You need to create a wallet first'>
-              <a href="" className="btn" onClick={(e) => this.openModal(CREATE_WALLET, e)} style={{ minWidth: '200px' }}>Create Wallet</a>
+          <div className="container">
+            <NoEntriesMessage text="You need to create a wallet first">
+              <a
+                href=""
+                className="btn"
+                onClick={e => this.openModal(CREATE_WALLET, e)}
+                style={{ minWidth: "200px" }}
+              >
+                Create Wallet
+              </a>
             </NoEntriesMessage>
           </div>
         </React.Fragment>
@@ -513,98 +637,184 @@ class CreateListingPage extends React.Component {
     return (
       <div>
         <Switch>
-          <Route exact path={routes.loc} render={() => <ListingLocAddress
-            values={this.state}
-            onChange={this.onChange}
-            routes={routes}
-            next={routes.landing} />} />
-          <Route exact path={routes.landing} render={() => <ListingLandingPage
-            values={this.state}
-            onChange={this.onChange}
-            updateProgress={this.updateProgress}
-            routes={routes}
-            next={routes.placetype} />} />
-          <Route exact path={routes.placetype} render={() => <ListingPlaceType
-            values={this.state}
-            toggleCheckbox={this.toggleCheckbox}
-            onChange={this.onChange}
-            onNumberChange={this.onNumberChange}
-            updateProgress={this.updateProgress}
-            routes={routes}
-            prev={routes.landing}
-            next={routes.accommodation} />} />
-          <Route exact path={routes.accommodation} render={() => <ListingAccommodations
-            values={this.state}
-            updateCounter={this.updateCounter}
-            updateBedrooms={this.updateBedrooms}
-            updateBedCount={this.updateBedCount}
-            updateProgress={this.updateProgress}
-            routes={routes}
-            prev={routes.placetype}
-            next={routes.facilities} />} />
-          <Route exact path={routes.facilities} render={() => <ListingFacilities
-            values={this.state}
-            toggle={this.toggleFacility}
-            updateProgress={this.updateProgress}
-            routes={routes}
-            prev={routes.accommodation}
-            next={routes.safetyamenities} />} />
-          <Route exact path={routes.safetyamenities} render={() => <ListingSafetyFacilities
-            values={this.state}
-            toggle={this.toggleFacility}
-            updateProgress={this.updateProgress}
-            routes={routes}
-            prev={routes.facilities}
-            next={routes.location} />} />
-          <Route exact path={routes.location} render={() => <ListingLocation
-            values={this.state}
-            onChangeLocation={this.onChangeLocation}
-            onChange={this.onChange}
-            onSelect={this.onSelect}
-            updateProgress={this.updateProgress}
-            routes={routes}
-            prev={routes.safetyamenities}
-            handleLocationChange={this.handleLocationChange}
-            convertGoogleApiAddressComponents={this.convertGoogleApiAddressComponents}
-            next={routes.description} />} />
-          <Route exact path={routes.description} render={() => <ListingDescription
-            values={this.state}
-            onChange={this.onChange}
-            updateProgress={this.updateProgress}
-            routes={routes}
-            prev={routes.location}
-            next={routes.photos} />} />
-          <Route exact path={routes.photos} render={() => <ListingPhotos
-            values={this.state}
-            onImageDrop={this.handleImageUpload}
-            removePhoto={this.removePhoto}
-            onSortEnd={this.onSortEnd}
-            updateProgress={this.updateProgress}
-            routes={routes}
-            prev={routes.description}
-            next={routes.houserules} />} />
-          <Route exact path={routes.houserules} render={() => <ListingHouseRules
-            values={this.state}
-            onChange={this.onChange}
-            addRule={this.addHouseRule}
-            removeRule={this.removeHouseRule}
-            updateProgress={this.updateProgress}
-            routes={routes}
-            prev={routes.photos}
-            next={routes.checking} />} />
-          <Route exact path={routes.checking} render={() => <ListingChecking
-            values={this.state}
-            updateDropdown={this.onChange}
-            updateProgress={this.updateProgress}
-            routes={routes}
-            prev={routes.houserules}
-            next={routes.price} />} />
-          <Route exact path={routes.price} render={() => <ListingPrice
-            values={this.state}
-            onChange={this.onChange}
-            finish={this.finish}
-            routes={routes}
-            prev={routes.checking} />} />
+          <Route
+            exact
+            path={routes.loc}
+            render={() => (
+              <ListingLocAddress
+                values={this.state}
+                onChange={this.onChange}
+                routes={routes}
+                next={routes.landing}
+              />
+            )}
+          />
+          <Route
+            exact
+            path={routes.landing}
+            render={() => (
+              <ListingLandingPage
+                values={this.state}
+                onChange={this.onChange}
+                updateProgress={this.updateProgress}
+                routes={routes}
+                next={routes.placetype}
+              />
+            )}
+          />
+          <Route
+            exact
+            path={routes.placetype}
+            render={() => (
+              <ListingPlaceType
+                values={this.state}
+                toggleCheckbox={this.toggleCheckbox}
+                onChange={this.onChange}
+                onNumberChange={this.onNumberChange}
+                updateProgress={this.updateProgress}
+                routes={routes}
+                prev={routes.landing}
+                next={routes.accommodation}
+              />
+            )}
+          />
+          <Route
+            exact
+            path={routes.accommodation}
+            render={() => (
+              <ListingAccommodations
+                values={this.state}
+                updateCounter={this.updateCounter}
+                updateBedrooms={this.updateBedrooms}
+                updateBedCount={this.updateBedCount}
+                updateProgress={this.updateProgress}
+                routes={routes}
+                prev={routes.placetype}
+                next={routes.facilities}
+              />
+            )}
+          />
+          <Route
+            exact
+            path={routes.facilities}
+            render={() => (
+              <ListingFacilities
+                values={this.state}
+                toggle={this.toggleFacility}
+                updateProgress={this.updateProgress}
+                routes={routes}
+                prev={routes.accommodation}
+                next={routes.safetyamenities}
+              />
+            )}
+          />
+          <Route
+            exact
+            path={routes.safetyamenities}
+            render={() => (
+              <ListingSafetyFacilities
+                values={this.state}
+                toggle={this.toggleFacility}
+                updateProgress={this.updateProgress}
+                routes={routes}
+                prev={routes.facilities}
+                next={routes.location}
+              />
+            )}
+          />
+          <Route
+            exact
+            path={routes.location}
+            render={() => (
+              <ListingLocation
+                values={this.state}
+                onChangeLocation={this.onChangeLocation}
+                onChange={this.onChange}
+                onSelect={this.onSelect}
+                updateProgress={this.updateProgress}
+                routes={routes}
+                prev={routes.safetyamenities}
+                handleLocationChange={this.handleLocationChange}
+                convertGoogleApiAddressComponents={
+                  this.convertGoogleApiAddressComponents
+                }
+                next={routes.description}
+              />
+            )}
+          />
+          <Route
+            exact
+            path={routes.description}
+            render={() => (
+              <ListingDescription
+                values={this.state}
+                onChange={this.onChange}
+                updateProgress={this.updateProgress}
+                routes={routes}
+                prev={routes.location}
+                next={routes.photos}
+              />
+            )}
+          />
+          <Route
+            exact
+            path={routes.photos}
+            render={() => (
+              <ListingPhotos
+                values={this.state}
+                onImageDrop={this.handleImageUpload}
+                removePhoto={this.removePhoto}
+                onSortEnd={this.onSortEnd}
+                updateProgress={this.updateProgress}
+                routes={routes}
+                prev={routes.description}
+                next={routes.houserules}
+              />
+            )}
+          />
+          <Route
+            exact
+            path={routes.houserules}
+            render={() => (
+              <ListingHouseRules
+                values={this.state}
+                onChange={this.onChange}
+                addRule={this.addHouseRule}
+                removeRule={this.removeHouseRule}
+                updateProgress={this.updateProgress}
+                routes={routes}
+                prev={routes.photos}
+                next={routes.checking}
+              />
+            )}
+          />
+          <Route
+            exact
+            path={routes.checking}
+            render={() => (
+              <ListingChecking
+                values={this.state}
+                updateDropdown={this.onChange}
+                updateProgress={this.updateProgress}
+                routes={routes}
+                prev={routes.houserules}
+                next={routes.price}
+              />
+            )}
+          />
+          <Route
+            exact
+            path={routes.price}
+            render={() => (
+              <ListingPrice
+                values={this.state}
+                onChange={this.onChange}
+                finish={this.finish}
+                routes={routes}
+                prev={routes.checking}
+              />
+            )}
+          />
         </Switch>
       </div>
     );
@@ -612,18 +822,18 @@ class CreateListingPage extends React.Component {
 }
 
 const routes = {
-  loc: '/profile/listings/create/loc',
-  landing: '/profile/listings/create/landing/',
-  placetype: '/profile/listings/create/placetype/',
-  accommodation: '/profile/listings/create/accommodation/',
-  facilities: '/profile/listings/create/facilities/',
-  safetyamenities: '/profile/listings/create/safetyamenities/',
-  location: '/profile/listings/create/location/',
-  description: '/profile/listings/create/description/',
-  photos: '/profile/listings/create/photos/',
-  houserules: '/profile/listings/create/houserules/',
-  checking: '/profile/listings/create/checking/',
-  price: '/profile/listings/create/price/',
+  loc: "/profile/listings/create/loc",
+  landing: "/profile/listings/create/landing/",
+  placetype: "/profile/listings/create/placetype/",
+  accommodation: "/profile/listings/create/accommodation/",
+  facilities: "/profile/listings/create/facilities/",
+  safetyamenities: "/profile/listings/create/safetyamenities/",
+  location: "/profile/listings/create/location/",
+  description: "/profile/listings/create/description/",
+  photos: "/profile/listings/create/photos/",
+  houserules: "/profile/listings/create/houserules/",
+  checking: "/profile/listings/create/checking/",
+  price: "/profile/listings/create/price/"
 };
 
 CreateListingPage.propTypes = {
@@ -636,7 +846,7 @@ CreateListingPage.propTypes = {
   userLocAddress: PropTypes.string
 };
 
-const mapStateToProps = ({ userInfo }) => ({ 
+const mapStateToProps = ({ userInfo }) => ({
   userLocAddress: getLocAddress(userInfo),
   email: getEmail(userInfo)
 });

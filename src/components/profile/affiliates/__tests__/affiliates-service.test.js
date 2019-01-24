@@ -1,5 +1,8 @@
 import referralIdPersister from "../service/persist-referral-id";
-import { getAdapters } from "../service/affiliates-rest-client";
+import {
+  getAdapters,
+  AffiliatesServiceClass
+} from "../service/affiliates-rest-client";
 
 import moment from "moment";
 
@@ -149,7 +152,7 @@ describe("services", () => {
       });
     });
   });
-  describe("referralIdPersister - local storage", () => {
+  describe("referralIdPersister - cookies", () => {
     test("", async () => {});
   });
 });

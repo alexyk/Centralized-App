@@ -1,97 +1,106 @@
-import { closeModal, openModal } from '../../../actions/modalsInfo.js';
-import { setAdults, setChildren, setRegion, setRooms, setRoomsByCountOfRooms } from '../../../actions/hotelsSearchInfo';
-import { isActive } from '../../../selectors/modalsInfo.js';
-import { getCurrency } from '../../../selectors/paymentInfo';
-import { getStartDate, getEndDate } from '../../../selectors/searchDatesInfo';
-import { getRooms, getAdults, getRegion, hasChildren } from '../../../selectors/hotelsSearchInfo.js';
+import { closeModal, openModal } from "../../../actions/modalsInfo.js";
+import {
+  setAdults,
+  setChildren,
+  setRegion,
+  setRooms,
+  setRoomsByCountOfRooms
+} from "../../../actions/hotelsSearchInfo";
+import { isActive } from "../../../selectors/modalsInfo.js";
+import { getCurrency } from "../../../selectors/paymentInfo";
+import { getStartDate, getEndDate } from "../../../selectors/searchDatesInfo";
+import {
+  getRooms,
+  getAdults,
+  getRegion,
+  hasChildren
+} from "../../../selectors/hotelsSearchInfo.js";
 
-import { CHILDREN } from '../../../constants/modals';
-import ChildrenModal from '../modals/ChildrenModal';
-import PropTypes from 'prop-types';
-import React from 'react';
-import AsyncSelect from 'react-select/lib/Async';
-import { connect } from 'react-redux';
-import requester from '../../../requester';
-import { withRouter } from 'react-router-dom';
-import HotelsDatepickerWrapper from './HotelsDatepickerWrapper';
-import { NotificationManager } from 'react-notifications';
+import { CHILDREN } from "../../../constants/modals";
+import ChildrenModal from "../modals/ChildrenModal";
+import PropTypes from "prop-types";
+import React from "react";
+import AsyncSelect from "react-select/lib/Async";
+import { connect } from "react-redux";
+import requester from "../../../requester";
+import { withRouter } from "react-router-dom";
+import Datepicker from "../../common/datepicker";
+import moment from "moment";
+import { NotificationManager } from "react-notifications";
 
 const customStyles = {
-  container: (styles) => ({
+  container: styles => ({
     ...styles,
-    flex: '1 1 0',
-    outline: 'none',
+    flex: "1 1 0",
+    outline: "none"
   }),
-  valueContainer: (styles) => ({
+  valueContainer: styles => ({
     ...styles,
-    fontSize: '1.2em'
+    fontSize: "1.2em"
   }),
-  input: (styles) => ({
+  input: styles => ({
     ...styles,
-    outline: 'none',
+    outline: "none"
   }),
-  control: (styles) => ({
+  control: styles => ({
     ...styles,
-    padding: '0 10px',
-    cursor: 'pointer',
-    boxShadow: 'none',
-    border: 0,
+    padding: "0 10px",
+    cursor: "pointer",
+    boxShadow: "none",
+    border: 0
   }),
-  indicatorSeparator: (styles) => ({
+  indicatorSeparator: styles => ({
     ...styles,
-    display: 'none'
+    display: "none"
   }),
-  menu: (styles) => ({
+  menu: styles => ({
     ...styles,
-    marginTop: '20px'
+    marginTop: "20px"
   }),
   option: (styles, { data, isFocused, isSelected }) => {
-    const color = isSelected ? '#d87a61' : 'black';
+    const color = isSelected ? "#d87a61" : "black";
     return {
       ...styles,
-      fontSize: '1.2em',
-      textAlign: 'left',
-      cursor: 'pointer',
-      backgroundColor: isFocused
-        ? '#f0f1f3'
-        : 'none',
-      color: isSelected
-        ? color
-        : data.color,
-      fontWeight: isSelected && '400',
-      paddingLeft: isSelected && '30px',
+      fontSize: "1.2em",
+      textAlign: "left",
+      cursor: "pointer",
+      backgroundColor: isFocused ? "#f0f1f3" : "none",
+      color: isSelected ? color : data.color,
+      fontWeight: isSelected && "400",
+      paddingLeft: isSelected && "30px"
     };
-  },
+  }
 };
 
 function HotelsSearchBar(props) {
-
   let select = null;
 
-  if (props.location.pathname.indexOf('/mobile') !== -1) {
+  if (props.location.pathname.indexOf("/mobile") !== -1) {
     return null;
   }
 
-  const loadOptions = (input = '', callback) => {
+  const loadOptions = (input = "", callback) => {
     fetchCities(input).then(cities => callback(cities));
   };
 
-  const fetchCities = (input = '') => {
-    return requester.getRegionsBySearchParameter([`query=${input}`]).then(res => {
-      return res.body.then(data => {
-        if (!data) {
-          return [];
-        }
+  const fetchCities = (input = "") => {
+    return requester
+      .getRegionsBySearchParameter([`query=${input}`])
+      .then(res => {
+        return res.body.then(data => {
+          if (!data) {
+            return [];
+          }
 
-        return data.map(region => ({
-          value: region.id,
-          label: region.query
-        }));
+          return data.map(region => ({
+            value: region.id,
+            label: region.query
+          }));
+        });
       });
-    });
   };
 
-  const changeRegion = (selectedOption) => {
+  const changeRegion = selectedOption => {
     if (selectedOption) {
       const region = {
         id: selectedOption.value,
@@ -104,12 +113,12 @@ function HotelsSearchBar(props) {
 
   const getQueryString = () => {
     const { region, rooms, currency, startDate, endDate } = props;
-    let queryString = '?';
-    queryString += 'region=' + region.id;
-    queryString += '&currency=' + currency;
-    queryString += '&startDate=' + startDate.format('DD/MM/YYYY');
-    queryString += '&endDate=' + endDate.format('DD/MM/YYYY');
-    queryString += '&rooms=' + encodeURI(JSON.stringify(rooms));
+    let queryString = "?";
+    queryString += "region=" + region.id;
+    queryString += "&currency=" + currency;
+    queryString += "&startDate=" + startDate.format("DD/MM/YYYY");
+    queryString += "&endDate=" + endDate.format("DD/MM/YYYY");
+    queryString += "&rooms=" + encodeURI(JSON.stringify(rooms));
     return queryString;
   };
 
@@ -154,16 +163,16 @@ function HotelsSearchBar(props) {
     props.dispatch(closeModal(modal));
   };
 
-  const handleSearch = (e) => {
+  const handleSearch = e => {
     if (e) {
       e.preventDefault();
     }
 
     if (!props.region) {
       select.focus();
-      NotificationManager.info('Please choose a location.');
+      NotificationManager.info("Please choose a location.");
     } else {
-      distributeAdults().then((rooms) => {
+      distributeAdults().then(rooms => {
         if (props.hasChildren) {
           openChildrenModal(CHILDREN);
         } else {
@@ -186,7 +195,7 @@ function HotelsSearchBar(props) {
     <form className="source-panel" onSubmit={handleSearch}>
       <div className="select-wrap source-panel-item">
         <AsyncSelect
-          ref={(node) => select = node}
+          ref={node => (select = node)}
           styles={customStyles}
           value={selectedOption}
           onChange={changeRegion}
@@ -207,29 +216,38 @@ function HotelsSearchBar(props) {
         />
 
         <div className="check">
-          <HotelsDatepickerWrapper />
+          <Datepicker minDate={moment()} enableRanges />
         </div>
 
         <div className="days-of-stay">
-          <span className="icon-moon"></span>
-          <span>{props.endDate.diff(props.startDate, 'days')} nights</span>
+          <span className="icon-moon" />
+          <span>{props.endDate.diff(props.startDate, "days")} nights</span>
         </div>
       </div>
 
       <div className="guest-wrap guests source-panel-item">
-        <select className="guest-select " name={'rooms'} value={props.rooms.length} onChange={e => props.dispatch(setRoomsByCountOfRooms(e.target.value))}>
+        <select
+          className="guest-select "
+          name={"rooms"}
+          value={props.rooms.length}
+          onChange={e => props.dispatch(setRoomsByCountOfRooms(e.target.value))}
+        >
           <option value="1">1 room</option>
           <option value="2">2 rooms</option>
           <option value="3">3 rooms</option>
           <option value="4">4 rooms</option>
           <option value="5">5 rooms</option>
-          <option value="6">6 room</option>
+          {/*<option value="6">6 room</option>
           <option value="7">7 rooms</option>
           <option value="8">8 rooms</option>
           <option value="9">9 rooms</option>
-          <option value="10">10 rooms</option>
+          <option value="10">10 rooms</option>*/}
         </select>
-        <select name={'adults'} value={props.adults} onChange={e => props.dispatch(setAdults(e.target.value))}>
+        <select
+          name={"adults"}
+          value={props.adults}
+          onChange={e => props.dispatch(setAdults(e.target.value))}
+        >
           <option value="1">1 adult</option>
           <option value="2">2 adults</option>
           <option value="3">3 adults</option>
@@ -241,16 +259,16 @@ function HotelsSearchBar(props) {
           <option value="9">9 adults</option>
           <option value="10">10 adults</option>
         </select>
-        <div className="select-children" onClick={() => props.dispatch(setChildren())}>
-          <div>
-            {!props.hasChildren
-              ? 'No children'
-              : 'With children'
-            }
-          </div>
+        <div
+          className="select-children"
+          onClick={() => props.dispatch(setChildren())}
+        >
+          <div>{!props.hasChildren ? "No children" : "With children"}</div>
         </div>
       </div>
-      <button type="submit" className="button">Search</button>
+      <button type="submit" className="button">
+        Search
+      </button>
     </form>
   );
 }
