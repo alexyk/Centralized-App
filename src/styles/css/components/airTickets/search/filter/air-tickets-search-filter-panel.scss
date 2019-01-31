@@ -51,11 +51,27 @@ $white: #fff;
 
   .stops-filter {
     margin-bottom: 24px;
-    .labels {
-      font-size: 14px;
-      display: flex;
-      justify-content: space-between;
+
+    ul {
+      list-style: none;
+      display: inline-flex;
+      width: 100%;
+      flex-direction: row;
+      flex-wrap: wrap;
+      margin-left: rem-calc(10);
+
+      li {
+        width: 100%;
+        display: inline-flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+
+        label {
+          margin-left: rem-calc(5);
+        }
+      }
     }
+
     h5 {
       margin-bottom: 10px;
     }

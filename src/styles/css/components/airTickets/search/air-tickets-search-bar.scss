@@ -30,7 +30,7 @@ $media-expressions: (
   &-form {
     display: flex;
     border-radius: 3px;
-    margin-bottom: 35px;
+    margin-bottom: 15px;
     text-align: center;
     padding: 4px 7px;
     justify-content: center;
@@ -46,7 +46,7 @@ $media-expressions: (
       background: $light-gray;
     }
     .air-tickets-form-destinations-dates-wrapper {
-      width: 59%;
+      width: 75%;
       display: flex;
       position: relative;
       @include media("<=widescreen") {
@@ -61,20 +61,25 @@ $media-expressions: (
         width: 27.5%;
         min-width: 180px;
         background: $white;
+        border-right: rem-calc(1) solid $gray;
+
         @include media("<=desktop") {
           width: 100%;
           margin-bottom: 10px;
           border-right: none;
         }
+
         @include media("<=tablet") {
           flex-wrap: 50%;
         }
+
         select {
           font-size: 18px;
           height: 100%;
           border: none;
           padding: 5px 18px;
         }
+
         .Select-value {
           width: calc(100% - 50px);
         }
@@ -83,15 +88,18 @@ $media-expressions: (
         display: flex;
         align-items: center;
         justify-content: center;
-        width: 45%;
         background: $white;
+        border-right: rem-calc(1) solid $gray;
+
         @include media("<=desktop") {
           margin-bottom: 10px;
           padding: 7px 0;
         }
+
         @include media("<=tablet") {
           width: 100%;
         }
+
         @include media("<=phone") {
           .check {
             .check-in,
@@ -130,22 +138,26 @@ $media-expressions: (
       }
     }
     .air-tickets-form-passengers-wrap {
-      width: 15%;
+      width: 18%;
       display: flex;
       justify-content: center;
       align-items: center;
       background: $white;
       position: relative;
+      right: 3%;
+      @include sansFont(16px, $text-black, $base-font-weight-thin);
+
       @include media("<=widescreen") {
         width: 25%;
       }
       @include media("<=desktop") {
-        width: 70%;
+        width: 100%;
         margin-bottom: 10px;
         padding: 17px 0;
+        right: 0;
       }
       @include media("<=tablet") {
-        width: 70%;
+        width: 100%;
         margin-bottom: 10px;
         padding: 17px 0;
       }
@@ -156,6 +168,13 @@ $media-expressions: (
         cursor: pointer;
       }
     }
+
+    .air-tickets-form-search-btn-wrapper {
+      display: inline-flex;
+      flex-direction: column;
+      flex-wrap: wrap;
+      width: auto;
+    }
     .air-tickets-form-flight-class,
     .air-tickets-form-flight-stops,
     .air-tickets-form-departure-time {
@@ -163,26 +182,25 @@ $media-expressions: (
       display: flex;
       justify-content: center;
       align-items: center;
+      border-bottom: 1px solid #ccc;
+      margin-bottom: 15px;
+
       .select-selected {
+        width: 100%;
         height: 50px;
         display: flex;
         align-items: center;
-        justify-content: center;
+        justify-content: flex-start;
+        padding: 0;
       }
     }
-    .air-tickets-form-flight-class,
     .air-tickets-form-departure-time {
       min-width: 80px;
-      width: 7%;
       @include media("<=widescreen") {
         width: 18%;
       }
       @include media("<=desktop") {
-        width: 33%;
         margin-bottom: 10px;
-      }
-      @include media("<=tablet") {
-        width: 33%;
       }
     }
     .air-tickets-form-flight-stops {
@@ -211,6 +229,55 @@ $media-expressions: (
         min-width: 80px;
         padding: 15px 0;
         text-align: center;
+      }
+    }
+  }
+
+  .air-tickets-form-type-wrapper {
+    width: 38%;
+  }
+
+  .air-tickets-form-search-bar-filters-wrapper {
+    width: 50%;
+  }
+
+  .air-tickets-form-type-wrapper,
+  .air-tickets-form-search-bar-filters-wrapper {
+    display: none;
+    color: $dark-gray;
+    width: 100%;
+    margin: rem-calc(15) auto;
+
+    @include media("<=tablet") {
+      flex-wrap: wrap;
+      flex-direction: row;
+    }
+
+    label {
+      position: relative;
+      margin-left: 15px;
+      margin-right: 15px;
+      @include sansFont();
+
+      @include media("<=tablet") {
+        width: 100%;
+        display: inline-flex;
+        flex-wrap: wrap;
+        flex-direction: column;
+        margin-bottom: 15px;
+
+        span {
+          position: absolute;
+          left: 15%;
+        }
+      }
+
+      @include media(">=desktop") {
+        color: $white;
+      }
+
+      input {
+        margin-right: 5px;
       }
     }
   }

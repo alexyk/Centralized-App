@@ -55,4 +55,9 @@ $media-expressions: (
     width: 100%;
     padding: 0 15px;
   }
+
+  .air-tickets-form-type-wrapper,
+  .air-tickets-form-search-bar-filters-wrapper {
+    display: inline-flex;
+  }
 }

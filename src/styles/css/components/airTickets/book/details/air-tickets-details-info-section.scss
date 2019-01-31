@@ -50,21 +50,20 @@ $media-expressions: (
         margin-bottom: 40px;
       }
       .flight-details {
-        display: flex;
-        justify-content: space-between;
-        @include media("<=tablet") {
-          flex-wrap: wrap;
-        }
+        width: 100%;
+        display: inline-block;
+
         .departure,
         .return {
-          width: 40%;
-          @include media("<=tablet") {
-            width: 100%;
-          }
+          width: 100%;
+          padding: 15px;
+          border: 1px solid $gray;
+
           h5 {
             font-weight: 400;
             margin-bottom: 20px;
           }
+
           h6 {
             margin-bottom: 10px;
             font-size: 17px;
@@ -74,10 +73,21 @@ $media-expressions: (
             }
           }
           .departure-segment {
+            width: 48%;
             margin-bottom: 20px;
+            display: inline-block;
+
+            &:nth-child(odd) {
+              margin-left: 15px;
+            }
+
             .departure-segment-item {
               display: flex;
               justify-content: space-between;
+
+              &.stop-over-wrapper {
+                color: $moderate-red;
+              }
             }
           }
         }

@@ -4,7 +4,7 @@ export class Config {
     if (toTrim) {
       result = result.trim();
     }
-    
+
     return result;
   }
 }

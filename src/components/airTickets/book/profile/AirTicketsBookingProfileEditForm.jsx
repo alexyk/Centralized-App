@@ -49,10 +49,13 @@ class AirTicketsBookingProfileEditForm extends Component {
               <input id="lastName" name="lastName" value={lastName || ''} onChange={this.onChange} type="text" required />
             </div>
           </div>
+
+          {!email &&
           <div className="email">
             <label htmlFor="contactEmail">Email <span className="mandatory">*</span></label>
             <input id="contactEmail" name="email" value={email || ''} onChange={this.onChange} type="email" required />
-          </div>
+          </div>}
+
           <div className="phone-number">
             <label htmlFor="contactPhone">Phone Number <span className="mandatory">*</span></label>
             <input id="contactPhone" name="phone" value={phone || ''} onChange={this.onChange} type="number" required />

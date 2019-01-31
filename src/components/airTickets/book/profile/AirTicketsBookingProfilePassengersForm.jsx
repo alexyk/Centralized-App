@@ -127,7 +127,7 @@ class AirTicketsBookingProfilePassengersForm extends Component {
 
     return (
       <div className="air-tickets-passengers-form">
-        <h2>Passengers</h2>
+        <h2>Passengers Details</h2>
         <hr />
         <form onSubmit={(e) => { e.preventDefault(); this.validatePassengersInfo(); }}>
           {passengersInfo.map((passenger, passengerIndex) => {

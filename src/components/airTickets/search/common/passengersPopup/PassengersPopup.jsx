@@ -3,7 +3,9 @@ import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import queryString from 'query-string';
-import { setAdults, setChildren } from '../../../../../actions/airTicketsSearchInfo';
+import { setFlightClass, setAdults, setChildren } from '../../../../../actions/airTicketsSearchInfo';
+import { selectFlightClass } from '../../../../../selectors/airTicketsSearchSelector';
+import SelectFlex from '../../../../common/select';
 
 import './style.css';
 
@@ -124,14 +126,14 @@ class PassengersPopup extends Component {
   applyPassengersChoose() {
     const { passengers } = this.state;
 
-    this.props.dispatch(setAdults(passengers.adults));
+    this.props.dispatch(setAdults(passengers.adults.toString()));
     this.props.dispatch(setChildren(passengers.children));
 
     this.props.closePassengersPopup();
   }
 
   render() {
-    const { showPassengersPopup } = this.props;
+    const { showPassengersPopup, flightClass } = this.props;
     const { passengers } = this.state;
 
     if (!showPassengersPopup) {
@@ -140,8 +142,17 @@ class PassengersPopup extends Component {
 
     return (
       <div className="passengers-popup">
+        <SelectFlex placeholder="Flight class" className="air-tickets-form-flight-class" onChange={(value) => this.props.dispatch(setFlightClass(value))} value={flightClass}>
+          <select name="flightClass">
+            <option value="0">Any class</option>
+            <option value="E">Economy class</option>
+            <option value="P">Premium Economy class</option>
+            <option value="B">Business class</option>
+            <option value="F">First class</option>
+          </select>
+        </SelectFlex>
         <div className="passengers-popup-item">
-          <div className="passengers-popup-item-title">Adults</div>
+          <div className="passengers-popup-item-title">Adults (12+ years)</div>
           <div className="passengers-popup-item-controls">
             <div className="minus" onClick={this.decreaseAdults}>-</div>
             <div className="count">{passengers.adults}</div>
@@ -149,7 +160,7 @@ class PassengersPopup extends Component {
           </div>
         </div>
         <div className="passengers-popup-item">
-          <div className="passengers-popup-item-title">Children</div>
+          <div className="passengers-popup-item-title">Children (0-12 years)</div>
           <div className="passengers-popup-item-controls">
             <div className="minus" onClick={this.decreaseChildren}>-</div>
             <div className="count">{passengers.children.length}</div>
@@ -188,7 +199,16 @@ PassengersPopup.propTypes = {
   location: PropTypes.object,
 
   // Redux props
-  dispatch: PropTypes.func
+  dispatch: PropTypes.func,
+  flightClass: PropTypes.string
 };
 
-export default withRouter(connect()(PassengersPopup));
+function mapStateToProps(state) {
+  const { airTicketsSearchInfo } = state;
+
+  return {
+    flightClass: selectFlightClass(airTicketsSearchInfo)
+  }
+}
+
+export default withRouter(connect(mapStateToProps)(PassengersPopup));

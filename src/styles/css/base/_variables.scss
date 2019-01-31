@@ -18,6 +18,10 @@ $base-font-sans-serif: 'Futura', 'Arial', 'Helvetica Neue', 'Helvetica', sans-se
 $base-font-serif: 'Times New Roman', 'Times', 'Baskerville', 'Georgia', serif;
 $base-font-cursive: 'Nothing You Could Do', 'Arial', 'Helvetica Neue', 'Helvetica', sans-serif;
 
+$base-font-weight-thin: 200;
+$base-font-weight-normal: 400;
+$base-font-weight-medium: 500;
+$base-font-weight-bold: 700;
 // This is the default html and body font-size for the base rem value.
 $rem-base: 16px;
 
@@ -35,7 +39,7 @@ $base-min-width: 320px;
 // Liks
 $base-link-color: $black;
 
-// Buttons 
+// Buttons
 $btn-color: $white !default;
 $btn-background: $black !default;
 $btn-padding: 0.4em 0.7em !default;
