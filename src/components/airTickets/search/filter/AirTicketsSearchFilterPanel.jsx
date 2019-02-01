@@ -166,17 +166,7 @@ class AirTicketsSearchFilterPanel extends Component {
         {filters.departure &&
           <div className="departure-range-filters">
               <h5>Departure</h5>
-              <TimeRangeSlider
-                disabled={false}
-                format={24}
-                maxValue={"23:59"}
-                minValue={"00:00"}
-                name={"time_range"}
-                onChangeStart={this.changeStartHandler}
-                onChangeComplete={this.changeCompleteHandler}
-                onChange={this.timeChangeHandler}
-                step={15}
-                value={this.state.departureValue}/>
+              <TimeRangeSlider />
           </div>}
         </div>
         <div className="filter airlines-filter">

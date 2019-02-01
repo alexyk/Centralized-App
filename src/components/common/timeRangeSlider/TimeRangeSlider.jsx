@@ -110,15 +110,15 @@ class TimeRangeSlider extends Component {
   }
 
   render() {
-    let {start, end} = this.props.value,
-    min = this.timeToMinute(start),
-    max = this.timeToMinute(end);
+    let min = this.timeToMinute('00:00');
+    let max = this.timeToMinute('23:59');
+
     return (
       <InputRange
-        disabled={this.props.disabled}
-        draggableTrack={this.props.draggableTrack}
-        maxValue={this.timeToMinute(this.props.maxValue)}
-        minValue={this.timeToMinute(this.props.minValue)}
+        disabled={false}
+        draggableTrack={true}
+        maxValue={"23:59"}
+        minValue={"00:00"}
         onChangeStart={this.onChangeStart.bind(this)}
         onChange={this.onChange.bind(this)}
         onChangeComplete={this.onChangeComplete.bind(this)}
