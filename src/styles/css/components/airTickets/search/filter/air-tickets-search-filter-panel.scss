@@ -68,6 +68,10 @@ $white: #fff;
 
         label {
           margin-left: rem-calc(5);
+
+          span {
+            margin-left: rem-calc(10);
+          }
         }
       }
     }

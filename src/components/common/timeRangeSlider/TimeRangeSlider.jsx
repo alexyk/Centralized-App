@@ -127,20 +127,4 @@ class TimeRangeSlider extends Component {
   }
 }
 
-TimeRangeSlider.defaultProps = {
-  disabled: false,
-  draggableTrack: false,
-  format: 24,
-  maxValue: "23:59",
-  minValue: "00:00",
-  onChange: () => {},
-  onChangeComplete: () => {},
-  onChangeStart: () => {},
-  step: 15,
-  value: {
-    start: "00:00",
-    end: "23:59"
-  }
-}
-
 export default TimeRangeSlider;

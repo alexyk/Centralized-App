@@ -100,9 +100,7 @@ class AirTicketsSearchFilterPanel extends Component {
   }
 
   handleStopsFilter(stops) {
-    this.setState({
-      'stops': stops
-    });
+    this.state.stops = stops;
 
     this.props.applyFilters(this.state);
   }
@@ -155,7 +153,7 @@ class AirTicketsSearchFilterPanel extends Component {
                       type="checkbox"
                       name="stops"
                       value={item.changesId}
-                      onChange={() => { this.handleStopsFilter(item.changesId)}}
+                      onChange={() => { this.handleStopsFilter([item])}}
                     />
                     <span>{item.changesName}</span>
                   </label>
