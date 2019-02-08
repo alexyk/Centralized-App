@@ -157,111 +157,47 @@ class AirTicketsSearchPage extends Component {
   }
 
   applyFilters(filtersObject) {
-    let items = {};
     const filters = {
-      airlines: filtersObject.airlines.map(a => a.airlineId) || null,
-      stops: filtersObject.stops.map(a => a.changesId) || null,
+      airlines: filtersObject.airlines.map(a => a.airlineId).join(',') || null,
+      stops: filtersObject.stops.map(a => a.changesId).join(',') || null,
       minPrice: filtersObject.priceRange && filtersObject.priceRange.min,
       maxPrice: filtersObject.priceRange && filtersObject.priceRange.max,
       minWaitTime: filtersObject.waitingTimeRange && filtersObject.waitingTimeRange[0],
       maxWaitTime: filtersObject.waitingTimeRange && filtersObject.waitingTimeRange[1],
-      airportsDeparture: filtersObject.airportsDeparture.map(a => a.airportId) || null,
-      airportsArrival: filtersObject.airportsArrival.map(a => a.airportId) || null,
-      airportsTransfer: filtersObject.airportsTransfer.map(a => a.airportId) || null,
+      airportsDeparture: filtersObject.airportsDeparture.map(a => a.airportId).join(',') || null,
+      airportsArrival: filtersObject.airportsArrival.map(a => a.airportId).join(',') || null,
+      airportsTransfer: filtersObject.airportsTransfer.map(a => a.airportId).join(',') || null,
       searchId: this.searchId,
       uuid: this.filtersQueueId
     };
 
-    if (filters.airlines) {
-      filters.airlines.map(airline => {
-        for (let k in this.results) {
-
+    fetch(`${Config.getValue('apiHost')}flight/search/filter`, {
+      method: 'POST',
+      headers: {
+        'Content-type': 'application/json'
+      },
+      body: JSON.stringify(filters)
+    })
+      .then(res => {
+        if (res.ok) {
+          res.json().then(() => {
+            this.setState({
+              loading: true,
+              page: 0,
+              currentPageResults: '',
+              allElements: false,
+              totalElements: 0
+            }, () => this.connectSocketFilters());
+          });
+        } else {
+          res.json().then((data) => {
+            console.log(data);
+          });
         }
+      })
+      .catch(res => {
+        console.log(res);
       });
-    }
-
-    if (filters.stops) {
-      filters.stops.map(stop => {
-        for (let k in this.results) {
-          let item = this.results[k];
-
-          if (item.segments.length === 2 && stop === stopIds.D) {
-            items[k] = item;
-          }
-
-          if (item.segments.length === 4 && stop === stopIds.O) {
-            items[k] = item;
-          }
-
-          if (item.segments.length > 4 && stop === stopIds.M) {
-            items[k] = item;
-          }
-        }
-      });
-    }
-
-    if (filters.minPrice) {
-      filters.minPrice.map(min => {
-        for (let k in this.results) {
-
-        }
-      });
-    }
-
-    if (filters.maxPrice) {
-      filters.maxPrice.map(max => {
-        for (let k in this.results) {
-
-        }
-      });
-    }
-
-    if (filters.minWaitTime) {
-      filters.minWaitTime.map(minwt => {
-        for (let k in this.results) {
-
-        }
-      });
-    }
-
-    if (filters.maxWaitTime) {
-      filters.maxWaitTime.map(maxwt => {
-        for (let k in this.results) {
-
-        }
-      });
-    }
-
-    if (filters.airportsDeparture) {
-      filters.airportsDeparture.map(airportDeparture => {
-        for (let k in this.results) {
-
-        }
-      });
-    }
-
-    if (filters.airportsArrival) {
-      filters.airportsArrival.map(airportArrival => {
-        for (let k in this.results) {
-
-        }
-      });
-    }
-
-    if (filters.airportsTransfer) {
-      filters.airportsTransfer.map(airportTransfer => {
-        for (let k in this.results) {
-
-        }
-      });
-    }
-
-
-    this.setState({
-      allResults: items,
-      allElements: true,
-      currentPageResults: Object.values(items).slice(0,10)
-    });
   }
 
   updateWindowWidth() {
