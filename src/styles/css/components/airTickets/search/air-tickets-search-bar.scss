@@ -137,6 +137,7 @@ $media-expressions: (
         padding: 17px 0;
       }
     }
+
     .air-tickets-form-passengers-wrap {
       width: 18%;
       display: flex;
@@ -150,22 +151,31 @@ $media-expressions: (
       @include media("<=widescreen") {
         width: 25%;
       }
+
       @include media("<=desktop") {
         width: 100%;
         margin-bottom: 10px;
         padding: 17px 0;
         right: 0;
       }
+
       @include media("<=tablet") {
         width: 100%;
         margin-bottom: 10px;
         padding: 17px 0;
       }
+
       @include media("<=phone") {
         width: 100%;
       }
+
       .passengers-title {
         cursor: pointer;
+      }
+
+      .travel-info-wrapper {
+        @include sansFont(14, $text-black, $base-font-weight-normal);
+        margin: 50px auto;
       }
     }
 
@@ -233,19 +243,16 @@ $media-expressions: (
     }
   }
 
-  .air-tickets-form-type-wrapper {
-    width: 38%;
-  }
-
-  .air-tickets-form-search-bar-filters-wrapper {
-    width: 50%;
-  }
-
   .air-tickets-form-type-wrapper,
   .air-tickets-form-search-bar-filters-wrapper {
-    display: none;
+
+    &.air-tickets-form-search-bar-filters-wrapper {
+      justify-content: flex-end;
+    }
+
+    display: inline-flex;
     color: $dark-gray;
-    width: 100%;
+    width: 50%;
     margin: rem-calc(15) auto;
 
     @include media("<=tablet") {
@@ -270,10 +277,6 @@ $media-expressions: (
           position: absolute;
           left: 15%;
         }
-      }
-
-      @include media(">=desktop") {
-        color: $white;
       }
 
       input {

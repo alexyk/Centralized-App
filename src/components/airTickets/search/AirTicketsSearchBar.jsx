@@ -207,7 +207,7 @@ class AirTicketsSearchBar extends Component {
   }
 
   mapFlightClassByValue(flightClass) {
-    let flightClassName = 'Any class';
+    let flightClassName = '';
 
     switch (flightClass) {
       case 'E':
@@ -222,6 +222,9 @@ class AirTicketsSearchBar extends Component {
       case 'F':
         flightClassName = 'First Class';
         break;
+      default:
+        flightClassName = 'Any class';
+      break;
     }
 
     return flightClassName;
@@ -288,6 +291,25 @@ class AirTicketsSearchBar extends Component {
               <span>{flightRoutingValues.MS.displayText}</span>
             </label>
           </div>
+          <div className="air-tickets-form-search-bar-filters-wrapper">
+            <label className="custom-radio">
+              <input
+                type="checkbox"
+                name="flightStops"
+                onChange={() => this.setDirectFlight()}
+                value="0"
+                checked={stops === '0'}/>
+              <span>Direct flight</span>
+            </label>
+            <label className="custom-radio">
+              <input
+                type="checkbox"
+                onChange={() => this.props.dispatch(setFlexSearch())}
+                checked={flexSearch}
+              />
+              <span>Flex search</span>
+            </label>
+          </div>
           <div className="air-tickets-form">
             <div className="air-tickets-form-destinations-dates-wrapper">
               <div className="air-tickets-form-select">
@@ -349,26 +371,6 @@ class AirTicketsSearchBar extends Component {
             <div className="air-tickets-form-search-btn-wrapper">
               <button type="submit" className="button air-tickets-button-search">Search</button>
             </div>
-          </div>
-
-          <div className="air-tickets-form-search-bar-filters-wrapper">
-            <label className="custom-radio">
-              <input
-                type="checkbox"
-                name="flightStops"
-                onChange={() => this.setDirectFlight()}
-                value="0"
-                checked={stops === '0'}/>
-              <span>Direct flight</span>
-            </label>
-            <label className="custom-radio">
-              <input
-                type="checkbox"
-                onChange={() => this.props.dispatch(setFlexSearch())}
-                checked={flexSearch}
-              />
-              <span>Flex search</span>
-            </label>
           </div>
         </form>
       </div>

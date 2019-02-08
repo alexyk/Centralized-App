@@ -58,6 +58,10 @@ $media-expressions: (
 
   .air-tickets-form-type-wrapper,
   .air-tickets-form-search-bar-filters-wrapper {
-    display: inline-flex;
+    @include media(">tablet") {
+      label {
+        color: $white;
+      }
+    }
   }
 }

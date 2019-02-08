@@ -11,10 +11,6 @@ import '../../../styles/css/components/airTickets/search/air-tickets-datepicker-
 import { selectFlightRouting } from '../../../selectors/airTicketsSearchSelector';
 
 class AirTicketsDatepickerWrapper extends Component {
-  constructor(props) {
-    super(props);
-  }
-
   componentDidMount() {
     this.validateDates();
   }

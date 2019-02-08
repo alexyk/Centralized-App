@@ -329,6 +329,7 @@ class AirTicketsSearchResult extends Component {
 
     const search = this.props.location.search;
     const endOfSearch = search.indexOf('&filters=') !== -1 ? search.indexOf('&filters=') : search.length;
+    const bookingUrl = redirectURL + '/' + result.id + '/details' + search.substr(0, endOfSearch);
 
     return (
       <div className="air-tickets-result" >
@@ -352,7 +353,7 @@ class AirTicketsSearchResult extends Component {
             <div>
               {!isPriceLoaded && allElements
                 ? <button disabled className="mobile-pricing-button">Unavailable</button>
-                : <Link className="mobile-pricing-button" to={`${redirectURL}/${result.id}/details${search.substr(0, endOfSearch)}`}>Book now</Link>
+                : <Link className="mobile-pricing-button" to={bookingUrl}>Book now</Link>
               }
             </div>
           </div>
@@ -370,7 +371,7 @@ class AirTicketsSearchResult extends Component {
           {isPriceLoaded && <LocPrice fiat={priceForLoc} />}
           {!allElements
             ? <button disabled className="button">Updating Price...</button>
-            : <Link className="button" to={`${redirectURL}/${result.id}/details${search.substr(0, endOfSearch)}`} _target="blank">Book now</Link>
+            : <Link className="button" to={bookingUrl} onClick={(event) => {event.preventDefault(); window.open(bookingUrl);}}>Book now</Link>
           }
         </div>
       </div>

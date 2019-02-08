@@ -183,6 +183,10 @@ class PassengersPopup extends Component {
               );
             })}
           </Fragment>}
+        <div class="travel-info-wrapper">
+          <p>Your age at time of travel must be valid for the age category booked. Airlines have restrictions on under 18s travelling alone.</p>
+          <p>Age limits and policies for travelling with children may vary so please check with the airline before booking.</p>
+        </div>
         <div className="button-holder">
           <div className="passengers-apply-button" onClick={this.applyPassengersChoose}>Apply</div>
         </div>
