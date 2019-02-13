@@ -20,15 +20,36 @@ const STATUS = {
   QUEUED: "PENDING",
   QUEUED_FOR_CONFIRMATION: "PENDING",
   CANCELLED: "CANCELLED",
-  PENDING_SAFECHARGE_CONFIRMATION: "PENDING"
+  PENDING_SAFECHARGE_CONFIRMATION: "PENDING",
+  PENDING_CANCELLATION: "PENDING CANCELLATION",
+  CANCELLATION_FAILED: "CANCELLATION FAILED"
 };
 
+/*
 const STATUS_TOOLTIP = {
   COMPLETE: "Your reservation is complete",
   PENDING: "Contact us if status is still Pending after 30 minutes",
   "BOOKING FAILED": "Your booking failed please contact us",
-  CANCELLED: "You canceled your reservation"
+  CANCELLED: "You canceled your reservation",
+  "PENDING CANCELLATION": "Your cancelation is being processed",
+  "CANCELLATION FAILED": "Your booking cancellation was unsuccessful, please contact us",
+  CANCELLATION_FAILED: "Your booking cancellation was unsuccessful, please contact us"
 };
+*/
+const STATUS_TOOLTIP = {
+  DONE: "Your reservation is complete",
+  CONFIRMED: "Contact us if status is still Pending after 30 minutes",
+  FAIL: "Your booking failed please contact us",
+  FAILED: "Your booking failed please contact us",
+  PENDING: "Contact us if status is still Pending after 30 minutes",
+  QUEUED: "Contact us if status is still Pending after 30 minutes",
+  QUEUED_FOR_CONFIRMATION: "Contact us if status is still Pending after 30 minutes",
+  CANCELLED: "You canceled your reservation",
+  PENDING_SAFECHARGE_CONFIRMATION: "Contact us if status is still Pending after 30 minutes",
+  PENDING_CANCELLATION: "Your cancelation is being processed",
+  CANCELLATION_FAILED: "Your booking cancellation was unsuccessful, please contact us"
+};
+
 
 class HotelTrip extends React.Component {
   capitalize(string) {
@@ -83,7 +104,7 @@ class HotelTrip extends React.Component {
       this.props.parseBookingStatus || parseBookingStatus;
     // const status = STATUS[this.props.trip.status];
     const status = _parseBookingStatus(this.props.trip.status);
-    const statusMessage = STATUS_TOOLTIP[status];
+    const statusMessage = STATUS_TOOLTIP[this.props.trip.status];
 
     const { hotel_photo, hotel_name, hostEmail, hostPhone } = this.props.trip;
     const isCompleted =
@@ -154,8 +175,8 @@ class HotelTrip extends React.Component {
             )}
             <div className="content-row">
               {isCompleted && (
-                /* <button type="submit" onClick={e => { e.preventDefault(); this.props.onTripSelect(this.props.trip.id); this.props.handleCancelReservation(); }}>Cancel Trip</button> */
-                <button
+                <button type="submit" onClick={e => { e.preventDefault(); this.props.onTripSelect(this.props.trip.id); this.props.handleCancelReservation(); }}>Cancel Trip</button>
+                /* <button
                   type="submit"
                   onClick={e => {
                     e.preventDefault();
@@ -167,7 +188,7 @@ class HotelTrip extends React.Component {
                   }}
                 >
                   Cancel Trip
-                </button>
+                </button> */
               )}
               {this.props.trip.has_details === 1 && (
                 <Link to={`/profile/trips/hotels/${this.props.trip.id}`}>
@@ -184,7 +205,7 @@ class HotelTrip extends React.Component {
               <span
                 className="icon-question"
                 tooltip={
-                  this.props.trip.error ? this.props.trip.error : statusMessage
+                  (this.props.trip.error && !this.props.trip.error.includes('{') && !this.props.trip.error.includes('}')) ? this.props.trip.error : statusMessage
                 }
               />
             )}
