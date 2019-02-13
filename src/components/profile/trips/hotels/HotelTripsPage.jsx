@@ -84,9 +84,7 @@ class HotelTripsPage extends React.Component {
       //.then(data => {
       .then(res => {
         /*
-        console.log ('KOR ' + JSON.stringify(res));
         var data = res.body;
-        console.log ('BOZA ' + JSON.stringify(data));
         if (data.isCancellationRequested) {
           NotificationManager.info(RESERVATION_CANCELLED, '', LONG);
         } else {

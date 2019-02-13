@@ -509,8 +509,6 @@ class HotelsBookingConfirmPage extends Component {
     const hasLocAddress = !!userInfo.locAddress;
 
     const booking = reservation && reservation.booking.hotelBooking;
-    
-    console.log ("KOR => " + quotePPAdditionalFees);
 
     const fiatAmountPP = currencyExchangeRates && quotePPFiatAmount && CurrencyConverter.convert(currencyExchangeRates, DEFAULT_CRYPTO_CURRENCY, currency, quotePPFiatAmount);
     const additionalFeesPP = currencyExchangeRates && quotePPAdditionalFees && CurrencyConverter.convert(currencyExchangeRates, DEFAULT_CRYPTO_CURRENCY, currency, quotePPAdditionalFees).toFixed(2);
