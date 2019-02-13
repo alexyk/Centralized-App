@@ -10,7 +10,7 @@ import { PASSWORD_PROMPT } from '../../../../constants/modals.js';
 import Pagination from '../../../common/pagination/Pagination';
 import WalletPasswordModal from '../../../common/modals/WalletPasswordModal';
 import PropTypes from 'prop-types';
-import { RESERVATION_CANCELLED } from '../../../../constants/infoMessages.js';
+import { RESERVATION_CANCELLED, CANCELLING_RESERVATION } from '../../../../constants/infoMessages.js';
 import React from 'react';
 import { connect } from 'react-redux';
 import requester from '../../../../requester';
@@ -80,13 +80,18 @@ class HotelTripsPage extends React.Component {
 
   handleCancelTrip() {
     requester.cancelBooking({ bookingId: this.state.bookingPrepareId })
-      .then(res => res.body)
-      .then(data => {
-        if (data.isCancellationSuccessful) {
+      //.then(res => res.body)
+      //.then(data => {
+      .then(res => {
+        /*
+        var data = res.body;
+        if (data.isCancellationRequested) {
           NotificationManager.info(RESERVATION_CANCELLED, '', LONG);
         } else {
           NotificationManager.warning(CANCELLATION_NOT_POSSIBLE, '', LONG);
         }
+        */
+        NotificationManager.info(CANCELLING_RESERVATION, '', LONG);
       });
 
     this.closeModal(PASSWORD_PROMPT);
