@@ -50,16 +50,6 @@ class AirTicketsSearchResult extends Component {
       descriptionLength: this.getDescriptionLength(screenSize)
     };
 
-    this.updateWindowDimensions = _.debounce(this.updateWindowDimensions.bind(this), 500);
-  }
-
-  componentDidMount() {
-    this.updateWindowDimensions();
-    window.addEventListener('resize', this.updateWindowDimensions);
-  }
-
-  componentWillUnmount() {
-    window.removeEventListener('resize', this.updateWindowDimensions);
   }
 
   updateWindowDimensions() {
@@ -371,14 +361,14 @@ class AirTicketsSearchResult extends Component {
           {isPriceLoaded && <LocPrice fiat={priceForLoc} />}
           {!allElements
             ? <button disabled className="button">Updating Price...</button>
-            : <Link className="button" to={bookingUrl} onClick={(event) => {event.preventDefault(); window.open(bookingUrl);}}>Book now</Link>
+            : <Link className="button" to={bookingUrl}>Book now</Link>
           }
         </div>
       </div>
     );
   }
 }
-
+//onClick={(event) => {event.preventDefault(); window.open(bookingUrl);}}
 AirTicketsSearchResult.propTypes = {
   result: PropTypes.object,
   price: PropTypes.any,

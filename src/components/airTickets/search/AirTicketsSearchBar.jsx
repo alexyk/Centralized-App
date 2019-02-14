@@ -256,7 +256,7 @@ class AirTicketsSearchBar extends Component {
     }
 
     const { origin, destination, flexSearch, adultsCount, children, flightClass, stops } = this.props;
-    const totalTravelers = parseInt(adultsCount) + children.length;
+    const totalTravelers = parseInt(adultsCount, 10) + children.length;
 
     return (
       <div className="air-tickets">

@@ -30,12 +30,12 @@ class AirTicketsBookingConfirmPage extends Component {
     };
 
     this.handlePayWithLOC = this.handlePayWithLOC.bind(this);
-    this.requestBookingDetails = this.requestBookingDetails.bind(this);
+    //this.requestBookingDetails = this.requestBookingDetails.bind(this);
     this.searchAirTickets = this.searchAirTickets.bind(this);
   }
 
   componentDidMount() {
-    this.requestBookingDetails();
+    //this.requestBookingDetails();
   }
 
   searchAirTickets(queryString) {

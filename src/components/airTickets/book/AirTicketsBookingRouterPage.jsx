@@ -132,7 +132,7 @@ class AirTicketsBookingRouterPage extends Component {
 
   requestPrepareBooking(initBooking) {
     return new Promise((resolve, reject) => {
-      fetch(`${Config.getValue('apiHost')}flight/new/prepareBooking`, {
+      fetch(`${Config.getValue('apiHost')}flight/prepareBooking`, {
         method: 'POST',
         headers: {
           'Content-type': 'application/json',
@@ -231,7 +231,7 @@ class AirTicketsBookingRouterPage extends Component {
     }
 
     for (let i = 0; i < children.length; i++) {
-      passengersInfo.push({ 
+      passengersInfo.push({
         title: '',
         firstName: '',
         lastName: '',
