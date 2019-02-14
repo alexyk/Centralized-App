@@ -116,7 +116,7 @@ class AirTicketsBookingRouterPage extends Component {
   }
 
   requestAllCountries() {
-    fetch(`${Config.getValue('apiHost')}flight/country/all`)
+    fetch(`${Config.getValue('apiHost')}countries`)
       .then((res) => {
         if (res.ok) {
           res.json().then((data) => {
