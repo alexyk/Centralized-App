@@ -98,24 +98,40 @@ class AirTicketsSearchFilterPanel extends Component {
     this.setState({
         departure: time
     });
+
+    setTimeout(() => {
+      this.props.applyFilters(this.state);
+    }, 2000);
   }
 
   arrivalTmeChangeHandler(time) {
     this.setState({
         arrival: time
     });
+
+    setTimeout(() => {
+      this.props.applyFilters(this.state);
+    }, 2000);
   }
 
   journeyTmeChangeHandler(time) {
     this.setState({
         journey: time
     });
+
+    setTimeout(() => {
+      this.props.applyFilters(this.state);
+    }, 2000);
   }
 
   stopsChangeHandler(stop) {
     this.setState({
       'stops': [stop]
-    })
+    });
+    setTimeout(() => {
+      console.log(this.state);
+      this.props.applyFilters(this.state);
+    }, 2000);
   }
 
   render() {
@@ -295,7 +311,6 @@ class AirTicketsSearchFilterPanel extends Component {
             />
           </div>}
         <div className="buttons-holder">
-          <button onClick={() => this.props.applyFilters(this.state)} className="button">Apply Filters</button>
           <button onClick={this.clearFilters} className="button">Clear Filters</button>
         </div>
       </div>

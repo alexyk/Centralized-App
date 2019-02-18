@@ -362,7 +362,6 @@ class AirTicketsDetailsInfoSection extends Component {
                 <hr />
                 <div className="farerules">
                   {fareRules.map((rule, ruleIndex) => {
-                    console.log(rule);
                     const rules = rule.fareRulesInfo.map((ruleInfo, ruleInfoIndex) => {
                       return (
                         <div key={ruleInfoIndex} className="rule">

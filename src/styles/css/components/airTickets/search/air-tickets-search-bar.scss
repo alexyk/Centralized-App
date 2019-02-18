@@ -171,6 +171,10 @@ $media-expressions: (
 
       .passengers-title {
         cursor: pointer;
+
+        .travelers-count {
+          margin-right: 2px;
+        }
       }
 
       .travel-info-wrapper {

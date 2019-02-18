@@ -87,7 +87,7 @@ class AirTicketsBookingProfilePassengersForm extends Component {
 
     for (let i = 0; i < passengersInfo.length; i++) {
       for (let key in passengersInfo[i]) {
-        if (key !== 'title' && key !== 'options' && !passengersInfo[i][key]) {
+        if (key !== 'title' && key !== 'options' && key !== 'birthDate' && !passengersInfo[i][key]) {
           NotificationManager.warning(`Passenger ${i + 1} - ${key} is required!`, '', LONG);
           this.setState({
             currentPassengerIndex: i
@@ -310,7 +310,7 @@ class AirTicketsBookingProfilePassengersForm extends Component {
             );
           })}
           <div className="buttons-wrapper">
-            <NavLink to={{ pathname: `/tickets/results/initBook/${this.props.match.params.id}/profile/${isFlightServices ? 'services' : 'invoice'}`, search: this.props.location.search }} className="btn-back" id="btn-continue">
+            <NavLink to={{ pathname: `/tickets/results/initBook/${this.props.match.params.id}/profile/${isFlightServices ? 'services' : 'invoice'}`, search: this.props.location.search, flightReservationId: this.props.result.flightReservationId }} className="btn-back" id="btn-continue">
               <i className="fa fa-long-arrow-left" aria-hidden="true"></i>
               &nbsp;Back</NavLink>
             <button type="submit" disabled={isBookingProccess} className="button">{isBookingProccess ? 'Processing...' : 'Proceed'}</button>
@@ -331,6 +331,7 @@ AirTicketsBookingProfilePassengersForm.propTypes = {
   onChange: PropTypes.func,
   onChangeService: PropTypes.func,
   initBooking: PropTypes.func,
+  result: PropTypes.object,
 
   // Router props
   match: PropTypes.object,

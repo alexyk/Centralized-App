@@ -80,9 +80,7 @@ class AirTicketsBookingConfirmPage extends Component {
       .then((res) => {
         if (res.ok) {
           res.json().then((data) => {
-            console.log(data);
             if (data.success) {
-              console.log(data);
               NotificationManager.success(data.documentStatus, '', LONG);
               this.props.history.push('/profile/tickets');
             } else {
@@ -105,8 +103,6 @@ class AirTicketsBookingConfirmPage extends Component {
     if (!bookingDetails) {
       return <div className="loader"></div>;
     }
-
-    console.log(bookingDetails);
 
     const flightProperties = bookingDetails.entities[0];
     const flightPriceInfo = flightProperties.properties.price;

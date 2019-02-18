@@ -141,20 +141,22 @@ class AirTicketsSearchPage extends Component {
   }
 
   requestFilters() {
-    fetch(`${Config.getValue('apiHost')}flight/search/filter/data?searchId=${this.searchId}`)
-      .then(res => {
-        if (res.ok) {
-          res.json().then((data) => {
-            this.setState({
-              filters: data,
-              allElements: true
+    setTimeout(e => {
+      fetch(`${Config.getValue('apiHost')}flight/search/filter/data?searchId=${this.searchId}`)
+        .then(res => {
+          if (res.ok) {
+            res.json().then((data) => {
+              this.setState({
+                filters: data,
+                allElements: true
+              });
             });
-          });
-        }
-      })
-      .catch(res => {
-        console.log(res);
-      });
+          }
+        })
+        .catch(res => {
+          console.log(res);
+        });
+    }, 2000);
   }
 
   applyFilters(filtersObject) {
@@ -266,6 +268,8 @@ class AirTicketsSearchPage extends Component {
       allResults: items,
       currentPageResults: Object.values(items).slice(0, 10)
     });
+
+    this.forceUpdate();
   }
 
   updateWindowWidth() {

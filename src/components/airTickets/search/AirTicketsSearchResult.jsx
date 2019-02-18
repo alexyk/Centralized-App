@@ -361,7 +361,7 @@ class AirTicketsSearchResult extends Component {
           {isPriceLoaded && <LocPrice fiat={priceForLoc} />}
           {!allElements
             ? <button disabled className="button">Updating Price...</button>
-            : <Link className="button" to={bookingUrl}>Book now</Link>
+            : <Link className="button" to={bookingUrl} onClick={(event) => {event.preventDefault(); window.open(bookingUrl);}}>Book now</Link>
           }
         </div>
       </div>

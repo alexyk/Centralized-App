@@ -8,10 +8,6 @@ function AirTicketsBookingProfileEditNav(props) {
   return (
     <Fragment>
       <div className="host-step"><NavLink exact activeClassName="active" to={{ pathname: `/tickets/results/initBook/${props.match.params.id}/profile`, search: props.location.search }}>Profile</NavLink></div>
-      {props.confirmInfo.invoice ?
-        <div className="host-step"><NavLink exact activeClassName="active" to={{ pathname: `/tickets/results/initBook/${props.match.params.id}/profile/invoice`, search: props.location.search }}>Invoice</NavLink></div> :
-        <div className="host-step"><div className="disable-link">Invoice</div></div>
-      }
       {props.hasFlightServices &&
         (props.confirmInfo.services ?
           <div className="host-step"><NavLink exact activeClassName="active" to={{ pathname: `/tickets/results/initBook/${props.match.params.id}/profile/services`, search: props.location.search }}>Services</NavLink></div> :

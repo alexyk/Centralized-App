@@ -255,7 +255,7 @@ class AirTicketsSearchBar extends Component {
       return null;
     }
 
-    const { origin, destination, flexSearch, adultsCount, children, flightClass, stops } = this.props;
+    const { origin, destination, flexSearch, adultsCount, children, flightClass, stops, flightRouting } = this.props;
     const totalTravelers = parseInt(adultsCount, 10) + children.length;
 
     return (
@@ -268,7 +268,7 @@ class AirTicketsSearchBar extends Component {
                 onChange={() => this.changeFlightRouting(flightRoutingValues.RT.value)}
                 name="flightRouting"
                 value={flightRoutingValues.RT.value}
-                defaultChecked
+                checked={flightRouting === flightRoutingValues.RT.value}
               />
               <span>{flightRoutingValues.RT.displayText}</span>
             </label>
@@ -278,6 +278,7 @@ class AirTicketsSearchBar extends Component {
                 onChange={() => this.changeFlightRouting(flightRoutingValues.OS.value)}
                 name="flightRouting"
                 value={flightRoutingValues.OS.value}
+                checked={flightRouting === flightRoutingValues.OS.value}
                 />
               <span>{flightRoutingValues.OS.displayText}</span>
             </label>
@@ -287,6 +288,7 @@ class AirTicketsSearchBar extends Component {
                 onChange={() => this.changeFlightRouting(flightRoutingValues.MS.value)}
                 name="flightRouting"
                 value={flightRoutingValues.MS.value}
+                checked={flightRouting === flightRoutingValues.MS.value}
               />
               <span>{flightRoutingValues.MS.displayText}</span>
             </label>
@@ -362,7 +364,7 @@ class AirTicketsSearchBar extends Component {
             </div>
             <div className="air-tickets-form-passengers-wrap">
               <div className="passengers-title" onClick={this.openPassengersPopup}>
-                { totalTravelers }
+                <span className="travelers-count">{ totalTravelers }</span>
                 { totalTravelers === 1 ? 'Traveller' : 'Travellers'} ,
                 {this.mapFlightClassByValue(flightClass)}
               </div>
