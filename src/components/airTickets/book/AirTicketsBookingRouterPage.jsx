@@ -57,7 +57,8 @@ class AirTicketsBookingRouterPage extends Component {
     this.requestSelectFlight = this.requestSelectFlight.bind(this);
     this.requestFareRules = this.requestFareRules.bind(this);
     this.requestAllCountries = this.requestAllCountries.bind(this);
-    this.requestPrepareBooking = this.requestPrepareBooking.bind(this);
+    this.requestConfirmAndPay = this.requestConfirmAndPay.bind(this);
+    this.requestPayWithCC = this.requestPayWithCC.bind(this);
     this.requestBooking = this.requestBooking.bind(this);
     this.onChangeContactInfo = this.onChangeContactInfo.bind(this);
     this.onChangeInvoiceInfo = this.onChangeInvoiceInfo.bind(this);
@@ -163,7 +164,7 @@ class AirTicketsBookingRouterPage extends Component {
       });
   }
 
-  requestPrepareBooking(initBooking) {
+  requestConfirmAndPay(initBooking) {
     return new Promise((resolve, reject) => {
       fetch(`${Config.getValue('apiHost')}flight/confirmAndPay`, {
         method: 'POST',
@@ -174,21 +175,36 @@ class AirTicketsBookingRouterPage extends Component {
         body: JSON.stringify(initBooking)
       })
         .then((res) => {
-          if (res.ok) {
-            res.json().then((data) => {
-              if (data.success === false) {
-                reject(data);
-              } else {
-                resolve(data);
-              }
-            });
-          } else {
-            res.json().then((err) => {
-              console.log(err);
-              reject(err);
-            });
-            console.log(res);
-          }
+          res.json().then((data) => {
+            console.log(data);
+            resolve(data);
+          }).catch(err => {
+            reject(err);
+          });
+        }).catch(err => {
+          reject(err);
+        });
+    });
+  }
+
+  requestPayWithCC(initBooking) {
+    return new Promise((resolve, reject) => {
+      fetch(`${Config.getValue('apiHost')}payment/creditcard/flight`, {
+        method: 'POST',
+        headers: {
+          'Content-type': 'application/json',
+          'Authorization': localStorage[Config.getValue('domainPrefix') + '.auth.locktrip']
+        },
+        body: JSON.stringify(initBooking)
+      })
+        .then((res) => {
+          res.json().then((data) => {
+            resolve(data);
+          }).catch(err => {
+            reject(err);
+          });
+        }).catch(err => {
+          reject(err);
         });
     });
   }
@@ -410,7 +426,7 @@ class AirTicketsBookingRouterPage extends Component {
       passengers
     };
 
-    this.requestPrepareBooking(initBooking)
+    this.requestConfirmAndPay(initBooking)
       .then((data) => {
         this.setState({
           isBookingProccess: false

@@ -129,7 +129,7 @@ class AirTicketsBookingProfilePassengersForm extends Component {
       <div className="air-tickets-passengers-form">
         <h2>Passengers Details</h2>
         <hr />
-        <form onSubmit={(e) => { e.preventDefault(); this.validatePassengersInfo(); }}>
+        <form onSubmit={(e) => { e.preventDefault(); this.validatePassengersInfo(e); }}>
           {passengersInfo.map((passenger, passengerIndex) => {
             return (
               <Fragment key={passengerIndex}>
@@ -310,10 +310,11 @@ class AirTicketsBookingProfilePassengersForm extends Component {
             );
           })}
           <div className="buttons-wrapper">
-            <NavLink to={{ pathname: `/tickets/results/initBook/${this.props.match.params.id}/profile/${isFlightServices ? 'services' : 'invoice'}`, search: this.props.location.search, flightReservationId: this.props.result.flightReservationId }} className="btn-back" id="btn-continue">
+            <NavLink to={{ pathname: `/tickets/results/initBook/${this.props.match.params.id}/profile/${isFlightServices ? 'services' : 'invoice'}`, search: this.props.location.search }} className="btn-back" id="btn-continue">
               <i className="fa fa-long-arrow-left" aria-hidden="true"></i>
               &nbsp;Back</NavLink>
-            <button type="submit" disabled={isBookingProccess} className="button">{isBookingProccess ? 'Processing...' : 'Proceed'}</button>
+            <button id="pay_loc" type="submit" disabled={isBookingProccess} className="button" name="pay_loc">{isBookingProccess ? 'Processing...' : 'Pay with LOC'}</button>
+            <button id="pay_cc" type="submit" disabled={isBookingProccess} className="button" name="pay_cc">{isBookingProccess ? 'Processing...' : 'Pay with Credit Card'}</button>
           </div>
         </form>
       </div>

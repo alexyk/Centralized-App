@@ -99,9 +99,7 @@ class AirTicketsSearchFilterPanel extends Component {
         departure: time
     });
 
-    setTimeout(() => {
-      this.props.applyFilters(this.state);
-    }, 2000);
+    this.props.applyFilters(this.state);
   }
 
   arrivalTmeChangeHandler(time) {
@@ -109,9 +107,7 @@ class AirTicketsSearchFilterPanel extends Component {
         arrival: time
     });
 
-    setTimeout(() => {
-      this.props.applyFilters(this.state);
-    }, 2000);
+    this.props.applyFilters(this.state);
   }
 
   journeyTmeChangeHandler(time) {
@@ -119,19 +115,15 @@ class AirTicketsSearchFilterPanel extends Component {
         journey: time
     });
 
-    setTimeout(() => {
-      this.props.applyFilters(this.state);
-    }, 2000);
+    this.props.applyFilters(this.state);
   }
 
   stopsChangeHandler(stop) {
     this.setState({
       'stops': [stop]
     });
-    setTimeout(() => {
-      console.log(this.state);
-      this.props.applyFilters(this.state);
-    }, 2000);
+
+    this.props.applyFilters(this.state);
   }
 
   render() {
