@@ -74,7 +74,6 @@ class AirTicketsSearchPage extends Component {
     this.unsubscribeFilters();
     this.disconnectSearch();
     this.disconnectFilters();
-    this.clearIntervals();
   }
 
   initAirTicketsSearchPage() {
@@ -92,7 +91,6 @@ class AirTicketsSearchPage extends Component {
 
     this.unsubscribeSearch();
     this.unsubscribeFilters();
-    this.clearIntervals();
 
     this.queueId = null;
     this.filtersQueueId = null;
@@ -104,9 +102,6 @@ class AirTicketsSearchPage extends Component {
     this.searchId = null;
     this.results = {};
     this.totalElements = 0;
-
-    this.flightsResultsIntervalSearch = null;
-    this.flightsResultsIntervalFilters = null;
 
     this.initUUIDs();
     this.populateSearchBar();
@@ -133,6 +128,8 @@ class AirTicketsSearchPage extends Component {
       .then(res => {
         if (res.ok) {
           this.connectSocketSearch();
+        } else {
+          this.disconnectSearch();
         }
       })
       .catch(res => {
@@ -389,10 +386,6 @@ class AirTicketsSearchPage extends Component {
   }
 
   connectSocketSearch() {
-    this.flightsResultsIntervalSearch = setInterval(() => {
-      console.log('');
-    }, 1000);
-
     const url = Config.getValue('socketHost');
     this.clientSearch = Stomp.client(url);
 
@@ -400,14 +393,21 @@ class AirTicketsSearchPage extends Component {
       this.clientSearch.debug = () => { };
     }
 
-    this.clientSearch.connect(null, null, this.subscribeSearch);
+    this.clientSearch.connect(null, null, (e) => {
+      this.disconnectSearch();
+      this.setState({
+        currentPageResults: '',
+        allElements: true,
+        allResults: '',
+        loading: false,
+        totalElements: 0,
+        page: 0,
+        filters: null
+      });
+    });
   }
 
   connectSocketFilters() {
-    this.flightsResultsIntervalFilters = setInterval(() => {
-      console.log('');
-    }, 1000);
-
     const url = Config.getValue('socketHost');
     this.clientFilters = Stomp.client(url);
 
@@ -499,12 +499,8 @@ class AirTicketsSearchPage extends Component {
     }
   }
 
-  clearIntervals() {
-    clearInterval(this.flightsResultsIntervalSearch);
-    clearInterval(this.flightsResultsIntervalFilters);
-  }
-
   handleReceiveMessageSearch(message) {
+    console.log(message);
     const messageBody = JSON.parse(message.body);
     // console.log(messageBody);
     if (messageBody.allElements) {
@@ -514,10 +510,8 @@ class AirTicketsSearchPage extends Component {
       this.results = {};
       this.totalElements = 0;
       this.unsubscribeFilters();
-      this.clearIntervals();
     } else if (messageBody.success === false || messageBody.errorMessage) {
       this.setState({ loading: false });
-      this.clearIntervals();
       NotificationManager.warning(messageBody.message || messageBody.errorMessage, '', LONG);
     } else if (messageBody.id) {
       if (!this.searchId) {
@@ -546,10 +540,8 @@ class AirTicketsSearchPage extends Component {
       this.totalElements = 0;
       this.unsubscribeSearch();
       this.unsubscribeFilters();
-      this.clearIntervals();
     } else if (messageBody.success === false || messageBody.errorMessage) {
       this.setState({ loading: false, allElements: true });
-      this.clearIntervals();
       NotificationManager.warning(messageBody.message || messageBody.errorMessage, '', LONG);
     } else if (messageBody.id) {
       if (!this.searchId) {
@@ -572,7 +564,6 @@ class AirTicketsSearchPage extends Component {
     this.unsubscribeFilters();
     this.disconnectSearch();
     this.disconnectFilters();
-    this.clearIntervals();
 
     this.props.history.push('/tickets/results' + queryString);
 
