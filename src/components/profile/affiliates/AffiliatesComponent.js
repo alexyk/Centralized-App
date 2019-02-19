@@ -23,10 +23,6 @@ type Props = {
   affiliateLink: string
 };
 export default class AffiliatesDashboard extends React.Component<Props> {
-  constructor(props) {
-    super(props);
-  }
-
   componentDidMount() {
     window.addEventListener("resize", this.forceUpdate);
   }

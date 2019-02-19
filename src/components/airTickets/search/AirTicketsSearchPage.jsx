@@ -17,6 +17,8 @@ import AirTicketsResultsHolder from './AirTicketsSearchResultsHolder';
 import AirTicketsSearchFilterPanel from './filter/AirTicketsSearchFilterPanel';
 import { LONG } from '../../../constants/notificationDisplayTimes';
 import AsideContentPage from '../../common/asideContentPage/AsideContentPage';
+import { stopIds } from '../../../constants/constants';
+import _ from 'lodash';
 
 import '../../../styles/css/components/airTickets/search/air-tickets-search-page.css';
 
@@ -139,63 +141,139 @@ class AirTicketsSearchPage extends Component {
   }
 
   requestFilters() {
-    fetch(`${Config.getValue('apiHost')}flight/search/filter/data?searchId=${this.searchId}`)
-      .then(res => {
-        if (res.ok) {
-          res.json().then((data) => {
-            this.setState({
-              filters: data
+    setTimeout(e => {
+      fetch(`${Config.getValue('apiHost')}flight/search/filter/data?searchId=${this.searchId}`)
+        .then(res => {
+          if (res.ok) {
+            res.json().then((data) => {
+              this.setState({
+                filters: data,
+                allElements: true
+              });
             });
-          });
-        }
-      })
-      .catch(res => {
-        console.log(res);
-      });
+          }
+        })
+        .catch(res => {
+          console.log(res);
+        });
+    }, 2000);
   }
 
   applyFilters(filtersObject) {
     const filters = {
-      airlines: filtersObject.airlines.map(a => a.airlineId).join(',') || null,
-      stops: filtersObject.stops.map(a => a.changesId).join(',') || null,
+      airlines: filtersObject.airlines.map(a => a.airlineId) || [],
+      stops: filtersObject.stops.map(a => a.changesId) || [],
       minPrice: filtersObject.priceRange && filtersObject.priceRange.min,
       maxPrice: filtersObject.priceRange && filtersObject.priceRange.max,
       minWaitTime: filtersObject.waitingTimeRange && filtersObject.waitingTimeRange[0],
       maxWaitTime: filtersObject.waitingTimeRange && filtersObject.waitingTimeRange[1],
-      airportsDeparture: filtersObject.airportsDeparture.map(a => a.airportId).join(',') || null,
-      airportsArrival: filtersObject.airportsArrival.map(a => a.airportId).join(',') || null,
-      airportsTransfer: filtersObject.airportsTransfer.map(a => a.airportId).join(',') || null,
+      airportsArrival: filtersObject.airportsArrival.map(a => a.airportId) || [],
+      airportsTransfer: filtersObject.airportsTransfer.map(a => a.airportId) || [],
+      departureTime: filtersObject.departure || [],
+      arrivalTime: filtersObject.arrival || [],
+      journeyTime: filtersObject.transfer || [],
       searchId: this.searchId,
       uuid: this.filtersQueueId
     };
 
-    fetch(`${Config.getValue('apiHost')}flight/search/filter`, {
-      method: 'POST',
-      headers: {
-        'Content-type': 'application/json'
-      },
-      body: JSON.stringify(filters)
-    })
-      .then(res => {
-        if (res.ok) {
-          res.json().then(() => {
-            this.setState({
-              loading: true,
-              page: 0,
-              currentPageResults: '',
-              allElements: false,
-              totalElements: 0
-            }, () => this.connectSocketFilters());
-          });
-        } else {
-          res.json().then((data) => {
-            console.log(data);
-          });
+    let results = this.results;
+    let items = {};
+
+    for (var k in results) {
+      let item = results[k];
+      let segments = item.segments;
+      let itemExists = items.hasOwnProperty(k);
+      let segmentLength = segments.length;
+
+      filters.stops.forEach(stop => {
+        if (!itemExists) {
+          let stopsCount = (parseInt(stop, 10) + 1) * 2;
+          if (segmentLength === stopsCount || (stopsCount === 4 && segmentLength >= stopsCount)) {
+            items[k] = item;
+          }
         }
-      })
-      .catch(res => {
-        console.log(res);
       });
+
+      if (!itemExists && filters.minPrice >= item.price.total && item.price.total <= filters.maxPrice) {
+        items[k] = item;
+      }
+
+      // for (let i in segments) {
+      //   itemExists = items.hasOwnProperty(k);
+      //   let segment = segments[i];
+
+      //   if (!itemExists) {
+      //     let itemDepartureTime =  moment(segment.destination.time, 'HH:mm');
+      //     let itemArrivalTime = moment(segment.origin.time, 'HH:mm');
+      //     let itemJourneyTime = moment(segment.destination.date + ' ' + segment.destination.time).add(segment.journeyTime, 'minutes').format('HH:mm');
+
+      //     if (filters.airlines.length && filters.airlines.indexOf(segment.carrier.name) !== -1) {
+      //       items[k] = item;
+      //     }
+
+      //     if (filters.minWaitTime >= segment.waitTime && segment.waitTime <= filters.maxWaitTime) {
+      //       items[k] = item;
+      //     }
+
+
+      //     if (filters.airportsArrival.length) {
+      //       filters.airportsArrival.some(arrivalAirport => {
+      //         if (arrivalAirport === segment.destination.code) {
+      //           items[k] = item;
+      //         }
+      //         return;
+      //       });
+      //     }
+
+      //     if (filters.airportsTransfer.length) {
+      //       filters.airportsTransfer.split(',').some(transferAirport => {
+
+      //         return;
+      //       });
+      //     }
+
+      //     if (filters.departureTime.length) {
+      //       let filtersDTStart = moment(filters.departureTime.start, 'HH:mm');
+      //       let filtersDTEnd = moment(filters.departureTime.end, 'HH:mm');
+
+      //       if (filtersDTStart.isSameOrAfter(itemDepartureTime) || filtersDTEnd.isSameOrBefore(itemDepartureTime)) {
+      //         items[k] = item;
+      //       }
+      //     }
+
+      //     if (filters.arrivalTime.length) {
+      //       let filtersDTStart = moment(filters.arrivalTime.start, 'HH:mm');
+      //       let filtersDTEnd = moment(filters.arrivalTime.end, 'HH:mm');
+
+      //       if (filtersDTStart.isSameOrAfter(itemArrivalTime) || filtersDTEnd.isSameOrBefore(itemArrivalTime)) {
+      //         items[k] = item;
+      //       }
+      //     }
+
+      //     if (filters.journeyTime.length) {
+      //       let filtersDTStart = moment(filters.journeyTime.start, 'HH:mm');
+      //       let filtersDTEnd = moment(filters.journeyTime.end, 'HH:mm');
+
+      //       if (filtersDTStart.isSameOrAfter(itemJourneyTime) || filtersDTEnd.isSameOrBefore(itemJourneyTime)) {
+      //         items[k] = item;
+      //       }
+      //     }
+      //   }
+      // }
+    }
+
+    if (!Object.values(items).length) {
+      items = results;
+    }
+
+    this.setState({
+      allElements: true,
+      allResults: items,
+      currentPageResults: Object.values(items).slice(0, 10),
+      totalElements: Object.values(items).length,
+    });
+
+    this.forceUpdate();
   }
 
   updateWindowWidth() {
@@ -296,7 +374,7 @@ class AirTicketsSearchPage extends Component {
     const { allElements, allResults } = this.state;
     const currentPage = page - 1;
     const startResultsIndex = currentPage * 10;
-    const endResultsIndex = (currentPage * 10) + 10;
+    const endResultsIndex = startResultsIndex + 10;
     this.setState({
       page: currentPage,
       currentPageResults: allElements ? allResults.slice(startResultsIndex, endResultsIndex) : Object.values(this.results).slice(startResultsIndex, endResultsIndex)
@@ -362,6 +440,13 @@ class AirTicketsSearchPage extends Component {
     };
 
     client.send(sendDestination, headers, msg);
+
+
+    setTimeout(() => {
+      this.requestFilters();
+      this.unsubscribeSearch();
+    }, 30000);
+
   }
 
   subscribeFilters() {
@@ -428,8 +513,6 @@ class AirTicketsSearchPage extends Component {
       this.setState({ allElements: messageBody.allElements, allResults, currentPageResults: allResults.slice(0, 10), loading: false, totalElements: this.totalElements });
       this.results = {};
       this.totalElements = 0;
-      this.requestFilters();
-      this.unsubscribeSearch();
       this.unsubscribeFilters();
       this.clearIntervals();
     } else if (messageBody.success === false || messageBody.errorMessage) {

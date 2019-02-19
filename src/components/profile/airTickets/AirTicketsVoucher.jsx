@@ -20,24 +20,24 @@ class AirTicketsVoucher extends Component {
   }
 
   componentDidMount() {
-    fetch(`${Config.getValue('apiHost')}flight/bookings/ticket?refId=${this.props.match.params.id}`)
-      .then((res) => {
-        if (res.ok) {
-          res.json().then((data) => {
-            if (data.success === false) {
-              this.props.history.push('/profile/tickets');
-              NotificationManager.warning(data.message, '', LONG);
-            } else {
-              data.fullResponse = JSON.parse(data.fullResponse);
-              this.setState({
-                ticketDetails: data
-              });
-            }
-          });
-        } else {
-          console.log(res);
-        }
-      });
+    // fetch(`${Config.getValue('apiHost')}flight/bookings/ticket?refId=${this.props.match.params.id}`)
+    //   .then((res) => {
+    //     if (res.ok) {
+    //       res.json().then((data) => {
+    //         if (data.success === false) {
+    //           this.props.history.push('/profile/tickets');
+    //           NotificationManager.warning(data.message, '', LONG);
+    //         } else {
+    //           data.fullResponse = JSON.parse(data.fullResponse);
+    //           this.setState({
+    //             ticketDetails: data
+    //           });
+    //         }
+    //       });
+    //     } else {
+    //       console.log(res);
+    //     }
+    //   });
   }
 
   extractDatesData(segments) {

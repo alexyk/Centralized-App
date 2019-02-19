@@ -21,14 +21,14 @@ class AirTicketsBookingProfileEditForm extends Component {
   }
 
   render() {
-    const { contactInfo, countries } = this.props;
-    const { title, firstName, lastName, email, phone, country, zip, city, address } = contactInfo;
+    const { countries } = this.props;
+    const { title, firstName, lastName, email, phoneNumber, country, zipCode, city, address } = this.props.contactInfo;
 
     return (
       <div className="air-tickets-contact-edit-form">
         <h2>Profile</h2>
         <hr />
-        <form onSubmit={(e) => { e.preventDefault(); this.props.enableNextSection('invoice'); }}>
+        <form onSubmit={(e) => { e.preventDefault(); this.props.enableNextSection('services'); }}>
           <div className="contact-name-wrapper">
             <div className="contact-title">
               <label htmlFor="title">Title <span className="mandatory">*</span></label>
@@ -49,22 +49,24 @@ class AirTicketsBookingProfileEditForm extends Component {
               <input id="lastName" name="lastName" value={lastName || ''} onChange={this.onChange} type="text" required />
             </div>
           </div>
+
+          {!email &&
           <div className="email">
             <label htmlFor="contactEmail">Email <span className="mandatory">*</span></label>
             <input id="contactEmail" name="email" value={email || ''} onChange={this.onChange} type="email" required />
-          </div>
+          </div>}
+
           <div className="phone-number">
             <label htmlFor="contactPhone">Phone Number <span className="mandatory">*</span></label>
-            <input id="contactPhone" name="phone" value={phone || ''} onChange={this.onChange} type="number" required />
+            <input id="contactPhone" name="phoneNumber" value={phoneNumber || ''} onChange={this.onChange} type="number" required />
           </div>
           <div className="address-info">
             <div className="country-code">
               <label htmlFor="contactCountryCode">Country <span className="mandatory">*</span></label>
               <div className="select">
-                <select id="contactCountryCode" name="country" value={country || ''} onChange={this.onChange}>
-                  <option defaultValue="" disabled hidden></option>
-                  {countries && countries.map((country, countryIndex) => {
-                    return <option key={countryIndex} value={country.code} onChange={this.onChange}>{country.name}</option>;
+                <select id="contactCountryCode" name="country" defaultValue={country.code} onChange={this.onChange}>
+                  {countries && countries.map((countryItem, countryIndex) => {
+                    return <option key={countryIndex} value={countryItem.code} >{countryItem.name}</option>;
                   })}
                 </select>
               </div>
@@ -72,7 +74,7 @@ class AirTicketsBookingProfileEditForm extends Component {
             <div className="zip-code">
               <label htmlFor="contactZip">Zip Code <span className="mandatory">*</span></label>
               <div>
-                <input id="contactZip" name="zip" value={zip || ''} onChange={this.onChange} type="number" required />
+                <input id="contactZip" name="zipCode" value={zipCode || ''} onChange={this.onChange} type="number" required />
               </div>
             </div>
             <div className="city">
@@ -83,7 +85,6 @@ class AirTicketsBookingProfileEditForm extends Component {
                 name="city"
                 onPlaceSelected={this.handleCitySelect}
                 types={['(cities)']}
-                componentRestrictions={{ country: (country && country.toLowerCase()) || '' }}
                 disabled={!country}
                 placeholder=""
                 required

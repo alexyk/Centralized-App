@@ -78,27 +78,33 @@ class AirTicketsDetailsInfoSection extends Component {
     return (
       <Fragment>
         <div className="solution-main-info">
-          <h5 className="departure">Departure</h5>
-          <h5 className="carrier">{departureInfo[0].carrier.name}</h5>
-          <div className="duration">
-            <img width="20" src={TimeIcon} alt="time" />
-            {this.convertMinutesToTime(departureInfo[departureInfo.length - 1].journeyTime)}
+          <div className="flight-departure-text-wrapper">
+            <h5>Departure</h5>
           </div>
-          <div className="stops-count">{departureInfo.length - 1 === 0 ? 'direct flight' : `${departureInfo.length - 1} stops`}</div>
+          <div className="flight-carrier-wrapper">
+            <h5 className="carrier">{departureInfo[0].carrier.name}</h5>
+          </div>
+          <div className="flight-duration-wrapper">
+            <img width="20" src={TimeIcon} alt="time" />
+            <span className="duration">{this.convertMinutesToTime(departureInfo[departureInfo.length - 1].journeyTime)}</span>
+          </div>
+          <div className="flight-stops-count">
+            <span>{departureInfo.length - 1 === 0 ? 'direct flight' : `${departureInfo.length - 1} stops`}</span>
+          </div>
         </div>
         <div className="solution-flight">
           <div className="flight">
             <div className="item flight-date-times">
               <div className="flight-date-time">
                 <span className="date-in-day">{departureDate.departure.day}</span> {departureDate.departure.month}, {departureDate.departure.year}
-                <div className="time">{departureDate.departure.time} {departureDate.departure.timezone}</div>
+                <div className="time">{departureDate.departure.time}</div>
               </div>
               <div className="arrow-icon-container">
                 <img src="/images/icon-arrow.png" alt="icon-arrow" />
               </div>
               <div className="flight-date-time">
                 <span className="date-out-day">{departureDate.arrival.day}</span> {departureDate.arrival.month}, {departureDate.arrival.year}
-                <div className="time">{departureDate.arrival.time} {departureDate.arrival.timezone}</div>
+                <div className="time">{departureDate.arrival.time}</div>
               </div>
             </div>
             <div className="item flight-stops">
@@ -161,27 +167,36 @@ class AirTicketsDetailsInfoSection extends Component {
     return (
       <Fragment>
         <div className="solution-main-info">
-          <h5 className="departure">Return</h5>
-          <h5 className="carrier">{returnInfo[0].carrier.name}</h5>
-          <div className="duration">
-            <img width="20" src={TimeIcon} alt="time" />
-            {this.convertMinutesToTime(returnInfo[returnInfo.length - 1].journeyTime)}
+          <div className="flight-return-text-wrapper">
+            <h5>Return</h5>
           </div>
-          <div className="stops-count">{returnInfo.length - 1 === 0 ? 'direct flight' : `${returnInfo.length - 1} stops`}</div>
+          <div className="flight-carrier-wrapper">
+            <h5 className="carrier">{returnInfo[0].carrier.name}</h5>
+          </div>
+          <div className="flight-duration-wrapper">
+            <img width="20" src={TimeIcon} alt="time" />
+            <span className="duration">
+              {this.convertMinutesToTime(returnInfo[returnInfo.length - 1].journeyTime)}
+            </span>
+          </div>
+          <div className="flight-stops-count">
+            <span>{returnInfo.length - 1 === 0 ? 'direct flight' : `${returnInfo.length - 1} stops`}</span>
+          </div>
         </div>
         <div className="solution-flight">
           <div className="flight">
             <div className="item flight-date-times">
               <div className="flight-date-time">
-                <span className="date-in-day">{returnDate.departure.day}</span> {returnDate.departure.month}, {returnDate.departure.year}
-                <div className="time">{returnDate.departure.time} {returnDate.departure.timezone}</div>
+                <span className="date-in-day">{returnDate.departure.day}</span>
+                <span> {returnDate.departure.month}, {returnDate.departure.year} </span>
+                <div className="time">{returnDate.departure.time}</div>
               </div>
               <div className="arrow-icon-container">
                 <img src="/images/icon-arrow.png" alt="icon-arrow" />
               </div>
               <div className="flight-date-time">
                 <span className="date-out-day">{returnDate.arrival.day}</span> {returnDate.arrival.month}, {returnDate.arrival.year}
-                <div className="time">{returnDate.arrival.time} {returnDate.arrival.timezone}</div>
+                <div className="time">{returnDate.arrival.time}</div>
               </div>
             </div>
             <div className="item flight-stops">
@@ -256,7 +271,7 @@ class AirTicketsDetailsInfoSection extends Component {
                   {resultDepartureInfo.map((segment, index) => {
                     return (
                       <div className="departure-segment" key={index}>
-                        <h6>{segment.origin.name} <span className="icon-arrow-right arrow"></span> {segment.destination.name}</h6>
+                        <h5>{segment.origin.name} <span className="icon-arrow-right arrow"></span> {segment.destination.name}</h5>
                         <div className="departure-segment-item">
                           <div>Flight number:</div>
                           <div>{segment.carrier.flightNumber}</div>
@@ -266,7 +281,7 @@ class AirTicketsDetailsInfoSection extends Component {
                           <div>{segment.classFlightInfo.name}</div>
                         </div>
                         <div className="departure-segment-item">
-                          <div>Flight time:</div>
+                          <div>Duration:</div>
                           <div>{this.convertMinutesToTime(segment.flightTime)}</div>
                         </div>
                         {segment.techStops !== 0 &&
@@ -275,8 +290,8 @@ class AirTicketsDetailsInfoSection extends Component {
                             <div>{segment.techStops}</div>
                           </div>}
                         {segment.waitTime &&
-                          <div className="departure-segment-item">
-                            <div>Wait time:</div>
+                          <div className="departure-segment-item stop-over-wrapper">
+                            <div>Stop-over time:</div>
                             <div>{this.convertMinutesToTime(segment.waitTime)}</div>
                           </div>}
                       </div>
@@ -289,7 +304,7 @@ class AirTicketsDetailsInfoSection extends Component {
                     {resultReturnInfo.map((segment, index) => {
                       return (
                         <div className="departure-segment" key={index}>
-                          <h6>{segment.origin.name} <span className="icon-arrow-right arrow"></span> {segment.destination.name}</h6>
+                          <h5>{segment.origin.name} <span className="icon-arrow-right arrow"></span> {segment.destination.name}</h5>
                           <div className="departure-segment-item">
                             <div>Flight number:</div>
                             <div>{segment.carrier.flightNumber}</div>
@@ -299,7 +314,7 @@ class AirTicketsDetailsInfoSection extends Component {
                             <div>{segment.classFlightInfo.name}</div>
                           </div>
                           <div className="departure-segment-item">
-                            <div>Flight time:</div>
+                            <div>Duration:</div>
                             <div>{this.convertMinutesToTime(segment.flightTime)}</div>
                           </div>
                           {segment.techStops !== 0 &&
@@ -308,8 +323,8 @@ class AirTicketsDetailsInfoSection extends Component {
                               <div>{segment.techStops}</div>
                             </div>}
                           {segment.waitTime &&
-                            <div className="departure-segment-item">
-                              <div>Wait time:</div>
+                            <div className="departure-segment-item stop-over-wrapper">
+                              <div>Stop-over time:</div>
                               <div>{this.convertMinutesToTime(segment.waitTime)}</div>
                             </div>}
                         </div>
@@ -347,12 +362,11 @@ class AirTicketsDetailsInfoSection extends Component {
                 <hr />
                 <div className="farerules">
                   {fareRules.map((rule, ruleIndex) => {
-                    console.log(rule);
                     const rules = rule.fareRulesInfo.map((ruleInfo, ruleInfoIndex) => {
                       return (
                         <div key={ruleInfoIndex} className="rule">
                           <h5>{ruleInfo.title}</h5>
-                          <h6>{ruleInfo.text}</h6>
+                          <h5>{ruleInfo.text}</h5>
                         </div>
                       );
                     });

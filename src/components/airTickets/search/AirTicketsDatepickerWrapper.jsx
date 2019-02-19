@@ -5,19 +5,12 @@ import moment from 'moment';
 import DatePicker from '../../common/datepicker';
 import { asyncSetEndDate } from '../../../actions/searchDatesInfo';
 import { getStartDate, getEndDate } from '../../../selectors/searchDatesInfo';
-import { setFlightRouting } from '../../../actions/airTicketsSearchInfo';
-import SelectFlex from '../../common/select';
+import MultiStopsPopup from './common/multiStopsPopup';
 
 import '../../../styles/css/components/airTickets/search/air-tickets-datepicker-wrapper.css';
 import { selectFlightRouting } from '../../../selectors/airTicketsSearchSelector';
 
 class AirTicketsDatepickerWrapper extends Component {
-  constructor(props) {
-    super(props);
-
-    this.changeFlightRouting = this.changeFlightRouting.bind(this);
-  }
-
   componentDidMount() {
     this.validateDates();
   }
@@ -33,15 +26,6 @@ class AirTicketsDatepickerWrapper extends Component {
     }
   }
 
-  changeFlightRouting(flightRouting) {
-    if (flightRouting === '3') {
-      this.props.openMultiStopsPopup();
-    } else {
-      this.props.closeMultiStopsPopup();
-    }
-    this.props.dispatch(setFlightRouting(flightRouting));
-  }
-
   render() {
     const { flightRouting } = this.props;
 
@@ -54,23 +38,12 @@ class AirTicketsDatepickerWrapper extends Component {
           intervalEndText="Return"
           enableSameDates
         />
-        <div className={`choose-roundtrip${flightRouting === '2' ? ' hide-single' : ''}`}>
-          <span className="icon-arrow-right arrow"></span>
-          <SelectFlex placeholder="Flight Routing" className="flight-routing" onChange={(value) => this.changeFlightRouting(value)} value={flightRouting}>
-            <select name="flightRouting">
-              <option value="1">One Way</option>
-              <option value="2">Roundtrip</option>
-              <option value="3">Multi Stops</option>
-            </select>
-          </SelectFlex>
-        </div>
-        <div className="close-roundtrip-holder">
-          <span className={`icon-close${flightRouting === '1' ? ' hide-close-roundtrip' : ''}`} onClick={() => this.changeFlightRouting('1')} />
-        </div>
+
         {flightRouting === '3' &&
           <div className="open-multi-city-popup-holder">
             <span className="icon-plus" onClick={this.props.openMultiStopsPopup}></span>
           </div>}
+          <MultiStopsPopup showMultiStopsPopup={flightRouting === '3'} closeMultiStopsPopup={this.props.closeMultiStopsPopup} />
       </div>
     );
   }

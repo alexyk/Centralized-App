@@ -90,6 +90,7 @@ function AirTicketsBookingProfileRouterPage(props) {
                     render={() => {
                       return (
                         <AirTicketsBookingProfilePassengersForm
+                          result={result}
                           passengersInfo={passengersInfo}
                           onChange={props.onChangePassengersInfo}
                           onChangeService={props.onChangePassengerServices}

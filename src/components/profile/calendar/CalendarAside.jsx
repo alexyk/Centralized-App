@@ -8,7 +8,7 @@ class CalendarAside extends React.Component {
       <div className="calendar-aside">
         <div className="calendar-aside-header">
           <h3>Settings - {moment(this.props.date).format('DD MMM')}</h3>
-          <button onClick={this.props.onCancel}><i class="fa fa-times"></i></button>
+          <button onClick={this.props.onCancel}><i className="fa fa-times"></i></button>
         </div>
         <div className="calendar-aside-body">
           <form onSubmit={(e) => { e.preventDefault(); this.props.onSubmit(); }}>

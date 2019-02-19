@@ -51,11 +51,31 @@ $white: #fff;
 
   .stops-filter {
     margin-bottom: 24px;
-    .labels {
-      font-size: 14px;
-      display: flex;
-      justify-content: space-between;
+
+    ul {
+      list-style: none;
+      display: inline-flex;
+      width: 100%;
+      flex-direction: row;
+      flex-wrap: wrap;
+      margin-left: rem-calc(10);
+
+      li {
+        width: 100%;
+        display: inline-flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+
+        label {
+          margin-left: rem-calc(5);
+
+          span {
+            margin-left: rem-calc(10);
+          }
+        }
+      }
     }
+
     h5 {
       margin-bottom: 10px;
     }
@@ -109,7 +129,24 @@ $white: #fff;
   }
 
   .price-range-filters,
-  .waiting-range-filters {
+  .waiting-range-filters,
+  .departure-range-filters,
+  .arrival-range-filters,
+  .journey-range-filters {
+
+    &.departure-range-filters,
+    &.arrival-range-filters,
+    &.journey-range-filters {
+      padding: 10px;
+      font-size: 14px;
+      width: 100%;
+      margin: 0 auto;
+
+      h5 {
+        padding-left: 0;
+      }
+    }
+
     margin-bottom: 25px;
     input {
       margin-bottom: 12px;
@@ -124,6 +161,10 @@ $white: #fff;
     }
     .select {
       margin-bottom: 9px;
+    }
+
+    .time-range-min-end {
+      float: right;
     }
   }
 
@@ -158,4 +199,14 @@ $white: #fff;
       }
     }
   }
+}
+
+.input-range {
+  margin-bottom: 10px;
+}
+
+.input-range__track--active,
+.input-range__slider {
+  background: $moderate-red;
+  border: 1px solid $moderate-red;
 }

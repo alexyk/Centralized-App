@@ -162,7 +162,7 @@ $media-expressions: (
     display: inline-block;
     vertical-align: middle;
     color: $text-black;
-    font-size: 1em;
+    font-size: 15px;
     text-transform: uppercase;
     padding: 10px;
     overflow: hidden;
@@ -184,7 +184,6 @@ $media-expressions: (
       }
     }
     @include media(">=desktop") {
-      font-size: 1.2em;
       padding: 16px 5px 13px 5px;
       &:after {
         height: 4px;

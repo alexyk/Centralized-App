@@ -23,7 +23,6 @@ function AirTicketsDetailsBookingPanel(props) {
   }
 
   const { result, isUserLogged, currency, currencySign, flightRouting, startDate, endDate } = props;
-
   const currencyCode = result.price.currency;
   const price = result.price.total;
   const taxPrice = result.price.tax;
@@ -33,6 +32,10 @@ function AirTicketsDetailsBookingPanel(props) {
 
   const taxPriceInCurrentCurrency = CurrencyConverter.convert(currencyExchangeRates, currencyCode, currency, taxPrice);
   const taxPriceInRoomsXMLCurrency = CurrencyConverter.convert(currencyExchangeRates, currencyCode, RoomsXMLCurrency.get(), taxPrice);
+
+  const priceWithoutTax = (fiatPriceInCurrentCurrency - taxPriceInCurrentCurrency).toFixed(2);
+  const showPrice = !taxPriceInCurrentCurrency ? fiatPriceInCurrentCurrency : priceWithoutTax;
+  const taxAndFeesCalc = isUserLogged && currencySign ? taxPriceInCurrentCurrency.toFixed(2) : 0;
 
   const getFlightRoutingPreview = (flightRouting) => {
     if (flightRouting === '1') {
@@ -76,13 +79,14 @@ function AirTicketsDetailsBookingPanel(props) {
           <div className="without-fees">
             <p>Passengers</p>
             <span className="icon-question" tooltip={'Some message'}></span>
-            <p>{isUserLogged && `${currencySign} ${(fiatPriceInCurrentCurrency - taxPriceInCurrentCurrency).toFixed(2)}`} <LocPrice fiat={fiatPriceInRoomsXMLCurrency - taxPriceInRoomsXMLCurrency} /></p>
+            <p>{isUserLogged && `${currencySign} ${showPrice.toFixed(2)}`} <LocPrice fiat={showPrice} /></p>
           </div>
-          <div className="cleaning-fee">
-            <p>Taxes and fees</p>
-            <span className="icon-question" tooltip={'Some message'}></span>
-            <p>{isUserLogged && `${currencySign} ${(taxPriceInCurrentCurrency.toFixed(2))}`} <LocPrice fiat={taxPriceInRoomsXMLCurrency} /></p>
-          </div>
+          {!isNaN(taxAndFeesCalc) &&
+            <div className="cleaning-fee">
+              <p>Taxes and fees</p>
+              <span className="icon-question" tooltip={'Some message'}></span>
+              <p>${isUserLogged && `${currencySign} ${(taxAndFeesCalc)}`} <LocPrice fiat={taxPriceInRoomsXMLCurrency} /></p>
+            </div>}
           <div className="total">
             <p>Total</p>
             <p>{isUserLogged && `${currencySign} ${(fiatPriceInCurrentCurrency.toFixed(2))}`} <LocPrice fiat={fiatPriceInRoomsXMLCurrency} /></p>

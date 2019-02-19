@@ -57,6 +57,8 @@ class GoogleClient implements StreetGoogleClient {
 
   getLocationForStreetPlaceId(placeId) {
     return new Promise((resolve, reject) => {
+      var location;
+
       this.placesService.getDetails(
         {
           placeId: placeId
@@ -66,12 +68,12 @@ class GoogleClient implements StreetGoogleClient {
             return resolve(undefined);
           }
           try {
-            var location = {
+            location = {
               lat: data.geometry.location.lat(),
               lng: data.geometry.location.lng()
             };
           } catch (e) {
-            var location = undefined;
+            location = undefined;
           }
 
           resolve(location);
