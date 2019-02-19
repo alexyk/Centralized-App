@@ -314,7 +314,6 @@ class AirTicketsBookingProfilePassengersForm extends Component {
               <i className="fa fa-long-arrow-left" aria-hidden="true"></i>
               &nbsp;Back</NavLink>
             <button id="pay_loc" type="submit" disabled={isBookingProccess} className="button" name="pay_loc">{isBookingProccess ? 'Processing...' : 'Pay with LOC'}</button>
-            <button id="pay_cc" type="submit" disabled={isBookingProccess} className="button" name="pay_cc">{isBookingProccess ? 'Processing...' : 'Pay with Credit Card'}</button>
           </div>
         </form>
       </div>

@@ -183,90 +183,90 @@ class AirTicketsSearchPage extends Component {
       let item = results[k];
       let segments = item.segments;
       let itemExists = items.hasOwnProperty(k);
+      let segmentLength = segments.length;
 
-      Object.values(stopIds).some(stopId => {
-        let segmentCountIncrementer = 2;
-        let stopsCount = (parseInt(stopId, 10) + 1) * segmentCountIncrementer;
-
-        if (!itemExists && filters.stops.includes(stopId.toString()) && segments.length === stopsCount) {
-          items[k] = item;
+      filters.stops.forEach(stop => {
+        if (!itemExists) {
+          let stopsCount = (parseInt(stop, 10) + 1) * 2;
+          if (segmentLength === stopsCount || (stopsCount === 4 && segmentLength >= stopsCount)) {
+            items[k] = item;
+          }
         }
-
-        return;
       });
 
       if (!itemExists && filters.minPrice >= item.price.total && item.price.total <= filters.maxPrice) {
         items[k] = item;
       }
 
-      for (let i in segments) {
-        let segment = segments[i];
+      // for (let i in segments) {
+      //   itemExists = items.hasOwnProperty(k);
+      //   let segment = segments[i];
 
-        if (!itemExists) {
-          let itemDepartureTime =  moment(segment.destination.time, 'HH:mm');
-          let itemArrivalTime = moment(segment.origin.time, 'HH:mm');
-          let itemJourneyTime = moment(segment.destination.date + ' ' + segment.destination.time).add(segment.journeyTime, 'minutes').format('HH:mm');
+      //   if (!itemExists) {
+      //     let itemDepartureTime =  moment(segment.destination.time, 'HH:mm');
+      //     let itemArrivalTime = moment(segment.origin.time, 'HH:mm');
+      //     let itemJourneyTime = moment(segment.destination.date + ' ' + segment.destination.time).add(segment.journeyTime, 'minutes').format('HH:mm');
 
-          if (filters.airlines.length && filters.airlines.indexOf(segment.carrier.name) !== -1) {
-            items[k] = item;
-          }
+      //     if (filters.airlines.length && filters.airlines.indexOf(segment.carrier.name) !== -1) {
+      //       items[k] = item;
+      //     }
 
-          if (filters.minWaitTime >= segment.waitTime && segment.waitTime <= filters.maxWaitTime) {
-            items[k] = item;
-          }
+      //     if (filters.minWaitTime >= segment.waitTime && segment.waitTime <= filters.maxWaitTime) {
+      //       items[k] = item;
+      //     }
 
 
-          if (filters.airportsArrival.length) {
-            filters.airportsArrival.some(arrivalAirport => {
-              if (arrivalAirport === segment.destination.code) {
-                items[k] = item;
-              }
-              return;
-            });
-          }
+      //     if (filters.airportsArrival.length) {
+      //       filters.airportsArrival.some(arrivalAirport => {
+      //         if (arrivalAirport === segment.destination.code) {
+      //           items[k] = item;
+      //         }
+      //         return;
+      //       });
+      //     }
 
-          if (filters.airportsTransfer.length) {
-            filters.airportsTransfer.split(',').some(transferAirport => {
+      //     if (filters.airportsTransfer.length) {
+      //       filters.airportsTransfer.split(',').some(transferAirport => {
 
-              return;
-            });
-          }
+      //         return;
+      //       });
+      //     }
 
-          if (filters.departureTime.length) {
-            let filtersDTStart = moment(filters.departureTime.start, 'HH:mm');
-            let filtersDTEnd = moment(filters.departureTime.end, 'HH:mm');
+      //     if (filters.departureTime.length) {
+      //       let filtersDTStart = moment(filters.departureTime.start, 'HH:mm');
+      //       let filtersDTEnd = moment(filters.departureTime.end, 'HH:mm');
 
-            if (filtersDTStart.isSameOrAfter(itemDepartureTime) || filtersDTEnd.isSameOrBefore(itemDepartureTime)) {
-              items[k] = item;
-            }
-          }
+      //       if (filtersDTStart.isSameOrAfter(itemDepartureTime) || filtersDTEnd.isSameOrBefore(itemDepartureTime)) {
+      //         items[k] = item;
+      //       }
+      //     }
 
-          if (filters.arrivalTime.length) {
-            let filtersDTStart = moment(filters.arrivalTime.start, 'HH:mm');
-            let filtersDTEnd = moment(filters.arrivalTime.end, 'HH:mm');
+      //     if (filters.arrivalTime.length) {
+      //       let filtersDTStart = moment(filters.arrivalTime.start, 'HH:mm');
+      //       let filtersDTEnd = moment(filters.arrivalTime.end, 'HH:mm');
 
-            if (filtersDTStart.isSameOrAfter(itemArrivalTime) || filtersDTEnd.isSameOrBefore(itemArrivalTime)) {
-              items[k] = item;
-            }
-          }
+      //       if (filtersDTStart.isSameOrAfter(itemArrivalTime) || filtersDTEnd.isSameOrBefore(itemArrivalTime)) {
+      //         items[k] = item;
+      //       }
+      //     }
 
-          if (filters.journeyTime.length) {
-            let filtersDTStart = moment(filters.journeyTime.start, 'HH:mm');
-            let filtersDTEnd = moment(filters.journeyTime.end, 'HH:mm');
+      //     if (filters.journeyTime.length) {
+      //       let filtersDTStart = moment(filters.journeyTime.start, 'HH:mm');
+      //       let filtersDTEnd = moment(filters.journeyTime.end, 'HH:mm');
 
-            if (filtersDTStart.isSameOrAfter(itemJourneyTime) || filtersDTEnd.isSameOrBefore(itemJourneyTime)) {
-              items[k] = item;
-            }
-          }
-        }
-      }
+      //       if (filtersDTStart.isSameOrAfter(itemJourneyTime) || filtersDTEnd.isSameOrBefore(itemJourneyTime)) {
+      //         items[k] = item;
+      //       }
+      //     }
+      //   }
+      // }
     }
 
     this.setState({
-      loading: false,
       allElements: true,
       allResults: items,
-      currentPageResults: Object.values(items).slice(0, 10)
+      currentPageResults: Object.values(items).slice(0, 10),
+      totalElements: Object.values(items).length,
     });
 
     this.forceUpdate();

@@ -3,7 +3,6 @@ import Select from 'react-select';
 import PropTypes from 'prop-types';
 import NumberRangeSlider from '../../../common/numberRangeSlider';
 import TimeRangeSlider from 'react-time-range-slider';
-import _ from 'lodash';
 
 import '../../../../styles/css/components/airTickets/search/filter/air-tickets-search-filter-panel.css';
 
@@ -38,20 +37,12 @@ class AirTicketsSearchFilterPanel extends Component {
     this.handlePriceRangeSelect = this.handlePriceRangeSelect.bind(this);
     this.handleWaitingRangeSelect = this.handleWaitingRangeSelect.bind(this);
     this.clearFilters = this.clearFilters.bind(this);
-    this.departureTmeChangeHandler = this.departureTmeChangeHandler.bind(this);
-    this.arrivalTmeChangeHandler = this.arrivalTmeChangeHandler.bind(this);
-    this.journeyTmeChangeHandler = this.journeyTmeChangeHandler.bind(this);
-    this.stopsChangeHandler = this.stopsChangeHandler.bind(this);
   }
 
   onChange(name, option) {
     this.setState({
       [name]: option
-    });
-
-    setTimeout(() => {
-      this.props.applyFilters(this.state);
-    }, 2000);
+    }, () => this.props.applyFilters(this.state));
   }
 
   getCurrencySign(currency) {
@@ -64,21 +55,13 @@ class AirTicketsSearchFilterPanel extends Component {
   handlePriceRangeSelect(priceRange) {
     this.setState({
       priceRange
-    });
-
-    setTimeout(() => {
-      this.props.applyFilters(this.state);
-    }, 2000);
+    }, () => this.props.applyFilters(this.state));
   }
 
   handleWaitingRangeSelect(waitingTimeRange) {
     this.setState({
       waitingTimeRange
-    });
-
-    setTimeout(() => {
-      this.props.applyFilters(this.state);
-    }, 2000);
+    }, () => this.props.applyFilters(this.state));
   }
 
   clearFilters() {
@@ -94,36 +77,24 @@ class AirTicketsSearchFilterPanel extends Component {
     }, () => this.props.applyFilters(this.state));
   }
 
-  departureTmeChangeHandler(time) {
-    this.setState({
-        departure: time
-    });
+  mapStopName(stopId) {
+    let stopName = '';
 
-    this.props.applyFilters(this.state);
-  }
+    switch(stopId) {
+      case '0':
+        stopName = 'Direct flight';
+        break;
+      case '1':
+        stopName = 'One stop';
+        break;
+      case '2':
+        stopName = 'Multi stop';
+        break;
+      default:
+        break;
+    }
 
-  arrivalTmeChangeHandler(time) {
-    this.setState({
-        arrival: time
-    });
-
-    this.props.applyFilters(this.state);
-  }
-
-  journeyTmeChangeHandler(time) {
-    this.setState({
-        journey: time
-    });
-
-    this.props.applyFilters(this.state);
-  }
-
-  stopsChangeHandler(stop) {
-    this.setState({
-      'stops': [stop]
-    });
-
-    this.props.applyFilters(this.state);
+    return stopName;
   }
 
   render() {
@@ -179,7 +150,7 @@ class AirTicketsSearchFilterPanel extends Component {
                         value={stop.changesId}
                         onChange={() => this.onChange('stops', [stop])}
                       />
-                      <span>{stop.changesName}</span>
+                      <span>{this.mapStopName(stop.changesId)}</span>
                     </label>
                   </li>
                 );
@@ -196,7 +167,7 @@ class AirTicketsSearchFilterPanel extends Component {
                 maxValue={"23:59"}
                 minValue={"00:00"}
                 name={"time_range"}
-                onChange={this.departureTmeChangeHandler}
+                onChange={() => this.onChange('departure', departure)}
                 step={15}
                 value={departure}/>
                 <span className="time-range-min-value">{departure.start}</span>
@@ -210,9 +181,9 @@ class AirTicketsSearchFilterPanel extends Component {
                 maxValue={"23:59"}
                 minValue={"00:00"}
                 name={"time_range"}
-                onChange={this.arrivalTmeChangeHandler}
+                onChange={() => this.onChange('arrival', arrival)}
                 step={15}
-                value={this.state.arrival}/>
+                value={arrival}/>
                 <span className="time-range-min-value">{arrival.start}</span>
                 <span className="time-range-min-end">{arrival.end}</span>
           </div>
@@ -224,7 +195,7 @@ class AirTicketsSearchFilterPanel extends Component {
                 maxValue={"23:59"}
                 minValue={"00:00"}
                 name={"time_range"}
-                onChange={this.journeyTmeChangeHandler}
+                onChange={() => this.onChange('journey', journey)}
                 step={15}
                 value={journey}/>
                 <span className="time-range-min-value">{journey.start}</span>
