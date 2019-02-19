@@ -228,6 +228,21 @@ class StaticHotelsSearchPage extends React.Component {
     }
   }
 
+  // connectSocketForLocRate(){
+  //   const topic = "/loc_rate";
+  //   const url = Config.getValue("socketHost");
+  //   let client = Stomp.client(url);
+  //   const onSubscribe = ()=>client.subscribe(topic, (data)=>{
+  //     console.log(data)
+  //   });
+  //
+  //   this.client.connect(
+  //     null,
+  //     null,
+  //     onSubscribe
+  //   );
+  // }
+
   connectSocket() {
     if (!localStorage.getItem("uuid")) {
       localStorage.setItem("uuid", `${uuid()}`);
@@ -259,9 +274,7 @@ class StaticHotelsSearchPage extends React.Component {
     const destination = "search/" + queueId;
     const client = this.client;
     const handleReceiveHotelPrice = this.handleReceiveMessage;
-
     this.subscription = client.subscribe(destination, handleReceiveHotelPrice);
-
     const msgObject = {
       uuid: queueId,
       query: search.substr(0, endOfSearch)
