@@ -175,14 +175,20 @@ class AirTicketsBookingRouterPage extends Component {
         body: JSON.stringify(initBooking)
       })
         .then((res) => {
-          res.json().then((data) => {
-            console.log(data);
-            resolve(data);
-          }).catch(err => {
-            reject(err);
-          });
+          if (res.ok) {
+            res.json().then((data) => {
+              resolve(data);
+            }).catch(err => {
+              reject(err);
+              NotificationManager.warning('Please try again', 'Warning', LONG);
+            });
+          } else {
+            reject(new Error('Fail'));
+            NotificationManager.warning('Please try again', 'Warning', LONG);
+          }
         }).catch(err => {
           reject(err);
+          NotificationManager.warning('Please try again', 'Warning', LONG);
         });
     });
   }

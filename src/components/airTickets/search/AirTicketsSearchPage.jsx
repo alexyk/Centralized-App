@@ -262,6 +262,10 @@ class AirTicketsSearchPage extends Component {
       // }
     }
 
+    if (!Object.values(items).length) {
+      items = results;
+    }
+
     this.setState({
       allElements: true,
       allResults: items,
