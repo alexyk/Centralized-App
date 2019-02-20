@@ -175,7 +175,7 @@ class AirTicketsSearchPage extends Component {
 
     let results = this.results;
     let items = {};
-
+console.log(filters);
     for (var k in results) {
       let item = results[k];
       let segments = item.segments;
@@ -258,7 +258,6 @@ class AirTicketsSearchPage extends Component {
       //   }
       // }
     }
-
     if (!Object.values(items).length) {
       items = results;
     }
@@ -269,8 +268,6 @@ class AirTicketsSearchPage extends Component {
       currentPageResults: Object.values(items).slice(0, 10),
       totalElements: Object.values(items).length,
     });
-
-    this.forceUpdate();
   }
 
   updateWindowWidth() {
@@ -393,16 +390,17 @@ class AirTicketsSearchPage extends Component {
       this.clientSearch.debug = () => { };
     }
 
-    this.clientSearch.connect(null, null, (e) => {
-      this.disconnectSearch();
+    this.clientSearch.connect(null, null, this.subscribeSearch, () => {
       this.setState({
         currentPageResults: '',
         allElements: true,
-        allResults: '',
+        allResults: {},
         loading: false,
         totalElements: 0,
         page: 0,
-        filters: null
+        filters: null,
+        windowWidth: 0,
+        showFiltersMobile: false
       });
     });
   }
@@ -440,13 +438,7 @@ class AirTicketsSearchPage extends Component {
     };
 
     client.send(sendDestination, headers, msg);
-
-
-    setTimeout(() => {
-      this.requestFilters();
-      this.unsubscribeSearch();
-    }, 30000);
-
+    this.requestFilters();
   }
 
   subscribeFilters() {
@@ -500,7 +492,6 @@ class AirTicketsSearchPage extends Component {
   }
 
   handleReceiveMessageSearch(message) {
-    console.log(message);
     const messageBody = JSON.parse(message.body);
     // console.log(messageBody);
     if (messageBody.allElements) {

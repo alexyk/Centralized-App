@@ -75,7 +75,7 @@ $media-expressions: (
           .departure-segment {
             width: 48%;
             margin-bottom: 20px;
-            display: inline-block;
+            display: inline-grid;
 
             &:nth-child(odd) {
               margin-left: 15px;
