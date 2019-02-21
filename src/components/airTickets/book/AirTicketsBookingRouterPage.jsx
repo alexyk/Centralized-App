@@ -194,6 +194,8 @@ class AirTicketsBookingRouterPage extends Component {
   }
 
   requestPayWithCC(initBooking) {
+    initBooking.backUrl = this.props.location.search;
+    initBooking.currency = 'USD';
     return new Promise((resolve, reject) => {
       fetch(`${Config.getValue('apiHost')}payment/creditcard/flight`, {
         method: 'POST',
@@ -390,14 +392,15 @@ class AirTicketsBookingRouterPage extends Component {
     }), () => this.props.history.push(`/tickets/results/initBook/${this.props.match.params.id}/profile/${section}${this.props.location.search}`));
   }
 
-  initBooking() {
+  initBooking(type) {
     this.setState({
       isBookingProccess: true
     });
 
     const { contactInfo, invoiceInfo, servicesInfo, passengersInfo } = this.state;
-
     const invoice = Object.assign({}, invoiceInfo);
+    let paymentResult = null;
+
     invoice.country = invoiceInfo.country.code;
 
     const passengers = [];
@@ -432,41 +435,25 @@ class AirTicketsBookingRouterPage extends Component {
       passengers
     };
 
-    this.requestConfirmAndPay(initBooking)
-      .then((data) => {
+
+    if (type === 'loc') {
+      paymentResult = this.requestConfirmAndPay(initBooking);
+    } else {
+      paymentResult = this.requestPayWithCC(initBooking);
+    }
+console.log(paymentResult);
+    paymentResult.then(() => {
         this.setState({
           isBookingProccess: false
         });
         this.props.history.push(`/tickets/results/initBook/${this.props.match.params.id}/confirm${this.props.location.search}`);
-        // this.requestBooking()
-        //   .then((data) => {
-        //     this.setState({
-        //       isBookingProccess: false
-        //     }, () => {
-        //       console.log('Success booking.');
-        //       console.log(data);
-        //       if (data.bookingStatus === 'Unsuccessful booking or no booking has made') {
-        //         this.searchAirTickets(this.props.location.search);
-        //         NotificationManager.warning(data.bookingStatus, '', LONG);
-        //       } else {
-        //         this.props.history.push(`/tickets/results/book/${this.props.match.params.id}`);
-        //         NotificationManager.success(data.bookingStatus, '', LONG);
-        //       }
-        //     });
-        //   })
-        //   .catch((err) => {
-        //     err.json().then((data) => {
-        //       console.log(data);
-        //     });
-        //   });
-      })
-      .catch((err) => {
-        NotificationManager.warning(err.messageResponse, '', LONG);
-        this.setState({
-          isBookingProccess: false
-        });
-        this.searchAirTickets(this.props.location.search);
+    }).catch((err) => {
+      NotificationManager.warning(err.messageResponse, '', LONG);
+      this.setState({
+        isBookingProccess: false
       });
+      this.searchAirTickets(this.props.location.search);
+    });
   }
 
   render() {

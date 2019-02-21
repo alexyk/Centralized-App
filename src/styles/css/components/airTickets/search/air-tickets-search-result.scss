@@ -58,11 +58,15 @@ $media-expressions: (
       .flight-duration-wrapper,
       .flight-stops-count,
       .flight-return-text-wrapper {
-        width: 15%;
+        width: 8%;
         display: inline-flex;
         flex-direction: column;
         flex-wrap: wrap;
         align-items: center;
+
+        &.flight-stops-count {
+          width: 20%;
+        }
 
         &.flight-carrier-wrapper {
           width: 50%;
