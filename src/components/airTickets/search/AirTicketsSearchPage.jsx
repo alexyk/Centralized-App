@@ -157,8 +157,10 @@ class AirTicketsSearchPage extends Component {
   }
 
   applyFilters(filtersObject) {
+    const items = {};
+    const results = this.results;
     const filters = {
-      airlines: filtersObject.airlines.map(a => a.airlineId) || [],
+      airlines: filtersObject.airlines.map(a => a.airlineName) || [],
       stops: filtersObject.stops.map(a => a.changesId) || [],
       minPrice: filtersObject.priceRange && filtersObject.priceRange.min,
       maxPrice: filtersObject.priceRange && filtersObject.priceRange.max,
@@ -173,93 +175,36 @@ class AirTicketsSearchPage extends Component {
       uuid: this.filtersQueueId
     };
 
-    let results = this.results;
-    let items = {};
-console.log(filters);
-    for (var k in results) {
-      let item = results[k];
-      let segments = item.segments;
-      let itemExists = items.hasOwnProperty(k);
-      let segmentLength = segments.length;
+    for (const i in results) {
+      const item = results[i];
+      const segments = item.segments;
+      const isDirect = segments.length == 2 && filters.stops.indexOf(stopIds.D) !== -1;
+      const isOneStop = segments.length == 4  && filters.stops.indexOf(stopIds.O) !== -1;
+      const isMultiStop = segments.length > 4  && filters.stops.indexOf(stopIds.M) !== -1;
+      const origin = segments[0];
+      const destination = segments[segments.length - 1];
 
-      filters.stops.forEach(stop => {
-        if (!itemExists) {
-          let stopsCount = (parseInt(stop, 10) + 1) * 2;
-          if (segmentLength === stopsCount || (stopsCount === 4 && segmentLength >= stopsCount)) {
-            items[k] = item;
-          }
+      if (filters.airlines.length) {
+        if (filters.airlines.indexOf(origin.carrier.name) || filters.airlines.indexOf(destination.carrier.name)) {
+          items[i] = item;
         }
-      });
-
-      if (!itemExists && filters.minPrice >= item.price.total && item.price.total <= filters.maxPrice) {
-        items[k] = item;
       }
 
-      // for (let i in segments) {
-      //   itemExists = items.hasOwnProperty(k);
-      //   let segment = segments[i];
+      if (filters.stops.length) {
+        if (isDirect) {
+          items[i] = item;
+        }
 
-      //   if (!itemExists) {
-      //     let itemDepartureTime =  moment(segment.destination.time, 'HH:mm');
-      //     let itemArrivalTime = moment(segment.origin.time, 'HH:mm');
-      //     let itemJourneyTime = moment(segment.destination.date + ' ' + segment.destination.time).add(segment.journeyTime, 'minutes').format('HH:mm');
+        if (isOneStop) {
+          items[i] = item;
+        }
 
-      //     if (filters.airlines.length && filters.airlines.indexOf(segment.carrier.name) !== -1) {
-      //       items[k] = item;
-      //     }
+        if (isMultiStop) {
+          items[i] = item;
+        }
+      }
 
-      //     if (filters.minWaitTime >= segment.waitTime && segment.waitTime <= filters.maxWaitTime) {
-      //       items[k] = item;
-      //     }
-
-
-      //     if (filters.airportsArrival.length) {
-      //       filters.airportsArrival.some(arrivalAirport => {
-      //         if (arrivalAirport === segment.destination.code) {
-      //           items[k] = item;
-      //         }
-      //         return;
-      //       });
-      //     }
-
-      //     if (filters.airportsTransfer.length) {
-      //       filters.airportsTransfer.split(',').some(transferAirport => {
-
-      //         return;
-      //       });
-      //     }
-
-      //     if (filters.departureTime.length) {
-      //       let filtersDTStart = moment(filters.departureTime.start, 'HH:mm');
-      //       let filtersDTEnd = moment(filters.departureTime.end, 'HH:mm');
-
-      //       if (filtersDTStart.isSameOrAfter(itemDepartureTime) || filtersDTEnd.isSameOrBefore(itemDepartureTime)) {
-      //         items[k] = item;
-      //       }
-      //     }
-
-      //     if (filters.arrivalTime.length) {
-      //       let filtersDTStart = moment(filters.arrivalTime.start, 'HH:mm');
-      //       let filtersDTEnd = moment(filters.arrivalTime.end, 'HH:mm');
-
-      //       if (filtersDTStart.isSameOrAfter(itemArrivalTime) || filtersDTEnd.isSameOrBefore(itemArrivalTime)) {
-      //         items[k] = item;
-      //       }
-      //     }
-
-      //     if (filters.journeyTime.length) {
-      //       let filtersDTStart = moment(filters.journeyTime.start, 'HH:mm');
-      //       let filtersDTEnd = moment(filters.journeyTime.end, 'HH:mm');
-
-      //       if (filtersDTStart.isSameOrAfter(itemJourneyTime) || filtersDTEnd.isSameOrBefore(itemJourneyTime)) {
-      //         items[k] = item;
-      //       }
-      //     }
-      //   }
-      // }
-    }
-    if (!Object.values(items).length) {
-      items = results;
+      break;
     }
 
     this.setState({

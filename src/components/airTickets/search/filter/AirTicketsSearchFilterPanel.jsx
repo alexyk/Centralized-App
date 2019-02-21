@@ -78,7 +78,18 @@ class AirTicketsSearchFilterPanel extends Component {
       airportsTransfer: [],
       priceRange: '',
       waitingTimeRange: '',
-      flightTimeRange: ''
+      departure: {
+        start: "00:00",
+        end: "23:59"
+      },
+      arrival: {
+        start: "00:00",
+        end: "23:59"
+      },
+      journey: {
+        start: "00:00",
+        end: "23:59"
+      }
     }, () => this.props.applyFilters(this.state));
   }
 
@@ -104,7 +115,7 @@ class AirTicketsSearchFilterPanel extends Component {
     let stopElement = JSON.parse(stop.target.value);
 
     this.setState({
-      stops: stopElement
+      stops: [stopElement]
     }, () => this.props.applyFilters(this.state));
   }
 
@@ -151,7 +162,7 @@ class AirTicketsSearchFilterPanel extends Component {
       );
     }
 
-    const { airlines, priceRange, waitingTimeRange, airportsArrival, airportsDeparture, airportsTransfer, departure, arrival, journey } = this.state;
+    const { airlines, stops, priceRange, waitingTimeRange, airportsArrival, airportsDeparture, airportsTransfer, departure, arrival, journey } = this.state;
 
     if (windowWidth <= 1024 && !showFiltersMobile) {
       return (
@@ -171,7 +182,7 @@ class AirTicketsSearchFilterPanel extends Component {
           <ul>
               {filters.changes.map((stop, index) => {
                 return (
-                  <li key={index} onClick={this.handleStops}>
+                  <li key={index} onClick={this.handleStops} value={stops}>
                     <FilterCheckbox
                       id={stop.changesName}
                       value={JSON.stringify(stop)}
