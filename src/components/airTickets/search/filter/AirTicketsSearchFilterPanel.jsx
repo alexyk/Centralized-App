@@ -239,7 +239,7 @@ class AirTicketsSearchFilterPanel extends Component {
                 <span className="time-range-min-end">{journey.end}</span>
           </div>
         </div>
-        {airlines.length > 0 &&
+        {airlines.length > 0   &&
         <div className="filter airlines-filter">
           <h5>Airlines</h5>
           <Select

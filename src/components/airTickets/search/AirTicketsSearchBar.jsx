@@ -85,6 +85,8 @@ class AirTicketsSearchBar extends Component {
     this.closePassengersPopup = this.closePassengersPopup.bind(this);
     this.loadOptions = this.loadOptions.bind(this);
     this.changeFlightRouting = this.changeFlightRouting.bind(this);
+    this.openMultiStopsPopup = this.openMultiStopsPopup.bind(this);
+    this.closeMultiStopsPopup = this.closeMultiStopsPopup.bind(this);
   }
 
   componentDidMount() {
