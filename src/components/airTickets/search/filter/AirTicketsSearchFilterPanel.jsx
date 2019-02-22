@@ -239,6 +239,7 @@ class AirTicketsSearchFilterPanel extends Component {
                 <span className="time-range-min-end">{journey.end}</span>
           </div>
         </div>
+        {airlines && airlines.length &&
         <div className="filter airlines-filter">
           <h5>Airlines</h5>
           <Select
@@ -251,7 +252,7 @@ class AirTicketsSearchFilterPanel extends Component {
             onChange={(option) => this.onChange('airlines', option)}
             isMulti
           />
-        </div>
+        </div>}
         {filters.airports &&
           <div className="filter airports-filter">
             <h5>Airports</h5>
