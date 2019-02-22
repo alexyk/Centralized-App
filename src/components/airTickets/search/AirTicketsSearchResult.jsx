@@ -295,7 +295,6 @@ class AirTicketsSearchResult extends Component {
 
   render() {
     const { currencyExchangeRates, currency, currencySign, isUserLogged, result, allElements, flightRouting } = this.props;
-
     const departureInfo = result.segments.filter(s => s.group === '0');
     const returnInfo = result.segments.filter(s => s.group === '1');
 

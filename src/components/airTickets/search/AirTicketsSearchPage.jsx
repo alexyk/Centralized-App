@@ -164,8 +164,8 @@ class AirTicketsSearchPage extends Component {
       stops: filtersObject.stops.map(a => a.changesId) || [],
       minPrice: filtersObject.priceRange && filtersObject.priceRange.min,
       maxPrice: filtersObject.priceRange && filtersObject.priceRange.max,
-      minWaitTime: filtersObject.waitingTimeRange && filtersObject.waitingTimeRange[0],
-      maxWaitTime: filtersObject.waitingTimeRange && filtersObject.waitingTimeRange[1],
+      minWaitTime: filtersObject.waitingTimeRange && filtersObject.waitingTimeRange.min,
+      maxWaitTime: filtersObject.waitingTimeRange && filtersObject.waitingTimeRange.max,
       airportsArrival: filtersObject.airportsArrival.map(a => a.airportId) || [],
       airportsTransfer: filtersObject.airportsTransfer.map(a => a.airportId) || [],
       departureTime: filtersObject.departure || [],
@@ -175,14 +175,42 @@ class AirTicketsSearchPage extends Component {
       uuid: this.filtersQueueId
     };
 
+    const arrivalStartTime = moment(filters.arrivalTime.start, 'HH:mm');
+    const arrivalEndTime = moment(filters.arrivalTime.end, 'HH:mm');
+    const departureStartTime = moment(filters.departureTime.start, 'HH:mm');
+    const departureEndTime = moment(filters.departureTime.end, 'HH:mm');
+    const journeyStartTime = moment(filters.journeyTime.start, 'HH:mm');
+    const journeyEndTime = moment(filters.journeyTime.end, 'HH:mm');
+
     for (const i in results) {
       const item = results[i];
       const segments = item.segments;
-      const isDirect = segments.length == 2 && filters.stops.indexOf(stopIds.D) !== -1;
-      const isOneStop = segments.length == 4  && filters.stops.indexOf(stopIds.O) !== -1;
+      const segmentsArrLength = segments.length - 1;
+      const isDirect = segments.length === 2 && filters.stops.indexOf(stopIds.D) !== -1;
+      const isOneStop = segments.length === 4  && filters.stops.indexOf(stopIds.O) !== -1;
       const isMultiStop = segments.length > 4  && filters.stops.indexOf(stopIds.M) !== -1;
-      const origin = segments[0];
-      const destination = segments[segments.length - 1];
+      const origin = segments[0].origin;
+      const destination = segments[segments.length - 1].destination;
+      const flightJourneyTime = departureStartTime.add(item.journeyTime).format('HH:mm');
+      const originTime = moment(origin.time, 'HH:mm');
+      const destinationTime = moment(destination.time, 'HH::mm');
+      const waitTimeTotal = segments.map(segment => {
+        if (segment.waitTime !== null) {
+          return segment.waitTime;
+        }
+        return;
+      });
+
+      const arrivalAirports = segments.map(segment => {
+        return segment.destination.code;
+      });
+
+      const transferAirports = segments.map((segment, index) => {
+        if (index !== 0 && index !== segmentsArrLength) {
+          return segment.origin.code + ',' + segment.destination.code;
+        }
+        return;
+      });
 
       if (filters.airlines.length) {
         if (filters.airlines.indexOf(origin.carrier.name) || filters.airlines.indexOf(destination.carrier.name)) {
@@ -204,14 +232,54 @@ class AirTicketsSearchPage extends Component {
         }
       }
 
-      break;
+      if (departureStartTime.isSameOrBefore(originTime) && departureEndTime.isSameOrAfter(originTime)) {
+        items[i] = item;
+      }
+
+      if (arrivalStartTime.isSameOrBefore(destinationTime) && arrivalEndTime.isSameOrAfter(destinationTime)) {
+        items[i] = item;
+      }
+
+      if (journeyStartTime.isSameOrBefore(flightJourneyTime) && journeyEndTime.isSameOrAfter(flightJourneyTime)) {
+        items[i] = item;
+      }
+
+      if (filters.minPrice >= item.price.total && item.price.total <= filters.maxPrice) {
+        items[i] = item;
+      }
+
+      if (waitTimeTotal.indexOf(filters.minWaitTime) !== -1 || waitTimeTotal.indexOf(filters.maxWaitTime)) {
+        items[i] = item;
+      }
+
+      if (filters.airportsArrival.length) {
+        for (const k in arrivalAirports) {
+          const arrival = arrivalAirports[k];
+
+          if (filters.airportsArrival.indexOf(arrival)) {
+            items[i] = item;
+          }
+        }
+      }
+
+      if (filters.airportsTransfer.length) {
+        for (const k in transferAirports) {
+          const transfer = transferAirports[k];
+
+          if (filters.airportsTransfer.indexOf(transfer)) {
+            items[i] = item;
+          }
+        }
+      }
     }
 
     this.setState({
+      loading: false,
       allElements: true,
-      allResults: items,
+      allResults: _.isEmpty(items) ? this.results : items,
       currentPageResults: Object.values(items).slice(0, 10),
       totalElements: Object.values(items).length,
+      page: 0,
     });
   }
 
@@ -438,12 +506,12 @@ class AirTicketsSearchPage extends Component {
 
   handleReceiveMessageSearch(message) {
     const messageBody = JSON.parse(message.body);
-    // console.log(messageBody);
+
     if (messageBody.allElements) {
       let allResults = Object.values(this.results);
       allResults = allResults.sort((r1, r2) => r1.price.total - r2.price.total);
       this.setState({ allElements: messageBody.allElements, allResults, currentPageResults: allResults.slice(0, 10), loading: false, totalElements: this.totalElements });
-      this.results = {};
+      //this.results = {};
       this.totalElements = 0;
       this.unsubscribeFilters();
     } else if (messageBody.success === false || messageBody.errorMessage) {
@@ -467,12 +535,12 @@ class AirTicketsSearchPage extends Component {
 
   handleReceiveMessageFilters(message) {
     const messageBody = JSON.parse(message.body);
-    // console.log(messageBody);
+
     if (messageBody.allElements) {
       let allResults = Object.values(this.results);
       allResults = allResults.sort((r1, r2) => r1.price.total - r2.price.total);
       this.setState({ allElements: messageBody.allElements, allResults, currentPageResults: allResults.slice(0, 10), loading: false, totalElements: this.totalElements });
-      this.results = {};
+      //this.results = {};
       this.totalElements = 0;
       this.unsubscribeSearch();
       this.unsubscribeFilters();

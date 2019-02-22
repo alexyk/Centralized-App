@@ -255,7 +255,7 @@ class AirTicketsSearchFilterPanel extends Component {
         {filters.airports &&
           <div className="filter airports-filter">
             <h5>Airports</h5>
-            {filters.airports.arrivals &&
+            {filters.airports.arrivals.length > 1 &&
             <div className="arrivals">
               <h6>Arrivals</h6>
                 <Select
@@ -270,7 +270,7 @@ class AirTicketsSearchFilterPanel extends Component {
                 />
             </div>}
 
-            {filters.airports && filters.airports.transfers &&
+            {filters.airports && filters.airports.transfers.length > 1 &&
             <div className="transfers">
               <h6>Transfers</h6>
               <Select
