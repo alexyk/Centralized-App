@@ -152,7 +152,7 @@ class HotelTrip extends React.Component {
               className="trips-location-link content-row"
               to={`/hotels/listings/${
                 this.props.trip.hotel_id
-              }?currency=GBP&startDate=${this.props.tomorrow}&endDate=${
+              }?currency=GBP&startDate=${this.props.today}&endDate=${
                 this.props.afterTomorrow
               }&rooms=%5B%7B"adults":2,"children":%5B%5D%7D%5D`}
             >
@@ -175,7 +175,7 @@ class HotelTrip extends React.Component {
             )}
             <div className="content-row">
               {isCompleted && (
-                <button type="submit" onClick={e => { e.preventDefault(); this.props.onTripSelect(this.props.trip.id); this.props.handleCancelReservation(); }}>Cancel Trip</button>
+                <button type="submit" onClick={e => { e.preventDefault(); this.props.onTripSelect(this.props.trip.id); this.props.handleCancelReservation(this.props.trip.id); }}>Cancel Trip</button>
                 /* <button
                   type="submit"
                   onClick={e => {

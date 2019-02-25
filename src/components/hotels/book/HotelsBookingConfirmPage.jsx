@@ -456,7 +456,7 @@ class HotelsBookingConfirmPage extends Component {
         if (fee.amt === 0 && fee.loc === 0) {
           this.addFreeClauseRow(rows, fee.from);
         } else {
-          let date = moment(fee.from).add(1, 'days').format('DD MMM YYYY');
+          let date = moment(fee.from)/*.add(1, 'days')*/.format('DD MMM YYYY');
           const arrivalDateFormat = moment(arrivalDate).format('DD MMM YYYY');
           let amount = fee.amt;
           if (fee.from === arrivalDate) {
@@ -464,6 +464,8 @@ class HotelsBookingConfirmPage extends Component {
           } else if (date === arrivalDateFormat) {
             amount = reservation && reservation.fiatPrice;
           }
+          console.log(fee.from)
+
           rows.push(
             <tr key={3 * 1000 + feeIndex + 1}>
               <td>

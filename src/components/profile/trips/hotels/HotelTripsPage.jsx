@@ -29,6 +29,7 @@ class HotelTripsPage extends React.Component {
       currentTripId: null,
       bookingPrepareId: 0,
       password: '',
+      count: 0
     };
 
     this.onPageChange = this.onPageChange.bind(this);
@@ -37,9 +38,15 @@ class HotelTripsPage extends React.Component {
     this.closeModal = this.closeModal.bind(this);
     this.handleCancelTrip = this.handleCancelTrip.bind(this);
     this.onTripSelect = this.onTripSelect.bind(this);
+    this.getBookings = this.getBookings.bind(this);
   }
 
   componentDidMount() {
+
+    this.getBookings();
+  }
+
+  getBookings(){
     let search = this.props.location.search.split('?');
     let id = null;
     if (search.length > 1) {
@@ -54,7 +61,7 @@ class HotelTripsPage extends React.Component {
     }
     requester.getMyHotelBookings(['page=0']).then(res => {
       res.body.then(data => {
-        this.setState({ trips: data.content, totalTrips: data.totalElements, loading: false, currentTripId: id });
+        this.setState({ trips: data.content, totalTrips: data.totalElements, loading: false, currentTripId: id, count: this.state.count++ }, );
         if (id) {
           NotificationManager.success(BOOKING_REQUEST_SENT, 'Reservation Operations', LONG);
         }
@@ -78,8 +85,8 @@ class HotelTripsPage extends React.Component {
     this.props.dispatch(closeModal(modal));
   }
 
-  handleCancelTrip() {
-    requester.cancelBooking({ bookingId: this.state.bookingPrepareId })
+  handleCancelTrip(bookingId) {
+    requester.cancelBooking({ bookingId: bookingId || this.state.bookingPrepareId })
       //.then(res => res.body)
       //.then(data => {
       .then(res => {
@@ -92,9 +99,11 @@ class HotelTripsPage extends React.Component {
         }
         */
         NotificationManager.info(CANCELLING_RESERVATION, '', LONG);
-      });
+      }).then(()=>{
+        return this.getBookings();
+    })
 
-    this.closeModal(PASSWORD_PROMPT);
+    // this.closeModal(PASSWORD_PROMPT);
   }
 
   setTripIsAccepted(tripId, isAccepted) {
@@ -146,7 +155,7 @@ class HotelTripsPage extends React.Component {
               trips={this.state.trips}
               currentTripId={this.state.currentTripId}
               onTripSelect={this.onTripSelect}
-              handleCancelReservation={() => this.openModal(PASSWORD_PROMPT)}
+              handleCancelReservation={this.handleCancelTrip}
               loading={this.state.loading}
             />
 
