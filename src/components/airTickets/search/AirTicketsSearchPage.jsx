@@ -110,8 +110,8 @@ class AirTicketsSearchPage extends Component {
     window.addEventListener('resize', this.updateWindowWidth);
   }
 
-  initUUIDs() {
-    if (!localStorage.getItem('tickets-uuid')) {
+  initUUIDs(forceUUIDUpdate) {
+    if (!localStorage.getItem('tickets-uuid') || forceUUIDUpdate === true) {
       localStorage.setItem('tickets-uuid', `${uuid()}`);
     }
     const ticketsUUID = localStorage.getItem('tickets-uuid');
@@ -124,6 +124,7 @@ class AirTicketsSearchPage extends Component {
   }
 
   requestFlightsSearch() {
+    localStorage.setItem('search_uuid', this.queueId);
     fetch(`${Config.getValue('apiHost')}flight/search${this.props.location.search}&uuid=${this.queueId}`)
       .then(res => {
         if (res.ok) {
@@ -138,22 +139,21 @@ class AirTicketsSearchPage extends Component {
   }
 
   requestFilters() {
-    setTimeout(e => {
-      fetch(`${Config.getValue('apiHost')}flight/search/filter/data?searchId=${this.searchId}`)
-        .then(res => {
-          if (res.ok) {
-            res.json().then((data) => {
-              this.setState({
-                filters: data,
-                allElements: true
-              });
+    fetch(`${Config.getValue('apiHost')}flight/search/filter/data?searchId=${this.searchId}`)
+      .then(res => {
+        if (res.ok) {
+          res.json().then((data) => {
+            this.setState({
+              filters: data,
+              allElements: true
             });
-          }
-        })
-        .catch(res => {
-          console.log(res);
-        });
-    }, 2000);
+          });
+        }
+      })
+      .catch(res => {
+        console.log(res);
+        throw new Error(res.message);
+      });
   }
 
   applyFilters(filtersObject) {
@@ -170,9 +170,7 @@ class AirTicketsSearchPage extends Component {
       airportsTransfer: filtersObject.airportsTransfer.map(a => a.airportId) || [],
       departureTime: filtersObject.departure || [],
       arrivalTime: filtersObject.arrival || [],
-      journeyTime: filtersObject.transfer || [],
-      searchId: this.searchId,
-      uuid: this.filtersQueueId
+      journeyTime: filtersObject.transfer || []
     };
 
     const arrivalStartTime = moment(filters.arrivalTime.start, 'HH:mm');
@@ -193,7 +191,7 @@ class AirTicketsSearchPage extends Component {
       const destination = segments[segments.length - 1].destination;
       const flightJourneyTime = departureStartTime.add(item.journeyTime).format('HH:mm');
       const originTime = moment(origin.time, 'HH:mm');
-      const destinationTime = moment(destination.time, 'HH::mm');
+      const destinationTime = moment(destination.time, 'HH:mm');
       const waitTimeTotal = segments.map(segment => {
         if (segment.waitTime !== null) {
           return segment.waitTime;
@@ -252,27 +250,27 @@ class AirTicketsSearchPage extends Component {
         items[i] = item;
       }
 
-      if (filters.airportsArrival.length) {
-        for (const k in arrivalAirports) {
-          const arrival = arrivalAirports[k];
+      // if (filters.airportsArrival.length) {
+      //   for (const k in arrivalAirports) {
+      //     const arrival = arrivalAirports[k];
 
-          if (filters.airportsArrival.indexOf(arrival)) {
-            items[i] = item;
-          }
-        }
-      }
+      //     if (filters.airportsArrival.indexOf(arrival)) {
+      //       items[i] = item;
+      //     }
+      //   }
+      // }
 
-      if (filters.airportsTransfer.length) {
-        for (const k in transferAirports) {
-          const transfer = transferAirports[k];
+      // if (filters.airportsTransfer.length) {
+      //   for (const k in transferAirports) {
+      //     const transfer = transferAirports[k];
 
-          if (filters.airportsTransfer.indexOf(transfer)) {
-            items[i] = item;
-          }
-        }
-      }
+      //     if (filters.airportsTransfer.indexOf(transfer)) {
+      //       items[i] = item;
+      //     }
+      //   }
+      // }
     }
-
+console.log(items);
     this.setState({
       loading: false,
       allElements: true,
@@ -570,6 +568,7 @@ class AirTicketsSearchPage extends Component {
     this.disconnectFilters();
 
     this.props.history.push('/tickets/results' + queryString);
+    this.initUUIDs(true);
 
     this.setState({
       allResults: '',

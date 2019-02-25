@@ -53,6 +53,7 @@ class AirTicketsBookingRouterPage extends Component {
       isBookingProccess: false
     };
 
+    this.searchId = null;
     this.searchAirTickets = this.searchAirTickets.bind(this);
     this.requestSelectFlight = this.requestSelectFlight.bind(this);
     this.requestFareRules = this.requestFareRules.bind(this);
@@ -77,6 +78,7 @@ class AirTicketsBookingRouterPage extends Component {
     this.requestAllCountries();
     this.populatePassengersInfo();
     this.getUserInfo();
+    this.searchId = localStorage.getItem('search_uuid');
   }
 
 
@@ -94,27 +96,29 @@ class AirTicketsBookingRouterPage extends Component {
     };
 
     requester.getUserInfo().then(res => {
-      res.body.then(data => {
-        contactInfo.address = data.address;
-        contactInfo.city = data.city;
-        contactInfo.country = data.country;
-        contactInfo.email = data.email;
-        contactInfo.firstName = data.firstName;
-        contactInfo.lastName = data.lastName;
-        contactInfo.phoneNumber = data.phoneNumber;
-        contactInfo.title = data.title;
-        contactInfo.zipCode = data.zipCode;
+      if (res.ok && res.body) {
+        res.body.then(data => {
+          contactInfo.address = data.address;
+          contactInfo.city = data.city;
+          contactInfo.country = data.country;
+          contactInfo.email = data.email;
+          contactInfo.firstName = data.firstName;
+          contactInfo.lastName = data.lastName;
+          contactInfo.phoneNumber = data.phoneNumber;
+          contactInfo.title = data.title;
+          contactInfo.zipCode = data.zipCode;
 
 
-        this.setState({
-          contactInfo: contactInfo
+          this.setState({
+            contactInfo: contactInfo
+          });
         });
-      });
+      }
     });
   }
 
   requestSelectFlight() {
-    fetch(`${Config.getValue('apiHost')}flight/selectFlight?flightId=${this.props.match.params.id}`)
+    fetch(`${Config.getValue('apiHost')}flight/selectFlight?flightId=${this.props.match.params.id}&uuid=${this.searchId}`)
       .then(res => {
         if (res.ok) {
           res.json().then((data) => {
@@ -130,7 +134,7 @@ class AirTicketsBookingRouterPage extends Component {
   }
 
   requestFareRules() {
-    fetch(`${Config.getValue('apiHost')}flight/fareRules?flightId=${this.props.match.params.id}`)
+    fetch(`${Config.getValue('apiHost')}flight/fareRules?flightId=${this.props.match.params.id}&uuid=${this.searchId}`)
       .then(res => {
         if (res.ok) {
           res.json().then((data) => {
@@ -225,7 +229,7 @@ class AirTicketsBookingRouterPage extends Component {
           'Content-type': 'application/json',
           'Authorization': localStorage[Config.getValue('domainPrefix') + '.auth.locktrip']
         },
-        body: JSON.stringify({ flightId: this.props.match.params.id })
+        body: JSON.stringify({ flightId: this.props.match.params.id , uuid: this.searchId})
       })
         .then((res) => {
           if (res.ok) {
@@ -441,7 +445,7 @@ class AirTicketsBookingRouterPage extends Component {
     } else {
       paymentResult = this.requestPayWithCC(initBooking);
     }
-console.log(paymentResult);
+
     paymentResult.then(() => {
         this.setState({
           isBookingProccess: false

@@ -176,7 +176,7 @@ class AirTicketsSearchFilterPanel extends Component {
 
     return (
       <div className="filter-box">
-        {filters.changes &&
+        {filters.changes && filters.changes.length > 1 &&
         <div className="filter stops-filter">
           <h5>Stops</h5>
           <ul>
