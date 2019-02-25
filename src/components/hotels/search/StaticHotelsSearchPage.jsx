@@ -233,7 +233,6 @@ class StaticHotelsSearchPage extends React.Component {
   //   const url = Config.getValue("socketHost");
   //   let client = Stomp.client(url);
   //   const onSubscribe = ()=>client.subscribe(topic, (data)=>{
-  //     console.log(data)
   //   });
   //
   //   this.client.connect(
@@ -474,7 +473,6 @@ class StaticHotelsSearchPage extends React.Component {
     requester.getLastSearchHotelResultsByFilter(search, filters).then(res => {
       if (res.success) {
         res.body.then(data => {
-          // console.log(data);
           this.setState(
             {
               loading: false,
@@ -602,7 +600,6 @@ class StaticHotelsSearchPage extends React.Component {
                   this.toggleMap();
                 });
               } else {
-                // console.log('Search expired');
               }
             });
         }

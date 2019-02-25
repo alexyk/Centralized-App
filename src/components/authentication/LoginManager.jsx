@@ -57,9 +57,7 @@ export class LoginManager extends React.Component {
   }
 
   tryToOpenRecoveryModalOnMount() {
-    console.log("tryToOpenRecoveryModalOnMount");
     if (this.props.openRecoveryOnMount) {
-      console.log("openRecoveryOnMount");
 
       // this.openModal(SEND_RECOVERY_EMAIL);
       this.props.openRecoveryEmailModal();
