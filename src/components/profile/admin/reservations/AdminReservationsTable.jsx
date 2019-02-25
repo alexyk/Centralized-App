@@ -43,7 +43,6 @@ class AdminReservationsTable extends Component {
             });
           });
         } else {
-          console.log(res);
         }
       });
   }
