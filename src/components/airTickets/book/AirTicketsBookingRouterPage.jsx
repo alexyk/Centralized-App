@@ -53,7 +53,7 @@ class AirTicketsBookingRouterPage extends Component {
       isBookingProccess: false
     };
 
-    this.searchId = null;
+    this.searchId = localStorage.getItem('search_uuid');
     this.searchAirTickets = this.searchAirTickets.bind(this);
     this.requestSelectFlight = this.requestSelectFlight.bind(this);
     this.requestFareRules = this.requestFareRules.bind(this);
@@ -78,7 +78,6 @@ class AirTicketsBookingRouterPage extends Component {
     this.requestAllCountries();
     this.populatePassengersInfo();
     this.getUserInfo();
-    this.searchId = localStorage.getItem('search_uuid');
   }
 
 
@@ -96,7 +95,7 @@ class AirTicketsBookingRouterPage extends Component {
     };
 
     requester.getUserInfo().then(res => {
-      if (res.ok && res.body) {
+      if (res.success) {
         res.body.then(data => {
           contactInfo.address = data.address;
           contactInfo.city = data.city;
