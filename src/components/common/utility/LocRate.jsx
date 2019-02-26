@@ -43,8 +43,9 @@ class LocRate extends PureComponent {
     let client = Stomp.client(url);
     this.locRateClient = client;
     const onSubscribe = ()=>client.subscribe(topic, (data)=>{
+      debugger;
       this.setState({
-        locEurRate: data.body
+        locEurRate: JSON.parse(data.body).eurPrice
       })
     });
 
