@@ -5,7 +5,7 @@ import { components } from 'react-select';
 import AsyncSelect from 'react-select/lib/Async';
 import PropTypes from 'prop-types';
 import { setFlightRouting, setOrigin, setDestination, setFlexSearch, setStops } from '../../../actions/airTicketsSearchInfo';
-import { selectOrigin, selectDestination, selectFlightRouting, selectMultiStopsDestinations, selectFlightClass, selectStops, selectDepartureTime, selectFlexSearch, selectChildren, selectAdultsCount } from '../../../selectors/airTicketsSearchSelector';
+import { selectOrigin, selectDestination, selectFlightRouting, selectFlightClass, selectStops, selectDepartureTime, selectFlexSearch, selectChildren, selectAdultsCount } from '../../../selectors/airTicketsSearchSelector';
 import AirTicketsDatepickerWrapper from './AirTicketsDatepickerWrapper';
 import { Config } from '../../../config';
 import PassengersPopup from './common/passengersPopup';
@@ -412,7 +412,6 @@ function mapStateToProps(state) {
     origin: selectOrigin(airTicketsSearchInfo),
     destination: selectDestination(airTicketsSearchInfo),
     flightRouting: selectFlightRouting(airTicketsSearchInfo),
-    multiStopsDestinations: selectMultiStopsDestinations(airTicketsSearchInfo),
     flightClass: selectFlightClass(airTicketsSearchInfo),
     stops: selectStops(airTicketsSearchInfo),
     departureTime: selectDepartureTime(airTicketsSearchInfo),

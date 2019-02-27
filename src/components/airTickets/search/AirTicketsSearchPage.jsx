@@ -250,27 +250,27 @@ class AirTicketsSearchPage extends Component {
         items[i] = item;
       }
 
-      // if (filters.airportsArrival.length) {
-      //   for (const k in arrivalAirports) {
-      //     const arrival = arrivalAirports[k];
+      if (filters.airportsArrival.length) {
+        for (const k in arrivalAirports) {
+          const arrival = arrivalAirports[k];
 
-      //     if (filters.airportsArrival.indexOf(arrival)) {
-      //       items[i] = item;
-      //     }
-      //   }
-      // }
+          if (filters.airportsArrival.indexOf(arrival)) {
+            items[i] = item;
+          }
+        }
+      }
 
-      // if (filters.airportsTransfer.length) {
-      //   for (const k in transferAirports) {
-      //     const transfer = transferAirports[k];
+      if (filters.airportsTransfer.length) {
+        for (const k in transferAirports) {
+          const transfer = transferAirports[k];
 
-      //     if (filters.airportsTransfer.indexOf(transfer)) {
-      //       items[i] = item;
-      //     }
-      //   }
-      // }
+          if (filters.airportsTransfer.indexOf(transfer)) {
+            items[i] = item;
+          }
+        }
+      }
     }
-console.log(items);
+
     this.setState({
       loading: false,
       allElements: true,

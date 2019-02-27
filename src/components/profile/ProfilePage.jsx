@@ -16,6 +16,7 @@ import AffiliatesPage from './affiliates/AffiliatesPage';
 import WalletPage from './wallet/WalletIndexPage';
 import BuyLocPage from './buyloc/BuyLocPage';
 import ProfileAirTicketsRouter from './airTickets/ProfileAirTicketsRouter';
+import SendTokensModal from './wallet/SendTokensModal'
 import { isLogged } from '../../selectors/userInfo';
 
 function ProfilePage(props) {
@@ -36,6 +37,7 @@ function ProfilePage(props) {
         <Route path="/profile/wallet" render={() => <WalletPage />} />
         <Route path="/buyloc" render={() => <BuyLocPage />} />
         <Route path="/profile/admin" render={() => <AdminPage />} />
+        <Route path="/profile/sendTransactionData" render={() => <SendTokensModal />} />
       </Switch>
     </React.Fragment>
   );

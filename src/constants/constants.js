@@ -9,3 +9,8 @@ export const stopIds = {
   O: '1',
   M: '2'
 }
+
+
+export const ERROR_MESSAGES = {
+  TRY_AGAIN: 'Please try again'
+};

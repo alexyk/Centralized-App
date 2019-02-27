@@ -1,5 +1,5 @@
 import React, { Component, Fragment } from 'react';
-import { Route, Switch, withRouter } from 'react-router-dom';
+import { Route, Switch, withRouter, Redirect } from 'react-router-dom';
 import { NotificationManager } from 'react-notifications';
 import update from 'react-addons-update';
 import PropTypes from 'prop-types';
@@ -9,7 +9,9 @@ import AirTicketsBookingProfileRouterPage from './profile/AirTicketsBookingProfi
 import AirTicketsBookingConfirmPage from './confirm/AirTicketsBookingConfirmPage';
 import { Config } from '../../../config';
 import { LONG } from '../../../constants/notificationDisplayTimes';
-import requester from '../../../requester'
+import requester from '../../../requester';
+import { ERROR_MESSAGES } from '../../../constants/constants';
+import { sendTokens } from './../../../services/payment/loc';
 
 const PASSENGER_TYPES_CODES = {
   adult: 'ADT',
@@ -80,6 +82,9 @@ class AirTicketsBookingRouterPage extends Component {
     this.getUserInfo();
   }
 
+  sendTokens(password, recipient, locAmount) {
+    sendTokens(password, recipient, locAmount);
+  }
 
   getUserInfo() {
     let contactInfo = {
@@ -180,18 +185,23 @@ class AirTicketsBookingRouterPage extends Component {
         .then((res) => {
           if (res.ok) {
             res.json().then((data) => {
-              resolve(data);
+              if (data.status) {
+                return <Redirect to='/profile/tickets' />
+              } else {
+                reject(data);
+                NotificationManager.warning(data.message, 'Warning', LONG);
+              }
             }).catch(err => {
               reject(err);
-              NotificationManager.warning('Please try again', 'Warning', LONG);
+              NotificationManager.warning(ERROR_MESSAGES.TRY_AGAIN, 'Warning', LONG);
             });
           } else {
             reject(new Error('Fail'));
-            NotificationManager.warning('Please try again', 'Warning', LONG);
+            NotificationManager.warning(ERROR_MESSAGES.TRY_AGAIN, 'Warning', LONG);
           }
         }).catch(err => {
           reject(err);
-          NotificationManager.warning('Please try again', 'Warning', LONG);
+          NotificationManager.warning(ERROR_MESSAGES.TRY_AGAIN, 'Warning', LONG);
         });
     });
   }
@@ -211,6 +221,7 @@ class AirTicketsBookingRouterPage extends Component {
         .then((res) => {
           res.json().then((data) => {
             resolve(data);
+            return <Redirect to={data.url} />
           }).catch(err => {
             reject(err);
           });
@@ -429,6 +440,7 @@ class AirTicketsBookingRouterPage extends Component {
     //prepare object for json request
     contactInfo.country = contactInfo.country.code;
     const initBooking = {
+      uuid: localStorage.getItem('search_uuid'),
       flightId: this.props.match.params.id,
       flightReservationId: this.state.result.flightReservationId,
       contact: contactInfo,
