@@ -195,7 +195,7 @@ class AirTicket extends Component {
           <div className="flex-row-child tickets-actions">
             <div className="content-row">
               <div>
-                <Link to={`/profile/tickets/${ticket.reservationId}`}>Details</Link>
+                <Link to={`/profile/flights/${ticket.reservationId}`}>Details</Link>
               </div>
             </div>
           </div>

@@ -117,7 +117,7 @@ class AirTicketsBookingProfilePassengersForm extends Component {
   }
 
   render() {
-    const { passengersInfo, countries, services, isFlightServices, isBookingProccess } = this.props;
+    const { passengersInfo, countries, services, isFlightServices } = this.props;
     const { currentPassengerIndex } = this.state;
 
     let years = [];
@@ -141,7 +141,7 @@ class AirTicketsBookingProfilePassengersForm extends Component {
       <div className="air-tickets-passengers-form">
         <h2>Passengers Details</h2>
         <hr />
-        <form onSubmit={(e) => { e.preventDefault() }}>
+        <form onSubmit={(e) => { e.preventDefault(); this.props.enableNextSection('pay'); }}>
           {passengersInfo.map((passenger, passengerIndex) => {
             return (
               <Fragment key={passengerIndex}>
@@ -325,22 +325,8 @@ class AirTicketsBookingProfilePassengersForm extends Component {
             <NavLink to={{ pathname: `/tickets/results/initBook/${this.props.match.params.id}/profile/${isFlightServices ? 'services' : 'invoice'}`, search: this.props.location.search }} className="btn-back" id="btn-continue">
               <i className="fa fa-long-arrow-left" aria-hidden="true"></i>
               &nbsp;Back</NavLink>
-
-            <div className="pay-with-loc-wrapper">
-              <button
-                id="pay_loc"
-                type="button"
-                disabled={isBookingProccess} className="button"
-                onClick={() => this.handleLOCPayment()}>Pay with LOC</button>
-            </div>
-
-            <div className="pay-with-cc-wrapper">
-              <button
-                id="pay_cc"
-                type="button"
-                disabled={isBookingProccess}
-                className="button"
-                onClick={() => this.handleCCPayment()}>Pay with Credit/Debit card</button>
+            <div className="button-wrapper">
+              <button type="submit" className="button">Next</button>
             </div>
           </div>
         </form>
@@ -355,11 +341,11 @@ AirTicketsBookingProfilePassengersForm.propTypes = {
   services: PropTypes.array,
   isFlightServices: PropTypes.bool,
   currency: PropTypes.string,
-  isBookingProccess: PropTypes.bool,
   onChange: PropTypes.func,
   onChangeService: PropTypes.func,
   initBooking: PropTypes.func,
   result: PropTypes.object,
+  enableNextSection: PropTypes.func,
 
   // Router props
   match: PropTypes.object,

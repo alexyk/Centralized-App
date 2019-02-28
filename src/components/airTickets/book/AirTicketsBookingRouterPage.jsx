@@ -186,7 +186,7 @@ class AirTicketsBookingRouterPage extends Component {
           if (res.ok) {
             res.json().then((data) => {
               if (data.status) {
-                return <Redirect to='/profile/tickets' />
+                return <Redirect to='/profile/flights' />
               } else {
                 reject(data);
                 NotificationManager.warning(data.message, 'Warning', LONG);

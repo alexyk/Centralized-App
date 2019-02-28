@@ -241,7 +241,6 @@ class MultiStopsPopup extends PureComponent {
   }
 
   render() {
-    console.log(this);
     const { destinations } = this.state;
     const isMobile = window.innerWidth < 1024;
     const monthsToShow = this.props.monthsToShow ? this.props.monthsToShow : (isMobile ? 1 : 2);

@@ -32,7 +32,7 @@ function ProfilePage(props) {
         <Route exact path="/profile/messages/chat/:id" render={() => <MessagesChatPage />} />
         <Route path="/profile/trips" render={() => <TripsRouter location={props.location} />} />
         <Route path="/profile/reservations" render={() => <MyGuestsPage />} />
-        <Route path="/profile/tickets" render={() => <ProfileAirTicketsRouter />} />
+        <Route path="/profile/flights" render={() => <ProfileAirTicketsRouter />} />
         <Route path="/profile/me" render={() => <ProfileEditPage />} />
         <Route path="/profile/wallet" render={() => <WalletPage />} />
         <Route path="/buyloc" render={() => <BuyLocPage />} />

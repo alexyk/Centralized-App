@@ -449,7 +449,6 @@ class AirTicketsSearchPage extends Component {
     };
 
     client.send(sendDestination, headers, msg);
-    this.requestFilters();
   }
 
   subscribeFilters() {
@@ -504,7 +503,7 @@ class AirTicketsSearchPage extends Component {
 
   handleReceiveMessageSearch(message) {
     const messageBody = JSON.parse(message.body);
-
+console.log(messageBody);
     if (messageBody.allElements) {
       let allResults = Object.values(this.results);
       allResults = allResults.sort((r1, r2) => r1.price.total - r2.price.total);
@@ -515,6 +514,7 @@ class AirTicketsSearchPage extends Component {
     } else if (messageBody.success === false || messageBody.errorMessage) {
       this.setState({ loading: false });
       NotificationManager.warning(messageBody.message || messageBody.errorMessage, '', LONG);
+      this.requestFilters();
     } else if (messageBody.id) {
       if (!this.searchId) {
         this.searchId = messageBody.searchId;
