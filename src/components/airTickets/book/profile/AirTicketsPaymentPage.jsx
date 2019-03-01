@@ -1,6 +1,5 @@
 import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
-
 import '../../../../styles/css/components/airTickets/book/profile/air-tickets-booking-profile-passengers-form.css';
 import { NotificationManager } from 'react-notifications';
 
@@ -22,7 +21,7 @@ class AirTicketsPaymentPage extends Component {
 
     return (
       <Fragment>
-        <div className="pay-with-loc-wrapper" style="margin-bottom: 30px; display: inline;">
+        <div className="pay-with-loc-wrapper">
           <div className="price-wrapper">
             <h3>
               <span className="total-price">{result.price.locPrice.toFixed(2)}</span>

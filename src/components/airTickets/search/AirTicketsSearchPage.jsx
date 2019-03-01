@@ -139,6 +139,7 @@ class AirTicketsSearchPage extends Component {
   }
 
   requestFilters() {
+    console.log('request filters...');
     fetch(`${Config.getValue('apiHost')}flight/search/filter/data?searchId=${this.searchId}`)
       .then(res => {
         if (res.ok) {

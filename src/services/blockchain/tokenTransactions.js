@@ -72,9 +72,10 @@ export class TokenTransactions {
     await EtherValidators.validateEthBalance(wallet, gasConfig.transferTokens);
 
     let approveTx = createSignedTransaction(locContract, 'approve', wallet, approveTxOptions, locContract.address, recipient, amount);
-
-    let createReservationTx = createSignedTransaction(locContract, 'createFlightReservation', wallet, createReservationTxOptions, locContract.address, recipient, amount);
-
-    return [approveTx, createReservationTx];
+    let createReservationTx = createSignedTransaction(locContract, 'transfer', wallet, createReservationTxOptions, locContract.address, recipient, amount);
+    let signedTxs = {};
+    signedTxs.signedApproveData = approveTx;
+    signedTxs.signedTransactionData = createReservationTx;
+    return signedTxs;
   }
 }
