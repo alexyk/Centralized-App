@@ -7,7 +7,6 @@ import { parse } from 'query-string';
 import AirTicketsDetailsPage from './details/AirTicketsDetailsPage';
 import AirTicketsBookingProfileRouterPage from './profile/AirTicketsBookingProfileRouterPage';
 import AirTicketsBookingConfirmPage from './confirm/AirTicketsBookingConfirmPage';
-import SendTokensModal from '../../profile/wallet/SendTokensModal';
 import { Config } from '../../../config';
 import { LONG } from '../../../constants/notificationDisplayTimes';
 import requester from '../../../requester';
@@ -187,9 +186,7 @@ class AirTicketsBookingRouterPage extends Component {
           if (res.ok) {
             res.json().then((data) => {
               if (data.status) {
-                return <SendTokensModal
-                  flightReservationId={initBooking.flightReservationId}
-                />
+                return true;
               } else {
                 reject(data);
                 NotificationManager.warning(data.message, 'Warning', LONG);
@@ -456,6 +453,7 @@ class AirTicketsBookingRouterPage extends Component {
 
     if (type === 'loc') {
       paymentResult = this.requestConfirmAndPay(initBooking);
+      return;
     } else {
       paymentResult = this.requestPayWithCC(initBooking);
     }
@@ -472,6 +470,8 @@ class AirTicketsBookingRouterPage extends Component {
       });
       this.searchAirTickets(this.props.location.search);
     });
+
+    return initBooking;
   }
 
   render() {

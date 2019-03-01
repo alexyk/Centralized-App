@@ -1,5 +1,7 @@
 import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
+import SendTokensModal from '../../../profile/wallet/SendTokensModal';
+
 import '../../../../styles/css/components/airTickets/book/payment/air-tickets-payment-page.css';
 
 class AirTicketsPaymentPage extends Component {
@@ -8,7 +10,9 @@ class AirTicketsPaymentPage extends Component {
   }
 
   handleLOCPayment() {
-    this.props.initBooking('loc');
+    return <SendTokensModal
+      flightReservationId={this.props.initBooking.flightReservationId}
+    />
   }
 
   handleCCPayment() {
@@ -54,7 +58,10 @@ class AirTicketsPaymentPage extends Component {
 
 AirTicketsPaymentPage.propTypes = {
   result: PropTypes.object,
-  initBooking: PropTypes.func
+  initBooking: PropTypes.oneOfType([
+    PropTypes.func,
+    PropTypes.object
+  ])
 };
 
 export default AirTicketsPaymentPage;

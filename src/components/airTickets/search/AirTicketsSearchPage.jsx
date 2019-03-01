@@ -504,18 +504,18 @@ class AirTicketsSearchPage extends Component {
 
   handleReceiveMessageSearch(message) {
     const messageBody = JSON.parse(message.body);
-console.log(messageBody);
+
     if (messageBody.allElements) {
       let allResults = Object.values(this.results);
       allResults = allResults.sort((r1, r2) => r1.price.total - r2.price.total);
       this.setState({ allElements: messageBody.allElements, allResults, currentPageResults: allResults.slice(0, 10), loading: false, totalElements: this.totalElements });
-      //this.results = {};
+      // this.results = {};
       this.totalElements = 0;
       this.unsubscribeFilters();
+      this.requestFilters();
     } else if (messageBody.success === false || messageBody.errorMessage) {
       this.setState({ loading: false });
       NotificationManager.warning(messageBody.message || messageBody.errorMessage, '', LONG);
-      this.requestFilters();
     } else if (messageBody.id) {
       if (!this.searchId) {
         this.searchId = messageBody.searchId;

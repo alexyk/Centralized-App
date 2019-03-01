@@ -111,7 +111,10 @@ function AirTicketsBookingProfileRouterPage(props) {
 AirTicketsBookingProfileRouterPage.propTypes = {
   result: PropTypes.object,
   contactInfo: PropTypes.object,
-  invoiceInfo: PropTypes.object,
+  invoiceInfo: PropTypes.oneOfType([
+    PropTypes.func,
+    PropTypes.object
+  ]),
   servicesInfo: PropTypes.array,
   passengersInfo: PropTypes.array,
   confirmInfo: PropTypes.object,
