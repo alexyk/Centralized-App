@@ -76,6 +76,7 @@ export class TokenTransactions {
     let signedTxs = {};
     signedTxs.signedApproveData = approveTx;
     signedTxs.signedTransactionData = createReservationTx;
+    signedTxs.flightReservationId = flightReservationId;
     return signedTxs;
   }
 }

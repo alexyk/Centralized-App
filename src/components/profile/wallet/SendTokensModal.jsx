@@ -28,7 +28,7 @@ class SendTokensModal extends Component {
   }
 
   sendTokens() {
-    sendTokens(this.state.password, this.state.recipient, this.state.locAmount);
+    sendTokens(this.state.password, this.state.recipient, this.state.locAmount, this.props.flightReservationId);
   }
 
   render() {
@@ -74,5 +74,7 @@ class SendTokensModal extends Component {
   }
 }
 
-
+SendTokensModal.props = {
+  flightReservationId: PropTypes.string
+}
 export default SendTokensModal;

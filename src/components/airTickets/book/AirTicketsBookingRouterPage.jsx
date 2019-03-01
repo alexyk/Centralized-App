@@ -187,7 +187,9 @@ class AirTicketsBookingRouterPage extends Component {
           if (res.ok) {
             res.json().then((data) => {
               if (data.status) {
-                return <SendTokensModal />
+                return <SendTokensModal
+                  flightReservationId={initBooking.flightReservationId}
+                />
               } else {
                 reject(data);
                 NotificationManager.warning(data.message, 'Warning', LONG);

@@ -26,7 +26,7 @@ function tokensToWei(tokens) {
   return wei;
 }
 
-export function sendTokens(password, recipientAddress, locAmount) {
+export function sendTokens(password, recipientAddress, locAmount, flightReservationId) {
   const wei = (tokensToWei(locAmount.toString()));
 
   NotificationManager.info(PROCESSING_TRANSACTION, 'Transactions', LONG);
@@ -38,7 +38,8 @@ export function sendTokens(password, recipientAddress, locAmount) {
       jsonFile,
       password,
       recipientAddress,
-      wei.toString()
+      wei.toString(),
+      flightReservationId
     ).then((data) => {
         NotificationManager.success(TRANSACTION_SUCCESSFUL, 'Send Tokens', LONG);
 

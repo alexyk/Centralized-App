@@ -1,7 +1,6 @@
 import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
-import '../../../../styles/css/components/airTickets/book/profile/air-tickets-booking-profile-passengers-form.css';
-import { NotificationManager } from 'react-notifications';
+import '../../../../styles/css/components/airTickets/book/payment/air-tickets-payment-page.css';
 
 class AirTicketsPaymentPage extends Component {
   constructor(props) {
@@ -21,11 +20,11 @@ class AirTicketsPaymentPage extends Component {
 
     return (
       <Fragment>
-        <div className="pay-with-loc-wrapper">
+        <div className="pay-with-loc-wrapper" >
           <div className="price-wrapper">
             <h3>
               <span className="total-price">{result.price.locPrice.toFixed(2)}</span>
-              <span className="total-price">{result.price.currency}</span>
+              <span className="currency">{result.price.currency}</span>
             </h3>
           </div>
           <button
@@ -38,8 +37,8 @@ class AirTicketsPaymentPage extends Component {
         <div className="pay-with-cc-wrapper">
           <div className="price-wrapper">
             <h3>
-              <span className="total-price">{result.price.total.toFixed(2)}</span>
-              <span className="total-price">{result.price.currency}</span>
+              <span className="total-loc-price">{result.price.total.toFixed(2)}</span>
+              <span className="currency">{result.price.currency}</span>
             </h3>
           </div>
           <button
