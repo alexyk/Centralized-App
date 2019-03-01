@@ -50,7 +50,7 @@ export class TokenTransactions {
     return await nodeProvider.getBalance(address);
   }
 
-  static async signTransaction(jsonObj, password, recipient, amount) {
+  static async signTransaction(jsonObj, password, recipient, amount, flightReservationId) {
     let wallet = await ethers.Wallet.fromEncryptedWallet(jsonObj, password);
     const locContract = await LOCTokenContractWithWallet(wallet)
     const gasPrice = await getGasPrice();
