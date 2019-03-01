@@ -24,7 +24,7 @@ class AirTicketsPaymentPage extends Component {
           <div className="price-wrapper">
             <h3>
               <span className="total-price">{result.price.locPrice.toFixed(2)}</span>
-              <span className="currency">{result.price.currency}</span>
+              <span className="currency">LOC</span>
             </h3>
           </div>
           <button
