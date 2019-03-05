@@ -1,13 +1,14 @@
 .pay-with-loc-wrapper,
 .pay-with-cc-wrapper {
+  text-align: center;
+  margin-bottom: 50px;
+
   .price-wrapper {
+    margin-bottom: 15px;
+
     .total-price,
     .total-loc-price {
-
-    }
-
-    .currency {
-
+      margin-right: 10px;
     }
   }
 }

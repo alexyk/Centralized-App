@@ -7,12 +7,15 @@ import '../../../../styles/css/components/airTickets/book/payment/air-tickets-pa
 class AirTicketsPaymentPage extends Component {
   constructor(props) {
     super(props);
+    this.state = {
+      showModal: false
+    };
   }
 
   handleLOCPayment() {
-    return <SendTokensModal
-      flightReservationId={this.props.initBooking.flightReservationId}
-    />
+    this.setState({
+      showModal: !this.state.showModal
+    });
   }
 
   handleCCPayment() {
@@ -24,6 +27,10 @@ class AirTicketsPaymentPage extends Component {
 
     return (
       <Fragment>
+        <SendTokensModal
+          flightReservationId={this.props.initBooking.flightReservationId}
+          showModal={this.state.showModal}
+        />
         <div className="pay-with-loc-wrapper" >
           <div className="price-wrapper">
             <h3>

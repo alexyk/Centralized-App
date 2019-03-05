@@ -60,7 +60,7 @@ class AirTicketsBookingRouterPage extends Component {
     this.requestSelectFlight = this.requestSelectFlight.bind(this);
     this.requestFareRules = this.requestFareRules.bind(this);
     this.requestAllCountries = this.requestAllCountries.bind(this);
-    this.requestConfirmAndPay = this.requestConfirmAndPay.bind(this);
+    this.requestPrepareFlightReservation = this.requestPrepareFlightReservation.bind(this);
     this.requestPayWithCC = this.requestPayWithCC.bind(this);
     this.requestBooking = this.requestBooking.bind(this);
     this.onChangeContactInfo = this.onChangeContactInfo.bind(this);
@@ -172,9 +172,9 @@ class AirTicketsBookingRouterPage extends Component {
       });
   }
 
-  requestConfirmAndPay(initBooking) {
+  requestPrepareFlightReservation(initBooking, callback) {
     return new Promise((resolve, reject) => {
-      fetch(`${Config.getValue('apiHost')}flight/confirmAndPay`, {
+      fetch(`${Config.getValue('apiHost')}flight/prepareFlightReservation`, {
         method: 'POST',
         headers: {
           'Content-type': 'application/json',
@@ -186,21 +186,21 @@ class AirTicketsBookingRouterPage extends Component {
           if (res.ok) {
             res.json().then((data) => {
               if (data.status) {
-                return true;
+                if (callback) {
+                  callback();
+                } else {
+                  return true;
+                }
               } else {
-                reject(data);
                 NotificationManager.warning(data.message, 'Warning', LONG);
               }
             }).catch(err => {
-              reject(err);
               NotificationManager.warning(ERROR_MESSAGES.TRY_AGAIN, 'Warning', LONG);
             });
           } else {
-            reject(new Error('Fail'));
             NotificationManager.warning(ERROR_MESSAGES.TRY_AGAIN, 'Warning', LONG);
           }
         }).catch(err => {
-          reject(err);
           NotificationManager.warning(ERROR_MESSAGES.TRY_AGAIN, 'Warning', LONG);
         });
     });
@@ -406,7 +406,7 @@ class AirTicketsBookingRouterPage extends Component {
     }), () => this.props.history.push(`/tickets/results/initBook/${this.props.match.params.id}/profile/${section}${this.props.location.search}`));
   }
 
-  initBooking(type) {
+  initBooking(type, callback) {
     this.setState({
       isBookingProccess: true
     });
@@ -452,7 +452,7 @@ class AirTicketsBookingRouterPage extends Component {
 
 
     if (type === 'loc') {
-      paymentResult = this.requestConfirmAndPay(initBooking);
+      paymentResult = this.requestPrepareFlightReservation(initBooking, callback);
       return;
     } else {
       paymentResult = this.requestPayWithCC(initBooking);

@@ -104,12 +104,10 @@ class AirTicketsBookingProfilePassengersForm extends Component {
     return isValidPassengerInfo;
   }
 
-  confirmAndPay() {
+  prepareFlightReservation() {
     if (this.validatePassengersInfo()) {
-      this.props.initBooking('loc');
+      this.props.initBooking('loc', this.props.enableNextSection('pay'));
     }
-
-    this.props.enableNextSection('pay');
   }
 
   render() {
@@ -137,7 +135,7 @@ class AirTicketsBookingProfilePassengersForm extends Component {
       <div className="air-tickets-passengers-form">
         <h2>Passengers Details</h2>
         <hr />
-        <form onSubmit={(e) => { e.preventDefault(); this.confirmAndPay() }}>
+        <form onSubmit={(e) => { e.preventDefault(); this.prepareFlightReservation() }}>
           {passengersInfo.map((passenger, passengerIndex) => {
             return (
               <Fragment key={passengerIndex}>
