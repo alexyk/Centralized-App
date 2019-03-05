@@ -10,8 +10,6 @@ class AirTicketsPaymentPage extends Component {
     this.state = {
       showModal: false
     };
-
-    console.log(props)
   }
 
   handleLOCPayment() {
@@ -32,6 +30,7 @@ class AirTicketsPaymentPage extends Component {
         <SendTokensModal
           flightReservationId={this.props.result.flightReservationId}
           showModal={this.state.showModal}
+          result={this.props.result}
         />
         <div className="pay-with-loc-wrapper" >
           <div className="price-wrapper">
