@@ -15,7 +15,6 @@ class SendTokensModal extends Component {
     }
 
     this.onChange = this.onChange.bind(this);
-    this.validateAmount = this.validateAmount.bind(this);
     this.closeModal = this.closeModal.bind(this);
   }
 
@@ -32,31 +31,8 @@ class SendTokensModal extends Component {
     });
   }
 
-  validateAmount(value) {
-    let success = true;
-    let message = '';
-
-    if (!value.match('/\d+/g')) {
-      success = false;
-      message = 'Amount is not correct!';
-    } else if (!value) {
-      success = false;
-      message = 'Missing value';
-    }
-
-    return {
-      success: success,
-      message: message
-    }
-  }
-
   sendTokens() {
-    const validateValues = validateValues(this.state);
-    if (validateValues.success) {
-      sendTokens(this.state.password, this.state.recipient, this.state.locAmount, this.props.flightReservationId);
-    } else {
-      NotificationManager.warning(validateValues.message, 'Warning');
-    }
+    sendTokens(this.state.password, this.state.recipient, this.state.locAmount, this.props.flightReservationId);
   }
 
   render() {
