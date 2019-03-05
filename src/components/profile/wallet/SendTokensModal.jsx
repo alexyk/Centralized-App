@@ -17,6 +17,8 @@ class SendTokensModal extends Component {
     this.onChange = this.onChange.bind(this);
     this.validateAmount = this.validateAmount.bind(this);
     this.closeModal = this.closeModal.bind(this);
+
+    console.log(props);
   }
 
   closeModal() {
