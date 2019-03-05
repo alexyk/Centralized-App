@@ -16,12 +16,12 @@ class SendTokensModal extends Component {
 
     this.onChange = this.onChange.bind(this);
     this.closeModal = this.closeModal.bind(this);
+    this.sendTokens = this.sendTokens.bind(this);
   }
 
   closeModal() {
-    console.log(this.state);
     this.setState({
-      showModal: this.props.showModal
+      showModal: !this.state.showModal
     });
   }
 
@@ -32,26 +32,33 @@ class SendTokensModal extends Component {
   }
 
   sendTokens() {
-    sendTokens(this.state.password, this.state.recipient, this.state.locAmount, this.props.flightReservationId);
+    sendTokens(this.state.password, this.state.recipientAddress, this.state.locAmount, this.props.flightReservationId);
   }
 
   render() {
-    console.log(this.props.result)
+    const { result } = this.props;
+    const price = result && result.price.locPrice ? result.price.locPrice.toFixed(2) : '';
     return (
       <Fragment>
         <Modal
           show={this.props.showModal}
-          onHide={() => this.closeModal()}
           className="modal fade myModal"
         >
           <form onSubmit={e => { e.preventDefault(); this.sendTokens(); }}>
-            <Modal.Header closeButton>
+            <Modal.Header>
               <h1>Send Tokens</h1>
+              <button
+                type="button"
+                className="close"
+                onClick={() => this.closeModal()}
+              >
+                &times;
+              </button>
             </Modal.Header>
             <Modal.Body>
                 <div className="name">
                   <label htmlFor="loc-amount">Send LOC Amount</label>
-                  <input id="loc-amount" name="locAmount" onChange={this.onChange} type="text" placeholder="0.000" value={this.props.result.price.locPrice.toFixed(2)}/>
+                  <input id="loc-amount" name="locAmount" onChange={this.onChange} type="text" placeholder="0.000" value={price}/>
                 </div>
                 <div className="name">
                   <label htmlFor="password">Your wallet password</label>
