@@ -110,7 +110,7 @@ class MultiMarkerGoogleMap extends Component {
     const locPrice = ((hotel.price / locEurRate) / nights).toFixed(2);
     const fiatPrice = currencyExchangeRates && ((CurrencyConverter.convert(currencyExchangeRates, RoomsXMLCurrency.get(), currency, hotel.price)) / nights).toFixed(2);
     const isMobile = location.pathname.indexOf('/mobile') !== -1;
-    const rootUrl = isMobile ? '/mobile/details' : '/hotels/listings';
+    const rootUrl = isMobile ? '/mobile/hotels/listings' : '/hotels/listings';
 
     const content = ReactDOMServer.renderToString(
       <MarkerInfoWindow

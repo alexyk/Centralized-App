@@ -319,8 +319,6 @@ class EditListingPage extends React.Component {
       newBedrooms = newBedrooms.slice(0, value);
     }
 
-    // console.log(value + ' ' + event.target.value.split(' ')[1]);
-    // console.log(newBedrooms);
 
     this.setState({
       bedroomsCount: value + " " + event.target.value.split(" ")[1],
@@ -463,7 +461,6 @@ class EditListingPage extends React.Component {
           res.errors.then(data => {
             const errors = data.errors;
             for (let key in errors) {
-              console.log("error");
               if (typeof errors[key] !== "function") {
                 NotificationManager.warning(errors[key].message, "", LONG);
               }

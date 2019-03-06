@@ -66,7 +66,6 @@ class ProfileVerificationPage extends React.Component {
     requester.getUserInfo().then(res => {
       res.body.then(data => {
         this.splitVerificationData(data);
-        // console.log(data);
         this.setState({
           governmentIdPhoto: data.userIdentity !== null && data.userIdentity.governmentIdPhoto !== null ? data.userIdentity.governmentIdPhoto : null,
           governmentIdHolderPhoto: data.userIdentity !== null && data.userIdentity.governmentIdHolderPhoto !== null ? data.userIdentity.governmentIdHolderPhoto : null,
@@ -201,7 +200,6 @@ class ProfileVerificationPage extends React.Component {
       return <div className="loader"></div>;
     }
 
-    // console.log(this.state);
     const isTwoPicturesUploaded = this.state.uploadedFilegovernmentIdHolderPhoto != null && this.state.uploadedFilegovernmentIdPhoto != null;
     const saveButtonClass = this.state.uploadedFilegovernmentIdPhoto === null || this.state.uploadedFilegovernmentIdHolderPhoto === null ? 'unactive' : 'active';
     return (

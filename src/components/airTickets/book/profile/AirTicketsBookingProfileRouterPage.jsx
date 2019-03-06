@@ -4,9 +4,9 @@ import PropTypes from 'prop-types';
 import BookingSteps from '../../../common/bookingSteps';
 import AirTicketsBookingProfileEditNav from './AirTicketsBookingProfileEditNav';
 import AirTicketsBookingProfileEditForm from './AirTicketsBookingProfileEditForm';
-import AirTicketsBookingProfileInvoiceForm from './AirTicketsBookingProfileInvoiceForm';
 import AirTicketsBookingProfileServicesForm from './AirTicketsBookingProfileServicesForm';
 import AirTicketsBookingProfilePassengersForm from './AirTicketsBookingProfilePassengersForm';
+import AirTicketsPaymentPage from './AirTicketsPaymentPage';
 
 import '../../../../styles/css/components/airTickets/book/profile/air-tickets-booking-profile-router-page.css';
 
@@ -45,26 +45,11 @@ function AirTicketsBookingProfileRouterPage(props) {
                         onChange={props.onChangeContactInfo}
                         enableNextSection={props.enableNextSection}
                         countries={countries}
+                        hasFlightServices={hasFlightServices}
                       />
                     );
                   }}
                 />
-                {confirmInfo.invoice ?
-                  <Route
-                    exact
-                    path="/tickets/results/initBook/:id/profile/invoice"
-                    render={() => {
-                      return (
-                        <AirTicketsBookingProfileInvoiceForm
-                          invoiceInfo={invoiceInfo}
-                          onChange={props.onChangeInvoiceInfo}
-                          enableNextSection={props.enableNextSection}
-                          countries={countries}
-                          hasFlightServices={hasFlightServices}
-                        />
-                      );
-                    }}
-                  /> : <Redirect to={{ pathname: '/tickets/results/initBook/:id/profile', search: props.location.search }} />}
                 {hasFlightServices &&
                   (confirmInfo.services ?
                     <Route
@@ -99,10 +84,22 @@ function AirTicketsBookingProfileRouterPage(props) {
                           services={passengersServices}
                           currency={result.price.currency}
                           isBookingProccess={isBookingProccess}
+                          enableNextSection={props.enableNextSection}
                         />
                       );
                     }}
                   /> : <Redirect to={{ pathname: '/tickets/results/initBook/:id/profile', search: props.location.search }} />}
+
+                  <Route
+                    exact
+                    path="/tickets/results/initBook/:id/profile/pay"
+                    render={() => { return (
+                      <AirTicketsPaymentPage
+                        result={result}
+                        initBooking={props.initBooking}
+                      />
+                    )}}
+                  />
               </Switch>
             </div>
           </div>
@@ -114,7 +111,10 @@ function AirTicketsBookingProfileRouterPage(props) {
 AirTicketsBookingProfileRouterPage.propTypes = {
   result: PropTypes.object,
   contactInfo: PropTypes.object,
-  invoiceInfo: PropTypes.object,
+  invoiceInfo: PropTypes.oneOfType([
+    PropTypes.func,
+    PropTypes.object
+  ]),
   servicesInfo: PropTypes.array,
   passengersInfo: PropTypes.array,
   confirmInfo: PropTypes.object,

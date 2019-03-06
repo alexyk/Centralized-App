@@ -25,7 +25,7 @@ class AirTicketsVoucher extends Component {
     //     if (res.ok) {
     //       res.json().then((data) => {
     //         if (data.success === false) {
-    //           this.props.history.push('/profile/tickets');
+    //           this.props.history.push('/profile/flights');
     //           NotificationManager.warning(data.message, '', LONG);
     //         } else {
     //           data.fullResponse = JSON.parse(data.fullResponse);

@@ -135,7 +135,6 @@ function HotelsSearchBar(props) {
 
     let index = 0;
     while (adults > 0) {
-      // console.log(`${adults} / ${rooms.length - index} = ${Math.ceil(adults / (rooms.length - index))}`)
       const quotient = Math.ceil(adults / (rooms.length - index));
       rooms[index].adults = quotient;
       adults -= quotient;

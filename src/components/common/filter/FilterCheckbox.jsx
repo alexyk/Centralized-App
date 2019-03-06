@@ -2,9 +2,9 @@ import PropTypes from 'prop-types';
 import React from 'react';
 // import '../../../styles/css/components/profile/listings/listing-facilities.css';
 
-const FilterCheckbox = ({ id, text, checked, onChange }) => (
+const FilterCheckbox = ({ id, value, text, checked }) => (
   <div className="key">
-    <input type="checkbox" name={id} onChange={onChange} checked={checked}/>
+    <input type="checkbox" name={id} checked={checked} value={value}/>
     <label htmlFor={id}>{text}</label>
   </div>
 );

@@ -3,6 +3,7 @@ import Select from 'react-select';
 import PropTypes from 'prop-types';
 import NumberRangeSlider from '../../../common/numberRangeSlider';
 import TimeRangeSlider from 'react-time-range-slider';
+import FilterCheckbox from '../../../common/filter/FilterCheckbox';
 
 import '../../../../styles/css/components/airTickets/search/filter/air-tickets-search-filter-panel.css';
 
@@ -37,6 +38,10 @@ class AirTicketsSearchFilterPanel extends Component {
     this.handlePriceRangeSelect = this.handlePriceRangeSelect.bind(this);
     this.handleWaitingRangeSelect = this.handleWaitingRangeSelect.bind(this);
     this.clearFilters = this.clearFilters.bind(this);
+    this.departureTmeChangeHandler = this.departureTmeChangeHandler.bind(this);
+    this.arrivalTmeChangeHandler = this.arrivalTmeChangeHandler.bind(this);
+    this.journeyTmeChangeHandler = this.journeyTmeChangeHandler.bind(this);
+    this.handleStops = this.handleStops.bind(this);
   }
 
   onChange(name, option) {
@@ -73,7 +78,44 @@ class AirTicketsSearchFilterPanel extends Component {
       airportsTransfer: [],
       priceRange: '',
       waitingTimeRange: '',
-      flightTimeRange: ''
+      departure: {
+        start: "00:00",
+        end: "23:59"
+      },
+      arrival: {
+        start: "00:00",
+        end: "23:59"
+      },
+      journey: {
+        start: "00:00",
+        end: "23:59"
+      }
+    }, () => this.props.applyFilters(this.state));
+  }
+
+  departureTmeChangeHandler(time) {
+    this.setState({
+        departure: time
+    }, () => this.props.applyFilters(this.state));
+  }
+
+  arrivalTmeChangeHandler(time) {
+    this.setState({
+        arrival: time
+    }, () => this.props.applyFilters(this.state));
+  }
+
+  journeyTmeChangeHandler(time) {
+    this.setState({
+        journey: time
+    }, () => this.props.applyFilters(this.state));
+  }
+
+  handleStops(stop) {
+    let stopElement = JSON.parse(stop.target.value);
+
+    this.setState({
+      stops: [stopElement]
     }, () => this.props.applyFilters(this.state));
   }
 
@@ -134,30 +176,25 @@ class AirTicketsSearchFilterPanel extends Component {
 
     return (
       <div className="filter-box">
+        {filters.changes && filters.changes.length > 1 &&
         <div className="filter stops-filter">
           <h5>Stops</h5>
           <ul>
-            {filters.changes &&
-              filters.changes.map((stop, index) => {
-
+              {filters.changes.map((stop, index) => {
                 return (
-                  <li key={index}>
-                    <label className="filter-label">
-                      <input
-                        type="checkbox"
-                        className="filter-checkbox"
-                        name="stops[]"
-                        value={stop.changesId}
-                        onChange={() => this.onChange('stops', [stop])}
-                      />
-                      <span>{this.mapStopName(stop.changesId)}</span>
-                    </label>
+                  <li key={index} onClick={this.handleStops} value={stops}>
+                    <FilterCheckbox
+                      id={stop.changesName}
+                      value={JSON.stringify(stop)}
+                      key={index}
+                      text={this.mapStopName(stop.changesId)}
+                    />
                   </li>
                 );
               }
             )}
           </ul>
-        </div>
+        </div>}
         <div className="filter time-range-filter">
           <div className="departure-range-filters">
               <h5>Departure Time</h5>
@@ -167,7 +204,7 @@ class AirTicketsSearchFilterPanel extends Component {
                 maxValue={"23:59"}
                 minValue={"00:00"}
                 name={"time_range"}
-                onChange={() => this.onChange('departure', departure)}
+                onChange={this.departureTmeChangeHandler}
                 step={15}
                 value={departure}/>
                 <span className="time-range-min-value">{departure.start}</span>
@@ -181,7 +218,7 @@ class AirTicketsSearchFilterPanel extends Component {
                 maxValue={"23:59"}
                 minValue={"00:00"}
                 name={"time_range"}
-                onChange={() => this.onChange('arrival', arrival)}
+                onChange={this.arrivalTmeChangeHandler}
                 step={15}
                 value={arrival}/>
                 <span className="time-range-min-value">{arrival.start}</span>
@@ -195,13 +232,14 @@ class AirTicketsSearchFilterPanel extends Component {
                 maxValue={"23:59"}
                 minValue={"00:00"}
                 name={"time_range"}
-                onChange={() => this.onChange('journey', journey)}
+                onChange={this.journeyTmeChangeHandler}
                 step={15}
                 value={journey}/>
                 <span className="time-range-min-value">{journey.start}</span>
                 <span className="time-range-min-end">{journey.end}</span>
           </div>
         </div>
+        {airlines.length > 0   &&
         <div className="filter airlines-filter">
           <h5>Airlines</h5>
           <Select
@@ -214,11 +252,11 @@ class AirTicketsSearchFilterPanel extends Component {
             onChange={(option) => this.onChange('airlines', option)}
             isMulti
           />
-        </div>
+        </div>}
         {filters.airports &&
           <div className="filter airports-filter">
             <h5>Airports</h5>
-            {filters.airports.arrivals &&
+            {filters.airports.arrivals.length > 1 &&
             <div className="arrivals">
               <h6>Arrivals</h6>
                 <Select
@@ -233,7 +271,7 @@ class AirTicketsSearchFilterPanel extends Component {
                 />
             </div>}
 
-            {filters.airports && filters.airports.transfers &&
+            {filters.airports && filters.airports.transfers.length > 1 &&
             <div className="transfers">
               <h6>Transfers</h6>
               <Select

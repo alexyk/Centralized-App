@@ -125,7 +125,6 @@ class ConfirmProfilePage extends React.Component {
       if (res.success) {
         this.payWithCard();
       } else {
-        res.errors.then(e => console.log(e));
         NotificationManager.error('Invalid user information.', '', LONG);
       }
     });
@@ -137,7 +136,7 @@ class ConfirmProfilePage extends React.Component {
     if (['Canada', 'India', 'United States of America'].includes(value.name)) {
       requester.getStates(value.id)
         .then(res => res.body)
-        .then(data => { console.log(data); this.setState({ states: data }); });
+        .then(data => {  this.setState({ states: data }); });
     }
 
     const userInfo = { ...this.state.userInfo };

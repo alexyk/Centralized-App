@@ -55,7 +55,6 @@ class GooglePlaces extends React.Component {
 
   handleAddressSelect(place) {
     if (place) {
-      // console.log(place);
     }
   }
 

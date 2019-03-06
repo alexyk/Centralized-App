@@ -228,6 +228,20 @@ class StaticHotelsSearchPage extends React.Component {
     }
   }
 
+  // connectSocketForLocRate(){
+  //   const topic = "/loc_rate";
+  //   const url = Config.getValue("socketHost");
+  //   let client = Stomp.client(url);
+  //   const onSubscribe = ()=>client.subscribe(topic, (data)=>{
+  //   });
+  //
+  //   this.client.connect(
+  //     null,
+  //     null,
+  //     onSubscribe
+  //   );
+  // }
+
   connectSocket() {
     if (!localStorage.getItem("uuid")) {
       localStorage.setItem("uuid", `${uuid()}`);
@@ -259,9 +273,7 @@ class StaticHotelsSearchPage extends React.Component {
     const destination = "search/" + queueId;
     const client = this.client;
     const handleReceiveHotelPrice = this.handleReceiveMessage;
-
     this.subscription = client.subscribe(destination, handleReceiveHotelPrice);
-
     const msgObject = {
       uuid: queueId,
       query: search.substr(0, endOfSearch)
@@ -461,7 +473,6 @@ class StaticHotelsSearchPage extends React.Component {
     requester.getLastSearchHotelResultsByFilter(search, filters).then(res => {
       if (res.success) {
         res.body.then(data => {
-          // console.log(data);
           this.setState(
             {
               loading: false,
@@ -589,7 +600,6 @@ class StaticHotelsSearchPage extends React.Component {
                   this.toggleMap();
                 });
               } else {
-                // console.log('Search expired');
               }
             });
         }

@@ -6,6 +6,7 @@ import DatePicker from '../../common/datepicker';
 import { asyncSetEndDate } from '../../../actions/searchDatesInfo';
 import { getStartDate, getEndDate } from '../../../selectors/searchDatesInfo';
 import MultiStopsPopup from './common/multiStopsPopup';
+import { selectMultiStopsDestinations } from '../../../selectors/airTicketsSearchSelector';
 
 import '../../../styles/css/components/airTickets/search/air-tickets-datepicker-wrapper.css';
 import { selectFlightRouting } from '../../../selectors/airTicketsSearchSelector';
@@ -40,10 +41,8 @@ class AirTicketsDatepickerWrapper extends Component {
         />
 
         {flightRouting === '3' &&
-          <div className="open-multi-city-popup-holder">
-            <span className="icon-plus" onClick={this.props.openMultiStopsPopup}></span>
-          </div>}
-          <MultiStopsPopup showMultiStopsPopup={flightRouting === '3'} closeMultiStopsPopup={this.props.closeMultiStopsPopup} />
+          <MultiStopsPopup showMultiStopsPopup={this.props.openMultiStopsPopup()} closeMultiStopsPopup={this.props.closeMultiStopsPopup} />
+        }
       </div>
     );
   }
@@ -66,7 +65,8 @@ const mapStateToProps = (state) => {
   return {
     flightRouting: selectFlightRouting(airTicketsSearchInfo),
     startDate: getStartDate(searchDatesInfo),
-    endDate: getEndDate(searchDatesInfo)
+    endDate: getEndDate(searchDatesInfo),
+    multiStopsDestinations: selectMultiStopsDestinations(airTicketsSearchInfo)
   };
 };
 

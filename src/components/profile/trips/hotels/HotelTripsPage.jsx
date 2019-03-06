@@ -9,7 +9,7 @@ import { NotificationManager } from 'react-notifications';
 import { PASSWORD_PROMPT, CANCEL_TRIP_MODAL } from '../../../../constants/modals.js';
 import Pagination from '../../../common/pagination/Pagination';
 import PropTypes from 'prop-types';
-import { RESERVATION_CANCELLED } from '../../../../constants/infoMessages.js';
+import { RESERVATION_CANCELLED, CANCELLING_RESERVATION } from '../../../../constants/infoMessages.js';
 import React from 'react';
 import { connect } from 'react-redux';
 import requester from '../../../../requester';
@@ -28,7 +28,8 @@ class HotelTripsPage extends React.Component {
       currentTripId: null,
       bookingPrepareId: 0,
       password: '',
-      cancellationText: ''
+      cancellationText: '',
+      count: 0
     };
 
     this.onPageChange = this.onPageChange.bind(this);
@@ -37,9 +38,15 @@ class HotelTripsPage extends React.Component {
     this.closeModal = this.closeModal.bind(this);
     this.handleCancelTrip = this.handleCancelTrip.bind(this);
     this.onTripSelect = this.onTripSelect.bind(this);
+    this.getBookings = this.getBookings.bind(this);
   }
 
   componentDidMount() {
+
+    this.getBookings();
+  }
+
+  getBookings(){
     let search = this.props.location.search.split('?');
     let id = null;
     if (search.length > 1) {
@@ -54,7 +61,7 @@ class HotelTripsPage extends React.Component {
     }
     requester.getMyHotelBookings(['page=0']).then(res => {
       res.body.then(data => {
-        this.setState({ trips: data.content, totalTrips: data.totalElements, loading: false, currentTripId: id });
+        this.setState({ trips: data.content, totalTrips: data.totalElements, loading: false, currentTripId: id, count: this.state.count++ }, );
         if (id) {
           NotificationManager.success(BOOKING_REQUEST_SENT, 'Reservation Operations', LONG);
         }
@@ -78,20 +85,25 @@ class HotelTripsPage extends React.Component {
     this.props.dispatch(closeModal(modal));
   }
 
-  handleCancelTrip() {
-    console.log("CANCEL");
-    requester.cancelBooking({ bookingId: this.state.bookingPrepareId })
-      .then(res => res.body)
-      .then(data => {
-        console.log(data);
+  handleCancelTrip(bookingId) {
+    requester.cancelBooking({ bookingId: bookingId || this.state.bookingPrepareId })
+      //.then(res => res.body)
+      //.then(data => {
+      .then(res => {
+        /*
+        var data = res.body;
         if (data.isCancellationRequested) {
           NotificationManager.info(RESERVATION_CANCELLED, '', LONG);
         } else {
           NotificationManager.warning(CANCELLATION_NOT_POSSIBLE, '', LONG);
         }
-      });
+        */
+        NotificationManager.info(CANCELLING_RESERVATION, '', LONG);
+      }).then(()=>{
+        return this.getBookings();
+    })
 
-    this.closeModal(PASSWORD_PROMPT);
+    // this.closeModal(PASSWORD_PROMPT);
   }
 
   setTripIsAccepted(tripId, isAccepted) {
@@ -143,7 +155,7 @@ class HotelTripsPage extends React.Component {
               trips={this.state.trips}
               currentTripId={this.state.currentTripId}
               onTripSelect={this.onTripSelect}
-              handleCancelReservation={() => this.openModal(CANCEL_TRIP_MODAL)}
+              handleCancelReservation={this.handleCancelTrip}
               loading={this.state.loading}
             />
 

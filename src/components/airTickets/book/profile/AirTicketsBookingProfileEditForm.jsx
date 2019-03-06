@@ -21,14 +21,14 @@ class AirTicketsBookingProfileEditForm extends Component {
   }
 
   render() {
-    const { countries } = this.props;
+    const { countries, hasFlightServices } = this.props;
     const { title, firstName, lastName, email, phoneNumber, country, zipCode, city, address } = this.props.contactInfo;
 
     return (
       <div className="air-tickets-contact-edit-form">
         <h2>Profile</h2>
         <hr />
-        <form onSubmit={(e) => { e.preventDefault(); this.props.enableNextSection('services'); }}>
+        <form onSubmit={(e) => { e.preventDefault(); this.props.enableNextSection( hasFlightServices ? 'services' : 'passengers'); }}>
           <div className="contact-name-wrapper">
             <div className="contact-title">
               <label htmlFor="title">Title <span className="mandatory">*</span></label>
@@ -108,7 +108,8 @@ AirTicketsBookingProfileEditForm.propTypes = {
   contactInfo: PropTypes.object,
   countries: PropTypes.array,
   onChange: PropTypes.func,
-  enableNextSection: PropTypes.func
+  enableNextSection: PropTypes.func,
+  hasFlightServices: PropTypes.bool
 };
 
 export default AirTicketsBookingProfileEditForm;

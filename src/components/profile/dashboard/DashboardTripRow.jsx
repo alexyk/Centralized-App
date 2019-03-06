@@ -59,7 +59,6 @@ function DashboardTripRow(props) {
   var _dates = getDates();
 
   if (props.trip.status === "PENDING_SAFECHARGE_CONFIRMATION") return null;
-  //console.log('KOR = ' + props.trip.status);
   return (
     <ProfileFlexContainer styleClass={`flex-container-row ${props.styleClass}`}>
       <div className="flex-row-child dashboard-image">

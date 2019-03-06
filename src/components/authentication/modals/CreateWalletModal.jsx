@@ -35,7 +35,6 @@ function CreateWalletModal(props) {
         });
       } catch (error) {
         NotificationManager.info(error, '', LONG);
-        // console.log(error);
       }
     }
   };

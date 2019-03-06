@@ -33,9 +33,11 @@ class ExchangerWS {
     if (this.ws.readyState === 1 && id) {
       this.ws.send(JSON.stringify({ id, method, params }));
     }
+    return this;
   }
 
   handleRecieveMessage(event) {
+
     if (event) {
       const data = JSON.parse(event.data);
       if (data.params && data.params.secondsLeft) {
@@ -48,6 +50,7 @@ class ExchangerWS {
   }
 
   close() {
+
     if (this.shoudSocketReconnect) {
       if (store.getState().exchangerSocketInfo.isExchangerWebsocketConnected) {
         store.dispatch(clearLocAmounts());

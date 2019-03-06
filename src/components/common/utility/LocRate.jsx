@@ -7,6 +7,8 @@ import { getCurrency } from '../../../selectors/paymentInfo';
 import { getCurrencyExchangeRates, getLocEurRate, getLocRateFiatAmount } from '../../../selectors/exchangeRatesInfo';
 import { isExchangerWebsocketConnected } from '../../../selectors/exchangerSocketInfo';
 import { getLocAmountById } from '../../../selectors/locAmountsInfo';
+import {Config} from "../../../config";
+import Stomp from "stompjs";
 
 const DEFAULT_CRYPTO_CURRENCY = 'EUR';
 
@@ -14,7 +16,15 @@ class LocRate extends PureComponent {
   constructor(props) {
     super(props);
 
+    this.state = {
+      locEurRate: null
+    }
     this.isSendMessage = false;
+    this.connectSocketForLocRate = this.connectSocketForLocRate.bind(this);
+  }
+
+  componentDidMount(){
+    this.connectSocketForLocRate();
   }
 
   componentDidUpdate(prevProps) {
@@ -23,17 +33,36 @@ class LocRate extends PureComponent {
     }
     if (this.props.isExchangerWebsocketConnected && !this.isSendMessage) {
       this.isSendMessage = true;
-      ExchangerWebsocket.sendMessage(prevProps.locRateFiatAmount, 'getLocPrice', { fiatAmount: prevProps.locRateFiatAmount });
+      ExchangerWebsocket.sendMessage(prevProps.locRateFiatAmount, 'getLocPrice', { fiatAmount: prevProps.locRateFiatAmount })
+
     }
+  }
+  connectSocketForLocRate(){
+    const topic = "/topic/loc_rate";
+    const url = Config.getValue("socketHost");
+    let client = Stomp.client(url);
+    this.locRateClient = client;
+    const onSubscribe = ()=>client.subscribe(topic, (data)=>{
+      this.setState({
+        locEurRate: JSON.parse(data.body).eurPrice
+      })
+    });
+
+    client.connect(
+      null,
+      null,
+      onSubscribe
+    );
   }
 
   componentWillUnmount() {
     ExchangerWebsocket.sendMessage(this.props.locRateFiatAmount, 'unsubscribe');
+    this.locRateClient.disconnect()
   }
 
   render() {
-    const { currency, currencyExchangeRates, locRateFiatAmount, locEurRate, locRateLocAmount } = this.props;
-
+    const { currency, currencyExchangeRates, locRateFiatAmount, locRateLocAmount } = this.props;
+    let locEurRate = this.state.locEurRate || this.props.locEurRate;
     const fiat = currencyExchangeRates && CurrencyConverter.convert(currencyExchangeRates, DEFAULT_CRYPTO_CURRENCY, currency, locRateFiatAmount);
     let locAmount = locRateLocAmount;
     if (!locAmount) {
@@ -43,9 +72,8 @@ class LocRate extends PureComponent {
     let locRate = fiat / locAmount;
 
     if (!locRate) {
-      return <div className="loader sm-none" style={{ width: '100px' }} ></div>;
+      return <div className={"loader sm-none"} style={{ width: '100px' }} ></div>;
     }
-
     return (
       <Fragment>
         <span className="cross-rate">LOC/{currency} </span>

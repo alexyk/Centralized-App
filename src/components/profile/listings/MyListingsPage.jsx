@@ -113,7 +113,6 @@ class MyListingsPage extends React.Component {
       }
       this.handleCloseDeleteListing();
     }).catch(e => {
-      // console.log(e);
       this.handleCloseDeleteListing();
     });
   }

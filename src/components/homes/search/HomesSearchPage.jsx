@@ -89,7 +89,6 @@ class HomesSearchPage extends React.Component {
       filters.cities = this.getCities(searchParams);
       filters.propertyTypes = this.getPropertyTypes(searchParams);
 
-      console.log(country);
 
       this.props.dispatch(asyncSetStartDate(startDate));
       this.props.dispatch(asyncSetEndDate(endDate));

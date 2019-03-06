@@ -25,7 +25,7 @@ import { isActive } from '../../../selectors/modalsInfo.js';
 import { getCurrency, getCurrencySign } from '../../../selectors/paymentInfo';
 import { getLocEurRate, getCurrencyExchangeRates } from '../../../selectors/exchangeRatesInfo.js';
 import { getSeconds } from '../../../selectors/locPriceUpdateTimerInfo.js';
-import { getLocAmountById, getQuotePPFiatAmount, getQuotePPFundsSufficient } from '../../../selectors/locAmountsInfo.js';
+import { getLocAmountById, getQuotePPFiatAmount, getQuotePPAdditionalFees, getQuotePPFundsSufficient } from '../../../selectors/locAmountsInfo.js';
 import RecoverWallerPassword from '../../common/utility/RecoverWallerPassword';
 import { ExchangerWebsocket } from '../../../services/socket/exchangerWebsocket';
 
@@ -89,7 +89,6 @@ class HotelsBookingConfirmPage extends Component {
           });
         } else {
           res.errors.then((err) => {
-            console.log(err);
           });
         }
       });
@@ -281,7 +280,6 @@ class HotelsBookingConfirmPage extends Component {
           this.openModal(CONFIRM_PAYMENT_WITH_LOC);
         }
       }).catch((e) => {
-        console.log(e);
         this.restartQuote();
         NotificationManager.error(SERVICE_UNAVAILABLE);
       });
@@ -298,7 +296,6 @@ class HotelsBookingConfirmPage extends Component {
       const locAmount = quoteLocAmount || CurrencyConverter.convert(currencyExchangeRates, reservation.currency, DEFAULT_CRYPTO_CURRENCY, reservation.fiatPrice) / locEurRate;
 
       const wei = (this.tokensToWei(locAmount.toString()));
-      // console.log(wei);
       const booking = reservation.booking.hotelBooking;
       const endDate = moment.utc(booking[0].arrivalDate, 'YYYY-MM-DD').add(booking[0].nights, 'days');
 
@@ -311,8 +308,6 @@ class HotelsBookingConfirmPage extends Component {
       requester.getMyJsonFile().then(res => {
         res.body.then(data => {
           setTimeout(() => {
-            // console.log('HotelBookingConfirmPage.jsx, wei:', wei.toString());
-            // console.log('HotelBookingConfirmPage.jsx, end date:', endDate.unix().toString());
 
             HotelReservation.createSimpleReservationSingleWithdrawer(
               data.jsonFile,
@@ -320,7 +315,6 @@ class HotelsBookingConfirmPage extends Component {
               wei.toString(),
               endDate.unix().toString(),
             ).then(transaction => {
-              // console.log('transaction', transaction);
               const bookingConfirmObj = {
                 bookingId: preparedBookingId,
                 transactionHash: transaction.hash,
@@ -338,7 +332,6 @@ class HotelsBookingConfirmPage extends Component {
                 this.restartQuote();
                 NotificationManager.success('Something with your transaction went wrong...', '', LONG);
                 window.removeEventListener('beforeunload', this.showLeavePagePromt);
-                console.log(error);
               });
             }).catch(error => {
               this.restartQuote();
@@ -457,7 +450,7 @@ class HotelsBookingConfirmPage extends Component {
         if (fee.amt === 0 && fee.loc === 0) {
           this.addFreeClauseRow(rows, fee.from);
         } else {
-          let date = moment(fee.from).add(1, 'days').format('DD MMM YYYY');
+          let date = moment(fee.from)/*.add(1, 'days')*/.format('DD MMM YYYY');
           const arrivalDateFormat = moment(arrivalDate).format('DD MMM YYYY');
           let amount = fee.amt;
           if (fee.from === arrivalDate) {
@@ -465,6 +458,7 @@ class HotelsBookingConfirmPage extends Component {
           } else if (date === arrivalDateFormat) {
             amount = reservation && reservation.fiatPrice;
           }
+
           rows.push(
             <tr key={3 * 1000 + feeIndex + 1}>
               <td>
@@ -505,13 +499,14 @@ class HotelsBookingConfirmPage extends Component {
       return <div className="loader"></div>;
     }
 
-    const { reservation, isActive, currency, currencySign, quoteLocAmount, quotePPFiatAmount, quotePPFundsSufficient, currencyExchangeRates, userInfo, seconds } = this.props;
+    const { reservation, isActive, currency, currencySign, quoteLocAmount, quotePPFiatAmount, quotePPAdditionalFees, quotePPFundsSufficient, currencyExchangeRates, userInfo, seconds } = this.props;
     const { userConfirmedPaymentWithLOC, password, isQuoteStopped, safeChargeMode } = this.state;
     const hasLocAddress = !!userInfo.locAddress;
 
     const booking = reservation && reservation.booking.hotelBooking;
-    
+
     const fiatAmountPP = currencyExchangeRates && quotePPFiatAmount && CurrencyConverter.convert(currencyExchangeRates, DEFAULT_CRYPTO_CURRENCY, currency, quotePPFiatAmount);
+    const additionalFeesPP = currencyExchangeRates && quotePPAdditionalFees && CurrencyConverter.convert(currencyExchangeRates, DEFAULT_CRYPTO_CURRENCY, currency, quotePPAdditionalFees).toFixed(2);
     const fiatPriceInUserCurrency = currencyExchangeRates && CurrencyConverter.convert(currencyExchangeRates, reservation.currency, currency, reservation.fiatPrice).toFixed(2);
 
     return (
@@ -570,6 +565,7 @@ class HotelsBookingConfirmPage extends Component {
                         <p className="booking-card-price">
                           Pay with Credit Card: Current Market Price: <span className="important">{currencySign} {fiatAmountPP && (fiatAmountPP).toFixed(2)}</span>
                         </p>
+                        <p>Additional Fees: <span className="important">{additionalFeesPP > 0 ? (currencySign + ' ' + additionalFeesPP) : 'No fees'}</span></p>
                         <div className="price-update-timer" tooltip="Seconds until we update your quoted price">
                           {!isQuoteStopped ? <span>Market Price will update in <i className="fa fa-clock-o" aria-hidden="true"></i>&nbsp;{seconds} sec &nbsp;</span> : 'Price will not update during payment'}
                         </div>
@@ -660,6 +656,7 @@ HotelsBookingConfirmPage.propTypes = {
   quoteLocAmount: PropTypes.number,
   quotePPLocAmount: PropTypes.number,
   quotePPFiatAmount: PropTypes.number,
+  quotePPFiatAdditionalFees: PropTypes.number,
   quotePPFundsSufficient: PropTypes.bool,
   seconds: PropTypes.number
 };
@@ -676,6 +673,7 @@ function mapStateToProps(state) {
     quoteLocAmount: getLocAmountById(locAmountsInfo, DEFAULT_QUOTE_LOC_ID),
     quotePPLocAmount: getLocAmountById(locAmountsInfo, DEFAULT_QUOTE_LOC_PP_ID),
     quotePPFiatAmount: getQuotePPFiatAmount(locAmountsInfo),
+    quotePPAdditionalFees: getQuotePPAdditionalFees(locAmountsInfo),
     quotePPFundsSufficient: getQuotePPFundsSufficient(locAmountsInfo),
     seconds: getSeconds(locPriceUpdateTimerInfo)
   };

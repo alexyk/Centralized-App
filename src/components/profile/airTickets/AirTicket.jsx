@@ -127,15 +127,19 @@ class AirTicket extends Component {
 
   getStatus(status) {
     const statusPreview = status.split('_').join(' ');
+    let statusName = '';
 
-    return statusPreview;
+    if (statusPreview.indexOf('Pending')) {
+      statusName = 'PENDING';
+    } else {
+      statusName = 'DONE';
+    }
+
+    return statusName;
   }
 
   render() {
     const { ticket } = this.props;
-
-    console.log(ticket);
-
     const departureSegments = ticket.segments.filter(s => s.group === '0');
     const returnSegments = ticket.segments.filter(s => s.group === '1');
     const departureDate = this.extractDatesData(departureSegments);
@@ -191,13 +195,7 @@ class AirTicket extends Component {
           <div className="flex-row-child tickets-actions">
             <div className="content-row">
               <div>
-                <Link to={`/tickets/results/book/${ticket.flightId}`}>Pay</Link>
-              </div>
-              {/* {isCompleted &&
-                <button type="submit" onClick={e => { e.preventDefault(); this.props.onTripSelect(this.props.trip.id); this.props.handleCancelReservation(); }}>Cancel Trip</button>
-              } */}
-              <div>
-                {ticket.status === 'FLIGHT_RESERVATION' && <Link to={`/profile/tickets/${ticket.reservationId}`}>Details</Link>}
+                <Link to={`/profile/flights/${ticket.reservationId}`}>Details</Link>
               </div>
             </div>
           </div>

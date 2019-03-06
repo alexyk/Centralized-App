@@ -41,7 +41,6 @@ class Balance extends React.Component {
           this.setState({ balance: data.count, refLink: Config.getValue('basePath') + 'vote?ref=' + data.referralId });
         });
       } else {
-        // console.log('Error');
       }
     });
   }

@@ -88,21 +88,18 @@ class AirTicketsSearchResult extends Component {
   extractDatesData(segments) {
     const startDateMoment = moment(segments[0].origin.date);
     const endDateMoment = moment(segments[segments.length - 1].destination.date);
-
     const departure = {
       day: startDateMoment.format('D'),
       year: startDateMoment.format('YYYY'),
       month: startDateMoment.format('MMM'),
-      time: segments[0].origin.time,
-      timezone: segments[0].origin.timeZone
+      time: segments[0].origin.time
     };
 
     const arrival = {
       day: endDateMoment.format('D'),
       year: endDateMoment.format('YYYY'),
       month: endDateMoment.format('MMM'),
-      time: segments[segments.length - 1].origin.time,
-      timezone: segments[segments.length - 1].origin.timeZone
+      time: segments[segments.length - 1].destination.time
     };
 
     return { departure, arrival };
@@ -114,10 +111,9 @@ class AirTicketsSearchResult extends Component {
     }
 
     const departureDate = this.extractDatesData(departureInfo);
-
+    const buletIndex = 180 / departureInfo.length;
     let middleStopsBulets = [];
 
-    const buletIndex = 180 / departureInfo.length;
 
     for (let i = 0; i < departureInfo.length - 1; i++) {
       middleStopsBulets.push(
@@ -299,7 +295,6 @@ class AirTicketsSearchResult extends Component {
 
   render() {
     const { currencyExchangeRates, currency, currencySign, isUserLogged, result, allElements, flightRouting } = this.props;
-
     const departureInfo = result.segments.filter(s => s.group === '0');
     const returnInfo = result.segments.filter(s => s.group === '1');
 

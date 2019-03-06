@@ -284,12 +284,12 @@ class AirTicketsDetailsInfoSection extends Component {
                           <div>Duration:</div>
                           <div>{this.convertMinutesToTime(segment.flightTime)}</div>
                         </div>
-                        {segment.techStops !== 0 &&
+                        {!!segment.techStops &&
                           <div className="departure-segment-item">
                             <div>Tech stops:</div>
                             <div>{segment.techStops}</div>
                           </div>}
-                        {segment.waitTime &&
+                        {!!segment.waitTime &&
                           <div className="departure-segment-item stop-over-wrapper">
                             <div>Stop-over time:</div>
                             <div>{this.convertMinutesToTime(segment.waitTime)}</div>
@@ -317,12 +317,12 @@ class AirTicketsDetailsInfoSection extends Component {
                             <div>Duration:</div>
                             <div>{this.convertMinutesToTime(segment.flightTime)}</div>
                           </div>
-                          {segment.techStops !== 0 &&
+                          {!!segment.techStops &&
                             <div className="departure-segment-item">
                               <div>Tech stops:</div>
                               <div>{segment.techStops}</div>
                             </div>}
-                          {segment.waitTime &&
+                          {!!segment.waitTime &&
                             <div className="departure-segment-item stop-over-wrapper">
                               <div>Stop-over time:</div>
                               <div>{this.convertMinutesToTime(segment.waitTime)}</div>

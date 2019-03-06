@@ -14,7 +14,6 @@ function AirTicketsResultsHolder(props) {
   if (props.results.length === 0) {
     return <NoEntriesMessage text='No Results' />;
   }
-
   const results = props.results.map((result) => {
     return <AirTicketsSearchResult
       key={result.id}

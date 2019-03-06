@@ -74,7 +74,6 @@ class AirTicketsSearchPage extends Component {
     this.unsubscribeFilters();
     this.disconnectSearch();
     this.disconnectFilters();
-    this.clearIntervals();
   }
 
   initAirTicketsSearchPage() {
@@ -92,7 +91,6 @@ class AirTicketsSearchPage extends Component {
 
     this.unsubscribeSearch();
     this.unsubscribeFilters();
-    this.clearIntervals();
 
     this.queueId = null;
     this.filtersQueueId = null;
@@ -105,9 +103,6 @@ class AirTicketsSearchPage extends Component {
     this.results = {};
     this.totalElements = 0;
 
-    this.flightsResultsIntervalSearch = null;
-    this.flightsResultsIntervalFilters = null;
-
     this.initUUIDs();
     this.populateSearchBar();
     this.requestFlightsSearch();
@@ -115,8 +110,8 @@ class AirTicketsSearchPage extends Component {
     window.addEventListener('resize', this.updateWindowWidth);
   }
 
-  initUUIDs() {
-    if (!localStorage.getItem('tickets-uuid')) {
+  initUUIDs(forceUUIDUpdate) {
+    if (!localStorage.getItem('tickets-uuid') || forceUUIDUpdate === true) {
       localStorage.setItem('tickets-uuid', `${uuid()}`);
     }
     const ticketsUUID = localStorage.getItem('tickets-uuid');
@@ -129,10 +124,13 @@ class AirTicketsSearchPage extends Component {
   }
 
   requestFlightsSearch() {
+    localStorage.setItem('search_uuid', this.queueId);
     fetch(`${Config.getValue('apiHost')}flight/search${this.props.location.search}&uuid=${this.queueId}`)
       .then(res => {
         if (res.ok) {
           this.connectSocketSearch();
+        } else {
+          this.disconnectSearch();
         }
       })
       .catch(res => {
@@ -141,139 +139,146 @@ class AirTicketsSearchPage extends Component {
   }
 
   requestFilters() {
-    setTimeout(e => {
-      fetch(`${Config.getValue('apiHost')}flight/search/filter/data?searchId=${this.searchId}`)
-        .then(res => {
-          if (res.ok) {
-            res.json().then((data) => {
-              this.setState({
-                filters: data,
-                allElements: true
-              });
+    fetch(`${Config.getValue('apiHost')}flight/search/filter/data?searchId=${this.searchId}`)
+      .then(res => {
+        if (res.ok) {
+          res.json().then((data) => {
+            this.setState({
+              filters: data,
+              allElements: true
             });
-          }
-        })
-        .catch(res => {
-          console.log(res);
-        });
-    }, 2000);
+          });
+        }
+      })
+      .catch(res => {
+        console.log(res);
+        throw new Error(res.message);
+      });
   }
 
   applyFilters(filtersObject) {
+    const items = {};
+    const results = this.results;
     const filters = {
-      airlines: filtersObject.airlines.map(a => a.airlineId) || [],
+      airlines: filtersObject.airlines.map(a => a.airlineName) || [],
       stops: filtersObject.stops.map(a => a.changesId) || [],
       minPrice: filtersObject.priceRange && filtersObject.priceRange.min,
       maxPrice: filtersObject.priceRange && filtersObject.priceRange.max,
-      minWaitTime: filtersObject.waitingTimeRange && filtersObject.waitingTimeRange[0],
-      maxWaitTime: filtersObject.waitingTimeRange && filtersObject.waitingTimeRange[1],
+      minWaitTime: filtersObject.waitingTimeRange && filtersObject.waitingTimeRange.min,
+      maxWaitTime: filtersObject.waitingTimeRange && filtersObject.waitingTimeRange.max,
       airportsArrival: filtersObject.airportsArrival.map(a => a.airportId) || [],
       airportsTransfer: filtersObject.airportsTransfer.map(a => a.airportId) || [],
       departureTime: filtersObject.departure || [],
       arrivalTime: filtersObject.arrival || [],
-      journeyTime: filtersObject.transfer || [],
-      searchId: this.searchId,
-      uuid: this.filtersQueueId
+      journeyTime: filtersObject.transfer || []
     };
 
-    let results = this.results;
-    let items = {};
+    const arrivalStartTime = moment(filters.arrivalTime.start, 'HH:mm');
+    const arrivalEndTime = moment(filters.arrivalTime.end, 'HH:mm');
+    const departureStartTime = moment(filters.departureTime.start, 'HH:mm');
+    const departureEndTime = moment(filters.departureTime.end, 'HH:mm');
+    const journeyStartTime = moment(filters.journeyTime.start, 'HH:mm');
+    const journeyEndTime = moment(filters.journeyTime.end, 'HH:mm');
 
-    for (var k in results) {
-      let item = results[k];
-      let segments = item.segments;
-      let itemExists = items.hasOwnProperty(k);
-      let segmentLength = segments.length;
-
-      filters.stops.forEach(stop => {
-        if (!itemExists) {
-          let stopsCount = (parseInt(stop, 10) + 1) * 2;
-          if (segmentLength === stopsCount || (stopsCount === 4 && segmentLength >= stopsCount)) {
-            items[k] = item;
-          }
+    for (const i in results) {
+      const item = results[i];
+      const segments = item.segments;
+      const segmentsArrLength = segments.length - 1;
+      const isDirect = segments.length === 2 && filters.stops.indexOf(stopIds.D) !== -1;
+      const isOneStop = segments.length === 4  && filters.stops.indexOf(stopIds.O) !== -1;
+      const isMultiStop = segments.length > 4  && filters.stops.indexOf(stopIds.M) !== -1;
+      const origin = segments[0].origin;
+      const destination = segments[segments.length - 1].destination;
+      const flightJourneyTime = departureStartTime.add(item.journeyTime).format('HH:mm');
+      const originTime = moment(origin.time, 'HH:mm');
+      const destinationTime = moment(destination.time, 'HH:mm');
+      const waitTimeTotal = segments.map(segment => {
+        if (segment.waitTime !== null) {
+          return segment.waitTime;
         }
+        return;
       });
 
-      if (!itemExists && filters.minPrice >= item.price.total && item.price.total <= filters.maxPrice) {
-        items[k] = item;
+      const arrivalAirports = segments.map(segment => {
+        return segment.destination.code;
+      });
+
+      const transferAirports = segments.map((segment, index) => {
+        if (index !== 0 && index !== segmentsArrLength) {
+          return segment.origin.code + ',' + segment.destination.code;
+        }
+        return;
+      });
+
+      if (filters.airlines.length) {
+        if (filters.airlines.indexOf(origin.carrier.name) || filters.airlines.indexOf(destination.carrier.name)) {
+          items[i] = item;
+        }
       }
 
-      // for (let i in segments) {
-      //   itemExists = items.hasOwnProperty(k);
-      //   let segment = segments[i];
+      if (filters.stops.length) {
+        if (isDirect) {
+          items[i] = item;
+        }
 
-      //   if (!itemExists) {
-      //     let itemDepartureTime =  moment(segment.destination.time, 'HH:mm');
-      //     let itemArrivalTime = moment(segment.origin.time, 'HH:mm');
-      //     let itemJourneyTime = moment(segment.destination.date + ' ' + segment.destination.time).add(segment.journeyTime, 'minutes').format('HH:mm');
+        if (isOneStop) {
+          items[i] = item;
+        }
 
-      //     if (filters.airlines.length && filters.airlines.indexOf(segment.carrier.name) !== -1) {
-      //       items[k] = item;
-      //     }
+        if (isMultiStop) {
+          items[i] = item;
+        }
+      }
 
-      //     if (filters.minWaitTime >= segment.waitTime && segment.waitTime <= filters.maxWaitTime) {
-      //       items[k] = item;
-      //     }
+      if (departureStartTime.isSameOrBefore(originTime) && departureEndTime.isSameOrAfter(originTime)) {
+        items[i] = item;
+      }
 
+      if (arrivalStartTime.isSameOrBefore(destinationTime) && arrivalEndTime.isSameOrAfter(destinationTime)) {
+        items[i] = item;
+      }
 
-      //     if (filters.airportsArrival.length) {
-      //       filters.airportsArrival.some(arrivalAirport => {
-      //         if (arrivalAirport === segment.destination.code) {
-      //           items[k] = item;
-      //         }
-      //         return;
-      //       });
-      //     }
+      if (journeyStartTime.isSameOrBefore(flightJourneyTime) && journeyEndTime.isSameOrAfter(flightJourneyTime)) {
+        items[i] = item;
+      }
 
-      //     if (filters.airportsTransfer.length) {
-      //       filters.airportsTransfer.split(',').some(transferAirport => {
+      if (filters.minPrice >= item.price.total && item.price.total <= filters.maxPrice) {
+        items[i] = item;
+      }
 
-      //         return;
-      //       });
-      //     }
+      if (waitTimeTotal.indexOf(filters.minWaitTime) !== -1 || waitTimeTotal.indexOf(filters.maxWaitTime)) {
+        items[i] = item;
+      }
 
-      //     if (filters.departureTime.length) {
-      //       let filtersDTStart = moment(filters.departureTime.start, 'HH:mm');
-      //       let filtersDTEnd = moment(filters.departureTime.end, 'HH:mm');
+      if (filters.airportsArrival.length) {
+        for (const k in arrivalAirports) {
+          const arrival = arrivalAirports[k];
 
-      //       if (filtersDTStart.isSameOrAfter(itemDepartureTime) || filtersDTEnd.isSameOrBefore(itemDepartureTime)) {
-      //         items[k] = item;
-      //       }
-      //     }
+          if (filters.airportsArrival.indexOf(arrival)) {
+            items[i] = item;
+          }
+        }
+      }
 
-      //     if (filters.arrivalTime.length) {
-      //       let filtersDTStart = moment(filters.arrivalTime.start, 'HH:mm');
-      //       let filtersDTEnd = moment(filters.arrivalTime.end, 'HH:mm');
+      if (filters.airportsTransfer.length) {
+        for (const k in transferAirports) {
+          const transfer = transferAirports[k];
 
-      //       if (filtersDTStart.isSameOrAfter(itemArrivalTime) || filtersDTEnd.isSameOrBefore(itemArrivalTime)) {
-      //         items[k] = item;
-      //       }
-      //     }
-
-      //     if (filters.journeyTime.length) {
-      //       let filtersDTStart = moment(filters.journeyTime.start, 'HH:mm');
-      //       let filtersDTEnd = moment(filters.journeyTime.end, 'HH:mm');
-
-      //       if (filtersDTStart.isSameOrAfter(itemJourneyTime) || filtersDTEnd.isSameOrBefore(itemJourneyTime)) {
-      //         items[k] = item;
-      //       }
-      //     }
-      //   }
-      // }
-    }
-
-    if (!Object.values(items).length) {
-      items = results;
+          if (filters.airportsTransfer.indexOf(transfer)) {
+            items[i] = item;
+          }
+        }
+      }
     }
 
     this.setState({
+      loading: false,
       allElements: true,
-      allResults: items,
+      allResults: _.isEmpty(items) ? this.results : items,
       currentPageResults: Object.values(items).slice(0, 10),
       totalElements: Object.values(items).length,
+      page: 0,
     });
-
-    this.forceUpdate();
   }
 
   updateWindowWidth() {
@@ -375,9 +380,21 @@ class AirTicketsSearchPage extends Component {
     const currentPage = page - 1;
     const startResultsIndex = currentPage * 10;
     const endResultsIndex = startResultsIndex + 10;
+    let items = this.results;
+
+    if (allElements) {
+      if (Array.isArray(allElements)) {
+        items = allResults.slice(startResultsIndex, endResultsIndex)
+      } else {
+        items = Object.values(allElements).slice(startResultsIndex, endResultsIndex)
+      }
+    } else {
+      items = Object.values(items).slice(startResultsIndex, endResultsIndex)
+    }
+
     this.setState({
       page: currentPage,
-      currentPageResults: allElements ? allResults.slice(startResultsIndex, endResultsIndex) : Object.values(this.results).slice(startResultsIndex, endResultsIndex)
+      currentPageResults: items
     });
 
     window.scrollTo(0, 0);
@@ -389,10 +406,6 @@ class AirTicketsSearchPage extends Component {
   }
 
   connectSocketSearch() {
-    this.flightsResultsIntervalSearch = setInterval(() => {
-      console.log('');
-    }, 1000);
-
     const url = Config.getValue('socketHost');
     this.clientSearch = Stomp.client(url);
 
@@ -400,14 +413,22 @@ class AirTicketsSearchPage extends Component {
       this.clientSearch.debug = () => { };
     }
 
-    this.clientSearch.connect(null, null, this.subscribeSearch);
+    this.clientSearch.connect(null, null, this.subscribeSearch, () => {
+      this.setState({
+        currentPageResults: '',
+        allElements: true,
+        allResults: {},
+        loading: false,
+        totalElements: 0,
+        page: 0,
+        filters: null,
+        windowWidth: 0,
+        showFiltersMobile: false
+      });
+    });
   }
 
   connectSocketFilters() {
-    this.flightsResultsIntervalFilters = setInterval(() => {
-      console.log('');
-    }, 1000);
-
     const url = Config.getValue('socketHost');
     this.clientFilters = Stomp.client(url);
 
@@ -440,13 +461,6 @@ class AirTicketsSearchPage extends Component {
     };
 
     client.send(sendDestination, headers, msg);
-
-
-    setTimeout(() => {
-      this.requestFilters();
-      this.unsubscribeSearch();
-    }, 30000);
-
   }
 
   subscribeFilters() {
@@ -499,25 +513,19 @@ class AirTicketsSearchPage extends Component {
     }
   }
 
-  clearIntervals() {
-    clearInterval(this.flightsResultsIntervalSearch);
-    clearInterval(this.flightsResultsIntervalFilters);
-  }
-
   handleReceiveMessageSearch(message) {
     const messageBody = JSON.parse(message.body);
-    // console.log(messageBody);
+
     if (messageBody.allElements) {
       let allResults = Object.values(this.results);
       allResults = allResults.sort((r1, r2) => r1.price.total - r2.price.total);
       this.setState({ allElements: messageBody.allElements, allResults, currentPageResults: allResults.slice(0, 10), loading: false, totalElements: this.totalElements });
-      this.results = {};
+      // this.results = {};
       this.totalElements = 0;
       this.unsubscribeFilters();
-      this.clearIntervals();
+      this.requestFilters();
     } else if (messageBody.success === false || messageBody.errorMessage) {
       this.setState({ loading: false });
-      this.clearIntervals();
       NotificationManager.warning(messageBody.message || messageBody.errorMessage, '', LONG);
     } else if (messageBody.id) {
       if (!this.searchId) {
@@ -537,19 +545,17 @@ class AirTicketsSearchPage extends Component {
 
   handleReceiveMessageFilters(message) {
     const messageBody = JSON.parse(message.body);
-    // console.log(messageBody);
+
     if (messageBody.allElements) {
       let allResults = Object.values(this.results);
       allResults = allResults.sort((r1, r2) => r1.price.total - r2.price.total);
       this.setState({ allElements: messageBody.allElements, allResults, currentPageResults: allResults.slice(0, 10), loading: false, totalElements: this.totalElements });
-      this.results = {};
+      //this.results = {};
       this.totalElements = 0;
       this.unsubscribeSearch();
       this.unsubscribeFilters();
-      this.clearIntervals();
     } else if (messageBody.success === false || messageBody.errorMessage) {
       this.setState({ loading: false, allElements: true });
-      this.clearIntervals();
       NotificationManager.warning(messageBody.message || messageBody.errorMessage, '', LONG);
     } else if (messageBody.id) {
       if (!this.searchId) {
@@ -572,9 +578,9 @@ class AirTicketsSearchPage extends Component {
     this.unsubscribeFilters();
     this.disconnectSearch();
     this.disconnectFilters();
-    this.clearIntervals();
 
     this.props.history.push('/tickets/results' + queryString);
+    this.initUUIDs(true);
 
     this.setState({
       allResults: '',

@@ -82,7 +82,7 @@ class AirTicketsBookingConfirmPage extends Component {
           res.json().then((data) => {
             if (data.success) {
               NotificationManager.success(data.documentStatus, '', LONG);
-              this.props.history.push('/profile/tickets');
+              this.props.history.push('/profile/flights');
             } else {
               NotificationManager.warning(data.message, '', LONG);
             }
@@ -512,7 +512,7 @@ class AirTicketsBookingConfirmPage extends Component {
                         ? <button className="button" onClick={this.handlePayWithLOC}>Pay with LOC Tokens</button>
                         : <button className="button" onClick={(e) => this.openModal(CREATE_WALLET, e)}>Create Wallet</button>
                     } */}
-                    <p>You can pay <Link to="/profile/tickets">later</Link>, until {flightProperties.properties.deadline}.</p>
+                    <p>You can pay <Link to="/profile/flights">later</Link>, until {flightProperties.properties.deadline}.</p>
                   </div>
                   <div className="logos">
                     <div className="logo loc">
