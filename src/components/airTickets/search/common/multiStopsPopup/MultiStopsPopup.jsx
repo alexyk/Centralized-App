@@ -95,7 +95,6 @@ class MultiStopsPopup extends PureComponent {
     }
 
     this.state = {
-      showPassengersPopup: false,
       destinations
     };
 

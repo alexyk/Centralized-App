@@ -5,7 +5,7 @@ import { components } from 'react-select';
 import AsyncSelect from 'react-select/lib/Async';
 import PropTypes from 'prop-types';
 import { setFlightRouting, setOrigin, setDestination, setFlexSearch, setStops } from '../../../actions/airTicketsSearchInfo';
-import { selectOrigin, selectDestination, selectFlightRouting, selectFlightClass, selectStops, selectDepartureTime, selectFlexSearch, selectChildren, selectAdultsCount } from '../../../selectors/airTicketsSearchSelector';
+import { selectOrigin, selectDestination, selectFlightRouting, selectMultiStopsDestinations, selectFlightClass, selectStops, selectDepartureTime, selectFlexSearch, selectChildren, selectAdultsCount } from '../../../selectors/airTicketsSearchSelector';
 import AirTicketsDatepickerWrapper from './AirTicketsDatepickerWrapper';
 import { Config } from '../../../config';
 import PassengersPopup from './common/passengersPopup';
@@ -125,8 +125,7 @@ class AirTicketsSearchBar extends Component {
 
   getDestinations() {
     const { origin, destination, flightRouting, multiStopsDestinations, startDate, endDate } = this.props;
-
-    let destinations;
+    let destinations = [];
 
     if (flightRouting === '1') {
       destinations = [
@@ -138,10 +137,6 @@ class AirTicketsSearchBar extends Component {
         { origin: destination.code, destination: origin.code, date: endDate.format('DD/MM/YYYY') }
       ];
     } else if (flightRouting === '3') {
-      destinations = [
-        { origin: origin.code, destination: destination.code, date: startDate.format('DD/MM/YYYY') }
-      ];
-
       multiStopsDestinations.forEach((destination) => {
         destinations.push({
           origin: destination.origin.code, destination: destination.destination.code, date: destination.date.format('DD/MM/YYYY')
@@ -175,9 +170,11 @@ class AirTicketsSearchBar extends Component {
       e.preventDefault();
     }
 
-    if (!this.props.origin) {
+    const hasMultiStops = this.props.multiStopsDestinations !== undefined && this.props.multiStopsDestinations.length;
+
+    if (!hasMultiStops && !this.props.origin) {
       NotificationManager.error(MISSING_ORIGIN);
-    } else if (!this.props.destination) {
+    } else if (!hasMultiStops && !this.props.destination) {
       NotificationManager.error(MISSING_DESTINATION);
     } else {
       this.props.search(this.getQueryString(), e);
@@ -200,12 +197,16 @@ class AirTicketsSearchBar extends Component {
     this.setState({
       showMultiStopsPopup: true
     });
+
+    return this.state.showMultiStopsPopup;
   }
 
   closeMultiStopsPopup() {
     this.setState({
       showMultiStopsPopup: false
     });
+
+    return this.state.showMultiStopsPopup;
   }
 
   mapFlightClassByValue(flightClass) {
@@ -412,6 +413,7 @@ function mapStateToProps(state) {
     origin: selectOrigin(airTicketsSearchInfo),
     destination: selectDestination(airTicketsSearchInfo),
     flightRouting: selectFlightRouting(airTicketsSearchInfo),
+    multiStopsDestinations: selectMultiStopsDestinations(airTicketsSearchInfo),
     flightClass: selectFlightClass(airTicketsSearchInfo),
     stops: selectStops(airTicketsSearchInfo),
     departureTime: selectDepartureTime(airTicketsSearchInfo),

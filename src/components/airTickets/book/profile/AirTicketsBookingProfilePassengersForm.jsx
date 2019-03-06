@@ -28,7 +28,8 @@ class AirTicketsBookingProfilePassengersForm extends Component {
     super(props);
 
     this.state = {
-      currentPassengerIndex: 0
+      currentPassengerIndex: 0,
+      sendRequest: false
     };
 
     this.onChange = this.onChange.bind(this);
@@ -106,7 +107,10 @@ class AirTicketsBookingProfilePassengersForm extends Component {
 
   prepareFlightReservation() {
     if (this.validatePassengersInfo()) {
-      this.props.initBooking('loc', this.props.enableNextSection('pay'));
+      this.setState({
+        sendRequest: true
+      });
+      this.props.initBooking('loc', this.props.enableNextSection);
     }
   }
 
@@ -320,7 +324,7 @@ class AirTicketsBookingProfilePassengersForm extends Component {
               <i className="fa fa-long-arrow-left" aria-hidden="true"></i>
               &nbsp;Back</NavLink>
             <div className="button-wrapper">
-              <button type="submit" className="button">Next</button>
+              <button type="submit" className="button">{this.state.sendRequest ? 'Processing...' : 'Next'}</button>
             </div>
           </div>
         </form>

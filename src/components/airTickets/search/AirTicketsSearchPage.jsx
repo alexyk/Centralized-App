@@ -139,7 +139,6 @@ class AirTicketsSearchPage extends Component {
   }
 
   requestFilters() {
-    console.log('request filters...');
     fetch(`${Config.getValue('apiHost')}flight/search/filter/data?searchId=${this.searchId}`)
       .then(res => {
         if (res.ok) {
@@ -340,9 +339,9 @@ class AirTicketsSearchPage extends Component {
       const departureDate = moment(destinations[0].date, 'DD/MM/YYYY');
       let returnDate = moment(departureDate, 'DD/MM/YYYY');
       if (flightRouting === '2') {
-        returnDate = moment(destinations[1].date, 'DD/MM/YYYY');
+        returnDate = moment(destinations[0].date, 'DD/MM/YYYY');
       } else if (flightRouting === '3') {
-        returnDate = moment(destinations[1].date, 'DD/MM/YYYY');
+        returnDate = moment(destinations[0].date, 'DD/MM/YYYY');
         destinations.shift();
       }
       destinations.forEach((destination) => {
@@ -381,9 +380,21 @@ class AirTicketsSearchPage extends Component {
     const currentPage = page - 1;
     const startResultsIndex = currentPage * 10;
     const endResultsIndex = startResultsIndex + 10;
+    let items = this.results;
+
+    if (allElements) {
+      if (Array.isArray(allElements)) {
+        items = allResults.slice(startResultsIndex, endResultsIndex)
+      } else {
+        items = Object.values(allElements).slice(startResultsIndex, endResultsIndex)
+      }
+    } else {
+      items = Object.values(items).slice(startResultsIndex, endResultsIndex)
+    }
+
     this.setState({
       page: currentPage,
-      currentPageResults: allElements ? allResults.slice(startResultsIndex, endResultsIndex) : Object.values(this.results).slice(startResultsIndex, endResultsIndex)
+      currentPageResults: items
     });
 
     window.scrollTo(0, 0);

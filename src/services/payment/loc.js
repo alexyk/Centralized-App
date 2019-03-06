@@ -52,7 +52,7 @@ export function sendTokens(password, recipientAddress, locAmount, flightReservat
           body: JSON.stringify(data)
         }).then (res => {
           res.body.then(data => {
-
+            console.log(data);
           })
         })
     }).catch(error => {

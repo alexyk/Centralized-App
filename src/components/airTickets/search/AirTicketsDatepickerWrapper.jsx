@@ -41,10 +41,8 @@ class AirTicketsDatepickerWrapper extends Component {
         />
 
         {flightRouting === '3' &&
-          <div className="open-multi-city-popup-holder">
-            <span className="icon-plus" onClick={this.props.openMultiStopsPopup}></span>
-          </div>}
-          <MultiStopsPopup showMultiStopsPopup={flightRouting === '3'} closeMultiStopsPopup={this.props.closeMultiStopsPopup} />
+          <MultiStopsPopup showMultiStopsPopup={this.props.openMultiStopsPopup()} closeMultiStopsPopup={this.props.closeMultiStopsPopup} />
+        }
       </div>
     );
   }

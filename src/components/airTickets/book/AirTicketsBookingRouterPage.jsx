@@ -187,7 +187,7 @@ class AirTicketsBookingRouterPage extends Component {
             res.json().then((data) => {
               if (data.status) {
                 if (callback) {
-                  callback();
+                  callback('pay');
                 } else {
                   return true;
                 }
@@ -220,8 +220,7 @@ class AirTicketsBookingRouterPage extends Component {
       })
         .then((res) => {
           res.json().then((data) => {
-            resolve(data);
-            return <Redirect to={data.url} />
+              window.open(data.url, '_blank');
           }).catch(err => {
             reject(err);
           });
@@ -438,7 +437,10 @@ class AirTicketsBookingRouterPage extends Component {
     }
 
     //prepare object for json request
-    contactInfo.country = contactInfo.country.code;
+    if (contactInfo.country) {
+      contactInfo.country = contactInfo.country.code;
+    }
+
     const initBooking = {
       uuid: localStorage.getItem('search_uuid'),
       flightId: this.props.match.params.id,
