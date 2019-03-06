@@ -339,9 +339,9 @@ class AirTicketsSearchPage extends Component {
       const departureDate = moment(destinations[0].date, 'DD/MM/YYYY');
       let returnDate = moment(departureDate, 'DD/MM/YYYY');
       if (flightRouting === '2') {
-        returnDate = moment(destinations[0].date, 'DD/MM/YYYY');
+        returnDate = moment(destinations[1].date, 'DD/MM/YYYY');
       } else if (flightRouting === '3') {
-        returnDate = moment(destinations[0].date, 'DD/MM/YYYY');
+        returnDate = moment(destinations[1].date, 'DD/MM/YYYY');
         destinations.shift();
       }
       destinations.forEach((destination) => {

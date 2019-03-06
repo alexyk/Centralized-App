@@ -10,6 +10,9 @@ class AirTicketsPaymentPage extends Component {
     this.state = {
       showModal: false
     };
+
+    this.closeModal = this.closeModal.bind(this);
+    this.handleLOCPayment = this.handleLOCPayment.bind(this);
   }
 
   handleLOCPayment() {
@@ -22,6 +25,12 @@ class AirTicketsPaymentPage extends Component {
     this.props.initBooking();
   }
 
+  closeModal() {
+    this.setState({
+      showModal: false
+    });
+  }
+
   render() {
     const { result } = this.props;
 
@@ -31,6 +40,7 @@ class AirTicketsPaymentPage extends Component {
           flightReservationId={this.props.result.flightReservationId}
           showModal={this.state.showModal}
           result={this.props.result}
+          closeModal={this.closeModal}
         />
         <div className="pay-with-loc-wrapper" >
           <div className="price-wrapper">

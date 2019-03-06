@@ -28,11 +28,8 @@ class HotelTripsPage extends React.Component {
       currentTripId: null,
       bookingPrepareId: 0,
       password: '',
-<<<<<<< HEAD
-      cancellationText: ''
-=======
+      cancellationText: '',
       count: 0
->>>>>>> 17e0455c4e93414d3ff553b899f0236d56a4284e
     };
 
     this.onPageChange = this.onPageChange.bind(this);
@@ -88,14 +85,6 @@ class HotelTripsPage extends React.Component {
     this.props.dispatch(closeModal(modal));
   }
 
-<<<<<<< HEAD
-  handleCancelTrip() {
-    console.log("CANCEL");
-    requester.cancelBooking({ bookingId: this.state.bookingPrepareId })
-      .then(res => res.body)
-      .then(data => {
-        console.log(data);
-=======
   handleCancelTrip(bookingId) {
     requester.cancelBooking({ bookingId: bookingId || this.state.bookingPrepareId })
       //.then(res => res.body)
@@ -103,7 +92,6 @@ class HotelTripsPage extends React.Component {
       .then(res => {
         /*
         var data = res.body;
->>>>>>> 17e0455c4e93414d3ff553b899f0236d56a4284e
         if (data.isCancellationRequested) {
           NotificationManager.info(RESERVATION_CANCELLED, '', LONG);
         } else {
@@ -167,11 +155,7 @@ class HotelTripsPage extends React.Component {
               trips={this.state.trips}
               currentTripId={this.state.currentTripId}
               onTripSelect={this.onTripSelect}
-<<<<<<< HEAD
-              handleCancelReservation={() => this.openModal(CANCEL_TRIP_MODAL)}
-=======
               handleCancelReservation={this.handleCancelTrip}
->>>>>>> 17e0455c4e93414d3ff553b899f0236d56a4284e
               loading={this.state.loading}
             />
 

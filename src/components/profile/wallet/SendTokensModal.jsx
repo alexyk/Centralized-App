@@ -11,18 +11,11 @@ class SendTokensModal extends Component {
       recipientAddress: '0xa99c523BfC2E1374ac528FE39e4dD7c35F6C1d46',
       password: '',
       locAmount: 0,
-      showModal: false
+      showModal: this.props.showModal
     }
 
     this.onChange = this.onChange.bind(this);
-    this.closeModal = this.closeModal.bind(this);
     this.sendTokens = this.sendTokens.bind(this);
-  }
-
-  closeModal() {
-    this.setState({
-      showModal: !this.state.showModal
-    });
   }
 
   onChange(e) {
@@ -38,6 +31,7 @@ class SendTokensModal extends Component {
   render() {
     const { result } = this.props;
     const price = result && result.price.locPrice ? result.price.locPrice.toFixed(2) : '';
+
     return (
       <Fragment>
         <Modal
@@ -50,7 +44,7 @@ class SendTokensModal extends Component {
               <button
                 type="button"
                 className="close"
-                onClick={() => this.closeModal()}
+                onClick={() => this.props.closeModal()}
               >
                 &times;
               </button>
@@ -80,6 +74,7 @@ class SendTokensModal extends Component {
 SendTokensModal.props = {
   flightReservationId: PropTypes.string,
   showModal: PropTypes.bool,
-  result: PropTypes.object
+  result: PropTypes.object,
+  closeModal: PropTypes.func
 }
 export default SendTokensModal;
