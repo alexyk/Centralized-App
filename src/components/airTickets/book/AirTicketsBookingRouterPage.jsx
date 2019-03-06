@@ -201,7 +201,18 @@ class AirTicketsBookingRouterPage extends Component {
             NotificationManager.warning(ERROR_MESSAGES.TRY_AGAIN, 'Warning', LONG);
           }
         }).catch(err => {
-          NotificationManager.warning(ERROR_MESSAGES.TRY_AGAIN, 'Warning', LONG);
+          const errors = err.errors;
+          let message = '';
+
+          if (errors.DifferentContactPersonException) {
+            message = errors.DifferentContactPersonException.message;
+          } else if (errors.FlightProviderUnavailableException) {
+            message = errors.FlightProviderUnavailableException.message;
+          } else {
+            message = err.message
+          }
+
+          NotificationManager.warning(message, 'Warning', LONG);
         });
     });
   }
@@ -225,7 +236,24 @@ class AirTicketsBookingRouterPage extends Component {
             reject(err);
           });
         }).catch(err => {
-          reject(err);
+          const errors = err.errors;
+          let message = '';
+
+          if (errors.NotActiveException) {
+            message = errors.NotActiveException.message;
+          } else if (errors.MissingFlightReservationException) {
+            message = errors.MissingFlightReservationException.message;
+          } else if (errors.MissingPassengerInfoException) {
+              message = errors.MissingPassengerInfoException.message;
+          } else if (errors.UserNotFoundException) {
+            message = errors.UserNotFoundException.message;
+          } else if (errors.FlightProviderUnavailableException) {
+            message = errors.FlightProviderUnavailableException.message;
+          } else {
+            message = err.message
+          }
+
+          NotificationManager.warning(message, 'Warning', LONG);
         });
     });
   }

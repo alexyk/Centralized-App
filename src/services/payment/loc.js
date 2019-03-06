@@ -51,10 +51,27 @@ export function sendTokens(password, recipientAddress, locAmount, flightReservat
           },
           body: JSON.stringify(data)
         }).then (res => {
-          res.body.then(data => {
-            console.log(data);
-          })
-        })
+
+        }).catch(err => {
+          const errors = err.errors;
+          let message = '';
+
+          if (errors.NotActiveException) {
+            message = errors.NotActiveException.message;
+          } else if (errors.MissingFlightReservationException) {
+            message = errors.MissingFlightReservationException.message;
+          } else if (errors.MissingPassengerInfoException) {
+              message = errors.MissingPassengerInfoException.message;
+          } else if (errors.UserNotFoundException) {
+            message = errors.UserNotFoundException.message;
+          } else if (errors.FlightProviderUnavailableException) {
+            message = errors.FlightProviderUnavailableException.message;
+          } else {
+            message = err.message
+          }
+
+          NotificationManager.warning(message, 'Warning', LONG);
+        });
     }).catch(error => {
       if (error.hasOwnProperty('message')) {
         NotificationManager.warning(error.message, 'Send Tokens', LONG);
