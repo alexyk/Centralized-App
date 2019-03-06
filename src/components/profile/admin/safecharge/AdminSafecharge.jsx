@@ -41,7 +41,6 @@ class AdminSafecharge extends Component {
         });
       } else {
         res.errors.then((err) => {
-          console.log(err);
         });
       }
     });

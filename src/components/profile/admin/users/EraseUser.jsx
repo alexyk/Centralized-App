@@ -51,7 +51,6 @@ class EraseUser extends React.Component {
       )
     )
       requester.eraseUserByEmail(this.state.userEmail).then(res => {
-        console.log("RES = " + JSON.stringify(res));
         if (res.success) {
           res.body.then(data => {
             if (data.success) {

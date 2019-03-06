@@ -254,8 +254,6 @@ class CreateListingPage extends React.Component<Props, State> {
       newBedrooms = newBedrooms.slice(0, value);
     }
 
-    // console.log(value + ' ' + event.target.value.split(' ')[1]);
-    // console.log(newBedrooms);
 
     this.setState({
       bedroomsCount: value + " " + event.target.value.split(" ")[1],
@@ -568,7 +566,6 @@ class CreateListingPage extends React.Component<Props, State> {
   }
 
   finish() {
-    console.log("finish");
     const { name, street, city, country, text, uploadedFilesUrls } = this.state;
     if (name.length < 2) {
       NotificationManager.warning(INVALID_TITLE, "", LONG);
@@ -589,7 +586,6 @@ class CreateListingPage extends React.Component<Props, State> {
       NotificationManager.warning(MISSING_PICTURE, "", LONG);
       this.props.history.push("/profile/listings/create/photos/");
     } else {
-      console.log("create");
       this.createListing();
     }
   }

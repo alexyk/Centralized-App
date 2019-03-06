@@ -47,7 +47,6 @@ class HotelTripDetails extends React.Component {
 
   componentDidMount() {
     const bookingId = this.props.match.params.id;
-    console.log(this.props.location.search);
     if (bookingId === "error_url") {
       this.setState({
         safeChargeMode: "error"

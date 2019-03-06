@@ -45,7 +45,6 @@ class AdminReservationsEditForm extends Component {
           });
         });
       } else {
-        console.log(res);
       }
     });
   }
@@ -74,7 +73,6 @@ class AdminReservationsEditForm extends Component {
             }
           });
         } else {
-          console.log(res);
         }
       });
   }

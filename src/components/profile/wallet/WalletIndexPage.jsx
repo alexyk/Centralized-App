@@ -104,7 +104,6 @@ class WalletIndexPage extends React.Component {
         } else if (typeof error === 'string') {
           NotificationManager.warning(error, 'Send Tokens', LONG);
         } else {
-          // console.log(error);
         }
 
         this.setState({ loading: false });

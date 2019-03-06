@@ -25,6 +25,7 @@ function HotelTripsTable(props) {
           <HotelTrip
             key={trip.id}
             trip={trip}
+            today={moment().format('DD/MM/YYYY')}
             tomorrow={moment().add(1, 'days').format('DD/MM/YYYY')}
             afterTomorrow={moment().add(2, 'days').format('DD/MM/YYYY')}
             styleClass="trips-flex-container"
