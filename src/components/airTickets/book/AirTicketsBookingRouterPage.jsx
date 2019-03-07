@@ -130,6 +130,8 @@ class AirTicketsBookingRouterPage extends Component {
               result: data
             });
           });
+        } else {
+          this.searchAirTickets(this.props.location.search);
         }
       }).catch(err => {
         NotificationManager.warning(err.message, '', LONG);
@@ -231,7 +233,11 @@ class AirTicketsBookingRouterPage extends Component {
       })
         .then((res) => {
           res.json().then((data) => {
+            if (data.success) {
               window.open(data.url, '_blank');
+            } else {
+              NotificationManager.warning(data.message, 'Warning', LONG);
+            }
           }).catch(err => {
             reject(err);
           });

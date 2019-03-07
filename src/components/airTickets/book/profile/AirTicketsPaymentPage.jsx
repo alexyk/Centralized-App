@@ -1,8 +1,11 @@
 import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import SendTokensModal from '../../../profile/wallet/SendTokensModal';
+import { ExchangerWebsocket } from '../../../../services/socket/exchangerWebsocket';
 
 import '../../../../styles/css/components/airTickets/book/payment/air-tickets-payment-page.css';
+
+const DEFAULT_QUOTE_LOC_ID = 'quote';
 
 class AirTicketsPaymentPage extends Component {
   constructor(props) {
@@ -13,6 +16,15 @@ class AirTicketsPaymentPage extends Component {
 
     this.closeModal = this.closeModal.bind(this);
     this.handleLOCPayment = this.handleLOCPayment.bind(this);
+    this.exchangerPrice = 0;
+  }
+
+  componentDidMount() {
+    this.exchangerPrice = ExchangerWebsocket.sendMessage(DEFAULT_QUOTE_LOC_ID, 'subscribe', this.props.result.price.total);
+
+    if (this.exchangerPrice.readyState) {
+      this.exchangerPrice.onmessage();
+    }
   }
 
   handleLOCPayment() {
