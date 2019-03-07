@@ -26,7 +26,7 @@ function tokensToWei(tokens) {
   return wei;
 }
 
-export function sendTokens(password, recipientAddress, locAmount, flightReservationId) {
+export function sendTokens(password, recipientAddress, locAmount, flightReservationId, callback) {
   const wei = (tokensToWei(locAmount.toString()));
 
   NotificationManager.info(PROCESSING_TRANSACTION, 'Transactions', LONG);
@@ -51,7 +51,9 @@ export function sendTokens(password, recipientAddress, locAmount, flightReservat
           },
           body: JSON.stringify(data)
         }).then (res => {
-
+          if (callback) {
+            callback();
+          }
         }).catch(err => {
           const errors = err.errors;
           let message = '';

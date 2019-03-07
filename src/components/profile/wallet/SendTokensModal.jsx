@@ -25,7 +25,7 @@ class SendTokensModal extends Component {
   }
 
   sendTokens() {
-    sendTokens(this.state.password, this.state.recipientAddress, this.state.locAmount, this.props.flightReservationId);
+    sendTokens(this.state.password, this.state.recipientAddress, this.state.locAmount, this.props.flightReservationId, this.props.closeModal);
   }
 
   render() {
@@ -52,7 +52,7 @@ class SendTokensModal extends Component {
             <Modal.Body>
                 <div className="name">
                   <label htmlFor="loc-amount">Send LOC Amount</label>
-                  <input id="loc-amount" name="locAmount" onChange={this.onChange} type="text" placeholder="0.000" value={price}/>
+                  <input id="loc-amount" name="locAmount" onChange={this.onChange} type="text" placeholder="0.000" value={price} readOnly />
                 </div>
                 <div className="name">
                   <label htmlFor="password">Your wallet password</label>
