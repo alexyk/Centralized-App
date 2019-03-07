@@ -33,7 +33,7 @@ export function sendTokens(password, recipientAddress, locAmount, flightReservat
 
   requester.getMyJsonFile().then(res => res.body).then(data => {
     const { jsonFile } = data;
-
+console.log(wei);
     TokenTransactions.signTransaction(
       jsonFile,
       password,
@@ -58,16 +58,18 @@ export function sendTokens(password, recipientAddress, locAmount, flightReservat
           const errors = err.errors;
           let message = '';
 
-          if (errors.NotActiveException) {
-            message = errors.NotActiveException.message;
-          } else if (errors.MissingFlightReservationException) {
-            message = errors.MissingFlightReservationException.message;
-          } else if (errors.MissingPassengerInfoException) {
-              message = errors.MissingPassengerInfoException.message;
-          } else if (errors.UserNotFoundException) {
-            message = errors.UserNotFoundException.message;
-          } else if (errors.FlightProviderUnavailableException) {
-            message = errors.FlightProviderUnavailableException.message;
+          if (errors) {
+            if (errors.hasOwnProperty('NotActiveException')) {
+              message = errors.NotActiveException.message;
+            } else if (errors.hasOwnProperty('MissingFlightReservationException')) {
+              message = errors.MissingFlightReservationException.message;
+            } else if (errors.hasOwnProperty('MissingPassengerInfoException')) {
+                message = errors.MissingPassengerInfoException.message;
+            } else if (errors.hasOwnProperty('UserNotFoundException')) {
+              message = errors.UserNotFoundException.message;
+            } else if (errors.hasOwnProperty('FlightProviderUnavailableException')) {
+              message = errors.FlightProviderUnavailableException.message;
+            }
           } else {
             message = err.message
           }

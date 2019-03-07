@@ -206,9 +206,9 @@ class AirTicketsBookingRouterPage extends Component {
           const errors = err.errors;
           let message = '';
 
-          if (errors.DifferentContactPersonException) {
+          if (errors.hasOwnProperty('DifferentContactPersonException')) {
             message = errors.DifferentContactPersonException.message;
-          } else if (errors.FlightProviderUnavailableException) {
+          } else if (errors.hasOwnProperty('FlightProviderUnavailableException')) {
             message = errors.FlightProviderUnavailableException.message;
           } else {
             message = err.message
@@ -221,7 +221,8 @@ class AirTicketsBookingRouterPage extends Component {
 
   requestPayWithCC(initBooking) {
     initBooking.backUrl = this.props.location.search;
-    initBooking.currency = 'USD';
+    initBooking.currency = localStorage.getItem('currency');
+
     return new Promise((resolve, reject) => {
       fetch(`${Config.getValue('apiHost')}payment/creditcard/flight`, {
         method: 'POST',
