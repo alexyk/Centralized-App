@@ -12,10 +12,16 @@ class SendTokensModal extends Component {
       password: '',
       locAmount: 0,
       showModal: this.props.showModal
-    }
+    };
 
     this.onChange = this.onChange.bind(this);
     this.sendTokens = this.sendTokens.bind(this);
+  }
+
+  componentDidMount() {
+    this.setState({
+      locAmount: this.props.result.price.locPrice
+    });
   }
 
   onChange(e) {
@@ -52,7 +58,7 @@ class SendTokensModal extends Component {
             <Modal.Body>
                 <div className="name">
                   <label htmlFor="loc-amount">Send LOC Amount</label>
-                  <input id="loc-amount" name="locAmount" onChange={this.onChange} type="text" placeholder="0.000" value={price} readOnly />
+                  <input id="loc-amount" name="locAmount" type="text" placeholder="0.000" value={price} readOnly />
                 </div>
                 <div className="name">
                   <label htmlFor="password">Your wallet password</label>

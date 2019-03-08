@@ -21,7 +21,7 @@ class AirTicketsPaymentPage extends Component {
 
   componentDidMount() {
     this.exchangerPrice = ExchangerWebsocket.sendMessage(DEFAULT_QUOTE_LOC_ID, 'subscribe', this.props.result.price.total);
-
+console.log(this.exchangerPrice);
     if (this.exchangerPrice.readyState) {
       this.exchangerPrice.onmessage();
     }

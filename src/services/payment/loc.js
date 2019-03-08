@@ -27,6 +27,7 @@ function tokensToWei(tokens) {
 }
 
 export function sendTokens(password, recipientAddress, locAmount, flightReservationId, callback) {
+  console.log(recipientAddress, locAmount);
   const wei = (tokensToWei(locAmount.toString()));
 
   NotificationManager.info(PROCESSING_TRANSACTION, 'Transactions', LONG);
@@ -58,16 +59,18 @@ export function sendTokens(password, recipientAddress, locAmount, flightReservat
           const errors = err.errors;
           let message = '';
 
-          if (errors.NotActiveException) {
-            message = errors.NotActiveException.message;
-          } else if (errors.MissingFlightReservationException) {
-            message = errors.MissingFlightReservationException.message;
-          } else if (errors.MissingPassengerInfoException) {
-              message = errors.MissingPassengerInfoException.message;
-          } else if (errors.UserNotFoundException) {
-            message = errors.UserNotFoundException.message;
-          } else if (errors.FlightProviderUnavailableException) {
-            message = errors.FlightProviderUnavailableException.message;
+          if (errors) {
+            if (errors.hasOwnProperty('NotActiveException')) {
+              message = errors.NotActiveException.message;
+            } else if (errors.hasOwnProperty('MissingFlightReservationException')) {
+              message = errors.MissingFlightReservationException.message;
+            } else if (errors.hasOwnProperty('MissingPassengerInfoException')) {
+                message = errors.MissingPassengerInfoException.message;
+            } else if (errors.hasOwnProperty('UserNotFoundException')) {
+              message = errors.UserNotFoundException.message;
+            } else if (errors.hasOwnProperty('FlightProviderUnavailableException')) {
+              message = errors.FlightProviderUnavailableException.message;
+            }
           } else {
             message = err.message
           }
