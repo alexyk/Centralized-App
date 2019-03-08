@@ -2,6 +2,8 @@ import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import SendTokensModal from '../../../profile/wallet/SendTokensModal';
 import { ExchangerWebsocket } from '../../../../services/socket/exchangerWebsocket';
+import {Config} from "../../../../config";
+import Stomp from "stompjs"
 
 import '../../../../styles/css/components/airTickets/book/payment/air-tickets-payment-page.css';
 
@@ -11,20 +13,46 @@ class AirTicketsPaymentPage extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      showModal: false
+      showModal: false,
+      locEurRate: null
     };
 
     this.closeModal = this.closeModal.bind(this);
     this.handleLOCPayment = this.handleLOCPayment.bind(this);
-    this.exchangerPrice = 0;
+    this.isSendMessage = false;
+    this.connectSocketForLocRate = this.connectSocketForLocRate.bind(this);
+    this.isPaymentEnabled = localStorage.getItem('passpayd') === true;
   }
 
   componentDidMount() {
-    this.exchangerPrice = ExchangerWebsocket.sendMessage(DEFAULT_QUOTE_LOC_ID, 'subscribe', this.props.result.price.total);
-console.log(this.exchangerPrice);
-    if (this.exchangerPrice.readyState) {
-      this.exchangerPrice.onmessage();
-    }
+    this.connectSocketForLocRate();
+  }
+
+  componentDidUpdate(prevProps) {
+    this.isSendMessage = true;
+    ExchangerWebsocket.sendMessage(prevProps.locRateFiatAmount, 'getLocPrice', { fiatAmount: prevProps.locRateFiatAmount })
+  }
+  connectSocketForLocRate(){
+    const topic = "queue";
+    const url = Config.getValue("socketHost");
+    let client = Stomp.client(url);
+    this.locRateClient = client;
+    const onSubscribe = ()=>client.subscribe(topic, (data)=>{
+      this.setState({
+        locEurRate: JSON.parse(data.body).eurPrice
+      })
+    });
+
+    client.connect(
+      null,
+      null,
+      onSubscribe
+    );
+  }
+
+  componentWillUnmount() {
+    ExchangerWebsocket.sendMessage(this.props.result.locPrice, 'unsubscribe');
+    this.locRateClient.disconnect()
   }
 
   handleLOCPayment() {
@@ -44,6 +72,7 @@ console.log(this.exchangerPrice);
   }
 
   render() {
+    console.log(this);
     const { result } = this.props;
 
     return (
@@ -65,7 +94,8 @@ console.log(this.exchangerPrice);
             id="pay_loc"
             type="button"
             className="button"
-            onClick={() => this.handleLOCPayment()}>Pay with LOC</button>
+            onClick={() => this.handleLOCPayment()}
+            disabled={this.isPaymentEnabled}>Pay with LOC</button>
         </div>
 
         <div className="pay-with-cc-wrapper">
@@ -79,7 +109,8 @@ console.log(this.exchangerPrice);
             id="pay_cc"
             type="button"
             className="button"
-            onClick={() => this.handleCCPayment()}>Pay with Credit/Debit card</button>
+            onClick={() => this.handleCCPayment()}
+            disabled={this.isPaymentEnabled}>Pay with Credit/Debit card</button>
         </div>
       </Fragment>
     );

@@ -72,6 +72,8 @@ class AirTicketsBookingRouterPage extends Component {
     this.populatePassengersInfo = this.populatePassengersInfo.bind(this);
     this.initBooking = this.initBooking.bind(this);
     this.getUserInfo = this.getUserInfo.bind(this);
+
+    localStorage.removeItem('passpayd');
   }
 
   componentDidMount() {
@@ -189,18 +191,22 @@ class AirTicketsBookingRouterPage extends Component {
             res.json().then((data) => {
               if (data.status) {
                 if (callback) {
+                  localStorage.setItem('passpayd', true);
                   callback('pay');
                 } else {
                   return true;
                 }
               } else {
                 NotificationManager.warning(data.message, 'Warning', LONG);
+                this.searchAirTickets(this.props.location.search);
               }
             }).catch(err => {
               NotificationManager.warning(ERROR_MESSAGES.TRY_AGAIN, 'Warning', LONG);
+              this.searchAirTickets(this.props.location.search);
             });
           } else {
             NotificationManager.warning(ERROR_MESSAGES.TRY_AGAIN, 'Warning', LONG);
+            this.searchAirTickets(this.props.location.search);
           }
         }).catch(err => {
           const errors = err.errors;
@@ -215,6 +221,7 @@ class AirTicketsBookingRouterPage extends Component {
           }
 
           NotificationManager.warning(message, 'Warning', LONG);
+          this.searchAirTickets(this.props.location.search);
         });
     });
   }
@@ -238,9 +245,10 @@ class AirTicketsBookingRouterPage extends Component {
               window.open(data.url, '_blank');
             } else {
               NotificationManager.warning(data.message, 'Warning', LONG);
+              this.searchAirTickets(this.props.location.search);
             }
           }).catch(err => {
-            reject(err);
+            this.searchAirTickets(this.props.location.search);
           });
         }).catch(err => {
           const errors = err.errors;
@@ -261,6 +269,7 @@ class AirTicketsBookingRouterPage extends Component {
           }
 
           NotificationManager.warning(message, 'Warning', LONG);
+          this.searchAirTickets(this.props.location.search);
         });
     });
   }
