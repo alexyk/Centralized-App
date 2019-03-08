@@ -13,7 +13,6 @@ const DEFAULT_QUOTE_LOC_ID = 'quote';
 const DEFAULT_QUOTE_LOC_PP_ID = DEFAULT_QUOTE_LOC_ID + PAYMENT_PROCESSOR_IDENTIFICATOR;
 
 const updateFEPrice = (data, result) => {
-  console.log(data);
   if(updateFEPrice) {
     let totalLocPrice = document.querySelector('.total-loc-price');
     let additionalFees = document.querySelector('.additional-fees');
@@ -28,8 +27,7 @@ class AirTicketsPaymentPage extends Component {
     super(props);
     this.state = {
       showModal: false,
-      locEurRate: null,
-      isConnectedForLocRage: false
+      locEurRate: null
     };
 
     this.closeModal = this.closeModal.bind(this);
@@ -38,15 +36,11 @@ class AirTicketsPaymentPage extends Component {
     this.connectSocketForLocRate = this.connectSocketForLocRate.bind(this);
     this.isPaymentEnabled = localStorage.getItem('passpayd') === true;
     this.locRateClient = null;
+    this.connectSocketForLocRate();
   }
 
   componentDidMount() {
-    if (!this.state.isConnectedForLocRage) {
-      this.connectSocketForLocRate();
-      this.setState({
-        isConnectedForLocRage: true
-      });
-    }
+    this.connectSocketForLocRate();
   }
 
   componentDidUpdate(prevProps) {
@@ -54,6 +48,7 @@ class AirTicketsPaymentPage extends Component {
     ExchangerWebsocket.sendMessage(DEFAULT_QUOTE_LOC_ID, 'quoteLoc', { bookingId: this.props.result.flightReservationId }, true);
     ExchangerWebsocket.sendMessage(DEFAULT_QUOTE_LOC_PP_ID, 'quoteLoc', { bookingId: this.props.result.flightReservationId + PAYMENT_PROCESSOR_IDENTIFICATOR }, true);
   }
+
   connectSocketForLocRate(){
     const topic = "queue";
     const url = Config.getValue("socketHost");
@@ -61,6 +56,7 @@ class AirTicketsPaymentPage extends Component {
 
     this.locRateClient = client;
     const onSubscribe = ()=>client.subscribe(topic, (data)=>{
+      console.log(data);
       this.setState({
         locEurRate: JSON.parse(data.body).eurPrice
       });
@@ -77,9 +73,6 @@ class AirTicketsPaymentPage extends Component {
   componentWillUnmount() {
     ExchangerWebsocket.sendMessage(this.props.result.locPrice, 'unsubscribe');
     this.locRateClient.disconnect();
-    this.setState({
-      isConnectedForLocRage: false
-    });
   }
 
   handleLOCPayment() {
