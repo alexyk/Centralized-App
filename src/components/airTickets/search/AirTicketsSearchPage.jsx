@@ -602,6 +602,7 @@ class AirTicketsSearchPage extends Component {
           <AirTicketsSearchBar search={this.searchAirTickets} />
         </div>
         <BookingSteps steps={['Search', 'Details', 'Prepare Booking', 'Confirm & Pay']} currentStepIndex={0} />
+        <h4 style={{ color: 'red', textAlign: 'center'}}>THIS IS AN ALPHA VERSION!</h4>
         <div className="container">
           <AsideContentPage>
             <AsideContentPage.Aside>

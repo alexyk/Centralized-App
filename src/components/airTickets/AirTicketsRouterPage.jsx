@@ -7,6 +7,10 @@ import AirTicketsBookingRouterPage from './book/AirTicketsBookingRouterPage';
 import { LONG } from '../../constants/notificationDisplayTimes';
 import { SEARCH_EXPIRED } from '../../constants/infoMessages';
 
+const textStyle = {
+  color: 'red',
+  textAlign: 'center'
+}
 class AirTicketsRouterPage extends Component {
   constructor(props) {
     super(props);
@@ -38,7 +42,7 @@ class AirTicketsRouterPage extends Component {
       }, 29 * 60000);
     }
   }
-  
+
   render() {
     return (
       <Fragment>
