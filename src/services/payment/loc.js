@@ -27,13 +27,14 @@ function tokensToWei(tokens) {
 }
 
 export function sendTokens(password, recipientAddress, locAmount, flightReservationId, callback) {
+  console.log(recipientAddress, locAmount);
   const wei = (tokensToWei(locAmount.toString()));
 
   NotificationManager.info(PROCESSING_TRANSACTION, 'Transactions', LONG);
 
   requester.getMyJsonFile().then(res => res.body).then(data => {
     const { jsonFile } = data;
-console.log(wei);
+
     TokenTransactions.signTransaction(
       jsonFile,
       password,
