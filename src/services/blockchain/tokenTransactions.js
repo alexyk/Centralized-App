@@ -57,13 +57,13 @@ export class TokenTransactions {
     let nonce = await getNonceNumber(wallet.address);
 
     let approveTxOptions = {
-      gasLimit: gasConfig.approve,
+      gasLimit: gasConfig.exchangeLocToEth,
       gasPrice: gasPrice,
       nonce: nonce
     };
 
     let createReservationTxOptions = {
-      gasLimit: gasConfig.hotelReservation.create,
+      gasLimit: gasConfig.exchangeLocToEth,
       gasPrice: gasPrice,
       nonce: nonce + 1
     }
