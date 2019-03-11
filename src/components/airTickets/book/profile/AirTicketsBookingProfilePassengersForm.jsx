@@ -304,9 +304,9 @@ class AirTicketsBookingProfilePassengersForm extends Component {
                               <div className="service-title">{SERVICES_TYPES_CODES[service.type]}</div>
                               <div className="select">
                                 <select name={service.id} value={selectedServiceValue} onChange={this.onChangeService}>
-                                  <option defaultValue="" disabled hidden></option>
+                                  <option defaultValue=""></option>
                                   {service.options.map((option, selectionIndex) => {
-                                    return <option key={selectionIndex} value={option.value} onChange={this.onChangeService}>{this.getSelectionNameByServiceType(SERVICES_TYPES_CODES[service.type], option)}</option>;
+                                    return <option key={selectionIndex} value={option.value}>{this.getSelectionNameByServiceType(SERVICES_TYPES_CODES[service.type], option)}</option>;
                                   })}
                                 </select>
                               </div>
