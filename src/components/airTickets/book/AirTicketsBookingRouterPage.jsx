@@ -244,7 +244,11 @@ class AirTicketsBookingRouterPage extends Component {
         .then((res) => {
           res.json().then((data) => {
             if (data.success) {
-              window.open(data.url, '_blank');
+              fetch(data.url, {
+                method: 'POST'
+              }).then(res => {
+                console.log(res)
+              });
             } else {
               NotificationManager.warning(data.message, 'Warning', LONG);
               this.searchAirTickets(this.props.location.search);
