@@ -212,10 +212,12 @@ class AirTicketsBookingRouterPage extends Component {
           const errors = err.errors;
           let message = '';
 
-          if (errors.hasOwnProperty('DifferentContactPersonException')) {
-            message = errors.DifferentContactPersonException.message;
-          } else if (errors.hasOwnProperty('FlightProviderUnavailableException')) {
-            message = errors.FlightProviderUnavailableException.message;
+          if (errors) {
+            if (errors.hasOwnProperty('DifferentContactPersonException')) {
+              message = errors.DifferentContactPersonException.message;
+            } else if (errors.hasOwnProperty('FlightProviderUnavailableException')) {
+              message = errors.FlightProviderUnavailableException.message;
+            }
           } else {
             message = err.message
           }
