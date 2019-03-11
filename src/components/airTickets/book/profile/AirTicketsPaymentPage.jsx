@@ -44,7 +44,8 @@ class AirTicketsPaymentPage extends Component {
   }
 
   componentDidMount() {
-
+    this.quoteResult = ExchangerWebsocket.sendMessage(DEFAULT_QUOTE_LOC_ID, 'quoteLoc', { bookingId: this.props.result.flightReservationId });
+    this.quotePPResult = ExchangerWebsocket.sendMessage(DEFAULT_QUOTE_LOC_PP_ID, 'quoteLoc', { bookingId: this.props.result.flightReservationId + PAYMENT_PROCESSOR_IDENTIFICATOR });
   }
 
   componentWillUnmount() {
