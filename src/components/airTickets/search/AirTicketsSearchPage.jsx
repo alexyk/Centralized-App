@@ -129,8 +129,6 @@ class AirTicketsSearchPage extends Component {
       .then(res => {
         if (res.ok) {
           this.connectSocketSearch();
-        } else {
-          this.disconnectSearch();
         }
       })
       .catch(res => {
@@ -519,8 +517,14 @@ class AirTicketsSearchPage extends Component {
     if (messageBody.allElements) {
       let allResults = Object.values(this.results);
       allResults = allResults.sort((r1, r2) => r1.price.total - r2.price.total);
-      this.setState({ allElements: messageBody.allElements, allResults, currentPageResults: allResults.slice(0, 10), loading: false, totalElements: this.totalElements });
-      // this.results = {};
+      this.setState({
+        allElements: messageBody.allElements,
+        allResults: allResults,
+        currentPageResults: allResults.slice(0, 10),
+        loading: false,
+        totalElements: this.totalElements
+      });
+      this.results = {};
       this.totalElements = 0;
       this.unsubscribeFilters();
       this.requestFilters();
