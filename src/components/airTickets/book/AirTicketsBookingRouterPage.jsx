@@ -243,12 +243,7 @@ class AirTicketsBookingRouterPage extends Component {
       })
         .then((res) => {
           res.json().then((data) => {
-            if (data.success) {
-              window.open(data.url, '_blank');
-            } else {
-              NotificationManager.warning(data.message, 'Warning', LONG);
-              this.searchAirTickets(this.props.location.search);
-            }
+            window.location = data.url;
           }).catch(err => {
             this.searchAirTickets(this.props.location.search);
           });

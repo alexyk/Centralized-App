@@ -5,6 +5,8 @@ import { ExchangerWebsocket } from '../../../../services/socket/exchangerWebsock
 import {Config} from "../../../../config";
 import Stomp from "stompjs"
 import { CurrencyConverter } from '../../../../services/utilities/currencyConverter';
+import { RoomsXMLCurrency } from '../../../../services/utilities/roomsXMLCurrency';
+import LocPrice from '../../../common/utility/LocPrice';
 
 import '../../../../styles/css/components/airTickets/book/payment/air-tickets-payment-page.css';
 
@@ -32,6 +34,7 @@ class AirTicketsPaymentPage extends Component {
 
     this.closeModal = this.closeModal.bind(this);
     this.handleLOCPayment = this.handleLOCPayment.bind(this);
+    this.convertPrice = this.convertPrice.bind(this);
     this.isSendMessage = false;
     this.connectSocketForLocRate = this.connectSocketForLocRate.bind(this);
     this.isPaymentEnabled = localStorage.getItem('passpayd') === true;
@@ -91,10 +94,43 @@ class AirTicketsPaymentPage extends Component {
     });
   }
 
-  render() {
-    console.log(this);
-    const { result } = this.props;
+  convertPrice(result) {
+    const currencyExchangeRatesLS = localStorage.getItem('flights-fiat-rates');
 
+    if (!currencyExchangeRatesLS) {
+      return {
+        fiatPriceInCurrentCurrency: 0,
+        fiatPriceInRoomsXMLCurrency: 0,
+        taxPriceInCurrentCurrency: 0,
+        taxPriceInRoomsXMLCurrency: 0
+      };
+    }
+
+    const currencyExchangeRates = JSON.parse(currencyExchangeRatesLS);
+    const currencyCode = result.price.currency;
+    const price = result.price.total;
+    const taxPrice = result.price.tax;
+    const currency = localStorage.getItem('currency');
+
+    const fiatPriceInCurrentCurrency = CurrencyConverter.convert(currencyExchangeRates, currencyCode, currency, price);
+    const fiatPriceInRoomsXMLCurrency = CurrencyConverter.convert(currencyExchangeRates, currencyCode, RoomsXMLCurrency.get(), price);
+
+    const taxPriceInCurrentCurrency = CurrencyConverter.convert(currencyExchangeRates, currencyCode, currency, taxPrice);
+    const taxPriceInRoomsXMLCurrency = CurrencyConverter.convert(currencyExchangeRates, currencyCode, RoomsXMLCurrency.get(), taxPrice);
+
+    return {
+      fiatPriceInCurrentCurrency: fiatPriceInCurrentCurrency,
+      fiatPriceInRoomsXMLCurrency: fiatPriceInRoomsXMLCurrency,
+      taxPriceInCurrentCurrency: taxPriceInCurrentCurrency,
+      taxPriceInRoomsXMLCurrency: taxPriceInRoomsXMLCurrency,
+      currency: currency
+    }
+  }
+
+  render() {
+    const { result } = this.props;
+    const price = this.convertPrice(result);
+    console.log(price);
     return (
       <Fragment>
         <SendTokensModal
@@ -106,7 +142,10 @@ class AirTicketsPaymentPage extends Component {
         <div className="pay-with-loc-wrapper" >
           <div className="price-wrapper">
             <h3>
-              <span className="total-price">{result.price.locPrice.toFixed(2)}</span>
+              <span>Total price: </span>
+              <span className="total-price">
+                <LocPrice fiat={price.fiatPriceInCurrentCurrency} brackets={false}/>
+              </span>
               <span className="currency">LOC</span>
             </h3>
           </div>
@@ -121,14 +160,16 @@ class AirTicketsPaymentPage extends Component {
         <div className="pay-with-cc-wrapper">
           <div className="price-wrapper">
             <h3>
-              <span className="total-loc-price">{result.price.total.toFixed(2)}</span>
-              <span className="currency">{result.price.currency}</span>
+              <span>Total price: </span>
+              <span className="total-loc-price">{price.fiatPriceInCurrentCurrency.toFixed(2)}</span>
+              <span className="currency">{price.currency}</span>
             </h3>
           </div>
           <div className="price-wrapper">
             <h3>
-              <span className="additional-fees"></span>
-              <span className="currency">{result.price.currency}</span>
+              <span>Additional Fees: </span>
+              <span className="additional-fees">{(Math.abs(result.price.total - price.fiatPriceInCurrentCurrency)).toFixed(2)}</span>
+              <span className="currency">{price.currency}</span>
             </h3>
           </div>
           <button

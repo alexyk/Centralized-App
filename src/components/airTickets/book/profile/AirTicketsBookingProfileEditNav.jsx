@@ -11,7 +11,7 @@ function AirTicketsBookingProfileEditNav(props) {
       {props.hasFlightServices ?
       <div className="host-step"><NavLink exact activeClassName="active" to={{ pathname: `/tickets/results/initBook/${props.match.params.id}/profile/services`, search: props.location.search }}>Services</NavLink></div> : ''}
       <div className="host-step"><NavLink exact activeClassName="active" to={{ pathname: `/tickets/results/initBook/${props.match.params.id}/profile/passengers`, search: props.location.search }}>Passengers</NavLink></div>
-      <div className="host-step"><NavLink exact activeClassName="active" to={{ pathname: `/tickets/results/initBook/${props.match.params.id}/profile/pay`}}>Payment</NavLink></div>
+      <div className="host-step hide"><NavLink exact activeClassName="active" to={{ pathname: `/tickets/results/initBook/${props.match.params.id}/profile/pay`}}>Payment</NavLink></div>
     </Fragment>
   );
 }

@@ -22,6 +22,7 @@ function AirTicketsDetailsBookingPanel(props) {
     return <div className="loader"></div>;
   }
 
+  localStorage.setItem('flights-fiat-rates', JSON.stringify(currencyExchangeRates));
   const { result, isUserLogged, currency, currencySign, flightRouting, startDate, endDate } = props;
   const currencyCode = result.price.currency;
   const price = result.price.total;
