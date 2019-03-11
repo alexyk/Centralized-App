@@ -1,12 +1,16 @@
 import React, { Component, Fragment } from 'react';
+import { connect } from 'react-redux';
+import { withRouter } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import SendTokensModal from '../../../profile/wallet/SendTokensModal';
 import { ExchangerWebsocket } from '../../../../services/socket/exchangerWebsocket';
-import {Config} from "../../../../config";
-import Stomp from "stompjs"
 import { CurrencyConverter } from '../../../../services/utilities/currencyConverter';
 import { RoomsXMLCurrency } from '../../../../services/utilities/roomsXMLCurrency';
 import LocPrice from '../../../common/utility/LocPrice';
+import { getCurrency, getCurrencySign } from '../../../../selectors/paymentInfo';
+import { getLocEurRate, getCurrencyExchangeRates } from '../../../../selectors/exchangeRatesInfo.js';
+import { getSeconds } from '../../../../selectors/locPriceUpdateTimerInfo.js';
+import { getLocAmountById, getQuotePPFiatAmount, getQuotePPAdditionalFees, getQuotePPFundsSufficient } from '../../../../selectors/locAmountsInfo.js';
 
 import '../../../../styles/css/components/airTickets/book/payment/air-tickets-payment-page.css';
 
@@ -15,13 +19,11 @@ const DEFAULT_QUOTE_LOC_ID = 'quote';
 const DEFAULT_QUOTE_LOC_PP_ID = DEFAULT_QUOTE_LOC_ID + PAYMENT_PROCESSOR_IDENTIFICATOR;
 
 const updateFEPrice = (data, result) => {
-  if(updateFEPrice) {
-    let totalLocPrice = document.querySelector('.total-loc-price');
-    let additionalFees = document.querySelector('.additional-fees');
+  let totalLocPrice = document.querySelector('.total-loc-price');
+  let additionalFees = document.querySelector('.additional-fees');
 
-    totalLocPrice.innerText = data.locAmount.toFixed(2);
-    additionalFees.innerText = data.additionalFees.toFixed(2) + (Math.abs(result.total.price - data.fiatAmount));
-  }
+  totalLocPrice.innerText = data.locAmount.toFixed(2);
+  additionalFees.innerText = data.additionalFees.toFixed(2) + (Math.abs(result.total.price - data.fiatAmount));
 };
 
 class AirTicketsPaymentPage extends Component {
@@ -35,47 +37,19 @@ class AirTicketsPaymentPage extends Component {
     this.closeModal = this.closeModal.bind(this);
     this.handleLOCPayment = this.handleLOCPayment.bind(this);
     this.convertPrice = this.convertPrice.bind(this);
-    this.isSendMessage = false;
-    this.connectSocketForLocRate = this.connectSocketForLocRate.bind(this);
     this.isPaymentEnabled = localStorage.getItem('passpayd') === true;
-    this.locRateClient = null;
-    this.connectSocketForLocRate();
+    this.quoteResult = ExchangerWebsocket.sendMessage(DEFAULT_QUOTE_LOC_ID, 'quoteLoc', { bookingId: this.props.result.flightReservationId });
+    this.quotePPResult = ExchangerWebsocket.sendMessage(DEFAULT_QUOTE_LOC_PP_ID, 'quoteLoc', { bookingId: this.props.result.flightReservationId + PAYMENT_PROCESSOR_IDENTIFICATOR });
+
   }
 
   componentDidMount() {
-    this.connectSocketForLocRate();
-  }
 
-  componentDidUpdate(prevProps) {
-    this.isSendMessage = true;
-    ExchangerWebsocket.sendMessage(DEFAULT_QUOTE_LOC_ID, 'quoteLoc', { bookingId: this.props.result.flightReservationId }, true);
-    ExchangerWebsocket.sendMessage(DEFAULT_QUOTE_LOC_PP_ID, 'quoteLoc', { bookingId: this.props.result.flightReservationId + PAYMENT_PROCESSOR_IDENTIFICATOR }, true);
-  }
-
-  connectSocketForLocRate(){
-    const topic = "queue";
-    const url = Config.getValue("socketHost");
-    let client = Stomp.client(url);
-
-    this.locRateClient = client;
-    const onSubscribe = ()=>client.subscribe(topic, (data)=>{
-      console.log(data);
-      this.setState({
-        locEurRate: JSON.parse(data.body).eurPrice
-      });
-      updateFEPrice(data, this.props.result);
-    });
-
-    client.connect(
-      null,
-      null,
-      onSubscribe
-    );
   }
 
   componentWillUnmount() {
-    ExchangerWebsocket.sendMessage(this.props.result.locPrice, 'unsubscribe');
-    this.locRateClient.disconnect();
+    ExchangerWebsocket.sendMessage(DEFAULT_QUOTE_LOC_ID, 'unsubscribe');
+    ExchangerWebsocket.sendMessage(DEFAULT_QUOTE_LOC_PP_ID, 'unsubscribe');
   }
 
   handleLOCPayment() {
@@ -94,19 +68,7 @@ class AirTicketsPaymentPage extends Component {
     });
   }
 
-  convertPrice(result) {
-    const currencyExchangeRatesLS = localStorage.getItem('flights-fiat-rates');
-
-    if (!currencyExchangeRatesLS) {
-      return {
-        fiatPriceInCurrentCurrency: 0,
-        fiatPriceInRoomsXMLCurrency: 0,
-        taxPriceInCurrentCurrency: 0,
-        taxPriceInRoomsXMLCurrency: 0
-      };
-    }
-
-    const currencyExchangeRates = JSON.parse(currencyExchangeRatesLS);
+  convertPrice(currencyExchangeRates, result) {
     const currencyCode = result.price.currency;
     const price = result.price.total;
     const taxPrice = result.price.tax;
@@ -128,9 +90,12 @@ class AirTicketsPaymentPage extends Component {
   }
 
   render() {
-    const { result } = this.props;
-    const price = this.convertPrice(result);
-    console.log(price);
+    const { result,  currencySign, quoteLocAmount, quotePPFiatAmount, quotePPAdditionalFees,  currencyExchangeRates, seconds } = this.props;
+    const price = this.convertPrice(currencyExchangeRates, result);
+
+    const locPrice = (!quoteLocAmount) ? price.fiatPriceInCurrentCurrency : quotePPFiatAmount;
+    const ppPirce = (!quotePPFiatAmount) ? price.fiatPriceInCurrentCurrency : quotePPFiatAmount
+    const additionalFees = (!quotePPAdditionalFees) ? 0 : quotePPAdditionalFees
     return (
       <Fragment>
         <SendTokensModal
@@ -144,7 +109,7 @@ class AirTicketsPaymentPage extends Component {
             <h3>
               <span>Total price: </span>
               <span className="total-price">
-                <LocPrice fiat={price.fiatPriceInCurrentCurrency} brackets={false}/>
+                <LocPrice fiat={locPrice} brackets={false}/>
               </span>
               <span className="currency">LOC</span>
             </h3>
@@ -161,15 +126,15 @@ class AirTicketsPaymentPage extends Component {
           <div className="price-wrapper">
             <h3>
               <span>Total price: </span>
-              <span className="total-loc-price">{price.fiatPriceInCurrentCurrency.toFixed(2)}</span>
-              <span className="currency">{price.currency}</span>
+              <span className="total-loc-price">{ppPirce.toFixed(2)}</span>
+              <span className="currency">{currencySign}</span>
             </h3>
           </div>
           <div className="price-wrapper">
             <h3>
               <span>Additional Fees: </span>
-              <span className="additional-fees">{(Math.abs(result.price.total - price.fiatPriceInCurrentCurrency)).toFixed(2)}</span>
-              <span className="currency">{price.currency}</span>
+              <span className="additional-fees">{additionalFees.toFixed(2)}</span>
+              <span className="currency">{currencySign}</span>
             </h3>
           </div>
           <button
@@ -189,7 +154,36 @@ AirTicketsPaymentPage.propTypes = {
   initBooking: PropTypes.oneOfType([
     PropTypes.func,
     PropTypes.object
-  ])
+  ]),
+
+  dispatch: PropTypes.func,
+  currency: PropTypes.string,
+  currencySign: PropTypes.string,
+  locEurRate: PropTypes.number,
+  currencyExchangeRates: PropTypes.object,
+  quoteLocAmount: PropTypes.number,
+  quotePPLocAmount: PropTypes.number,
+  quotePPFiatAmount: PropTypes.number,
+  quotePPFiatAdditionalFees: PropTypes.number,
+  quotePPFundsSufficient: PropTypes.bool,
+  seconds: PropTypes.number
 };
 
-export default AirTicketsPaymentPage;
+function mapStateToProps(state) {
+  const { paymentInfo, exchangeRatesInfo, locAmountsInfo, locPriceUpdateTimerInfo } = state;
+
+  return {
+    currency: getCurrency(paymentInfo),
+    currencySign: getCurrencySign(paymentInfo),
+    locEurRate: getLocEurRate(exchangeRatesInfo),
+    currencyExchangeRates: getCurrencyExchangeRates(exchangeRatesInfo),
+    quoteLocAmount: getLocAmountById(locAmountsInfo, DEFAULT_QUOTE_LOC_ID),
+    quotePPLocAmount: getLocAmountById(locAmountsInfo, DEFAULT_QUOTE_LOC_PP_ID),
+    quotePPFiatAmount: getQuotePPFiatAmount(locAmountsInfo),
+    quotePPAdditionalFees: getQuotePPAdditionalFees(locAmountsInfo),
+    quotePPFundsSufficient: getQuotePPFundsSufficient(locAmountsInfo),
+    seconds: getSeconds(locPriceUpdateTimerInfo)
+  };
+}
+
+export default withRouter(connect(mapStateToProps)(AirTicketsPaymentPage));
