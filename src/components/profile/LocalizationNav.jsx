@@ -51,13 +51,13 @@ class LocalizationNav extends PureComponent {
                   <div className="balance">
                     <div className="value">
                       <span>LOC Balance:&nbsp;</span>
-                      <span>{userLocBalance}</span>
+                      <span>{userLocBalance.toFixed(4)}</span>
                     </div>
                   </div>
                   <div className="balance">
                     <div className="value">
                       <span>ETH Balance:&nbsp;</span>
-                      <span>{userEthBalance}</span>
+                      <span>{userEthBalance.toFixed(6)}</span>
                     </div>
                   </div>
                   {/* <a href="#" className="icon-plus"></a> */}

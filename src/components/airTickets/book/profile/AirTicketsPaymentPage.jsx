@@ -68,7 +68,19 @@ class AirTicketsPaymentPage extends Component {
     });
   }
 
-  convertPrice(currencyExchangeRates, result) {
+  convertPrice(result) {
+    const currencyExchangeRatesLS = localStorage.getItem('flights-fiat-rates');
+
+    if (!currencyExchangeRatesLS) {
+      return {
+        fiatPriceInCurrentCurrency: 0,
+        fiatPriceInRoomsXMLCurrency: 0,
+        taxPriceInCurrentCurrency: 0,
+        taxPriceInRoomsXMLCurrency: 0
+      };
+    }
+
+    const currencyExchangeRates = JSON.parse(currencyExchangeRatesLS);
     const currencyCode = result.price.currency;
     const price = result.price.total;
     const taxPrice = result.price.tax;
@@ -90,11 +102,11 @@ class AirTicketsPaymentPage extends Component {
   }
 
   render() {
-    const { result,  currencySign, quoteLocAmount, quotePPFiatAmount, quotePPAdditionalFees,  currencyExchangeRates, seconds } = this.props;
-    const price = this.convertPrice(currencyExchangeRates, result);
+    const { result,  currencySign, quoteLocAmount, quotePPFiatAmount, quotePPAdditionalFees} = this.props;
+    const price = this.convertPrice(result);
 
-    const locPrice = (!quoteLocAmount) ? price.fiatPriceInCurrentCurrency : quotePPFiatAmount;
-    const ppPirce = (!quotePPFiatAmount) ? price.fiatPriceInCurrentCurrency : quotePPFiatAmount
+    const locPrice = (!quoteLocAmount) ? <LocPrice locAmount={price.fiatPriceInCurrentCurrency} brackets={false}/> : quoteLocAmount.toFixed(2);
+    const ppPirce = (!quotePPFiatAmount) ? price.fiatPriceInCurrentCurrency.toFixed(2) : quotePPFiatAmount.toFixed(2)
     const additionalFees = (!quotePPAdditionalFees) ? 0 : quotePPAdditionalFees
     return (
       <Fragment>
@@ -109,7 +121,7 @@ class AirTicketsPaymentPage extends Component {
             <h3>
               <span>Total price: </span>
               <span className="total-price">
-                <LocPrice fiat={locPrice} brackets={false}/>
+                {locPrice}
               </span>
               <span className="currency">LOC</span>
             </h3>
@@ -126,7 +138,7 @@ class AirTicketsPaymentPage extends Component {
           <div className="price-wrapper">
             <h3>
               <span>Total price: </span>
-              <span className="total-loc-price">{ppPirce.toFixed(2)}</span>
+              <span className="total-loc-price">{ppPirce}</span>
               <span className="currency">{currencySign}</span>
             </h3>
           </div>
