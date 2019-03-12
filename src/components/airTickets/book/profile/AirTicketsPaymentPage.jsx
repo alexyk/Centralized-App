@@ -5,7 +5,6 @@ import PropTypes from 'prop-types';
 import SendTokensModal from '../../../profile/wallet/SendTokensModal';
 import { ExchangerWebsocket } from '../../../../services/socket/exchangerWebsocket';
 import { CurrencyConverter } from '../../../../services/utilities/currencyConverter';
-import { RoomsXMLCurrency } from '../../../../services/utilities/roomsXMLCurrency';
 import LocPrice from '../../../common/utility/LocPrice';
 import { getCurrency, getCurrencySign } from '../../../../selectors/paymentInfo';
 import { getLocEurRate, getCurrencyExchangeRates } from '../../../../selectors/exchangeRatesInfo.js';
@@ -18,37 +17,30 @@ const PAYMENT_PROCESSOR_IDENTIFICATOR = '-PP';
 const DEFAULT_QUOTE_LOC_ID = 'quote';
 const DEFAULT_QUOTE_LOC_PP_ID = DEFAULT_QUOTE_LOC_ID + PAYMENT_PROCESSOR_IDENTIFICATOR;
 
-const updateFEPrice = (data, result) => {
-  let totalLocPrice = document.querySelector('.total-loc-price');
-  let additionalFees = document.querySelector('.additional-fees');
-
-  totalLocPrice.innerText = data.locAmount.toFixed(2);
-  additionalFees.innerText = data.additionalFees.toFixed(2) + (Math.abs(result.total.price - data.fiatAmount));
-};
-
 class AirTicketsPaymentPage extends Component {
   constructor(props) {
     super(props);
     this.state = {
       showModal: false,
-      locEurRate: null
+      locEurRate: null,
+      currencySign: '',
+      currency: '',
+      quoteLocAmount: '',
+      quotePPFiatAmount: '',
+      quotePPAdditionalFees: '',
+      currencyExchangeRates: ''
     };
 
     this.closeModal = this.closeModal.bind(this);
     this.handleLOCPayment = this.handleLOCPayment.bind(this);
     this.convertPrice = this.convertPrice.bind(this);
     this.isPaymentEnabled = localStorage.getItem('passpayd') === true;
-    this.quoteResult = ExchangerWebsocket.sendMessage(DEFAULT_QUOTE_LOC_ID, 'quoteLoc', { bookingId: this.props.result.flightReservationId });
-    this.quotePPResult = ExchangerWebsocket.sendMessage(DEFAULT_QUOTE_LOC_PP_ID, 'quoteLoc', { bookingId: this.props.result.flightReservationId + PAYMENT_PROCESSOR_IDENTIFICATOR });
 
+    ExchangerWebsocket.sendMessage(DEFAULT_QUOTE_LOC_ID, 'quoteLoc', { bookingId: this.props.result.flightReservationId });
+    ExchangerWebsocket.sendMessage(DEFAULT_QUOTE_LOC_PP_ID, 'quoteLoc', { bookingId: this.props.result.flightReservationId + PAYMENT_PROCESSOR_IDENTIFICATOR });
   }
 
-  componentDidMount() {
-    this.quoteResult = ExchangerWebsocket.sendMessage(DEFAULT_QUOTE_LOC_ID, 'quoteLoc', { bookingId: this.props.result.flightReservationId });
-    this.quotePPResult = ExchangerWebsocket.sendMessage(DEFAULT_QUOTE_LOC_PP_ID, 'quoteLoc', { bookingId: this.props.result.flightReservationId + PAYMENT_PROCESSOR_IDENTIFICATOR });
-  }
-
-  componentWillUnmount() {
+  componentDidUnmount() {
     ExchangerWebsocket.sendMessage(DEFAULT_QUOTE_LOC_ID, 'unsubscribe');
     ExchangerWebsocket.sendMessage(DEFAULT_QUOTE_LOC_PP_ID, 'unsubscribe');
   }
@@ -69,52 +61,27 @@ class AirTicketsPaymentPage extends Component {
     });
   }
 
-  convertPrice(result) {
-    const currencyExchangeRatesLS = localStorage.getItem('flights-fiat-rates');
-
-    if (!currencyExchangeRatesLS) {
-      return {
-        fiatPriceInCurrentCurrency: 0,
-        fiatPriceInRoomsXMLCurrency: 0,
-        taxPriceInCurrentCurrency: 0,
-        taxPriceInRoomsXMLCurrency: 0
-      };
+  convertPrice(currencyExchangeRates, currency, price) {
+    if (!currencyExchangeRates || !currency || !price) {
+      return 0;
     }
 
-    const currencyExchangeRates = JSON.parse(currencyExchangeRatesLS);
-    const currencyCode = result.price.currency;
-    const price = result.price.total;
-    const taxPrice = result.price.tax;
-    const currency = localStorage.getItem('currency');
-
-    const fiatPriceInCurrentCurrency = CurrencyConverter.convert(currencyExchangeRates, currencyCode, currency, price);
-    const fiatPriceInRoomsXMLCurrency = CurrencyConverter.convert(currencyExchangeRates, currencyCode, RoomsXMLCurrency.get(), price);
-
-    const taxPriceInCurrentCurrency = CurrencyConverter.convert(currencyExchangeRates, currencyCode, currency, taxPrice);
-    const taxPriceInRoomsXMLCurrency = CurrencyConverter.convert(currencyExchangeRates, currencyCode, RoomsXMLCurrency.get(), taxPrice);
-
-    return {
-      fiatPriceInCurrentCurrency: fiatPriceInCurrentCurrency,
-      fiatPriceInRoomsXMLCurrency: fiatPriceInRoomsXMLCurrency,
-      taxPriceInCurrentCurrency: taxPriceInCurrentCurrency,
-      taxPriceInRoomsXMLCurrency: taxPriceInRoomsXMLCurrency,
-      currency: currency
-    }
+    const fiatPriceInCurrentCurrency = CurrencyConverter.convert(currencyExchangeRates, 'EUR', currency, price);
+    return fiatPriceInCurrentCurrency.toFixed(2);
   }
 
   render() {
-    const { result,  currencySign, quoteLocAmount, quotePPFiatAmount, quotePPAdditionalFees} = this.props;
-    const price = this.convertPrice(result);
+    const { result, currencySign, currency, quoteLocAmount, quotePPFiatAmount, quotePPAdditionalFees, currencyExchangeRates } = this.props;
+    const fiatAmount = this.convertPrice(currencyExchangeRates, currency, quotePPFiatAmount);
+    const locPrice = (!quoteLocAmount) ? result.price.locPrice.toFixed(2) : quoteLocAmount.toFixed(2);
+    const totalPrice = this.convertPrice(currencyExchangeRates, currency, result.price.total);
 
-    const locPrice = (!quoteLocAmount) ? <LocPrice locAmount={price.fiatPriceInCurrentCurrency} brackets={false}/> : quoteLocAmount.toFixed(2);
-    const ppPirce = (!quotePPFiatAmount) ? price.fiatPriceInCurrentCurrency.toFixed(2) : quotePPFiatAmount.toFixed(2)
-    const additionalFees = (!quotePPAdditionalFees) ? 0 : quotePPAdditionalFees
     return (
       <Fragment>
         <SendTokensModal
-          flightReservationId={this.props.result.flightReservationId}
+          flightReservationId={result.flightReservationId}
           showModal={this.state.showModal}
-          result={this.props.result}
+          result={result}
           closeModal={this.closeModal}
         />
         <div className="pay-with-loc-wrapper" >
@@ -135,28 +102,29 @@ class AirTicketsPaymentPage extends Component {
             disabled={this.isPaymentEnabled}>Pay with LOC</button>
         </div>
 
-        <div className="pay-with-cc-wrapper">
-          <div className="price-wrapper">
-            <h3>
-              <span>Total price: </span>
-              <span className="total-loc-price">{ppPirce}</span>
-              <span className="currency">{currencySign}</span>
-            </h3>
-          </div>
-          <div className="price-wrapper">
-            <h3>
-              <span>Additional Fees: </span>
-              <span className="additional-fees">{additionalFees.toFixed(2)}</span>
-              <span className="currency">{currencySign}</span>
-            </h3>
-          </div>
-          <button
-            id="pay_cc"
-            type="button"
-            className="button"
-            onClick={() => this.handleCCPayment()}
-            disabled={this.isPaymentEnabled}>Pay with Credit/Debit card</button>
-        </div>
+        {quotePPAdditionalFees &&
+          <div className="pay-with-cc-wrapper">
+            <div className="price-wrapper">
+              <h3>
+                <span>Total price: </span>
+                <span className="total-loc-price">{totalPrice}</span>
+                <span className="currency">{currencySign}</span>
+              </h3>
+            </div>
+            <div className="price-wrapper">
+              <h3>
+                <span>Additional Fees: </span>
+                <span className="additional-fees">{(quotePPAdditionalFees + (Math.abs(totalPrice - fiatAmount))).toFixed(2)}</span>
+                <span className="currency">{currencySign}</span>
+              </h3>
+            </div>
+            <button
+              id="pay_cc"
+              type="button"
+              className="button"
+              onClick={() => this.handleCCPayment()}
+              disabled={this.isPaymentEnabled}>Pay with Credit/Debit card</button>
+          </div>}
       </Fragment>
     );
   }

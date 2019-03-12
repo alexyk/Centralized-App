@@ -256,7 +256,7 @@ class AirTicketsBookingRouterPage extends Component {
           } else if (errors.MissingFlightReservationException) {
             message = errors.MissingFlightReservationException.message;
           } else if (errors.MissingPassengerInfoException) {
-              message = errors.MissingPassengerInfoException.message;
+            message = errors.MissingPassengerInfoException.message;
           } else if (errors.UserNotFoundException) {
             message = errors.UserNotFoundException.message;
           } else if (errors.FlightProviderUnavailableException) {
