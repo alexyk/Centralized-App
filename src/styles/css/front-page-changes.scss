@@ -1,0 +1,132 @@
+#main_tabs {
+  padding: 0 63px;
+  display: flex;
+  justify-content: flex-end;
+  height: 53px !important;
+  align-items: flex-end;
+}
+
+#main_tabs a {
+  width: 128px;
+  height: 35px;
+  border-radius: 10px 10px 0 0;
+  background: #a1c4bd;
+  text-align: center;
+  font-weight: lighter;
+  line-height: 35px;
+  color: #fff;
+  font-family: 'Gilroy-ExtraBold';
+  font-size: 13px;
+  display: block;
+  margin: 0 0 0 6px;
+}
+
+#main_tabs a.main {
+  height: 43px;
+  line-height: 43px;
+  background: white;
+  color: #3c4e5f;
+
+}
+
+.nav-list-menu .list-menu-item {
+  cursor: pointer;
+  padding: 20px 15px;
+}
+
+#main-nav {
+  height: 57px !important;
+  position: relative;
+  min-height: 0
+}
+
+.navbar-logo {
+  margin: 0 !important;
+  width: 130px !important;
+  height: 60px !important;
+  display: flex !important;
+  align-items: center !important;
+}
+
+.container.main-page.balances {
+  font-size: 12px;
+  height: 45px;
+  display: flex;
+
+  max-width: 1200px;
+  width: 100%;
+  padding: 0 15px;
+  margin: 0 auto;
+}
+
+.source-data {
+  width: 94%;
+  margin: 0 auto;
+  /* display: flex; */
+  justify-content: flex-end;
+}
+
+.language {
+  color: #d87a61;
+  width: 20px !important;
+}
+
+.select {
+  width: 68px !important;
+  min-width: 0;
+  font-size:  13px
+}
+
+.info .balance .value {
+  font-size: 13px;
+}
+
+.hero h1 {
+  font-size: 59px;
+}
+
+.source-data {
+  /* width: 94%; */
+  margin: 0 auto;
+}
+
+body {
+  font: 14px/1.2 "Futura", "Arial", "Helvetica Neue", "Helvetica", sans-serif;
+  font-weight: 300;
+}
+
+
+select.currency {
+  color: #d87a61;
+  min-width: 0;
+  width: 62px !important;
+}
+.info .cross-rate {
+  font-size: 13px;
+  text-transform: uppercase;
+  color: #d87a61;
+  margin-right: 10px;
+}
+select.language {
+  width:  20px !important;
+}
+.container.balances {
+  font-size: 12px;
+  display: flex;
+}
+
+span.rate {
+  font-size: 13px !important;
+}
+
+.select {
+  min-width: 0 !important;
+}
+
+.container.balances > .source-data {
+  /* display: flex; */
+}
+
+button.slider-menu-toggle-button.mb-only {
+  height: 55px;
+}
