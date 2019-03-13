@@ -58,8 +58,10 @@
   margin: 0 auto;
 }
 
-.container.balances .info {
-  height: 45px;
+@media (min-width: 1025px) {
+  .container.balances .info {
+    height: 45px;
+  }
 }
 
 .source-data {
