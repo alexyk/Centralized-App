@@ -48,15 +48,18 @@
   align-items: center !important;
 }
 
-.container.main-page.balances {
+.container.balances {
   font-size: 12px;
-  height: 45px;
   display: flex;
 
   max-width: 1200px;
   width: 100%;
   padding: 0 15px;
   margin: 0 auto;
+}
+
+.container.balances .info {
+  height: 45px;
 }
 
 .source-data {
