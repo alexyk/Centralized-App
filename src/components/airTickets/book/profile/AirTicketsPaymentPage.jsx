@@ -10,6 +10,7 @@ import { getCurrency, getCurrencySign } from '../../../../selectors/paymentInfo'
 import { getLocEurRate, getCurrencyExchangeRates } from '../../../../selectors/exchangeRatesInfo.js';
 import { getSeconds } from '../../../../selectors/locPriceUpdateTimerInfo.js';
 import { getLocAmountById, getQuotePPFiatAmount, getQuotePPAdditionalFees, getQuotePPFundsSufficient } from '../../../../selectors/locAmountsInfo.js';
+import PriceUpdatedModal from '../modals/PriceUpdatedModal';
 
 import '../../../../styles/css/components/airTickets/book/payment/air-tickets-payment-page.css';
 
@@ -28,15 +29,24 @@ class AirTicketsPaymentPage extends Component {
       quoteLocAmount: '',
       quotePPFiatAmount: '',
       quotePPAdditionalFees: '',
-      currencyExchangeRates: ''
+      currencyExchangeRates: '',
+      seconds: this.props.seconds
     };
 
     this.closeModal = this.closeModal.bind(this);
     this.handleLOCPayment = this.handleLOCPayment.bind(this);
+    this.handleCCPayment = this.handleCCPayment.bind(this);
     this.convertPrice = this.convertPrice.bind(this);
+    this.startTimer = this.startTimer.bind(this);
     this.isPaymentEnabled = localStorage.getItem('passpayd') === true;
     ExchangerWebsocket.sendMessage(DEFAULT_QUOTE_LOC_ID, 'quoteLoc', { bookingId: this.props.result.flightReservationId });
     ExchangerWebsocket.sendMessage(DEFAULT_QUOTE_LOC_PP_ID, 'quoteLoc', { bookingId: this.props.result.flightReservationId + PAYMENT_PROCESSOR_IDENTIFICATOR });
+  }
+
+  componentDidMount() {
+    this.setState({
+      seconds: this.props.seconds
+    });
   }
 
   componentWillUnmount() {
@@ -69,8 +79,18 @@ class AirTicketsPaymentPage extends Component {
     return fiatPriceInCurrentCurrency.toFixed(2);
   }
 
+  startTimer(seconds) {
+      setInterval(() => {
+        seconds -= 1;
+        this.setState({
+          seconds: seconds
+        });
+      }, 1000);
+
+  }
+
   render() {
-    const { result, currencySign, currency, quoteLocAmount, quotePPFiatAmount, quotePPAdditionalFees, currencyExchangeRates, seconds } = this.props;
+    const { result, currencySign, currency, quoteLocAmount, quotePPFiatAmount, quotePPAdditionalFees, currencyExchangeRates } = this.props;
     const fiatAmount = this.convertPrice(currencyExchangeRates, currency, quotePPFiatAmount);
     const locPrice = (!quoteLocAmount) ? result.price.locPrice.toFixed(2) : quoteLocAmount.toFixed(2);
     const totalPrice = this.convertPrice(currencyExchangeRates, currency, result.price.total);
@@ -87,7 +107,7 @@ class AirTicketsPaymentPage extends Component {
             <p>Pay Directly With LOC: <span className="important">{currencySign} {locPrice}</span></p>
             <p>Order Total: <span className="important">{locPrice}</span></p>
             <div className="price-update-timer" tooltip="Seconds until we update your quoted price">
-                <span>LOC price will update in <i className="fa fa-clock-o" aria-hidden="true"></i>&nbsp;{seconds} sec &nbsp;</span>
+                <span>LOC price will update in <i className="fa fa-clock-o" aria-hidden="true"></i>&nbsp;{this.startTimer(this.props.seconds)} sec &nbsp;</span>
               <p>(Click <a href={`${Config.getValue('basePath')}buyloc`} target="_blank" rel="noopener noreferrer">here</a> to learn how you can buy LOC directly to enjoy cheaper travel)</p>
             </div>
             <button className="button" onClick={this.handleLOCPayment} type="button" disabled={this.isPaymentEnabled}>Pay with LOC Tokens</button>
@@ -107,10 +127,10 @@ class AirTicketsPaymentPage extends Component {
               </p>
               <p>Additional Fees: <span className="important">{currencySign} {(quotePPAdditionalFees + (Math.abs(totalPrice - fiatAmount))).toFixed(2)}</span></p>
               <div className="price-update-timer" tooltip="Seconds until we update your quoted price">
-                <span>Market Price will update in <i className="fa fa-clock-o" aria-hidden="true"></i>&nbsp;{seconds} sec &nbsp;</span>
+                <span>Market Price will update in <i className="fa fa-clock-o" aria-hidden="true"></i>&nbsp;{this.startTimer(this.props.seconds)} sec &nbsp;</span>
               </div>
               <div>
-                <button className="button" disabled={this.isPaymentEnabled} onClick={() => this.handleCCPayment()} type="button">Pay with Credit Card</button>
+                <button className="button" disabled={this.isPaymentEnabled} onClick={this.handleCCPayment} type="button">Pay with Credit Card</button>
               </div>
             </div>
             <div className="logos">
@@ -127,6 +147,7 @@ class AirTicketsPaymentPage extends Component {
             </div>
           </div>
         }
+        <PriceUpdatedModal openModal={this.props.openModal} closeModal={this.props.closeModal}/>
       </Fragment>
     );
   }
@@ -134,6 +155,8 @@ class AirTicketsPaymentPage extends Component {
 
 AirTicketsPaymentPage.propTypes = {
   result: PropTypes.object,
+  openModal: PropTypes.func,
+  closeModal: PropTypes.func,
   initBooking: PropTypes.oneOfType([
     PropTypes.func,
     PropTypes.object

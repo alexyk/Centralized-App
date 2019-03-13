@@ -12,6 +12,8 @@ import { LONG } from '../../../constants/notificationDisplayTimes';
 import requester from '../../../requester';
 import { ERROR_MESSAGES } from '../../../constants/constants';
 import { sendTokens } from './../../../services/payment/loc';
+import { CONFIRM_PRICE_UPDATE } from '../../../constants/modals';
+import { openModal, closeModal } from '../../../actions/modalsInfo';
 
 const PASSENGER_TYPES_CODES = {
   adult: 'ADT',
@@ -250,11 +252,18 @@ class AirTicketsBookingRouterPage extends Component {
       })
         .then((res) => {
           res.json().then((data) => {
-            window.location = data.url;
+            if (data.success === false) {
+              openModal(CONFIRM_PRICE_UPDATE)
+            } else if (data.hasOwnProperty('url')) {
+              window.location = data.url;
+            } else {
+              this.searchAirTickets(this.props.location.search);
+            }
           }).catch(err => {
             this.searchAirTickets(this.props.location.search);
           });
         }).catch(err => {
+          console.log(err);
           const errors = err.errors;
           let message = '';
 
@@ -549,6 +558,8 @@ class AirTicketsBookingRouterPage extends Component {
                 enableNextSection={this.enableNextSection}
                 initBooking={this.initBooking}
                 isBookingProccess={isBookingProccess}
+                openModal={openModal}
+                closeModal={closeModal}
               />
             );
           }}
