@@ -177,6 +177,14 @@ class AirTicketsBookingRouterPage extends Component {
   }
 
   requestPrepareFlightReservation(initBooking, callback) {
+    const params = {
+      uuid: initBooking.uuid,
+      flightId: initBooking.flightId,
+      flightReservationId: initBooking.flightReservationId,
+      currency: initBooking.currency,
+      backUrl: initBooking.backUrl
+    };
+
     return new Promise((resolve, reject) => {
       fetch(`${Config.getValue('apiHost')}flight/prepareFlightReservation`, {
         method: 'POST',
@@ -184,7 +192,7 @@ class AirTicketsBookingRouterPage extends Component {
           'Content-type': 'application/json',
           'Authorization': localStorage[Config.getValue('domainPrefix') + '.auth.locktrip']
         },
-        body: JSON.stringify(initBooking)
+        body: JSON.stringify(params)
       })
         .then((res) => {
           if (res.ok) {
@@ -266,7 +274,7 @@ class AirTicketsBookingRouterPage extends Component {
           }
 
           NotificationManager.warning(message, 'Warning', LONG);
-          this.searchAirTickets(this.props.location.search);
+         // this.searchAirTickets(this.props.location.search);
         });
     });
   }

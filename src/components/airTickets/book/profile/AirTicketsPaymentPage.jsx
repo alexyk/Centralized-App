@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import SendTokensModal from '../../../profile/wallet/SendTokensModal';
 import { ExchangerWebsocket } from '../../../../services/socket/exchangerWebsocket';
 import { CurrencyConverter } from '../../../../services/utilities/currencyConverter';
-import LocPrice from '../../../common/utility/LocPrice';
+import { Config } from '../../../../config.js';
 import { getCurrency, getCurrencySign } from '../../../../selectors/paymentInfo';
 import { getLocEurRate, getCurrencyExchangeRates } from '../../../../selectors/exchangeRatesInfo.js';
 import { getSeconds } from '../../../../selectors/locPriceUpdateTimerInfo.js';
@@ -35,12 +35,11 @@ class AirTicketsPaymentPage extends Component {
     this.handleLOCPayment = this.handleLOCPayment.bind(this);
     this.convertPrice = this.convertPrice.bind(this);
     this.isPaymentEnabled = localStorage.getItem('passpayd') === true;
-
     ExchangerWebsocket.sendMessage(DEFAULT_QUOTE_LOC_ID, 'quoteLoc', { bookingId: this.props.result.flightReservationId });
     ExchangerWebsocket.sendMessage(DEFAULT_QUOTE_LOC_PP_ID, 'quoteLoc', { bookingId: this.props.result.flightReservationId + PAYMENT_PROCESSOR_IDENTIFICATOR });
   }
 
-  componentDidUnmount() {
+  componentWillUnmount() {
     ExchangerWebsocket.sendMessage(DEFAULT_QUOTE_LOC_ID, 'unsubscribe');
     ExchangerWebsocket.sendMessage(DEFAULT_QUOTE_LOC_PP_ID, 'unsubscribe');
   }
@@ -71,60 +70,63 @@ class AirTicketsPaymentPage extends Component {
   }
 
   render() {
-    const { result, currencySign, currency, quoteLocAmount, quotePPFiatAmount, quotePPAdditionalFees, currencyExchangeRates } = this.props;
+    const { result, currencySign, currency, quoteLocAmount, quotePPFiatAmount, quotePPAdditionalFees, currencyExchangeRates, seconds } = this.props;
     const fiatAmount = this.convertPrice(currencyExchangeRates, currency, quotePPFiatAmount);
     const locPrice = (!quoteLocAmount) ? result.price.locPrice.toFixed(2) : quoteLocAmount.toFixed(2);
     const totalPrice = this.convertPrice(currencyExchangeRates, currency, result.price.total);
 
     return (
       <Fragment>
-        <SendTokensModal
-          flightReservationId={result.flightReservationId}
+        <SendTokensModal flightReservationId={result.flightReservationId}
           showModal={this.state.showModal}
           result={result}
           closeModal={this.closeModal}
         />
-        <div className="pay-with-loc-wrapper" >
-          <div className="price-wrapper">
-            <h3>
-              <span>Total price: </span>
-              <span className="total-price">
-                {locPrice}
-              </span>
-              <span className="currency">LOC</span>
-            </h3>
+        <div className="payment-methods-loc-wrapper">
+          <div className="details">
+            <p>Pay Directly With LOC: <span className="important">{currencySign} {locPrice}</span></p>
+            <p>Order Total: <span className="important">{locPrice}</span></p>
+            <div className="price-update-timer" tooltip="Seconds until we update your quoted price">
+                <span>LOC price will update in <i className="fa fa-clock-o" aria-hidden="true"></i>&nbsp;{seconds} sec &nbsp;</span>
+              <p>(Click <a href={`${Config.getValue('basePath')}buyloc`} target="_blank" rel="noopener noreferrer">here</a> to learn how you can buy LOC directly to enjoy cheaper travel)</p>
+            </div>
+            <button className="button" onClick={this.handleLOCPayment} type="button" disabled={this.isPaymentEnabled}>Pay with LOC Tokens</button>
           </div>
-          <button
-            id="pay_loc"
-            type="button"
-            className="button"
-            onClick={() => this.handleLOCPayment()}
-            disabled={this.isPaymentEnabled}>Pay with LOC</button>
+          <div className="logos">
+            <div className="logo loc">
+              <img src={Config.getValue('basePath') + 'images/logos/loc.jpg'} alt="Visa Logo" />
+            </div>
+          </div>
         </div>
 
-        {quotePPAdditionalFees &&
-          <div className="pay-with-cc-wrapper">
-            <div className="price-wrapper">
-              <h3>
-                <span>Total price: </span>
-                <span className="total-loc-price">{totalPrice}</span>
-                <span className="currency">{currencySign}</span>
-              </h3>
+        {!quotePPAdditionalFees &&
+          <div className="payment-methods-cc-wrapper">
+            <div className="details">
+              <p className="booking-card-price">
+                Pay with Credit Card: Current Market Price: <span className="important">{currencySign} {totalPrice}</span>
+              </p>
+              <p>Additional Fees: <span className="important">{currencySign} {(quotePPAdditionalFees + (Math.abs(totalPrice - fiatAmount))).toFixed(2)}</span></p>
+              <div className="price-update-timer" tooltip="Seconds until we update your quoted price">
+                <span>Market Price will update in <i className="fa fa-clock-o" aria-hidden="true"></i>&nbsp;{seconds} sec &nbsp;</span>
+              </div>
+              <div>
+                <button className="button" disabled={this.isPaymentEnabled} onClick={() => this.handleCCPayment()} type="button">Pay with Credit Card</button>
+              </div>
             </div>
-            <div className="price-wrapper">
-              <h3>
-                <span>Additional Fees: </span>
-                <span className="additional-fees">{(quotePPAdditionalFees + (Math.abs(totalPrice - fiatAmount))).toFixed(2)}</span>
-                <span className="currency">{currencySign}</span>
-              </h3>
+            <div className="logos">
+              <div className="logos-row">
+                <div className="logo credit-cards">
+                  <img src={Config.getValue('basePath') + 'images/logos/credit-cards.png'} alt="Credit Cards Logos" />
+                </div>
+              </div>
+              <div className="logos-row">
+                <div className="logo safecharge">
+                  <img src={Config.getValue('basePath') + 'images/logos/safecharge.png'} alt="Safecharge Logo" />
+                </div>
+              </div>
             </div>
-            <button
-              id="pay_cc"
-              type="button"
-              className="button"
-              onClick={() => this.handleCCPayment()}
-              disabled={this.isPaymentEnabled}>Pay with Credit/Debit card</button>
-          </div>}
+          </div>
+        }
       </Fragment>
     );
   }
