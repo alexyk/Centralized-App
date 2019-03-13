@@ -389,7 +389,7 @@ class AirTicketsSearchPage extends Component {
     } else {
       items = Object.values(items).slice(startResultsIndex, endResultsIndex)
     }
-console.log(this);
+
     this.setState({
       page: currentPage,
       currentPageResults: items
@@ -526,7 +526,6 @@ console.log(this);
       });
       this.results = {};
       this.totalElements = 0;
-      console.log(this);
       this.unsubscribeFilters();
       this.requestFilters();
     } else if (messageBody.success === false || messageBody.errorMessage) {

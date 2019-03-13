@@ -177,22 +177,15 @@ class AirTicketsBookingRouterPage extends Component {
   }
 
   requestPrepareFlightReservation(initBooking, callback) {
-    const params = {
-      uuid: initBooking.uuid,
-      flightId: initBooking.flightId,
-      flightReservationId: initBooking.flightReservationId,
-      currency: initBooking.currency,
-      backUrl: initBooking.backUrl
-    };
-
     return new Promise((resolve, reject) => {
       fetch(`${Config.getValue('apiHost')}flight/prepareFlightReservation`, {
         method: 'POST',
         headers: {
+          'Accept': 'application/json',
           'Content-type': 'application/json',
           'Authorization': localStorage[Config.getValue('domainPrefix') + '.auth.locktrip']
         },
-        body: JSON.stringify(params)
+        body: JSON.stringify(initBooking)
       })
         .then((res) => {
           if (res.ok) {
@@ -237,17 +230,23 @@ class AirTicketsBookingRouterPage extends Component {
   }
 
   requestPayWithCC(initBooking) {
-    initBooking.backUrl = this.props.location.search;
-    initBooking.currency = localStorage.getItem('currency');
+    const params = {
+      uuid: initBooking.uuid,
+      flightId: initBooking.flightId,
+      flightReservationId: initBooking.flightReservationId,
+      currency: localStorage.getItem('currency'),
+      backUrl: this.props.location.search
+    };
 
     return new Promise((resolve, reject) => {
       fetch(`${Config.getValue('apiHost')}payment/creditcard/flight`, {
         method: 'POST',
         headers: {
+          'Accept': 'application/json',
           'Content-type': 'application/json',
           'Authorization': localStorage[Config.getValue('domainPrefix') + '.auth.locktrip']
         },
-        body: JSON.stringify(initBooking)
+        body: JSON.stringify(params)
       })
         .then((res) => {
           res.json().then((data) => {
