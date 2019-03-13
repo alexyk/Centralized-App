@@ -273,7 +273,7 @@ class AirTicketsBookingRouterPage extends Component {
           }
 
           NotificationManager.warning(message, 'Warning', LONG);
-         // this.searchAirTickets(this.props.location.search);
+         this.searchAirTickets(this.props.location.search);
         });
     });
   }
