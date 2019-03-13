@@ -99,7 +99,7 @@ class AirTicketsPaymentPage extends Component {
           </div>
         </div>
 
-        {!quotePPAdditionalFees &&
+        {quotePPAdditionalFees &&
           <div className="payment-methods-cc-wrapper">
             <div className="details">
               <p className="booking-card-price">
