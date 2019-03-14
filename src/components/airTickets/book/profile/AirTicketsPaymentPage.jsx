@@ -10,7 +10,6 @@ import { getCurrency, getCurrencySign } from '../../../../selectors/paymentInfo'
 import { getLocEurRate, getCurrencyExchangeRates } from '../../../../selectors/exchangeRatesInfo.js';
 import { getSeconds } from '../../../../selectors/locPriceUpdateTimerInfo.js';
 import { getLocAmountById, getQuotePPFiatAmount, getQuotePPAdditionalFees, getQuotePPFundsSufficient } from '../../../../selectors/locAmountsInfo.js';
-import PriceUpdatedModal from '../modals/PriceUpdatedModal';
 
 import '../../../../styles/css/components/airTickets/book/payment/air-tickets-payment-page.css';
 
@@ -90,10 +89,11 @@ class AirTicketsPaymentPage extends Component {
   }
 
   render() {
-    const { result, currencySign, currency, quoteLocAmount, quotePPFiatAmount, quotePPAdditionalFees, currencyExchangeRates } = this.props;
+    const { result, currencySign, currency, quoteLocAmount, quotePPFiatAmount, quotePPAdditionalFees, currencyExchangeRates, updatedPrice } = this.props;
+    const price = (!updatedPrice) ? result.price.total : updatedPrice;
     const fiatAmount = this.convertPrice(currencyExchangeRates, currency, quotePPFiatAmount);
     const locPrice = (!quoteLocAmount) ? result.price.locPrice.toFixed(2) : quoteLocAmount.toFixed(2);
-    const totalPrice = this.convertPrice(currencyExchangeRates, currency, result.price.total);
+    const totalPrice = this.convertPrice(currencyExchangeRates, currency, price);
 
     return (
       <Fragment>
@@ -147,7 +147,6 @@ class AirTicketsPaymentPage extends Component {
             </div>
           </div>
         }
-        <PriceUpdatedModal openModal={this.props.openModal} closeModal={this.props.closeModal}/>
       </Fragment>
     );
   }
@@ -155,8 +154,6 @@ class AirTicketsPaymentPage extends Component {
 
 AirTicketsPaymentPage.propTypes = {
   result: PropTypes.object,
-  openModal: PropTypes.func,
-  closeModal: PropTypes.func,
   initBooking: PropTypes.oneOfType([
     PropTypes.func,
     PropTypes.object
@@ -172,7 +169,8 @@ AirTicketsPaymentPage.propTypes = {
   quotePPFiatAmount: PropTypes.number,
   quotePPFiatAdditionalFees: PropTypes.number,
   quotePPFundsSufficient: PropTypes.bool,
-  seconds: PropTypes.number
+  seconds: PropTypes.number,
+  updatedPrice: PropTypes.string
 };
 
 function mapStateToProps(state) {

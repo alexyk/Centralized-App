@@ -8,12 +8,10 @@ import AirTicketsDetailsPage from './details/AirTicketsDetailsPage';
 import AirTicketsBookingProfileRouterPage from './profile/AirTicketsBookingProfileRouterPage';
 import AirTicketsBookingConfirmPage from './confirm/AirTicketsBookingConfirmPage';
 import { Config } from '../../../config';
-import { LONG } from '../../../constants/notificationDisplayTimes';
+import { MEDIUM ,LONG } from '../../../constants/notificationDisplayTimes';
 import requester from '../../../requester';
 import { ERROR_MESSAGES } from '../../../constants/constants';
 import { sendTokens } from './../../../services/payment/loc';
-import { CONFIRM_PRICE_UPDATE } from '../../../constants/modals';
-import { openModal, closeModal } from '../../../actions/modalsInfo';
 
 const PASSENGER_TYPES_CODES = {
   adult: 'ADT',
@@ -26,6 +24,7 @@ class AirTicketsBookingRouterPage extends Component {
 
     this.state = {
       result: null,
+      updatedPrice: null,
       fareRules: null,
       contactInfo: {
         address: '',
@@ -253,7 +252,10 @@ class AirTicketsBookingRouterPage extends Component {
         .then((res) => {
           res.json().then((data) => {
             if (data.success === false) {
-              openModal(CONFIRM_PRICE_UPDATE)
+              NotificationManager.warning(data.message, '', MEDIUM);
+              this.setState({
+                updatedPrice: data.price
+              });
             } else if (data.hasOwnProperty('url')) {
               window.location = data.url;
             } else {
@@ -558,8 +560,7 @@ class AirTicketsBookingRouterPage extends Component {
                 enableNextSection={this.enableNextSection}
                 initBooking={this.initBooking}
                 isBookingProccess={isBookingProccess}
-                openModal={openModal}
-                closeModal={closeModal}
+                updatedPrice={this.state.updatedPrice}
               />
             );
           }}

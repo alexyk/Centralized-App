@@ -97,8 +97,6 @@ function AirTicketsBookingProfileRouterPage(props) {
                       <AirTicketsPaymentPage
                         result={result}
                         initBooking={props.initBooking}
-                        openModal={this.props.openModal}
-                        closeModal={this.props.closeModal}
                       />
                     )}}
                   />
@@ -112,8 +110,6 @@ function AirTicketsBookingProfileRouterPage(props) {
 
 AirTicketsBookingProfileRouterPage.propTypes = {
   result: PropTypes.object,
-  openModal: PropTypes.func,
-  closeModal: PropTypes.func,
   contactInfo: PropTypes.object,
   invoiceInfo: PropTypes.oneOfType([
     PropTypes.func,
