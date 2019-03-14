@@ -35,25 +35,14 @@ class AirTicketsPage extends React.Component {
             data.reverse().forEach((ticket) => {
               tickets.push({
                 segments: JSON.parse(ticket.dashboardViews),
-                deadline: ticket.deadline,
-                status: ticket.status,
-                flightId: ticket.flightId,
-                reservationId: ticket.reservationId
+                flightReservationId: ticket.flightReservationId
               });
             });
 
             this.setState({
-              tickets,
+              tickets: tickets,
               loading: false
             });
-            // if (data.success === false) {
-            //   this.searchAirTickets(this.props.location.search);
-            //   NotificationManager.warning(data.message, '', LONG);
-            // } else {
-            //   this.setState({
-            //     bookingDetails: data
-            //   });
-            // }
           });
         } else {
           console.log(res);
