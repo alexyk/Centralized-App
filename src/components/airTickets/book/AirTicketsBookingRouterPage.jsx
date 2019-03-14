@@ -8,7 +8,7 @@ import AirTicketsDetailsPage from './details/AirTicketsDetailsPage';
 import AirTicketsBookingProfileRouterPage from './profile/AirTicketsBookingProfileRouterPage';
 import AirTicketsBookingConfirmPage from './confirm/AirTicketsBookingConfirmPage';
 import { Config } from '../../../config';
-import { LONG } from '../../../constants/notificationDisplayTimes';
+import { MEDIUM ,LONG } from '../../../constants/notificationDisplayTimes';
 import requester from '../../../requester';
 import { ERROR_MESSAGES } from '../../../constants/constants';
 import { sendTokens } from './../../../services/payment/loc';
@@ -24,6 +24,7 @@ class AirTicketsBookingRouterPage extends Component {
 
     this.state = {
       result: null,
+      updatedPrice: null,
       fareRules: null,
       contactInfo: {
         address: '',
@@ -181,6 +182,7 @@ class AirTicketsBookingRouterPage extends Component {
       fetch(`${Config.getValue('apiHost')}flight/prepareFlightReservation`, {
         method: 'POST',
         headers: {
+          'Accept': 'application/json',
           'Content-type': 'application/json',
           'Authorization': localStorage[Config.getValue('domainPrefix') + '.auth.locktrip']
         },
@@ -229,25 +231,41 @@ class AirTicketsBookingRouterPage extends Component {
   }
 
   requestPayWithCC(initBooking) {
-    initBooking.backUrl = this.props.location.search;
-    initBooking.currency = localStorage.getItem('currency');
+    const params = {
+      uuid: initBooking.uuid,
+      flightId: initBooking.flightId,
+      flightReservationId: initBooking.flightReservationId,
+      currency: localStorage.getItem('currency'),
+      backUrl: this.props.location.search
+    };
 
     return new Promise((resolve, reject) => {
       fetch(`${Config.getValue('apiHost')}payment/creditcard/flight`, {
         method: 'POST',
         headers: {
+          'Accept': 'application/json',
           'Content-type': 'application/json',
           'Authorization': localStorage[Config.getValue('domainPrefix') + '.auth.locktrip']
         },
-        body: JSON.stringify(initBooking)
+        body: JSON.stringify(params)
       })
         .then((res) => {
           res.json().then((data) => {
-            window.location = data.url;
+            if (data.success === false) {
+              NotificationManager.warning(data.message, '', MEDIUM);
+              this.setState({
+                updatedPrice: data.price
+              });
+            } else if (data.hasOwnProperty('url')) {
+              window.location = data.url;
+            } else {
+              this.searchAirTickets(this.props.location.search);
+            }
           }).catch(err => {
             this.searchAirTickets(this.props.location.search);
           });
         }).catch(err => {
+          console.log(err);
           const errors = err.errors;
           let message = '';
 
@@ -256,7 +274,7 @@ class AirTicketsBookingRouterPage extends Component {
           } else if (errors.MissingFlightReservationException) {
             message = errors.MissingFlightReservationException.message;
           } else if (errors.MissingPassengerInfoException) {
-              message = errors.MissingPassengerInfoException.message;
+            message = errors.MissingPassengerInfoException.message;
           } else if (errors.UserNotFoundException) {
             message = errors.UserNotFoundException.message;
           } else if (errors.FlightProviderUnavailableException) {
@@ -266,7 +284,7 @@ class AirTicketsBookingRouterPage extends Component {
           }
 
           NotificationManager.warning(message, 'Warning', LONG);
-          this.searchAirTickets(this.props.location.search);
+         this.searchAirTickets(this.props.location.search);
         });
     });
   }
@@ -542,6 +560,7 @@ class AirTicketsBookingRouterPage extends Component {
                 enableNextSection={this.enableNextSection}
                 initBooking={this.initBooking}
                 isBookingProccess={isBookingProccess}
+                updatedPrice={this.state.updatedPrice}
               />
             );
           }}

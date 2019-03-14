@@ -381,10 +381,10 @@ class AirTicketsSearchPage extends Component {
     let items = this.results;
 
     if (allElements) {
-      if (Array.isArray(allElements)) {
+      if (Array.isArray(allResults)) {
         items = allResults.slice(startResultsIndex, endResultsIndex)
       } else {
-        items = Object.values(allElements).slice(startResultsIndex, endResultsIndex)
+        items = Object.values(allResults).slice(startResultsIndex, endResultsIndex)
       }
     } else {
       items = Object.values(items).slice(startResultsIndex, endResultsIndex)
@@ -553,8 +553,8 @@ class AirTicketsSearchPage extends Component {
     if (messageBody.allElements) {
       let allResults = Object.values(this.results);
       allResults = allResults.sort((r1, r2) => r1.price.total - r2.price.total);
-      this.setState({ allElements: messageBody.allElements, allResults, currentPageResults: allResults.slice(0, 10), loading: false, totalElements: this.totalElements });
-      //this.results = {};
+      this.setState({ allElements: messageBody.allElements, allResults:allResults, currentPageResults: allResults.slice(0, 10), loading: false, totalElements: this.totalElements });
+      this.results = {};
       this.totalElements = 0;
       this.unsubscribeSearch();
       this.unsubscribeFilters();

@@ -1,14 +1,48 @@
-.pay-with-loc-wrapper,
-.pay-with-cc-wrapper {
-  text-align: center;
-  margin-bottom: 50px;
+@import "../../../../base/mixins";
+.payment-methods-loc-wrapper,
+.payment-methods-cc-wrapper {
+  width: 100%;
+    margin: 0 auto;
+    background: #fff;
+    padding: 20px;
+    display: inline-flex;
+    margin-bottom: 30px;
 
-  .price-wrapper {
-    margin-bottom: 15px;
+    .details {
+      width: 100%;
+      margin: 0 auto;
+      display: inline-flex;
+      flex-direction: column;
+      @include sansFont();
 
-    .total-price,
-    .total-loc-price {
-      margin-right: 10px;
+      .price-update-timer {
+        margin-bottom: 15px;
+      }
+
+      button {
+        max-width: 100%;
+        width: 100%;
+      }
     }
-  }
+
+    .logos {
+      width: 100%;
+      margin: 0 auto;
+      display: inline-block;
+
+      .logo {
+        width: 100%;
+        margin: 0 auto;
+        display: inline-block;
+        margin-top: 20px;
+
+        img {
+          max-width: 150px;
+          max-height: 150px;
+          margin: 15px auto;
+          position: relative;
+          left: 50%;
+        }
+      }
+    }
 }

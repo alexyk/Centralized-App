@@ -5,8 +5,7 @@ import PropTypes from 'prop-types';
 import SendTokensModal from '../../../profile/wallet/SendTokensModal';
 import { ExchangerWebsocket } from '../../../../services/socket/exchangerWebsocket';
 import { CurrencyConverter } from '../../../../services/utilities/currencyConverter';
-import { RoomsXMLCurrency } from '../../../../services/utilities/roomsXMLCurrency';
-import LocPrice from '../../../common/utility/LocPrice';
+import { Config } from '../../../../config.js';
 import { getCurrency, getCurrencySign } from '../../../../selectors/paymentInfo';
 import { getLocEurRate, getCurrencyExchangeRates } from '../../../../selectors/exchangeRatesInfo.js';
 import { getSeconds } from '../../../../selectors/locPriceUpdateTimerInfo.js';
@@ -18,33 +17,35 @@ const PAYMENT_PROCESSOR_IDENTIFICATOR = '-PP';
 const DEFAULT_QUOTE_LOC_ID = 'quote';
 const DEFAULT_QUOTE_LOC_PP_ID = DEFAULT_QUOTE_LOC_ID + PAYMENT_PROCESSOR_IDENTIFICATOR;
 
-const updateFEPrice = (data, result) => {
-  let totalLocPrice = document.querySelector('.total-loc-price');
-  let additionalFees = document.querySelector('.additional-fees');
-
-  totalLocPrice.innerText = data.locAmount.toFixed(2);
-  additionalFees.innerText = data.additionalFees.toFixed(2) + (Math.abs(result.total.price - data.fiatAmount));
-};
-
 class AirTicketsPaymentPage extends Component {
   constructor(props) {
     super(props);
     this.state = {
       showModal: false,
-      locEurRate: null
+      locEurRate: null,
+      currencySign: '',
+      currency: '',
+      quoteLocAmount: '',
+      quotePPFiatAmount: '',
+      quotePPAdditionalFees: '',
+      currencyExchangeRates: '',
+      seconds: this.props.seconds
     };
 
     this.closeModal = this.closeModal.bind(this);
     this.handleLOCPayment = this.handleLOCPayment.bind(this);
+    this.handleCCPayment = this.handleCCPayment.bind(this);
     this.convertPrice = this.convertPrice.bind(this);
+    this.startTimer = this.startTimer.bind(this);
     this.isPaymentEnabled = localStorage.getItem('passpayd') === true;
-    this.quoteResult = ExchangerWebsocket.sendMessage(DEFAULT_QUOTE_LOC_ID, 'quoteLoc', { bookingId: this.props.result.flightReservationId });
-    this.quotePPResult = ExchangerWebsocket.sendMessage(DEFAULT_QUOTE_LOC_PP_ID, 'quoteLoc', { bookingId: this.props.result.flightReservationId + PAYMENT_PROCESSOR_IDENTIFICATOR });
-
+    ExchangerWebsocket.sendMessage(DEFAULT_QUOTE_LOC_ID, 'quoteLoc', { bookingId: this.props.result.flightReservationId });
+    ExchangerWebsocket.sendMessage(DEFAULT_QUOTE_LOC_PP_ID, 'quoteLoc', { bookingId: this.props.result.flightReservationId + PAYMENT_PROCESSOR_IDENTIFICATOR });
   }
 
   componentDidMount() {
-
+    this.setState({
+      seconds: this.props.seconds
+    });
   }
 
   componentWillUnmount() {
@@ -68,82 +69,84 @@ class AirTicketsPaymentPage extends Component {
     });
   }
 
-  convertPrice(currencyExchangeRates, result) {
-    const currencyCode = result.price.currency;
-    const price = result.price.total;
-    const taxPrice = result.price.tax;
-    const currency = localStorage.getItem('currency');
-
-    const fiatPriceInCurrentCurrency = CurrencyConverter.convert(currencyExchangeRates, currencyCode, currency, price);
-    const fiatPriceInRoomsXMLCurrency = CurrencyConverter.convert(currencyExchangeRates, currencyCode, RoomsXMLCurrency.get(), price);
-
-    const taxPriceInCurrentCurrency = CurrencyConverter.convert(currencyExchangeRates, currencyCode, currency, taxPrice);
-    const taxPriceInRoomsXMLCurrency = CurrencyConverter.convert(currencyExchangeRates, currencyCode, RoomsXMLCurrency.get(), taxPrice);
-
-    return {
-      fiatPriceInCurrentCurrency: fiatPriceInCurrentCurrency,
-      fiatPriceInRoomsXMLCurrency: fiatPriceInRoomsXMLCurrency,
-      taxPriceInCurrentCurrency: taxPriceInCurrentCurrency,
-      taxPriceInRoomsXMLCurrency: taxPriceInRoomsXMLCurrency,
-      currency: currency
+  convertPrice(currencyExchangeRates, currency, price) {
+    if (!currencyExchangeRates || !currency || !price) {
+      return 0;
     }
+
+    const fiatPriceInCurrentCurrency = CurrencyConverter.convert(currencyExchangeRates, 'EUR', currency, price);
+    return fiatPriceInCurrentCurrency.toFixed(2);
+  }
+
+  startTimer(seconds) {
+      setInterval(() => {
+        seconds -= 1;
+        this.setState({
+          seconds: seconds
+        });
+      }, 1000);
+
   }
 
   render() {
-    const { result,  currencySign, quoteLocAmount, quotePPFiatAmount, quotePPAdditionalFees,  currencyExchangeRates, seconds } = this.props;
-    const price = this.convertPrice(currencyExchangeRates, result);
+    const { result, currencySign, currency, quoteLocAmount, quotePPFiatAmount, quotePPAdditionalFees, currencyExchangeRates, updatedPrice } = this.props;
+    const price = (!updatedPrice) ? result.price.total : updatedPrice;
+    const fiatAmount = this.convertPrice(currencyExchangeRates, currency, quotePPFiatAmount);
+    const locPrice = (!quoteLocAmount) ? result.price.locPrice.toFixed(2) : quoteLocAmount.toFixed(2);
+    const totalPrice = this.convertPrice(currencyExchangeRates, currency, price);
 
-    const locPrice = (!quoteLocAmount) ? price.fiatPriceInCurrentCurrency : quotePPFiatAmount;
-    const ppPirce = (!quotePPFiatAmount) ? price.fiatPriceInCurrentCurrency : quotePPFiatAmount
-    const additionalFees = (!quotePPAdditionalFees) ? 0 : quotePPAdditionalFees
     return (
       <Fragment>
-        <SendTokensModal
-          flightReservationId={this.props.result.flightReservationId}
+        <SendTokensModal flightReservationId={result.flightReservationId}
           showModal={this.state.showModal}
-          result={this.props.result}
+          result={result}
           closeModal={this.closeModal}
         />
-        <div className="pay-with-loc-wrapper" >
-          <div className="price-wrapper">
-            <h3>
-              <span>Total price: </span>
-              <span className="total-price">
-                <LocPrice fiat={locPrice} brackets={false}/>
-              </span>
-              <span className="currency">LOC</span>
-            </h3>
+        <div className="payment-methods-loc-wrapper">
+          <div className="details">
+            <p>Pay Directly With LOC: <span className="important">{currencySign} {locPrice}</span></p>
+            <p>Order Total: <span className="important">{locPrice}</span></p>
+            <div className="price-update-timer" tooltip="Seconds until we update your quoted price">
+                <span>LOC price will update in <i className="fa fa-clock-o" aria-hidden="true"></i>&nbsp;{this.startTimer(this.props.seconds)} sec &nbsp;</span>
+              <p>(Click <a href={`${Config.getValue('basePath')}buyloc`} target="_blank" rel="noopener noreferrer">here</a> to learn how you can buy LOC directly to enjoy cheaper travel)</p>
+            </div>
+            <button className="button" onClick={this.handleLOCPayment} type="button" disabled={this.isPaymentEnabled}>Pay with LOC Tokens</button>
           </div>
-          <button
-            id="pay_loc"
-            type="button"
-            className="button"
-            onClick={() => this.handleLOCPayment()}
-            disabled={this.isPaymentEnabled}>Pay with LOC</button>
+          <div className="logos">
+            <div className="logo loc">
+              <img src={Config.getValue('basePath') + 'images/logos/loc.jpg'} alt="Visa Logo" />
+            </div>
+          </div>
         </div>
 
-        <div className="pay-with-cc-wrapper">
-          <div className="price-wrapper">
-            <h3>
-              <span>Total price: </span>
-              <span className="total-loc-price">{ppPirce.toFixed(2)}</span>
-              <span className="currency">{currencySign}</span>
-            </h3>
+        {quotePPAdditionalFees &&
+          <div className="payment-methods-cc-wrapper">
+            <div className="details">
+              <p className="booking-card-price">
+                Pay with Credit Card: Current Market Price: <span className="important">{currencySign} {totalPrice}</span>
+              </p>
+              <p>Additional Fees: <span className="important">{currencySign} {(quotePPAdditionalFees + (Math.abs(totalPrice - fiatAmount))).toFixed(2)}</span></p>
+              <div className="price-update-timer" tooltip="Seconds until we update your quoted price">
+                <span>Market Price will update in <i className="fa fa-clock-o" aria-hidden="true"></i>&nbsp;{this.startTimer(this.props.seconds)} sec &nbsp;</span>
+              </div>
+              <div>
+                <button className="button" disabled={this.isPaymentEnabled} onClick={this.handleCCPayment} type="button">Pay with Credit Card</button>
+              </div>
+            </div>
+            <div className="logos">
+              <div className="logos-row">
+                <div className="logo credit-cards">
+                  <img src={Config.getValue('basePath') + 'images/logos/credit-cards.png'} alt="Credit Cards Logos" />
+                </div>
+              </div>
+              <div className="logos-row">
+                <div className="logo safecharge">
+                  <img src={Config.getValue('basePath') + 'images/logos/safecharge.png'} alt="Safecharge Logo" />
+                </div>
+              </div>
+            </div>
           </div>
-          <div className="price-wrapper">
-            <h3>
-              <span>Additional Fees: </span>
-              <span className="additional-fees">{additionalFees.toFixed(2)}</span>
-              <span className="currency">{currencySign}</span>
-            </h3>
-          </div>
-          <button
-            id="pay_cc"
-            type="button"
-            className="button"
-            onClick={() => this.handleCCPayment()}
-            disabled={this.isPaymentEnabled}>Pay with Credit/Debit card</button>
-        </div>
+        }
       </Fragment>
     );
   }
@@ -166,7 +169,8 @@ AirTicketsPaymentPage.propTypes = {
   quotePPFiatAmount: PropTypes.number,
   quotePPFiatAdditionalFees: PropTypes.number,
   quotePPFundsSufficient: PropTypes.bool,
-  seconds: PropTypes.number
+  seconds: PropTypes.number,
+  updatedPrice: PropTypes.string
 };
 
 function mapStateToProps(state) {
