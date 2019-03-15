@@ -156,7 +156,6 @@ class AirTicket extends Component {
 
   render() {
     const { ticket } = this.props;
-    console.log(ticket);
     if (!ticket.segments.length) {
       return (
         <div></div>
