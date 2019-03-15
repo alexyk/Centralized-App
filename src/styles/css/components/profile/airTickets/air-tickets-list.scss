@@ -12,8 +12,12 @@ $breakpoints: (
 @import "../../../base/variables";
 
 .tickets-flex-container {
+
   margin-bottom: 40px;
   .ticket-flex-container {
+    flex-direction: row;
+    width: 100%;
+    flex-wrap: wrap;
     h4 {
       font-weight: 400;
       font-size: 22px;
@@ -209,6 +213,19 @@ $breakpoints: (
           }
         }
       }
+    }
+  }
+
+  .flex-container-details {
+    margin-top: 25px;
+    display: none;
+    flex-direction: column;
+    width: 100%;
+    flex-wrap: wrap;
+
+
+    span {
+      @include sansFont();
     }
   }
 }

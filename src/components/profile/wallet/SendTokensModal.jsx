@@ -2,7 +2,6 @@ import { Modal } from "react-bootstrap";
 import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { sendTokens } from '../../../services/payment/loc';
-import { NotificationManager } from 'react-notifications';
 
 class SendTokensModal extends Component {
   constructor(props) {
