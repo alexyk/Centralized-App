@@ -97,6 +97,7 @@ function AirTicketsBookingProfileRouterPage(props) {
                       <AirTicketsPaymentPage
                         result={result}
                         initBooking={props.initBooking}
+                        updatedPrice={this.props.updatedPrice}
                       />
                     )}}
                   />
@@ -127,6 +128,7 @@ AirTicketsBookingProfileRouterPage.propTypes = {
   onChangePassengerServices: PropTypes.func,
   enableNextSection: PropTypes.func,
   initBooking: PropTypes.func,
+  updatedPrice: PropTypes.string,
 
   // Router props
   location: PropTypes.object

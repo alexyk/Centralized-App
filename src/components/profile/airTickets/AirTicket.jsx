@@ -7,6 +7,7 @@ import PlaneIcon from '../../../styles/images/plane-icon.png';
 
 class AirTicket extends Component {
   extractDatesData(segments) {
+    console.log(segments);
     const startDateMoment = moment(segments[0].originDate);
     const endDateMoment = moment(segments[segments.length - 1].destinationDate);
 
@@ -140,8 +141,13 @@ class AirTicket extends Component {
 
   render() {
     const { ticket } = this.props;
+    if (!ticket.segments.length) {
+      return (
+        <div></div>
+      );
+    }
     const departureSegments = ticket.segments.filter(s => s.group === '0');
-    const returnSegments = ticket.segments.filter(s => s.group === '1');
+    const returnSegments = ticket.segments.filter(s => s.group === '0');
     const departureDate = this.extractDatesData(departureSegments);
     let returnDate;
     if (returnSegments.length > 0) {
@@ -160,9 +166,9 @@ class AirTicket extends Component {
                 {this.getDepartureAirports(departureSegments)}
               </div>
               {returnSegments.length > 0 &&
-                <div className="content-row">
-                  {this.getReturnAirports(returnSegments)}
-                </div>}
+              <div className="content-row">
+                {this.getReturnAirports(returnSegments)}
+              </div>}
             </div>
             <div className={`flex-row-child tickets-dates${returnSegments.length === 0 ? ' one-way' : ''}`}>
               <div className="content-row">
@@ -179,29 +185,29 @@ class AirTicket extends Component {
                 </div>
               </div>
               {returnSegments.length > 0 &&
-                <div className="content-row">
-                  <div>
-                    <span className="date-in-day">{returnDate.departure.day}</span> {returnDate.departure.month}, {returnDate.departure.year}
-                    <div className="time">{returnDate.departure.time} {returnDate.departure.timezone}</div>
-                  </div>
-                  <i aria-hidden="true" className="fa fa-long-arrow-right" />
-                  <div>
-                    <span className="date-out-day">{returnDate.arrival.day}</span> {returnDate.arrival.month}, {returnDate.arrival.year}
-                    <div className="time">{returnDate.arrival.time} {returnDate.arrival.timezone}</div>
-                  </div>
-                </div>}
+              <div className="content-row">
+                <div>
+                  <span className="date-in-day">{returnDate.departure.day}</span> {returnDate.departure.month}, {returnDate.departure.year}
+                  <div className="time">{returnDate.departure.time} {returnDate.departure.timezone}</div>
+                </div>
+                <i aria-hidden="true" className="fa fa-long-arrow-right" />
+                <div>
+                  <span className="date-out-day">{returnDate.arrival.day}</span> {returnDate.arrival.month}, {returnDate.arrival.year}
+                  <div className="time">{returnDate.arrival.time} {returnDate.arrival.timezone}</div>
+                </div>
+              </div>}
             </div>
           </div>
           <div className="flex-row-child tickets-actions">
             <div className="content-row">
               <div>
-                <Link to={`/profile/flights/${ticket.reservationId}`}>Details</Link>
+                <Link to={`/profile/flights/${ticket.flightReservationId}`}>Details</Link>
               </div>
             </div>
           </div>
           <div className="flex-row-child tickets-status">
             {ticket.status &&
-              <span className="status">{this.getStatus(ticket.status)}</span>
+            <span className="status">{this.getStatus(ticket.status)}</span>
             }
           </div>
         </ProfileFlexContainer>
