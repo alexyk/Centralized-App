@@ -79,13 +79,13 @@ class AirTicketsPaymentPage extends Component {
   }
 
   startTimer(seconds) {
-      setInterval(() => {
-        seconds -= 1;
-        this.setState({
-          seconds: seconds
-        });
+    const timerSeconds = document.querySelector('.timer-seconds');
+    for (let i = 1; i <= seconds; i++) {
+      setTimeout(() => {
+        seconds = seconds = 1;
+        timerSeconds.innerText = seconds;
       }, 1000);
-
+    }
   }
 
   render() {
@@ -107,7 +107,7 @@ class AirTicketsPaymentPage extends Component {
             <p>Pay Directly With LOC: <span className="important">{currencySign} {locPrice}</span></p>
             <p>Order Total: <span className="important">{locPrice}</span></p>
             <div className="price-update-timer" tooltip="Seconds until we update your quoted price">
-                <span>LOC price will update in <i className="fa fa-clock-o" aria-hidden="true"></i>&nbsp;{this.startTimer(this.props.seconds)} sec &nbsp;</span>
+              <span>LOC price will update in <i className="fa fa-clock-o" aria-hidden="true"></i>&nbsp;<span className="timer-seconds">{this.startTimer(this.props.seconds)}</span> sec &nbsp;</span>
               <p>(Click <a href={`${Config.getValue('basePath')}buyloc`} target="_blank" rel="noopener noreferrer">here</a> to learn how you can buy LOC directly to enjoy cheaper travel)</p>
             </div>
             <button className="button" onClick={this.handleLOCPayment} type="button" disabled={this.isPaymentEnabled}>Pay with LOC Tokens</button>
@@ -127,7 +127,7 @@ class AirTicketsPaymentPage extends Component {
               </p>
               <p>Additional Fees: <span className="important">{currencySign} {(quotePPAdditionalFees + (Math.abs(totalPrice - fiatAmount))).toFixed(2)}</span></p>
               <div className="price-update-timer" tooltip="Seconds until we update your quoted price">
-                <span>Market Price will update in <i className="fa fa-clock-o" aria-hidden="true"></i>&nbsp;{this.startTimer(this.props.seconds)} sec &nbsp;</span>
+                <span>Market Price will update in <i className="fa fa-clock-o" aria-hidden="true"></i>&nbsp;<span className="timer-seconds">{this.startTimer(this.props.seconds)}</span> sec &nbsp;</span>
               </div>
               <div>
                 <button className="button" disabled={this.isPaymentEnabled} onClick={this.handleCCPayment} type="button">Pay with Credit Card</button>

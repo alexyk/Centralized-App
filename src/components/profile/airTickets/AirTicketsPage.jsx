@@ -35,7 +35,9 @@ class AirTicketsPage extends React.Component {
             data.reverse().forEach((ticket) => {
               tickets.push({
                 segments: JSON.parse(ticket.dashboardViews),
-                flightReservationId: ticket.flightReservationId
+                flightReservationId: ticket.flightReservationId,
+                status: ticket.status,
+                details: ticket.details,
               });
             });
 

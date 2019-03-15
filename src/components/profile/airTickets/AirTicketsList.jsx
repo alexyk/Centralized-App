@@ -7,7 +7,6 @@ import ProfileFlexContainer from '../flexContainer/ProfileFlexContainer';
 import '../../../styles/css/components/profile/airTickets/air-tickets-list.css';
 
 function AirTicketsList(props) {
-  console.log(props)
   const renderTickets = () => {
     if (!props.tickets) {
       return;

@@ -1,13 +1,12 @@
 import React, { Component, Fragment } from 'react';
-import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import moment from 'moment';
 import ProfileFlexContainer from '../flexContainer/ProfileFlexContainer';
 import PlaneIcon from '../../../styles/images/plane-icon.png';
 
+const STATUS = ['PENDING', 'PREPARE']
 class AirTicket extends Component {
   extractDatesData(segments) {
-    console.log(segments);
     const startDateMoment = moment(segments[0].originDate);
     const endDateMoment = moment(segments[segments.length - 1].destinationDate);
 
@@ -127,16 +126,32 @@ class AirTicket extends Component {
   }
 
   getStatus(status) {
+    if (!status) {
+      return 'PENDING';
+    }
+
     const statusPreview = status.split('_').join(' ');
     let statusName = '';
 
-    if (statusPreview.indexOf('Pending')) {
+    if (STATUS.indexOf(statusPreview[0])) {
       statusName = 'PENDING';
+    } else if (statusName[0] === 'FAILED') {
+      statusName = 'FAILED';
     } else {
       statusName = 'DONE';
     }
 
     return statusName;
+  }
+
+  getDetails(e) {
+    let btn = e.target;
+
+    if (btn.parentNode.parentElement.parentElement.parentElement.children.item(4).style.display === 'inline-flex') {
+      btn.parentNode.parentElement.parentElement.parentElement.children.item(4).style.display = 'none';
+    } else {
+      btn.parentNode.parentElement.parentElement.parentElement.children.item(4).style.display = 'inline-flex';
+    }
   }
 
   render() {
@@ -149,6 +164,7 @@ class AirTicket extends Component {
     const departureSegments = ticket.segments.filter(s => s.group === '0');
     const returnSegments = ticket.segments.filter(s => s.group === '0');
     const departureDate = this.extractDatesData(departureSegments);
+    const bookedDate = moment(ticket.details.bookedDate).format('DD/MM/YYYY');
     let returnDate;
     if (returnSegments.length > 0) {
       returnDate = this.extractDatesData(returnSegments);
@@ -201,15 +217,23 @@ class AirTicket extends Component {
           <div className="flex-row-child tickets-actions">
             <div className="content-row">
               <div>
-                <Link to={`/profile/flights/${ticket.flightReservationId}`}>Details</Link>
+                <button className="link" onClick={this.getDetails}>Details</button>
               </div>
             </div>
           </div>
           <div className="flex-row-child tickets-status">
-            {ticket.status &&
             <span className="status">{this.getStatus(ticket.status)}</span>
-            }
           </div>
+          <ProfileFlexContainer styleClass={`flex-container-details ${this.props.styleClass}`}>
+            <div className="flex-row-child details">
+              <div>
+                <span className="pnr">PNR: {ticket.details.pnr}</span>
+              </div>
+              <div>
+                <span className="booked-date">Booked date: {bookedDate}</span>
+              </div>
+            </div>
+          </ProfileFlexContainer>
         </ProfileFlexContainer>
       </Fragment>
     );

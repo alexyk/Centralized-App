@@ -347,3 +347,13 @@ hr {
   margin-bottom: 20px;
   border-top: 1px solid #cfcfcf;
 }
+
+
+.link {
+  background: transparent;
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}

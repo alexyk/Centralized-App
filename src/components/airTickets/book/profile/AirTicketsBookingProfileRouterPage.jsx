@@ -12,7 +12,7 @@ import '../../../../styles/css/components/airTickets/book/profile/air-tickets-bo
 
 
 function AirTicketsBookingProfileRouterPage(props) {
-  const { result, contactInfo, invoiceInfo, servicesInfo, passengersInfo, countries, confirmInfo, isBookingProccess } = props;
+  const { result, contactInfo, invoiceInfo, servicesInfo, passengersInfo, countries, confirmInfo, isBookingProccess, updatedPrice } = props;
 
   let flightServices;
   let passengersServices;
@@ -97,7 +97,7 @@ function AirTicketsBookingProfileRouterPage(props) {
                       <AirTicketsPaymentPage
                         result={result}
                         initBooking={props.initBooking}
-                        updatedPrice={this.props.updatedPrice}
+                        updatedPrice={updatedPrice}
                       />
                     )}}
                   />
