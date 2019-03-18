@@ -1,0 +1,256 @@
+#main_tabs {
+  padding: 0 63px;
+  display: flex;
+  justify-content: flex-end;
+  height: 53px !important;
+  align-items: flex-end;
+  padding-right: 5% !important;
+}
+//
+//#main_tabs a {
+//  width: 128px;
+//  height: 35px;
+//  border-radius: 10px 10px 0 0;
+//  background: #a1c4bd;
+//  text-align: center;
+//  font-weight: lighter;
+//  line-height: 35px;
+//  color: #fff;
+//  font-family: 'Gilroy-ExtraBold';
+//  font-size: 13px;
+//  display: block;
+//  margin: 0 0 0 6px;
+//}
+
+#main_tabs a.main {
+  height: 43px;
+  line-height: 43px;
+  background: white;
+  color: #3c4e5f;
+
+}
+
+.nav-list-menu .list-menu-item {
+  cursor: pointer;
+  padding: 20px 15px;
+}
+
+#main-nav {
+  height: 57px !important;
+  position: relative;
+  min-height: 0
+}
+
+.navbar-logo {
+  margin: 0 !important;
+  width: 130px !important;
+  height: 60px !important;
+  display: flex !important;
+  align-items: center !important;
+}
+
+.container.balances {
+  font-size: 12px;
+  display: flex;
+
+  max-width: 1200px;
+  width: 100%;
+  padding: 0 15px;
+  margin: 0 auto;
+}
+
+@media (min-width: 1025px) {
+  .container.balances .info {
+    height: 45px;
+  }
+}
+
+.source-data {
+  width: 94%;
+  margin: 0 auto;
+  /* display: flex; */
+  justify-content: flex-end;
+}
+
+.language {
+  color: #d87a61;
+  width: 20px !important;
+}
+
+.select {
+  width: 68px !important;
+  min-width: 0;
+  font-size:  13px
+}
+
+.info .balance .value {
+  font-size: 13px;
+}
+
+.hero h1 {
+  font-size: 59px;
+}
+
+.source-data {
+  /* width: 94%; */
+  margin: 0 auto;
+}
+
+body {
+  font: 14px/1.2 "Futura", "Arial", "Helvetica Neue", "Helvetica", sans-serif;
+  font-weight: 300;
+}
+
+
+select.currency {
+  color: #d87a61;
+  min-width: 0;
+  width: 62px !important;
+}
+.info .cross-rate {
+  font-size: 13px;
+  text-transform: uppercase;
+  color: #d87a61;
+  margin-right: 10px;
+}
+select.language {
+  width:  20px !important;
+}
+.container.balances {
+  font-size: 12px;
+  display: flex;
+}
+
+span.rate {
+  font-size: 13px !important;
+}
+
+.select {
+  min-width: 0 !important;
+}
+
+.container.balances > .source-data {
+  /* display: flex; */
+}
+
+button.slider-menu-toggle-button.mb-only {
+  height: 55px;
+}
+
+.get-started-content {
+  font-size: 28px;
+}
+
+h3 {
+  font-size: 27px;
+}
+
+
+//
+
+#main_tabs a {
+  width: 185px !important;
+  height: 50px !important;
+  border-radius: 10px 10px 0 0;
+  background: #a1c4bd;
+  text-align: center;
+  line-height: 50px !important;
+  color: #fff;
+  font-family: 'Gilroy-ExtraBold';
+  font-size: 18px !important;
+  display: block;
+}
+
+@media (max-width: 567px) and (min-width: 240px) {
+  #main_tabs ul li a.active {
+    height: 50px !important;
+    line-height: 50px !important;
+  }
+}
+
+@media (max-width: 767px) {
+  #main_tabs a {
+    width: 105px;
+    font-size: 13px;
+  }
+}
+#main_tabs a.main {
+  height: 60px !important;
+  line-height: 60px !important;
+}
+
+@media (max-width: 567px){
+  #main_tabs
+  a.main {
+    height: 50px !important;
+    line-height: 50px !important;
+  }
+}
+#main_tabs {
+  height: 80px !important;
+}
+
+@media (max-width: 567px) and (min-width: 240px){
+  #main_tabs {
+    height: auto !important;
+    padding: 15px 0 0 !important;
+  }
+}
+
+
+
+#main-tabs a {
+  width: 185px !important;
+  height: 50px !important;
+  border-radius: 10px 10px 0 0;
+  background: #a1c4bd;
+  text-align: center;
+  line-height: 50px !important;
+  color: #fff;
+  font-family: 'Gilroy-ExtraBold';
+  font-size: 18px !important;
+  display: block;
+}
+
+@media (max-width: 567px) and (min-width: 240px) {
+  #main_tabs ul li a.active {
+    height: 50px !important;
+    line-height: 50px !important;
+  }
+}
+
+@media (max-width: 767px) {
+  #main_tabs a {
+    width: 105px !important;
+    font-size: 13px !important;
+  }
+}
+#main_tabs a.main {
+  height: 60px !important;
+  line-height: 60px !important;
+}
+
+@media (max-width: 567px){
+  #main_tabs
+  a.main {
+    height: 50px !important;
+    line-height: 50px !important;
+  }
+}
+#main_tabs {
+  height: 80px !important;
+}
+
+@media (max-width: 567px) and (min-width: 240px){
+  #main_tabs {
+    height: auto !important;
+    padding: 15px 0 0 !important;
+  }
+}
+
+@media (max-width: 767px) {
+  #main_tabs ul li a {
+    width: 105px !important;
+    font-size: 13px !important;
+  }
+}
