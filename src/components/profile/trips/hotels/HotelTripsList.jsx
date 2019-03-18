@@ -31,6 +31,7 @@ function HotelTripsTable(props) {
             styleClass="trips-flex-container"
             onTripSelect={props.onTripSelect}
             handleCancelReservation={props.handleCancelReservation}
+            sendCancelRequest={props.sendCancellationRequest}
           />
         );
       })
