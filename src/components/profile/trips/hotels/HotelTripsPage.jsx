@@ -29,7 +29,8 @@ class HotelTripsPage extends React.Component {
       bookingPrepareId: 0,
       password: '',
       cancellationText: '',
-      count: 0
+      count: 0,
+      showModal: false
     };
 
     this.onPageChange = this.onPageChange.bind(this);
@@ -86,24 +87,21 @@ class HotelTripsPage extends React.Component {
   }
 
   handleCancelTrip(bookingId) {
-    requester.cancelBooking({ bookingId: bookingId || this.state.bookingPrepareId })
-      //.then(res => res.body)
-      //.then(data => {
+    this.setState({
+      showModal: true,
+      bookingPrepareId: bookingId
+    });
+
+    this.openModal(CANCELLING_RESERVATION);
+  }
+
+  sendCancellationRequest(bookingId) {
+    requester.cancelBooking({ bookingId: bookingId || this.state.bookingPrepareId, confirmed: true })
       .then(res => {
-        /*
-        var data = res.body;
-        if (data.isCancellationRequested) {
-          NotificationManager.info(RESERVATION_CANCELLED, '', LONG);
-        } else {
-          NotificationManager.warning(CANCELLATION_NOT_POSSIBLE, '', LONG);
-        }
-        */
         NotificationManager.info(CANCELLING_RESERVATION, '', LONG);
       }).then(()=>{
         return this.getBookings();
     })
-
-    // this.closeModal(PASSWORD_PROMPT);
   }
 
   setTripIsAccepted(tripId, isAccepted) {
@@ -157,6 +155,7 @@ class HotelTripsPage extends React.Component {
               onTripSelect={this.onTripSelect}
               handleCancelReservation={this.handleCancelTrip}
               loading={this.state.loading}
+              sendCancelRequest={this.sendCancellationRequest}
             />
 
             <Pagination
@@ -171,9 +170,11 @@ class HotelTripsPage extends React.Component {
         <CancelTripModal
           cancellationText={this.state.cancellationText}
           onChange={this.onChange}
-          isActive={this.props.isActive[CANCEL_TRIP_MODAL]}
+          isActive={this.state.showModal}
           onClose={this.closeModal}
-          handleCancelTrip={this.handleCancelTrip} />
+          handleCancelTrip={this.handleCancelTrip}
+          sendCancelRequest={this.sendCancellationRequest}
+          />
       </div>
     );
   }

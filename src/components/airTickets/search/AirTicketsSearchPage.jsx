@@ -19,6 +19,7 @@ import { LONG } from '../../../constants/notificationDisplayTimes';
 import AsideContentPage from '../../common/asideContentPage/AsideContentPage';
 import { stopIds } from '../../../constants/constants';
 import _ from 'lodash';
+import requester from "../../../requester";
 
 import '../../../styles/css/components/airTickets/search/air-tickets-search-page.css';
 
@@ -43,6 +44,7 @@ class AirTicketsSearchPage extends Component {
       showFiltersMobile: false
     };
 
+    this.filterResults = null;
     this.onPageChange = this.onPageChange.bind(this);
     this.searchAirTickets = this.searchAirTickets.bind(this);
     this.applyFilters = this.applyFilters.bind(this);
@@ -155,8 +157,11 @@ class AirTicketsSearchPage extends Component {
   }
 
   applyFilters(filtersObject) {
+    if (!this.filterResults) {
+      this.filterResults = this.state.allResults
+    }
     const items = {};
-    const results = this.results;
+    const results = this.filterResults;
     const filters = {
       airlines: filtersObject.airlines.map(a => a.airlineName) || [],
       stops: filtersObject.stops.map(a => a.changesId) || [],
@@ -272,7 +277,7 @@ class AirTicketsSearchPage extends Component {
     this.setState({
       loading: false,
       allElements: true,
-      allResults: _.isEmpty(items) ? this.results : items,
+      allResults: _.isEmpty(items) ? this.filterResults : items,
       currentPageResults: Object.values(items).slice(0, 10),
       totalElements: Object.values(items).length,
       page: 0,
