@@ -234,7 +234,7 @@ class AirTicketsBookingRouterPage extends Component {
     const params = {
       uuid: initBooking.uuid,
       flightId: initBooking.flightId,
-      flightReservationId: initBooking.flightReservationId,
+      flightReservationId: initBooking.flightReservationId + '-PP',
       currency: localStorage.getItem('currency'),
       backUrl: this.props.location.search
     };
