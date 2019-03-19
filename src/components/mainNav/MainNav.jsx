@@ -16,7 +16,6 @@ import ListMenu from "./list-menu";
 import { setShowMenu } from "../../actions/burgerMenuInfo.js";
 
 import { selectors as UserSelectors } from "../../reducers/userInfo";
-import "./links-to-other-sites.css"
 
 class MainNav extends React.Component {
   constructor(props) {
