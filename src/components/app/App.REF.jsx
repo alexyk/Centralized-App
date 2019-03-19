@@ -1,4 +1,5 @@
 import "../../styles/css/main.css";
+import "../../styles/css/front-page-changes.css";
 import "../../styles/css/components/captcha/captcha-container.css";
 import { Redirect, Route, Switch } from "react-router-dom";
 import React from "react";

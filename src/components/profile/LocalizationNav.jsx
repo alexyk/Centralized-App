@@ -22,7 +22,7 @@ class LocalizationNav extends PureComponent {
     const { userLocBalance, userEthBalance, isUserLogged, currency, location } = this.props;
 
     return (
-      <div className="container">
+      <div className="container balances">
         <div className="source-data">
           <div className="info">
             {location.pathname !== '/hotels'
