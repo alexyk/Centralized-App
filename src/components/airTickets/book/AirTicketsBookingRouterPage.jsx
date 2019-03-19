@@ -265,26 +265,25 @@ class AirTicketsBookingRouterPage extends Component {
             this.searchAirTickets(this.props.location.search);
           });
         }).catch(err => {
-          console.log(err);
+          this.searchAirTickets(this.props.location.search);
           const errors = err.errors;
           let message = '';
 
-          if (errors.NotActiveException) {
+          if (errors.hasOwnProperty('NotActiveException')) {
             message = errors.NotActiveException.message;
-          } else if (errors.MissingFlightReservationException) {
+          } else if (errors.hasOwnProperty('MissingFlightReservationException')) {
             message = errors.MissingFlightReservationException.message;
-          } else if (errors.MissingPassengerInfoException) {
+          } else if (errors.hasOwnProperty('MissingPassengerInfoException')) {
             message = errors.MissingPassengerInfoException.message;
-          } else if (errors.UserNotFoundException) {
+          } else if (errors.hasOwnProperty('UserNotFoundException')) {
             message = errors.UserNotFoundException.message;
-          } else if (errors.FlightProviderUnavailableException) {
+          } else if (errors.hasOwnProperty('FlightProviderUnavailableException')) {
             message = errors.FlightProviderUnavailableException.message;
           } else {
             message = err.message
           }
 
           NotificationManager.warning(message, 'Warning', LONG);
-         this.searchAirTickets(this.props.location.search);
         });
     });
   }
