@@ -80,7 +80,7 @@ function AirTicketsDetailsBookingPanel(props) {
           <div className="without-fees">
             <p>Passengers</p>
             <span className="icon-question" tooltip={'Some message'}></span>
-            <p>{isUserLogged && `${currencySign} ${showPrice.toFixed(2)}`} <LocPrice fiat={showPrice} /></p>
+            <p>{isUserLogged && `${currencySign} ${showPrice.toFixed(2)}`} <LocPrice fiat={fiatPriceInRoomsXMLCurrency} /></p>
           </div>
           {!isNaN(taxAndFeesCalc) &&
             <div className="cleaning-fee">
