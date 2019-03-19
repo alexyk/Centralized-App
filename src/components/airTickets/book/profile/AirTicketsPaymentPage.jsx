@@ -10,7 +10,7 @@ import { getCurrency, getCurrencySign } from '../../../../selectors/paymentInfo'
 import { getLocEurRate, getCurrencyExchangeRates } from '../../../../selectors/exchangeRatesInfo.js';
 import { getSeconds } from '../../../../selectors/locPriceUpdateTimerInfo.js';
 import { getLocAmountById, getQuotePPFiatAmount, getQuotePPAdditionalFees, getQuotePPFundsSufficient } from '../../../../selectors/locAmountsInfo.js';
-
+import LocPrice from '../../../common/utility/LocPrice';
 import '../../../../styles/css/components/airTickets/book/payment/air-tickets-payment-page.css';
 
 const PAYMENT_PROCESSOR_IDENTIFICATOR = '-PP';
@@ -78,14 +78,15 @@ class AirTicketsPaymentPage extends Component {
     return fiatPriceInCurrentCurrency.toFixed(2);
   }
 
-  startTimer(seconds) {
-    const timerSeconds = document.querySelector('.timer-seconds');
-    for (let i = 1; i <= seconds; i++) {
-      setTimeout(() => {
-        seconds = seconds = 1;
-        timerSeconds.innerText = seconds;
-      }, 1000);
-    }
+  startTimer(seconds = 10) {
+    let secondsWrapper = document.querySelectorAll(".timer-seconds");
+    let refreshTimer = setInterval(() => {
+      secondsWrapper.forEach(item => item.innerText = seconds);
+      seconds -= 1;
+      if(seconds <= 0){
+        clearInterval(refreshTimer);
+      }
+    }, 1000);
   }
 
   render() {
@@ -104,8 +105,10 @@ class AirTicketsPaymentPage extends Component {
         />
         <div className="payment-methods-loc-wrapper">
           <div className="details">
-            <p>Pay Directly With LOC: <span className="important">{currencySign} {locPrice}</span></p>
-            <p>Order Total: <span className="important">{locPrice}</span></p>
+            <p>Pay Directly With LOC: <span className="important">{currencySign} {totalPrice}</span></p>
+            <p>Order Total: <span className="important">
+              <LocPrice fiat={parseFloat(totalPrice)} brackets={false} locAmount={locPrice} currencyExchangeRates={currencyExchangeRates} />
+            </span></p>
             <div className="price-update-timer" tooltip="Seconds until we update your quoted price">
               <span>LOC price will update in <i className="fa fa-clock-o" aria-hidden="true"></i>&nbsp;<span className="timer-seconds">{this.startTimer(this.props.seconds)}</span> sec &nbsp;</span>
               <p>(Click <a href={`${Config.getValue('basePath')}buyloc`} target="_blank" rel="noopener noreferrer">here</a> to learn how you can buy LOC directly to enjoy cheaper travel)</p>
@@ -123,7 +126,7 @@ class AirTicketsPaymentPage extends Component {
           <div className="payment-methods-cc-wrapper">
             <div className="details">
               <p className="booking-card-price">
-                Pay with Credit Card: Current Market Price: <span className="important">{currencySign} {totalPrice}</span>
+                Pay with Credit Card: <span className="important">{currencySign} {totalPrice}</span>
               </p>
               <p>Additional Fees: <span className="important">{currencySign} {(quotePPAdditionalFees + (Math.abs(totalPrice - fiatAmount))).toFixed(2)}</span></p>
               <div className="price-update-timer" tooltip="Seconds until we update your quoted price">
