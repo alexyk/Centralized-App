@@ -113,6 +113,7 @@ class AirTicketsPaymentPage extends Component {
           showModal={this.state.showModal}
           result={result}
           closeModal={this.closeModal}
+          price={quoteLocAmount}
         />
         <div className="payment-methods-loc-wrapper">
           <div className="details">
