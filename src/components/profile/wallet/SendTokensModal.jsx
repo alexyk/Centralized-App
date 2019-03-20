@@ -35,8 +35,7 @@ class SendTokensModal extends Component {
   }
 
   render() {
-    const { result } = this.props;
-    const price = result && result.price.locPrice ? result.price.locPrice.toFixed(2) : '';
+    const { result, price } = this.props;
 
     return (
       <Fragment>
@@ -58,7 +57,7 @@ class SendTokensModal extends Component {
             <Modal.Body>
                 <div className="name">
                   <label htmlFor="loc-amount">Send LOC Amount</label>
-                  <LocPrice fiat={this.props.price} brackets={false}/>
+                  LOC {price}
                   <input id="loc-amount" name="locAmount" type="hidden" placeholder="0.000" value={price} readOnly />
                 </div>
                 <div className="name">
