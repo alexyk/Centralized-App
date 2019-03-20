@@ -10,6 +10,7 @@
     "copy-to-clipboard": "^3.0.8",
     "create-react-class": "^15.6.3",
     "ethers": "^3.0.29",
+    "imagetracerjs": "^1.2.5",
     "javascript-time-ago": "^1.0.35",
     "jquery": "^3.3.1",
     "json-fetch": "^7.5.1",
@@ -17,7 +18,7 @@
     "lodash": "^4.17.11",
     "moment": "^2.24.0",
     "npm-run-all": "^4.1.5",
-    "prop-types": "^15.7.1",
+    "prop-types": "^15.6.2",
     "query-string": "^5.1.1",
     "ramda": "^0.26.1",
     "rc-pagination": "^1.17.8",
@@ -63,6 +64,7 @@
     "react-sortable-hoc": "^0.6.8",
     "react-stomp": "^3.3.0",
     "react-time-ago": "^1.0.11",
+    "react-time-range-slider": "^1.1.1",
     "react-webcam": "^1.1.0",
     "recompose": "^0.30.0",
     "redux": "^3.7.2",
@@ -96,7 +98,8 @@
     "build/dev": "sh -ac '. ./.env.dev; npm run build'",
     "build-css": "node-sass-chokidar ./src/ --output ./src/",
     "watch-css": "node-sass-chokidar ./src/ --output ./src/ --watch",
-    "all": "npm-run-all --parallel watch-css start-js"
+    "all": "npm-run-all --parallel watch-css start-js",
+    "png2svg": "node ./png2svg.js"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",

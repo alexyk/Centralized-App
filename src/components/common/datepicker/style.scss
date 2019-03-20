@@ -105,6 +105,10 @@ $breakpoints: (
   .react-datepicker__triangle {
     display: none;
   }
+  .check-in-popper {
+    left: -152px !important;
+    transform: translate3d(533px, 53px, 0px) !important;
+  }
   .check-out-popper {
     left: -152px !important;
   }

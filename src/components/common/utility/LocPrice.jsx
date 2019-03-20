@@ -9,6 +9,8 @@ import { isLogged } from '../../../selectors/userInfo';
 import { getLocAmountById } from '../../../selectors/locAmountsInfo';
 import { getCurrencyExchangeRates, getLocEurRate } from '../../../selectors/exchangeRatesInfo';
 import { isExchangerWebsocketConnected } from '../../../selectors/exchangerSocketInfo';
+import {Config} from "../../../config";
+import Stomp from "stompjs";
 
 const DEFAULT_CRYPTO_CURRENCY = 'EUR';
 const DEFAULT_LOC__PRICE_METHOD = 'getLocPrice';

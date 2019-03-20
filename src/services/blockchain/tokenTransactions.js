@@ -14,7 +14,9 @@ import {
   getNodeProvider
 } from './config/contracts-config.js';
 import {
-  getGasPrice
+  getGasPrice,
+  getNonceNumber,
+  createSignedTransaction
 } from "./utils/ethFuncs";
 const gasConfig = require('./config/gas-config.json');
 const errors = require('./config/errors.json');
@@ -46,6 +48,35 @@ export class TokenTransactions {
   static async getETHBalance(address) {
     const nodeProvider = getNodeProvider();
     return await nodeProvider.getBalance(address);
+  }
 
+  static async signTransaction(jsonObj, password, recipient, amount, flightReservationId) {
+    let wallet = await ethers.Wallet.fromEncryptedWallet(jsonObj, password);
+    const locContract = await LOCTokenContractWithWallet(wallet)
+    const gasPrice = await getGasPrice();
+    let nonce = await getNonceNumber(wallet.address);
+
+    let approveTxOptions = {
+      gasLimit: gasConfig.exchangeLocToEth,
+      gasPrice: gasPrice,
+      nonce: nonce
+    };
+
+    let createReservationTxOptions = {
+      gasLimit: gasConfig.exchangeLocToEth,
+      gasPrice: gasPrice,
+      nonce: nonce + 1
+    }
+
+    await TokenValidators.validateLocBalance(wallet.address, amount, wallet, gasConfig.transferTokens);
+    await EtherValidators.validateEthBalance(wallet, gasConfig.transferTokens);
+
+    let approveTx = createSignedTransaction(locContract, 'approve', wallet, approveTxOptions, locContract.address, recipient, amount);
+    let createReservationTx = createSignedTransaction(locContract, 'transfer', wallet, createReservationTxOptions, locContract.address, recipient, amount);
+    let signedTxs = {};
+    signedTxs.signedApproveData = approveTx;
+    signedTxs.signedTransactionData = createReservationTx;
+    signedTxs.flightReservationId = flightReservationId;
+    return signedTxs;
   }
 }

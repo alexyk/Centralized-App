@@ -14,7 +14,7 @@ import { HotelReservation } from '../../../services/blockchain/hotelReservation'
 import { RoomsXMLCurrency } from '../../../services/utilities/roomsXMLCurrency';
 import { CurrencyConverter } from '../../../services/utilities/currencyConverter';
 import requester from '../../../requester';
-import BookingSteps from '../../common/utility/BookingSteps';
+import BookingSteps from '../../common/bookingSteps';
 import LocPrice from '../../common/utility/LocPrice';
 import QuoteLocPrice from '../../common/utility/QuoteLocPrice';
 import QuoteLocPricePP from '../../common/utility/QuoteLocPricePP';
@@ -366,6 +366,7 @@ class HotelsBookingConfirmPage extends Component {
     if (e) {
       e.preventDefault();
     }
+    console.log(modal);
 
     this.props.dispatch(openModal(modal));
   }

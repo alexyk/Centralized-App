@@ -16,7 +16,7 @@ class DateInput extends React.Component {
           <div className="date-container">
             <div className="text">{text}</div>
             <div className="date">
-              <span>{date.format('DD')} </span>{date.format('MMM, ddd').toUpperCase()}
+              <span>{date.format('DD')} </span>{date.format('MMM, ddd')}
             </div>
           </div>
         </div>

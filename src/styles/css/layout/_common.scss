@@ -28,7 +28,6 @@ body {
 	font-weight: 300;
   letter-spacing: -0.03em;
   min-width: 160px;
-  max-width: 100%;
   font-weight: 400;
 	@include media(">=desktop") {
 		padding: 15px 30px;
@@ -111,6 +110,7 @@ body {
 		letter-spacing: 0.03em;
 		background: $dark-blue;
 	}
+
 }
 
 .btn-block {
@@ -346,4 +346,14 @@ hr {
   margin-top: 10px;
   margin-bottom: 20px;
   border-top: 1px solid #cfcfcf;
+}
+
+
+.link {
+  background: transparent;
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
 }

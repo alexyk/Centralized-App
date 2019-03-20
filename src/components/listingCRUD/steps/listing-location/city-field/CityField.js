@@ -90,14 +90,15 @@ type Props = {
   initialCityValue?: string,
   countryCode?: string
 };
-type State = {
-  selectedOption: null | ReactSelectOption,
-  input: string
-};
 
 type ReactSelectOption = {
   label: string,
   value: string
+};
+
+type State = {
+  selectedOption: null | ReactSelectOption,
+  input: string
 };
 
 export default class CityField extends React.Component<Props, State> {

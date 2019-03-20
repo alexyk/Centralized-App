@@ -1,0 +1,291 @@
+$breakpoints: (
+  "xs-phone": 320px,
+  "phone": 440px,
+  "tablet": 768px,
+  "desktop": 1024px,
+  "widescreen": 1200px
+);
+
+// keywords
+$media-expressions: (
+  "screen": "screen",
+  "print": "print",
+  "handheld": "handheld",
+  "landscape": "(orientation: landscape)",
+  "portrait": "(orientation: portrait)",
+  "retina2x": "(-webkit-min-device-pixel-ratio: 1.5), (min-resolution: 144dpi)",
+  "retina3x": "(-webkit-min-device-pixel-ratio: 2.5), (min-resolution: 240dpi)"
+);
+
+// ligatured operators ≥ ≤
+
+@import "../../../vendors/include-media";
+
+@import "../../../base/functions";
+@import "../../../base/variables";
+@import "../../../base/mixins";
+@import "../../../base/helpers";
+
+.air-tickets {
+  &-form {
+    display: flex;
+    border-radius: 3px;
+    margin-bottom: 15px;
+    text-align: center;
+    padding: 4px 7px;
+    justify-content: center;
+    background: $white;
+    .Select-clear {
+      display: none !important;
+    }
+    @include media("<=widescreen") {
+      flex-wrap: wrap;
+      margin-bottom: 15px;
+    }
+    @include media("<=desktop") {
+      background: $light-gray;
+    }
+    .air-tickets-form-destinations-dates-wrapper {
+      width: 75%;
+      display: flex;
+      position: relative;
+      @include media("<=widescreen") {
+        width: 100%;
+      }
+      @include media("<=tablet") {
+        flex-wrap: wrap;
+      }
+      .air-tickets-form-select {
+        position: relative;
+        padding: 7px 0;
+        width: 27.5%;
+        min-width: 180px;
+        background: $white;
+        border-right: rem-calc(1) solid $gray;
+
+        @include media("<=desktop") {
+          width: 100%;
+          margin-bottom: 10px;
+          border-right: none;
+        }
+
+        @include media("<=tablet") {
+          flex-wrap: 50%;
+        }
+
+        select {
+          font-size: 18px;
+          height: 100%;
+          border: none;
+          padding: 5px 18px;
+        }
+
+        .Select-value {
+          width: calc(100% - 50px);
+        }
+      }
+      .air-tickets-form-check-wrap {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: $white;
+        border-right: rem-calc(1) solid $gray;
+
+        @include media("<=desktop") {
+          margin-bottom: 10px;
+          padding: 7px 0;
+        }
+
+        @include media("<=tablet") {
+          width: 100%;
+        }
+
+        @include media("<=phone") {
+          .check {
+            .check-in,
+            .roundtrip {
+              width: 100px;
+              span {
+                display: none;
+              }
+            }
+          }
+        }
+      }
+    }
+    .air-tickets-form-flex-search {
+      width: 13%;
+      display: flex;
+      align-items: center;
+      background: #fff;
+      cursor: pointer;
+      @include media("<=widescreen") {
+        width: 10%;
+      }
+      @include media("<=desktop") {
+        margin-bottom: 10px;
+        padding: 7px 0;
+        width: 30%;
+        justify-content: center;
+      }
+      @include media("<=tablet") {
+        width: 30%;
+        justify-content: center;
+      }
+      @include media("<=phone") {
+        width: 100%;
+        padding: 17px 0;
+      }
+    }
+
+    .air-tickets-form-passengers-wrap {
+      width: 18%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: $white;
+      position: relative;
+      right: 3%;
+      @include sansFont(16px, $text-black, $base-font-weight-thin);
+
+      @include media("<=widescreen") {
+        width: 25%;
+      }
+
+      @include media("<=desktop") {
+        width: 100%;
+        margin-bottom: 10px;
+        padding: 17px 0;
+        right: 0;
+      }
+
+      @include media("<=tablet") {
+        width: 100%;
+        margin-bottom: 10px;
+        padding: 17px 0;
+      }
+
+      @include media("<=phone") {
+        width: 100%;
+      }
+
+      .passengers-title {
+        cursor: pointer;
+
+        .travelers-count {
+          margin-right: 2px;
+        }
+      }
+
+      .travel-info-wrapper {
+        @include sansFont(14, $text-black, $base-font-weight-normal);
+        margin: 50px auto;
+      }
+    }
+
+    .air-tickets-form-search-btn-wrapper {
+      display: inline-flex;
+      flex-direction: column;
+      flex-wrap: wrap;
+      width: auto;
+    }
+    .air-tickets-form-flight-class,
+    .air-tickets-form-flight-stops,
+    .air-tickets-form-departure-time {
+      background: $white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border-bottom: 1px solid #ccc;
+      margin-bottom: 15px;
+
+      .select-selected {
+        width: 100%;
+        height: 50px;
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        padding: 0;
+      }
+    }
+    .air-tickets-form-departure-time {
+      min-width: 80px;
+      @include media("<=widescreen") {
+        width: 18%;
+      }
+      @include media("<=desktop") {
+        margin-bottom: 10px;
+      }
+    }
+    .air-tickets-form-flight-stops {
+      min-width: 70px;
+      width: 5%;
+      @include media("<=widescreen") {
+        width: 18%;
+      }
+      @include media("<=desktop") {
+        width: 34%;
+        margin-bottom: 10px;
+      }
+      @include media("<=tablet") {
+        width: 34%;
+      }
+    }
+    .air-tickets-form-flight-class {
+      @include media("<=widescreen") {
+        border-right: none;
+      }
+    }
+    .air-tickets-button-search {
+      width: 100%;
+      @include media(">=desktop") {
+        width: auto;
+        min-width: 80px;
+        padding: 15px 0;
+        text-align: center;
+      }
+    }
+  }
+
+  .air-tickets-form-type-wrapper,
+  .air-tickets-form-search-bar-filters-wrapper {
+
+    &.air-tickets-form-search-bar-filters-wrapper {
+      justify-content: flex-end;
+    }
+
+    display: inline-flex;
+    color: $dark-gray;
+    width: 50%;
+    margin: rem-calc(15) auto;
+
+    @include media("<=tablet") {
+      flex-wrap: wrap;
+      flex-direction: row;
+    }
+
+    label {
+      position: relative;
+      margin-left: 15px;
+      margin-right: 15px;
+      @include sansFont();
+
+      @include media("<=tablet") {
+        width: 100%;
+        display: inline-flex;
+        flex-wrap: wrap;
+        flex-direction: column;
+        margin-bottom: 15px;
+
+        span {
+          position: absolute;
+          left: 15%;
+        }
+      }
+
+      input {
+        margin-right: 5px;
+      }
+    }
+  }
+}

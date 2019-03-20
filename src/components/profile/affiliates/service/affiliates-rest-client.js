@@ -3,7 +3,6 @@ import superagent from "superagent";
 import moment from "moment";
 import * as _ from "ramda";
 import { AffiliatesServiceInterface } from "./affiliates-rest-client.flow";
-import { mockedRequests } from "./affiliates-rest-client-mocks";
 
 import { Config } from "../../../../config";
 // const HOST = "https://dev.locktrip.com/api";

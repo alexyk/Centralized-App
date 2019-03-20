@@ -28,7 +28,7 @@ function BookingSteps(props) {
 BookingSteps.propTypes = {
   /** String names of steps */
   steps: PropTypes.arrayOf(PropTypes.string),
-  currentStepIndex: PropTypes.number, 
+  currentStepIndex: PropTypes.number,
 };
 
 export default BookingSteps;

@@ -27,6 +27,7 @@ class LocalizationNav extends PureComponent {
           <div className="info">
             {location.pathname !== '/hotels'
               && location.pathname !== '/homes'
+              && location.pathname !== '/tickets'
               && (location.pathname.indexOf('/hotels/listings/book') === -1
               && location.pathname.indexOf('/homes/listings/book') === -1
               && location.pathname.indexOf('/profile') === -1)
@@ -34,6 +35,7 @@ class LocalizationNav extends PureComponent {
               ? <ul className="tabset">
                 <li><NavLink to='/hotels' activeClassName="active">HOTELS</NavLink></li>
                 <li><NavLink to='/homes' activeClassName="active">HOMES</NavLink></li>
+                <li><NavLink to='/tickets' activeClassName="active">AIR TICKETS</NavLink></li>
                 <li><NavLink to='/buyloc' activeClassName="active">BUY LOC</NavLink></li>
               </ul>
               : <div className="sm-none">&nbsp;</div>
@@ -49,13 +51,13 @@ class LocalizationNav extends PureComponent {
                   <div className="balance">
                     <div className="value">
                       <span>LOC Balance:&nbsp;</span>
-                      <span>{userLocBalance}</span>
+                      <span>{userLocBalance.toFixed(4)}</span>
                     </div>
                   </div>
                   <div className="balance">
                     <div className="value">
                       <span>ETH Balance:&nbsp;</span>
-                      <span>{userEthBalance}</span>
+                      <span>{userEthBalance.toFixed(6)}</span>
                     </div>
                   </div>
                   {/* <a href="#" className="icon-plus"></a> */}

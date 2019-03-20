@@ -1,0 +1,212 @@
+$breakpoints: (
+  "xs-phone": 320px,
+  "phone": 480px,
+  "tablet": 768px,
+  "desktop": 1024px,
+  "widescreen": 1200px
+);
+
+// keywords
+$media-expressions: (
+  "screen": "screen",
+  "print": "print",
+  "handheld": "handheld",
+  "landscape": "(orientation: landscape)",
+  "portrait": "(orientation: portrait)",
+  "retina2x": "(-webkit-min-device-pixel-ratio: 1.5), (min-resolution: 144dpi)",
+  "retina3x": "(-webkit-min-device-pixel-ratio: 2.5), (min-resolution: 240dpi)"
+);
+
+@import "../../../../vendors/include-media";
+
+@import "../../../../base/functions";
+@import "../../../../base/variables";
+@import "../../../../base/mixins";
+@import "../../../../base/helpers";
+
+$light-gray: #898c8d;
+$white: #fff;
+
+.filter-box {
+  background: #fff;
+  border-radius: 4px;
+  padding: 20px 10px;
+  margin-bottom: 10px;
+
+  .filter {
+    margin-bottom: 30px;
+  }
+
+  .select {
+    &:after {
+      @include media("<desktop") {
+        right: 5px;
+      }
+    }
+    select {
+      border-radius: 3px;
+      padding: 11px 17px;
+    }
+  }
+
+  .stops-filter {
+    margin-bottom: 24px;
+
+    ul {
+      list-style: none;
+      display: inline-flex;
+      width: 100%;
+      flex-direction: row;
+      flex-wrap: wrap;
+      margin-left: rem-calc(10);
+
+      li {
+        width: 100%;
+        display: inline-flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+
+        label {
+          margin-left: rem-calc(5);
+
+          span {
+            margin-left: rem-calc(10);
+          }
+        }
+      }
+    }
+
+    h5 {
+      margin-bottom: 10px;
+    }
+    .select {
+      margin-bottom: 9px;
+    }
+  }
+
+  .airports-filter {
+    .arrivals,
+    .departures,
+    .transfers {
+      h6 {
+        padding-left: 20px;
+      }
+      margin-bottom: 10px;
+    }
+  }
+
+	.departure-filter,
+	.arrival-filter {
+    display: flex;
+    justify-content: space-between;
+    .departure-landing-time,
+		.departure-takeoff-time,
+		.arrival-landing-time,
+    .arrival-takeoff-time {
+      display: flex;
+      width: 45%;
+      flex-wrap: wrap;
+      justify-content: space-around;
+      h6 {
+        width: 100%;
+        padding-left: 20px;
+      }
+      .departure-landing-time-hours,
+      .departure-landing-time-minutes,
+      .departure-takeoff-time-hours,
+			.departure-takeoff-time-minutes,
+			.arrival-landing-time-hours,
+      .arrival-landing-time-minutes,
+      .arrival-takeoff-time-hours,
+      .arrival-takeoff-time-minutes {
+				width: 40%;
+				select {
+					border-radius: 4px;
+					padding: 8px;
+				}
+      }
+    }
+  }
+
+  .price-range-filters,
+  .waiting-range-filters,
+  .departure-range-filters,
+  .arrival-range-filters,
+  .journey-range-filters {
+
+    &.departure-range-filters,
+    &.arrival-range-filters,
+    &.journey-range-filters {
+      padding: 10px;
+      font-size: 14px;
+      width: 100%;
+      margin: 0 auto;
+
+      h5 {
+        padding-left: 0;
+      }
+    }
+
+    margin-bottom: 25px;
+    input {
+      margin-bottom: 12px;
+    }
+    .labels {
+      font-size: 14px;
+      display: flex;
+      justify-content: space-between;
+    }
+    h5 {
+      margin-bottom: 10px;
+    }
+    .select {
+      margin-bottom: 9px;
+    }
+
+    .time-range-min-end {
+      float: right;
+    }
+  }
+
+  .buttons-holder {
+    width: 100%;
+    button {
+      width: 100%;
+      height: 100%;
+      margin-bottom: 20px;
+    }
+  }
+
+  .show-filters {
+    position: relative;
+    font-size: 1em;
+    padding: 0px 20px;
+    &:after {
+      position: absolute;
+      content: "\e900";
+      font-family: "icomoon" !important;
+      padding: 0 8px;
+      font-size: 0.4em;
+      right: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 1;
+      text-align: center;
+      pointer-events: none;
+      box-sizing: border-box;
+      @include media(">=desktop") {
+        font-size: 7px;
+      }
+    }
+  }
+}
+
+.input-range {
+  margin-bottom: 10px;
+}
+
+.input-range__track--active,
+.input-range__slider {
+  background: $moderate-red;
+  border: 1px solid $moderate-red;
+}

@@ -22,8 +22,8 @@ class Datepicker extends Component {
 
   handleChangeStart(date) {
     this.props.dispatch(asyncSetStartDate(date)).then(() => {
-      const { startDate, endDate, enableRanges } = this.props;
-      if (enableRanges && endDate.isSameOrBefore(startDate, 'day')) {
+      const { startDate, endDate } = this.props;
+      if (endDate.isSameOrBefore(startDate, 'day')) {
         this.props.dispatch(asyncSetEndDate(moment(startDate))).then(() => {
           this.openEndDatePicker();
         });

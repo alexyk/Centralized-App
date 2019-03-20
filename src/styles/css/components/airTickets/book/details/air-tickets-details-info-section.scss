@@ -1,0 +1,342 @@
+$breakpoints: (
+  "xs-phone": 320px,
+  "phone": 480px,
+  "tablet": 768px,
+  "desktop": 1024px,
+  "widescreen": 1200px
+);
+
+// keywords
+$media-expressions: (
+  "screen": "screen",
+  "print": "print",
+  "handheld": "handheld",
+  "landscape": "(orientation: landscape)",
+  "portrait": "(orientation: portrait)",
+  "retina2x": "(-webkit-min-device-pixel-ratio: 1.5), (min-resolution: 144dpi)",
+  "retina3x": "(-webkit-min-device-pixel-ratio: 2.5), (min-resolution: 240dpi)"
+);
+
+// ligatured operators ≥ ≤
+
+@import "../../../../vendors/include-media";
+
+@import "../../../../base/variables";
+
+.air-tickets-details-container {
+  padding: 20px 0;
+  .air-tickets-details-box {
+    max-width: 1200px;
+    width: 100%;
+    padding: 0 22px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 3fr 1fr;
+    grid-template-areas: "content panel";
+    grid-gap: 5%;
+    @include media("<=desktop") {
+      grid-template-columns: 1fr;
+      grid-gap: 0;
+      grid-template-areas:
+        "content"
+        "panel";
+    }
+    @include media("<=desktop") {
+      grid-template-columns: 100%;
+    }
+    .air-tickets-details-content {
+      grid-area: content;
+      &-item {
+        margin-bottom: 40px;
+      }
+      .flight-details {
+        width: 100%;
+        display: inline-block;
+
+        .departure,
+        .return {
+          width: 100%;
+          padding: 15px;
+          border: 1px solid $gray;
+
+          h5 {
+            font-weight: 400;
+            margin-bottom: 20px;
+          }
+
+          h6 {
+            margin-bottom: 10px;
+            font-size: 17px;
+            .icon-arrow-right {
+              font-size: 0.6em;
+              margin: 0 10px;
+            }
+          }
+          .departure-segment {
+            width: 48%;
+            margin-bottom: 20px;
+            display: inline-grid;
+
+            &:nth-child(odd) {
+              margin-left: 15px;
+            }
+
+            .departure-segment-item {
+              display: flex;
+              justify-content: space-between;
+
+              &.stop-over-wrapper {
+                color: $moderate-red;
+              }
+            }
+          }
+        }
+        div {
+          margin-bottom: 5px;
+        }
+      }
+      .farerules {
+        .flight-rule-title {
+          margin-bottom: 0.5em;
+          display: flex;
+          align-items: center;
+          h5 {
+            display: flex;
+            width: 95%;
+            margin: 0;
+            align-items: center;
+            .flight-rule-origin,
+            .flight-rule-destination {
+              width: 30%;
+            }
+            .icon-arrow-right {
+              font-size: 0.6em;
+              margin: 0 20px;
+            }
+          }
+          .toggle {
+            width: 5%;
+            font-size: 25px;
+            span {
+              cursor: pointer;
+            }
+          }
+        }
+        .flight-rules {
+          margin-bottom: 30px;
+          .rule {
+            margin-bottom: 10px;
+            a {
+              color: $moderate-red;
+              &:hover {
+                color: $moderate-red;
+              }
+            }
+            h5 {
+              font-weight: 400;
+            }
+          }
+        }
+      }
+    }
+    .air-tickets-details-booking-panel {
+      grid-area: panel;
+      @include media("<=desktop") {
+        margin-top: 15px;
+      }
+      .box {
+        border-radius: 4px;
+        background-color: #ffffff;
+        border: 1px solid #cbcbcb;
+        padding: 20px;
+        .default-price {
+          font-size: 20px;
+          color: #1f2427;
+          font-weight: 300;
+          .main-fiat {
+            font-size: 34px;
+            font-weight: normal;
+          }
+        }
+        .booking-dates {
+          margin: 10px 0;
+          display: flex;
+          border: 1px solid #cccccc99;
+          border-radius: 4px;
+          padding: 10px 5px;
+          .air-tickets-form-check-wrap {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            .check-in {
+              &:hover {
+                cursor: initial;
+                border-bottom: 2px solid #fff;
+              }
+              .icon-calendar {
+                @include media("<phone") {
+                  display: none;
+                }
+              }
+            }
+            .choose-roundtrip {
+              display: flex;
+              align-items: center;
+              padding: 5px;
+              .icon-arrow-right {
+                @include media("<phone") {
+                  display: none;
+                }
+              }
+              .flight-routing-preview {
+                width: 130px;
+                display: inline-flex;
+                justify-content: center;
+                border-bottom: 2px solid #fff;
+                @include media("<phone") {
+                  width: 100px;
+                }
+                .icon-calendar {
+                  display: flex;
+                  align-items: center;
+                  margin-right: 10px;
+                  font-size: 0.9em;
+                  color: #898c8d;
+                  @include media("<phone") {
+                    display: none;
+                  }
+                }
+                .date-container {
+                  margin: 0;
+                  .text {
+                    margin: 0;
+                  }
+                  .date {
+                    min-width: 80px;
+                    font-size: 0.8em;
+                    font-weight: 400;
+                    text-align: left;
+                    span {
+                      color: #a2c5bf;
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+        .booking-guests {
+          position: relative;
+          select {
+            padding: 17px 18px;
+            border: 1px solid #cccccc99;
+            border-radius: 4px;
+            margin: 5px 0;
+          }
+          &:after {
+            position: absolute;
+            content: "\e900";
+            font-family: "icomoon" !important;
+            padding: 0 8px;
+            font-size: 5px;
+            right: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 1;
+            text-align: center;
+            pointer-events: none;
+            box-sizing: border-box;
+            @include media(">=desktop") {
+              font-size: 7px;
+            }
+          }
+        }
+        .without-fees p,
+        .cleaning-fee p,
+        .total p {
+          display: inline-block;
+          margin: 0;
+          font-size: 18px;
+          color: #1f2427;
+          font-weight: 300;
+        }
+        .without-fees p:last-of-type,
+        .cleaning-fee p:last-of-type,
+        .total p:last-of-type {
+          text-align: right;
+        }
+        .total p {
+          font-weight: normal;
+        }
+        .without-fees,
+        .cleaning-fee {
+          display: grid;
+          grid-template-columns: 35% 5% 60%;
+          margin: 10px 0;
+          .icon-question {
+            position: relative;
+            &:hover {
+              &::before,
+              &::after {
+                opacity: 1;
+              }
+            }
+            &::before {
+              content: "\E914";
+              color: #abc3bd;
+            }
+            &::after {
+              content: attr(tooltip);
+              position: absolute;
+              left: 270%;
+              top: 6px;
+              -webkit-transform: translateX(-75%) translateY(-120%);
+              -ms-transform: translateX(-75%) translateY(-120%);
+              transform: translateX(-75%) translateY(-120%);
+              background: rgba(100, 100, 100, 0.7);
+              text-align: center;
+              color: #fff;
+              padding: 10px 20px 10px 20px;
+              min-width: 200px;
+              border-radius: 2px;
+              border: 1px solid black;
+              pointer-events: none;
+              opacity: 0;
+              font: 16px/1.2 "Futura", "Arial", "Helvetica Neue", "Helvetica",
+                sans-serif;
+              -webkit-font-smoothing: antialiased;
+            }
+          }
+        }
+        .total {
+          display: grid;
+          grid-template-columns: 40% 60%;
+          margin: 10px 0;
+        }
+        .pay-in {
+          display: block;
+          width: 100%;
+          letter-spacing: 1px;
+          font-size: 18px;
+          color: #ffffff;
+          background-color: #d77961;
+          border-radius: 4px;
+          padding: 20px 0;
+          margin: 15px 0;
+          text-align: center;
+          &.disabled {
+            cursor: default;
+            opacity: 0.7;
+          }
+        }
+        .booking-helper {
+          font-size: 14px;
+          text-align: center;
+          margin: 0;
+          color: #898c8d;
+        }
+      }
+    }
+  }
+}

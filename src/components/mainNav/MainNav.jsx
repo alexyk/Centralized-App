@@ -16,7 +16,6 @@ import ListMenu from "./list-menu";
 import { setShowMenu } from "../../actions/burgerMenuInfo.js";
 
 import { selectors as UserSelectors } from "../../reducers/userInfo";
-import "./links-to-other-sites.css"
 
 class MainNav extends React.Component {
   constructor(props) {
@@ -104,11 +103,6 @@ class MainNav extends React.Component {
     const { unreadMessages } = this.state;
     return (
       <React.Fragment>
-      <div id="main_tabs" className="token-tabs">
-        <a href="#" className={"main"}>Marketplace</a>
-        <a href="#">Blockchain</a>
-        <a href="#" className="economy">Token Economy</a>
-      </div>
       <nav id="main-nav" className="navbar">
         <div className="container">
           <div className="nav-container">
@@ -133,7 +127,7 @@ class MainNav extends React.Component {
                   href="https://locktrip.zendesk.com/hc/en-us"
                   target="_blank"
                   rel="noopener noreferrer"
-                  class="list-menu-item"
+                  className="list-menu-item"
                 >
                   FAQ
                 </a>
@@ -141,7 +135,7 @@ class MainNav extends React.Component {
                   href="https://locktrip.zendesk.com/hc/en-us/requests/new"
                   target="_blank"
                   rel="noopener noreferrer"
-                  class="list-menu-item"
+                  className="list-menu-item"
                 >
                   Support
                 </a>
@@ -196,8 +190,8 @@ class MainNav extends React.Component {
                 </DropdownMenu>
               </ListMenu>
               ) : ( <ListMenu>
-                <a href="https://locktrip.zendesk.com/hc/en-us" target="_blank" rel="noopener noreferrer" class="list-menu-item">FAQ</a>
-                <a href="https://locktrip.zendesk.com/hc/en-us/requests/new" target="_blank" rel="noopener noreferrer" class="list-menu-item">Support</a>
+                <a href="https://locktrip.zendesk.com/hc/en-us" target="_blank" rel="noopener noreferrer" className="list-menu-item">FAQ</a>
+                <a href="https://locktrip.zendesk.com/hc/en-us/requests/new" target="_blank" rel="noopener noreferrer" className="list-menu-item">Support</a>
                 <div className="list-menu-item" onClick={() => { this.openModal(LOGIN); }}>Login</div>
                 <div className="list-menu-item" onClick={() => { this.openModal(REGISTER); }}>Register</div>
               </ListMenu>
@@ -280,7 +274,7 @@ MainNav.propTypes = {
 export default withRouter(
   connect(function mapStateToProps(state) {
     return {
-      isLogged: UserSelectors.getUserId(state.userInfo)
+      isLogged: UserSelectors.getUserId(state.userInfo) !== null
     };
   })(MainNav)
 );

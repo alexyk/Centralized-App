@@ -29,17 +29,13 @@ function FilterPanel(props) {
         <h5>Pricing</h5>
 
         <NumberRangeSlider
+          minLabel={`$${props.priceValue.min}`}
+          maxLabel={`$${props.priceValue.max}`}
+          minValue={0}
+          maxValue={5000}
           value={props.priceValue}
           onChange={value => { props.setPriceValue(value); props.handleSearch(); }}
         />
-        {/* <ReactBootstrapSlider
-          value={props.priceValue}
-          slideStop={(e) => { props.setPriceValue(e); props.handleSearch(e); }}
-          step={5}
-          max={5000}
-          min={1}
-          orientation="horizontal"
-          range={true} /> */}
       </div>
       <div className="clearfix" />
 
