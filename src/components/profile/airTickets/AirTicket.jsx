@@ -30,6 +30,7 @@ class AirTicket extends Component {
   }
 
   getDepartureAirports(airports) {
+    console.log(airports);
     let middleStopsBulets = [];
     const buletIndex = 180 / airports.length;
     for (let i = 0; i < airports.length - 1; i++) {
@@ -41,7 +42,7 @@ class AirTicket extends Component {
             <div className="tooltip-content">
               <div>Transfer</div>
               <hr />
-              <div>{airports[i].destination} ({airports[i].destination})</div>
+              <div>{airports[i].destinationName}</div>
             </div>
           </div>
         </Fragment>
@@ -55,7 +56,7 @@ class AirTicket extends Component {
           <div className="tooltip-content">
             <div>Departure</div>
             <hr />
-            <div>{airports[0].origin} ({airports[0].origin})</div>
+            <div>{airports[0].originName}</div>
           </div>
         </div>
         <div className="stops-container horizontal">
@@ -69,7 +70,7 @@ class AirTicket extends Component {
           <div className="tooltip-content">
             <div>Arrival</div>
             <hr />
-            <div>{airports[airports.length - 1].destination} ({airports[airports.length - 1].destination})</div>
+            <div>{airports[airports.length - 1].destinationName}</div>
           </div>
         </div>
       </div>
@@ -90,7 +91,7 @@ class AirTicket extends Component {
             <div className="tooltip-content">
               <div>Transfer</div>
               <hr />
-              <div>{airports[i].destination} ({airports[i].destination})</div>
+              <div>{airports[i].destinationName}</div>
             </div>
           </div>
         </Fragment>
@@ -104,7 +105,7 @@ class AirTicket extends Component {
           <div className="tooltip-content">
             <div>Departure</div>
             <hr />
-            <div>{airports[0].origin} ({airports[0].origin})</div>
+            <div>{airports[0].originName}</div>
           </div>
         </div>
         <div className="stops-container horizontal">
@@ -118,7 +119,7 @@ class AirTicket extends Component {
           <div className="tooltip-content">
             <div>Arrival</div>
             <hr />
-            <div>{airports[airports.length - 1].destination} ({airports[airports.length - 1].destination})</div>
+            <div>{airports[airports.length - 1].destinationName}</div>
           </div>
         </div>
       </div>
@@ -161,13 +162,30 @@ class AirTicket extends Component {
         <div></div>
       );
     }
-    const departureSegments = ticket.segments.filter(s => s.group === '0');
-    const returnSegments = ticket.segments.filter(s => s.group === '0');
-    const departureDate = this.extractDatesData(departureSegments);
+    const firstFlight = ticket.segments.filter(s => s.group === '0');
+    const secondFlight = ticket.segments.filter(s => s.group === '1');
+    const thirdFlight = ticket.segments.filter(s => s.group === '2');
+    const fourthFlight = ticket.segments.filter(s => s.group === '3');
+    const fifthFlight = ticket.segments.filter(s => s.group === '4');
+
+    const departureDate = this.extractDatesData(firstFlight);
     const bookedDate = moment(ticket.details.bookedDate).format('DD/MM/YYYY');
-    let returnDate;
-    if (returnSegments.length > 0) {
-      returnDate = this.extractDatesData(returnSegments);
+    let secondFlightDate, thirdFlightDate, fourthFlightDate, fifthFlightDate;
+
+    if (secondFlight.length > 0) {
+      secondFlightDate = this.extractDatesData(secondFlight);
+    }
+
+    if (thirdFlight.length > 0) {
+      thirdFlightDate = this.extractDatesData(thirdFlight);
+    }
+
+    if (fourthFlight.length > 0) {
+      fourthFlightDate = this.extractDatesData(fourthFlight);
+    }
+
+    if (fifthFlight.length > 0) {
+      fifthFlightDate = this.extractDatesData(fifthFlight);
     }
 
     return (
@@ -177,18 +195,30 @@ class AirTicket extends Component {
             <img src={PlaneIcon} alt="plane" />
           </div>
           <div className="tickets-airports-holder">
-            <div className={`flex-row-child tickets-airports${returnSegments.length === 0 ? ' one-way' : ''}`}>
+            <div className={`flex-row-child tickets-airports${secondFlight.length === 0 ? ' one-way' : ''}`}>
               <div className="content-row">
-                {this.getDepartureAirports(departureSegments)}
+                {this.getDepartureAirports(firstFlight)}
               </div>
-              {returnSegments.length > 0 &&
+              {secondFlight.length > 0 &&
               <div className="content-row">
-                {this.getReturnAirports(returnSegments)}
+                {this.getDepartureAirports(secondFlight)}
+              </div>}
+              {thirdFlight.length > 0 &&
+              <div className="content-row">
+                {this.getDepartureAirports(thirdFlight)}
+              </div>}
+              {fourthFlight.length > 0 &&
+              <div className="content-row">
+                {this.getDepartureAirports(fourthFlight)}
+              </div>}
+              {fifthFlight.length > 0 &&
+              <div className="content-row">
+                {this.getReturnAirports(fifthFlight)}
               </div>}
             </div>
-            <div className={`flex-row-child tickets-dates${returnSegments.length === 0 ? ' one-way' : ''}`}>
+            <div className={`flex-row-child tickets-dates${secondFlight.length === 0 ? ' one-way' : ''}`}>
               <div className="content-row">
-                <div className={`departure-dates${returnSegments.length === 0 ? ' one-way' : ''}`}>
+                <div className={`departure-dates${secondFlight.length === 0 ? ' one-way' : ''}`}>
                   <div>
                     <span className="date-in-day">{departureDate.departure.day}</span> {departureDate.departure.month}, {departureDate.departure.year}
                     <div className="time">{departureDate.departure.time} {departureDate.departure.timezone}</div>
@@ -200,16 +230,52 @@ class AirTicket extends Component {
                   </div>
                 </div>
               </div>
-              {returnSegments.length > 0 &&
+              {secondFlight.length > 0 &&
               <div className="content-row">
                 <div>
-                  <span className="date-in-day">{returnDate.departure.day}</span> {returnDate.departure.month}, {returnDate.departure.year}
-                  <div className="time">{returnDate.departure.time} {returnDate.departure.timezone}</div>
+                  <span className="date-in-day">{secondFlightDate.departure.day}</span> {secondFlightDate.departure.month}, {secondFlightDate.departure.year}
+                  <div className="time">{secondFlightDate.departure.time} {secondFlightDate.departure.timezone}</div>
                 </div>
                 <i aria-hidden="true" className="fa fa-long-arrow-right" />
                 <div>
-                  <span className="date-out-day">{returnDate.arrival.day}</span> {returnDate.arrival.month}, {returnDate.arrival.year}
-                  <div className="time">{returnDate.arrival.time} {returnDate.arrival.timezone}</div>
+                  <span className="date-out-day">{secondFlightDate.arrival.day}</span> {secondFlightDate.arrival.month}, {secondFlightDate.arrival.year}
+                  <div className="time">{secondFlightDate.arrival.time} {secondFlightDate.arrival.timezone}</div>
+                </div>
+              </div>}
+              {thirdFlight.length > 0 &&
+              <div className="content-row">
+                <div>
+                  <span className="date-in-day">{thirdFlightDate.departure.day}</span> {thirdFlightDate.departure.month}, {thirdFlightDate.departure.year}
+                  <div className="time">{thirdFlightDate.departure.time} {thirdFlightDate.departure.timezone}</div>
+                </div>
+                <i aria-hidden="true" className="fa fa-long-arrow-right" />
+                <div>
+                  <span className="date-out-day">{thirdFlightDate.arrival.day}</span> {thirdFlightDate.arrival.month}, {thirdFlightDate.arrival.year}
+                  <div className="time">{thirdFlightDate.arrival.time} {thirdFlightDate.arrival.timezone}</div>
+                </div>
+              </div>}
+              {fourthFlight.length > 0 &&
+              <div className="content-row">
+                <div>
+                  <span className="date-in-day">{fourthFlightDate.departure.day}</span> {fourthFlightDate.departure.month}, {fourthFlightDate.departure.year}
+                  <div className="time">{fourthFlightDate.departure.time} {fourthFlightDate.departure.timezone}</div>
+                </div>
+                <i aria-hidden="true" className="fa fa-long-arrow-right" />
+                <div>
+                  <span className="date-out-day">{fourthFlightDate.arrival.day}</span> {fourthFlightDate.arrival.month}, {fourthFlightDate.arrival.year}
+                  <div className="time">{fourthFlightDate.arrival.time} {fourthFlightDate.arrival.timezone}</div>
+                </div>
+              </div>}
+              {fifthFlight.length > 0 &&
+              <div className="content-row">
+                <div>
+                  <span className="date-in-day">{fifthFlightDate.departure.day}</span> {fifthFlightDate.departure.month}, {fifthFlightDate.departure.year}
+                  <div className="time">{fifthFlightDate.departure.time} {fifthFlightDate.departure.timezone}</div>
+                </div>
+                <i aria-hidden="true" className="fa fa-long-arrow-right" />
+                <div>
+                  <span className="date-out-day">{fifthFlightDate.arrival.day}</span> {fifthFlightDate.arrival.month}, {fifthFlightDate.arrival.year}
+                  <div className="time">{fifthFlightDate.arrival.time} {fifthFlightDate.arrival.timezone}</div>
                 </div>
               </div>}
             </div>
@@ -227,7 +293,7 @@ class AirTicket extends Component {
           <ProfileFlexContainer styleClass={`flex-container-details ${this.props.styleClass}`}>
             <div className="flex-row-child details">
               <div>
-                <span className="pnr">PNR: {ticket.details.pnr}</span>
+                <span className="pnr">PNR: {ticket.details.pnr || 'N/A'}</span>
               </div>
               <div>
                 <span className="booked-date">Booked date: {bookedDate}</span>

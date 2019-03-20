@@ -22,7 +22,7 @@ class LocPrice extends PureComponent {
     let fiatInEur;
     const { currencyExchangeRates, fiat } = this.props;
     if (currencyExchangeRates) {
-      fiatInEur = currencyExchangeRates && CurrencyConverter.convert(currencyExchangeRates, RoomsXMLCurrency.get(), DEFAULT_CRYPTO_CURRENCY, fiat);
+      fiatInEur = currencyExchangeRates && CurrencyConverter.convert(currencyExchangeRates, localStorage.getItem('currency'), DEFAULT_CRYPTO_CURRENCY, fiat);
       this.sendWebsocketMessage(fiatInEur, null, { fiatAmount: fiatInEur });
       isLocPriceRendered = true;
     }
@@ -38,7 +38,7 @@ class LocPrice extends PureComponent {
       this.sendWebsocketMessage(this.state.fiatInEur, null, { fiatAmount: this.state.fiatInEur });
     }
     if (this.props.currencyExchangeRates && !this.state.isLocPriceRendered) {
-      const fiatInEur = this.props.currencyExchangeRates && CurrencyConverter.convert(this.props.currencyExchangeRates, RoomsXMLCurrency.get(), DEFAULT_CRYPTO_CURRENCY, prevProps.fiat);
+      const fiatInEur = this.props.currencyExchangeRates && CurrencyConverter.convert(this.props.currencyExchangeRates, localStorage.getItem('currency'), DEFAULT_CRYPTO_CURRENCY, prevProps.fiat);
       this.sendWebsocketMessage(fiatInEur, null, { fiatAmount: fiatInEur });
       this.setState({
         isLocPriceRendered: true,
