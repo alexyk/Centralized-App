@@ -117,9 +117,11 @@ class AirTicketsPaymentPage extends Component {
         <div className="payment-methods-loc-wrapper">
           <div className="details">
             <p>Pay Directly With LOC: <span className="important">{currencySign} {totalPrice}</span></p>
-            <p>Order Total: <span className="important">
-              LOC {quoteLocAmount}
-            </span></p>
+            {quoteLocAmount &&
+              <p>Order Total: <span className="important">
+                LOC {quoteLocAmount.toFixed(2)}
+              </span></p>
+            }
             <div className="price-update-timer" tooltip="Seconds until we update your quoted price">
               <span>LOC price will update in <i className="fa fa-clock-o" aria-hidden="true"></i>&nbsp;<span className="timer-seconds">{this.startTimer(this.props.seconds)}</span> sec &nbsp;</span>
               <p>(Click <a href={`${Config.getValue('basePath')}buyloc`} target="_blank" rel="noopener noreferrer">here</a> to learn how you can buy LOC directly to enjoy cheaper travel)</p>
