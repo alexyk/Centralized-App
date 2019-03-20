@@ -18,8 +18,6 @@ import AirTicketsSearchFilterPanel from './filter/AirTicketsSearchFilterPanel';
 import { LONG } from '../../../constants/notificationDisplayTimes';
 import AsideContentPage from '../../common/asideContentPage/AsideContentPage';
 import { stopIds } from '../../../constants/constants';
-import _ from 'lodash';
-import requester from "../../../requester";
 
 import '../../../styles/css/components/airTickets/search/air-tickets-search-page.css';
 
@@ -160,11 +158,10 @@ class AirTicketsSearchPage extends Component {
     if (!this.filterResults) {
       this.filterResults = this.state.allResults
     }
-    const items = {};
     const results = this.filterResults;
     const filters = {
       airlines: filtersObject.airlines.map(a => a.airlineName) || [],
-      stops: filtersObject.stops.map(a => a.changesId) || [],
+      stops: filtersObject.stops || [],
       minPrice: filtersObject.priceRange && filtersObject.priceRange.min,
       maxPrice: filtersObject.priceRange && filtersObject.priceRange.max,
       minWaitTime: filtersObject.waitingTimeRange && filtersObject.waitingTimeRange.min,
@@ -183,103 +180,125 @@ class AirTicketsSearchPage extends Component {
     const journeyStartTime = moment(filters.journeyTime.start, 'HH:mm');
     const journeyEndTime = moment(filters.journeyTime.end, 'HH:mm');
 
-    for (const i in results) {
-      const item = results[i];
-      const segments = item.segments;
-      const segmentsArrLength = segments.length - 1;
-      const isDirect = segments.length === 2 && filters.stops.indexOf(stopIds.D) !== -1;
-      const isOneStop = segments.length === 4  && filters.stops.indexOf(stopIds.O) !== -1;
-      const isMultiStop = segments.length > 4  && filters.stops.indexOf(stopIds.M) !== -1;
-      const origin = segments[0].origin;
-      const destination = segments[segments.length - 1].destination;
-      const flightJourneyTime = departureStartTime.add(item.journeyTime).format('HH:mm');
-      const originTime = moment(origin.time, 'HH:mm');
-      const destinationTime = moment(destination.time, 'HH:mm');
-      const waitTimeTotal = segments.map(segment => {
-        if (segment.waitTime !== null) {
-          return segment.waitTime;
-        }
-        return;
-      });
+    const items = results.filter((item, i)=>{
+        const segments = item.segments;
+        const segmentsArrLength = segments.length - 1;
+        const isDirect = segments.length === 2 && filters.stops.indexOf(stopIds.D) !== -1;
+        const isOneStop = segments.length === 4  && filters.stops.indexOf(stopIds.O) !== -1;
+        const isMultiStop = segments.length > 4  && filters.stops.indexOf(stopIds.M) !== -1;
+        const origin = segments[0].origin;
+        const destination = segments[segments.length - 1].destination;
+        const flightJourneyTime = departureStartTime.add(item.journeyTime).format('HH:mm');
+        const originTime = moment(origin.time, 'HH:mm');
+        const destinationTime = moment(destination.time, 'HH:mm');
+        const waitTimeTotal = segments.map(segment => {
+          if (segment.waitTime !== null) {
+            return segment.waitTime;
+          }
+          return;
+        });
 
-      const arrivalAirports = segments.map(segment => {
-        return segment.destination.code;
-      });
+        const arrivalAirports = segments.map(segment => {
+          return segment.destination.code;
+        });
 
-      const transferAirports = segments.map((segment, index) => {
-        if (index !== 0 && index !== segmentsArrLength) {
-          return segment.origin.code + ',' + segment.destination.code;
-        }
-        return;
-      });
+        const transferAirports = segments.map((segment, index) => {
+          if (index !== 0 && index !== segmentsArrLength) {
+            return segment.origin.code + ',' + segment.destination.code;
+          }
+          return;
+        });
 
-      if (filters.airlines.length) {
-        if (filters.airlines.indexOf(origin.carrier.name) || filters.airlines.indexOf(destination.carrier.name)) {
-          items[i] = item;
-        }
-      }
 
-      if (filters.stops.length) {
-        if (isDirect) {
-          items[i] = item;
-        }
-
-        if (isOneStop) {
-          items[i] = item;
-        }
-
-        if (isMultiStop) {
-          items[i] = item;
-        }
-      }
-
-      if (departureStartTime.isSameOrBefore(originTime) && departureEndTime.isSameOrAfter(originTime)) {
-        items[i] = item;
-      }
-
-      if (arrivalStartTime.isSameOrBefore(destinationTime) && arrivalEndTime.isSameOrAfter(destinationTime)) {
-        items[i] = item;
-      }
-
-      if (journeyStartTime.isSameOrBefore(flightJourneyTime) && journeyEndTime.isSameOrAfter(flightJourneyTime)) {
-        items[i] = item;
-      }
-
-      if (filters.minPrice >= item.price.total && item.price.total <= filters.maxPrice) {
-        items[i] = item;
-      }
-
-      if (waitTimeTotal.indexOf(filters.minWaitTime) !== -1 || waitTimeTotal.indexOf(filters.maxWaitTime)) {
-        items[i] = item;
-      }
-
-      if (filters.airportsArrival.length) {
-        for (const k in arrivalAirports) {
-          const arrival = arrivalAirports[k];
-
-          if (filters.airportsArrival.indexOf(arrival)) {
-            items[i] = item;
+        if (filters.airlines.length > 0) {
+          if (filters.airlines.indexOf(origin.carrier.name) !== -1 || filters.airlines.indexOf(destination.carrier.name) !== -1) {
+            return true
           }
         }
-      }
 
-      if (filters.airportsTransfer.length) {
-        for (const k in transferAirports) {
-          const transfer = transferAirports[k];
+        if (filters.stops.length > 0) {
+          if (isDirect) {
+            return true
 
-          if (filters.airportsTransfer.indexOf(transfer)) {
-            items[i] = item;
+          }
+
+          if (isOneStop) {
+            return true
+
+          }
+
+          if (isMultiStop) {
+            return true
+
           }
         }
-      }
-    }
+
+        if (departureStartTime.isValid() && departureStartTime.isSameOrBefore(originTime)) {
+          return true
+
+        }
+
+        if (departureEndTime.isValid() && departureEndTime.isSameOrAfter(originTime)) {
+          return true
+
+        }
+
+        if (arrivalStartTime.isValid() && arrivalStartTime.isSameOrBefore(destinationTime)) {
+          return true
+
+        }
+
+        if (arrivalEndTime.isValid() && arrivalEndTime.isSameOrAfter(destinationTime)) {
+          return true
+
+        }
+
+        if (journeyStartTime.isValid() && journeyStartTime.isSameOrBefore(flightJourneyTime)) {
+          return true
+
+        }
+
+        if (journeyEndTime.isValid() && journeyEndTime.isSameOrAfter(flightJourneyTime)) {
+          return true
+        }
+
+        if (filters.minPrice >= item.price.total && item.price.total <= filters.maxPrice) {
+          return true
+        }
+
+        if (filters.minWaitTime !== '' && waitTimeTotal.indexOf(filters.minWaitTime) !== -1) {
+          return true
+        }
+
+        if (filters.maxWaitTime !== '' && waitTimeTotal.indexOf(filters.maxWaitTime) !== -1) {
+          return true
+        }
+
+        if (filters.airportsArrival.length) {
+          for (const k in arrivalAirports) {
+            const arrival = arrivalAirports[k];
+            if (filters.airportsArrival.indexOf(arrival) !== -1) {
+              return true
+            }
+          }
+        }
+
+        if (filters.airportsTransfer.length) {
+          for (const k in transferAirports) {
+            const transfer = transferAirports[k];
+            if (filters.airportsTransfer.indexOf(transfer) !== -1) {
+              return true
+            }
+          }
+        }
+    });
 
     this.setState({
       loading: false,
       allElements: true,
-      allResults: _.isEmpty(items) ? this.filterResults : items,
-      currentPageResults: Object.values(items).slice(0, 10),
-      totalElements: Object.values(items).length,
+      allResults: items.length === 0 ? this.filterResults : items,
+      currentPageResults: items.slice(0, 10),
+      totalElements: items.length,
       page: 0,
     });
   }

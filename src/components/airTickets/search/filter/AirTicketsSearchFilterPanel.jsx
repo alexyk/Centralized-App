@@ -21,16 +21,16 @@ class AirTicketsSearchFilterPanel extends Component {
       priceRange: '',
       waitingTimeRange: '',
       departure: {
-        start: "00:00",
-        end: "23:59"
+        start: "",
+        end: ""
       },
       arrival: {
-        start: "00:00",
-        end: "23:59"
+        start: "",
+        end: ""
       },
       journey: {
-        start: "00:00",
-        end: "23:59"
+        start: "",
+        end: ""
       }
     };
 
@@ -111,11 +111,24 @@ class AirTicketsSearchFilterPanel extends Component {
     }, () => this.props.applyFilters(this.state));
   }
 
-  handleStops(stop) {
-    let stopElement = JSON.parse(stop.target.value);
-
+  handleStops(e) {
+    let isChecked = e.target.checked;
+    let stopElement = e.target.value;
+    let value;
+    if(isChecked){
+      if(this.state.stops.indexOf() === -1){
+        if (!stopElement) {
+          console.log(stopElement);
+        }
+        value = [...this.state.stops, stopElement]
+      } else {
+        value = [...this.state.stops]
+      }
+    } else {
+      value = this.state.stops.filter(v=> v !== stopElement)
+    }
     this.setState({
-      stops: [stopElement]
+      stops: value
     }, () => this.props.applyFilters(this.state));
   }
 
@@ -182,12 +195,13 @@ class AirTicketsSearchFilterPanel extends Component {
           <ul>
               {filters.changes.map((stop, index) => {
                 return (
-                  <li key={index} onClick={this.handleStops} value={stops}>
+                  <li key={index}>
                     <FilterCheckbox
                       id={stop.changesName}
-                      value={JSON.stringify(stop)}
+                      value={stop.changesId}
                       key={index}
                       text={this.mapStopName(stop.changesId)}
+                      onClick={this.handleStops}
                     />
                   </li>
                 );
@@ -206,7 +220,7 @@ class AirTicketsSearchFilterPanel extends Component {
                 name={"time_range"}
                 onChange={this.departureTmeChangeHandler}
                 step={15}
-                value={departure}/>
+                value={{start: departure.start || '00:00', end: departure.end || '23:59'}}/>
                 <span className="time-range-min-value">{departure.start}</span>
                 <span className="time-range-min-end">{departure.end}</span>
           </div>
@@ -220,7 +234,7 @@ class AirTicketsSearchFilterPanel extends Component {
                 name={"time_range"}
                 onChange={this.arrivalTmeChangeHandler}
                 step={15}
-                value={arrival}/>
+                value={{start: arrival.start || '00:00', end: arrival.end || '23:59'}}/>
                 <span className="time-range-min-value">{arrival.start}</span>
                 <span className="time-range-min-end">{arrival.end}</span>
           </div>
@@ -234,7 +248,7 @@ class AirTicketsSearchFilterPanel extends Component {
                 name={"time_range"}
                 onChange={this.journeyTmeChangeHandler}
                 step={15}
-                value={journey}/>
+                value={{start: journey.start || '00:00', end: journey.end || '23:59'}}/>
                 <span className="time-range-min-value">{journey.start}</span>
                 <span className="time-range-min-end">{journey.end}</span>
           </div>
