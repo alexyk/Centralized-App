@@ -2,6 +2,7 @@ import { Modal } from "react-bootstrap";
 import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { sendTokens } from '../../../services/payment/loc';
+import LocPrice from '../../common/utility/LocPrice';
 
 class SendTokensModal extends Component {
   constructor(props) {
@@ -57,7 +58,8 @@ class SendTokensModal extends Component {
             <Modal.Body>
                 <div className="name">
                   <label htmlFor="loc-amount">Send LOC Amount</label>
-                  <input id="loc-amount" name="locAmount" type="text" placeholder="0.000" value={price} readOnly />
+                  <LocPrice fiat={this.props.price} brackets={false}/>
+                  <input id="loc-amount" name="locAmount" type="hidden" placeholder="0.000" value={price} readOnly />
                 </div>
                 <div className="name">
                   <label htmlFor="password">Your wallet password</label>
@@ -80,6 +82,7 @@ SendTokensModal.props = {
   flightReservationId: PropTypes.string,
   showModal: PropTypes.bool,
   result: PropTypes.object,
-  closeModal: PropTypes.func
-}
+  closeModal: PropTypes.func,
+  price: PropTypes.number
+};
 export default SendTokensModal;
