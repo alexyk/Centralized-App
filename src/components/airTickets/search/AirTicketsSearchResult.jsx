@@ -295,9 +295,11 @@ class AirTicketsSearchResult extends Component {
 
   render() {
     const { currencyExchangeRates, currency, currencySign, isUserLogged, result, allElements, flightRouting } = this.props;
-    const departureInfo = result.segments.filter(s => s.group === '0');
-    const returnInfo = result.segments.filter(s => s.group === '1');
-
+    const firstFlight = result.segments.filter(s => s.group === '0');
+    const secondFlight = result.segments.filter(s => s.group === '1');
+    const thirdFlight = result.segments.filter(s => s.group === '2');
+    const fourthFlight = result.segments.filter(s => s.group === '3');
+    const fifthFlight = result.segments.filter(s => s.group === '4');
     const priceInfo = result.price;
     const price = priceInfo.total;
 
@@ -320,14 +322,17 @@ class AirTicketsSearchResult extends Component {
       <div className="air-tickets-result" >
         <form className="air-tickets-result-content">
           <div style={{ marginBottom: '10px' }}><strong>{result.isLowCost && 'Low Cost'}</strong></div>
-          {flightRouting !== '3' ?
+          {flightRouting === '3' ?
             <Fragment>
-              {this.getDepartureInfo(departureInfo)}
-              {this.getReturnInfo(returnInfo)}
+              {this.getDepartureInfo(firstFlight)}
+              {this.getDepartureInfo(secondFlight)}
+              {this.getDepartureInfo(thirdFlight)}
+              {this.getDepartureInfo(fourthFlight)}
+              {this.getReturnInfo(fifthFlight)}
             </Fragment> :
             <Fragment>
-              {this.getDepartureInfo(departureInfo)}
-              {this.getReturnInfo(returnInfo)}
+              {this.getDepartureInfo(firstFlight)}
+              {this.getReturnInfo(secondFlight)}
             </Fragment>}
           <div className="air-tickets-result-mobile-pricing">
             {!isPriceLoaded
