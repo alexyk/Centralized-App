@@ -10,7 +10,7 @@ function ListingTypeNav() {
           <ul>
             <li><NavLink to='/hotels' activeClassName="active">HOTELS</NavLink></li>
             <li><NavLink to='/homes' activeClassName="active">HOMES</NavLink></li>
-            <li><NavLink to='/tickets' activeClassName="active">AIR TICKETS</NavLink></li>
+            <li><NavLink to='/tickets' activeClassName="active">FLIGHTS</NavLink></li>
             <li><NavLink to='/buyloc' activeClassName="active">BUY LOC</NavLink></li>
           </ul>
         </div>
