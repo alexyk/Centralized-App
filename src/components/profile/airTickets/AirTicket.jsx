@@ -227,7 +227,7 @@ class AirTicket extends Component {
           <ProfileFlexContainer styleClass={`flex-container-details ${this.props.styleClass}`}>
             <div className="flex-row-child details">
               <div>
-                <span className="pnr">PNR: {ticket.details.pnr}</span>
+                <span className="pnr">PNR: {ticket.details.pnr || 'N/A'}</span>
               </div>
               <div>
                 <span className="booked-date">Booked date: {bookedDate}</span>
