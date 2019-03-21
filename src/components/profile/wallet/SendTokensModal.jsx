@@ -57,8 +57,8 @@ class SendTokensModal extends Component {
             <Modal.Body>
                 <div className="name">
                   <label htmlFor="loc-amount">Send LOC Amount</label>
-                    <p>LOC {price.toFixed(2)}</p>
-                  <input id="loc-amount" name="locAmount" type="hidden" placeholder="0.000" value={price} readOnly />
+                    <p><b>LOC {price && price.toFixed(2)}</b></p>
+                  <input id="loc-amount" name="locAmount" type="hidden" placeholder="0.000" value={price && price.toFixed(2)} readOnly />
                 </div>
                 <div className="name">
                   <label htmlFor="password">Your wallet password</label>
@@ -67,7 +67,7 @@ class SendTokensModal extends Component {
             </Modal.Body>
             <Modal.Footer>
               <div>
-                <button className="button" type="submit">Send Tokens</button>
+                <button className="button" type="submit" disabled={(price == undefined || price == null)}>Send Tokens</button>
               </div>
             </Modal.Footer>
           </form>
