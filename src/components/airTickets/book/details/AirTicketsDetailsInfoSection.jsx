@@ -237,7 +237,7 @@ class AirTicketsDetailsInfoSection extends Component {
 
   render() {
     const { result, fareRules } = this.props;
-
+console.log(fareRules);
     if (!result || !fareRules) {
       return <div className="loader"></div>;
     }
