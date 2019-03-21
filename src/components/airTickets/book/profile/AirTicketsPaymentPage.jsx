@@ -127,7 +127,7 @@ class AirTicketsPaymentPage extends Component {
               <span>LOC price will update in <i className="fa fa-clock-o" aria-hidden="true"></i>&nbsp;<span className="timer-seconds">{this.startTimer(this.props.seconds)}</span> sec &nbsp;</span>
               <p>(Click <a href={`${Config.getValue('basePath')}buyloc`} target="_blank" rel="noopener noreferrer">here</a> to learn how you can buy LOC directly to enjoy cheaper travel)</p>
             </div>
-            <button className="button" onClick={this.handleLOCPayment} type="button" disabled={this.state.isPaymentEnabled}>Pay with LOC Tokens</button>
+            <button className="button" onClick={this.handleLOCPayment} type="button" disabled={this.state.isPaymentEnabled && quoteLocAmount}>Pay with LOC Tokens</button>
           </div>
           <div className="logos">
             <div className="logo loc">

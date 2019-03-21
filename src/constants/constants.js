@@ -8,9 +8,13 @@ export const stopIds = {
   D: '0',
   O: '1',
   M: '2'
-}
+};
 
 
 export const ERROR_MESSAGES = {
   TRY_AGAIN: 'Please try again'
+};
+
+export const URLS = {
+  TICKETS_DASHBOARD: '/profile/flights'
 };
