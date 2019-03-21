@@ -7,7 +7,7 @@ import '../../../../styles/css/components/profile/me/profile-edit-nav.css';
 function AirTicketsBookingProfileEditNav(props) {
   return (
     <Fragment>
-      <div className="host-step"><NavLink exact activeClassName="active" to={{ pathname: `/tickets/results/initBook/${props.match.params.id}/profile`, search: props.location.search }}>Profile</NavLink></div>
+      <div className="host-step"><NavLink exact activeClassName="active" to={{ pathname: `/tickets/results/initBook/${props.match.params.id}/profile`, search: props.location.search }}>Billing Details</NavLink></div>
       {props.hasFlightServices ?
       <div className="host-step"><NavLink exact activeClassName="active" to={{ pathname: `/tickets/results/initBook/${props.match.params.id}/profile/services`, search: props.location.search }}>Services</NavLink></div> : ''}
       <div className="host-step"><NavLink exact activeClassName="active" to={{ pathname: `/tickets/results/initBook/${props.match.params.id}/profile/passengers`, search: props.location.search }}>Passengers</NavLink></div>
