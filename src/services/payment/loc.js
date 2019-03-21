@@ -1,6 +1,7 @@
 import { NotificationManager } from 'react-notifications';
 import { PROCESSING_TRANSACTION } from '../../constants/infoMessages.js';
 import { TRANSACTION_SUCCESSFUL } from '../../constants/successMessages.js';
+import { URLS } from '../../constants/constants';
 import { LONG } from '../../constants/notificationDisplayTimes';
 import { TokenTransactions } from '../../services/blockchain/tokenTransactions';
 import requester from '../../requester';
@@ -55,6 +56,8 @@ export function sendTokens(password, recipientAddress, locAmount, flightReservat
           if (callback) {
             callback();
           }
+
+          window.location = URLS.TICKETS_DASHBOARD;
         }).catch(err => {
           const errors = err.errors;
           let message = '';

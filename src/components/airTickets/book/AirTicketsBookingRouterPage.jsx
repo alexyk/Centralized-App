@@ -11,7 +11,6 @@ import { Config } from '../../../config';
 import { MEDIUM ,LONG } from '../../../constants/notificationDisplayTimes';
 import requester from '../../../requester';
 import { ERROR_MESSAGES } from '../../../constants/constants';
-import { sendTokens } from './../../../services/payment/loc';
 
 const PASSENGER_TYPES_CODES = {
   adult: 'ADT',
@@ -83,10 +82,6 @@ class AirTicketsBookingRouterPage extends Component {
     this.requestAllCountries();
     this.populatePassengersInfo();
     this.getUserInfo();
-  }
-
-  sendTokens(password, recipient, locAmount) {
-    sendTokens(password, recipient, locAmount);
   }
 
   getUserInfo() {
