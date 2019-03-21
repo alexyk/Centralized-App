@@ -57,7 +57,7 @@ class SendTokensModal extends Component {
             <Modal.Body>
                 <div className="name">
                   <label htmlFor="loc-amount">Send LOC Amount</label>
-                  LOC {price}
+                    <p>LOC {price.toFixed(2)}</p>
                   <input id="loc-amount" name="locAmount" type="hidden" placeholder="0.000" value={price} readOnly />
                 </div>
                 <div className="name">

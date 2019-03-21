@@ -1,7 +1,11 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Select from '../../../common/google/GooglePlacesAutocomplete';
-
+import requester from '../../../../requester';
+import { LONG } from '../../../../constants/notificationDisplayTimes.js';
+import { NotificationManager } from 'react-notifications';
+import { PROFILE_UPDATE_ERROR } from '../../../../constants/errorMessages.js';
+import moment from 'moment';
 import '../../../../styles/css/components/airTickets/book/profile/air-tickets-booking-profile-edit-form.css';
 
 class AirTicketsBookingProfileEditForm extends Component {
@@ -10,6 +14,7 @@ class AirTicketsBookingProfileEditForm extends Component {
 
     this.onChange = this.onChange.bind(this);
     this.handleCitySelect = this.handleCitySelect.bind(this);
+    this.handleNextStep = this.handleNextStep.bind(this);
   }
 
   onChange(e) {
@@ -20,6 +25,51 @@ class AirTicketsBookingProfileEditForm extends Component {
     this.props.onChange('city', place.formatted_address);
   }
 
+  handleNextStep(hasFlightServices) {
+    const { contactInfo } = this.props;
+
+    requester.getUserInfo().then(res => {
+      if (res.success) {
+        res.body.then(data => {
+          data.firstName = contactInfo.firstName;
+          data.lastName = contactInfo.lastName;
+          data.phoneNumber = contactInfo.phoneNumber;
+          data.country = contactInfo.country.id;
+          data.city = contactInfo.city;
+          data.zipCode = contactInfo.zipCode;
+          data.address = contactInfo.address;
+          data.preferredCurrency = data.preferredCurrency.id;
+
+          const params = {};
+          if (data.birthday) {
+            let bday = moment(new Date(data.birthday)).utc();
+            params.birthday = `${bday.format('D')}/${bday.format('MM')}/${bday.format('YYYY')}`;
+          }
+
+          params.firstName = contactInfo.firstName;
+          params.lastName = contactInfo.lastName;
+          params.phoneNumber = contactInfo.phoneNumber;
+          params.country = contactInfo.country.id;
+          params.city = contactInfo.city;
+          params.zipCode = contactInfo.zipCode;
+          params.address = contactInfo.address;
+          params.preferredCurrency = data.preferredCurrency.id || 1;
+          params.gender = data.gender;
+          params.jsonFile = data.jsonFile;
+          params.locAddress = data.locAddress;
+
+          requester.updateUserInfo(params).then(res => {
+            if (res.success) {
+              this.props.enableNextSection( hasFlightServices ? 'services' : 'passengers');
+            } else {
+              NotificationManager.warning(PROFILE_UPDATE_ERROR, 'Warning', LONG);
+            }
+          }).catch(err => console.log(err));
+        });
+      }
+    });
+  }
+
   render() {
     const { countries, hasFlightServices } = this.props;
     const { title, firstName, lastName, email, phoneNumber, country, zipCode, city, address } = this.props.contactInfo;
@@ -28,7 +78,7 @@ class AirTicketsBookingProfileEditForm extends Component {
       <div className="air-tickets-contact-edit-form">
         <h2>Profile</h2>
         <hr />
-        <form onSubmit={(e) => { e.preventDefault(); this.props.enableNextSection( hasFlightServices ? 'services' : 'passengers'); }}>
+        <form onSubmit={(e) => { e.preventDefault(); this.handleNextStep(hasFlightServices)}}>
           <div className="contact-name-wrapper">
             <div className="contact-title">
               <label htmlFor="title">Title <span className="mandatory">*</span></label>
