@@ -22,6 +22,8 @@ class LocPrice extends PureComponent {
     let fiatInEur;
     const { currencyExchangeRates, fiat } = this.props;
     if (currencyExchangeRates) {
+      console.log(DEFAULT_CRYPTO_CURRENCY);
+      console.log(localStorage.getItem('currency'));
       fiatInEur = currencyExchangeRates && CurrencyConverter.convert(currencyExchangeRates, localStorage.getItem('currency'), DEFAULT_CRYPTO_CURRENCY, fiat);
       this.sendWebsocketMessage(fiatInEur, null, { fiatAmount: fiatInEur });
       isLocPriceRendered = true;

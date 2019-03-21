@@ -58,6 +58,8 @@ class AirTicketsPaymentPage extends Component {
       showModal: !this.state.showModal,
       isPaymentEnabled: !this.state.isPaymentEnabled
     });
+    ExchangerWebsocket.sendMessage(DEFAULT_QUOTE_LOC_ID, 'approveQuote', { bookingId: this.props.result.flightReservationId });
+    ExchangerWebsocket.sendMessage(DEFAULT_QUOTE_LOC_PP_ID, 'approveQuote', { bookingId: this.props.result.flightReservationId + PAYMENT_PROCESSOR_IDENTIFICATOR });
   }
 
   handleCCPayment() {
@@ -74,6 +76,9 @@ class AirTicketsPaymentPage extends Component {
       showModal: false,
       isPaymentEnabled: !this.state.isPaymentEnabled
     });
+
+    ExchangerWebsocket.sendMessage(DEFAULT_QUOTE_LOC_ID, 'quoteLoc', { bookingId: this.props.result.flightReservationId });
+    ExchangerWebsocket.sendMessage(DEFAULT_QUOTE_LOC_PP_ID, 'quoteLoc', { bookingId: this.props.result.flightReservationId + PAYMENT_PROCESSOR_IDENTIFICATOR });
   }
 
   convertPrice(currencyExchangeRates, currency, price) {
@@ -102,13 +107,13 @@ class AirTicketsPaymentPage extends Component {
     const fiatAmount = this.convertPrice(currencyExchangeRates, currency, quotePPFiatAmount);
     const locPrice = (!quoteLocAmount) ? result.price.locPrice.toFixed(2) : quoteLocAmount.toFixed(2);
     const totalPrice = this.convertPrice(currencyExchangeRates, currency, price);
-
     return (
       <Fragment>
         <SendTokensModal flightReservationId={result.flightReservationId}
           showModal={this.state.showModal}
           result={result}
           closeModal={this.closeModal}
+          price={quoteLocAmount}
         />
         <div className="payment-methods-loc-wrapper">
           <div className="details">
