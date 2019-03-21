@@ -10,7 +10,6 @@ import { getCurrency, getCurrencySign } from '../../../../selectors/paymentInfo'
 import { getLocEurRate, getCurrencyExchangeRates } from '../../../../selectors/exchangeRatesInfo.js';
 import { getSeconds } from '../../../../selectors/locPriceUpdateTimerInfo.js';
 import { getLocAmountById, getQuotePPFiatAmount, getQuotePPAdditionalFees, getQuotePPFundsSufficient } from '../../../../selectors/locAmountsInfo.js';
-import LocPrice from '../../../common/utility/LocPrice';
 import '../../../../styles/css/components/airTickets/book/payment/air-tickets-payment-page.css';
 
 const PAYMENT_PROCESSOR_IDENTIFICATOR = '-PP';
@@ -127,7 +126,7 @@ class AirTicketsPaymentPage extends Component {
               <span>LOC price will update in <i className="fa fa-clock-o" aria-hidden="true"></i>&nbsp;<span className="timer-seconds">{this.startTimer(this.props.seconds)}</span> sec &nbsp;</span>
               <p>(Click <a href={`${Config.getValue('basePath')}buyloc`} target="_blank" rel="noopener noreferrer">here</a> to learn how you can buy LOC directly to enjoy cheaper travel)</p>
             </div>
-            <button className="button" onClick={this.handleLOCPayment} type="button" disabled={this.state.isPaymentEnabled && quoteLocAmount}>Pay with LOC Tokens</button>
+            <button className="button payment-button" onClick={this.handleLOCPayment} type="button" disabled={this.state.isPaymentEnabled && quoteLocAmount}>Pay with LOC Tokens</button>
           </div>
           <div className="logos">
             <div className="logo loc">
@@ -147,7 +146,7 @@ class AirTicketsPaymentPage extends Component {
                 <span>Market Price will update in <i className="fa fa-clock-o" aria-hidden="true"></i>&nbsp;<span className="timer-seconds">{this.startTimer()}</span> sec &nbsp;</span>
               </div>
               <div>
-                <button className="button" disabled={this.state.isPaymentEnabled} onClick={this.handleCCPayment} type="button">Pay with Credit Card</button>
+                <button className="button payment-button" disabled={this.state.isPaymentEnabled} onClick={this.handleCCPayment} type="button">Pay with Credit Card</button>
               </div>
             </div>
             <div className="logos">
