@@ -295,11 +295,18 @@ class AirTicketsSearchResult extends Component {
 
   render() {
     const { currencyExchangeRates, currency, currencySign, isUserLogged, result, allElements, flightRouting } = this.props;
-    const firstFlight = result.segments.filter(s => s.group === '0');
-    const secondFlight = result.segments.filter(s => s.group === '1');
-    const thirdFlight = result.segments.filter(s => s.group === '2');
-    const fourthFlight = result.segments.filter(s => s.group === '3');
-    const fifthFlight = result.segments.filter(s => s.group === '4');
+    // const firstFlight = result.segments.filter(s => s.group === '0');
+    // const secondFlight = result.segments.filter(s => s.group === '1');
+    // const thirdFlight = result.segments.filter(s => s.group === '2');
+    // const fourthFlight = result.segments.filter(s => s.group === '3');
+    // const fifthFlight = result.segments.filter(s => s.group === '4');
+
+    const firstFlight = result.orderedSegments["0"] || [];
+    const secondFlight = result.orderedSegments["1"] || [];
+    const thirdFlight = result.orderedSegments["2"] || [];
+    const fourthFlight = result.orderedSegments["3"] || [];
+    const fifthFlight = result.orderedSegments["4"] || [];
+
     const priceInfo = result.price;
     const price = priceInfo.total;
 
