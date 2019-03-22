@@ -15,15 +15,13 @@ class AirTicket extends Component {
       year: startDateMoment.format('YYYY'),
       month: startDateMoment.format('MMM'),
       time: segments[0].originTime,
-      timezone: segments[0].originTimezone
     };
 
     const arrival = {
       day: endDateMoment.format('D'),
       year: endDateMoment.format('YYYY'),
       month: endDateMoment.format('MMM'),
-      time: segments[segments.length - 1].originTime,
-      timezone: segments[segments.length - 1].originTimezone
+      time: segments[segments.length - 1].destinationTime,
     };
 
     return { departure, arrival };
@@ -221,12 +219,12 @@ class AirTicket extends Component {
                 <div className={`departure-dates${secondFlight.length === 0 ? ' one-way' : ''}`}>
                   <div>
                     <span className="date-in-day">{departureDate.departure.day}</span> {departureDate.departure.month}, {departureDate.departure.year}
-                    <div className="time">{departureDate.departure.time} {departureDate.departure.timezone}</div>
+                    <div className="time">{departureDate.departure.time}</div>
                   </div>
                   <i aria-hidden="true" className="fa fa-long-arrow-right" />
                   <div>
                     <span className="date-out-day">{departureDate.arrival.day}</span> {departureDate.arrival.month}, {departureDate.arrival.year}
-                    <div className="time">{departureDate.arrival.time} {departureDate.arrival.timezone}</div>
+                    <div className="time">{departureDate.arrival.time}</div>
                   </div>
                 </div>
               </div>
@@ -234,48 +232,48 @@ class AirTicket extends Component {
               <div className="content-row">
                 <div>
                   <span className="date-in-day">{secondFlightDate.departure.day}</span> {secondFlightDate.departure.month}, {secondFlightDate.departure.year}
-                  <div className="time">{secondFlightDate.departure.time} {secondFlightDate.departure.timezone}</div>
+                  <div className="time">{secondFlightDate.departure.time}</div>
                 </div>
                 <i aria-hidden="true" className="fa fa-long-arrow-right" />
                 <div>
                   <span className="date-out-day">{secondFlightDate.arrival.day}</span> {secondFlightDate.arrival.month}, {secondFlightDate.arrival.year}
-                  <div className="time">{secondFlightDate.arrival.time} {secondFlightDate.arrival.timezone}</div>
+                  <div className="time">{secondFlightDate.arrival.time}</div>
                 </div>
               </div>}
               {thirdFlight.length > 0 &&
               <div className="content-row">
                 <div>
                   <span className="date-in-day">{thirdFlightDate.departure.day}</span> {thirdFlightDate.departure.month}, {thirdFlightDate.departure.year}
-                  <div className="time">{thirdFlightDate.departure.time} {thirdFlightDate.departure.timezone}</div>
+                  <div className="time">{thirdFlightDate.departure.time}</div>
                 </div>
                 <i aria-hidden="true" className="fa fa-long-arrow-right" />
                 <div>
                   <span className="date-out-day">{thirdFlightDate.arrival.day}</span> {thirdFlightDate.arrival.month}, {thirdFlightDate.arrival.year}
-                  <div className="time">{thirdFlightDate.arrival.time} {thirdFlightDate.arrival.timezone}</div>
+                  <div className="time">{thirdFlightDate.arrival.time}</div>
                 </div>
               </div>}
               {fourthFlight.length > 0 &&
               <div className="content-row">
                 <div>
                   <span className="date-in-day">{fourthFlightDate.departure.day}</span> {fourthFlightDate.departure.month}, {fourthFlightDate.departure.year}
-                  <div className="time">{fourthFlightDate.departure.time} {fourthFlightDate.departure.timezone}</div>
+                  <div className="time">{fourthFlightDate.departure.time}</div>
                 </div>
                 <i aria-hidden="true" className="fa fa-long-arrow-right" />
                 <div>
                   <span className="date-out-day">{fourthFlightDate.arrival.day}</span> {fourthFlightDate.arrival.month}, {fourthFlightDate.arrival.year}
-                  <div className="time">{fourthFlightDate.arrival.time} {fourthFlightDate.arrival.timezone}</div>
+                  <div className="time">{fourthFlightDate.arrival.time}</div>
                 </div>
               </div>}
               {fifthFlight.length > 0 &&
               <div className="content-row">
                 <div>
                   <span className="date-in-day">{fifthFlightDate.departure.day}</span> {fifthFlightDate.departure.month}, {fifthFlightDate.departure.year}
-                  <div className="time">{fifthFlightDate.departure.time} {fifthFlightDate.departure.timezone}</div>
+                  <div className="time">{fifthFlightDate.departure.time}</div>
                 </div>
                 <i aria-hidden="true" className="fa fa-long-arrow-right" />
                 <div>
                   <span className="date-out-day">{fifthFlightDate.arrival.day}</span> {fifthFlightDate.arrival.month}, {fifthFlightDate.arrival.year}
-                  <div className="time">{fifthFlightDate.arrival.time} {fifthFlightDate.arrival.timezone}</div>
+                  <div className="time">{fifthFlightDate.arrival.time}</div>
                 </div>
               </div>}
             </div>
