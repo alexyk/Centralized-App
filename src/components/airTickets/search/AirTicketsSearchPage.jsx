@@ -527,14 +527,14 @@ class AirTicketsSearchPage extends Component {
           <AsideContentPage>
             <AsideContentPage.Aside>
               <div className="air-tickets-search-filter-panel">
-                <AirTicketsSearchFilterPanel
+                {/* <AirTicketsSearchFilterPanel
                   windowWidth={windowWidth}
                   showFiltersMobile={showFiltersMobile}
                   loading={!allElements}
                   filters={filters}
                   handleShowFilters={this.handleShowFilters}
                   applyFilters={this.applyFilters}
-                />
+                /> */}
               </div>
             </AsideContentPage.Aside>
             <AsideContentPage.Content>
