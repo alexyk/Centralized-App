@@ -325,10 +325,6 @@ class AirTicketsSearchPage extends Component {
     const url = Config.getValue('socketHost');
     this.clientSearch = Stomp.client(url);
 
-    if (!DEBUG_SOCKET) {
-      this.clientSearch.debug = () => { };
-    }
-
     this.clientSearch.connect(null, null, this.subscribeSearch, () => {
       this.setState({
         currentPageResults: '',
@@ -361,7 +357,7 @@ class AirTicketsSearchPage extends Component {
     const destination = 'flight/' + this.queueId;
     const client = this.clientSearch;
     const handleReceiveTicketsResults = this.handleReceiveMessageSearch;
-
+    this.results = {};
     this.subscriptionSearch = client.subscribe(destination, handleReceiveTicketsResults);
 
     const msgObject = {
@@ -494,23 +490,21 @@ class AirTicketsSearchPage extends Component {
   }
 
   searchAirTickets(queryString) {
-    this.unsubscribeSearch();
-    this.unsubscribeFilters();
-    this.disconnectSearch();
-    this.disconnectFilters();
-
     this.props.history.push('/tickets/results' + queryString);
-    this.initUUIDs(true);
-
     this.setState({
-      allResults: '',
-      totalElements: 0,
-      filters: null,
-      loading: true,
-      page: 0,
       currentPageResults: '',
       allElements: false,
-    }, () => this.requestFlightsSearch());
+      allResults: '',
+      loading: true,
+      totalElements: 0,
+      page: 0,
+      filters: null
+    }, (e) => {
+      this.unsubscribeSearch();
+      this.unsubscribeFilters();
+      this.initUUIDs();
+      this.requestFlightsSearch();
+    });
   }
 
   render() {
