@@ -43,11 +43,11 @@ class AirTicketsBookingProfileServicesForm extends Component {
       case 'Checking bag for return':
         return `${serviceOption.bags ? `Bags - ${serviceOption.bags}.` : ''}${serviceOption.maxWeight ? ` Max weight - ${serviceOption.maxWeight}.` : ''}${serviceOption.price ? ` Price - ${this.getCurrencySign(this.props.currency)}${serviceOption.price}.` : ''}`;
       case 'Hand baggage':
-        return 'Hand baggage is not formatted.';
+        return `${serviceOption.type ? `${serviceOption.type}.` : ''}${serviceOption.price ? ` Price - ${this.getCurrencySign(this.props.currency)}${serviceOption.price}.` : ''}`;
       case 'Checkin':
         return 'Checkin is not formatted.';
       case 'Priority boarding':
-        return `${serviceOption.bags ? `Bags - ${serviceOption.bags}.` : ''}${serviceOption.maxWeight ? ` Max weight - ${serviceOption.maxWeight}.` : ''}${serviceOption.price ? ` Price - ${this.getCurrencySign(this.props.currency)}${serviceOption.price}.` : ''}`;
+        return `${serviceOption.bags ? `${serviceOption.bags}.` : ''}${serviceOption.price ? ` Price - ${this.getCurrencySign(this.props.currency)}${serviceOption.price}.` : ''}`;
       case 'Dining/meal':
         return 'Dining/meal is not formatted.';
       case 'Cabins':
