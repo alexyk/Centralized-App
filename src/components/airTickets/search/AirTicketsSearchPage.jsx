@@ -18,7 +18,7 @@ import AirTicketsSearchFilterPanel from './filter/AirTicketsSearchFilterPanel';
 import { LONG } from '../../../constants/notificationDisplayTimes';
 import AsideContentPage from '../../common/asideContentPage/AsideContentPage';
 import { stopIds } from '../../../constants/constants';
-
+import * as _ from "ramda";
 import orderSegments from "./order-flights/order-flights";
 
 import '../../../styles/css/components/airTickets/search/air-tickets-search-page.css';
@@ -565,11 +565,12 @@ class AirTicketsSearchPage extends Component {
         this.totalElements += 1;
       }
 
-      var  orderedSegments = orderSegments(messageBody.segments)
+        var  orderedSegments = orderSegments(messageBody.segments)
 
+      debugger;
       this.results[messageBody.id] =   {
         ...messageBody,
-        orderedSegments
+        segments: Object.values(orderedSegments).reduce(_.concat)
        };
 
       if (this.totalElements === 10) {
