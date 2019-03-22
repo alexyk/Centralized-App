@@ -22,8 +22,6 @@ class LocPrice extends PureComponent {
     let fiatInEur;
     const { currencyExchangeRates, fiat } = this.props;
     if (currencyExchangeRates) {
-      console.log(DEFAULT_CRYPTO_CURRENCY);
-      console.log(localStorage.getItem('currency'));
       fiatInEur = currencyExchangeRates && CurrencyConverter.convert(currencyExchangeRates, localStorage.getItem('currency'), DEFAULT_CRYPTO_CURRENCY, fiat);
       this.sendWebsocketMessage(fiatInEur, null, { fiatAmount: fiatInEur });
       isLocPriceRendered = true;
@@ -38,8 +36,6 @@ class LocPrice extends PureComponent {
     if (this.props.isExchangerWebsocketConnected &&
       this.props.isExchangerWebsocketConnected !== prevProps.isExchangerWebsocketConnected) {
       this.sendWebsocketMessage(this.state.fiatInEur, null, { fiatAmount: this.state.fiatInEur });
-    }
-    if (this.props.currencyExchangeRates && !this.state.isLocPriceRendered) {
       const fiatInEur = this.props.currencyExchangeRates && CurrencyConverter.convert(this.props.currencyExchangeRates, localStorage.getItem('currency'), DEFAULT_CRYPTO_CURRENCY, prevProps.fiat);
       this.sendWebsocketMessage(fiatInEur, null, { fiatAmount: fiatInEur });
       this.setState({
