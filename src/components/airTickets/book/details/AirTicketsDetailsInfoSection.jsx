@@ -252,6 +252,11 @@ class AirTicketsDetailsInfoSection extends Component {
     const departureInfo = this.getDepartureInfo(resultDepartureInfo);
     const returnInfo = this.getReturnInfo(resultReturnInfo);
 
+    const brandInfo = result.brandInfo;
+    const supplierInfo = result.supplierInfo;
+
+    console.log(brandInfo);
+    console.log(supplierInfo);
     return (
       <section className="air-tickets-details-container">
         <div className="air-tickets-details-box" id="air-tickets-details-box">
@@ -333,30 +338,7 @@ class AirTicketsDetailsInfoSection extends Component {
                   </div>}
               </div>
             </div>
-            {isLowCost ?
-              fareRules.length > 0 &&
-              <div className="air-tickets-details-content-item">
-                <h2>Supplier Info</h2>
-                <hr />
-                <div className="farerules">
-                  {fareRules.map((rule, ruleIndex) => {
-                    return (
-                      <Fragment key={ruleIndex}>
-                        <div className="flight-rule-title">
-                          <h5>{rule.name}</h5>
-                        </div>
-                        <div className="flight-rules">
-                          <div className="rule">
-                            <a href={rule.value} target="_blank" rel="noopener noreferrer">{rule.value}</a>
-                          </div>
-                        </div>
-                      </Fragment>
-                    );
-                  })}
-                </div>
-              </div>
-              :
-              fareRules.length > 0 &&
+            {fareRules.length > 0 &&
               <div className="air-tickets-details-content-item">
                 <h2>Fare Rules</h2>
                 <hr />
@@ -384,7 +366,55 @@ class AirTicketsDetailsInfoSection extends Component {
                     );
                   })}
                 </div>
-              </div>}
+              </div>
+            }
+            {brandInfo.length > 0 &&
+              <div className="air-tickets-details-content-item">
+                <h2>Brand Info</h2>
+                <hr />
+                <div className="farerules">
+                  {brandInfo.map((rule, ruleIndex) => {
+                    const rules = rule.fareRulesInfo.map((ruleInfo, ruleInfoIndex) => {
+                      return (
+                        <div key={ruleInfoIndex} className="rule">
+                          <h5>{ruleInfo.brandName}</h5>
+                          <h5>{ruleInfo.origin.name}</h5>
+                          <h5>{ruleInfo.destination.name}</h5>
+                        </div>
+                      );
+                    });
+                    return (
+                      <Fragment key={ruleIndex}>
+                        <div className="flight-rule-title">
+                          <h5><div className="flight-rule-origin">{rule.origin.name}</div> <span className="icon-arrow-right arrow"></span> <div className="flight-rule-destination">{rule.destination.name}</div></h5>
+                          {fareRulesIndex === ruleIndex ? <div className="toggle"><span className="fa fa-angle-down" onClick={() => this.toggleFareRule(-1)} /></div> : <div className="toggle"><span className="fa fa-angle-right" onClick={() => this.toggleFareRule(ruleIndex)} /></div>}
+                        </div>
+                        {fareRulesIndex === ruleIndex &&
+                          <div className="flight-rules">
+                            {rules}
+                          </div>}
+                      </Fragment>
+                    );
+                  })}
+                </div>
+              </div>
+            }
+            {supplierInfo.length > 0 &&
+              <div className="air-tickets-details-content-item">
+                <h2>Brand Info</h2>
+                <hr />
+                <div className="farerules">
+                  {supplierInfo.map((rule, ruleIndex) => {
+                      return (
+                        <div key={ruleIndex} className="rule">
+                          <h5>{rule.name}</h5>
+                          <h5>{rule.value}</h5>
+                        </div>
+                      );
+                  })}
+                </div>
+              </div>
+            }
           </div>
           <AirTicketsDetailsBookingPanel result={result} />
         </div>
