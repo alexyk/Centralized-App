@@ -456,11 +456,9 @@ class AirTicketsSearchPage extends Component {
 
       var  orderedSegments = orderSegments(messageBody.segments)
 
-      var segments = Object.values(orderedSegments).reduce(_.concat)
-
       this.results[messageBody.id] =   {
         ...messageBody,
-        segments: segments
+        orderedSegments: orderedSegments
        };
 
       if (this.totalElements === 10) {
