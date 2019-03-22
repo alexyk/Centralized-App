@@ -107,7 +107,7 @@ class AirTicketsDetailsPage extends Component {
   }
 
   render() {
-    const { result, fareRules, brandInfo, supplierInfo, isUserLogged } = this.props;
+    const { result, fareRules, isUserLogged } = this.props;
 
     return (
       <div>
@@ -121,8 +121,6 @@ class AirTicketsDetailsPage extends Component {
             openModal={this.openModal}
             result={result}
             fareRules={fareRules}
-            brandInfo={brandInfo}
-            supplierInfo={supplierInfo}
           />
         </div>
       </div>
@@ -133,8 +131,6 @@ class AirTicketsDetailsPage extends Component {
 AirTicketsDetailsPage.propTypes = {
   result: PropTypes.object,
   fareRules: PropTypes.array,
-  brandInfo: PropTypes.array,
-  supplierInfo: PropTypes.array,
 
   // start Router props
   match: PropTypes.object,

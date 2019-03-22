@@ -9,7 +9,13 @@ import '../../../../styles/css/components/airTickets/book/details/air-tickets-de
 
 class AirTicketsDetailsInfoSection extends Component {
   constructor(props) {
-    super(props)
+    super(props);
+
+    this.state = {
+      fareRulesIndex: -1
+    };
+
+    this.toggleFareRule = this.toggleFareRule.bind(this);
   }
 
   convertMinutesToTime(minutes) {
@@ -223,8 +229,14 @@ class AirTicketsDetailsInfoSection extends Component {
     );
   }
 
+  toggleFareRule(fareRulesIndex) {
+    this.setState({
+      fareRulesIndex: fareRulesIndex
+    });
+  }
+
   render() {
-    const { result, fareRules, brandInfo, supplierInfo } = this.props;
+    const { result, fareRules } = this.props;
 
     if (!result || !fareRules) {
       return <div className="loader"></div>;
@@ -232,12 +244,14 @@ class AirTicketsDetailsInfoSection extends Component {
 
     const resultDepartureInfo = result.segments.filter(s => s.group === '0');
     const resultReturnInfo = result.segments.filter(s => s.group === '1');
+
+    const isLowCost = result.propertiesInfo.isLowCost;
+
+    const { fareRulesIndex } = this.state;
+
     const departureInfo = this.getDepartureInfo(resultDepartureInfo);
     const returnInfo = this.getReturnInfo(resultReturnInfo);
 
-    const fareRulesInfo = fareRules.reduce(item => {
-      return item.fareRules;
-    });
     return (
       <section className="air-tickets-details-container">
         <div className="air-tickets-details-box" id="air-tickets-details-box">
@@ -319,56 +333,13 @@ class AirTicketsDetailsInfoSection extends Component {
                   </div>}
               </div>
             </div>
-            {fareRulesInfo.length > 0 &&
-              <div className="air-tickets-details-content-item">
-                <h2>Fare Rules Info</h2>
-                <hr />
-                <div className="farerules">
-                  {fareRulesInfo.map(item => {
-                    item.map((rule, ruleIndex) => {
-                      return (
-                        <Fragment key={ruleIndex}>
-                          <div className="flight-rule-title">
-                            <h5>{rule[0].name}</h5>
-                          </div>
-                          <div className="flight-rules">
-                            <div className="rule">
-                              <a href={rule[0].value} target="_blank" rel="noopener noreferrer">{rule.value}</a>
-                            </div>
-                          </div>
-                        </Fragment>
-                      );
-                    });
-                  })}
-                </div>
-              </div>}
-            {brandInfo.length > 0 &&
-              <div className="air-tickets-details-content-item">
-                <h2>Brand Info</h2>
-                <hr />
-                <div className="farerules">
-                  {brandInfo.map((rule, ruleIndex) => {
-                    return (
-                      <Fragment key={ruleIndex}>
-                        <div className="flight-rule-title">
-                          <h5>{rule.name}</h5>
-                        </div>
-                        <div className="flight-rules">
-                          <div className="rule">
-                            <a href={rule.value} target="_blank" rel="noopener noreferrer">{rule.value}</a>
-                          </div>
-                        </div>
-                      </Fragment>
-                    );
-                  })}
-                </div>
-              </div>}
-            {supplierInfo.length > 0 &&
+            {isLowCost ?
+              fareRules.length > 0 &&
               <div className="air-tickets-details-content-item">
                 <h2>Supplier Info</h2>
                 <hr />
                 <div className="farerules">
-                  {supplierInfo.map((rule, ruleIndex) => {
+                  {fareRules.map((rule, ruleIndex) => {
                     return (
                       <Fragment key={ruleIndex}>
                         <div className="flight-rule-title">
@@ -383,8 +354,37 @@ class AirTicketsDetailsInfoSection extends Component {
                     );
                   })}
                 </div>
+              </div>
+              :
+              fareRules.length > 0 &&
+              <div className="air-tickets-details-content-item">
+                <h2>Fare Rules</h2>
+                <hr />
+                <div className="farerules">
+                  {fareRules.map((rule, ruleIndex) => {
+                    const rules = rule.fareRulesInfo.map((ruleInfo, ruleInfoIndex) => {
+                      return (
+                        <div key={ruleInfoIndex} className="rule">
+                          <h5>{ruleInfo.title}</h5>
+                          <h5>{ruleInfo.text}</h5>
+                        </div>
+                      );
+                    });
+                    return (
+                      <Fragment key={ruleIndex}>
+                        <div className="flight-rule-title">
+                          <h5><div className="flight-rule-origin">{rule.origin.name}</div> <span className="icon-arrow-right arrow"></span> <div className="flight-rule-destination">{rule.destination.name}</div></h5>
+                          {fareRulesIndex === ruleIndex ? <div className="toggle"><span className="fa fa-angle-down" onClick={() => this.toggleFareRule(-1)} /></div> : <div className="toggle"><span className="fa fa-angle-right" onClick={() => this.toggleFareRule(ruleIndex)} /></div>}
+                        </div>
+                        {fareRulesIndex === ruleIndex &&
+                          <div className="flight-rules">
+                            {rules}
+                          </div>}
+                      </Fragment>
+                    );
+                  })}
+                </div>
               </div>}
-
           </div>
           <AirTicketsDetailsBookingPanel result={result} />
         </div>
@@ -395,9 +395,7 @@ class AirTicketsDetailsInfoSection extends Component {
 
 AirTicketsDetailsInfoSection.propTypes = {
   result: PropTypes.object,
-  fareRules: PropTypes.array,
-  brandInfo: PropTypes.array,
-  supplierInfo: PropTypes.array
+  fareRules: PropTypes.array
 };
 
 export default AirTicketsDetailsInfoSection;

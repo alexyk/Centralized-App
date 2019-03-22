@@ -25,8 +25,6 @@ class AirTicketsBookingRouterPage extends Component {
       result: null,
       updatedPrice: null,
       fareRules: null,
-      brandInfo: null,
-      supplierInfo: null,
       contactInfo: {
         address: '',
         city: '',
@@ -60,6 +58,7 @@ class AirTicketsBookingRouterPage extends Component {
     this.searchId = localStorage.getItem('search_uuid');
     this.searchAirTickets = this.searchAirTickets.bind(this);
     this.requestSelectFlight = this.requestSelectFlight.bind(this);
+    this.requestFareRules = this.requestFareRules.bind(this);
     this.requestAllCountries = this.requestAllCountries.bind(this);
     this.requestPrepareFlightReservation = this.requestPrepareFlightReservation.bind(this);
     this.requestPayWithCC = this.requestPayWithCC.bind(this);
@@ -79,6 +78,7 @@ class AirTicketsBookingRouterPage extends Component {
 
   componentDidMount() {
     this.requestSelectFlight();
+    this.requestFareRules();
     this.requestAllCountries();
     this.populatePassengersInfo();
     this.getUserInfo();
@@ -125,10 +125,7 @@ class AirTicketsBookingRouterPage extends Component {
         if (res.ok) {
           res.json().then((data) => {
             this.setState({
-              result: data,
-              fareRules: data.rules.segments,
-              brandInfo: data.brandInfo,
-              supplierInfo: data.supplierInfo
+              result: data
             });
           });
         } else {
@@ -137,6 +134,26 @@ class AirTicketsBookingRouterPage extends Component {
       }).catch(err => {
         NotificationManager.warning(err.message, '', LONG);
         this.searchAirTickets(this.props.location.search);
+      });
+  }
+
+  requestFareRules() {
+    fetch(`${Config.getValue('apiHost')}flight/fareRules?flightId=${this.props.match.params.id}&uuid=${this.searchId}`)
+      .then(res => {
+        if (res.ok) {
+          res.json().then((data) => {
+            if (data.success === false) {
+              NotificationManager.warning(data.message, '', LONG);
+              this.searchAirTickets(this.props.location.search);
+            } else {
+              this.setState({
+                fareRules: data.rules
+              });
+            }
+          });
+        } else {
+          this.searchAirTickets(this.props.location.search);
+        }
       });
   }
 
@@ -513,12 +530,12 @@ class AirTicketsBookingRouterPage extends Component {
   }
 
   render() {
-    const { result, fareRules, contactInfo, invoiceInfo, servicesInfo, passengersInfo, countries, confirmInfo, isBookingProccess, brandInfo, supplierInfo } = this.state;
+    const { result, fareRules, contactInfo, invoiceInfo, servicesInfo, passengersInfo, countries, confirmInfo, isBookingProccess } = this.state;
 
     return (
       <Fragment>
         <Switch>
-          <Route exact path="/tickets/results/initBook/:id/details" render={() => <AirTicketsDetailsPage result={result} fareRules={fareRules} brandInfo={brandInfo} supplierInfo={supplierInfo}/>} />
+          <Route exact path="/tickets/results/initBook/:id/details" render={() => <AirTicketsDetailsPage result={result} fareRules={fareRules} />} />
           <Route path="/tickets/results/initBook/:id/profile" render={() => {
             return (
               <AirTicketsBookingProfileRouterPage
