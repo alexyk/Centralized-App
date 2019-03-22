@@ -99,8 +99,8 @@ class AdminReservationsTable extends Component {
           <h2 className="navigation-tab">All Booking With Transaction Hash</h2>
         </AdminNav>
 
-        <button style={this.state.tab === "hotels" ? activeButtonStyle : {}} onClick={()=>{this.setState({tab: "hotels", totalElements: '', bookings: []})}}>Hotels</button>
-        <button style={this.state.tab === "flights" ? activeButtonStyle : {}} onClick={()=>{this.setState({tab: "flights", totalElements: '', bookings: []})}}>Flights</button>
+        <button className="a" style={this.state.tab === "hotels" ? activeButtonStyle : {}} onClick={()=>{this.setState({tab: "hotels", totalElements: '', bookings: []})}}>Hotels</button>
+        <button className="a" style={this.state.tab === "flights" ? activeButtonStyle : {}} onClick={()=>{this.setState({tab: "flights", totalElements: '', bookings: []})}}>Flights</button>
 
         {
           this.state.tab === "hotels" && (
