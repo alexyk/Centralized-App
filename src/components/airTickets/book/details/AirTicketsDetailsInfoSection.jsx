@@ -374,11 +374,27 @@ class AirTicketsDetailsInfoSection extends Component {
                 <hr />
                 <div className="farerules">
                   {brandInfo.map((rule, ruleIndex) => {
+                    const styleToggle = {
+                      width: '5%',
+                      display: 'inline-block',
+                      float: 'right'
+                    };
+                    const services = rule.services.map((service, i) => {
+                      return `<p>${service.name}</p><p>${service.description}</p>`;
+                    });
                     return (
                       <div key={ruleIndex} className="rule">
                         <h5>{rule.brandName}</h5>
-                        <h5>{rule.origin.name}</h5>
-                        <h5>{rule.destination.name}</h5>
+                        <h5 style={{ width: '95%', display: 'inline-block'}}>
+                          <span className="flight-rule-origin">{rule.origin.name}</span>
+                          <span className="icon-arrow-right arrow"></span>
+                          <span className="flight-rule-destination">{rule.destination.name}</span>
+                        </h5>
+                        {fareRulesIndex === ruleIndex ? <div className="toggle" style={styleToggle}><span className="fa fa-angle-down" onClick={() => this.toggleFareRule(-1)} /></div> : <div className="toggle" style={styleToggle}><span className="fa fa-angle-right" onClick={() => this.toggleFareRule(ruleIndex)} /></div>}
+                        {fareRulesIndex === ruleIndex &&
+                          <div className="flight-rules">
+                            {services}
+                          </div>}
                       </div>
                     );
                   })}
