@@ -61,7 +61,8 @@ class AdminReservationsTable extends Component {
       let host = Config.getValue("apiHost");
       let token = localStorage.getItem(Config.getValue("domainPrefix") + ".auth.locktrip");
 
-      sa.get(`${host}/admin/panel/flights/all?page=${page}`).set('Authorization', token).then(data=>{
+      sa.get(`${host}/admin/panel/flights/all?page=${page}&sort=id,desc`).set('Authorization', token).then(response=>{
+        let data = response.body;
         this.setState({
           loading: false,
           bookings: data.content,
@@ -98,8 +99,8 @@ class AdminReservationsTable extends Component {
           <h2 className="navigation-tab">All Booking With Transaction Hash</h2>
         </AdminNav>
 
-        <button style={this.state.tab === "hotels" ? activeButtonStyle : {}} onClick={()=>{this.setState({tab: "hotels"})}}>Hotels</button>
-        <button style={this.state.tab === "flights" ? activeButtonStyle : {}} onClick={()=>{this.setState({tab: "flights"})}}>Flights</button>
+        <button className="a" style={this.state.tab === "hotels" ? activeButtonStyle : {}} onClick={()=>{this.setState({tab: "hotels", totalElements: '', bookings: []})}}>Hotels</button>
+        <button className="a" style={this.state.tab === "flights" ? activeButtonStyle : {}} onClick={()=>{this.setState({tab: "flights", totalElements: '', bookings: []})}}>Flights</button>
 
         {
           this.state.tab === "hotels" && (
@@ -192,10 +193,7 @@ class AdminReservationsTable extends Component {
                   <th>Names</th>
                   <th>Tickets</th>
                   <th>Fare</th>
-                  <th>Departure</th>
-                  <th>Arrival</th>
                   <th>Price</th>
-                  <th>Currency</th>
                   <th>Transaction ID</th>
                   <th>Date Of Purchase</th>
                   <th>Payment Method</th>
@@ -204,26 +202,51 @@ class AdminReservationsTable extends Component {
                 </thead>
                 <tbody>
 
-                {bookings.map((booking, bookingIndex) => {
+                {(bookings || []).map((booking, bookingIndex) => {
+                  let passengerInfo = booking.passengerInfo ? JSON.parse(booking.passengerInfo) : {};
+                  let fare = booking.fare ? JSON.parse(booking.fare) : [];
                   return (
                     <tr key={bookingIndex}>
+
                       <td>{booking.pnr}</td>
                       <td>{booking.tripId}</td>
                       <td>{booking.status}</td>
                       <td>{booking.email}</td>
                       <td>{booking.phone}</td>
-                      <td>{booking.names}</td>
+                      <td>{passengerInfo && (
+                        (passengerInfo.passengers || []).map(passenger=>{
+                          return <div>{passenger.title} {passenger.firstName} {passenger.lastName}</div>
+                        })
+                      )}</td>
+
                       <td>{booking.tickets}</td>
-                      <td>{booking.fare}</td>
-                      <td>{booking.departure}</td>
-                      <td>{booking.arrival}</td>
-                      <td>{booking.price}</td>
-                      <td>{booking.currency}</td>
+
+                      <td style={{    maxWidth: "none",
+                        whiteSpace: "nowrap"}}>{
+                         (()=>{
+                           let group = 0;
+                          return (fare || []).map(f=>{
+                            let groupLine = null;
+
+                            if(Number(group) !== Number(f.group)){
+                              group = f.group;
+                              groupLine = <hr />
+                            }
+                            let line = <div>{f.origin} - {f.destination} {f.originDate} {f.originTime}</div>;
+                            return <React.Fragment>
+                                {groupLine}
+                                {line}
+                            </React.Fragment>
+                          })
+                        })()
+
+                    }</td>
+                      <td>{booking.price} {booking.currency}</td>
+
                       <td>{booking.transactionId}</td>
                       <td>{moment(booking.date).utc().format('DD/MM/YYYY')}</td>
                       <td>{booking.paymentMethod}</td>
                       <td>{booking.nationality}</td>
-                      <td><Link to={`/profile/admin/reservation/booking/${booking.id}/flights`}>Edit</Link></td>
                     </tr>
                   );
                 })}
