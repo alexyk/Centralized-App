@@ -202,9 +202,9 @@ class AdminReservationsTable extends Component {
                 </thead>
                 <tbody>
 
-                {bookings.map((booking, bookingIndex) => {
-                  let passengerInfo = JSON.parse(booking.passengerInfo);
-                  let fare = JSON.parse(booking.fare);
+                {(bookings || []).map((booking, bookingIndex) => {
+                  let passengerInfo = booking.passengerInfo ? JSON.parse(booking.passengerInfo) : {};
+                  let fare = booking.fare ? JSON.parse(booking.fare) : [];
                   return (
                     <tr key={bookingIndex}>
 
@@ -214,7 +214,7 @@ class AdminReservationsTable extends Component {
                       <td>{booking.email}</td>
                       <td>{booking.phone}</td>
                       <td>{passengerInfo && (
-                        passengerInfo.passengers.map(passenger=>{
+                        (passengerInfo.passengers || []).map(passenger=>{
                           return <div>{passenger.title} {passenger.firstName} {passenger.lastName}</div>
                         })
                       )}</td>
@@ -225,7 +225,7 @@ class AdminReservationsTable extends Component {
                         whiteSpace: "nowrap"}}>{
                          (()=>{
                            let group = 0;
-                          return fare.map(f=>{
+                          return (fare || []).map(f=>{
                             let groupLine = null;
 
                             if(Number(group) !== Number(f.group)){
