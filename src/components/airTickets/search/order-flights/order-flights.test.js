@@ -1253,4 +1253,293 @@ describe("orderFlights", () => {
 
     expect(Object.values(result).reduce(_.concat)).toEqual(testSegments);
   });
+
+  it("[THREW WITH] works when all the flights are given as a single flight group", function() {
+    let testSegments = [
+      {
+        group: "0",
+        carrier: { name: "Lufthansa" },
+        origin: {
+          code: "SOF",
+          name: "Sofia",
+          date: "2019-03-28",
+          time: "18:55",
+          timeZone: null,
+          terminal: null
+        },
+        destination: {
+          code: "FRA",
+          name: "Frankfurt",
+          date: "2019-03-28",
+          time: "20:20",
+          timeZone: null,
+          terminal: null
+        },
+        flightTime: 145,
+        journeyTime: 2815,
+        waitTime: 70
+      },
+      {
+        group: "0",
+        carrier: { name: "Lufthansa" },
+        origin: {
+          code: "FRA",
+          name: "Frankfurt",
+          date: "2019-03-28",
+          time: "21:30",
+          timeZone: null,
+          terminal: null
+        },
+        destination: {
+          code: "LHR",
+          name: "London Heathrow",
+          date: "2019-03-28",
+          time: "22:15",
+          timeZone: null,
+          terminal: null
+        },
+        flightTime: 105,
+        journeyTime: 2815,
+        waitTime: 465
+      },
+      {
+        group: "0",
+        carrier: { name: "Austrian Airlines" },
+        origin: {
+          code: "LHR",
+          name: "London Heathrow",
+          date: "2019-03-29",
+          time: "06:00",
+          timeZone: null,
+          terminal: null
+        },
+        destination: {
+          code: "VIE",
+          name: "Vienna",
+          date: "2019-03-29",
+          time: "09:20",
+          timeZone: null,
+          terminal: null
+        },
+        flightTime: 140,
+        journeyTime: 2815,
+        waitTime: 710
+      },
+      {
+        group: "0",
+        carrier: { name: "Austrian Airlines" },
+        origin: {
+          code: "VIE",
+          name: "Vienna",
+          date: "2019-03-29",
+          time: "21:10",
+          timeZone: null,
+          terminal: null
+        },
+        destination: {
+          code: "TXL",
+          name: "Berlin-Tegel",
+          date: "2019-03-29",
+          time: "22:25",
+          timeZone: null,
+          terminal: null
+        },
+        flightTime: 75,
+        journeyTime: 2815,
+        waitTime: 515
+      },
+      {
+        group: "0",
+        carrier: { name: "Austrian Airlines" },
+        origin: {
+          code: "TXL",
+          name: "Berlin-Tegel",
+          date: "2019-03-30",
+          time: "07:00",
+          timeZone: null,
+          terminal: null
+        },
+        destination: {
+          code: "VIE",
+          name: "Vienna",
+          date: "2019-03-30",
+          time: "08:15",
+          timeZone: null,
+          terminal: null
+        },
+        flightTime: 75,
+        journeyTime: 2815,
+        waitTime: 420
+      },
+      {
+        group: "0",
+        carrier: { name: "Austrian Airlines" },
+        origin: {
+          code: "VIE",
+          name: "Vienna",
+          date: "2019-03-30",
+          time: "15:15",
+          timeZone: null,
+          terminal: null
+        },
+        destination: {
+          code: "SOF",
+          name: "Sofia",
+          date: "2019-03-30",
+          time: "17:50",
+          timeZone: null,
+          terminal: null
+        },
+        flightTime: 95,
+        journeyTime: 2815,
+        waitTime: null
+      }
+    ];
+
+    let expectedData = {
+      "0": [
+        {
+          group: "0",
+          carrier: { name: "Lufthansa" },
+          origin: {
+            code: "SOF",
+            name: "Sofia",
+            date: "2019-03-28",
+            time: "18:55",
+            timeZone: null,
+            terminal: null
+          },
+          destination: {
+            code: "FRA",
+            name: "Frankfurt",
+            date: "2019-03-28",
+            time: "20:20",
+            timeZone: null,
+            terminal: null
+          },
+          flightTime: 145,
+          journeyTime: 2815,
+          waitTime: 70
+        },
+        {
+          group: "0",
+          carrier: { name: "Lufthansa" },
+          origin: {
+            code: "FRA",
+            name: "Frankfurt",
+            date: "2019-03-28",
+            time: "21:30",
+            timeZone: null,
+            terminal: null
+          },
+          destination: {
+            code: "LHR",
+            name: "London Heathrow",
+            date: "2019-03-28",
+            time: "22:15",
+            timeZone: null,
+            terminal: null
+          },
+          flightTime: 105,
+          journeyTime: 2815,
+          waitTime: 465
+        },
+        {
+          group: "0",
+          carrier: { name: "Austrian Airlines" },
+          origin: {
+            code: "LHR",
+            name: "London Heathrow",
+            date: "2019-03-29",
+            time: "06:00",
+            timeZone: null,
+            terminal: null
+          },
+          destination: {
+            code: "VIE",
+            name: "Vienna",
+            date: "2019-03-29",
+            time: "09:20",
+            timeZone: null,
+            terminal: null
+          },
+          flightTime: 140,
+          journeyTime: 2815,
+          waitTime: 710
+        },
+        {
+          group: "0",
+          carrier: { name: "Austrian Airlines" },
+          origin: {
+            code: "VIE",
+            name: "Vienna",
+            date: "2019-03-29",
+            time: "21:10",
+            timeZone: null,
+            terminal: null
+          },
+          destination: {
+            code: "TXL",
+            name: "Berlin-Tegel",
+            date: "2019-03-29",
+            time: "22:25",
+            timeZone: null,
+            terminal: null
+          },
+          flightTime: 75,
+          journeyTime: 2815,
+          waitTime: 515
+        },
+        {
+          group: "0",
+          carrier: { name: "Austrian Airlines" },
+          origin: {
+            code: "TXL",
+            name: "Berlin-Tegel",
+            date: "2019-03-30",
+            time: "07:00",
+            timeZone: null,
+            terminal: null
+          },
+          destination: {
+            code: "VIE",
+            name: "Vienna",
+            date: "2019-03-30",
+            time: "08:15",
+            timeZone: null,
+            terminal: null
+          },
+          flightTime: 75,
+          journeyTime: 2815,
+          waitTime: 420
+        },
+        {
+          group: "0",
+          carrier: { name: "Austrian Airlines" },
+          origin: {
+            code: "VIE",
+            name: "Vienna",
+            date: "2019-03-30",
+            time: "15:15",
+            timeZone: null,
+            terminal: null
+          },
+          destination: {
+            code: "SOF",
+            name: "Sofia",
+            date: "2019-03-30",
+            time: "17:50",
+            timeZone: null,
+            terminal: null
+          },
+          flightTime: 95,
+          journeyTime: 2815,
+          waitTime: null
+        }
+      ]
+    };
+
+    let result = orderFlights(testSegments);
+    expect(result).toEqual(expectedData);
+  });
 });
