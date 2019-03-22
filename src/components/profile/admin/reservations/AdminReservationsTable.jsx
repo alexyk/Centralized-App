@@ -7,7 +7,10 @@ import AdminNav from '../AdminNav';
 import requester from '../../../../requester';
 import Pagination from '../../../common/pagination/Pagination';
 
+import sa from "superagent";
+
 import '../../../../styles/css/components/profile/admin/reservations/admin-reservations-table.css';
+import {Config} from "../../../../config";
 
 class AdminReservationsTable extends Component {
   constructor(props) {
@@ -32,6 +35,12 @@ class AdminReservationsTable extends Component {
     this.requestBookings(this.state.page);
   }
 
+  componentDidUpdate(prevProps, prevState){
+    if(prevState.tab !== this.state.tab){
+      this.requestBookings(this.state.page);
+    }
+  }
+
   requestBookings(page) {
 
     if(this.state.tab === "hotels"){
@@ -49,19 +58,14 @@ class AdminReservationsTable extends Component {
           }
         });
     } else {
-      requester.getAllBookingsWithTransactionHash([`page=${page}`])
-        .then((res) => {
-          if (res.success) {
-            res.body.then((data) => {
-              this.setState({
-                loading: false,
-                bookings: data.content,
-                totalElements: data.totalElements
-              });
-            });
-          } else {
-          }
+      let host = Config.getValue("apiHost");
+      sa.get(`${host}/admin/panel/flights/all`).then(data=>{
+        this.setState({
+          loading: false,
+          bookings: data.content,
+          totalElements: data.totalElements
         });
+      })
     }
 
 
@@ -101,6 +105,7 @@ class AdminReservationsTable extends Component {
               <table>
                 <thead>
                 <tr>
+
                   <th>Rooms Booking Id</th>
                   <th>Booking Status</th>
                   <th>Transaction Hash</th>
@@ -161,15 +166,38 @@ class AdminReservationsTable extends Component {
               <table>
                 <thead>
                 <tr>
+                  {/*{*/}
+                    {/*pnr,*/}
+                    {/*tripId -> id PK,*/}
+                    {/*status,*/}
+                    {/*email,*/}
+                    {/*phone,*/}
+                    {/*passengerInfo,*/}
+                    {/*tickets -> count,*/}
+                    {/*fare -> dashboardViewModel (include: departure,arrival),*/}
+                    {/*price,*/}
+                    {/*currency,*/}
+                    {/*transactionId,*/}
+                    {/*date -> createdOn,*/}
+                    {/*paymentMethod,*/}
+                  {/*}*/}
+
+                  <th>PNR</th>
+                  <th>Trip ID</th>
+                  <th>Status</th>
                   <th>Email</th>
                   <th>Phone</th>
                   <th>Names</th>
-                  <th>Ticket Number</th>
+                  <th>Tickets</th>
                   <th>Fare</th>
+                  <th>Departure</th>
+                  <th>Arrival</th>
                   <th>Price</th>
                   <th>Currency</th>
-                  <th>Date</th>
+                  <th>Transaction ID</th>
+                  <th>Date Of Purchase</th>
                   <th>Payment Method</th>
+                  <th>Nationality</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -177,15 +205,23 @@ class AdminReservationsTable extends Component {
                 {bookings.map((booking, bookingIndex) => {
                   return (
                     <tr key={bookingIndex}>
+                      <td>{booking.pnr}</td>
+                      <td>{booking.tripId}</td>
+                      <td>{booking.status}</td>
                       <td>{booking.email}</td>
                       <td>{booking.phone}</td>
                       <td>{booking.names}</td>
-                      <td>{booking.ticketNumber}</td>
+                      <td>{booking.tickets}</td>
                       <td>{booking.fare}</td>
+                      <td>{booking.departure}</td>
+                      <td>{booking.arrival}</td>
                       <td>{booking.price}</td>
                       <td>{booking.currency}</td>
+                      <td>{booking.transactionId}</td>
                       <td>{moment(booking.date).utc().format('DD/MM/YYYY')}</td>
                       <td>{booking.paymentMethod}</td>
+                      <td>{booking.nationality}</td>
+                      <td><Link to={`/profile/admin/reservation/booking/${booking.id}/flights`}>Edit</Link></td>
                     </tr>
                   );
                 })}
