@@ -37,7 +37,6 @@ class ExchangerWS {
   }
 
   handleRecieveMessage(event) {
-
     if (event) {
       const data = JSON.parse(event.data);
       if (data.params && data.params.secondsLeft) {
@@ -50,7 +49,6 @@ class ExchangerWS {
   }
 
   close() {
-
     if (this.shoudSocketReconnect) {
       if (store.getState().exchangerSocketInfo.isExchangerWebsocketConnected) {
         store.dispatch(clearLocAmounts());

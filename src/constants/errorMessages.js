@@ -11,4 +11,4 @@ export const ROOM_IS_NO_LONGER_AVAILABLE =
 export const USER_NOUSER = "User NOT FOUND";
 export const USER_SERVERROR = "Backend Error";
 export const MISSING_ORIGIN = "Please select from where are you travelling!";
-export const MISSING_DESTINATION = "Please select to where are you travelling!"
+export const MISSING_DESTINATION = "Please select to where are you travelling!";

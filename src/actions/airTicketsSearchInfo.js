@@ -1,4 +1,4 @@
-import { airTicketsSearchInfo } from './actionTypes';
+import { airTicketsSearchInfo } from "./actionTypes";
 
 export function setFlightRouting(flightRouting) {
   return {
@@ -69,7 +69,18 @@ export function setMultiStopsDestinations(multiStopsDestinations) {
   };
 }
 
-export function setAirTicketsSearchInfo(flightRouting, flightClass, stops, departureTime, origin, destination, adultsCount, children, flexSearch, multiStopsDestinations) {
+export function setAirTicketsSearchInfo(
+  flightRouting,
+  flightClass,
+  stops,
+  departureTime,
+  origin,
+  destination,
+  adultsCount,
+  children,
+  flexSearch,
+  multiStopsDestinations
+) {
   return {
     type: airTicketsSearchInfo.SET_AIR_TICKETS_SEARCH_INFO,
     flightRouting,
