@@ -9,6 +9,7 @@ function AdminReservationsRouter() {
     <Switch>
       <Route exact path="/profile/admin/reservation/booking/all" render={() => <AdminReservationsTable />} />
       <Route exact path="/profile/admin/reservation/booking/:id" render={() => <AdminReservationsEditForm />} />
+      <Route exact path="/profile/admin/reservation/booking/:id/flights" render={() => <AdminReservationsEditForm isForFlights={true} />} />
     </Switch>
   );
 }
