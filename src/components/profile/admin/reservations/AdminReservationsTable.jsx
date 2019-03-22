@@ -59,7 +59,9 @@ class AdminReservationsTable extends Component {
         });
     } else {
       let host = Config.getValue("apiHost");
-      sa.get(`${host}/admin/panel/flights/all`).then(data=>{
+      let token = localStorage.getItem(Config.getValue("domainPrefix") + ".auth.locktrip");
+
+      sa.get(`${host}/admin/panel/flights/all?page=${page}`).set('Authorization', token).then(data=>{
         this.setState({
           loading: false,
           bookings: data.content,
