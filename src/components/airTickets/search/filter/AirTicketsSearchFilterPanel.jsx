@@ -305,8 +305,8 @@ class AirTicketsSearchFilterPanel extends Component {
           <div className="price-range-filters">
             <h5>Pricing</h5>
             <NumberRangeSlider
-              minLabel={`${this.getCurrencySign(filters.price.currency)} ${priceRange ? priceRange.min : priceObject.min}`}
-              maxLabel={`${this.getCurrencySign(filters.price.currency)} ${priceRange ? priceRange.max : priceObject.max}`}
+              minLabel={`${localStorage.getItem('currencySign')} ${priceObject.min}`}
+              maxLabel={`${localStorage.getItem('currencySign')} ${priceObject.max}`}
               minValue={priceObject.min}
               maxValue={priceObject.max}
               value={priceRange ? priceRange : priceObject}
