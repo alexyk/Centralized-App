@@ -9,13 +9,7 @@ import '../../../../styles/css/components/airTickets/book/details/air-tickets-de
 
 class AirTicketsDetailsInfoSection extends Component {
   constructor(props) {
-    super(props);
-
-    this.state = {
-      fareRulesIndex: -1
-    };
-
-    this.toggleFareRule = this.toggleFareRule.bind(this);
+    super(props)
   }
 
   convertMinutesToTime(minutes) {
@@ -229,29 +223,21 @@ class AirTicketsDetailsInfoSection extends Component {
     );
   }
 
-  toggleFareRule(fareRulesIndex) {
-    this.setState({
-      fareRulesIndex: fareRulesIndex
-    });
-  }
-
   render() {
-    const { result, fareRules } = this.props;
-console.log(fareRules);
+    const { result, fareRules, brandInfo, supplierInfo } = this.props;
+
     if (!result || !fareRules) {
       return <div className="loader"></div>;
     }
 
     const resultDepartureInfo = result.segments.filter(s => s.group === '0');
     const resultReturnInfo = result.segments.filter(s => s.group === '1');
-
-    const isLowCost = result.propertiesInfo.isLowCost;
-
-    const { fareRulesIndex } = this.state;
-
     const departureInfo = this.getDepartureInfo(resultDepartureInfo);
     const returnInfo = this.getReturnInfo(resultReturnInfo);
 
+    const fareRulesInfo = fareRules.reduce(item => {
+      return item.fareRules;
+    });
     return (
       <section className="air-tickets-details-container">
         <div className="air-tickets-details-box" id="air-tickets-details-box">
@@ -333,13 +319,35 @@ console.log(fareRules);
                   </div>}
               </div>
             </div>
-            {isLowCost ?
-              fareRules.length > 0 &&
+            {fareRulesInfo.length > 0 &&
               <div className="air-tickets-details-content-item">
-                <h2>Supplier Info</h2>
+                <h2>Fare Rules Info</h2>
                 <hr />
                 <div className="farerules">
-                  {fareRules.map((rule, ruleIndex) => {
+                  {fareRulesInfo.map(item => {
+                    item.map((rule, ruleIndex) => {
+                      return (
+                        <Fragment key={ruleIndex}>
+                          <div className="flight-rule-title">
+                            <h5>{rule[0].name}</h5>
+                          </div>
+                          <div className="flight-rules">
+                            <div className="rule">
+                              <a href={rule[0].value} target="_blank" rel="noopener noreferrer">{rule.value}</a>
+                            </div>
+                          </div>
+                        </Fragment>
+                      );
+                    });
+                  })}
+                </div>
+              </div>}
+            {brandInfo.length > 0 &&
+              <div className="air-tickets-details-content-item">
+                <h2>Brand Info</h2>
+                <hr />
+                <div className="farerules">
+                  {brandInfo.map((rule, ruleIndex) => {
                     return (
                       <Fragment key={ruleIndex}>
                         <div className="flight-rule-title">
@@ -354,37 +362,29 @@ console.log(fareRules);
                     );
                   })}
                 </div>
-              </div>
-              :
-              fareRules.length > 0 &&
+              </div>}
+            {supplierInfo.length > 0 &&
               <div className="air-tickets-details-content-item">
-                <h2>Fare Rules</h2>
+                <h2>Supplier Info</h2>
                 <hr />
                 <div className="farerules">
-                  {fareRules.map((rule, ruleIndex) => {
-                    const rules = rule.fareRulesInfo.map((ruleInfo, ruleInfoIndex) => {
-                      return (
-                        <div key={ruleInfoIndex} className="rule">
-                          <h5>{ruleInfo.title}</h5>
-                          <h5>{ruleInfo.text}</h5>
-                        </div>
-                      );
-                    });
+                  {supplierInfo.map((rule, ruleIndex) => {
                     return (
                       <Fragment key={ruleIndex}>
                         <div className="flight-rule-title">
-                          <h5><div className="flight-rule-origin">{rule.origin.name}</div> <span className="icon-arrow-right arrow"></span> <div className="flight-rule-destination">{rule.destination.name}</div></h5>
-                          {fareRulesIndex === ruleIndex ? <div className="toggle"><span className="fa fa-angle-down" onClick={() => this.toggleFareRule(-1)} /></div> : <div className="toggle"><span className="fa fa-angle-right" onClick={() => this.toggleFareRule(ruleIndex)} /></div>}
+                          <h5>{rule.name}</h5>
                         </div>
-                        {fareRulesIndex === ruleIndex &&
-                          <div className="flight-rules">
-                            {rules}
-                          </div>}
+                        <div className="flight-rules">
+                          <div className="rule">
+                            <a href={rule.value} target="_blank" rel="noopener noreferrer">{rule.value}</a>
+                          </div>
+                        </div>
                       </Fragment>
                     );
                   })}
                 </div>
               </div>}
+
           </div>
           <AirTicketsDetailsBookingPanel result={result} />
         </div>
@@ -395,7 +395,9 @@ console.log(fareRules);
 
 AirTicketsDetailsInfoSection.propTypes = {
   result: PropTypes.object,
-  fareRules: PropTypes.array
+  fareRules: PropTypes.array,
+  brandInfo: PropTypes.array,
+  supplierInfo: PropTypes.array
 };
 
 export default AirTicketsDetailsInfoSection;
