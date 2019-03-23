@@ -285,6 +285,16 @@ class AirTicketsSearchBar extends Component {
                 />
               <span>{flightRoutingValues.OS.displayText}</span>
             </label>
+            <label className="custom-radio">
+              <input
+                type="radio"
+                onChange={() => this.changeFlightRouting(flightRoutingValues.MS.value)}
+                name="flightRouting"
+                value={flightRoutingValues.MS.value}
+                checked={flightRouting === flightRoutingValues.MS.value}
+              />
+              <span>{flightRoutingValues.MS.displayText}</span>
+            </label>
           </div>
           <div className="air-tickets-form-search-bar-filters-wrapper">
             <label className="custom-radio">
