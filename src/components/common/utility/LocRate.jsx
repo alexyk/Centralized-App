@@ -41,6 +41,7 @@ class LocRate extends PureComponent {
     const topic = "/topic/loc_rate";
     const url = Config.getValue("socketHost");
     let client = Stomp.client(url);
+    client.debug = null;
     this.locRateClient = client;
     const onSubscribe = ()=>client.subscribe(topic, (data)=>{
       this.setState({

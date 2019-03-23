@@ -1,11 +1,12 @@
-import React, { Component } from 'react';
-import Select from 'react-select';
+import React, {Component} from 'react';
 import PropTypes from 'prop-types';
+import Select from 'react-select';
 import NumberRangeSlider from '../../../common/numberRangeSlider';
 import TimeRangeSlider from 'react-time-range-slider';
-import FilterCheckbox from '../../../common/filter/FilterCheckbox';
+import {getStopName} from '../../../common/flights/util';
 
 import '../../../../styles/css/components/airTickets/search/filter/air-tickets-search-filter-panel.css';
+import option from "eslint-plugin-jsx-a11y/src/util/implicitRoles/option";
 
 
 class AirTicketsSearchFilterPanel extends Component {
@@ -15,57 +16,53 @@ class AirTicketsSearchFilterPanel extends Component {
     this.state = {
       airlines: [],
       stops: [],
-      airportsDeparture: [],
-      airportsArrival: [],
-      airportsTransfer: [],
-      priceRange: '',
-      waitingTimeRange: '',
-      departure: {
-        start: "",
-        end: ""
+      arrivalAirports: [],
+      priceRange: {minPrice: 0, maxPrice: 10000},
+      waitTime: {
+        start: '',
+        end: ''
       },
-      arrival: {
-        start: "",
-        end: ""
+      departureTime: {
+        start: '',
+        end: ''
       },
-      journey: {
-        start: "",
-        end: ""
+      arrivalTime: {
+        start: '',
+        end: ''
+      },
+      journeyTime: {
+        start: '',
+        end: ''
       }
     };
 
-    this.onChange = this.onChange.bind(this);
-    this.handlePriceRangeSelect = this.handlePriceRangeSelect.bind(this);
-    this.handleWaitingRangeSelect = this.handleWaitingRangeSelect.bind(this);
+    this.stopOnChange = this.stopOnChange.bind(this);
+    this.handleSlider = this.handleSlider.bind(this);
     this.clearFilters = this.clearFilters.bind(this);
-    this.departureTmeChangeHandler = this.departureTmeChangeHandler.bind(this);
-    this.arrivalTmeChangeHandler = this.arrivalTmeChangeHandler.bind(this);
-    this.journeyTmeChangeHandler = this.journeyTmeChangeHandler.bind(this);
-    this.handleStops = this.handleStops.bind(this);
   }
 
-  onChange(name, option) {
+  handleSlider(name, e) {
+
+  }
+
+  stopOnChange(e) {
+    let isChecked = e.target.checked;
+    let stop = e.target.value;
+    let value = [];
+
+    if (isChecked) {
+      if (this.state.stops.indexOf() === -1) {
+        value = [...this.state.stops, stop];
+      } else {
+        value = [...this.state.stops];
+      }
+    } else {
+      const index = this.state.stops.indexOf(stop);
+      value = this.state.stops.slice(index,  1);
+    }
+
     this.setState({
-      [name]: option
-    }, () => this.props.applyFilters(this.state));
-  }
-
-  getCurrencySign(currency) {
-    let currencySign = '$';
-    if (currency === 'GBP') currencySign = '£';
-    if (currency === 'EUR') currencySign = '€';
-    return currencySign;
-  }
-
-  handlePriceRangeSelect(priceRange) {
-    this.setState({
-      priceRange
-    }, () => this.props.applyFilters(this.state));
-  }
-
-  handleWaitingRangeSelect(waitingTimeRange) {
-    this.setState({
-      waitingTimeRange
+      stops: value
     }, () => this.props.applyFilters(this.state));
   }
 
@@ -73,87 +70,33 @@ class AirTicketsSearchFilterPanel extends Component {
     this.setState({
       airlines: [],
       stops: [],
-      airportsDeparture: [],
-      airportsArrival: [],
-      airportsTransfer: [],
-      priceRange: '',
-      waitingTimeRange: '',
-      departure: {
-        start: "00:00",
-        end: "23:59"
+      departureAirports: [],
+      arrivalAirports: [],
+      transferAirports: [],
+      priceRange: {min: 0, max: 10000},
+      waitTime: {
+        start: '',
+        end: ''
       },
-      arrival: {
-        start: "00:00",
-        end: "23:59"
+      departureTime: {
+        start: '',
+        end: ''
       },
-      journey: {
-        start: "00:00",
-        end: "23:59"
+      arrivalTime: {
+        start: '',
+        end: ''
+      },
+      journeyTime: {
+        start: '',
+        end: ''
       }
-    }, () => this.props.applyFilters(this.state));
-  }
-
-  departureTmeChangeHandler(time) {
-    this.setState({
-        departure: time
-    }, () => this.props.applyFilters(this.state));
-  }
-
-  arrivalTmeChangeHandler(time) {
-    this.setState({
-        arrival: time
-    }, () => this.props.applyFilters(this.state));
-  }
-
-  journeyTmeChangeHandler(time) {
-    this.setState({
-        journey: time
-    }, () => this.props.applyFilters(this.state));
-  }
-
-  handleStops(e) {
-    let isChecked = e.target.checked;
-    let stopElement = e.target.value;
-    let value;
-    if(isChecked){
-      if(this.state.stops.indexOf() === -1){
-        if (!stopElement) {
-          console.log(stopElement);
-        }
-        value = [...this.state.stops, stopElement]
-      } else {
-        value = [...this.state.stops]
-      }
-    } else {
-      value = this.state.stops.filter(v=> v !== stopElement)
-    }
-    this.setState({
-      stops: value
-    }, () => this.props.applyFilters(this.state));
-  }
-
-  mapStopName(stopId) {
-    let stopName = '';
-
-    switch(stopId) {
-      case '0':
-        stopName = 'Direct flight';
-        break;
-      case '1':
-        stopName = 'One stop';
-        break;
-      case '2':
-        stopName = 'Multi stop';
-        break;
-      default:
-        break;
-    }
-
-    return stopName;
+    });
   }
 
   render() {
-    const { loading, filters, windowWidth, showFiltersMobile } = this.props;
+    const {loading, filters, windowWidth, showFiltersMobile} = this.props;
+    const {stops} = this.state;
+    const currencySign = localStorage.getItem('currencySign');
 
     if (loading) {
       return (
@@ -175,8 +118,6 @@ class AirTicketsSearchFilterPanel extends Component {
       );
     }
 
-    const { airlines, stops, priceRange, waitingTimeRange, airportsArrival, airportsDeparture, airportsTransfer, departure, arrival, journey } = this.state;
-
     if (windowWidth <= 1024 && !showFiltersMobile) {
       return (
         <div className="filter-box">
@@ -185,146 +126,34 @@ class AirTicketsSearchFilterPanel extends Component {
       );
     }
 
-    const priceObject = { min: 0, max: 10000 };
-
     return (
       <div className="filter-box">
-        {filters.changes && filters.changes.length > 1 &&
+
+        {filters.changes.length &&
         <div className="filter stops-filter">
           <h5>Stops</h5>
           <ul>
-              {filters.changes.map((stop, index) => {
+            {filters.changes.map((stop, index) => {
                 return (
                   <li key={index}>
-                    <FilterCheckbox
-                      id={stop.changesName}
-                      value={stop.changesId}
-                      key={index}
-                      text={this.mapStopName(stop.changesId)}
-                      onClick={this.handleStops}
-                    />
+                    <label htmlFor={stop.changesName}>
+                      <input
+                        type="checkbox"
+                        name="stops[]"
+                        value={stop.changesId}
+                        id={stop.changeName}
+                        defaultChecked={stops.length > 0 && stops.indexOf(stop.changesId) !== -1}
+                        onChange={(option) => this.stopOnChange(option)}/>
+                      <span>{getStopName(stop.changesId)}</span>
+                    </label>
                   </li>
                 );
               }
             )}
           </ul>
-        </div>}
-        <div className="filter time-range-filter">
-          <div className="departure-range-filters">
-              <h5>Departure Time</h5>
-              <TimeRangeSlider
-                disabled={false}
-                format={24}
-                maxValue={"23:59"}
-                minValue={"00:00"}
-                name={"time_range"}
-                onChange={this.departureTmeChangeHandler}
-                step={15}
-                value={{start: departure.start || '00:00', end: departure.end || '23:59'}}/>
-                <span className="time-range-min-value">{departure.start}</span>
-                <span className="time-range-min-end">{departure.end}</span>
-          </div>
-          <div className="arrival-range-filters">
-              <h5>Arrival Time</h5>
-              <TimeRangeSlider
-                disabled={false}
-                format={24}
-                maxValue={"23:59"}
-                minValue={"00:00"}
-                name={"time_range"}
-                onChange={this.arrivalTmeChangeHandler}
-                step={15}
-                value={{start: arrival.start || '00:00', end: arrival.end || '23:59'}}/>
-                <span className="time-range-min-value">{arrival.start}</span>
-                <span className="time-range-min-end">{arrival.end}</span>
-          </div>
-          <div className="journey-range-filters">
-              <h5>Journey Time</h5>
-              <TimeRangeSlider
-                disabled={false}
-                format={24}
-                maxValue={"23:59"}
-                minValue={"00:00"}
-                name={"time_range"}
-                onChange={this.journeyTmeChangeHandler}
-                step={15}
-                value={{start: journey.start || '00:00', end: journey.end || '23:59'}}/>
-                <span className="time-range-min-value">{journey.start}</span>
-                <span className="time-range-min-end">{journey.end}</span>
-          </div>
         </div>
-        {airlines.length > 0   &&
-        <div className="filter airlines-filter">
-          <h5>Airlines</h5>
-          <Select
-            name="airlines"
-            placeholder=""
-            value={airlines}
-            getOptionValue={(option) => option.airlineId}
-            getOptionLabel={(option) => option.airlineName}
-            options={filters.airlines}
-            onChange={(option) => this.onChange('airlines', option)}
-            isMulti
-          />
-        </div>}
-        {filters.airports &&
-          <div className="filter airports-filter">
-            <h5>Airports</h5>
-            {filters.airports.arrivals.length > 1 &&
-            <div className="arrivals">
-              <h6>Arrivals</h6>
-                <Select
-                  name="airportsArrival"
-                  placeholder=""
-                  value={airportsArrival}
-                  getOptionValue={(option) => option.airportId}
-                  getOptionLabel={(option) => option.airportName}
-                  options={filters.airports.arrivals}
-                  onChange={(option) => this.onChange('airportsArrival', option)}
-                  isMulti
-                />
-            </div>}
+        }
 
-            {filters.airports && filters.airports.transfers.length > 1 &&
-            <div className="transfers">
-              <h6>Transfers</h6>
-              <Select
-                name="airportsTransfer"
-                placeholder=""
-                value={airportsTransfer}
-                getOptionValue={(option) => option.airportId}
-                getOptionLabel={(option) => option.airportName}
-                options={filters.airports.transfers}
-                onChange={(option) => this.onChange('airportsTransfer', option)}
-                isMulti
-              />
-            </div>}
-        </div>}
-
-        {filters.price && filters.price.maxPrice && filters.price.minPrice &&
-          <div className="price-range-filters">
-            <h5>Pricing</h5>
-            <NumberRangeSlider
-              minLabel={`${localStorage.getItem('currencySign')} ${priceObject.min}`}
-              maxLabel={`${localStorage.getItem('currencySign')} ${priceObject.max}`}
-              minValue={priceObject.min}
-              maxValue={priceObject.max}
-              value={priceRange ? priceRange : priceObject}
-              onChange={this.handlePriceRangeSelect}
-            />
-          </div>}
-        {filters.waiting && filters.waiting.max && filters.waiting.min &&
-          <div className="waiting-range-filters">
-            <h5>Stop-over time</h5>
-            <NumberRangeSlider
-              minLabel={`${filters.waiting.min} min`}
-              maxLabel={`${filters.waiting.max} min`}
-              minValue={filters.waiting.min}
-              maxValue={filters.waiting.max}
-              value={waitingTimeRange ? waitingTimeRange : filters.waiting}
-              onChange={this.handleWaitingRangeSelect}
-            />
-          </div>}
         <div className="buttons-holder">
           <button onClick={this.clearFilters} className="button">Clear Filters</button>
         </div>
@@ -340,7 +169,6 @@ AirTicketsSearchFilterPanel.propTypes = {
   showFiltersMobile: PropTypes.bool,
   handleShowFilters: PropTypes.func,
   applyFilters: PropTypes.func,
-  toggle: PropTypes.func
 };
 
 export default AirTicketsSearchFilterPanel;

@@ -74,8 +74,6 @@ class AirTicketsVoucher extends Component {
     const returnInfo = ticketDetails.segments.filter(s => s.group === '1');
     const departureInfoDateTime = this.extractDatesData(departureInfo);
     const returnInfoDateTime = this.extractDatesData(returnInfo);
-    console.log(departureInfoDateTime);
-    console.log(ticketDetails);
 
     return (
       <div className="ticket-details">

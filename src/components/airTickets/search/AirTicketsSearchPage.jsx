@@ -17,13 +17,11 @@ import AirTicketsResultsHolder from './AirTicketsSearchResultsHolder';
 import AirTicketsSearchFilterPanel from './filter/AirTicketsSearchFilterPanel';
 import { LONG } from '../../../constants/notificationDisplayTimes';
 import AsideContentPage from '../../common/asideContentPage/AsideContentPage';
-import { stopIds } from '../../../constants/constants';
-import * as _ from "ramda";
+import { getFilters, sort } from '../../common/flights/filter';
 import orderSegments from "./order-flights/order-flights";
 
 import '../../../styles/css/components/airTickets/search/air-tickets-search-page.css';
 
-const DEBUG_SOCKET = false;
 const DEFAULT_PAGE_SIZE = 10;
 
 class AirTicketsSearchPage extends Component {
@@ -139,64 +137,30 @@ class AirTicketsSearchPage extends Component {
   }
 
   requestFilters() {
-    fetch(`${Config.getValue('apiHost')}flight/search/filter/data?searchId=${this.searchId}`)
-      .then(res => {
-        if (res.ok) {
-          res.json().then((data) => {
-            this.setState({
-              filters: data,
-              allElements: true
-            });
-          });
-        }
-      })
-      .catch(res => {
-        console.log(res);
-        throw new Error(res.message);
+    const res = getFilters(this.searchId);
+
+    if (res.ok) {
+      res.json().then(data => {
+        console.log(data);
+        this.setState({
+          filters: data,
+          allElements: true
+        });
       });
+    }
   }
 
-  applyFilters(filtersObject) {
-    const results = Object.values(this.results);
-    const filters = {
-      airlines: filtersObject.airlines.map(a => a.airlineName) || [],
-      stops: filtersObject.stops || [],
-      minPrice: filtersObject.priceRange && filtersObject.priceRange.min,
-      maxPrice: filtersObject.priceRange && filtersObject.priceRange.max,
-      minWaitTime: filtersObject.waitingTimeRange && filtersObject.waitingTimeRange.min,
-      maxWaitTime: filtersObject.waitingTimeRange && filtersObject.waitingTimeRange.max,
-      airportsArrival: filtersObject.airportsArrival.map(a => a.airportId) || [],
-      airportsTransfer: filtersObject.airportsTransfer.map(a => a.airportId) || [],
-      departureTime: filtersObject.departure || [],
-      arrivalTime: filtersObject.arrival || [],
-      journeyTime: filtersObject.transfer || []
-    };
+  applyFilters(filters) {
+    const items = sort(this.results, filters);
 
-    const items = results.filter(item => {
-      const segments = item.segments;
-      const segmentsLength = segments.length;
-      const isDirectFlight = segmentsLength === 2 && filters.stops.indexOf(stopIds.D);
-      const isOneStop = segmentsLength === 4 && filters.stops.indexOf(stopIds.O);
-      const isMultiStop = segments > 4 && filters.stops.indexOf(stopIds.M);
-
-      if (isDirectFlight) {
-        return true;
-      } else if (isOneStop) {
-        return true;
-      } else if (isMultiStop) {
-        return true;
-      }
-    });
-
-    const data = !items.length ? results : items;
     this.setState({
-      loading: false,
+      currentPageResults: items.slice(0, 10),
       allElements: true,
-      allResults: data,
-      currentPageResults: data.slice(0, 10),
-      totalElements: data.length,
-      page: 0,
-    });
+      allResults: items,
+      loading: false,
+      totalElements: items.length,
+      page: 0
+    })
   }
 
   updateWindowWidth() {
@@ -326,7 +290,7 @@ class AirTicketsSearchPage extends Component {
   connectSocketSearch() {
     const url = Config.getValue('socketHost');
     this.clientSearch = Stomp.client(url);
-
+    this.clientSearch.debug = null;
     this.clientSearch.connect(null, null, this.subscribeSearch, () => {
       this.setState({
         currentPageResults: '',
@@ -345,11 +309,6 @@ class AirTicketsSearchPage extends Component {
   connectSocketFilters() {
     const url = Config.getValue('socketHost');
     this.clientFilters = Stomp.client(url);
-
-    if (!DEBUG_SOCKET) {
-      this.clientFilters.debug = () => { };
-    }
-
     this.clientFilters.connect(null, null, this.subscribeFilters);
   }
 
@@ -530,14 +489,14 @@ class AirTicketsSearchPage extends Component {
           <AsideContentPage>
             <AsideContentPage.Aside>
               <div className="air-tickets-search-filter-panel">
-                {/* <AirTicketsSearchFilterPanel
+                <AirTicketsSearchFilterPanel
                   windowWidth={windowWidth}
                   showFiltersMobile={showFiltersMobile}
                   loading={!allElements}
                   filters={filters}
                   handleShowFilters={this.handleShowFilters}
                   applyFilters={this.applyFilters}
-                /> */}
+                />
               </div>
             </AsideContentPage.Aside>
             <AsideContentPage.Content>

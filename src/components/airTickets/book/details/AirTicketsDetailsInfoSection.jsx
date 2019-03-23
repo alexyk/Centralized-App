@@ -255,8 +255,6 @@ class AirTicketsDetailsInfoSection extends Component {
     const brandInfo = result.brandInfo;
     const supplierInfo = result.supplierInfo;
 
-    console.log(brandInfo);
-    console.log(supplierInfo);
     return (
       <section className="air-tickets-details-container">
         <div className="air-tickets-details-box" id="air-tickets-details-box">
