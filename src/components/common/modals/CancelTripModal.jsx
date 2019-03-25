@@ -3,29 +3,32 @@ import { Modal } from 'react-bootstrap';
 import PropTypes from 'prop-types';
 import { CANCEL_TRIP_MODAL } from '../../../constants/modals.js';
 
-function sendCancelRequest(e, props) {
-  const value = e.target.value;
+function handleClose(props, e) {
+  return props.onClose(CANCEL_TRIP_MODAL, e);
+}
 
-  if (value == '1') {
-    props.sendCancelRequest();
+function sendCancelRequest(props, e, type) {
+  if (type == 'cancel') {
+    props.sendCancelRequest(null, props.onClose(CANCEL_TRIP_MODAL, e));
   } else {
-    props.onClose(CANCEL_TRIP_MODAL, e);
+    handleClose(props);
   }
 }
+
 function CancelTripModal(props) {
   return (
     <React.Fragment>
-      <Modal show={props.isActive} onHide={e => props.onClose(CANCEL_TRIP_MODAL, e)} className="modal fade myModal">
-        <Modal.Header>
+      <Modal show={props.isActive} className="modal fade myModal" onHide={(e) => { props.onClose(CANCEL_TRIP_MODAL, e) }}>
+        <Modal.Header closeButton>
           <h1>Cancelling your booking?</h1>
-          <button type="button" className="close" onClick={(e) => props.onClose(CANCEL_TRIP_MODAL, e)}>&times;</button>
-          <p>To check if refund is available as per the Cancellation Policy, please contact Custommer Support before proceeding with your cancellation.ZZZZ</p>
+          <button type="button" className="close" onClick={(e) => handleClose(props, e)}>&times;</button>
+          <p>To check if refund is available as per the Cancellation Policy, please contact Custommer Support before proceeding with your cancellation.</p>
         </Modal.Header>
         <Modal.Body>
           <form onSubmit={(e) => { e.preventDefault();}}>
-            <div className="modal-input-label">Are you sure you want to cancel?</div>
-            <button type="submit" className="button" value="1" onClick={(e) => sendCancelRequest(e, props)}>YES, CANCEL MY BOOKING</button>
-            <button type="submit" className="button" value="0" onClick={(e) => sendCancelRequest(e, props)}>No, I don't want to cancel</button>
+            <div className="modal-input-label" style={{textAlign: 'center'}}>Are you sure you want to cancel?</div>
+            <button type="submit" className="button" value="1" onClick={(e) => sendCancelRequest(props, e, 'cancel')}>YES, CANCEL MY BOOKING</button>
+            <button type="submit" className="button" value="0" onClick={(e) => sendCancelRequest(props, e, 'close')}>No, I don't want to cancel</button>
             <div className="clearfix"></div>
           </form>
         </Modal.Body>
