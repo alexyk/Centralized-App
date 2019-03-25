@@ -111,9 +111,11 @@ class HotelDetailsPage extends React.Component {
     const searchParams = this.getRequestSearchParams();
 
     requester.getHotelRooms(id, searchParams).then(res => {
-      res.body.then(data => {
-        this.setState({ hotelRooms: data, loadingRooms: false });
-      });
+      if (res.body.success) {
+        res.body.then(data => {
+          this.setState({ hotelRooms: data, loadingRooms: false });
+        });
+      }
     });
   }
 

@@ -33,16 +33,14 @@ class AirTicketsDetailsInfoSection extends Component {
       day: startDateMoment.format('D'),
       year: startDateMoment.format('YYYY'),
       month: startDateMoment.format('MMM'),
-      time: segments[0].origin.time,
-      timezone: segments[0].origin.timezone
+      time: segments[0].origin.time
     };
 
     const arrival = {
       day: endDateMoment.format('D'),
       year: endDateMoment.format('YYYY'),
       month: endDateMoment.format('MMM'),
-      time: segments[segments.length - 1].origin.time,
-      timezone: segments[segments.length - 1].origin.timezone
+      time: segments[segments.length - 1].destination.time,c
     };
 
     return { departure, arrival };
@@ -383,12 +381,14 @@ class AirTicketsDetailsInfoSection extends Component {
                     return (
                       <div key={ruleIndex} className="rule">
                         <h5>{rule.brandName}</h5>
+                        <h5>{rule.brandName}</h5>
+                        <h5 style={{ width: '95%', display: 'inline-block'}}>
                         <h5 style={{ width: '95%', display: 'inline-block'}}>
                           <span className="flight-rule-origin">{rule.origin.name}</span>
                           <span className="icon-arrow-right arrow"></span>
                           <span className="flight-rule-destination">{rule.destination.name}</span>
                         </h5>
-                        {fareRulesIndex === ruleIndex ? <div className="toggle" style={styleToggle}><span className="fa fa-angle-down" onClick={() => this.toggleFareRule(-1)} /></div> : <div className="toggle" style={styleToggle}><span className="fa fa-angle-right" onClick={() => this.toggleFareRule(ruleIndex)} /></div>}
+                        {fareRulesIndex === ruleIndex ? <div className="toggle" style={styleToggle}><span className="fa fa-angle-down" onClick={() => this.toggleFareRule(-1)} /></div> : <div className="toggle" style={styleToggle}><span className="fa fa-angle-right" onClick={() => this.toggleFareRule(ruleIndex)} /></span></div>}
                         {fareRulesIndex === ruleIndex &&
                           <div className="flight-rules">
                             {services}
@@ -397,8 +397,7 @@ class AirTicketsDetailsInfoSection extends Component {
                     );
                   })}
                 </div>
-              </div>
-            }
+            </div>}
             {supplierInfo.length > 0 &&
               <div className="air-tickets-details-content-item">
                 <h2>Brand Info</h2>

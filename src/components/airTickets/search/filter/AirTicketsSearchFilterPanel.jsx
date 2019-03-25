@@ -41,8 +41,10 @@ class AirTicketsSearchFilterPanel extends Component {
     this.clearFilters = this.clearFilters.bind(this);
   }
 
-  handleSlider(name, e) {
-
+  handleSlider(name, value) {
+    this.setState({
+      [name]: value
+    })
   }
 
   stopOnChange(e) {
