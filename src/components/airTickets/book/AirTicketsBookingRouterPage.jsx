@@ -11,6 +11,7 @@ import { Config } from '../../../config';
 import { MEDIUM ,LONG } from '../../../constants/notificationDisplayTimes';
 import requester from '../../../requester';
 import { ERROR_MESSAGES } from '../../../constants/constants';
+import {orderFlightsAsAnArray} from "../search/order-flights/order-flights";
 
 const PASSENGER_TYPES_CODES = {
   adult: 'ADT',
@@ -124,6 +125,8 @@ class AirTicketsBookingRouterPage extends Component {
       .then(res => {
         if (res.ok) {
           res.json().then((data) => {
+            let orderedSegments = orderFlightsAsAnArray(data.segments);
+            data.segments = orderedSegments;
             this.setState({
               result: data
             });

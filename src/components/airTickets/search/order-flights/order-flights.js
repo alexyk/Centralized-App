@@ -13,6 +13,11 @@ import * as _ from "ramda";
 // When sorting cannot be done -------------
 // results are returned as provided
 
+export function orderFlightsAsAnArray(arrayOfStopsToSort) {
+  let ordered = orderFlights(arrayOfStopsToSort);
+  return Object.values(ordered).reduce(_.concat);
+}
+
 export default function orderFlights(arrayOfStopsToSort) {
   const groupByGroupIndex = _.groupBy(_.prop("group"));
 
