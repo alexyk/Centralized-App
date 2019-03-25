@@ -18,6 +18,8 @@ import AirTicketsSearchFilterPanel from './filter/AirTicketsSearchFilterPanel';
 import { LONG } from '../../../constants/notificationDisplayTimes';
 import AsideContentPage from '../../common/asideContentPage/AsideContentPage';
 import { stopIds } from '../../../constants/constants';
+import * as _ from "ramda";
+import orderSegments from "./order-flights/order-flights";
 
 import '../../../styles/css/components/airTickets/search/air-tickets-search-page.css';
 
@@ -451,7 +453,14 @@ class AirTicketsSearchPage extends Component {
       if (!this.results.hasOwnProperty(messageBody.id)) {
         this.totalElements += 1;
       }
-      this.results[messageBody.id] = messageBody;
+
+      var  orderedSegments = orderSegments(messageBody.segments)
+
+      this.results[messageBody.id] =   {
+        ...messageBody,
+        orderedSegments: orderedSegments
+       };
+
       if (this.totalElements === 10) {
         this.setState({ currentPageResults: Object.values(this.results), totalElements: this.totalElements, loading: false });
       } else if (this.totalElements % 10 === 0) {
