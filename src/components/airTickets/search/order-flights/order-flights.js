@@ -1,10 +1,31 @@
 import * as _ from "ramda";
 
+// Sorting By Date And Time ---------------
+// Sorting by time is not possible, because
+// the data provided by the provider does not
+// always contain a timezone
+
+// Sorting By Non-Repeating Airport Codes --
+// Only works when the provider returns the flights
+// in separate groups, but this is not always
+// the case
+
+// When sorting cannot be done -------------
+// results are returned as provided
+
+export function orderFlightsAsAnArray(arrayOfStopsToSort) {
+  let ordered = orderFlights(arrayOfStopsToSort);
+  return Object.values(ordered).reduce(_.concat);
+}
+
 export default function orderFlights(arrayOfStopsToSort) {
   const groupByGroupIndex = _.groupBy(_.prop("group"));
 
   const orderStops = _.mapObjIndexed((stops, groupIndex) => {
     let firstOriginCode = findCodeOfFirstOrigin(stops);
+    if (!firstOriginCode) {
+      return stops;
+    }
     let sortedStops = [];
     let currentStop = stops.find(stop => stop.origin.code === firstOriginCode);
     while (currentStop) {
@@ -59,7 +80,10 @@ function findCodeOfFirstOrigin(stops) {
 
   let firstOrigin = Object.values(_mapOfOriginsAndDestinations.codes).find(
     origin => origin.count === 1 && origin.type === "origin"
-  ).code;
+  );
 
-  return firstOrigin;
+  if (!firstOrigin) {
+    return undefined;
+  }
+  return firstOrigin.code;
 }
