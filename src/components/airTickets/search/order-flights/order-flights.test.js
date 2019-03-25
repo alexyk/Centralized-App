@@ -144,7 +144,6 @@ describe("orderFlights", () => {
         journeyTime: 1020,
         waitTime: 140
       },
-
       {
         group: "2",
         carrier: { name: "Turkish Airlines" },
