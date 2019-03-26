@@ -28,7 +28,6 @@ class AirTicket extends Component {
   }
 
   getDepartureAirports(airports) {
-    console.log(airports);
     let middleStopsBulets = [];
     const buletIndex = 180 / airports.length;
     for (let i = 0; i < airports.length - 1; i++) {

@@ -15,7 +15,15 @@ function HomeTripsList(props) {
 
     if (props.trips.length === 0) {
       return (
-        <NoEntriesMessage text="There are no upcoming trips. If you book any property, it will appear here." />
+        <HomeTrip
+            key={'123456789'}
+            trip={[]}
+            tomorrow={moment().add(1, 'days').format('DD/MM/YYYY')}
+            afterTomorrow={moment().add(2, 'days').format('DD/MM/YYYY')}
+            styleClass="trips-flex-container"
+            onTripSelect={props.onTripSelect}
+            handleCancelReservation={props.handleCancelReservation}
+          />
       );
     }
 
