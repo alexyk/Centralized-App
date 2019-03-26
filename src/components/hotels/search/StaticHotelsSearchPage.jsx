@@ -44,6 +44,8 @@ class StaticHotelsSearchPage extends React.Component {
     super(props);
 
     let queryParams = queryString.parse(this.props.location.search);
+    this.queryParams = queryParams;
+    this.isMobile = (this.props.location.pathname.indexOf("/mobile") !== -1);
 
     this.client = null;
     this.subscription = null;
@@ -125,6 +127,10 @@ class StaticHotelsSearchPage extends React.Component {
 
     if (!this.props.currency) {
       this.props.dispatch(setCurrency(queryParams.currency));
+    }
+
+    if (this.isMobile) {
+      localStorage.setItem('currency', this.queryParams.currency);
     }
 
     if (this.isSearchReady()) {
