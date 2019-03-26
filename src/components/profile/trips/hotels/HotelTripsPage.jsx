@@ -40,6 +40,7 @@ class HotelTripsPage extends React.Component {
     this.handleCancelTrip = this.handleCancelTrip.bind(this);
     this.onTripSelect = this.onTripSelect.bind(this);
     this.getBookings = this.getBookings.bind(this);
+    this.sendCancellationRequest = this.sendCancellationRequest.bind(this);
   }
 
   componentDidMount() {
@@ -75,6 +76,9 @@ class HotelTripsPage extends React.Component {
       e.preventDefault();
     }
 
+    this.setState({
+      showModal: true
+    });
     this.props.dispatch(openModal(modal));
   }
 
@@ -83,6 +87,9 @@ class HotelTripsPage extends React.Component {
       e.preventDefault();
     }
 
+    this.setState({
+      showModal: false
+    });
     this.props.dispatch(closeModal(modal));
   }
 
@@ -92,13 +99,17 @@ class HotelTripsPage extends React.Component {
       bookingPrepareId: bookingId
     });
 
-    this.openModal(CANCELLING_RESERVATION);
+    this.openModal(CANCEL_TRIP_MODAL);
   }
 
-  sendCancellationRequest(bookingId) {
+  sendCancellationRequest(bookingId, callback) {
     requester.cancelBooking({ bookingId: bookingId || this.state.bookingPrepareId, confirmed: true })
       .then(res => {
         NotificationManager.info(CANCELLING_RESERVATION, '', LONG);
+
+        if (callback) {
+          callback();
+        }
       }).then(()=>{
         return this.getBookings();
     })

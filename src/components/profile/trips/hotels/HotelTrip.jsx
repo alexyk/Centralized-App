@@ -105,8 +105,9 @@ class HotelTrip extends React.Component {
     // const status = STATUS[this.props.trip.status];
     const status = _parseBookingStatus(this.props.trip.status);
     const statusMessage = STATUS_TOOLTIP[this.props.trip.status];
-
-    const { hotel_photo, hotel_name, hostEmail, hostPhone } = this.props.trip;
+    const testTrip = { id: '1', hotel_id: '1H', hotel_photo: '', hotel_name :'Hotel Name', hostEmail: 'martin.y.kiriloff@gmail.com', hostPhone: '359877699383', has_details: 1 };
+    const items = (this.props.trip.length > 0) ? this.props.trip : testTrip;
+    const { id, hotel_id, hotel_photo, hotel_name, hostEmail, hostPhone, has_details } = items;
     const isCompleted =
       status === "COMPLETE" && this.isFutureDate(this.props.trip.arrival_date);
     var _dates = this.getDates();
@@ -132,10 +133,10 @@ class HotelTrip extends React.Component {
               <div className="hostName">{this.getHostName(hotel_name)}</div>
               <div className="email">{hostEmail}</div>
               <div className="phoneNumber">{hostPhone}</div>
-              {this.props.trip.hostEmail ? (
+              {hostEmail ? (
                 <div>
                   <span className="send-message-icon" />
-                  <a href={`mailto:${this.props.trip.hostEmail}`}>
+                  <a href={`mailto:${hostEmail}`}>
                     Send Message
                   </a>
                 </div>
@@ -151,12 +152,12 @@ class HotelTrip extends React.Component {
             <Link
               className="trips-location-link content-row"
               to={`/hotels/listings/${
-                this.props.trip.hotel_id
+                hotel_id
               }?currency=GBP&startDate=${this.props.today}&endDate=${
                 this.props.afterTomorrow
               }&rooms=%5B%7B"adults":2,"children":%5B%5D%7D%5D`}
             >
-              {this.getHostName(this.props.trip.hotel_name)}
+              {this.getHostName(hotel_name)}
             </Link>
           </div>
           <div className="flex-row-child trips-dates">
@@ -170,26 +171,11 @@ class HotelTrip extends React.Component {
             </div>
           </div>
           <div className="flex-row-child trips-actions">
-            {(isCompleted || this.props.trip.has_details === 1) && (
+            {(isCompleted || has_details === 1) && (
               <i className="fa fa-bolt icon" />
             )}
             <div className="content-row">
-              {isCompleted && (
-                <button type="submit" onClick={e => { e.preventDefault(); this.props.onTripSelect(this.props.trip.id); this.props.handleCancelReservation(this.props.trip.id); }}>Cancel Trip</button>
-                /* <button
-                  type="submit"
-                  onClick={e => {
-                    e.preventDefault();
-                    NotificationManager.warning(
-                      "Please, contact the user support.",
-                      "Temporarily disabled.",
-                      LONG
-                    );
-                  }}
-                >
-                  Cancel Trip
-                </button> */
-              )}
+                <button type="submit" onClick={e => { e.preventDefault(); this.props.onTripSelect(id); this.props.handleCancelReservation(id); }}>Cancel Trip</button>
               {this.props.trip.has_details === 1 && (
                 <Link to={`/profile/trips/hotels/${this.props.trip.id}`}>
                   Details

@@ -34,7 +34,6 @@ export function sendTokens(
   flightReservationId,
   callback
 ) {
-  console.log(recipientAddress, locAmount);
   const wei = tokensToWei(locAmount.toString());
 
   NotificationManager.info(PROCESSING_TRANSACTION, "Transactions", LONG);
