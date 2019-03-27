@@ -16,7 +16,6 @@ import ListMenu from "./list-menu";
 import { setShowMenu } from "../../actions/burgerMenuInfo.js";
 
 import { selectors as UserSelectors } from "../../reducers/userInfo";
-import "./links-to-other-sites.css"
 
 class MainNav extends React.Component {
   constructor(props) {
@@ -106,8 +105,8 @@ class MainNav extends React.Component {
       <React.Fragment>
       <div id="main_tabs" className="token-tabs">
         <a href="#" className={"main"}>Marketplace</a>
-        <a href="#">Blockchain</a>
-        <a href="#" className="economy">Token Economy</a>
+        <a href="https://locktrip.com/blockchain.html">Blockchain</a>
+        <a href="https://locktrip.com/index.html" className="economy">Token Economy</a>
       </div>
       <nav id="main-nav" className="navbar">
         <div className="container">
