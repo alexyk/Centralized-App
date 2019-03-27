@@ -106,8 +106,8 @@ class MainNav extends React.Component {
       <React.Fragment>
       <div id="main_tabs" className="token-tabs">
         <a href="#" className={"main"}>Marketplace</a>
-        <a href="#">Blockchain</a>
-        <a href="#" className="economy">Token Economy</a>
+        <a href="https://locktrip.com/v2/blockchain.html">Blockchain</a>
+        <a href="https://locktrip.com/v2/index.html" className="economy">Token Economy</a>
       </div>
       <nav id="main-nav" className="navbar">
         <div className="container">
