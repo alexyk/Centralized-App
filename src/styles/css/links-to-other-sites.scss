@@ -1,0 +1,52 @@
+@font-face {
+  font-family: 'Gilroy-Light';
+  src: url('../fonts/Gilroy-Light.woff2') format('woff2'),
+  url('../fonts/Gilroy-Light.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Gilroy-ExtraBold';
+  src: url('../fonts/Gilroy-ExtraBold.woff2') format('woff2'),
+  url('../fonts/Gilroy-ExtraBold.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
+
+#main_tabs {
+  display: flex;
+  justify-content: flex-end;
+  height: 80px;
+  align-items: flex-end;
+  padding-right: 15px;
+}
+#main_tabs a {
+  /*width: 185px;*/
+  /*height: 50px;*/
+  border-radius: 10px 10px 0 0;
+  background: #a1c4bd;
+  text-align: center;
+  /*line-height: 50px;*/
+  color: #fff;
+  font-family: 'Gilroy-ExtraBold';
+  /*font-size: 18px;*/
+  display: block;
+  margin: 0 0 0 8px;
+}
+
+#main_tabs a.main {
+  /*height: 60px;*/
+  /*line-height: 60px;*/
+  background: white;
+  color: #3c4e5f;
+}
+#main_tabs a.economy {
+  background: #74859c;
+}
+
+@media (max-width: 568px) {
+  #main_tabs a {
+    font-size: 13px
+  }
+}
