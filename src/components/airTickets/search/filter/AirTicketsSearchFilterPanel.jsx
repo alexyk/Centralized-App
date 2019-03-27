@@ -1,12 +1,13 @@
-import React, {Component} from 'react';
+import React, {Component, Fragment} from 'react';
 import PropTypes from 'prop-types';
 import Select from 'react-select';
 import NumberRangeSlider from '../../../common/numberRangeSlider';
 import TimeRangeSlider from 'react-time-range-slider';
 import {getStopName} from '../../../common/flights/util';
-
+import { FilterCheckbox, FilterSelect, FiltersRangeSlider } from './Filters';
 import '../../../../styles/css/components/airTickets/search/filter/air-tickets-search-filter-panel.css';
 import option from "eslint-plugin-jsx-a11y/src/util/implicitRoles/option";
+import { timingSafeEqual } from 'crypto';
 
 
 class AirTicketsSearchFilterPanel extends Component {
@@ -128,39 +129,11 @@ class AirTicketsSearchFilterPanel extends Component {
       );
     }
 
-    return (
-      <div className="filter-box">
-
-        {filters.changes.length &&
-        <div className="filter stops-filter">
-          <h5>Stops</h5>
-          <ul>
-            {filters.changes.map((stop, index) => {
-                return (
-                  <li key={index}>
-                    <label htmlFor={stop.changesName}>
-                      <input
-                        type="checkbox"
-                        name="stops[]"
-                        value={stop.changesId}
-                        id={stop.changeName}
-                        defaultChecked={stops.length > 0 && stops.indexOf(stop.changesId) !== -1}
-                        onChange={(option) => this.stopOnChange(option)}/>
-                      <span>{getStopName(stop.changesId)}</span>
-                    </label>
-                  </li>
-                );
-              }
-            )}
-          </ul>
-        </div>
-        }
-
-        <div className="buttons-holder">
-          <button onClick={this.clearFilters} className="button">Clear Filters</button>
-        </div>
-      </div>
-    );
+    <Fragment>
+    <FilterCheckbox stops={stops}/>
+    <FilterSelect airlines={filters.airlines} transferAirports={filters.transferAirports} arrivalAirports={filters.arrivalAirports} departureAirports={filters.departureAirports}/>
+    <FiltersRangeSlider priceRange={filters.priceOb} waitingTimeRange={filters.waitingTimeRange} journeyTimeRange={filters.transfer} departureTime={filters.departureTime} arrivalTime={filters.arrivalTime}/>
+    </Fragment>
   }
 }
 
