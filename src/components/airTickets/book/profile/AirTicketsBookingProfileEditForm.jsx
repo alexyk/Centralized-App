@@ -124,7 +124,7 @@ class AirTicketsBookingProfileEditForm extends Component {
             <div className="zip-code">
               <label htmlFor="contactZip">Zip Code <span className="mandatory">*</span></label>
               <div>
-                <input id="contactZip" name="zipCode" value={zipCode || ''} onChange={this.onChange} type="number" required />
+                <input id="contactZip" name="zipCode" value={zipCode || ''} onChange={this.onChange} type="text" required />
               </div>
             </div>
             <div className="city">
