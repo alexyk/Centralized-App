@@ -39,13 +39,13 @@ function HomeTrip(props) {
     }
     return `${name.substring(0, 50)}...`;
   };
-  const tripTest = {id: '12345', userImage: '', hostName: 'Test Host Name', hostPhone: '359877699383', accepted: true, booking_id: 'Ox369', listingId: '1', listingName: 'Test Listing', hostLocAddress: '0xC', locPrice: 74.63};
-  const { id, userImage, hostName, hostPhone, accepted, booking_id, listingId, listingName, hostLocAddress, locPrice } = tripTest; //props.trip;
+ // const tripTest = {id: '12345', userImage: '', hostName: 'Test Host Name', hostPhone: '359877699383', accepted: true, booking_id: 'Ox369', listingId: '1', listingName: 'Test Listing', hostLocAddress: '0xC', locPrice: 74.63};
+  const { id, userImage, hostName, hostPhone, accepted, booking_id, listingId, listingName, hostLocAddress, locPrice } = props.trip;
 
   const tripStatus = accepted ? 'ACCEPTED' : 'PENDING';
   const statusMessage = STATUS_TOOLTIP[tripStatus];
 
-  const dates = extractDatesData(props.trip || tripTest);
+  const dates = extractDatesData(props.trip);
 
   return (
     <React.Fragment>
@@ -58,7 +58,7 @@ function HomeTrip(props) {
           </div>
           <div className="flex-row-child trips-host">
             <div className="content-row">
-              <div className="hostName">{getHostName(hostName)}</div>
+              <div className="hostName">{getHostName(hostName || '')}</div>
               <div className="phoneNumber">{hostPhone}</div>
             </div>
           </div>

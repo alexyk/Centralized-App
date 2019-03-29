@@ -105,9 +105,8 @@ class HotelTrip extends React.Component {
     // const status = STATUS[this.props.trip.status];
     const status = _parseBookingStatus(this.props.trip.status);
     const statusMessage = STATUS_TOOLTIP[this.props.trip.status];
-    const testTrip = { id: '1', hotel_id: '1H', hotel_photo: '', hotel_name :'Hotel Name', hostEmail: 'martin.y.kiriloff@gmail.com', hostPhone: '359877699383', has_details: 1 };
-    const items = (this.props.trip.length > 0) ? this.props.trip : testTrip;
-    const { id, hotel_id, hotel_photo, hotel_name, hostEmail, hostPhone, has_details } = items;
+    const { id, hotel_id, hotel_photo, hotel_name, hostEmail, hostPhone, has_details } = this.props.trip;
+
     const isCompleted =
       status === "COMPLETE" && this.isFutureDate(this.props.trip.arrival_date);
     var _dates = this.getDates();

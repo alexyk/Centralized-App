@@ -17,3 +17,7 @@ export const ERROR_MESSAGES = {
 export const URLS = {
   TICKETS_DASHBOARD: "/profile/flights"
 };
+
+
+export const MIN_TICKETS_PRICE = 0;
+export const MAX_TICKETS_PRICE = 5000;
