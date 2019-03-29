@@ -103,6 +103,11 @@ class MainNav extends React.Component {
     const { unreadMessages } = this.state;
     return (
       <React.Fragment>
+      <div id="main_tabs" className="token-tabs">
+        <a href="#" className={"main"}>Marketplace</a>
+        <a href="https://locktrip.com/blockchain.html">Blockchain</a>
+        <a href="https://locktrip.com/index.html" className="economy">Token Economy</a>
+      </div>
       <nav id="main-nav" className="navbar">
         <div className="container">
           <div className="nav-container">
