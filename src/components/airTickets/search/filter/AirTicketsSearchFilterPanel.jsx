@@ -16,7 +16,6 @@ class AirTicketsSearchFilterPanel extends Component {
     super(props);
 
     this.state = {
-      arrivalAirports: [],
       departureAirports: [],
       transferAirports: [],
       airlines: [],

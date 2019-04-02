@@ -1,15 +1,15 @@
 import React, { Component, Fragment } from "react";
-import { withRouter } from "react-router-dom";
-import { connect } from "react-redux";
 import { NotificationManager } from "react-notifications";
 import PropTypes from "prop-types";
 import queryString from "query-string";
 import moment from "moment";
 import uuid from "uuid";
 import Stomp from "stompjs";
-import Pagination from "../../common/pagination/Pagination";
-import BookingSteps from "../../common/bookingSteps";
-import AirTicketsSearchBar from "./AirTicketsSearchBar";
+
+// import Pagination from "../../common/pagination/Pagination";
+// import BookingSteps from "../../common/bookingSteps";
+// import AirTicketsSearchBar from "./AirTicketsSearchBar";
+
 import {
   setOrigin,
   setDestination,
@@ -20,10 +20,14 @@ import {
   asyncSetEndDate
 } from "../../../actions/searchDatesInfo";
 import { Config } from "../../../config";
-import AirTicketsResultsHolder from "./AirTicketsSearchResultsHolder";
+
+// import AirTicketsResultsHolder from "./AirTicketsSearchResultsHolder";
 import AirTicketsSearchFilterPanel from "./filter/AirTicketsSearchFilterPanel";
+
 import { LONG } from "../../../constants/notificationDisplayTimes";
+
 import AsideContentPage from "../../common/asideContentPage/AsideContentPage";
+
 import { getFilters, sort } from "../../common/flights/filter";
 import orderSegments from "./order-flights/order-flights";
 import { stopIds } from '../../../constants/constants'
@@ -32,7 +36,7 @@ import "../../../styles/css/components/airTickets/search/air-tickets-search-page
 
 const DEFAULT_PAGE_SIZE = 10;
 
-class AirTicketsSearchPage extends Component {
+export default class AirTicketsSearchPage extends Component {
   constructor(props) {
     super(props);
 
@@ -154,22 +158,11 @@ class AirTicketsSearchPage extends Component {
   }
 
   requestFilters() {
-    const res = getFilters(this.searchId);
-
-    res.then(data => {
-      data.json().then(filters => {
-        this.setState({
-          filters: filters,
-          allElements: true
-        });
-      });
-    });
+    return getFilters(this.searchId).then(data =>data.json());
   }
 
   applyFilters(filtersObject) {
-    console.log("filtersObject", filtersObject)
-    let results = this.state.allResults;
-     // results = sort(this.state.allResults, filtersObject);
+    const results = this.state.allResults;
     const filters = {
       airlines: (filtersObject.airlines) ? filtersObject.airlines.map(a => a.airlines) : [],
       stops: (!_.isEmpty(filtersObject.stops)) ? (Object.values(filtersObject.stops)).map(a => a.changesId) : [],
@@ -681,18 +674,6 @@ class AirTicketsSearchPage extends Component {
 
   render() {
 
-    if(this.state.allElements){
-      console.log(JSON.stringify(Object.values(this.results).filter(result=>{
-        let segments = result.segments;
-        let withMultipleSegmentsInZero = segments.filter(segment=>segment.group === "0");
-        let withMultipleSegmentsInOne = segments.filter(segment=>segment.group === "1");
-        let withMultipleSegmentsInTwo = segments.filter(segment=>segment.group === "2");
-        if(withMultipleSegmentsInZero.length === 3 || withMultipleSegmentsInOne.length === 3 || withMultipleSegmentsInTwo.length === 3){
-          return true;
-        }
-      })))
-    }
-
     const {
       currentPageResults,
       allElements,
@@ -706,12 +687,12 @@ class AirTicketsSearchPage extends Component {
     return (
       <Fragment>
         <div className="container">
-          <AirTicketsSearchBar search={this.searchAirTickets} />
+          {/*<AirTicketsSearchBar search={this.searchAirTickets} />*/}
         </div>
-        <BookingSteps
-          steps={["Search", "Details", "Prepare Booking", "Confirm & Pay"]}
-          currentStepIndex={0}
-        />
+        {/*<BookingSteps*/}
+          {/*steps={["Search", "Details", "Prepare Booking", "Confirm & Pay"]}*/}
+          {/*currentStepIndex={0}*/}
+        {/*/>*/}
         <h4 style={{ color: "red", textAlign: "center", marginBottom: "20px" }}>
           LockTrip Flights are still in alpha
         </h4>
@@ -729,23 +710,23 @@ class AirTicketsSearchPage extends Component {
                 />
               </div>
             </AsideContentPage.Aside>
-            <AsideContentPage.Content>
-              <div className="air-tickets-search-results-holder">
-                <AirTicketsResultsHolder
-                  results={currentPageResults}
-                  allElements={allElements}
-                  loading={loading}
-                />
-                {!loading && (
-                  <Pagination
-                    onPageChange={this.onPageChange}
-                    currentPage={page + 1}
-                    pageSize={DEFAULT_PAGE_SIZE}
-                    totalElements={totalElements}
-                  />
-                )}
-              </div>
-            </AsideContentPage.Content>
+            {/*<AsideContentPage.Content>*/}
+              {/*<div className="air-tickets-search-results-holder">*/}
+                {/*<AirTicketsResultsHolder*/}
+                  {/*results={currentPageResults}*/}
+                  {/*allElements={allElements}*/}
+                  {/*loading={loading}*/}
+                {/*/>*/}
+                {/*{!loading && (*/}
+                  {/*<Pagination*/}
+                    {/*onPageChange={this.onPageChange}*/}
+                    {/*currentPage={page + 1}*/}
+                    {/*pageSize={DEFAULT_PAGE_SIZE}*/}
+                    {/*totalElements={totalElements}*/}
+                  {/*/>*/}
+                {/*)}*/}
+              {/*</div>*/}
+            {/*</AsideContentPage.Content>*/}
           </AsideContentPage>
         </div>
       </Fragment>
@@ -763,5 +744,3 @@ AirTicketsSearchPage.propTypes = {
   //Redux props
   dispatch: PropTypes.func
 };
-
-export default withRouter(connect()(AirTicketsSearchPage));

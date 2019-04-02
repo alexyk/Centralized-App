@@ -26,6 +26,7 @@ class FilterCheckbox extends Component {
             <li>
               <label className="filter-label">
                   <input
+                    data-testid={"stop-checkbox"}
                     type="checkbox"
                     className="filter-checkbox"
                     name="stops[]"
