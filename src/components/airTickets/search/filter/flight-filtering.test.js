@@ -4708,57 +4708,63 @@ function filterByAirports(filters, flights) {
   let groupedByCity = _.groupBy(_.prop("city"), allAirports);
 
   return flights.filter(flight => {
-    let cities = Object.keys(groupedByCity);
-    let passesForCities = 0;
-    cities.forEach(cityName => {
-      let currentCityAirports = groupedByCity[cityName];
-      let selectedAirports = currentCityAirports
-        .filter(ap => ap.selected)
-        .map(_.prop("airportId"));
-      let nonSelectedAirports = currentCityAirports
-        .filter(ap => !ap.selected)
-        .map(_.prop("airportId"));
-
-      let hasSelectedAirpors =
-        flight.segments.filter(segment => {
-          let containedInOrigin =
-            selectedAirports.indexOf(segment.origin.code) !== -1;
-          let containedInDestination =
-            selectedAirports.indexOf(segment.destination.code) !== -1;
-          return containedInOrigin || containedInDestination;
-        }).length > 0;
-
-      let doesNotHaveNonSelectedAirports =
-        flight.segments.filter(segment => {
-          let containedInOrigin =
-            nonSelectedAirports.indexOf(segment.origin.code) !== -1;
-          let containedInDestination =
-            nonSelectedAirports.indexOf(segment.destination.code) !== -1;
-          return containedInOrigin || containedInDestination;
-        }).length === 0;
-      if (nonSelectedAirports.length === 0) {
-        doesNotHaveNonSelectedAirports = true;
-      }
-
-      if (hasSelectedAirpors && doesNotHaveNonSelectedAirports) {
-        passesForCities += 1;
-      }
-    });
-    return passesForCities === cities.length;
+    return _passesForAllCities(flight, groupedByCity);
   });
 }
 
-function _findNonTransferAirports(flight) {
-  let { orderedSegments } = flight;
-  let inGroups = _.groupBy(_.prop("group"), orderedSegments);
-  let transformedToNonTransfers = _.mapObjectIndexed((value, index) => {
-    if (value.length > 1) {
-      let nonTransfers = [value[0], value[value.length - 1]];
-      return nonTransfers.map(_.path(["origin", "code"]));
+function _passesForAllCities(flight, groupedByCity) {
+  let cities = Object.keys(groupedByCity);
+  let passesForCities = 0;
+  cities.forEach(cityName => {
+    if (_passesForCity(groupedByCity, cityName, flight)) {
+      passesForCities += 1;
     }
-    return value.map(_.path(["origin", "code"]));
-  }, inGroups);
-  return Object.values(transformedToNonTransfers).reduce(_.concat);
+  });
+  return passesForCities === cities.length;
+}
+
+function _passesForCity(groupedByCity, cityName, flight) {
+  let currentCityAirports = groupedByCity[cityName];
+  let selectedAirports = currentCityAirports
+    .filter(ap => ap.selected)
+    .map(_.prop("airportId"));
+  let nonSelectedAirports = currentCityAirports
+    .filter(ap => !ap.selected)
+    .map(_.prop("airportId"));
+
+  let hasSelectedAirports = _hasSelectedAirports(flight, selectedAirports);
+  let doesNotHaveNonSelectedAirports = _doesNotHaveNonSelectedAirports(
+    flight,
+    nonSelectedAirports
+  );
+  return hasSelectedAirports && doesNotHaveNonSelectedAirports;
+}
+
+function _doesNotHaveNonSelectedAirports(flight, nonSelectedAirports) {
+  if (nonSelectedAirports.length === 0) {
+    return true;
+  }
+  return (
+    flight.segments.filter(segment => {
+      let containedInOrigin =
+        nonSelectedAirports.indexOf(segment.origin.code) !== -1;
+      let containedInDestination =
+        nonSelectedAirports.indexOf(segment.destination.code) !== -1;
+      return containedInOrigin || containedInDestination;
+    }).length === 0
+  );
+}
+
+function _hasSelectedAirports(flight, selectedAirports) {
+  return (
+    flight.segments.filter(segment => {
+      let containedInOrigin =
+        selectedAirports.indexOf(segment.origin.code) !== -1;
+      let containedInDestination =
+        selectedAirports.indexOf(segment.destination.code) !== -1;
+      return containedInOrigin || containedInDestination;
+    }).length > 0
+  );
 }
 
 /**
