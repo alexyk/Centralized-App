@@ -4653,6 +4653,7 @@ let filtersFromServer = {
       { airportId: "LTN", airportName: "Luton" }
     ],
     departures: [{ airportId: "SOF", airportName: "Sofia" }],
+
     transfers: [
       { airportId: "WAW", airportName: "Warsaw" },
       { airportId: "MUC", airportName: "Munich" },
@@ -4678,25 +4679,86 @@ let filtersFromServer = {
 };
 
 function filterFlights(filters, flights) {
+  if (filters.price) {
+    flights = filterByPrice(filters, flights);
+  }
   if (filters.changes) {
     flights = filterByChanges(filters, flights);
   }
   if (filters.airlines) {
     flights = filterByAirlines(filters, flights);
   }
-  if (filters.airports.arrivals) {
-    flights = filterByArrivals(filters, flights);
+
+  if (filters.airports) {
+    flights = filterByAirports(filters, flights);
   }
-  if (filters.airports.departures) {
-    flights = filterByDepartures(filters, flights);
-  }
+
   if (filters.airports.transfers) {
     flights = filterByTransfers(filters, flights);
   }
-  if (filters.price) {
-    flights = filterByPrice(filters, flights);
-  }
+
   return flights;
+}
+
+/**
+ * By Airports
+ */
+function filterByAirports(filters, flights) {
+  let allAirports = filters.airports.all;
+  let groupedByCity = _.groupBy(_.prop("city"), allAirports);
+
+  return flights.filter(flight => {
+    let cities = Object.keys(groupedByCity);
+    let passesForCities = 0;
+    cities.forEach(cityName => {
+      let currentCityAirports = groupedByCity[cityName];
+      let selectedAirports = currentCityAirports
+        .filter(ap => ap.selected)
+        .map(_.prop("airportId"));
+      let nonSelectedAirports = currentCityAirports
+        .filter(ap => !ap.selected)
+        .map(_.prop("airportId"));
+
+      let hasSelectedAirpors =
+        flight.segments.filter(segment => {
+          let containedInOrigin =
+            selectedAirports.indexOf(segment.origin.code) !== -1;
+          let containedInDestination =
+            selectedAirports.indexOf(segment.destination.code) !== -1;
+          return containedInOrigin || containedInDestination;
+        }).length > 0;
+
+      let doesNotHaveNonSelectedAirports =
+        flight.segments.filter(segment => {
+          let containedInOrigin =
+            nonSelectedAirports.indexOf(segment.origin.code) !== -1;
+          let containedInDestination =
+            nonSelectedAirports.indexOf(segment.destination.code) !== -1;
+          return containedInOrigin || containedInDestination;
+        }).length === 0;
+      if (nonSelectedAirports.length === 0) {
+        doesNotHaveNonSelectedAirports = true;
+      }
+
+      if (hasSelectedAirpors && doesNotHaveNonSelectedAirports) {
+        passesForCities += 1;
+      }
+    });
+    return passesForCities === cities.length;
+  });
+}
+
+function _findNonTransferAirports(flight) {
+  let { orderedSegments } = flight;
+  let inGroups = _.groupBy(_.prop("group"), orderedSegments);
+  let transformedToNonTransfers = _.mapObjectIndexed((value, index) => {
+    if (value.length > 1) {
+      let nonTransfers = [value[0], value[value.length - 1]];
+      return nonTransfers.map(_.path(["origin", "code"]));
+    }
+    return value.map(_.path(["origin", "code"]));
+  }, inGroups);
+  return Object.values(transformedToNonTransfers).reduce(_.concat);
 }
 
 /**
@@ -4737,8 +4799,11 @@ function _isWithUpToOneStop(flight) {
   return groupsWithUpToOneStop.length === allGroups.length;
 }
 
+/**
+ * By Airlines
+ */
 function filterByAirlines(filters, flights) {
-  let selectedArrivals = filters.airlines.map(_.prop("airlineName"));
+  let selectedCarriers = filters.airlines.map(_.prop("airlineName"));
   return flights.filter(flight => {
     let flightCarriers = flight.segments
       .map(_.path(["carrier", "name"]))
@@ -4749,31 +4814,19 @@ function filterByAirlines(filters, flights) {
         };
       }, {});
     flightCarriers = Object.keys(flightCarriers);
-    let matches = selectedArrivals.filter(sa => {
+    let matches = selectedCarriers.filter(sa => {
       return flightCarriers.indexOf(sa) !== -1;
     });
-    return matches.length === flightCarriers.length;
+    return (
+      matches.length === selectedCarriers.length &&
+      matches.length === flightCarriers.length
+    );
   });
 }
 
-function filterByArrivals(filters, flights) {
-  let selectedArrivals = filters.airports.arrivals.map(_.prop("airportId"));
-  return flights.filter(flight => {
-    let flightArrival =
-      flight.orderedSegments[flight.orderedSegments.length - 1].destination
-        .code;
-    return selectedArrivals.indexOf(flightArrival) !== -1;
-  });
-}
-
-function filterByDepartures(filters, flights) {
-  let selectedDepartures = filters.airports.departures.map(_.prop("airportId"));
-  return flights.filter(flight => {
-    let flightDeparture = flight.orderedSegments[0].origin.code;
-    return selectedDepartures.indexOf(flightDeparture) !== -1;
-  });
-}
-
+/**
+ * By Transfers
+ */
 function filterByTransfers(filters, flights) {
   let selectedTransfers = filters.airports.transfers.map(_.prop("airportId"));
   return flights.filter(flight => {
@@ -4799,6 +4852,9 @@ function _findTransfersInSegments(flight) {
     .reduce(_.concat);
 }
 
+/**
+ * By Price
+ */
 function filterByPrice(filters, flights) {
   let { minPrice, maxPrice } = filters.price;
   return flights.filter(flight => {
@@ -4817,7 +4873,7 @@ function filterByPrice(filters, flights) {
 // }
 
 describe("flight filtering", () => {
-  describe("filter by price", () => {
+  describe("filterByPrice", () => {
     let flights = [
       {
         id: "5ca346876ddc006486ea329f",
@@ -12065,7 +12121,7 @@ describe("flight filtering", () => {
         }
       },
       {
-        id: "5ca346876ddc006486ea32a1", // Four carrier
+        id: "5ca346876ddc006486ea32a1", // Four carriers
         price: { currency: "EUR", total: 1164 },
         segments: [
           {
@@ -12378,6 +12434,993 @@ describe("flight filtering", () => {
       let result = filterByAirlines(filters, flights);
       let resultIds = result.map(_.prop("id"));
       expect(resultIds).toEqual(flightIds.fourCarriers);
+    });
+
+    test("filterByAirlines with no matches 1", () => {
+      let filters = {
+        airlines: [
+          { airlineId: "0B", airlineName: "Blue Air" },
+          { airlineId: "2L", airlineName: "non-existent" }
+        ]
+      };
+      let result = filterByAirlines(filters, flights);
+      expect(result).toEqual([]);
+    });
+
+    test("filterByAirlines with no matches 2", () => {
+      let filters = {
+        airlines: [{ airlineId: "2L", airlineName: "non-existent" }]
+      };
+      let result = filterByAirlines(filters, flights);
+      expect(result).toEqual([]);
+    });
+  });
+
+  describe("filterByAirports", () => {
+    describe("testing with filters for one city", () => {
+      //  { airportId: "LCY", airportName: "London City Arpt" },
+      //  { airportId: "LHR", airportName: "London Heathrow" }
+
+      let flights = [
+        {
+          id: "5ca346876ddc006486ea329f", // Airports - SOFIA: SOF | LONDON: LHR, LGW | MAD, TXL
+          price: { currency: "EUR", total: 200.0 },
+          segments: [
+            {
+              group: "0",
+              carrier: { name: "Blue Air" },
+              origin: {
+                code: "SOF",
+                name: "Sofia",
+                date: "2019-04-03",
+                time: "16:05",
+                timeZone: "+03:00",
+                terminal: "2"
+              },
+              destination: {
+                code: "IST",
+                name: "Istanbul",
+                date: "2019-04-03",
+                time: "17:20",
+                timeZone: "+03:00",
+                terminal: "I"
+              },
+              flightTime: 75,
+              journeyTime: 400,
+              waitTime: 75
+            },
+            {
+              group: "0",
+              carrier: { name: "Blue Air" },
+              origin: {
+                code: "IST",
+                name: "Istanbul",
+                date: "2019-04-03",
+                time: "18:35",
+                timeZone: "+03:00",
+                terminal: "I"
+              },
+              destination: {
+                code: "LHR",
+                name: "London Heathrow",
+                date: "2019-04-03",
+                time: "20:45",
+                timeZone: "+01:00",
+                terminal: "2"
+              },
+              flightTime: 250,
+              journeyTime: 400,
+              waitTime: null
+            },
+            {
+              group: "1",
+              carrier: { name: "Blue Air" },
+              origin: {
+                code: "LGW",
+                name: "London Gatwick",
+                date: "2019-04-04",
+                time: "11:50",
+                timeZone: "+01:00",
+                terminal: "S"
+              },
+              destination: {
+                code: "AYT",
+                name: "Antalya",
+                date: "2019-04-04",
+                time: "18:15",
+                timeZone: "+03:00",
+                terminal: "1"
+              },
+              flightTime: 265,
+              journeyTime: 1305,
+              waitTime: 245
+            },
+            {
+              group: "1",
+              carrier: { name: "Blue Air" },
+              origin: {
+                code: "AYT",
+                name: "Antalya",
+                date: "2019-04-04",
+                time: "22:20",
+                timeZone: "+03:00",
+                terminal: "D"
+              },
+              destination: {
+                code: "IST",
+                name: "Istanbul",
+                date: "2019-04-04",
+                time: "23:50",
+                timeZone: "+03:00",
+                terminal: "D"
+              },
+              flightTime: 90,
+              journeyTime: 1305,
+              waitTime: 435
+            },
+            {
+              group: "1",
+              carrier: { name: "Blue Air" },
+              origin: {
+                code: "IST",
+                name: "Istanbul",
+                date: "2019-04-05",
+                time: "07:05",
+                timeZone: "+03:00",
+                terminal: "I"
+              },
+              destination: {
+                code: "MAD",
+                name: "Madrid",
+                date: "2019-04-05",
+                time: "10:35",
+                timeZone: "+02:00",
+                terminal: "1"
+              },
+              flightTime: 270,
+              journeyTime: 1305,
+              waitTime: null
+            },
+            {
+              group: "2",
+              carrier: { name: "Blue Air" },
+              origin: {
+                code: "MAD",
+                name: "Madrid",
+                date: "2019-04-05",
+                time: "14:35",
+                timeZone: "+02:00",
+                terminal: "1"
+              },
+              destination: {
+                code: "IST",
+                name: "Istanbul",
+                date: "2019-04-05",
+                time: "19:45",
+                timeZone: "+03:00",
+                terminal: "I"
+              },
+              flightTime: 250,
+              journeyTime: 1685,
+              waitTime: 1260
+            },
+            {
+              group: "2",
+              carrier: { name: "Blue Air" },
+              origin: {
+                code: "IST",
+                name: "Istanbul",
+                date: "2019-04-06",
+                time: "16:45",
+                timeZone: "+03:00",
+                terminal: "I"
+              },
+              destination: {
+                code: "TXL",
+                name: "Berlin-Tegel",
+                date: "2019-04-06",
+                time: "18:40",
+                timeZone: "+02:00",
+                terminal: null
+              },
+              flightTime: 175,
+              journeyTime: 1685,
+              waitTime: null
+            }
+          ],
+          isLowCost: false,
+          isRefundable: false,
+          searchId: "5ca346876ddc006486ea329e",
+          orderedSegments: {
+            "0": [
+              {
+                group: "0",
+                carrier: { name: "Turkish Airlines" },
+                origin: {
+                  code: "SOF",
+                  name: "Sofia",
+                  date: "2019-04-03",
+                  time: "16:05",
+                  timeZone: "+03:00",
+                  terminal: "2"
+                },
+                destination: {
+                  code: "IST",
+                  name: "Istanbul",
+                  date: "2019-04-03",
+                  time: "17:20",
+                  timeZone: "+03:00",
+                  terminal: "I"
+                },
+                flightTime: 75,
+                journeyTime: 400,
+                waitTime: 75
+              },
+              {
+                group: "0",
+                carrier: { name: "Turkish Airlines" },
+                origin: {
+                  code: "IST",
+                  name: "Istanbul",
+                  date: "2019-04-03",
+                  time: "18:35",
+                  timeZone: "+03:00",
+                  terminal: "I"
+                },
+                destination: {
+                  code: "LHR",
+                  name: "London Heathrow",
+                  date: "2019-04-03",
+                  time: "20:45",
+                  timeZone: "+01:00",
+                  terminal: "2"
+                },
+                flightTime: 250,
+                journeyTime: 400,
+                waitTime: null
+              }
+            ],
+            "1": [
+              {
+                group: "1",
+                carrier: { name: "Turkish Airlines" },
+                origin: {
+                  code: "LGW",
+                  name: "London Gatwick",
+                  date: "2019-04-04",
+                  time: "11:50",
+                  timeZone: "+01:00",
+                  terminal: "S"
+                },
+                destination: {
+                  code: "AYT",
+                  name: "Antalya",
+                  date: "2019-04-04",
+                  time: "18:15",
+                  timeZone: "+03:00",
+                  terminal: "1"
+                },
+                flightTime: 265,
+                journeyTime: 1305,
+                waitTime: 245
+              },
+              {
+                group: "1",
+                carrier: { name: "Turkish Airlines" },
+                origin: {
+                  code: "AYT",
+                  name: "Antalya",
+                  date: "2019-04-04",
+                  time: "22:20",
+                  timeZone: "+03:00",
+                  terminal: "D"
+                },
+                destination: {
+                  code: "IST",
+                  name: "Istanbul",
+                  date: "2019-04-04",
+                  time: "23:50",
+                  timeZone: "+03:00",
+                  terminal: "D"
+                },
+                flightTime: 90,
+                journeyTime: 1305,
+                waitTime: 435
+              },
+              {
+                group: "1",
+                carrier: { name: "Turkish Airlines" },
+                origin: {
+                  code: "IST",
+                  name: "Istanbul",
+                  date: "2019-04-05",
+                  time: "07:05",
+                  timeZone: "+03:00",
+                  terminal: "I"
+                },
+                destination: {
+                  code: "MAD",
+                  name: "Madrid",
+                  date: "2019-04-05",
+                  time: "10:35",
+                  timeZone: "+02:00",
+                  terminal: "1"
+                },
+                flightTime: 270,
+                journeyTime: 1305,
+                waitTime: null
+              }
+            ],
+            "2": [
+              {
+                group: "2",
+                carrier: { name: "Turkish Airlines" },
+                origin: {
+                  code: "MAD",
+                  name: "Madrid",
+                  date: "2019-04-05",
+                  time: "14:35",
+                  timeZone: "+02:00",
+                  terminal: "1"
+                },
+                destination: {
+                  code: "IST",
+                  name: "Istanbul",
+                  date: "2019-04-05",
+                  time: "19:45",
+                  timeZone: "+03:00",
+                  terminal: "I"
+                },
+                flightTime: 250,
+                journeyTime: 1685,
+                waitTime: 1260
+              },
+              {
+                group: "2",
+                carrier: { name: "Turkish Airlines" },
+                origin: {
+                  code: "IST",
+                  name: "Istanbul",
+                  date: "2019-04-06",
+                  time: "16:45",
+                  timeZone: "+03:00",
+                  terminal: "I"
+                },
+                destination: {
+                  code: "TXL",
+                  name: "Berlin-Tegel",
+                  date: "2019-04-06",
+                  time: "18:40",
+                  timeZone: "+02:00",
+                  terminal: null
+                },
+                flightTime: 175,
+                journeyTime: 1685,
+                waitTime: null
+              }
+            ]
+          }
+        },
+        {
+          id: "5ca346876ddc006486ea32a0", // Airports - SOFIA: SOF | LONDON: LHR |  MAD
+          price: { currency: "EUR", total: 2988.5 },
+          segments: [
+            {
+              group: "0",
+              carrier: { name: "Blue Air" },
+              origin: {
+                code: "SOF",
+                name: "Sofia",
+                date: "2019-04-03",
+                time: "21:40",
+                timeZone: "+03:00",
+                terminal: "2"
+              },
+              destination: {
+                code: "LHR",
+                name: "London Heathrow",
+                date: "2019-04-03",
+                time: "20:45",
+                timeZone: "+01:00",
+                terminal: "2"
+              },
+              flightTime: 85,
+              journeyTime: 850,
+              waitTime: 520
+            },
+            {
+              group: "1",
+              carrier: { name: "Helvetic Airways" },
+              origin: {
+                code: "LHR",
+                name: "London Heathrow",
+                date: "2019-04-03",
+                time: "20:45",
+                timeZone: "+01:00",
+                terminal: "2"
+              },
+              destination: {
+                code: "MAD",
+                name: "Madrid",
+                date: "2019-04-05",
+                time: "10:35",
+                timeZone: "+02:00",
+                terminal: "1"
+              },
+              flightTime: 270,
+              journeyTime: 1305,
+              waitTime: null
+            }
+          ],
+          isLowCost: false,
+          isRefundable: false,
+          searchId: "5ca346876ddc006486ea329e",
+          orderedSegments: {
+            "0": [
+              {
+                group: "0",
+                carrier: { name: "Turkish Airlines" },
+                origin: {
+                  code: "SOF",
+                  name: "Sofia",
+                  date: "2019-04-03",
+                  time: "21:40",
+                  timeZone: "+03:00",
+                  terminal: "2"
+                },
+                destination: {
+                  code: "IST",
+                  name: "Istanbul",
+                  date: "2019-04-03",
+                  time: "23:05",
+                  timeZone: "+03:00",
+                  terminal: "I"
+                },
+                flightTime: 85,
+                journeyTime: 850,
+                waitTime: 520
+              },
+              {
+                group: "0",
+                carrier: { name: "Turkish Airlines" },
+                origin: {
+                  code: "IST",
+                  name: "Istanbul",
+                  date: "2019-04-04",
+                  time: "07:45",
+                  timeZone: "+03:00",
+                  terminal: "I"
+                },
+                destination: {
+                  code: "LHR",
+                  name: "London Heathrow",
+                  date: "2019-04-04",
+                  time: "09:50",
+                  timeZone: "+01:00",
+                  terminal: "2"
+                },
+                flightTime: 245,
+                journeyTime: 850,
+                waitTime: null
+              }
+            ],
+            "1": [
+              {
+                group: "1",
+                carrier: { name: "Turkish Airlines" },
+                origin: {
+                  code: "LGW",
+                  name: "London Gatwick",
+                  date: "2019-04-04",
+                  time: "11:50",
+                  timeZone: "+01:00",
+                  terminal: "S"
+                },
+                destination: {
+                  code: "AYT",
+                  name: "Antalya",
+                  date: "2019-04-04",
+                  time: "18:15",
+                  timeZone: "+03:00",
+                  terminal: "1"
+                },
+                flightTime: 265,
+                journeyTime: 1305,
+                waitTime: 245
+              },
+              {
+                group: "1",
+                carrier: { name: "Turkish Airlines" },
+                origin: {
+                  code: "AYT",
+                  name: "Antalya",
+                  date: "2019-04-04",
+                  time: "22:20",
+                  timeZone: "+03:00",
+                  terminal: "D"
+                },
+                destination: {
+                  code: "IST",
+                  name: "Istanbul",
+                  date: "2019-04-04",
+                  time: "23:50",
+                  timeZone: "+03:00",
+                  terminal: "D"
+                },
+                flightTime: 90,
+                journeyTime: 1305,
+                waitTime: 435
+              },
+              {
+                group: "1",
+                carrier: { name: "Turkish Airlines" },
+                origin: {
+                  code: "IST",
+                  name: "Istanbul",
+                  date: "2019-04-05",
+                  time: "07:05",
+                  timeZone: "+03:00",
+                  terminal: "I"
+                },
+                destination: {
+                  code: "MAD",
+                  name: "Madrid",
+                  date: "2019-04-05",
+                  time: "10:35",
+                  timeZone: "+02:00",
+                  terminal: "1"
+                },
+                flightTime: 270,
+                journeyTime: 1305,
+                waitTime: null
+              }
+            ],
+            "2": [
+              {
+                group: "2",
+                carrier: { name: "Turkish Airlines" },
+                origin: {
+                  code: "MAD",
+                  name: "Madrid",
+                  date: "2019-04-05",
+                  time: "14:35",
+                  timeZone: "+02:00",
+                  terminal: "1"
+                },
+                destination: {
+                  code: "IST",
+                  name: "Istanbul",
+                  date: "2019-04-05",
+                  time: "19:45",
+                  timeZone: "+03:00",
+                  terminal: "I"
+                },
+                flightTime: 250,
+                journeyTime: 1685,
+                waitTime: 1260
+              },
+              {
+                group: "2",
+                carrier: { name: "Turkish Airlines" },
+                origin: {
+                  code: "IST",
+                  name: "Istanbul",
+                  date: "2019-04-06",
+                  time: "16:45",
+                  timeZone: "+03:00",
+                  terminal: "I"
+                },
+                destination: {
+                  code: "TXL",
+                  name: "Berlin-Tegel",
+                  date: "2019-04-06",
+                  time: "18:40",
+                  timeZone: "+02:00",
+                  terminal: null
+                },
+                flightTime: 175,
+                journeyTime: 1685,
+                waitTime: null
+              }
+            ]
+          }
+        },
+        {
+          id: "5ca346876ddc006486ea32a1", // Airports - SOFIA: SOF | LONDON: LTN | MAD
+          price: { currency: "EUR", total: 1164 },
+          segments: [
+            {
+              group: "0",
+              carrier: { name: "Blue Air" },
+              origin: {
+                code: "SOF",
+                name: "Sofia",
+                date: "2019-04-03",
+                time: "16:05",
+                timeZone: "+03:00",
+                terminal: "2"
+              },
+              destination: {
+                code: "LTN",
+                name: "Luton",
+                date: "2019-04-03",
+                time: "20:45",
+                timeZone: "+01:00",
+                terminal: "2"
+              },
+              flightTime: 75,
+              journeyTime: 400,
+              waitTime: 75
+            },
+            {
+              group: "1",
+              carrier: { name: "Helvetic Airways" },
+              origin: {
+                code: "LTN",
+                name: "Luton",
+                date: "2019-04-03",
+                time: "20:45",
+                timeZone: "+01:00",
+                terminal: "2"
+              },
+              destination: {
+                code: "IST",
+                name: "Istanbul",
+                date: "2019-04-05",
+                time: "17:25",
+                timeZone: "+03:00",
+                terminal: "I"
+              },
+              flightTime: 265,
+              journeyTime: 1305,
+              waitTime: 245
+            }
+          ],
+          isLowCost: false,
+          isRefundable: false,
+          searchId: "5ca346876ddc006486ea329e",
+          orderedSegments: {
+            "0": [
+              {
+                group: "0",
+                carrier: { name: "Turkish Airlines" },
+                origin: {
+                  code: "SOF",
+                  name: "Sofia",
+                  date: "2019-04-03",
+                  time: "16:05",
+                  timeZone: "+03:00",
+                  terminal: "2"
+                },
+                destination: {
+                  code: "IST",
+                  name: "Istanbul",
+                  date: "2019-04-03",
+                  time: "17:20",
+                  timeZone: "+03:00",
+                  terminal: "I"
+                },
+                flightTime: 75,
+                journeyTime: 400,
+                waitTime: 75
+              },
+              {
+                group: "0",
+                carrier: { name: "Turkish Airlines" },
+                origin: {
+                  code: "IST",
+                  name: "Istanbul",
+                  date: "2019-04-03",
+                  time: "18:35",
+                  timeZone: "+03:00",
+                  terminal: "I"
+                },
+                destination: {
+                  code: "LHR",
+                  name: "London Heathrow",
+                  date: "2019-04-03",
+                  time: "20:45",
+                  timeZone: "+01:00",
+                  terminal: "2"
+                },
+                flightTime: 250,
+                journeyTime: 400,
+                waitTime: null
+              }
+            ],
+            "1": [
+              {
+                group: "1",
+                carrier: { name: "Turkish Airlines" },
+                origin: {
+                  code: "LGW",
+                  name: "London Gatwick",
+                  date: "2019-04-04",
+                  time: "11:50",
+                  timeZone: "+01:00",
+                  terminal: "S"
+                },
+                destination: {
+                  code: "AYT",
+                  name: "Antalya",
+                  date: "2019-04-04",
+                  time: "18:15",
+                  timeZone: "+03:00",
+                  terminal: "1"
+                },
+                flightTime: 265,
+                journeyTime: 1305,
+                waitTime: 245
+              },
+              {
+                group: "1",
+                carrier: { name: "Turkish Airlines" },
+                origin: {
+                  code: "AYT",
+                  name: "Antalya",
+                  date: "2019-04-04",
+                  time: "22:20",
+                  timeZone: "+03:00",
+                  terminal: "D"
+                },
+                destination: {
+                  code: "IST",
+                  name: "Istanbul",
+                  date: "2019-04-04",
+                  time: "23:50",
+                  timeZone: "+03:00",
+                  terminal: "D"
+                },
+                flightTime: 90,
+                journeyTime: 1305,
+                waitTime: 435
+              },
+              {
+                group: "1",
+                carrier: { name: "Turkish Airlines" },
+                origin: {
+                  code: "IST",
+                  name: "Istanbul",
+                  date: "2019-04-05",
+                  time: "07:05",
+                  timeZone: "+03:00",
+                  terminal: "I"
+                },
+                destination: {
+                  code: "MAD",
+                  name: "Madrid",
+                  date: "2019-04-05",
+                  time: "10:35",
+                  timeZone: "+02:00",
+                  terminal: "1"
+                },
+                flightTime: 270,
+                journeyTime: 1305,
+                waitTime: null
+              }
+            ],
+            "2": [
+              {
+                group: "2",
+                carrier: { name: "Turkish Airlines" },
+                origin: {
+                  code: "MAD",
+                  name: "Madrid",
+                  date: "2019-04-05",
+                  time: "12:10",
+                  timeZone: "+02:00",
+                  terminal: "1"
+                },
+                destination: {
+                  code: "IST",
+                  name: "Istanbul",
+                  date: "2019-04-05",
+                  time: "17:25",
+                  timeZone: "+03:00",
+                  terminal: "I"
+                },
+                flightTime: 255,
+                journeyTime: 1830,
+                waitTime: 1400
+              },
+              {
+                group: "2",
+                carrier: { name: "Turkish Airlines" },
+                origin: {
+                  code: "IST",
+                  name: "Istanbul",
+                  date: "2019-04-06",
+                  time: "16:45",
+                  timeZone: "+03:00",
+                  terminal: "I"
+                },
+                destination: {
+                  code: "TXL",
+                  name: "Berlin-Tegel",
+                  date: "2019-04-06",
+                  time: "18:40",
+                  timeZone: "+02:00",
+                  terminal: null
+                },
+                flightTime: 175,
+                journeyTime: 1830,
+                waitTime: null
+              }
+            ]
+          }
+        }
+      ];
+
+      test("with LHR, SOF", () => {
+        let filters = {
+          airports: {
+            all: [
+              {
+                airportId: "LHR",
+                airportName: "London Heathrow",
+                city: "London",
+                selected: true
+              },
+              {
+                airportId: "SOF",
+                airportName: "Sofia",
+                city: "Sofia",
+                selected: true
+              },
+
+              {
+                airportId: "LCY",
+                airportName: "London City Arpt",
+                city: "London"
+              },
+              {
+                airportId: "LGW",
+                airportName: "London Gatwick",
+                city: "London"
+              },
+              {
+                airportId: "STN",
+                airportName: "London Stansted",
+                city: "London"
+              },
+              { airportId: "LTN", airportName: "Luton", city: "London" }
+            ]
+          }
+        };
+        let result = filterByAirports(filters, flights);
+        let resultIds = result.map(_.prop("id"));
+        let expectedResultIds = [flights[1].id];
+        expect(resultIds).toEqual(expectedResultIds);
+      });
+      test("with LHR, LGW", () => {
+        let filters = {
+          airports: {
+            all: [
+              {
+                airportId: "LHR",
+                airportName: "London Heathrow",
+                city: "London",
+                selected: true
+              },
+
+              {
+                airportId: "LCY",
+                airportName: "London City Arpt",
+                city: "London"
+              },
+              {
+                airportId: "LGW",
+                airportName: "London Gatwick",
+                city: "London",
+                selected: true
+              },
+              {
+                airportId: "STN",
+                airportName: "London Stansted",
+                city: "London"
+              },
+              { airportId: "LTN", airportName: "Luton", city: "London" }
+            ]
+          }
+        };
+        let result = filterByAirports(filters, flights);
+        let resultIds = result.map(_.prop("id"));
+        let expectedResultIds = [flights[0].id, flights[1].id];
+        expect(resultIds).toEqual(expectedResultIds);
+      });
+      test("with LTN, LHR, SOF", () => {
+        let filters = {
+          airports: {
+            all: [
+              {
+                airportId: "LHR",
+                airportName: "London Heathrow",
+                city: "London",
+                selected: true
+              },
+              {
+                airportId: "SOF",
+                airportName: "Sofia",
+                city: "Sofia",
+                selected: true
+              },
+
+              {
+                airportId: "LCY",
+                airportName: "London City Arpt",
+                city: "London"
+              },
+              {
+                airportId: "LGW",
+                airportName: "London Gatwick",
+                city: "London"
+              },
+              {
+                airportId: "STN",
+                airportName: "London Stansted",
+                city: "London"
+              },
+              {
+                airportId: "LTN",
+                airportName: "Luton",
+                city: "London",
+                selected: true
+              }
+            ]
+          }
+        };
+        let result = filterByAirports(filters, flights);
+        let resultIds = result.map(_.prop("id"));
+        let expectedResultIds = [flights[1].id, flights[2].id];
+        expect(resultIds).toEqual(expectedResultIds);
+      });
+      test("with LHR, LGW, LTN, SOF", () => {
+        let filters = {
+          airports: {
+            all: [
+              {
+                airportId: "LHR",
+                airportName: "London Heathrow",
+                city: "London",
+                selected: true
+              },
+              {
+                airportId: "SOF",
+                airportName: "Sofia",
+                city: "Sofia",
+                selected: true
+              },
+
+              {
+                airportId: "LCY",
+                airportName: "London City Arpt",
+                city: "London"
+              },
+              {
+                airportId: "LGW",
+                airportName: "London Gatwick",
+                city: "London",
+                selected: true
+              },
+              {
+                airportId: "STN",
+                airportName: "London Stansted",
+                city: "London"
+              },
+              {
+                airportId: "LTN",
+                airportName: "Luton",
+                city: "London",
+                selected: true
+              }
+            ]
+          }
+        };
+        let result = filterByAirports(filters, flights);
+        let resultIds = result.map(_.prop("id"));
+        let expectedResultIds = [flights[0].id, flights[1].id, flights[2].id];
+        expect(resultIds).toEqual(expectedResultIds);
+      });
     });
   });
 });

@@ -291,6 +291,30 @@ export default class AirTicketsSearchPage extends Component {
   }
 
   requestAirportInfo(airportCode) {
+    return new Promise((resolve, reject)=>{
+      setTimeout(()=>{
+         fetch(
+          `${Config.getValue("apiHost")}flight/city/airports/${airportCode}`,
+          {
+            headers: {
+              "Content-type": "application/json"
+            }
+          }
+        ).then(res => {
+            if (res.ok) {
+              res.json().then(data => {
+                resolve(data);
+              });
+            } else {
+              res.json().then(data => {
+                reject(data);
+              });
+            }
+        });
+      }, 1000)
+
+    })
+
     return fetch(
       `${Config.getValue("apiHost")}flight/city/airports/${airportCode}`,
       {
@@ -349,7 +373,7 @@ export default class AirTicketsSearchPage extends Component {
       });
   }
 
-  populateSearchBar() {
+  async populateSearchBar() {
     if (this.props.location.search) {
       const searchParams = queryString.parse(this.props.location.search);
 

@@ -297,6 +297,53 @@ class AirTicketsSearchPage extends Component {
     this.setState({ showFiltersMobile: true });
   }
 
+  // requestAirportInfo(airportCode) {
+  //   return new Promise((resolve, reject)=>{
+  //     setTimeout(()=>{
+  //       fetch(
+  //         `${Config.getValue("apiHost")}flight/city/airports/${airportCode}`,
+  //         {
+  //           headers: {
+  //             "Content-type": "application/json"
+  //           }
+  //         }
+  //       ).then(res => {
+  //         if (res.ok) {
+  //           res.json().then(data => {
+  //             resolve(data);
+  //           });
+  //         } else {
+  //           res.json().then(data => {
+  //             reject(data);
+  //           });
+  //         }
+  //       });
+  //     }, 30000)
+  //
+  //   })
+  //
+  //   return fetch(
+  //     `${Config.getValue("apiHost")}flight/city/airports/${airportCode}`,
+  //     {
+  //       headers: {
+  //         "Content-type": "application/json"
+  //       }
+  //     }
+  //   ).then(res => {
+  //     return new Promise((resolve, reject) => {
+  //       if (res.ok) {
+  //         res.json().then(data => {
+  //           resolve(data);
+  //         });
+  //       } else {
+  //         res.json().then(data => {
+  //           reject(data);
+  //         });
+  //       }
+  //     });
+  //   });
+  // }
+
   requestAirportInfo(airportCode) {
     return fetch(
       `${Config.getValue("apiHost")}flight/city/airports/${airportCode}`,
@@ -356,7 +403,7 @@ class AirTicketsSearchPage extends Component {
       });
   }
 
-  populateSearchBar() {
+  async populateSearchBar() {
     if (this.props.location.search) {
       const searchParams = queryString.parse(this.props.location.search);
 
@@ -370,27 +417,58 @@ class AirTicketsSearchPage extends Component {
         returnDate = moment(destinations[1].date, "DD/MM/YYYY");
       } else if (flightRouting === "3") {
         returnDate = moment(destinations[1].date, "DD/MM/YYYY");
-        destinations.shift();
+        // debugger;
+        // destinations.shift();
+        // debugger;
+
       }
-      destinations.forEach(destination => {
-        this.requestAirportInfo(destination.origin).then(data => {
-          destination.origin = {
+
+      let updatedDestinations = await Promise.all(destinations.map(async destination=>{
+        let origin = await this.requestAirportInfo(destination.origin).then(data => {
+          return {
+            city: data.cityName,
             code: data.code,
             name: `${data.cityName}, ${
               data.cityState ? data.cityState + ", " : ""
-            }${data.countryName}, ${data.code} airport`
+              }${data.countryName}, ${data.code} airport`
           };
         });
-        this.requestAirportInfo(destination.destination).then(data => {
-          destination.destination = {
+        let dest = await this.requestAirportInfo(destination.destination).then(data => {
+          return {
+            city: data.cityName,
             code: data.code,
             name: `${data.cityName}, ${
               data.cityState ? data.cityState + ", " : ""
-            }${data.countryName}, ${data.code} airport`
+              }${data.countryName}, ${data.code} airport`
           };
         });
-        destination.date = moment(destination.date, "DD/MM/YYYY");
-      });
+        let date = moment(destination.date, "DD/MM/YYYY");
+        return {
+          origin,
+          destination: dest,
+          date
+        }
+      }))
+
+      // destinations.forEach(destination => {
+      //   this.requestAirportInfo(destination.origin).then(data => {
+      //     destination.origin = {
+      //       code: data.code,
+      //       name: `${data.cityName}, ${
+      //         data.cityState ? data.cityState + ", " : ""
+      //       }${data.countryName}, ${data.code} airport`
+      //     };
+      //   });
+      //   this.requestAirportInfo(destination.destination).then(data => {
+      //     destination.destination = {
+      //       code: data.code,
+      //       name: `${data.cityName}, ${
+      //         data.cityState ? data.cityState + ", " : ""
+      //       }${data.countryName}, ${data.code} airport`
+      //     };
+      //   });
+      //   destination.date = moment(destination.date, "DD/MM/YYYY");
+      // });
       const flightClass = searchParams.flightClass;
       const stops = searchParams.stops;
       const departureTime = searchParams.departureTime
@@ -414,7 +492,7 @@ class AirTicketsSearchPage extends Component {
           adultsCount,
           children,
           flexSearch,
-          destinations
+          updatedDestinations
         )
       );
 
