@@ -18661,7 +18661,17 @@ describe("flight filtering functions", () => {
 function makeFiltersObjectFromResults(results) {
   return {
     airports: _gatherAirportsFromResults(results),
-    price: _gatherPrices(results)
+    price: _gatherPrices(results),
+    journeyTime: _gatherJourneyTimes(results)
+  };
+}
+
+function _gatherJourneyTimes(results) {
+  let times = results.map(_calculateJourneyTime);
+  let sorted = times.sort((a, b) => a - b);
+  return {
+    min: sorted[0],
+    max: sorted[sorted.length - 1]
   };
 }
 
@@ -20809,6 +20819,8 @@ describe("filter options gathering from flight results - makeFilterObjectFromRes
 
   let airlines = [];
 
+  let journeyTime = { max: 4140, min: 3390 };
+
   test("airports", () => {
     let filtersObject = makeFiltersObjectFromResults(results);
     expect(filtersObject.airports.all).toEqual(allAirports);
@@ -20822,6 +20834,11 @@ describe("filter options gathering from flight results - makeFilterObjectFromRes
   test("price", () => {
     let filtersObject = makeFiltersObjectFromResults(results);
     expect(filtersObject.price).toEqual(prices);
+  });
+
+  test("journeyTime", () => {
+    let filtersObject = makeFiltersObjectFromResults(results);
+    expect(filtersObject.journeyTime).toEqual(journeyTime);
   });
 
   test("airlines", () => {
