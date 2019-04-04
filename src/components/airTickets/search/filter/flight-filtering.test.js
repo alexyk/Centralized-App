@@ -18658,4 +18658,2174 @@ describe("flight filtering functions", () => {
   });
 });
 
-describe("filter options gathering from flight results", () => {});
+function makeFiltersObjectFromResults(results) {
+  return {
+    airports: _gatherAirportsFromResults(results),
+    price: _gatherPrices(results)
+  };
+}
+
+function _gatherPrices(results) {
+  let all = results.map(_.path(["price", "total"])).sort((a, b) => a - b);
+  return {
+    max: all[all.length - 1],
+    min: all[0]
+  };
+}
+
+function _gatherAirportsFromResults(results) {
+  return {
+    all: _gatherAllAirports(results),
+    transfers: _gatherTransferAirports(results)
+  };
+}
+
+function _gatherAllAirports(results) {
+  let all = results.reduce((all, flight) => {
+    let currentFlightAirports = _.compose(
+      _.flatten,
+      _.map(segment => {
+        let originAirport = {
+          airportId: segment.origin.code,
+          airportName: segment.origin.name
+        };
+        let destinationAirport = {
+          airportId: segment.destination.code,
+          airportName: segment.destination.name
+        };
+        return [originAirport, destinationAirport];
+      })
+    )(flight.segments);
+    return all.concat(currentFlightAirports);
+  }, []);
+
+  return _.uniqBy(_.prop("airportId"), all);
+}
+function _gatherTransferAirports(results) {
+  let filtered = results.reduce((acc, flight) => {
+    let transfers = _findTransferSegments(flight);
+    return acc.concat(transfers);
+  }, []);
+  return _.uniqBy(_.prop("airportId"), filtered);
+}
+
+function _findTransferSegments(flight) {
+  let { orderedSegments } = flight;
+  let inGroups = orderedSegments;
+  let transformedToTransfers = _.mapObjIndexed((value, index) => {
+    let transfers = [];
+    if (value.length === 2) {
+      transfers = [value[1]];
+    } else if (value.length > 2) {
+      transfers = value.slice(1);
+    }
+    return transfers.map(t => {
+      return {
+        airportName: t.origin.name,
+        airportId: t.origin.code
+      };
+    });
+  }, inGroups);
+  let list = Object.values(transformedToTransfers)
+    .filter(_.identity)
+    .reduce(_.concat);
+  return _.uniqBy(_.prop("airportId"), list);
+}
+
+describe("filter options gathering from flight results - makeFilterObjectFromResults", () => {
+  // let result = {
+  //   airports: {
+  //     all: [],
+  //     transfers: []
+  //   },
+  //   price: {
+  //     max: 0,
+  //     min: 0
+  //   },
+  //   journeyTime: {
+  //     max: 0,
+  //     min: 0
+  //   },
+  //   airlines: [],
+  //   changes: []
+  // };
+
+  let allAirports = [
+    { airportId: "SOF", airportName: "Sofia" },
+    { airportId: "IST", airportName: "Istanbul" },
+    { airportId: "LHR", airportName: "London Heathrow" },
+    { airportId: "LGW", airportName: "London Gatwick" },
+    { airportId: "AYT", airportName: "Antalya" },
+    { airportId: "MAD", airportName: "Madrid" },
+    { airportId: "TXL", airportName: "Berlin-Tegel" }
+  ];
+
+  let transfers = [
+    { airportId: "IST", airportName: "Istanbul" },
+    { airportId: "AYT", airportName: "Antalya" }
+  ];
+
+  let results = [
+    {
+      id: "5ca346876ddc006486ea329f",
+      price: { currency: "EUR", total: 100.5 },
+      segments: [
+        {
+          group: "0",
+          carrier: { name: "Turkish Airlines" },
+          origin: {
+            code: "SOF",
+            name: "Sofia",
+            date: "2019-04-03",
+            time: "16:05",
+            timeZone: "+03:00",
+            terminal: "2"
+          },
+          destination: {
+            code: "IST",
+            name: "Istanbul",
+            date: "2019-04-03",
+            time: "17:20",
+            timeZone: "+03:00",
+            terminal: "I"
+          },
+          flightTime: 75,
+          journeyTime: 400,
+          waitTime: 75
+        },
+        {
+          group: "0",
+          carrier: { name: "Turkish Airlines" },
+          origin: {
+            code: "IST",
+            name: "Istanbul",
+            date: "2019-04-03",
+            time: "18:35",
+            timeZone: "+03:00",
+            terminal: "I"
+          },
+          destination: {
+            code: "LHR",
+            name: "London Heathrow",
+            date: "2019-04-03",
+            time: "20:45",
+            timeZone: "+01:00",
+            terminal: "2"
+          },
+          flightTime: 250,
+          journeyTime: 400,
+          waitTime: null
+        },
+        {
+          group: "1",
+          carrier: { name: "Turkish Airlines" },
+          origin: {
+            code: "LGW",
+            name: "London Gatwick",
+            date: "2019-04-04",
+            time: "11:50",
+            timeZone: "+01:00",
+            terminal: "S"
+          },
+          destination: {
+            code: "AYT",
+            name: "Antalya",
+            date: "2019-04-04",
+            time: "18:15",
+            timeZone: "+03:00",
+            terminal: "1"
+          },
+          flightTime: 265,
+          journeyTime: 1305,
+          waitTime: 245
+        },
+        {
+          group: "1",
+          carrier: { name: "Turkish Airlines" },
+          origin: {
+            code: "AYT",
+            name: "Antalya",
+            date: "2019-04-04",
+            time: "22:20",
+            timeZone: "+03:00",
+            terminal: "D"
+          },
+          destination: {
+            code: "IST",
+            name: "Istanbul",
+            date: "2019-04-04",
+            time: "23:50",
+            timeZone: "+03:00",
+            terminal: "D"
+          },
+          flightTime: 90,
+          journeyTime: 1305,
+          waitTime: 435
+        },
+        {
+          group: "1",
+          carrier: { name: "Turkish Airlines" },
+          origin: {
+            code: "IST",
+            name: "Istanbul",
+            date: "2019-04-05",
+            time: "07:05",
+            timeZone: "+03:00",
+            terminal: "I"
+          },
+          destination: {
+            code: "MAD",
+            name: "Madrid",
+            date: "2019-04-05",
+            time: "10:35",
+            timeZone: "+02:00",
+            terminal: "1"
+          },
+          flightTime: 270,
+          journeyTime: 1305,
+          waitTime: null
+        },
+        {
+          group: "2",
+          carrier: { name: "Turkish Airlines" },
+          origin: {
+            code: "MAD",
+            name: "Madrid",
+            date: "2019-04-05",
+            time: "14:35",
+            timeZone: "+02:00",
+            terminal: "1"
+          },
+          destination: {
+            code: "IST",
+            name: "Istanbul",
+            date: "2019-04-05",
+            time: "19:45",
+            timeZone: "+03:00",
+            terminal: "I"
+          },
+          flightTime: 250,
+          journeyTime: 1685,
+          waitTime: 1260
+        },
+        {
+          group: "2",
+          carrier: { name: "Turkish Airlines" },
+          origin: {
+            code: "IST",
+            name: "Istanbul",
+            date: "2019-04-06",
+            time: "16:45",
+            timeZone: "+03:00",
+            terminal: "I"
+          },
+          destination: {
+            code: "TXL",
+            name: "Berlin-Tegel",
+            date: "2019-04-06",
+            time: "18:40",
+            timeZone: "+02:00",
+            terminal: null
+          },
+          flightTime: 175,
+          journeyTime: 1685,
+          waitTime: null
+        }
+      ],
+      isLowCost: false,
+      isRefundable: false,
+      searchId: "5ca346876ddc006486ea329e",
+      orderedSegments: {
+        "0": [
+          {
+            group: "0",
+            carrier: { name: "Turkish Airlines" },
+            origin: {
+              code: "SOF",
+              name: "Sofia",
+              date: "2019-04-03",
+              time: "16:05",
+              timeZone: "+03:00",
+              terminal: "2"
+            },
+            destination: {
+              code: "IST",
+              name: "Istanbul",
+              date: "2019-04-03",
+              time: "17:20",
+              timeZone: "+03:00",
+              terminal: "I"
+            },
+            flightTime: 75,
+            journeyTime: 400,
+            waitTime: 75
+          },
+          {
+            group: "0",
+            carrier: { name: "Turkish Airlines" },
+            origin: {
+              code: "IST",
+              name: "Istanbul",
+              date: "2019-04-03",
+              time: "18:35",
+              timeZone: "+03:00",
+              terminal: "I"
+            },
+            destination: {
+              code: "LHR",
+              name: "London Heathrow",
+              date: "2019-04-03",
+              time: "20:45",
+              timeZone: "+01:00",
+              terminal: "2"
+            },
+            flightTime: 250,
+            journeyTime: 400,
+            waitTime: null
+          }
+        ],
+        "1": [
+          {
+            group: "1",
+            carrier: { name: "Turkish Airlines" },
+            origin: {
+              code: "LGW",
+              name: "London Gatwick",
+              date: "2019-04-04",
+              time: "11:50",
+              timeZone: "+01:00",
+              terminal: "S"
+            },
+            destination: {
+              code: "AYT",
+              name: "Antalya",
+              date: "2019-04-04",
+              time: "18:15",
+              timeZone: "+03:00",
+              terminal: "1"
+            },
+            flightTime: 265,
+            journeyTime: 1305,
+            waitTime: 245
+          },
+          {
+            group: "1",
+            carrier: { name: "Turkish Airlines" },
+            origin: {
+              code: "AYT",
+              name: "Antalya",
+              date: "2019-04-04",
+              time: "22:20",
+              timeZone: "+03:00",
+              terminal: "D"
+            },
+            destination: {
+              code: "IST",
+              name: "Istanbul",
+              date: "2019-04-04",
+              time: "23:50",
+              timeZone: "+03:00",
+              terminal: "D"
+            },
+            flightTime: 90,
+            journeyTime: 1305,
+            waitTime: 435
+          },
+          {
+            group: "1",
+            carrier: { name: "Turkish Airlines" },
+            origin: {
+              code: "IST",
+              name: "Istanbul",
+              date: "2019-04-05",
+              time: "07:05",
+              timeZone: "+03:00",
+              terminal: "I"
+            },
+            destination: {
+              code: "MAD",
+              name: "Madrid",
+              date: "2019-04-05",
+              time: "10:35",
+              timeZone: "+02:00",
+              terminal: "1"
+            },
+            flightTime: 270,
+            journeyTime: 1305,
+            waitTime: null
+          }
+        ],
+        "2": [
+          {
+            group: "2",
+            carrier: { name: "Turkish Airlines" },
+            origin: {
+              code: "MAD",
+              name: "Madrid",
+              date: "2019-04-05",
+              time: "14:35",
+              timeZone: "+02:00",
+              terminal: "1"
+            },
+            destination: {
+              code: "IST",
+              name: "Istanbul",
+              date: "2019-04-05",
+              time: "19:45",
+              timeZone: "+03:00",
+              terminal: "I"
+            },
+            flightTime: 250,
+            journeyTime: 1685,
+            waitTime: 1260
+          },
+          {
+            group: "2",
+            carrier: { name: "Turkish Airlines" },
+            origin: {
+              code: "IST",
+              name: "Istanbul",
+              date: "2019-04-06",
+              time: "16:45",
+              timeZone: "+03:00",
+              terminal: "I"
+            },
+            destination: {
+              code: "TXL",
+              name: "Berlin-Tegel",
+              date: "2019-04-06",
+              time: "18:40",
+              timeZone: "+02:00",
+              terminal: null
+            },
+            flightTime: 175,
+            journeyTime: 1685,
+            waitTime: null
+          }
+        ]
+      }
+    },
+    {
+      id: "5ca346876ddc006486ea32a0",
+      price: { currency: "EUR", total: 200 },
+      segments: [
+        {
+          group: "0",
+          carrier: { name: "Turkish Airlines" },
+          origin: {
+            code: "SOF",
+            name: "Sofia",
+            date: "2019-04-03",
+            time: "21:40",
+            timeZone: "+03:00",
+            terminal: "2"
+          },
+          destination: {
+            code: "IST",
+            name: "Istanbul",
+            date: "2019-04-03",
+            time: "23:05",
+            timeZone: "+03:00",
+            terminal: "I"
+          },
+          flightTime: 85,
+          journeyTime: 850,
+          waitTime: 520
+        },
+        {
+          group: "0",
+          carrier: { name: "Turkish Airlines" },
+          origin: {
+            code: "IST",
+            name: "Istanbul",
+            date: "2019-04-04",
+            time: "07:45",
+            timeZone: "+03:00",
+            terminal: "I"
+          },
+          destination: {
+            code: "LHR",
+            name: "London Heathrow",
+            date: "2019-04-04",
+            time: "09:50",
+            timeZone: "+01:00",
+            terminal: "2"
+          },
+          flightTime: 245,
+          journeyTime: 850,
+          waitTime: null
+        },
+        {
+          group: "1",
+          carrier: { name: "Turkish Airlines" },
+          origin: {
+            code: "LGW",
+            name: "London Gatwick",
+            date: "2019-04-04",
+            time: "11:50",
+            timeZone: "+01:00",
+            terminal: "S"
+          },
+          destination: {
+            code: "AYT",
+            name: "Antalya",
+            date: "2019-04-04",
+            time: "18:15",
+            timeZone: "+03:00",
+            terminal: "1"
+          },
+          flightTime: 265,
+          journeyTime: 1305,
+          waitTime: 245
+        },
+        {
+          group: "1",
+          carrier: { name: "Turkish Airlines" },
+          origin: {
+            code: "AYT",
+            name: "Antalya",
+            date: "2019-04-04",
+            time: "22:20",
+            timeZone: "+03:00",
+            terminal: "D"
+          },
+          destination: {
+            code: "IST",
+            name: "Istanbul",
+            date: "2019-04-04",
+            time: "23:50",
+            timeZone: "+03:00",
+            terminal: "D"
+          },
+          flightTime: 90,
+          journeyTime: 1305,
+          waitTime: 435
+        },
+        {
+          group: "1",
+          carrier: { name: "Turkish Airlines" },
+          origin: {
+            code: "IST",
+            name: "Istanbul",
+            date: "2019-04-05",
+            time: "07:05",
+            timeZone: "+03:00",
+            terminal: "I"
+          },
+          destination: {
+            code: "MAD",
+            name: "Madrid",
+            date: "2019-04-05",
+            time: "10:35",
+            timeZone: "+02:00",
+            terminal: "1"
+          },
+          flightTime: 270,
+          journeyTime: 1305,
+          waitTime: null
+        },
+        {
+          group: "2",
+          carrier: { name: "Turkish Airlines" },
+          origin: {
+            code: "MAD",
+            name: "Madrid",
+            date: "2019-04-05",
+            time: "14:35",
+            timeZone: "+02:00",
+            terminal: "1"
+          },
+          destination: {
+            code: "IST",
+            name: "Istanbul",
+            date: "2019-04-05",
+            time: "19:45",
+            timeZone: "+03:00",
+            terminal: "I"
+          },
+          flightTime: 250,
+          journeyTime: 1685,
+          waitTime: 1260
+        },
+        {
+          group: "2",
+          carrier: { name: "Turkish Airlines" },
+          origin: {
+            code: "IST",
+            name: "Istanbul",
+            date: "2019-04-06",
+            time: "16:45",
+            timeZone: "+03:00",
+            terminal: "I"
+          },
+          destination: {
+            code: "TXL",
+            name: "Berlin-Tegel",
+            date: "2019-04-06",
+            time: "18:40",
+            timeZone: "+02:00",
+            terminal: null
+          },
+          flightTime: 175,
+          journeyTime: 1685,
+          waitTime: null
+        }
+      ],
+      isLowCost: false,
+      isRefundable: false,
+      searchId: "5ca346876ddc006486ea329e",
+      orderedSegments: {
+        "0": [
+          {
+            group: "0",
+            carrier: { name: "Turkish Airlines" },
+            origin: {
+              code: "SOF",
+              name: "Sofia",
+              date: "2019-04-03",
+              time: "21:40",
+              timeZone: "+03:00",
+              terminal: "2"
+            },
+            destination: {
+              code: "IST",
+              name: "Istanbul",
+              date: "2019-04-03",
+              time: "23:05",
+              timeZone: "+03:00",
+              terminal: "I"
+            },
+            flightTime: 85,
+            journeyTime: 850,
+            waitTime: 520
+          },
+          {
+            group: "0",
+            carrier: { name: "Turkish Airlines" },
+            origin: {
+              code: "IST",
+              name: "Istanbul",
+              date: "2019-04-04",
+              time: "07:45",
+              timeZone: "+03:00",
+              terminal: "I"
+            },
+            destination: {
+              code: "LHR",
+              name: "London Heathrow",
+              date: "2019-04-04",
+              time: "09:50",
+              timeZone: "+01:00",
+              terminal: "2"
+            },
+            flightTime: 245,
+            journeyTime: 850,
+            waitTime: null
+          }
+        ],
+        "1": [
+          {
+            group: "1",
+            carrier: { name: "Turkish Airlines" },
+            origin: {
+              code: "LGW",
+              name: "London Gatwick",
+              date: "2019-04-04",
+              time: "11:50",
+              timeZone: "+01:00",
+              terminal: "S"
+            },
+            destination: {
+              code: "AYT",
+              name: "Antalya",
+              date: "2019-04-04",
+              time: "18:15",
+              timeZone: "+03:00",
+              terminal: "1"
+            },
+            flightTime: 265,
+            journeyTime: 1305,
+            waitTime: 245
+          },
+          {
+            group: "1",
+            carrier: { name: "Turkish Airlines" },
+            origin: {
+              code: "AYT",
+              name: "Antalya",
+              date: "2019-04-04",
+              time: "22:20",
+              timeZone: "+03:00",
+              terminal: "D"
+            },
+            destination: {
+              code: "IST",
+              name: "Istanbul",
+              date: "2019-04-04",
+              time: "23:50",
+              timeZone: "+03:00",
+              terminal: "D"
+            },
+            flightTime: 90,
+            journeyTime: 1305,
+            waitTime: 435
+          },
+          {
+            group: "1",
+            carrier: { name: "Turkish Airlines" },
+            origin: {
+              code: "IST",
+              name: "Istanbul",
+              date: "2019-04-05",
+              time: "07:05",
+              timeZone: "+03:00",
+              terminal: "I"
+            },
+            destination: {
+              code: "MAD",
+              name: "Madrid",
+              date: "2019-04-05",
+              time: "10:35",
+              timeZone: "+02:00",
+              terminal: "1"
+            },
+            flightTime: 270,
+            journeyTime: 1305,
+            waitTime: null
+          }
+        ],
+        "2": [
+          {
+            group: "2",
+            carrier: { name: "Turkish Airlines" },
+            origin: {
+              code: "MAD",
+              name: "Madrid",
+              date: "2019-04-05",
+              time: "14:35",
+              timeZone: "+02:00",
+              terminal: "1"
+            },
+            destination: {
+              code: "IST",
+              name: "Istanbul",
+              date: "2019-04-05",
+              time: "19:45",
+              timeZone: "+03:00",
+              terminal: "I"
+            },
+            flightTime: 250,
+            journeyTime: 1685,
+            waitTime: 1260
+          },
+          {
+            group: "2",
+            carrier: { name: "Turkish Airlines" },
+            origin: {
+              code: "IST",
+              name: "Istanbul",
+              date: "2019-04-06",
+              time: "16:45",
+              timeZone: "+03:00",
+              terminal: "I"
+            },
+            destination: {
+              code: "TXL",
+              name: "Berlin-Tegel",
+              date: "2019-04-06",
+              time: "18:40",
+              timeZone: "+02:00",
+              terminal: null
+            },
+            flightTime: 175,
+            journeyTime: 1685,
+            waitTime: null
+          }
+        ]
+      }
+    },
+    {
+      id: "5ca346876ddc006486ea32a1",
+      price: { currency: "EUR", total: 300 },
+      segments: [
+        {
+          group: "0",
+          carrier: { name: "Turkish Airlines" },
+          origin: {
+            code: "SOF",
+            name: "Sofia",
+            date: "2019-04-03",
+            time: "16:05",
+            timeZone: "+03:00",
+            terminal: "2"
+          },
+          destination: {
+            code: "IST",
+            name: "Istanbul",
+            date: "2019-04-03",
+            time: "17:20",
+            timeZone: "+03:00",
+            terminal: "I"
+          },
+          flightTime: 75,
+          journeyTime: 400,
+          waitTime: 75
+        },
+        {
+          group: "0",
+          carrier: { name: "Turkish Airlines" },
+          origin: {
+            code: "IST",
+            name: "Istanbul",
+            date: "2019-04-03",
+            time: "18:35",
+            timeZone: "+03:00",
+            terminal: "I"
+          },
+          destination: {
+            code: "LHR",
+            name: "London Heathrow",
+            date: "2019-04-03",
+            time: "20:45",
+            timeZone: "+01:00",
+            terminal: "2"
+          },
+          flightTime: 250,
+          journeyTime: 400,
+          waitTime: null
+        },
+        {
+          group: "1",
+          carrier: { name: "Turkish Airlines" },
+          origin: {
+            code: "LGW",
+            name: "London Gatwick",
+            date: "2019-04-04",
+            time: "11:50",
+            timeZone: "+01:00",
+            terminal: "S"
+          },
+          destination: {
+            code: "AYT",
+            name: "Antalya",
+            date: "2019-04-04",
+            time: "18:15",
+            timeZone: "+03:00",
+            terminal: "1"
+          },
+          flightTime: 265,
+          journeyTime: 1305,
+          waitTime: 245
+        },
+        {
+          group: "1",
+          carrier: { name: "Turkish Airlines" },
+          origin: {
+            code: "AYT",
+            name: "Antalya",
+            date: "2019-04-04",
+            time: "22:20",
+            timeZone: "+03:00",
+            terminal: "D"
+          },
+          destination: {
+            code: "IST",
+            name: "Istanbul",
+            date: "2019-04-04",
+            time: "23:50",
+            timeZone: "+03:00",
+            terminal: "D"
+          },
+          flightTime: 90,
+          journeyTime: 1305,
+          waitTime: 435
+        },
+        {
+          group: "1",
+          carrier: { name: "Turkish Airlines" },
+          origin: {
+            code: "IST",
+            name: "Istanbul",
+            date: "2019-04-05",
+            time: "07:05",
+            timeZone: "+03:00",
+            terminal: "I"
+          },
+          destination: {
+            code: "MAD",
+            name: "Madrid",
+            date: "2019-04-05",
+            time: "10:35",
+            timeZone: "+02:00",
+            terminal: "1"
+          },
+          flightTime: 270,
+          journeyTime: 1305,
+          waitTime: null
+        },
+        {
+          group: "2",
+          carrier: { name: "Turkish Airlines" },
+          origin: {
+            code: "MAD",
+            name: "Madrid",
+            date: "2019-04-05",
+            time: "12:10",
+            timeZone: "+02:00",
+            terminal: "1"
+          },
+          destination: {
+            code: "IST",
+            name: "Istanbul",
+            date: "2019-04-05",
+            time: "17:25",
+            timeZone: "+03:00",
+            terminal: "I"
+          },
+          flightTime: 255,
+          journeyTime: 1830,
+          waitTime: 1400
+        },
+        {
+          group: "2",
+          carrier: { name: "Turkish Airlines" },
+          origin: {
+            code: "IST",
+            name: "Istanbul",
+            date: "2019-04-06",
+            time: "16:45",
+            timeZone: "+03:00",
+            terminal: "I"
+          },
+          destination: {
+            code: "TXL",
+            name: "Berlin-Tegel",
+            date: "2019-04-06",
+            time: "18:40",
+            timeZone: "+02:00",
+            terminal: null
+          },
+          flightTime: 175,
+          journeyTime: 1830,
+          waitTime: null
+        }
+      ],
+      isLowCost: false,
+      isRefundable: false,
+      searchId: "5ca346876ddc006486ea329e",
+      orderedSegments: {
+        "0": [
+          {
+            group: "0",
+            carrier: { name: "Turkish Airlines" },
+            origin: {
+              code: "SOF",
+              name: "Sofia",
+              date: "2019-04-03",
+              time: "16:05",
+              timeZone: "+03:00",
+              terminal: "2"
+            },
+            destination: {
+              code: "IST",
+              name: "Istanbul",
+              date: "2019-04-03",
+              time: "17:20",
+              timeZone: "+03:00",
+              terminal: "I"
+            },
+            flightTime: 75,
+            journeyTime: 400,
+            waitTime: 75
+          },
+          {
+            group: "0",
+            carrier: { name: "Turkish Airlines" },
+            origin: {
+              code: "IST",
+              name: "Istanbul",
+              date: "2019-04-03",
+              time: "18:35",
+              timeZone: "+03:00",
+              terminal: "I"
+            },
+            destination: {
+              code: "LHR",
+              name: "London Heathrow",
+              date: "2019-04-03",
+              time: "20:45",
+              timeZone: "+01:00",
+              terminal: "2"
+            },
+            flightTime: 250,
+            journeyTime: 400,
+            waitTime: null
+          }
+        ],
+        "1": [
+          {
+            group: "1",
+            carrier: { name: "Turkish Airlines" },
+            origin: {
+              code: "LGW",
+              name: "London Gatwick",
+              date: "2019-04-04",
+              time: "11:50",
+              timeZone: "+01:00",
+              terminal: "S"
+            },
+            destination: {
+              code: "AYT",
+              name: "Antalya",
+              date: "2019-04-04",
+              time: "18:15",
+              timeZone: "+03:00",
+              terminal: "1"
+            },
+            flightTime: 265,
+            journeyTime: 1305,
+            waitTime: 245
+          },
+          {
+            group: "1",
+            carrier: { name: "Turkish Airlines" },
+            origin: {
+              code: "AYT",
+              name: "Antalya",
+              date: "2019-04-04",
+              time: "22:20",
+              timeZone: "+03:00",
+              terminal: "D"
+            },
+            destination: {
+              code: "IST",
+              name: "Istanbul",
+              date: "2019-04-04",
+              time: "23:50",
+              timeZone: "+03:00",
+              terminal: "D"
+            },
+            flightTime: 90,
+            journeyTime: 1305,
+            waitTime: 435
+          },
+          {
+            group: "1",
+            carrier: { name: "Turkish Airlines" },
+            origin: {
+              code: "IST",
+              name: "Istanbul",
+              date: "2019-04-05",
+              time: "07:05",
+              timeZone: "+03:00",
+              terminal: "I"
+            },
+            destination: {
+              code: "MAD",
+              name: "Madrid",
+              date: "2019-04-05",
+              time: "10:35",
+              timeZone: "+02:00",
+              terminal: "1"
+            },
+            flightTime: 270,
+            journeyTime: 1305,
+            waitTime: null
+          }
+        ],
+        "2": [
+          {
+            group: "2",
+            carrier: { name: "Turkish Airlines" },
+            origin: {
+              code: "MAD",
+              name: "Madrid",
+              date: "2019-04-05",
+              time: "12:10",
+              timeZone: "+02:00",
+              terminal: "1"
+            },
+            destination: {
+              code: "IST",
+              name: "Istanbul",
+              date: "2019-04-05",
+              time: "17:25",
+              timeZone: "+03:00",
+              terminal: "I"
+            },
+            flightTime: 255,
+            journeyTime: 1830,
+            waitTime: 1400
+          },
+          {
+            group: "2",
+            carrier: { name: "Turkish Airlines" },
+            origin: {
+              code: "IST",
+              name: "Istanbul",
+              date: "2019-04-06",
+              time: "16:45",
+              timeZone: "+03:00",
+              terminal: "I"
+            },
+            destination: {
+              code: "TXL",
+              name: "Berlin-Tegel",
+              date: "2019-04-06",
+              time: "18:40",
+              timeZone: "+02:00",
+              terminal: null
+            },
+            flightTime: 175,
+            journeyTime: 1830,
+            waitTime: null
+          }
+        ]
+      }
+    },
+    {
+      id: "5ca346876ddc006486ea32a2",
+      price: { currency: "EUR", total: 1212 },
+      segments: [
+        {
+          group: "0",
+          carrier: { name: "Turkish Airlines" },
+          origin: {
+            code: "SOF",
+            name: "Sofia",
+            date: "2019-04-03",
+            time: "21:40",
+            timeZone: "+03:00",
+            terminal: "2"
+          },
+          destination: {
+            code: "IST",
+            name: "Istanbul",
+            date: "2019-04-03",
+            time: "23:05",
+            timeZone: "+03:00",
+            terminal: "I"
+          },
+          flightTime: 85,
+          journeyTime: 850,
+          waitTime: 520
+        },
+        {
+          group: "0",
+          carrier: { name: "Turkish Airlines" },
+          origin: {
+            code: "IST",
+            name: "Istanbul",
+            date: "2019-04-04",
+            time: "07:45",
+            timeZone: "+03:00",
+            terminal: "I"
+          },
+          destination: {
+            code: "LHR",
+            name: "London Heathrow",
+            date: "2019-04-04",
+            time: "09:50",
+            timeZone: "+01:00",
+            terminal: "2"
+          },
+          flightTime: 245,
+          journeyTime: 850,
+          waitTime: null
+        },
+        {
+          group: "1",
+          carrier: { name: "Turkish Airlines" },
+          origin: {
+            code: "LGW",
+            name: "London Gatwick",
+            date: "2019-04-04",
+            time: "11:50",
+            timeZone: "+01:00",
+            terminal: "S"
+          },
+          destination: {
+            code: "AYT",
+            name: "Antalya",
+            date: "2019-04-04",
+            time: "18:15",
+            timeZone: "+03:00",
+            terminal: "1"
+          },
+          flightTime: 265,
+          journeyTime: 1305,
+          waitTime: 245
+        },
+        {
+          group: "1",
+          carrier: { name: "Turkish Airlines" },
+          origin: {
+            code: "AYT",
+            name: "Antalya",
+            date: "2019-04-04",
+            time: "22:20",
+            timeZone: "+03:00",
+            terminal: "D"
+          },
+          destination: {
+            code: "IST",
+            name: "Istanbul",
+            date: "2019-04-04",
+            time: "23:50",
+            timeZone: "+03:00",
+            terminal: "D"
+          },
+          flightTime: 90,
+          journeyTime: 1305,
+          waitTime: 435
+        },
+        {
+          group: "1",
+          carrier: { name: "Turkish Airlines" },
+          origin: {
+            code: "IST",
+            name: "Istanbul",
+            date: "2019-04-05",
+            time: "07:05",
+            timeZone: "+03:00",
+            terminal: "I"
+          },
+          destination: {
+            code: "MAD",
+            name: "Madrid",
+            date: "2019-04-05",
+            time: "10:35",
+            timeZone: "+02:00",
+            terminal: "1"
+          },
+          flightTime: 270,
+          journeyTime: 1305,
+          waitTime: null
+        },
+        {
+          group: "2",
+          carrier: { name: "Turkish Airlines" },
+          origin: {
+            code: "MAD",
+            name: "Madrid",
+            date: "2019-04-05",
+            time: "12:10",
+            timeZone: "+02:00",
+            terminal: "1"
+          },
+          destination: {
+            code: "IST",
+            name: "Istanbul",
+            date: "2019-04-05",
+            time: "17:25",
+            timeZone: "+03:00",
+            terminal: "I"
+          },
+          flightTime: 255,
+          journeyTime: 1830,
+          waitTime: 1400
+        },
+        {
+          group: "2",
+          carrier: { name: "Turkish Airlines" },
+          origin: {
+            code: "IST",
+            name: "Istanbul",
+            date: "2019-04-06",
+            time: "16:45",
+            timeZone: "+03:00",
+            terminal: "I"
+          },
+          destination: {
+            code: "TXL",
+            name: "Berlin-Tegel",
+            date: "2019-04-06",
+            time: "18:40",
+            timeZone: "+02:00",
+            terminal: null
+          },
+          flightTime: 175,
+          journeyTime: 1830,
+          waitTime: null
+        }
+      ],
+      isLowCost: false,
+      isRefundable: false,
+      searchId: "5ca346876ddc006486ea329e",
+      orderedSegments: {
+        "0": [
+          {
+            group: "0",
+            carrier: { name: "Turkish Airlines" },
+            origin: {
+              code: "SOF",
+              name: "Sofia",
+              date: "2019-04-03",
+              time: "21:40",
+              timeZone: "+03:00",
+              terminal: "2"
+            },
+            destination: {
+              code: "IST",
+              name: "Istanbul",
+              date: "2019-04-03",
+              time: "23:05",
+              timeZone: "+03:00",
+              terminal: "I"
+            },
+            flightTime: 85,
+            journeyTime: 850,
+            waitTime: 520
+          },
+          {
+            group: "0",
+            carrier: { name: "Turkish Airlines" },
+            origin: {
+              code: "IST",
+              name: "Istanbul",
+              date: "2019-04-04",
+              time: "07:45",
+              timeZone: "+03:00",
+              terminal: "I"
+            },
+            destination: {
+              code: "LHR",
+              name: "London Heathrow",
+              date: "2019-04-04",
+              time: "09:50",
+              timeZone: "+01:00",
+              terminal: "2"
+            },
+            flightTime: 245,
+            journeyTime: 850,
+            waitTime: null
+          }
+        ],
+        "1": [
+          {
+            group: "1",
+            carrier: { name: "Turkish Airlines" },
+            origin: {
+              code: "LGW",
+              name: "London Gatwick",
+              date: "2019-04-04",
+              time: "11:50",
+              timeZone: "+01:00",
+              terminal: "S"
+            },
+            destination: {
+              code: "AYT",
+              name: "Antalya",
+              date: "2019-04-04",
+              time: "18:15",
+              timeZone: "+03:00",
+              terminal: "1"
+            },
+            flightTime: 265,
+            journeyTime: 1305,
+            waitTime: 245
+          },
+          {
+            group: "1",
+            carrier: { name: "Turkish Airlines" },
+            origin: {
+              code: "AYT",
+              name: "Antalya",
+              date: "2019-04-04",
+              time: "22:20",
+              timeZone: "+03:00",
+              terminal: "D"
+            },
+            destination: {
+              code: "IST",
+              name: "Istanbul",
+              date: "2019-04-04",
+              time: "23:50",
+              timeZone: "+03:00",
+              terminal: "D"
+            },
+            flightTime: 90,
+            journeyTime: 1305,
+            waitTime: 435
+          },
+          {
+            group: "1",
+            carrier: { name: "Turkish Airlines" },
+            origin: {
+              code: "IST",
+              name: "Istanbul",
+              date: "2019-04-05",
+              time: "07:05",
+              timeZone: "+03:00",
+              terminal: "I"
+            },
+            destination: {
+              code: "MAD",
+              name: "Madrid",
+              date: "2019-04-05",
+              time: "10:35",
+              timeZone: "+02:00",
+              terminal: "1"
+            },
+            flightTime: 270,
+            journeyTime: 1305,
+            waitTime: null
+          }
+        ],
+        "2": [
+          {
+            group: "2",
+            carrier: { name: "Turkish Airlines" },
+            origin: {
+              code: "MAD",
+              name: "Madrid",
+              date: "2019-04-05",
+              time: "12:10",
+              timeZone: "+02:00",
+              terminal: "1"
+            },
+            destination: {
+              code: "IST",
+              name: "Istanbul",
+              date: "2019-04-05",
+              time: "17:25",
+              timeZone: "+03:00",
+              terminal: "I"
+            },
+            flightTime: 255,
+            journeyTime: 1830,
+            waitTime: 1400
+          },
+          {
+            group: "2",
+            carrier: { name: "Turkish Airlines" },
+            origin: {
+              code: "IST",
+              name: "Istanbul",
+              date: "2019-04-06",
+              time: "16:45",
+              timeZone: "+03:00",
+              terminal: "I"
+            },
+            destination: {
+              code: "TXL",
+              name: "Berlin-Tegel",
+              date: "2019-04-06",
+              time: "18:40",
+              timeZone: "+02:00",
+              terminal: null
+            },
+            flightTime: 175,
+            journeyTime: 1830,
+            waitTime: null
+          }
+        ]
+      }
+    },
+    {
+      id: "5ca346876ddc006486ea32a3",
+      price: { currency: "EUR", total: 1164 },
+      segments: [
+        {
+          group: "0",
+          carrier: { name: "Turkish Airlines" },
+          origin: {
+            code: "SOF",
+            name: "Sofia",
+            date: "2019-04-03",
+            time: "21:40",
+            timeZone: "+03:00",
+            terminal: "2"
+          },
+          destination: {
+            code: "IST",
+            name: "Istanbul",
+            date: "2019-04-03",
+            time: "23:05",
+            timeZone: "+03:00",
+            terminal: "I"
+          },
+          flightTime: 85,
+          journeyTime: 815,
+          waitTime: 485
+        },
+        {
+          group: "0",
+          carrier: { name: "Turkish Airlines" },
+          origin: {
+            code: "IST",
+            name: "Istanbul",
+            date: "2019-04-04",
+            time: "07:10",
+            timeZone: "+03:00",
+            terminal: "I"
+          },
+          destination: {
+            code: "LGW",
+            name: "London Gatwick",
+            date: "2019-04-04",
+            time: "09:15",
+            timeZone: "+01:00",
+            terminal: "S"
+          },
+          flightTime: 245,
+          journeyTime: 815,
+          waitTime: null
+        },
+        {
+          group: "1",
+          carrier: { name: "Turkish Airlines" },
+          origin: {
+            code: "LGW",
+            name: "London Gatwick",
+            date: "2019-04-04",
+            time: "11:50",
+            timeZone: "+01:00",
+            terminal: "S"
+          },
+          destination: {
+            code: "AYT",
+            name: "Antalya",
+            date: "2019-04-04",
+            time: "18:15",
+            timeZone: "+03:00",
+            terminal: "1"
+          },
+          flightTime: 265,
+          journeyTime: 1305,
+          waitTime: 245
+        },
+        {
+          group: "1",
+          carrier: { name: "Turkish Airlines" },
+          origin: {
+            code: "AYT",
+            name: "Antalya",
+            date: "2019-04-04",
+            time: "22:20",
+            timeZone: "+03:00",
+            terminal: "D"
+          },
+          destination: {
+            code: "IST",
+            name: "Istanbul",
+            date: "2019-04-04",
+            time: "23:50",
+            timeZone: "+03:00",
+            terminal: "D"
+          },
+          flightTime: 90,
+          journeyTime: 1305,
+          waitTime: 435
+        },
+        {
+          group: "1",
+          carrier: { name: "Turkish Airlines" },
+          origin: {
+            code: "IST",
+            name: "Istanbul",
+            date: "2019-04-05",
+            time: "07:05",
+            timeZone: "+03:00",
+            terminal: "I"
+          },
+          destination: {
+            code: "MAD",
+            name: "Madrid",
+            date: "2019-04-05",
+            time: "10:35",
+            timeZone: "+02:00",
+            terminal: "1"
+          },
+          flightTime: 270,
+          journeyTime: 1305,
+          waitTime: null
+        },
+        {
+          group: "2",
+          carrier: { name: "Turkish Airlines" },
+          origin: {
+            code: "MAD",
+            name: "Madrid",
+            date: "2019-04-05",
+            time: "14:35",
+            timeZone: "+02:00",
+            terminal: "1"
+          },
+          destination: {
+            code: "IST",
+            name: "Istanbul",
+            date: "2019-04-05",
+            time: "19:45",
+            timeZone: "+03:00",
+            terminal: "I"
+          },
+          flightTime: 250,
+          journeyTime: 1685,
+          waitTime: 1260
+        },
+        {
+          group: "2",
+          carrier: { name: "Turkish Airlines" },
+          origin: {
+            code: "IST",
+            name: "Istanbul",
+            date: "2019-04-06",
+            time: "16:45",
+            timeZone: "+03:00",
+            terminal: "I"
+          },
+          destination: {
+            code: "TXL",
+            name: "Berlin-Tegel",
+            date: "2019-04-06",
+            time: "18:40",
+            timeZone: "+02:00",
+            terminal: null
+          },
+          flightTime: 175,
+          journeyTime: 1685,
+          waitTime: null
+        }
+      ],
+      isLowCost: false,
+      isRefundable: false,
+      searchId: "5ca346876ddc006486ea329e",
+      orderedSegments: {
+        "0": [
+          {
+            group: "0",
+            carrier: { name: "Turkish Airlines" },
+            origin: {
+              code: "SOF",
+              name: "Sofia",
+              date: "2019-04-03",
+              time: "21:40",
+              timeZone: "+03:00",
+              terminal: "2"
+            },
+            destination: {
+              code: "IST",
+              name: "Istanbul",
+              date: "2019-04-03",
+              time: "23:05",
+              timeZone: "+03:00",
+              terminal: "I"
+            },
+            flightTime: 85,
+            journeyTime: 815,
+            waitTime: 485
+          },
+          {
+            group: "0",
+            carrier: { name: "Turkish Airlines" },
+            origin: {
+              code: "IST",
+              name: "Istanbul",
+              date: "2019-04-04",
+              time: "07:10",
+              timeZone: "+03:00",
+              terminal: "I"
+            },
+            destination: {
+              code: "LGW",
+              name: "London Gatwick",
+              date: "2019-04-04",
+              time: "09:15",
+              timeZone: "+01:00",
+              terminal: "S"
+            },
+            flightTime: 245,
+            journeyTime: 815,
+            waitTime: null
+          }
+        ],
+        "1": [
+          {
+            group: "1",
+            carrier: { name: "Turkish Airlines" },
+            origin: {
+              code: "LGW",
+              name: "London Gatwick",
+              date: "2019-04-04",
+              time: "11:50",
+              timeZone: "+01:00",
+              terminal: "S"
+            },
+            destination: {
+              code: "AYT",
+              name: "Antalya",
+              date: "2019-04-04",
+              time: "18:15",
+              timeZone: "+03:00",
+              terminal: "1"
+            },
+            flightTime: 265,
+            journeyTime: 1305,
+            waitTime: 245
+          },
+          {
+            group: "1",
+            carrier: { name: "Turkish Airlines" },
+            origin: {
+              code: "AYT",
+              name: "Antalya",
+              date: "2019-04-04",
+              time: "22:20",
+              timeZone: "+03:00",
+              terminal: "D"
+            },
+            destination: {
+              code: "IST",
+              name: "Istanbul",
+              date: "2019-04-04",
+              time: "23:50",
+              timeZone: "+03:00",
+              terminal: "D"
+            },
+            flightTime: 90,
+            journeyTime: 1305,
+            waitTime: 435
+          },
+          {
+            group: "1",
+            carrier: { name: "Turkish Airlines" },
+            origin: {
+              code: "IST",
+              name: "Istanbul",
+              date: "2019-04-05",
+              time: "07:05",
+              timeZone: "+03:00",
+              terminal: "I"
+            },
+            destination: {
+              code: "MAD",
+              name: "Madrid",
+              date: "2019-04-05",
+              time: "10:35",
+              timeZone: "+02:00",
+              terminal: "1"
+            },
+            flightTime: 270,
+            journeyTime: 1305,
+            waitTime: null
+          }
+        ],
+        "2": [
+          {
+            group: "2",
+            carrier: { name: "Turkish Airlines" },
+            origin: {
+              code: "MAD",
+              name: "Madrid",
+              date: "2019-04-05",
+              time: "14:35",
+              timeZone: "+02:00",
+              terminal: "1"
+            },
+            destination: {
+              code: "IST",
+              name: "Istanbul",
+              date: "2019-04-05",
+              time: "19:45",
+              timeZone: "+03:00",
+              terminal: "I"
+            },
+            flightTime: 250,
+            journeyTime: 1685,
+            waitTime: 1260
+          },
+          {
+            group: "2",
+            carrier: { name: "Turkish Airlines" },
+            origin: {
+              code: "IST",
+              name: "Istanbul",
+              date: "2019-04-06",
+              time: "16:45",
+              timeZone: "+03:00",
+              terminal: "I"
+            },
+            destination: {
+              code: "TXL",
+              name: "Berlin-Tegel",
+              date: "2019-04-06",
+              time: "18:40",
+              timeZone: "+02:00",
+              terminal: null
+            },
+            flightTime: 175,
+            journeyTime: 1685,
+            waitTime: null
+          }
+        ]
+      }
+    },
+    {
+      id: "5ca346886ddc006486ea32a4",
+      price: { currency: "EUR", total: 2222 },
+      segments: [
+        {
+          group: "0",
+          carrier: { name: "Turkish Airlines" },
+          origin: {
+            code: "SOF",
+            name: "Sofia",
+            date: "2019-04-03",
+            time: "16:05",
+            timeZone: "+03:00",
+            terminal: "2"
+          },
+          destination: {
+            code: "IST",
+            name: "Istanbul",
+            date: "2019-04-03",
+            time: "17:20",
+            timeZone: "+03:00",
+            terminal: "I"
+          },
+          flightTime: 75,
+          journeyTime: 1150,
+          waitTime: 830
+        },
+        {
+          group: "0",
+          carrier: { name: "Turkish Airlines" },
+          origin: {
+            code: "IST",
+            name: "Istanbul",
+            date: "2019-04-04",
+            time: "07:10",
+            timeZone: "+03:00",
+            terminal: "I"
+          },
+          destination: {
+            code: "LGW",
+            name: "London Gatwick",
+            date: "2019-04-04",
+            time: "09:15",
+            timeZone: "+01:00",
+            terminal: "S"
+          },
+          flightTime: 245,
+          journeyTime: 1150,
+          waitTime: null
+        },
+        {
+          group: "1",
+          carrier: { name: "Turkish Airlines" },
+          origin: {
+            code: "LGW",
+            name: "London Gatwick",
+            date: "2019-04-04",
+            time: "11:50",
+            timeZone: "+01:00",
+            terminal: "S"
+          },
+          destination: {
+            code: "AYT",
+            name: "Antalya",
+            date: "2019-04-04",
+            time: "18:15",
+            timeZone: "+03:00",
+            terminal: "1"
+          },
+          flightTime: 265,
+          journeyTime: 1305,
+          waitTime: 245
+        },
+        {
+          group: "1",
+          carrier: { name: "Turkish Airlines" },
+          origin: {
+            code: "AYT",
+            name: "Antalya",
+            date: "2019-04-04",
+            time: "22:20",
+            timeZone: "+03:00",
+            terminal: "D"
+          },
+          destination: {
+            code: "IST",
+            name: "Istanbul",
+            date: "2019-04-04",
+            time: "23:50",
+            timeZone: "+03:00",
+            terminal: "D"
+          },
+          flightTime: 90,
+          journeyTime: 1305,
+          waitTime: 435
+        },
+        {
+          group: "1",
+          carrier: { name: "Turkish Airlines" },
+          origin: {
+            code: "IST",
+            name: "Istanbul",
+            date: "2019-04-05",
+            time: "07:05",
+            timeZone: "+03:00",
+            terminal: "I"
+          },
+          destination: {
+            code: "MAD",
+            name: "Madrid",
+            date: "2019-04-05",
+            time: "10:35",
+            timeZone: "+02:00",
+            terminal: "1"
+          },
+          flightTime: 270,
+          journeyTime: 1305,
+          waitTime: null
+        },
+        {
+          group: "2",
+          carrier: { name: "Turkish Airlines" },
+          origin: {
+            code: "MAD",
+            name: "Madrid",
+            date: "2019-04-05",
+            time: "14:35",
+            timeZone: "+02:00",
+            terminal: "1"
+          },
+          destination: {
+            code: "IST",
+            name: "Istanbul",
+            date: "2019-04-05",
+            time: "19:45",
+            timeZone: "+03:00",
+            terminal: "I"
+          },
+          flightTime: 250,
+          journeyTime: 1685,
+          waitTime: 1260
+        },
+        {
+          group: "2",
+          carrier: { name: "Turkish Airlines" },
+          origin: {
+            code: "IST",
+            name: "Istanbul",
+            date: "2019-04-06",
+            time: "16:45",
+            timeZone: "+03:00",
+            terminal: "I"
+          },
+          destination: {
+            code: "TXL",
+            name: "Berlin-Tegel",
+            date: "2019-04-06",
+            time: "18:40",
+            timeZone: "+02:00",
+            terminal: null
+          },
+          flightTime: 175,
+          journeyTime: 1685,
+          waitTime: null
+        }
+      ],
+      isLowCost: false,
+      isRefundable: false,
+      searchId: "5ca346876ddc006486ea329e",
+      orderedSegments: {
+        "0": [
+          {
+            group: "0",
+            carrier: { name: "Turkish Airlines" },
+            origin: {
+              code: "SOF",
+              name: "Sofia",
+              date: "2019-04-03",
+              time: "16:05",
+              timeZone: "+03:00",
+              terminal: "2"
+            },
+            destination: {
+              code: "IST",
+              name: "Istanbul",
+              date: "2019-04-03",
+              time: "17:20",
+              timeZone: "+03:00",
+              terminal: "I"
+            },
+            flightTime: 75,
+            journeyTime: 1150,
+            waitTime: 830
+          },
+          {
+            group: "0",
+            carrier: { name: "Turkish Airlines" },
+            origin: {
+              code: "IST",
+              name: "Istanbul",
+              date: "2019-04-04",
+              time: "07:10",
+              timeZone: "+03:00",
+              terminal: "I"
+            },
+            destination: {
+              code: "LGW",
+              name: "London Gatwick",
+              date: "2019-04-04",
+              time: "09:15",
+              timeZone: "+01:00",
+              terminal: "S"
+            },
+            flightTime: 245,
+            journeyTime: 1150,
+            waitTime: null
+          }
+        ],
+        "1": [
+          {
+            group: "1",
+            carrier: { name: "Turkish Airlines" },
+            origin: {
+              code: "LGW",
+              name: "London Gatwick",
+              date: "2019-04-04",
+              time: "11:50",
+              timeZone: "+01:00",
+              terminal: "S"
+            },
+            destination: {
+              code: "AYT",
+              name: "Antalya",
+              date: "2019-04-04",
+              time: "18:15",
+              timeZone: "+03:00",
+              terminal: "1"
+            },
+            flightTime: 265,
+            journeyTime: 1305,
+            waitTime: 245
+          },
+          {
+            group: "1",
+            carrier: { name: "Turkish Airlines" },
+            origin: {
+              code: "AYT",
+              name: "Antalya",
+              date: "2019-04-04",
+              time: "22:20",
+              timeZone: "+03:00",
+              terminal: "D"
+            },
+            destination: {
+              code: "IST",
+              name: "Istanbul",
+              date: "2019-04-04",
+              time: "23:50",
+              timeZone: "+03:00",
+              terminal: "D"
+            },
+            flightTime: 90,
+            journeyTime: 1305,
+            waitTime: 435
+          },
+          {
+            group: "1",
+            carrier: { name: "Turkish Airlines" },
+            origin: {
+              code: "IST",
+              name: "Istanbul",
+              date: "2019-04-05",
+              time: "07:05",
+              timeZone: "+03:00",
+              terminal: "I"
+            },
+            destination: {
+              code: "MAD",
+              name: "Madrid",
+              date: "2019-04-05",
+              time: "10:35",
+              timeZone: "+02:00",
+              terminal: "1"
+            },
+            flightTime: 270,
+            journeyTime: 1305,
+            waitTime: null
+          }
+        ],
+        "2": [
+          {
+            group: "2",
+            carrier: { name: "Turkish Airlines" },
+            origin: {
+              code: "MAD",
+              name: "Madrid",
+              date: "2019-04-05",
+              time: "14:35",
+              timeZone: "+02:00",
+              terminal: "1"
+            },
+            destination: {
+              code: "IST",
+              name: "Istanbul",
+              date: "2019-04-05",
+              time: "19:45",
+              timeZone: "+03:00",
+              terminal: "I"
+            },
+            flightTime: 250,
+            journeyTime: 1685,
+            waitTime: 1260
+          },
+          {
+            group: "2",
+            carrier: { name: "Turkish Airlines" },
+            origin: {
+              code: "IST",
+              name: "Istanbul",
+              date: "2019-04-06",
+              time: "16:45",
+              timeZone: "+03:00",
+              terminal: "I"
+            },
+            destination: {
+              code: "TXL",
+              name: "Berlin-Tegel",
+              date: "2019-04-06",
+              time: "18:40",
+              timeZone: "+02:00",
+              terminal: null
+            },
+            flightTime: 175,
+            journeyTime: 1685,
+            waitTime: null
+          }
+        ]
+      }
+    }
+  ];
+
+  let prices = {
+    min: 100.5,
+    max: 2222
+  };
+
+  let airlines = [];
+
+  test("airports", () => {
+    let filtersObject = makeFiltersObjectFromResults(results);
+    expect(filtersObject.airports.all).toEqual(allAirports);
+  });
+
+  test("transfers", () => {
+    let filtersObject = makeFiltersObjectFromResults(results);
+    expect(filtersObject.airports.transfers).toEqual(transfers);
+  });
+
+  test("price", () => {
+    let filtersObject = makeFiltersObjectFromResults(results);
+    expect(filtersObject.price).toEqual(prices);
+  });
+
+  test("airlines", () => {
+    let filtersObject = makeFiltersObjectFromResults(results);
+    expect(filtersObject.airlines).toEqual(airlines);
+  });
+});
