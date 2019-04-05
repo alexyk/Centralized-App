@@ -4,20 +4,20 @@ export function filterFlights(filters, flights) {
   if (filters.price) {
     flights = filterByPrice(filters, flights);
   }
-  if (filters.changes) {
-    flights = filterByChanges(filters, flights);
-  }
-  if (filters.airlines) {
-    flights = filterByAirlines(filters, flights);
-  }
-
-  if (filters.airports) {
-    flights = filterByAirports(filters, flights);
-  }
-
-  if (filters.airports.transfers) {
-    flights = filterByTransfers(filters, flights);
-  }
+  // if (filters.changes) {
+  //   flights = filterByChanges(filters, flights);
+  // }
+  // if (filters.airlines) {
+  //   flights = filterByAirlines(filters, flights);
+  // }
+  //
+  // if (filters.airports) {
+  //   flights = filterByAirports(filters, flights);
+  // }
+  //
+  // if (filters.airports.transfers) {
+  //   flights = filterByTransfers(filters, flights);
+  // }
 
   return flights;
 }
