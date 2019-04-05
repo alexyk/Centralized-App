@@ -18658,11 +18658,17 @@ describe("flight filtering functions", () => {
   });
 });
 
-function makeFiltersObjectFromResults(results) {
+function makeFiltersObjectFromResults(results, options = {}) {
   return {
     airports: _gatherAirportsFromResults(results),
     price: _gatherPrices(results),
-    journeyTime: _gatherJourneyTimes(results)
+    journeyTime: _gatherJourneyTimes(results),
+    airlines: options.airlines,
+    changes: [
+      { changesId: "0", changesName: "nonstop" },
+      { changesId: "1", changesName: "onestop" },
+      { changesId: "2", changesName: "twoormorestops" }
+    ]
   };
 }
 
@@ -18711,6 +18717,7 @@ function _gatherAllAirports(results) {
 
   return _.uniqBy(_.prop("airportId"), all);
 }
+
 function _gatherTransferAirports(results) {
   let filtered = results.reduce((acc, flight) => {
     let transfers = _findTransferSegments(flight);
@@ -20842,7 +20849,26 @@ describe("filter options gathering from flight results - makeFilterObjectFromRes
   });
 
   test("airlines", () => {
+    let fixture_airlines = [
+      { airlineId: "0B", airlineName: "Blue Air" },
+      { airlineId: "2L", airlineName: "Helvetic Airways" },
+      { airlineId: "A3", airlineName: "Aegean Air" },
+      { airlineId: "AF", airlineName: "Air France" }
+    ];
+    let filtersObject = makeFiltersObjectFromResults(results, {
+      airlines: fixture_airlines
+    });
+    expect(filtersObject.airlines).toEqual(fixture_airlines);
+  });
+
+  test("changes", () => {
+    let changes = [
+      { changesId: "0", changesName: "nonstop" },
+      { changesId: "1", changesName: "onestop" },
+      { changesId: "2", changesName: "twoormorestops" }
+    ];
+
     let filtersObject = makeFiltersObjectFromResults(results);
-    expect(filtersObject.airlines).toEqual(airlines);
+    expect(filtersObject.changes).toEqual(changes);
   });
 });
