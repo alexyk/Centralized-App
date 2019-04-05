@@ -93,15 +93,6 @@ export default class FiltersPanel extends React.Component {
   }
 
   render() {
-    // return (
-    //   this.state.selectedValues && (
-    //     <PriceSlider
-    //       priceRange={this.state.selectedValues.price}
-    //       onStateChange={this.handlePriceRangeChange}
-    //     />
-    //   )
-    // );
-
     return (
       this.state.selectedValues && (
         <div>

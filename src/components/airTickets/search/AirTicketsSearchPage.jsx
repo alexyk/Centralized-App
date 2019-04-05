@@ -298,7 +298,6 @@ class AirTicketsSearchPage extends Component {
   // }
 
   applyFilters(_filters){
-
     let filters = {
       ..._filters,
       price: {
@@ -308,15 +307,14 @@ class AirTicketsSearchPage extends Component {
     };
     let allResults = Object.values(this.results);
     let filteredFlights = filterFlights(filters, allResults);
-
     this.setState({
-          loading: false,
-          allElements: true,
-          allResults: allResults,
-          currentPageResults: filteredFlights.slice(0, 10),
-          totalElements: filteredFlights.length,
-          page: 0
-        });
+      loading: false,
+      allElements: true,
+      allResults: allResults,
+      currentPageResults: filteredFlights.slice(0, 10),
+      totalElements: filteredFlights.length,
+      page: 0
+    });
   }
 
   updateWindowWidth() {
