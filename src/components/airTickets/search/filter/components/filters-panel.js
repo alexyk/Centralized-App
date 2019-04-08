@@ -6,11 +6,6 @@ import "../../../../../styles/css/components/airTickets/search/filter/air-ticket
  * Individual Filter Components
  */
 import PriceSlider from "./price-slider";
-import InputRange from "react-input-range";
-import {
-  MAX_TICKETS_PRICE,
-  MIN_TICKETS_PRICE
-} from "../../../../../constants/constants";
 
 /**
  * Helpers

@@ -1,18 +1,18 @@
-import { stopIds } from '../../../constants/constants';
+import { stopIds } from "../../../constants/constants";
 
 export function getStopName(stopId) {
   switch (stopId) {
     case stopIds.D:
-      return 'Direct Flight';
+      return "Direct Flight";
       break;
     case stopIds.O:
-      return 'One stop';
+      return "One stop";
       break;
     case stopIds.M:
-      return 'Multi stop';
+      return "Multi stop";
       break;
     default:
-      return 'All';
+      return "All";
       break;
   }
 }
