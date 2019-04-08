@@ -12,6 +12,11 @@ import { MEDIUM ,LONG } from '../../../constants/notificationDisplayTimes';
 import requester from '../../../requester';
 import { ERROR_MESSAGES } from '../../../constants/constants';
 import {orderFlightsAsAnArray} from "../search/order-flights/order-flights";
+import {CurrencyConverter} from "../../../services/utilities/currencyConverter";
+import {getCurrencyExchangeRates, getLocEurRate} from "../../../selectors/exchangeRatesInfo";
+import {getLocAmountById} from "../../../selectors/locAmountsInfo";
+import {getCurrency} from "../../../selectors/paymentInfo";
+import {connect} from "react-redux";
 
 const PASSENGER_TYPES_CODES = {
   adult: 'ADT',
@@ -69,7 +74,9 @@ class AirTicketsBookingRouterPage extends Component {
     this.onChangeServiceInfo = this.onChangeServiceInfo.bind(this);
     this.onChangePassengersInfo = this.onChangePassengersInfo.bind(this);
     this.onChangePassengerServices = this.onChangePassengerServices.bind(this);
+    this.onPriceChange = this.onPriceChange.bind(this);
     this.enableNextSection = this.enableNextSection.bind(this);
+    this.calculateFeesForServices = this.calculateFeesForServices.bind(this);
     this.populatePassengersInfo = this.populatePassengersInfo.bind(this);
     this.initBooking = this.initBooking.bind(this);
     this.getUserInfo = this.getUserInfo.bind(this);
@@ -127,6 +134,7 @@ class AirTicketsBookingRouterPage extends Component {
           res.json().then((data) => {
             let orderedSegments = orderFlightsAsAnArray(data.segments);
             data.segments = orderedSegments;
+
             this.setState({
               result: data
             });
@@ -192,6 +200,7 @@ class AirTicketsBookingRouterPage extends Component {
               if (data.status) {
                 if (callback) {
                   localStorage.setItem('passpayd', true);
+                  this.onPriceChange(data.price)
                   callback('pay');
                 } else {
                   return true;
@@ -227,6 +236,7 @@ class AirTicketsBookingRouterPage extends Component {
         });
     });
   }
+
 
   requestPayWithCC(initBooking) {
     const params = {
@@ -452,6 +462,12 @@ class AirTicketsBookingRouterPage extends Component {
     });
   }
 
+  onPriceChange(price){
+    this.setState({
+      updatedPrice: price
+    })
+  }
+
   enableNextSection(section) {
     this.setState(prevState => ({
       confirmInfo: {
@@ -532,8 +548,34 @@ class AirTicketsBookingRouterPage extends Component {
     return initBooking;
   }
 
+  calculateFeesForServices(optionalServices){
+    let {currencyExchangeRates, currency} = this.props;
+
+    return optionalServices.map(optionalService => {
+      return {
+        ...optionalService,
+        options: optionalService.options.map(option=>{
+          return {
+            ...option,
+            price: CurrencyConverter.convert(currencyExchangeRates, "EUR", currency, option.price).toFixed(2)
+          }
+        })
+      }
+    });
+
+  }
+
   render() {
-    const { result, fareRules, contactInfo, invoiceInfo, servicesInfo, passengersInfo, countries, confirmInfo, isBookingProccess } = this.state;
+    let { result, fareRules, contactInfo, invoiceInfo, servicesInfo, passengersInfo, countries, confirmInfo, isBookingProccess } = this.state;
+
+   if(result){
+     let services = this.calculateFeesForServices(result.optionalServices);
+     result = {
+       ...result,
+       optionalServices: services
+     }
+   }
+
 
     return (
       <Fragment>
@@ -545,6 +587,7 @@ class AirTicketsBookingRouterPage extends Component {
                 result={result}
                 contactInfo={contactInfo}
                 invoiceInfo={invoiceInfo}
+                // servicesInfo={servicesInfo}
                 servicesInfo={servicesInfo}
                 passengersInfo={passengersInfo}
                 confirmInfo={confirmInfo}
@@ -577,4 +620,13 @@ AirTicketsBookingRouterPage.propTypes = {
   getUserInfo: PropTypes.func
 };
 
-export default withRouter(AirTicketsBookingRouterPage);
+function mapStateToProps(state){
+  const { exchangeRatesInfo, paymentInfo } = state;
+
+  return {
+    currencyExchangeRates: getCurrencyExchangeRates(exchangeRatesInfo),
+    currency: getCurrency(paymentInfo)
+  }
+}
+
+export default withRouter(connect(mapStateToProps, null)(AirTicketsBookingRouterPage));
