@@ -1,44 +1,64 @@
-import InputRange from "react-input-range";
-import React from "react";
-import {
-  MAX_TICKETS_PRICE,
-  MIN_TICKETS_PRICE
-} from "../../../../../constants/constants";
+import React, { Fragment, Component } from "react";
+import PropTypes from "prop-types";
+import { getStopName } from "../../../../common/flights/util";
 
-export default class PriceSlider extends React.Component {
+import "../../../../../styles/css/components/airTickets/search/filter/air-tickets-search-filter-panel.css";
+
+class FilterCheckbox extends Component {
   constructor(props) {
     super(props);
-
-    this.state = {
-      max: props.priceRange.max || MAX_TICKETS_PRICE,
-      min: props.priceRange.min || MIN_TICKETS_PRICE
-    };
-
-    this.onStateChange = this.onStateChange.bind(this);
+    this.onChange = this.onChange.bind(this);
   }
 
-  onStateChange(value) {
-    this.setState(value, () => {
-      if (this.props.onStateChange) {
-        let adaptedValue = {
-          min: value.min,
-          max: value.max
-        };
-        this.props.onStateChange(adaptedValue);
+  onChange(name, value) {
+    this.setState(
+      {
+        [name]: value
+      },
+      () => {
+        this.props.applyFilters(this.state);
       }
-    });
+    );
   }
 
   render() {
+    const { stops } = this.props;
+    let items = [];
+
+    Object.values(stops).map((item, i) => {
+      items.push(
+        <Fragment key={i}>
+          <li>
+            <label className="filter-label">
+              <input
+                data-testid={"stop-checkbox"}
+                type="checkbox"
+                className="filter-checkbox"
+                name="stops[]"
+                value={item.changesId}
+                onChange={() => this.onChange("stops", item)}
+              />
+              <span>{getStopName(item.changesId)}</span>
+            </label>
+          </li>
+        </Fragment>
+      );
+    });
+
     return (
-      <InputRange
-        minValue={MIN_TICKETS_PRICE}
-        maxValue={MAX_TICKETS_PRICE}
-        value={this.state}
-        onChange={this.onStateChange}
-        name={"priceRange"}
-        step={50}
-      />
+      <div className="filter-box">
+        <div className="filter stops-filter">
+          <h5>Stops</h5>
+          <ul>{items}</ul>
+        </div>
+      </div>
     );
   }
 }
+
+FilterCheckbox.propTypes = {
+  stops: PropTypes.any,
+  applyFilters: PropTypes.func
+};
+
+export default FilterCheckbox;

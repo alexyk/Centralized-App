@@ -6,6 +6,9 @@ import "../../../../../styles/css/components/airTickets/search/filter/air-ticket
  * Individual Filter Components
  */
 import PriceSlider from "./price-slider";
+import FilterCheckbox from "./stops";
+
+import { getStopName } from "../../../../common/flights/util";
 
 /**
  * Helpers
@@ -37,6 +40,7 @@ export default class FiltersPanel extends React.Component {
       selectedValues: null
     };
 
+    this.handleSelectedStopsChange = this.handleSelectedStopsChange.bind(this);
     this.handlePriceRangeChange = this.handlePriceRangeChange.bind(this);
     this.generateFiltersOptionsObject = this.generateFiltersOptionsObject.bind(
       this
@@ -76,7 +80,7 @@ export default class FiltersPanel extends React.Component {
     this.setState(
       {
         selectedValues: {
-          ...(this.state.selectedValue || {}),
+          ...(this.state.selectedValues || {}),
           price: {
             min: value.min,
             max: value.max
@@ -87,10 +91,51 @@ export default class FiltersPanel extends React.Component {
     );
   }
 
+  handleSelectedStopsChange(selectedChangesId) {
+    this.setState(
+      {
+        selectedValues: {
+          ...(this.state.selectedValues || {}),
+          changes: this.state.filterOptions.changes.map(currentChanges => {
+            if (currentChanges.changesId === selectedChangesId) {
+              return {
+                ...currentChanges,
+                selected: true
+              };
+            }
+            return {
+              ...currentChanges,
+              selected: false
+            };
+          })
+        }
+      },
+      this.onSelectedFiltersChange
+    );
+  }
+
   render() {
     return (
       this.state.selectedValues && (
         <div>
+          {Object.values(this.state.filterOptions.changes).map((item, i) => {
+            return (
+              <li key={i}>
+                <label className="filter-label">
+                  <input
+                    data-testid={"stop-checkbox"}
+                    type="checkbox"
+                    className="filter-checkbox"
+                    name="stops[]"
+                    value={item.changesId}
+                    onChange={this.handleSelectedStopsChange}
+                  />
+                  <span>{getStopName(item.changesId)}</span>
+                </label>
+              </li>
+            );
+          })}
+
           <div className="price-range-filters">
             <h5>Price</h5>
             <div className="number-range-slider">

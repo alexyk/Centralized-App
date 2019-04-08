@@ -4,7 +4,7 @@ import { getStopName } from '../../../common/flights/util';
 
 import '../../../../styles/css/components/airTickets/search/filter/air-tickets-search-filter-panel.css';
 
-class FilterCheckbox extends Component {
+class FilterCheckbox extends Component {//asdasd
   constructor(props) {
     super(props);
     this.onChange = this.onChange.bind(this);
