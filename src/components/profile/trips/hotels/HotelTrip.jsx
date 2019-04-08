@@ -174,7 +174,9 @@ class HotelTrip extends React.Component {
               <i className="fa fa-bolt icon" />
             )}
             <div className="content-row">
+              {this.props.trip.status !== "CANCELLED" && (
                 <button type="submit" onClick={e => { e.preventDefault(); this.props.onTripSelect(id); this.props.handleCancelReservation(id); }}>Cancel Trip</button>
+              )}
               {this.props.trip.has_details === 1 && (
                 <Link to={`/profile/trips/hotels/${this.props.trip.id}`}>
                   Details
