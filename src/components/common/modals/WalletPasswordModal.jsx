@@ -17,7 +17,7 @@ function WalletPasswordModal(props) {
           <form onSubmit={(e) => { e.preventDefault(); props.handleSubmit(); }}>
             <div className="input-container">
               <img src={Config.getValue('basePath') + 'images/login-pass.png'} className="password-image" alt="pass" />
-              <input type="password" placeholder={props.placeholder} name="password" value={props.password} className="with-icon" onChange={props.onChange} />
+              <input type="password" placeholder={props.placeholder} name="password" value={props.password} className="with-icon" onChange={props.onChange} required/>
             </div>
             <button type="submit" className="button">Confirm</button>
           </form>
