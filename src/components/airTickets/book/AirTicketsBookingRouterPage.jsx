@@ -587,6 +587,7 @@ class AirTicketsBookingRouterPage extends Component {
                 result={result}
                 contactInfo={contactInfo}
                 invoiceInfo={invoiceInfo}
+                currency={this.props.currency}
                 // servicesInfo={servicesInfo}
                 servicesInfo={servicesInfo}
                 passengersInfo={passengersInfo}
