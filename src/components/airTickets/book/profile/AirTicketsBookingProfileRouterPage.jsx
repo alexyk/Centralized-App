@@ -62,7 +62,7 @@ function AirTicketsBookingProfileRouterPage(props) {
                             services={flightServices}
                             onChange={props.onChangeServiceInfo}
                             enableNextSection={props.enableNextSection}
-                            currency={result.price.currency}
+                            currency={props.currency}
                           />
                         );
                       }}
