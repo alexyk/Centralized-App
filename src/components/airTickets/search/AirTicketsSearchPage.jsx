@@ -303,7 +303,10 @@ class AirTicketsSearchPage extends Component {
       price: {
         minPrice: _filters.price.min,
         maxPrice: _filters.price.max,
-      }
+      },
+      changes: Object.values(_filters.changes || {}).filter(change=>{
+        return change.selected;
+      })
     };
     let allResults = Object.values(this.results);
     let filteredFlights = filterFlights(filters, allResults);

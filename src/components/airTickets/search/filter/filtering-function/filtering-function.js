@@ -4,9 +4,9 @@ export function filterFlights(filters, flights) {
   if (filters.price) {
     flights = filterByPrice(filters, flights);
   }
-  // if (filters.changes) {
-  //   flights = filterByChanges(filters, flights);
-  // }
+  if (filters.changes && filters.changes.length) {
+    flights = filterByChanges(filters, flights);
+  }
   // if (filters.airlines) {
   //   flights = filterByAirlines(filters, flights);
   // }

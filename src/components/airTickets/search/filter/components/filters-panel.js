@@ -91,7 +91,9 @@ export default class FiltersPanel extends React.Component {
     );
   }
 
-  handleSelectedStopsChange(selectedChangesId) {
+  handleSelectedStopsChange(e) {
+    let selectedChangesId = e.target.value;
+    let checked = e.target.checked;
     this.setState(
       {
         selectedValues: {
@@ -100,7 +102,7 @@ export default class FiltersPanel extends React.Component {
             if (currentChanges.changesId === selectedChangesId) {
               return {
                 ...currentChanges,
-                selected: true
+                selected: checked ? true : false
               };
             }
             return {
@@ -118,23 +120,32 @@ export default class FiltersPanel extends React.Component {
     return (
       this.state.selectedValues && (
         <div>
-          {Object.values(this.state.filterOptions.changes).map((item, i) => {
-            return (
-              <li key={i}>
-                <label className="filter-label">
-                  <input
-                    data-testid={"stop-checkbox"}
-                    type="checkbox"
-                    className="filter-checkbox"
-                    name="stops[]"
-                    value={item.changesId}
-                    onChange={this.handleSelectedStopsChange}
-                  />
-                  <span>{getStopName(item.changesId)}</span>
-                </label>
-              </li>
-            );
-          })}
+          <div className="filter-box">
+            <div className="filter stops-filter">
+              <h5>Stops</h5>
+              <ul>
+                {Object.values(this.state.filterOptions.changes).map(
+                  (item, i) => {
+                    return (
+                      <li key={i}>
+                        <label className="filter-label">
+                          <input
+                            data-testid={"stop-checkbox"}
+                            type="checkbox"
+                            className="filter-checkbox"
+                            name="stops[]"
+                            value={item.changesId}
+                            onChange={this.handleSelectedStopsChange}
+                          />
+                          <span>{getStopName(item.changesId)}</span>
+                        </label>
+                      </li>
+                    );
+                  }
+                )}
+              </ul>
+            </div>
+          </div>
 
           <div className="price-range-filters">
             <h5>Price</h5>
