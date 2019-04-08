@@ -11,7 +11,6 @@ import '../../../../styles/css/components/airTickets/book/profile/air-tickets-bo
 class AirTicketsBookingProfileEditForm extends Component {
   constructor(props) {
     super(props);
-
     this.onChange = this.onChange.bind(this);
     this.handleCitySelect = this.handleCitySelect.bind(this);
     this.handleNextStep = this.handleNextStep.bind(this);

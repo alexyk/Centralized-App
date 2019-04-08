@@ -69,6 +69,7 @@ class AirTicketsBookingRouterPage extends Component {
     this.onChangeServiceInfo = this.onChangeServiceInfo.bind(this);
     this.onChangePassengersInfo = this.onChangePassengersInfo.bind(this);
     this.onChangePassengerServices = this.onChangePassengerServices.bind(this);
+    this.onPriceChange = this.onPriceChange.bind(this);
     this.enableNextSection = this.enableNextSection.bind(this);
     this.populatePassengersInfo = this.populatePassengersInfo.bind(this);
     this.initBooking = this.initBooking.bind(this);
@@ -127,6 +128,7 @@ class AirTicketsBookingRouterPage extends Component {
           res.json().then((data) => {
             let orderedSegments = orderFlightsAsAnArray(data.segments);
             data.segments = orderedSegments;
+            debugger;
             this.setState({
               result: data
             });
@@ -176,6 +178,7 @@ class AirTicketsBookingRouterPage extends Component {
   }
 
   requestPrepareFlightReservation(initBooking, callback) {
+  // here
     return new Promise((resolve, reject) => {
       fetch(`${Config.getValue('apiHost')}flight/prepareFlightReservation`, {
         method: 'POST',
@@ -192,6 +195,7 @@ class AirTicketsBookingRouterPage extends Component {
               if (data.status) {
                 if (callback) {
                   localStorage.setItem('passpayd', true);
+                  this.onPriceChange(data.price)
                   callback('pay');
                 } else {
                   return true;
@@ -227,6 +231,7 @@ class AirTicketsBookingRouterPage extends Component {
         });
     });
   }
+
 
   requestPayWithCC(initBooking) {
     const params = {
@@ -450,6 +455,12 @@ class AirTicketsBookingRouterPage extends Component {
     this.setState({
       passengersInfo: updatedPassengersInfo
     });
+  }
+
+  onPriceChange(price){
+    this.setState({
+      updatedPrice: price
+    })
   }
 
   enableNextSection(section) {
