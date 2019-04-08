@@ -19,10 +19,9 @@ function CancelTripModal(props) {
     <React.Fragment>
       <Modal show={props.isActive} onHide={e => props.onClose(CANCEL_TRIP_MODAL, e)} className="modal fade myModal">
         <Modal.Header>
-          <h1>Cancelling your booking?</h1>
+          <h1>Cancel your booking?</h1>
           <button type="button" className="close" onClick={(e) => props.onClose(CANCEL_TRIP_MODAL, e)}>&times;</button>
-          <p>To check if refund is available as per the Cancellation Policy, please contact Custommer Support before
-            proceeding with your cancellation.</p>
+            <p>Before proceeding with your cancellation, please contact Customer Support to check if a refund is available.</p>
         </Modal.Header>
         <Modal.Body>
           <form onSubmit={(e) => {
