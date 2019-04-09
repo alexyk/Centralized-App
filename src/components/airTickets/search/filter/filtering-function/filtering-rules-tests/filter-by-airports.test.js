@@ -796,7 +796,7 @@ describe("filterByAirports", () => {
       }
     ];
 
-    test("with LHR, SOF", () => {
+    test("with LHR", () => {
       let filters = {
         airports: {
           all: [
@@ -806,13 +806,6 @@ describe("filterByAirports", () => {
               city: "London",
               selected: true
             },
-            {
-              airportId: "SOF",
-              airportName: "Sofia",
-              city: "Sofia",
-              selected: true
-            },
-
             {
               airportId: "LCY",
               airportName: "London City Arpt",
@@ -873,7 +866,7 @@ describe("filterByAirports", () => {
       let expectedResultIds = [flights[0].id, flights[1].id];
       expect(resultIds).toEqual(expectedResultIds);
     });
-    test("with LTN, LHR, SOF", () => {
+    test("with LTN, LHR", () => {
       let filters = {
         airports: {
           all: [
@@ -886,8 +879,8 @@ describe("filterByAirports", () => {
             {
               airportId: "SOF",
               airportName: "Sofia",
-              city: "Sofia",
-              selected: true
+              city: "Sofia"
+              // selected: true
             },
 
             {
@@ -919,7 +912,7 @@ describe("filterByAirports", () => {
       let expectedResultIds = [flights[1].id, flights[2].id];
       expect(resultIds).toEqual(expectedResultIds);
     });
-    test("with LHR, LGW, LTN, SOF", () => {
+    test("with LHR, LGW, LTN", () => {
       let filters = {
         airports: {
           all: [
@@ -932,8 +925,7 @@ describe("filterByAirports", () => {
             {
               airportId: "SOF",
               airportName: "Sofia",
-              city: "Sofia",
-              selected: true
+              city: "Sofia"
             },
 
             {
@@ -966,5 +958,343 @@ describe("filterByAirports", () => {
       let expectedResultIds = [flights[0].id, flights[1].id, flights[2].id];
       expect(resultIds).toEqual(expectedResultIds);
     });
+  });
+});
+
+describe("threw with", () => {
+  let flights = [
+    {
+      id: "5cac8e97d752b957e7490720",
+      price: { currency: "EUR", total: 408 },
+      segments: [
+        {
+          group: "0",
+          carrier: { name: "British Airways" },
+          origin: {
+            code: "SOF",
+            name: "Sofia",
+            date: "2019-05-12",
+            time: "14:20",
+            timeZone: "+03:00",
+            terminal: "2"
+          },
+          destination: {
+            code: "LHR",
+            name: "London Heathrow",
+            date: "2019-05-12",
+            time: "15:50",
+            timeZone: "+01:00",
+            terminal: "5"
+          },
+          flightTime: 210,
+          journeyTime: 210,
+          waitTime: null
+        },
+        {
+          group: "1",
+          carrier: { name: "Iberia" },
+          origin: {
+            code: "LGW",
+            name: "London Gatwick",
+            date: "2019-05-14",
+            time: "10:50",
+            timeZone: "+01:00",
+            terminal: "S"
+          },
+          destination: {
+            code: "MAD",
+            name: "Madrid",
+            date: "2019-05-14",
+            time: "14:20",
+            timeZone: "+02:00",
+            terminal: "4"
+          },
+          flightTime: 150,
+          journeyTime: 150,
+          waitTime: null
+        },
+        {
+          group: "2",
+          carrier: { name: "British Airways" },
+          origin: {
+            code: "MAD",
+            name: "Madrid",
+            date: "2019-05-16",
+            time: "07:00",
+            timeZone: "+02:00",
+            terminal: "4"
+          },
+          destination: {
+            code: "LHR",
+            name: "London Heathrow",
+            date: "2019-05-16",
+            time: "08:25",
+            timeZone: "+01:00",
+            terminal: "5"
+          },
+          flightTime: 145,
+          journeyTime: 685,
+          waitTime: 425
+        },
+        {
+          group: "2",
+          carrier: { name: "British Airways" },
+          origin: {
+            code: "LHR",
+            name: "London Heathrow",
+            date: "2019-05-16",
+            time: "15:30",
+            timeZone: "+01:00",
+            terminal: "5"
+          },
+          destination: {
+            code: "TXL",
+            name: "Berlin-Tegel",
+            date: "2019-05-16",
+            time: "18:25",
+            timeZone: "+02:00",
+            terminal: null
+          },
+          flightTime: 115,
+          journeyTime: 685,
+          waitTime: null
+        }
+      ],
+      isLowCost: false,
+      isRefundable: false,
+      searchId: "5cac8e97d752b957e7490715"
+    },
+
+    {
+      id: "5cac90e2d752b957e7490ba6",
+      price: { currency: "EUR", total: 408 },
+      segments: [
+        {
+          group: "0",
+          carrier: { name: "British Airways" },
+          origin: {
+            code: "SOF",
+            name: "Sofia",
+            date: "2019-05-12",
+            time: "14:20",
+            timeZone: "+03:00",
+            terminal: "2"
+          },
+          destination: {
+            code: "LHR",
+            name: "London Heathrow",
+            date: "2019-05-12",
+            time: "15:50",
+            timeZone: "+01:00",
+            terminal: "5"
+          },
+          flightTime: 210,
+          journeyTime: 210,
+          waitTime: null
+        },
+        {
+          group: "1",
+          carrier: { name: "Iberia" },
+          origin: {
+            code: "LGW",
+            name: "London Gatwick",
+            date: "2019-05-14",
+            time: "10:50",
+            timeZone: "+01:00",
+            terminal: "S"
+          },
+          destination: {
+            code: "MAD",
+            name: "Madrid",
+            date: "2019-05-14",
+            time: "14:20",
+            timeZone: "+02:00",
+            terminal: "4"
+          },
+          flightTime: 150,
+          journeyTime: 150,
+          waitTime: null
+        },
+        {
+          group: "2",
+          carrier: { name: "British Airways" },
+          origin: {
+            code: "MAD",
+            name: "Madrid",
+            date: "2019-05-16",
+            time: "15:50",
+            timeZone: "+02:00",
+            terminal: "4S"
+          },
+          destination: {
+            code: "LHR",
+            name: "London Heathrow",
+            date: "2019-05-16",
+            time: "17:15",
+            timeZone: "+01:00",
+            terminal: "5"
+          },
+          flightTime: 145,
+          journeyTime: 1095,
+          waitTime: 840
+        },
+        {
+          group: "2",
+          carrier: { name: "British Airways" },
+          origin: {
+            code: "LHR",
+            name: "London Heathrow",
+            date: "2019-05-17",
+            time: "07:15",
+            timeZone: "+01:00",
+            terminal: "5"
+          },
+          destination: {
+            code: "TXL",
+            name: "Berlin-Tegel",
+            date: "2019-05-17",
+            time: "10:05",
+            timeZone: "+02:00",
+            terminal: null
+          },
+          flightTime: 110,
+          journeyTime: 1095,
+          waitTime: null
+        }
+      ],
+      isLowCost: false,
+      isRefundable: false,
+      searchId: "5cac90ddd752b957e7490b85"
+    }
+  ];
+
+  test("1", () => {
+    let filters = {
+      airports: {
+        all: [
+          {
+            airportId: "LHR",
+            airportName: "London Heathrow",
+            city: "London",
+            selected: true
+          },
+          {
+            airportId: "LCY",
+            airportName: "London City Arpt",
+            city: "London"
+          },
+          {
+            airportId: "LGW",
+            airportName: "London Gatwick",
+            city: "London"
+          },
+          {
+            airportId: "STN",
+            airportName: "London Stansted",
+            city: "London"
+          },
+          { airportId: "LTN", airportName: "Luton", city: "London" }
+        ]
+      }
+    };
+    let result = filterByAirports(filters, flights);
+    let resultIds = result.map(_.prop("id"));
+    let expectedResultIds = [];
+    expect(resultIds).toEqual(expectedResultIds);
+  });
+
+  test("2", () => {
+    let filters = {
+      airports: {
+        all: [
+          {
+            airportId: "LHR",
+            airportName: "London Heathrow",
+            city: "London",
+            selected: true
+          },
+          {
+            airportId: "LCY",
+            airportName: "London City Arpt",
+            city: "London"
+          },
+          {
+            airportId: "LGW",
+            airportName: "London Gatwick",
+            city: "London",
+            selected: true
+          },
+          {
+            airportId: "STN",
+            airportName: "London Stansted",
+            city: "London"
+          },
+          { airportId: "LTN", airportName: "Luton", city: "London" }
+        ]
+      }
+    };
+    let result = filterByAirports(filters, flights);
+    let resultIds = result.map(_.prop("id"));
+    let expectedResultIds = [
+      "5cac8e97d752b957e7490720",
+      "5cac90e2d752b957e7490ba6"
+    ];
+    expect(resultIds).toEqual(expectedResultIds);
+  });
+
+  test("3", () => {
+    let filters = {
+      airports: {
+        all: [
+          {
+            airportId: "LHR",
+            airportName: "London Heathrow",
+            city: "London",
+            selected: true
+          },
+          { airportId: "LGW", airportName: "London Gatwick", city: "London" }
+        ],
+        transfers: [
+          { airportName: "Amsterdam", airportId: "AMS" },
+          { airportName: "London Heathrow", airportId: "LHR" }
+        ]
+      }
+    };
+    let result = filterByAirports(filters, flights);
+    let resultIds = result.map(_.prop("id"));
+    let expectedResultIds = [];
+    expect(resultIds).toEqual(expectedResultIds);
+  });
+
+  test("4", () => {
+    let filters = {
+      airports: {
+        all: [
+          {
+            airportId: "LHR",
+            airportName: "London Heathrow",
+            city: "London",
+            selected: true
+          },
+          {
+            airportId: "LGW",
+            airportName: "London Gatwick",
+            city: "London",
+            selected: true
+          }
+        ],
+        transfers: [
+          { airportName: "Amsterdam", airportId: "AMS" },
+          { airportName: "London Heathrow", airportId: "LHR" }
+        ]
+      }
+    };
+    let result = filterByAirports(filters, flights);
+    let resultIds = result.map(_.prop("id"));
+    let expectedResultIds = [
+      "5cac8e97d752b957e7490720",
+      "5cac90e2d752b957e7490ba6"
+    ];
+    expect(resultIds).toEqual(expectedResultIds);
   });
 });

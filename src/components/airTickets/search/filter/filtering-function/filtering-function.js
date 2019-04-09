@@ -1,19 +1,22 @@
 import * as _ from "ramda";
 
 export function filterFlights(filters, flights) {
-  if (filters.price) {
-    flights = filterByPrice(filters, flights);
-  }
-  if (filters.changes && filters.changes.length) {
-    flights = filterByChanges(filters, flights);
-  }
-  // if (filters.airlines) {
+  // if (filters.price) {
+  //   flights = filterByPrice(filters, flights);
+  // }
+  // if (filters.changes && filters.changes.length) {
+  //   flights = filterByChanges(filters, flights);
+  // }
+  // if (filters.airlines && filters.airlines.length) {
   //   flights = filterByAirlines(filters, flights);
   // }
-  //
-  // if (filters.airports) {
-  //   flights = filterByAirports(filters, flights);
+  // if (filters.journeyTime) {
+  //   flights = filterByJourneyTime(filters, flights);
   // }
+
+  if (filters.airports) {
+    flights = filterByAirports(filters, flights);
+  }
   //
   // if (filters.airports.transfers) {
   //   flights = filterByTransfers(filters, flights);
@@ -28,6 +31,7 @@ export function filterFlights(filters, flights) {
 export function filterByAirports(filters, flights) {
   let allAirports = filters.airports.all;
   let groupedByCity = _.groupBy(_.prop("city"), allAirports);
+  groupedByCity = _.filter(value => value.length > 1, groupedByCity);
 
   return flights.filter(flight => {
     return _passesForAllCities(flight, groupedByCity);

@@ -297,17 +297,7 @@ class AirTicketsSearchPage extends Component {
   //   });
   // }
 
-  applyFilters(_filters){
-    let filters = {
-      ..._filters,
-      price: {
-        minPrice: _filters.price.min,
-        maxPrice: _filters.price.max,
-      },
-      changes: Object.values(_filters.changes || {}).filter(change=>{
-        return change.selected;
-      })
-    };
+  applyFilters(filters){
     let allResults = Object.values(this.results);
     let filteredFlights = filterFlights(filters, allResults);
     this.setState({
@@ -833,6 +823,7 @@ class AirTicketsSearchPage extends Component {
                 {
                   filters && (
                     <FiltersPanel
+                      searchId={this.searchId}
                       onSelectedFiltersChange={this.applyFilters}
                       windowWidth={windowWidth}
                       showFiltersMobile={showFiltersMobile}
