@@ -1,21 +1,22 @@
 import React from "react";
 import * as _ from "ramda";
-import { makeFiltersObjectFromResults } from "../filtering-function/filter-options-generating";
 import "../../../../../styles/css/components/airTickets/search/filter/air-tickets-search-filter-panel.css";
 
 /**
  * Individual Filter Components
  */
-import PriceSlider from "./price-slider";
-
-import { getStopName } from "../../../../common/flights/util";
-import Select from "react-select";
+import StopsFilter from "./filter-field_stops";
+import AirlinesFilter from "./filter-field_airlines";
+import JourneyTimeFilter from "./filter-field_journey-time";
+import PriceFilter from "./filter-field_price";
+import AirportsFilter from "./filter-field_airports";
+import TransfersFilter from "./filter-field_transfers";
 
 /**
  * Helpers
  */
+import { makeFiltersObjectFromResults } from "../filtering-function/filter-options-generating";
 import { Config } from "../../../../../config";
-import InputRange from "react-input-range";
 
 const makeFiltersFromResultsAndTheServer = (results, _options) => {
   let options = {
@@ -256,45 +257,6 @@ export default class FiltersPanel extends React.Component {
    *
    */
 
-  renderAirportOptions() {
-    let allAirports = Object.values(this.state.filterOptions.airports.all);
-    let airportsByCity = _.groupBy(_.prop("city"), allAirports);
-
-    let cityNames = _.keys(airportsByCity);
-
-    return cityNames.map((cityName, i) => {
-      let currentCityAirports = airportsByCity[cityName];
-      if (currentCityAirports.length <= 1) {
-        return null;
-      }
-
-      let currentCityAirportsElements = currentCityAirports.map(airport => {
-        return (
-          <li key={airport.airportId}>
-            <label className="filter-label">
-              <input
-                data-testid={"stop-checkbox"}
-                type="checkbox"
-                className="filter-checkbox"
-                name="stops[]"
-                value={airport.airportId}
-                onChange={this.handleSelectedAirportsChange}
-              />
-              <span>{airport.airportName}</span>
-            </label>
-          </li>
-        );
-      });
-
-      return (
-        <ul key={cityName}>
-          <h6>{cityName}</h6>
-          {currentCityAirportsElements}
-        </ul>
-      );
-    });
-  }
-
   handleTransfersChange(value) {
     this.setState(
       {
@@ -314,105 +276,40 @@ export default class FiltersPanel extends React.Component {
     return (
       this.state.selectedValues && (
         <div>
-          <div className="filter-box">
-            <div className="filter stops-filter">
-              <h5>Stops</h5>
-              <ul>
-                {Object.values(this.state.filterOptions.changes).map(
-                  (item, i) => {
-                    return (
-                      <li key={i}>
-                        <label className="filter-label">
-                          <input
-                            data-testid={"stop-checkbox"}
-                            type="checkbox"
-                            className="filter-checkbox"
-                            name="stops[]"
-                            value={item.changesId}
-                            onChange={this.handleSelectedStopsChange}
-                          />
-                          <span>{getStopName(item.changesId)}</span>
-                        </label>
-                      </li>
-                    );
-                  }
-                )}
-              </ul>
-            </div>
-          </div>
+          <StopsFilter
+            handleSelectedStopsChange={this.handleSelectedStopsChange}
+            filterOptions={this.state.filterOptions}
+          />
 
-          {this.state.selectedValues && (
-            <div className="filter airlines-filter">
-              <h5>Airlines</h5>
-              <Select
-                name="airlines[]"
-                placeholder=""
-                value={this.state.selectedValues.airlines}
-                getOptionValue={option => option.airlineId}
-                getOptionLabel={option => option.airlineName}
-                options={this.state.filterOptions.airlines}
-                onChange={this.handleAirlinesChange}
-                isMulti
-              />
-            </div>
-          )}
+          <AirlinesFilter
+            selectedValues={this.state.selectedValues}
+            filterOptions={this.state.filterOptions}
+            handleAirlinesChange={this.handleAirlinesChange}
+          />
 
-          <div className="price-range-filters">
-            <h5>Journey Time</h5>
-            <div className="number-range-slider">
-              <InputRange
-                minValue={0}
-                maxValue={this.state.filterOptions.journeyTime.max}
-                value={this.state.selectedValues.journeyTime.max}
-                onChange={this.handleJourneyTimeChange}
-                name={"priceRange"}
-                step={50}
-              />
-              <span className="waiting-start-time" />
-              <span className="waiting-end-time">
-                {this.state.selectedValues.journeyTime.max}
-              </span>
-            </div>
-          </div>
+          <JourneyTimeFilter
+            selectedValues={this.state.selectedValues}
+            filterOptions={this.state.filterOptions}
+            handleJourneyTimeChange={this.handleJourneyTimeChange}
+          />
 
-          <div className="price-range-filters">
-            <h5>Price</h5>
-            <div className="number-range-slider">
-              <PriceSlider
-                priceRange={this.state.selectedValues.price}
-                onStateChange={this.handlePriceRangeChange}
-              />
-              <span className="waiting-start-time">
-                {this.state.selectedValues.price.min}
-              </span>
-              <span className="waiting-end-time">
-                {this.state.selectedValues.price.max}
-              </span>
-            </div>
-          </div>
+          <PriceFilter
+            selectedValues={this.state.selectedValues}
+            filterOptions={this.state.filterOptions}
+            handlePriceRangeChange={this.handlePriceRangeChange}
+          />
 
-          <div className="filter-box">
-            <div className="filter stops-filter">
-              <h5>Airports</h5>
-              {this.renderAirportOptions()}
-            </div>
-          </div>
+          <AirportsFilter
+            selectedValues={this.state.selectedValues}
+            filterOptions={this.state.filterOptions}
+            handleSelectedAirportsChange={this.handleSelectedAirportsChange}
+          />
 
-          {this.state.selectedValues && (
-            <div className="filter airlines-filter">
-              <h5>Transfers</h5>
-              <Select
-                name="airlines[]"
-                placeholder=""
-                value={this.state.selectedValues.airports.transfers}
-                getOptionValue={option => option.airportId}
-                getOptionLabel={option => option.airportName}
-                options={this.state.filterOptions.airports.transfers}
-                onChange={this.handleTransfersChange}
-                isMulti
-              />
-            </div>
-          )}
+          <TransfersFilter
+            selectedValues={this.state.selectedValues}
+            filterOptions={this.state.filterOptions}
+            handleTransfersChange={this.handleTransfersChange}
+          />
         </div>
       )
     );
