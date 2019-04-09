@@ -15,7 +15,7 @@ import TransfersFilter from "./filter-field_transfers";
 /**
  * Helpers
  */
-import { makeFiltersObjectFromResults } from "../filtering-function/filter-options-generating";
+import { makeFiltersObjectFromResults } from "../filtering-function/filter-options-generating-function/filter-options-generating";
 import { Config } from "../../../../../config";
 
 const makeFiltersFromResultsAndTheServer = (results, _options) => {
