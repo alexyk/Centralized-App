@@ -1,26 +1,26 @@
 import * as _ from "ramda";
 
 export function filterFlights(filters, flights) {
-  // if (filters.price) {
-  //   flights = filterByPrice(filters, flights);
-  // }
-  // if (filters.changes && filters.changes.length) {
-  //   flights = filterByChanges(filters, flights);
-  // }
-  // if (filters.airlines && filters.airlines.length) {
-  //   flights = filterByAirlines(filters, flights);
-  // }
-  // if (filters.journeyTime) {
-  //   flights = filterByJourneyTime(filters, flights);
-  // }
+  if (filters.price) {
+    flights = filterByPrice(filters, flights);
+  }
+  if (filters.changes && filters.changes.length) {
+    flights = filterByChanges(filters, flights);
+  }
+  if (filters.airlines && filters.airlines.length) {
+    flights = filterByAirlines(filters, flights);
+  }
+  if (filters.journeyTime) {
+    flights = filterByJourneyTime(filters, flights);
+  }
 
   if (filters.airports) {
     flights = filterByAirports(filters, flights);
   }
-  //
-  // if (filters.airports.transfers) {
-  //   flights = filterByTransfers(filters, flights);
-  // }
+
+  if (filters.airports.transfers) {
+    flights = filterByTransfers(filters, flights);
+  }
 
   return flights;
 }
@@ -166,7 +166,9 @@ export function filterByTransfers(filters, flights) {
     let matches = flightTransfers.filter(st => {
       return selectedTransfers.indexOf(st) !== -1;
     });
-    return matches.length === flightTransfers.length;
+    let allOfTheTransfersAreInSelected =
+      matches.length === flightTransfers.length;
+    return allOfTheTransfersAreInSelected;
   });
 }
 

@@ -67,6 +67,7 @@ export default class FiltersPanel extends React.Component {
     this.handlePriceRangeChange = this.handlePriceRangeChange.bind(this);
     this.handleAirlinesChange = this.handleAirlinesChange.bind(this);
     this.handleJourneyTimeChange = this.handleJourneyTimeChange.bind(this);
+    this.handleTransfersChange = this.handleTransfersChange.bind(this);
     this.generateFiltersOptionsObject = this.generateFiltersOptionsObject.bind(
       this
     );
@@ -294,6 +295,21 @@ export default class FiltersPanel extends React.Component {
     });
   }
 
+  handleTransfersChange(value) {
+    this.setState(
+      {
+        selectedValues: {
+          ...this.state.selectedValues,
+          airports: {
+            ...this.state.selectedValues.airports,
+            transfers: value
+          }
+        }
+      },
+      this.onSelectedFiltersChange
+    );
+  }
+
   render() {
     return (
       this.state.selectedValues && (
@@ -381,6 +397,22 @@ export default class FiltersPanel extends React.Component {
               {this.renderAirportOptions()}
             </div>
           </div>
+
+          {this.state.selectedValues && (
+            <div className="filter airlines-filter">
+              <h5>Transfers</h5>
+              <Select
+                name="airlines[]"
+                placeholder=""
+                value={this.state.selectedValues.airports.transfers}
+                getOptionValue={option => option.airportId}
+                getOptionLabel={option => option.airportName}
+                options={this.state.filterOptions.airports.transfers}
+                onChange={this.handleTransfersChange}
+                isMulti
+              />
+            </div>
+          )}
         </div>
       )
     );
