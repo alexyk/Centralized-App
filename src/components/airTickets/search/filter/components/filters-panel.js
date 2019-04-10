@@ -189,6 +189,9 @@ export default class FiltersPanel extends React.Component {
     });
   }
 
+  /**
+   * Airports Changes
+   */
   handleSelectedAirportsChange(e) {
     let selectedAirportId = e.target.value;
     let checked = e.target.checked;
@@ -216,9 +219,8 @@ export default class FiltersPanel extends React.Component {
   }
 
   /**
-   *
+   * Transfer Changes
    */
-
   handleTransfersChange(value) {
     this.setState({
       selectedValues: {

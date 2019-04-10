@@ -18,10 +18,21 @@ export default class AirlinesFilter extends React.Component {
           />
           <span className="waiting-start-time" />
           <span className="waiting-end-time">
-            {this.props.selectedValues.journeyTime.max}
+            {this._convertTimeFromMinutesToHHmm(
+              this.props.selectedValues.journeyTime.max
+            )}
           </span>
         </div>
       </div>
     );
+  }
+
+  _convertTimeFromMinutesToHHmm(timeInMinutes) {
+    var h = (timeInMinutes / 60) | 0,
+      m = timeInMinutes % 60 | 0;
+    if (!h) {
+      return `${timeInMinutes}min`;
+    }
+    return `${h}h ${m}min`;
   }
 }
