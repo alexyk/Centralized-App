@@ -14,7 +14,7 @@ export default class AirportsFilter extends React.Component {
   }
 
   render() {
-    if (!this.props.filterOptions.airports) return null;
+    if (!this.props.selectedValues.airports) return null;
     return (
       <div className="filter-box">
         <div className="filter stops-filter">
@@ -25,7 +25,7 @@ export default class AirportsFilter extends React.Component {
     );
   }
   _renderAirportOptions() {
-    let allAirports = Object.values(this.props.filterOptions.airports.all);
+    let allAirports = Object.values(this.props.selectedValues.airports.all);
     let airportsByCity = _.groupBy(_.prop("city"), allAirports);
     let cityNames = _.keys(airportsByCity);
     return cityNames.map((cityName, i) => {
@@ -60,6 +60,7 @@ export default class AirportsFilter extends React.Component {
             name="stops[]"
             value={airport.airportId}
             onChange={this.onSelectedAirportsChange}
+            checked={airport.selected}
           />
           <span>{airport.airportName}</span>
         </label>

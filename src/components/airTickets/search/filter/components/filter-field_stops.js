@@ -3,13 +3,15 @@ import { getStopName } from "../../../../common/flights/util";
 
 export default class StopsFilter extends React.Component {
   render() {
-    if (!this.props.filterOptions.changes) return null;
+    if (!this.props.selectedValues || !this.props.selectedValues.changes) {
+      return null;
+    }
     return (
       <div className="filter-box">
         <div className="filter stops-filter">
           <h5>Stops</h5>
           <ul>
-            {(this.props.filterOptions.changes || []).map((item, i) => {
+            {(this.props.selectedValues.changes || []).map((item, i) => {
               return (
                 <li key={i}>
                   <label className="filter-label">
@@ -19,6 +21,7 @@ export default class StopsFilter extends React.Component {
                       className="filter-checkbox"
                       name="stops[]"
                       value={item.changesId}
+                      checked={item.selected}
                       onChange={this.props.handleSelectedStopsChange}
                     />
                     <span>{getStopName(item.changesId)}</span>

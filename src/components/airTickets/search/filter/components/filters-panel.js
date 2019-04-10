@@ -1,4 +1,5 @@
 import React from "react";
+import * as _ from "ramda";
 import "../../../../../styles/css/components/airTickets/search/filter/air-tickets-search-filter-panel.css";
 /**
  * Individual Filter Components
@@ -54,12 +55,14 @@ export default class FiltersPanel extends React.Component {
     this.generateFiltersOptionsObject = this.generateFiltersOptionsObject.bind(
       this
     );
+    this._selectAllFilterOptionsByDefault = this._selectAllFilterOptionsByDefault.bind(
+      this
+    );
     this.onSelectedFiltersChange = this.onSelectedFiltersChange.bind(this);
     this.handleSelectedAirportsChange = this.handleSelectedAirportsChange.bind(
       this
     );
   }
-
   /**
    * Hooks
    */
@@ -67,27 +70,48 @@ export default class FiltersPanel extends React.Component {
     this.generateFiltersOptionsObject(this.props.results);
   }
 
+  componentDidUpdate(prevProps, prevState) {
+    if (!_.equals(prevState.selectedValues, this.state.selectedValues)) {
+      this.onSelectedFiltersChange();
+    }
+  }
   /**
    * Generate The Options Object
    */
   async generateFiltersOptionsObject(results) {
     let options = makeDefaultOptionsForFilterGenaration(this.props.searchId);
     let filterOptions = await makeFiltersObjectFromResults(results, options);
+    let selectedValues = this._selectAllFilterOptionsByDefault(filterOptions);
     this.setState({
       filterOptions,
-      selectedValues: { ...filterOptions, airlines: [] }
+      selectedValues
     });
+  }
+
+  _selectAllFilterOptionsByDefault(filterOptions) {
+    filterOptions.airports.all = filterOptions.airports.all.map(ap => ({
+      ...ap,
+      selected: true
+    }));
+    filterOptions.changes = filterOptions.changes.map(ch => ({
+      ...ch,
+      selected: true
+    }));
+    return filterOptions;
   }
 
   /**
    * Inform Parent Component About Changes
    */
   onSelectedFiltersChange() {
-    let filters: FiltersForFilteringFunction = this._adaptFiltersForFilteringFunction();
+    let filters: FiltersForFilteringFunction = this._adaptFiltersForFilteringFunction(
+      this.state.selectedValues
+    );
     this.props.onSelectedFiltersChange(filters);
   }
-  _adaptFiltersForFilteringFunction(): FiltersForFilteringFunction {
-    let selectedValues = this.state.selectedValues;
+  _adaptFiltersForFilteringFunction(
+    selectedValues
+  ): FiltersForFilteringFunction {
     return {
       ...selectedValues,
       changes: selectedValues.changes.filter(change => change.selected),
@@ -102,18 +126,15 @@ export default class FiltersPanel extends React.Component {
    * Price Changes
    */
   handlePriceRangeChange(value) {
-    this.setState(
-      {
-        selectedValues: {
-          ...(this.state.selectedValues || {}),
-          price: {
-            min: value.min,
-            max: value.max
-          }
+    this.setState({
+      selectedValues: {
+        ...(this.state.selectedValues || {}),
+        price: {
+          min: value.min,
+          max: value.max
         }
-      },
-      this.onSelectedFiltersChange
-    );
+      }
+    });
   }
 
   /**
@@ -123,15 +144,12 @@ export default class FiltersPanel extends React.Component {
     let selectedChangesId = e.target.value;
     let checked = e.target.checked;
     let changes = this._markSelectedStops(selectedChangesId, checked);
-    this.setState(
-      {
-        selectedValues: {
-          ...(this.state.selectedValues || {}),
-          changes
-        }
-      },
-      this.onSelectedFiltersChange
-    );
+    this.setState({
+      selectedValues: {
+        ...(this.state.selectedValues || {}),
+        changes
+      }
+    });
   }
 
   _markSelectedStops(selectedChangesId, checked) {
@@ -149,50 +167,41 @@ export default class FiltersPanel extends React.Component {
    * Airline Changes
    */
   handleAirlinesChange(value) {
-    this.setState(
-      {
-        selectedValues: {
-          ...this.state.selectedValues,
-          airlines: value
-        }
-      },
-      this.onSelectedFiltersChange
-    );
+    this.setState({
+      selectedValues: {
+        ...this.state.selectedValues,
+        airlines: value
+      }
+    });
   }
   /**
    * Journey Time Changes
    */
   handleJourneyTimeChange(value) {
-    this.setState(
-      {
-        selectedValues: {
-          ...this.state.selectedValues,
-          journeyTime: {
-            ...this.state.selectedValues.journeyTime,
-            max: value
-          }
+    this.setState({
+      selectedValues: {
+        ...this.state.selectedValues,
+        journeyTime: {
+          ...this.state.selectedValues.journeyTime,
+          max: value
         }
-      },
-      this.onSelectedFiltersChange
-    );
+      }
+    });
   }
 
   handleSelectedAirportsChange(e) {
     let selectedAirportId = e.target.value;
     let checked = e.target.checked;
     let all = this._markSelectedAirports(selectedAirportId, checked);
-    this.setState(
-      {
-        selectedValues: {
-          ...(this.state.selectedValues || {}),
-          airports: {
-            ...this.state.selectedValues.airports,
-            all
-          }
+    this.setState({
+      selectedValues: {
+        ...(this.state.selectedValues || {}),
+        airports: {
+          ...this.state.selectedValues.airports,
+          all
         }
-      },
-      this.onSelectedFiltersChange
-    );
+      }
+    });
   }
 
   _markSelectedAirports(selectedAirportId, checked) {
@@ -211,18 +220,15 @@ export default class FiltersPanel extends React.Component {
    */
 
   handleTransfersChange(value) {
-    this.setState(
-      {
-        selectedValues: {
-          ...this.state.selectedValues,
-          airports: {
-            ...this.state.selectedValues.airports,
-            transfers: value
-          }
+    this.setState({
+      selectedValues: {
+        ...this.state.selectedValues,
+        airports: {
+          ...this.state.selectedValues.airports,
+          transfers: value
         }
-      },
-      this.onSelectedFiltersChange
-    );
+      }
+    });
   }
 
   render() {
@@ -230,8 +236,8 @@ export default class FiltersPanel extends React.Component {
       this.state.selectedValues && (
         <div>
           <StopsFilter
+            selectedValues={this.state.selectedValues}
             handleSelectedStopsChange={this.handleSelectedStopsChange}
-            filterOptions={this.state.filterOptions}
           />
 
           <AirlinesFilter
@@ -248,13 +254,11 @@ export default class FiltersPanel extends React.Component {
 
           <PriceFilter
             selectedValues={this.state.selectedValues}
-            filterOptions={this.state.filterOptions}
             handlePriceRangeChange={this.handlePriceRangeChange}
           />
 
           <AirportsFilter
             selectedValues={this.state.selectedValues}
-            filterOptions={this.state.filterOptions}
             handleSelectedAirportsChange={this.handleSelectedAirportsChange}
           />
 

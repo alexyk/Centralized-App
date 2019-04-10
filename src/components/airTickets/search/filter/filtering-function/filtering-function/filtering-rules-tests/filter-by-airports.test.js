@@ -958,6 +958,49 @@ describe("filterByAirports", () => {
       let expectedResultIds = [flights[0].id, flights[1].id, flights[2].id];
       expect(resultIds).toEqual(expectedResultIds);
     });
+
+    test("with 0 selected cities, returns []", () => {
+      let filters = {
+        airports: {
+          all: [
+            {
+              airportId: "LHR",
+              airportName: "London Heathrow",
+              city: "London"
+            },
+            {
+              airportId: "SOF",
+              airportName: "Sofia",
+              city: "Sofia"
+            },
+
+            {
+              airportId: "LCY",
+              airportName: "London City Arpt",
+              city: "London"
+            },
+            {
+              airportId: "LGW",
+              airportName: "London Gatwick",
+              city: "London"
+            },
+            {
+              airportId: "STN",
+              airportName: "London Stansted",
+              city: "London"
+            },
+            {
+              airportId: "LTN",
+              airportName: "Luton",
+              city: "London"
+            }
+          ]
+        }
+      };
+      let result = filterByAirports(filters, flights);
+      let resultIds = result.map(_.prop("id"));
+      expect(resultIds).toEqual([]);
+    });
   });
 });
 

@@ -38,10 +38,8 @@ export async function makeFiltersObjectFromResults(
   );
   let prices = _gatherPrices(flightResults);
   let journeyTimes = _gatherJourneyTimes(flightResults);
-
   let allAirlines = await _gatherAirlines(options);
   let airlines = _removeUnusedAirlines(allAirlines, flightResults);
-
   /**
    * End result
    */

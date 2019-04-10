@@ -19,10 +19,10 @@ export function filterFlights(filters: Filters, flights: [Filight]) {
   if (filters.price) {
     flights = filterByPrice(filters, flights);
   }
-  if (filters.changes && filters.changes.length) {
+  if (filters.changes) {
     flights = filterByChanges(filters, flights);
   }
-  if (filters.airlines && filters.airlines.length) {
+  if (filters.airlines) {
     flights = filterByAirlines(filters, flights);
   }
   if (filters.journeyTime) {
@@ -62,6 +62,9 @@ function _leaveOnlyAirportsOfSelectedCities(allAirports) {
 
 function _passesForAllCities(flight, groupedByCity) {
   let cities = Object.keys(groupedByCity);
+  if (cities.length === 0) {
+    return false;
+  }
   let passesForCities = 0;
   cities.forEach(cityName => {
     if (_passesForCity(groupedByCity, cityName, flight)) {
@@ -123,6 +126,11 @@ export function filterByChanges(filters, flights) {
   let lookingForDirect = selectedChanges.indexOf("0") !== -1;
   let lookingForUpToOneStop = selectedChanges.indexOf("1") !== -1;
   let lookingForMultiStop = selectedChanges.indexOf("2") !== -1;
+
+  if (!lookingForDirect && !lookingForUpToOneStop && !lookingForMultiStop) {
+    return [];
+  }
+
   return flights.filter(flight => {
     if (lookingForMultiStop) {
       return flight;
