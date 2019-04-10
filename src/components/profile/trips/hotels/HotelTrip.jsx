@@ -105,8 +105,8 @@ class HotelTrip extends React.Component {
     // const status = STATUS[this.props.trip.status];
     const status = _parseBookingStatus(this.props.trip.status);
     const statusMessage = STATUS_TOOLTIP[this.props.trip.status];
-    const { id, hotel_id, hotel_photo, hotel_name, hostEmail, hostPhone, has_details } = this.props.trip;
-
+    const items = this.props.trip
+    const { id, hotel_id, hotel_photo, hotel_name, hostEmail, hostPhone, has_details } = items;
     const isCompleted =
       status === "COMPLETE" && this.isFutureDate(this.props.trip.arrival_date);
     var _dates = this.getDates();
@@ -174,7 +174,9 @@ class HotelTrip extends React.Component {
               <i className="fa fa-bolt icon" />
             )}
             <div className="content-row">
+              {this.props.trip.status !== "CANCELLED" && (
                 <button type="submit" onClick={e => { e.preventDefault(); this.props.onTripSelect(id); this.props.handleCancelReservation(id); }}>Cancel Trip</button>
+              )}
               {this.props.trip.has_details === 1 && (
                 <Link to={`/profile/trips/hotels/${this.props.trip.id}`}>
                   Details
