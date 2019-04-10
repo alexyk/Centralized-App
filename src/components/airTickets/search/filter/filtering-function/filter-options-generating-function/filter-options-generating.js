@@ -36,9 +36,11 @@ export async function makeFiltersObjectFromResults(
     flightResults,
     options
   );
-  let airlines = await _gatherAirlines(options);
   let prices = _gatherPrices(flightResults);
   let journeyTimes = _gatherJourneyTimes(flightResults);
+
+  let allAirlines = await _gatherAirlines(options);
+  let airlines = _removeUnusedAirlines(allAirlines, flightResults);
 
   /**
    * End result
@@ -54,6 +56,18 @@ export async function makeFiltersObjectFromResults(
       { changesId: "2", changesName: "twoormorestops" }
     ]
   };
+}
+
+function _removeUnusedAirlines(allAirlines, results) {
+  let allAirlinesInResults = results.map(flight => {
+    return flight.segments.map(segment => segment.carrier.name);
+  });
+  allAirlinesInResults = allAirlinesInResults.reduce(_.concat);
+  allAirlinesInResults = _.uniq(allAirlinesInResults);
+
+  return allAirlines.filter(
+    airline => allAirlinesInResults.indexOf(airline.airlineName) !== -1
+  );
 }
 
 async function _gatherAirlines(options) {

@@ -34,7 +34,9 @@ import {filterFlights} from "./filter/filtering-function/filtering-function/filt
 const DEFAULT_PAGE_SIZE = 10;
 
 
-
+function sortFlightsByPrice(flights){
+  return flights.sort((r1, r2) => r1.price.total - r2.price.total);
+}
 
 class AirTicketsSearchPage extends Component {
   constructor(props) {
@@ -173,11 +175,10 @@ class AirTicketsSearchPage extends Component {
 
   applyFilters(filters){
     let allResults = Object.values(this.results);
-    let filteredFlights = filterFlights(filters, allResults);
+    let filteredFlights = sortFlightsByPrice(filterFlights(filters, allResults));
     this.setState({
       loading: false,
       allElements: true,
-      // allResults: allResults,
       allResults: filteredFlights,
       currentPageResults: filteredFlights.slice(0, 10),
       totalElements: filteredFlights.length,
@@ -325,25 +326,6 @@ class AirTicketsSearchPage extends Component {
         }
       }))
 
-      // destinations.forEach(destination => {
-      //   this.requestAirportInfo(destination.origin).then(data => {
-      //     destination.origin = {
-      //       code: data.code,
-      //       name: `${data.cityName}, ${
-      //         data.cityState ? data.cityState + ", " : ""
-      //       }${data.countryName}, ${data.code} airport`
-      //     };
-      //   });
-      //   this.requestAirportInfo(destination.destination).then(data => {
-      //     destination.destination = {
-      //       code: data.code,
-      //       name: `${data.cityName}, ${
-      //         data.cityState ? data.cityState + ", " : ""
-      //       }${data.countryName}, ${data.code} airport`
-      //     };
-      //   });
-      //   destination.date = moment(destination.date, "DD/MM/YYYY");
-      // });
       const flightClass = searchParams.flightClass;
       const stops = searchParams.stops;
       const departureTime = searchParams.departureTime
@@ -546,7 +528,7 @@ class AirTicketsSearchPage extends Component {
 
     if (messageBody.allElements) {
       let allResults = Object.values(this.results);
-      allResults = allResults.sort((r1, r2) => r1.price.total - r2.price.total);
+      allResults = sortFlightsByPrice(allResults)
       this.setState({
         allElements: messageBody.allElements,
         allResults: allResults,

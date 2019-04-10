@@ -168,11 +168,12 @@ export function filterByAirlines(filters, flights) {
         };
       }, {});
     flightCarriers = Object.keys(flightCarriers);
-    let matches = selectedCarriers.filter(sa => {
-      return flightCarriers.indexOf(sa) !== -1;
+    let matches = flightCarriers.filter(sa => {
+      return selectedCarriers.indexOf(sa) !== -1;
     });
+
     return (
-      matches.length === selectedCarriers.length &&
+      // matches.length === selectedCarriers.length &&
       matches.length === flightCarriers.length
     );
   });
