@@ -1,6 +1,21 @@
 import * as _ from "ramda";
+import type { Filight } from "../flights.type.flow";
 
-export function filterFlights(filters, flights) {
+export type Filters = {
+  price?: {
+    min: number,
+    max: number
+  },
+  changes?: [{ changesId: "0" | "1" | "2" }],
+  airlines?: [{ airlineName: string }],
+  journeyTime?: number,
+  airports?: {
+    all?: [{ city: string, airportId: string }],
+    transfers?: [{ airportId: string }]
+  }
+};
+
+export function filterFlights(filters: Filters, flights: [Filight]) {
   if (filters.price) {
     flights = filterByPrice(filters, flights);
   }
@@ -14,14 +29,12 @@ export function filterFlights(filters, flights) {
     flights = filterByJourneyTime(filters, flights);
   }
 
-  if (filters.airports) {
+  if (filters.airports && filters.airports.all) {
     flights = filterByAirports(filters, flights);
   }
-
-  if (filters.airports.transfers) {
+  if (filters.airports && filters.airports.transfers) {
     flights = filterByTransfers(filters, flights);
   }
-
   return flights;
 }
 
@@ -194,7 +207,7 @@ function _findTransfersInSegments(flight) {
  * By Price
  */
 export function filterByPrice(filters, flights) {
-  let { minPrice, maxPrice } = filters.price;
+  let { min: minPrice, max: maxPrice } = filters.price;
   return flights.filter(flight => {
     return flight.price.total >= minPrice && flight.price.total <= maxPrice;
   });

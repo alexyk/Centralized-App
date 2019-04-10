@@ -3396,7 +3396,7 @@ describe("filterByPrice", () => {
 
   test("filterByPrice 1", () => {
     let filters = {
-      price: { minPrice: 282.0, maxPrice: 2988.0, currency: "EUR" }
+      price: { min: 282.0, max: 2988.0, currency: "EUR" }
     };
 
     let expectedResult = [
@@ -4764,7 +4764,7 @@ describe("filterByPrice", () => {
 
   test("filterByPrice 2", () => {
     let filters = {
-      price: { minPrice: 9000, maxPrice: 10000, currency: "EUR" }
+      price: { min: 9000, max: 10000, currency: "EUR" }
     };
     let expectedResult = [
       {
@@ -5113,7 +5113,7 @@ describe("filterByPrice", () => {
 
   test("filterByPrice 3", () => {
     let filters = {
-      price: { minPrice: 11000, maxPrice: 12000, currency: "EUR" }
+      price: { min: 11000, max: 12000, currency: "EUR" }
     };
     let expectedResult = [];
     let result = filterByPrice(filters, flights);

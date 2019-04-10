@@ -1,17 +1,44 @@
 import * as _ from "ramda";
-
+import type { Filight } from "../flights.type.flow";
 /**
  * Generating The Filters Object
  */
+export type GeneratedFilterOptions = {
+  price: {
+    max: number,
+    min: number
+  },
+  changes: [{ changesId: "0" | "1" | "2", changesName: string }],
+  airlines: [{ airlineName: string, airlineId: string }],
+  journeyTime: {
+    max: number,
+    min: number
+  },
+  airports: {
+    all: [{ city: string, airportId: string, airportName: string }],
+    transfers: [{ airportId: string, airportName: string, city: string }]
+  }
+};
 
-export async function makeFiltersObjectFromResults(results, options = {}) {
+type OptionsForGeneratingFilters = {
+  getCityNameForAirport: (airportId: string) => Promise<string>,
+  getAirlines: () => Promise<[{ airlineId: string, airlineName: string }]>
+};
+
+export async function makeFiltersObjectFromResults(
+  flightResults: [Filight],
+  options: OptionsForGeneratingFilters
+): GeneratedFilterOptions {
   /**
    * Gather options
    */
-  let airports = await _gatherAirportsFromResultsAndServer(results, options);
+  let airports = await _gatherAirportsFromResultsAndServer(
+    flightResults,
+    options
+  );
   let airlines = await _gatherAirlines(options);
-  let prices = _gatherPrices(results);
-  let journeyTimes = _gatherJourneyTimes(results);
+  let prices = _gatherPrices(flightResults);
+  let journeyTimes = _gatherJourneyTimes(flightResults);
 
   /**
    * End result

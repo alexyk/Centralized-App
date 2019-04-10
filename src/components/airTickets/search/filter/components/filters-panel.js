@@ -13,32 +13,30 @@ import AirportsFilter from "./filter-field_airports";
 import TransfersFilter from "./filter-field_transfers";
 
 /**
- * Helpers
+ * Generating the filters object
  */
+import type { GeneratedFilterOptions } from "../filtering-function/filter-options-generating-function/filter-options-generating";
+import type { Filters as FiltersForFilteringFunction } from "../filtering-function/filtering-function/filtering-function";
 import { makeFiltersObjectFromResults } from "../filtering-function/filter-options-generating-function/filter-options-generating";
 import { Config } from "../../../../../config";
 
-const makeFiltersFromResultsAndTheServer = (results, _options) => {
+const makeFiltersFromResultsAndTheServer = (results, searchId) => {
   let options = {
     getCityNameForAirport(airportId) {
       return fetch(
         `${Config.getValue("apiHost")}flight/city/airports/${airportId}`
       )
         .then(res => res.json())
-        .then(data => {
-          return data.cityName;
-        });
+        .then(data => data.cityName);
     },
     getAirlines() {
       return fetch(
-        `${Config.getValue("apiHost")}flight/search/filter/data?searchId=${
-          _options.searchId
-        }`
+        `${Config.getValue(
+          "apiHost"
+        )}flight/search/filter/data?searchId=${searchId}`
       )
         .then(res => res.json())
-        .then(data => {
-          return data.airlines;
-        });
+        .then(data => data.airlines);
     }
   };
 
@@ -53,6 +51,15 @@ const makeFiltersFromResultsAndTheServer = (results, _options) => {
  * 4. Passes the state of the filters object, back to whichever component wants it via
  * onFiltersChange
  */
+
+type Props = {
+  onSelectedFiltersChange: (filters: FiltersForFilteringFunction) => void,
+  searchId: string
+};
+type State = {
+  filterOptions: null | GeneratedFilterOptions,
+  selectedValues: null | GeneratedFilterOptions
+};
 
 export default class FiltersPanel extends React.Component {
   constructor(props) {
@@ -89,9 +96,10 @@ export default class FiltersPanel extends React.Component {
    * Generate The Options Object
    */
   async generateFiltersOptionsObject(results) {
-    let filterOptions = await makeFiltersFromResultsAndTheServer(results, {
-      searchId: this.props.searchId
-    });
+    let filterOptions = await makeFiltersFromResultsAndTheServer(
+      results,
+      this.props.searchId
+    );
     this.setState({
       filterOptions,
       selectedValues: { ...filterOptions, airlines: [] }
@@ -102,39 +110,31 @@ export default class FiltersPanel extends React.Component {
    * Inform Parent Component About Changes
    */
   onSelectedFiltersChange() {
-    let filters = this._adaptFiltersForFilteringFunction();
+    let filters: FiltersForFilteringFunction = this._adaptFiltersForFilteringFunction();
     this.props.onSelectedFiltersChange(filters);
   }
-  _adaptFiltersForFilteringFunction() {
+  _adaptFiltersForFilteringFunction(): FiltersForFilteringFunction {
     let _filters = this.state.selectedValues;
     return {
       ..._filters,
-      price: {
-        minPrice: _filters.price.min,
-        maxPrice: _filters.price.max
-      },
       changes: Object.values(_filters.changes || {}).filter(change => {
         return change.selected;
       }),
       journeyTime: _filters.journeyTime.max,
-      airports: this._adaptAirportsForFilteringFunction(_filters)
+      airports: {
+        all: this._leaveOnlyAirportsOfSelectedCities(_filters),
+        transfers: _filters.airports.transfers
+      }
     };
   }
 
-  _adaptAirportsForFilteringFunction(_filters) {
+  _leaveOnlyAirportsOfSelectedCities(_filters) {
     let selectedCities = _filters.airports.all
       .filter(airport => airport.selected !== undefined)
       .map(_.prop("city"));
-
-    let all = _filters.airports.all.filter(
+    return _filters.airports.all.filter(
       airport => selectedCities.indexOf(airport.city) !== -1
     );
-    let transfers = _filters.airports.transfers;
-
-    return {
-      all,
-      transfers
-    };
   }
 
   /**
