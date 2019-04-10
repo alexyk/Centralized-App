@@ -177,12 +177,42 @@ class AirTicketsSearchPage extends Component {
     this.setState({
       loading: false,
       allElements: true,
-      allResults: allResults,
+      // allResults: allResults,
+      allResults: filteredFlights,
       currentPageResults: filteredFlights.slice(0, 10),
       totalElements: filteredFlights.length,
       page: 0
     });
   }
+
+  onPageChange(page) {
+    const { allElements, allResults } = this.state;
+    const currentPage = page - 1;
+    const startResultsIndex = currentPage * 10;
+    const endResultsIndex = startResultsIndex + 10;
+    let items = this.results;
+
+    if (allElements) {
+      if (Array.isArray(allResults)) {
+        items = allResults.slice(startResultsIndex, endResultsIndex);
+      } else {
+        items = Object.values(allResults).slice(
+          startResultsIndex,
+          endResultsIndex
+        );
+      }
+    } else {
+      items = Object.values(items).slice(startResultsIndex, endResultsIndex);
+    }
+
+    this.setState({
+      page: currentPage,
+      currentPageResults: items
+    });
+
+    window.scrollTo(0, 0);
+  }
+
 
   updateWindowWidth() {
     this.setState({ windowWidth: window.innerWidth });
@@ -349,33 +379,6 @@ class AirTicketsSearchPage extends Component {
     }
   }
 
-  onPageChange(page) {
-    const { allElements, allResults } = this.state;
-    const currentPage = page - 1;
-    const startResultsIndex = currentPage * 10;
-    const endResultsIndex = startResultsIndex + 10;
-    let items = this.results;
-
-    if (allElements) {
-      if (Array.isArray(allResults)) {
-        items = allResults.slice(startResultsIndex, endResultsIndex);
-      } else {
-        items = Object.values(allResults).slice(
-          startResultsIndex,
-          endResultsIndex
-        );
-      }
-    } else {
-      items = Object.values(items).slice(startResultsIndex, endResultsIndex);
-    }
-
-    this.setState({
-      page: currentPage,
-      currentPageResults: items
-    });
-
-    window.scrollTo(0, 0);
-  }
 
   getRandomInt() {
     const MAX = 999999999999;

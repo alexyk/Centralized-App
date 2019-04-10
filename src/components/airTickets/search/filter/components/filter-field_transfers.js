@@ -3,6 +3,7 @@ import Select from "react-select";
 
 export default class TransfersFilter extends React.Component {
   render() {
+    if (!this.props.filterOptions.airports) return null;
     return (
       <div className="filter airlines-filter">
         <h5>Transfers</h5>

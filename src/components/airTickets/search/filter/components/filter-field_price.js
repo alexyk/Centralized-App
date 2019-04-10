@@ -7,6 +7,7 @@ import {
 
 export default class PriceFilter extends React.Component {
   render() {
+    if (!this.props.selectedValues.price) return null;
     return (
       <div className="price-range-filters">
         <h5>Price</h5>

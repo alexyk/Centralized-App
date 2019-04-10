@@ -4,8 +4,6 @@ import * as _ from "ramda";
 export default class AirportsFilter extends React.Component {
   constructor(props) {
     super(props);
-
-    this.state = [];
     this.onSelectedAirportsChange = this.onSelectedAirportsChange.bind(this);
     this._renderAirportOptionsForCity = this._renderAirportOptionsForCity.bind(
       this
@@ -13,12 +11,10 @@ export default class AirportsFilter extends React.Component {
     this._renderIndividualAirportOption = this._renderIndividualAirportOption.bind(
       this
     );
-    this._leaveOnlyAirportsOfSelectedCities = this._leaveOnlyAirportsOfSelectedCities.bind(
-      this
-    );
   }
 
   render() {
+    if (!this.props.filterOptions.airports) return null;
     return (
       <div className="filter-box">
         <div className="filter stops-filter">
@@ -73,14 +69,5 @@ export default class AirportsFilter extends React.Component {
 
   onSelectedAirportsChange(value) {
     this.props.handleSelectedAirportsChange(value);
-  }
-
-  _leaveOnlyAirportsOfSelectedCities(_filters) {
-    let selectedCities = _filters.airports.all
-      .filter(airport => airport.selected !== undefined)
-      .map(_.prop("city"));
-    return _filters.airports.all.filter(
-      airport => selectedCities.indexOf(airport.city) !== -1
-    );
   }
 }

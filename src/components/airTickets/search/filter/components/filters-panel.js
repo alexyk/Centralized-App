@@ -1,7 +1,5 @@
 import React from "react";
-import * as _ from "ramda";
 import "../../../../../styles/css/components/airTickets/search/filter/air-tickets-search-filter-panel.css";
-
 /**
  * Individual Filter Components
  */
@@ -11,37 +9,15 @@ import JourneyTimeFilter from "./filter-field_journey-time";
 import PriceFilter from "./filter-field_price";
 import AirportsFilter from "./filter-field_airports";
 import TransfersFilter from "./filter-field_transfers";
-
 /**
  * Generating the filters object
  */
-import type { GeneratedFilterOptions } from "../filtering-function/filter-options-generating-function/filter-options-generating";
-import type { Filters as FiltersForFilteringFunction } from "../filtering-function/filtering-function/filtering-function";
-import { makeFiltersObjectFromResults } from "../filtering-function/filter-options-generating-function/filter-options-generating";
-import { Config } from "../../../../../config";
-
-const makeFiltersFromResultsAndTheServer = (results, searchId) => {
-  let options = {
-    getCityNameForAirport(airportId) {
-      return fetch(
-        `${Config.getValue("apiHost")}flight/city/airports/${airportId}`
-      )
-        .then(res => res.json())
-        .then(data => data.cityName);
-    },
-    getAirlines() {
-      return fetch(
-        `${Config.getValue(
-          "apiHost"
-        )}flight/search/filter/data?searchId=${searchId}`
-      )
-        .then(res => res.json())
-        .then(data => data.airlines);
-    }
-  };
-
-  return makeFiltersObjectFromResults(results, options);
-};
+import {
+  GeneratedFilterOptions,
+  Filters as FiltersForFilteringFunction,
+  makeFiltersObjectFromResults,
+  makeDefaultOptionsForFilterGenaration
+} from "../filtering-function";
 
 /**
  * FiltersPanel
@@ -51,7 +27,6 @@ const makeFiltersFromResultsAndTheServer = (results, searchId) => {
  * 4. Passes the state of the filters object, back to whichever component wants it via
  * onFiltersChange
  */
-
 type Props = {
   onSelectedFiltersChange: (filters: FiltersForFilteringFunction) => void,
   searchId: string
@@ -96,10 +71,8 @@ export default class FiltersPanel extends React.Component {
    * Generate The Options Object
    */
   async generateFiltersOptionsObject(results) {
-    let filterOptions = await makeFiltersFromResultsAndTheServer(
-      results,
-      this.props.searchId
-    );
+    let options = makeDefaultOptionsForFilterGenaration(this.props.searchId);
+    let filterOptions = await makeFiltersObjectFromResults(results, options);
     this.setState({
       filterOptions,
       selectedValues: { ...filterOptions, airlines: [] }
@@ -114,27 +87,12 @@ export default class FiltersPanel extends React.Component {
     this.props.onSelectedFiltersChange(filters);
   }
   _adaptFiltersForFilteringFunction(): FiltersForFilteringFunction {
-    let _filters = this.state.selectedValues;
+    let selectedValues = this.state.selectedValues;
     return {
-      ..._filters,
-      changes: Object.values(_filters.changes || {}).filter(change => {
-        return change.selected;
-      }),
-      journeyTime: _filters.journeyTime.max,
-      airports: {
-        all: this._leaveOnlyAirportsOfSelectedCities(_filters),
-        transfers: _filters.airports.transfers
-      }
+      ...selectedValues,
+      changes: selectedValues.changes.filter(change => change.selected),
+      journeyTime: selectedValues.journeyTime.max
     };
-  }
-
-  _leaveOnlyAirportsOfSelectedCities(_filters) {
-    let selectedCities = _filters.airports.all
-      .filter(airport => airport.selected !== undefined)
-      .map(_.prop("city"));
-    return _filters.airports.all.filter(
-      airport => selectedCities.indexOf(airport.city) !== -1
-    );
   }
 
   /**
@@ -177,18 +135,14 @@ export default class FiltersPanel extends React.Component {
   }
 
   _markSelectedStops(selectedChangesId, checked) {
-    return this.state.filterOptions.changes.map(currentChanges => {
-      if (currentChanges.changesId === selectedChangesId) {
-        return {
-          ...currentChanges,
-          selected: checked ? true : false
-        };
-      }
-      return {
-        ...currentChanges,
-        selected: false
-      };
-    });
+    return this.state.selectedValues.changes.map(currentChanges =>
+      currentChanges.changesId !== selectedChangesId
+        ? currentChanges
+        : {
+            ...currentChanges,
+            selected: checked ? true : false
+          }
+    );
   }
 
   /**
@@ -242,15 +196,14 @@ export default class FiltersPanel extends React.Component {
   }
 
   _markSelectedAirports(selectedAirportId, checked) {
-    return this.state.selectedValues.airports.all.map(currentAirport => {
-      if (currentAirport.airportId === selectedAirportId) {
-        return {
-          ...currentAirport,
-          selected: checked ? true : undefined
-        };
-      }
-      return currentAirport;
-    });
+    return this.state.selectedValues.airports.all.map(currentAirport =>
+      currentAirport.airportId !== selectedAirportId
+        ? currentAirport
+        : {
+            ...currentAirport,
+            selected: checked ? true : undefined
+          }
+    );
   }
 
   /**

@@ -10,7 +10,7 @@ export type Filters = {
   airlines?: [{ airlineName: string }],
   journeyTime?: number,
   airports?: {
-    all?: [{ city: string, airportId: string }],
+    all?: [{ city: string, airportId: string, selected?: boolean }],
     transfers?: [{ airportId: string }]
   }
 };
@@ -42,13 +42,22 @@ export function filterFlights(filters: Filters, flights: [Filight]) {
  * By Airports
  */
 export function filterByAirports(filters, flights) {
-  let allAirports = filters.airports.all;
+  let allAirports = _leaveOnlyAirportsOfSelectedCities(filters.airports.all);
   let groupedByCity = _.groupBy(_.prop("city"), allAirports);
   groupedByCity = _.filter(value => value.length > 1, groupedByCity);
 
   return flights.filter(flight => {
     return _passesForAllCities(flight, groupedByCity);
   });
+}
+
+function _leaveOnlyAirportsOfSelectedCities(allAirports) {
+  let selectedCities = allAirports
+    .filter(airport => airport.selected === true)
+    .map(_.prop("city"));
+  return allAirports.filter(
+    airport => selectedCities.indexOf(airport.city) !== -1
+  );
 }
 
 function _passesForAllCities(flight, groupedByCity) {

@@ -3,6 +3,7 @@ import InputRange from "react-input-range";
 
 export default class AirlinesFilter extends React.Component {
   render() {
+    if (!this.props.filterOptions.journeyTime) return null;
     return (
       <div className="price-range-filters">
         <h5>Journey Time</h5>
