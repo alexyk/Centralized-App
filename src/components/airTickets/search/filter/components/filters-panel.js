@@ -16,6 +16,7 @@ import TransfersFilter from "./filter-field_transfers";
 import {
   GeneratedFilterOptions,
   Filters as FiltersForFilteringFunction,
+  Flight,
   makeFiltersObjectFromResults,
   makeDefaultOptionsForFilterGenaration
 } from "../filtering-function";
@@ -30,17 +31,17 @@ import {
  */
 type Props = {
   onSelectedFiltersChange: (filters: FiltersForFilteringFunction) => void,
-  searchId: string
+  searchId: string,
+  results: [Flight]
 };
 type State = {
   filterOptions: null | GeneratedFilterOptions,
   selectedValues: null | GeneratedFilterOptions
 };
 
-export default class FiltersPanel extends React.Component {
-  constructor(props) {
+export default class FiltersPanel extends React.Component<Props, State> {
+  constructor(props: Props) {
     super(props);
-
     this.state = {
       filterOptions: null,
       selectedValues: null
@@ -52,7 +53,7 @@ export default class FiltersPanel extends React.Component {
     this.handleAirlinesChange = this.handleAirlinesChange.bind(this);
     this.handleJourneyTimeChange = this.handleJourneyTimeChange.bind(this);
     this.handleTransfersChange = this.handleTransfersChange.bind(this);
-    this.generateFiltersOptionsObject = this.generateFiltersOptionsObject.bind(
+    this._generateFiltersOptionsObject = this._generateFiltersOptionsObject.bind(
       this
     );
     this._selectAllFilterOptionsByDefault = this._selectAllFilterOptionsByDefault.bind(
@@ -67,7 +68,7 @@ export default class FiltersPanel extends React.Component {
    * Hooks
    */
   componentDidMount() {
-    this.generateFiltersOptionsObject(this.props.results);
+    this.generateFiltersAndSelectThemByDefault();
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -75,20 +76,33 @@ export default class FiltersPanel extends React.Component {
       this.onSelectedFiltersChange();
     }
   }
+
   /**
    * Generate The Options Object
    */
-  async generateFiltersOptionsObject(results) {
-    let options = makeDefaultOptionsForFilterGenaration(this.props.searchId);
-    let filterOptions = await makeFiltersObjectFromResults(results, options);
-    let selectedValues = this._selectAllFilterOptionsByDefault(filterOptions);
+  async generateFiltersAndSelectThemByDefault() {
+    let filterOptions: GeneratedFilterOptions = await this._generateFiltersOptionsObject(
+      this.props.results
+    );
+    let selectedValues: GeneratedFilterOptions = this._selectAllFilterOptionsByDefault(
+      filterOptions
+    );
     this.setState({
       filterOptions,
       selectedValues
     });
   }
 
-  _selectAllFilterOptionsByDefault(filterOptions) {
+  async _generateFiltersOptionsObject(
+    results: [Flight]
+  ): GeneratedFilterOptions {
+    let options = makeDefaultOptionsForFilterGenaration(this.props.searchId);
+    return await makeFiltersObjectFromResults(results, options);
+  }
+
+  _selectAllFilterOptionsByDefault(
+    filterOptions: GeneratedFilterOptions
+  ): GeneratedFilterOptions {
     filterOptions.airports.all = filterOptions.airports.all.map(ap => ({
       ...ap,
       selected: true
@@ -125,7 +139,7 @@ export default class FiltersPanel extends React.Component {
   /**
    * Price Changes
    */
-  handlePriceRangeChange(value) {
+  handlePriceRangeChange(value: { min: number, max: number }) {
     this.setState({
       selectedValues: {
         ...(this.state.selectedValues || {}),
@@ -141,7 +155,7 @@ export default class FiltersPanel extends React.Component {
    * Stops Change
    */
   handleSelectedStopsChange(e) {
-    let selectedChangesId = e.target.value;
+    let selectedChangesId: string = e.target.value;
     let checked = e.target.checked;
     let changes = this._markSelectedStops(selectedChangesId, checked);
     this.setState({
@@ -152,7 +166,10 @@ export default class FiltersPanel extends React.Component {
     });
   }
 
-  _markSelectedStops(selectedChangesId, checked) {
+  _markSelectedStops(
+    selectedChangesId: string,
+    checked: boolean
+  ): [{ changesId: string }] {
     return this.state.selectedValues.changes.map(currentChanges =>
       currentChanges.changesId !== selectedChangesId
         ? currentChanges
@@ -166,7 +183,7 @@ export default class FiltersPanel extends React.Component {
   /**
    * Airline Changes
    */
-  handleAirlinesChange(value) {
+  handleAirlinesChange(value: [{ airlineId: string, airlineName: string }]) {
     this.setState({
       selectedValues: {
         ...this.state.selectedValues,
@@ -177,7 +194,7 @@ export default class FiltersPanel extends React.Component {
   /**
    * Journey Time Changes
    */
-  handleJourneyTimeChange(value) {
+  handleJourneyTimeChange(value: number) {
     this.setState({
       selectedValues: {
         ...this.state.selectedValues,
@@ -193,7 +210,7 @@ export default class FiltersPanel extends React.Component {
    * Airports Changes
    */
   handleSelectedAirportsChange(e) {
-    let selectedAirportId = e.target.value;
+    let selectedAirportId: string = e.target.value;
     let checked = e.target.checked;
     let all = this._markSelectedAirports(selectedAirportId, checked);
     this.setState({
@@ -207,7 +224,10 @@ export default class FiltersPanel extends React.Component {
     });
   }
 
-  _markSelectedAirports(selectedAirportId, checked) {
+  _markSelectedAirports(
+    selectedAirportId: string,
+    checked: boolean
+  ): [{ airportId: string, airportName: string }] {
     return this.state.selectedValues.airports.all.map(currentAirport =>
       currentAirport.airportId !== selectedAirportId
         ? currentAirport
@@ -221,7 +241,7 @@ export default class FiltersPanel extends React.Component {
   /**
    * Transfer Changes
    */
-  handleTransfersChange(value) {
+  handleTransfersChange(value: [{ airportId: string, airportName: string }]) {
     this.setState({
       selectedValues: {
         ...this.state.selectedValues,

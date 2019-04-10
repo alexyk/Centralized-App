@@ -1,4 +1,4 @@
-export type Filight = {
+export type Flight = {
   id: string,
   price: { currency: "EUR", total: number },
   segments: [FlightSegment],

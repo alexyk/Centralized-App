@@ -1,5 +1,5 @@
 import * as _ from "ramda";
-import type { Filight } from "../flights.type.flow";
+import type { Flight } from "../flights.type.flow";
 /**
  * Generating The Filters Object
  */
@@ -26,7 +26,7 @@ type OptionsForGeneratingFilters = {
 };
 
 export async function makeFiltersObjectFromResults(
-  flightResults: [Filight],
+  flightResults: [Flight],
   options: OptionsForGeneratingFilters
 ): GeneratedFilterOptions {
   /**

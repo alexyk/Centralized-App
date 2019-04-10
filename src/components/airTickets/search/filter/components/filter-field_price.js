@@ -1,19 +1,24 @@
 import React from "react";
 import InputRange from "react-input-range";
-import {
-  MAX_TICKETS_PRICE,
-  MIN_TICKETS_PRICE
-} from "../../../../../constants/constants";
+
 import { CurrencyConverter } from "../../../../../services/utilities/currencyConverter";
 import { getCurrencyExchangeRates } from "../../../../../selectors/exchangeRatesInfo.js";
 import {
   getCurrency,
   getCurrencySign
 } from "../../../../../selectors/paymentInfo";
-
+import type { GeneratedFilterOptions } from "../filtering-function";
 import connect from "react-redux/es/connect/connect";
 
-class PriceFilter extends React.Component {
+export const MIN_TICKETS_PRICE = 0;
+export const MAX_TICKETS_PRICE = 5000;
+
+type Props = {
+  selectedValues: GeneratedFilterOptions,
+  handlePriceRangeChange: (priceRange: { max: number, min: number }) => void
+};
+
+class PriceFilter extends React.Component<Props> {
   constructor(props) {
     super(props);
 
