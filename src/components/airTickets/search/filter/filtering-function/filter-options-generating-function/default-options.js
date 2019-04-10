@@ -1,8 +1,11 @@
 import { Config } from "../../../../../../config";
+import type { OptionsForGeneratingFilters } from "./filter-options-generating";
 
-export function makeDefaultOptionsForFilterGenaration(searchId) {
+const makeDefaultOptionsForFilterGenaration = function makeDefaultOptionsForFilterGenaration(
+  searchId: string
+): OptionsForGeneratingFilters {
   return {
-    getCityNameForAirport(airportId) {
+    getCityNameForAirport(airportId: string) {
       return fetch(
         `${Config.getValue("apiHost")}flight/city/airports/${airportId}`
       )
@@ -19,4 +22,6 @@ export function makeDefaultOptionsForFilterGenaration(searchId) {
         .then(data => data.airlines);
     }
   };
-}
+};
+
+export { makeDefaultOptionsForFilterGenaration };

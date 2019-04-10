@@ -20,7 +20,7 @@ export type GeneratedFilterOptions = {
   }
 };
 
-type OptionsForGeneratingFilters = {
+export type OptionsForGeneratingFilters = {
   getCityNameForAirport: (airportId: string) => Promise<string>,
   getAirlines: () => Promise<[{ airlineId: string, airlineName: string }]>
 };

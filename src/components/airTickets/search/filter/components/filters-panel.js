@@ -15,6 +15,7 @@ import TransfersFilter from "./filter-field_transfers";
  */
 import {
   GeneratedFilterOptions,
+  OptionsForGeneratingFilters,
   Filters as FiltersForFilteringFunction,
   Flight,
   makeFiltersObjectFromResults,
@@ -27,7 +28,6 @@ import {
  * 2. Generates a filters object, based on the results and data from the server
  * 3. Passes on the options to the filters
  * 4. Passes the state of the filters object, back to whichever component wants it via
- * onFiltersChange
  */
 type Props = {
   onSelectedFiltersChange: (filters: FiltersForFilteringFunction) => void,
@@ -96,7 +96,9 @@ export default class FiltersPanel extends React.Component<Props, State> {
   async _generateFiltersOptionsObject(
     results: [Flight]
   ): GeneratedFilterOptions {
-    let options = makeDefaultOptionsForFilterGenaration(this.props.searchId);
+    let options: OptionsForGeneratingFilters = makeDefaultOptionsForFilterGenaration(
+      this.props.searchId
+    );
     return await makeFiltersObjectFromResults(results, options);
   }
 

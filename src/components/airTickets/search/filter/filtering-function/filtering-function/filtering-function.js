@@ -1,5 +1,5 @@
 import * as _ from "ramda";
-import type { Filight } from "../flights.type.flow";
+import type { Flight } from "../flights.type.flow";
 
 export type Filters = {
   price?: {
@@ -15,7 +15,7 @@ export type Filters = {
   }
 };
 
-export function filterFlights(filters: Filters, flights: [Filight]) {
+export function filterFlights(filters: Filters, flights: [Flight]) {
   if (filters.price) {
     flights = filterByPrice(filters, flights);
   }
