@@ -6,14 +6,20 @@ export type Filters = {
     min: number,
     max: number
   },
+  /** present changes are considered selected */
   changes?: [{ changesId: "0" | "1" | "2" }],
+  /** all selected airlines are considered selected */
   airlines?: [{ airlineName: string }],
   journeyTime?: number,
   airports?: {
+    /** all selected airports are marked with a flag */
     all?: [{ city: string, airportId: string, selected?: boolean }],
+    /** present airports are considered to be selected */
     transfers?: [{ airportId: string }]
   }
 };
+
+// TODO: [Filters]: Advisable to unify the criteria for selected items in a list
 
 export function filterFlights(filters: Filters, flights: [Flight]) {
   if (filters.price) {
@@ -25,7 +31,6 @@ export function filterFlights(filters: Filters, flights: [Flight]) {
   }
   if (filters.changes) {
     let before = flights.length;
-
     flights = filterByChanges(filters, flights);
     let after = flights.length;
     let total = before - after;
@@ -33,40 +38,31 @@ export function filterFlights(filters: Filters, flights: [Flight]) {
   }
   if (filters.airlines) {
     let before = flights.length;
-
     flights = filterByAirlines(filters, flights);
     let after = flights.length;
     let total = before - after;
-
     console.log("[FILTER: airlines] filtered out " + total + " items");
   }
   if (filters.journeyTime) {
     let before = flights.length;
-
     flights = filterByJourneyTime(filters, flights);
     let after = flights.length;
     let total = before - after;
-
     console.log("[FILTER: journeyTime] filtered out " + total + " items");
   }
 
   if (filters.airports && filters.airports.all) {
     let before = flights.length;
-    console.log("flights length before", flights.length);
     flights = filterByAirports(filters, flights);
     let after = flights.length;
     let total = before - after;
-
     console.log("[FILTER: airports] filtered out " + total + " items");
-    console.log("flights length after", flights.length);
   }
   if (filters.airports && filters.airports.transfers) {
     let before = flights.length;
-
     flights = filterByTransfers(filters, flights);
     let after = flights.length;
     let total = before - after;
-
     console.log("[FILTER: transfers] filtered out " + total + " items");
   }
   return flights;
@@ -80,17 +76,7 @@ export function filterByAirports(filters, flights) {
   return flights.filter(flight =>
     _allFlightAirportsAreSelected(flight, onlySelectedAirports)
   );
-  ////////////////////////////
-  let allAirports = _leaveOnlyAirportsOfSelectedCities(filters.airports.all);
-  let groupedByCity = _.groupBy(_.prop("city"), allAirports);
-  // groupedByCity = _.filter(value => value.length > 1, groupedByCity);
-
-  return flights.filter(flight => {
-    return _passesForAllCities(flight, groupedByCity);
-  });
 }
-
-////////////////////////////////////////
 
 function _allFlightAirportsAreSelected(flight, allAirports) {
   let allAirportCodes = allAirports.map(_.prop("airportId"));
@@ -102,75 +88,6 @@ function _allFlightAirportsAreSelected(flight, allAirports) {
   });
 
   return segmentsWithSelectedAirportOnly.length === flight.segments.length;
-}
-
-////////////////////////////////////////
-
-function _leaveOnlyAirportsOfSelectedCities(allAirports) {
-  let selectedCities = allAirports
-    .filter(airport => airport.selected === true)
-    .map(_.prop("city"));
-  return allAirports.filter(
-    airport => selectedCities.indexOf(airport.city) !== -1
-  );
-}
-
-function _passesForAllCities(flight, groupedByCity) {
-  let cities = Object.keys(groupedByCity);
-  if (cities.length === 0) {
-    return false;
-  }
-  let passesForCities = 0;
-  cities.forEach(cityName => {
-    if (_passesForCity(groupedByCity, cityName, flight)) {
-      passesForCities += 1;
-    }
-  });
-  return passesForCities === cities.length;
-}
-
-function _passesForCity(groupedByCity, cityName, flight) {
-  let currentCityAirports = groupedByCity[cityName];
-  let selectedAirports = currentCityAirports
-    .filter(ap => ap.selected)
-    .map(_.prop("airportId"));
-  let nonSelectedAirports = currentCityAirports
-    .filter(ap => !ap.selected)
-    .map(_.prop("airportId"));
-
-  let hasSelectedAirports = _hasSelectedAirports(flight, selectedAirports);
-  let doesNotHaveNonSelectedAirports = _doesNotHaveNonSelectedAirports(
-    flight,
-    nonSelectedAirports
-  );
-  return hasSelectedAirports && doesNotHaveNonSelectedAirports;
-}
-
-function _doesNotHaveNonSelectedAirports(flight, nonSelectedAirports) {
-  if (nonSelectedAirports.length === 0) {
-    return true;
-  }
-  return (
-    flight.segments.filter(segment => {
-      let containedInOrigin =
-        nonSelectedAirports.indexOf(segment.origin.code) !== -1;
-      let containedInDestination =
-        nonSelectedAirports.indexOf(segment.destination.code) !== -1;
-      return containedInOrigin || containedInDestination;
-    }).length === 0
-  );
-}
-
-function _hasSelectedAirports(flight, selectedAirports) {
-  return (
-    flight.segments.filter(segment => {
-      let containedInOrigin =
-        selectedAirports.indexOf(segment.origin.code) !== -1;
-      let containedInDestination =
-        selectedAirports.indexOf(segment.destination.code) !== -1;
-      return containedInOrigin || containedInDestination;
-    }).length > 0
-  );
 }
 
 /**
