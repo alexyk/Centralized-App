@@ -10,11 +10,9 @@ import {
 import type { GeneratedFilterOptions } from "../filtering-function";
 import connect from "react-redux/es/connect/connect";
 
-export const MIN_TICKETS_PRICE = 0;
-export const MAX_TICKETS_PRICE = 5000;
-
 type Props = {
   selectedValues: GeneratedFilterOptions,
+  filterOptions: GeneratedFilterOptions,
   handlePriceRangeChange: (priceRange: { max: number, min: number }) => void
 };
 
@@ -29,13 +27,14 @@ class PriceFilter extends React.Component<Props> {
 
   render() {
     if (!this.props.selectedValues.price) return null;
+    if (!this.props.filterOptions.price) return null;
     return (
       <div className="price-range-filters">
         <h5>Price</h5>
         <div className="number-range-slider">
           <InputRange
-            minValue={MIN_TICKETS_PRICE}
-            maxValue={MAX_TICKETS_PRICE}
+            minValue={this.props.filterOptions.price.min}
+            maxValue={this.props.filterOptions.price.max}
             value={this.props.selectedValues.price}
             onChange={this.props.handlePriceRangeChange}
             name={"priceRange"}
