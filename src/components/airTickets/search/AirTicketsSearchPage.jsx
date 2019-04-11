@@ -29,8 +29,6 @@ import orderSegments from "./order-flights/order-flights";
 import "../../../styles/css/components/airTickets/search/air-tickets-search-page.css";
 
 import {filterFlights} from "./filter/filtering-function/filtering-function/filtering-function"
-
-
 const DEFAULT_PAGE_SIZE = 10;
 
 
@@ -62,6 +60,7 @@ class AirTicketsSearchPage extends Component {
     this.filterResults = null;
     this.onPageChange = this.onPageChange.bind(this);
     this.searchAirTickets = this.searchAirTickets.bind(this);
+
     this.applyFilters = this.applyFilters.bind(this);
     this.initAirTicketsSearchPage = this.initAirTicketsSearchPage.bind(this);
     this.handleShowFilters = this.handleShowFilters.bind(this);
