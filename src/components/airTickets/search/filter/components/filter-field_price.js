@@ -38,7 +38,7 @@ class PriceFilter extends React.Component<Props> {
             value={this.props.selectedValues.price}
             onChange={this.props.handlePriceRangeChange}
             name={"priceRange"}
-            step={50}
+            step={1}
           />
           <span className="waiting-start-time">
             {this.props.currencySign}
