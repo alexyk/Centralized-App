@@ -156,7 +156,6 @@ class AirTicketsSearchPage extends Component {
         }
       })
       .catch(res => {
-        console.log(res);
       });
   }
 
@@ -590,19 +589,6 @@ class AirTicketsSearchPage extends Component {
 
 
   render() {
-
-    if(this.state.allElements){
-      console.log(JSON.stringify(Object.values(this.results).filter(result=>{
-        let segments = result.segments;
-        let withMultipleSegmentsInZero = segments.filter(segment=>segment.group === "0");
-        let withMultipleSegmentsInOne = segments.filter(segment=>segment.group === "1");
-        let withMultipleSegmentsInTwo = segments.filter(segment=>segment.group === "2");
-        if(withMultipleSegmentsInZero.length === 3 || withMultipleSegmentsInOne.length === 3 || withMultipleSegmentsInTwo.length === 3){
-          return true;
-        }
-      })))
-    }
-
     const {
       currentPageResults,
       allElements,

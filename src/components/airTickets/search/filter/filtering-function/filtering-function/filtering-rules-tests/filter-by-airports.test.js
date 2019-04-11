@@ -8,7 +8,7 @@ describe("filterByAirports", () => {
 
     let flights = [
       {
-        id: "5ca346876ddc006486ea329f", // Airports - SOFIA: SOF | LONDON: LHR, LGW | MAD, TXL
+        id: "5ca346876ddc006486ea329f", // Airports - SOFIA: SOF | IST | LONDON: LHR, LGW | MAD, TXL
         price: { currency: "EUR", total: 200.0 },
         segments: [
           {
@@ -796,7 +796,7 @@ describe("filterByAirports", () => {
       }
     ];
 
-    test("with LHR", () => {
+    test("with LHR, SOF, MAD", () => {
       let filters = {
         airports: {
           all: [
@@ -821,7 +821,19 @@ describe("filterByAirports", () => {
               airportName: "London Stansted",
               city: "London"
             },
-            { airportId: "LTN", airportName: "Luton", city: "London" }
+            { airportId: "LTN", airportName: "Luton", city: "London" },
+            {
+              airportId: "SOF",
+              airportName: "Sofia",
+              city: "Sofia",
+              selected: true
+            },
+            {
+              airportId: "MAD",
+              airportName: "Madrid",
+              city: "Madrid",
+              selected: true
+            }
           ]
         }
       };
@@ -830,10 +842,50 @@ describe("filterByAirports", () => {
       let expectedResultIds = [flights[1].id];
       expect(resultIds).toEqual(expectedResultIds);
     });
-    test("with LHR, LGW", () => {
+    test("with TXL, IST | SOF, MAD | LHR, LGW, AYT", () => {
       let filters = {
         airports: {
           all: [
+            {
+              airportId: "STN",
+              airportName: "London Stansted",
+              city: "London"
+            },
+            {
+              airportId: "LCY",
+              airportName: "London City Arpt",
+              city: "London"
+            },
+            {
+              airportId: "TXL",
+              airportName: "Berlin-Tegel",
+              city: "Berlin",
+              selected: true
+            },
+            {
+              airportId: "IST",
+              airportName: "Istanbul",
+              city: "Istanbul",
+              selected: true
+            },
+            {
+              airportId: "LTN",
+              airportName: "Luton",
+              city: "London"
+              // selected: true
+            },
+            {
+              airportId: "SOF",
+              airportName: "Sofia",
+              city: "Sofia",
+              selected: true
+            },
+            {
+              airportId: "MAD",
+              airportName: "Madrid",
+              city: "Madrid",
+              selected: true
+            },
             {
               airportId: "LHR",
               airportName: "London Heathrow",
@@ -842,22 +894,17 @@ describe("filterByAirports", () => {
             },
 
             {
-              airportId: "LCY",
-              airportName: "London City Arpt",
-              city: "London"
-            },
-            {
               airportId: "LGW",
               airportName: "London Gatwick",
               city: "London",
               selected: true
             },
             {
-              airportId: "STN",
-              airportName: "London Stansted",
-              city: "London"
-            },
-            { airportId: "LTN", airportName: "Luton", city: "London" }
+              airportId: "AYT",
+              airportName: "Antalya",
+              city: "Antalya",
+              selected: true
+            }
           ]
         }
       };
@@ -866,21 +913,41 @@ describe("filterByAirports", () => {
       let expectedResultIds = [flights[0].id, flights[1].id];
       expect(resultIds).toEqual(expectedResultIds);
     });
-    test("with LTN, LHR", () => {
+    test("with LTN | AYT | IST | LHR | SOF", () => {
       let filters = {
         airports: {
+          // LTN | AYT | IST | LHR | SOF
           all: [
+            {
+              airportId: "LTN",
+              airportName: "Luton",
+              city: "London",
+              selected: true
+            },
+            {
+              airportId: "AYT",
+              airportName: "Antalya",
+              city: "Antalya",
+              selected: true
+            },
+            {
+              airportId: "IST",
+              airportName: "Istanbul",
+              city: "Istanbul",
+              selected: true
+            },
             {
               airportId: "LHR",
               airportName: "London Heathrow",
               city: "London",
               selected: true
             },
+
             {
               airportId: "SOF",
               airportName: "Sofia",
-              city: "Sofia"
-              // selected: true
+              city: "Sofia",
+              selected: true
             },
 
             {
@@ -897,22 +964,16 @@ describe("filterByAirports", () => {
               airportId: "STN",
               airportName: "London Stansted",
               city: "London"
-            },
-            {
-              airportId: "LTN",
-              airportName: "Luton",
-              city: "London",
-              selected: true
             }
           ]
         }
       };
       let result = filterByAirports(filters, flights);
       let resultIds = result.map(_.prop("id"));
-      let expectedResultIds = [flights[1].id, flights[2].id];
+      let expectedResultIds = [flights[2].id];
       expect(resultIds).toEqual(expectedResultIds);
     });
-    test("with LHR, LGW, LTN", () => {
+    test("with LHR, LGW, LTN, SOF", () => {
       let filters = {
         airports: {
           all: [
@@ -923,9 +984,22 @@ describe("filterByAirports", () => {
               selected: true
             },
             {
+              airportId: "LGW",
+              airportName: "London Gatwick",
+              city: "London",
+              selected: true
+            },
+            {
+              airportId: "LTN",
+              airportName: "Luton",
+              city: "London",
+              selected: true
+            },
+            {
               airportId: "SOF",
               airportName: "Sofia",
-              city: "Sofia"
+              city: "Sofia",
+              selected: true
             },
 
             {
@@ -933,29 +1007,18 @@ describe("filterByAirports", () => {
               airportName: "London City Arpt",
               city: "London"
             },
-            {
-              airportId: "LGW",
-              airportName: "London Gatwick",
-              city: "London",
-              selected: true
-            },
+
             {
               airportId: "STN",
               airportName: "London Stansted",
               city: "London"
-            },
-            {
-              airportId: "LTN",
-              airportName: "Luton",
-              city: "London",
-              selected: true
             }
           ]
         }
       };
       let result = filterByAirports(filters, flights);
       let resultIds = result.map(_.prop("id"));
-      let expectedResultIds = [flights[0].id, flights[1].id, flights[2].id];
+      let expectedResultIds = [];
       expect(resultIds).toEqual(expectedResultIds);
     });
 
@@ -1007,7 +1070,7 @@ describe("filterByAirports", () => {
 describe("threw with", () => {
   let flights = [
     {
-      id: "5cac8e97d752b957e7490720",
+      id: "5cac8e97d752b957e7490720", // SOF, LHR, LGW, MAD, TXL
       price: { currency: "EUR", total: 408 },
       segments: [
         {
@@ -1109,7 +1172,7 @@ describe("threw with", () => {
     },
 
     {
-      id: "5cac90e2d752b957e7490ba6",
+      id: "5cac90e2d752b957e7490ba6", // SOF, LHR, LGW, MAD, TXL
       price: { currency: "EUR", total: 408 },
       segments: [
         {
@@ -1250,6 +1313,13 @@ describe("threw with", () => {
     let filters = {
       airports: {
         all: [
+          // SOF, LHR, LGW, MAD, TXL
+          {
+            airportId: "SOF",
+            airportName: "Sofia",
+            city: "Sofia",
+            selected: true
+          },
           {
             airportId: "LHR",
             airportName: "London Heathrow",
@@ -1257,16 +1327,29 @@ describe("threw with", () => {
             selected: true
           },
           {
-            airportId: "LCY",
-            airportName: "London City Arpt",
-            city: "London"
-          },
-          {
             airportId: "LGW",
             airportName: "London Gatwick",
             city: "London",
             selected: true
           },
+          {
+            airportId: "MAD",
+            airportName: "Madrid",
+            city: "Madrid",
+            selected: true
+          },
+          {
+            airportId: "TXL",
+            airportName: "Berlin",
+            city: "Berlin",
+            selected: true
+          },
+          {
+            airportId: "LCY",
+            airportName: "London City Arpt",
+            city: "London"
+          },
+
           {
             airportId: "STN",
             airportName: "London Stansted",
@@ -1306,38 +1389,6 @@ describe("threw with", () => {
     let result = filterByAirports(filters, flights);
     let resultIds = result.map(_.prop("id"));
     let expectedResultIds = [];
-    expect(resultIds).toEqual(expectedResultIds);
-  });
-
-  test("4", () => {
-    let filters = {
-      airports: {
-        all: [
-          {
-            airportId: "LHR",
-            airportName: "London Heathrow",
-            city: "London",
-            selected: true
-          },
-          {
-            airportId: "LGW",
-            airportName: "London Gatwick",
-            city: "London",
-            selected: true
-          }
-        ],
-        transfers: [
-          { airportName: "Amsterdam", airportId: "AMS" },
-          { airportName: "London Heathrow", airportId: "LHR" }
-        ]
-      }
-    };
-    let result = filterByAirports(filters, flights);
-    let resultIds = result.map(_.prop("id"));
-    let expectedResultIds = [
-      "5cac8e97d752b957e7490720",
-      "5cac90e2d752b957e7490ba6"
-    ];
     expect(resultIds).toEqual(expectedResultIds);
   });
 });

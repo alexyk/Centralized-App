@@ -17,23 +17,57 @@ export type Filters = {
 
 export function filterFlights(filters: Filters, flights: [Flight]) {
   if (filters.price) {
+    let before = flights.length;
     flights = filterByPrice(filters, flights);
+    let after = flights.length;
+    let total = before - after;
+    console.log("[FILTER: price] filtered out " + total + " items");
   }
   if (filters.changes) {
+    let before = flights.length;
+
     flights = filterByChanges(filters, flights);
+    let after = flights.length;
+    let total = before - after;
+    console.log("[FILTER: stops] filtered out " + total + " items");
   }
   if (filters.airlines) {
+    let before = flights.length;
+
     flights = filterByAirlines(filters, flights);
+    let after = flights.length;
+    let total = before - after;
+
+    console.log("[FILTER: airlines] filtered out " + total + " items");
   }
   if (filters.journeyTime) {
+    let before = flights.length;
+
     flights = filterByJourneyTime(filters, flights);
+    let after = flights.length;
+    let total = before - after;
+
+    console.log("[FILTER: journeyTime] filtered out " + total + " items");
   }
 
   if (filters.airports && filters.airports.all) {
+    let before = flights.length;
+    console.log("flights length before", flights.length);
     flights = filterByAirports(filters, flights);
+    let after = flights.length;
+    let total = before - after;
+
+    console.log("[FILTER: airports] filtered out " + total + " items");
+    console.log("flights length after", flights.length);
   }
   if (filters.airports && filters.airports.transfers) {
+    let before = flights.length;
+
     flights = filterByTransfers(filters, flights);
+    let after = flights.length;
+    let total = before - after;
+
+    console.log("[FILTER: transfers] filtered out " + total + " items");
   }
   return flights;
 }
@@ -42,14 +76,35 @@ export function filterFlights(filters: Filters, flights: [Flight]) {
  * By Airports
  */
 export function filterByAirports(filters, flights) {
+  let onlySelectedAirports = filters.airports.all.filter(ap => ap.selected);
+  return flights.filter(flight =>
+    _allFlightAirportsAreSelected(flight, onlySelectedAirports)
+  );
+  ////////////////////////////
   let allAirports = _leaveOnlyAirportsOfSelectedCities(filters.airports.all);
   let groupedByCity = _.groupBy(_.prop("city"), allAirports);
-  groupedByCity = _.filter(value => value.length > 1, groupedByCity);
+  // groupedByCity = _.filter(value => value.length > 1, groupedByCity);
 
   return flights.filter(flight => {
     return _passesForAllCities(flight, groupedByCity);
   });
 }
+
+////////////////////////////////////////
+
+function _allFlightAirportsAreSelected(flight, allAirports) {
+  let allAirportCodes = allAirports.map(_.prop("airportId"));
+  let segmentsWithSelectedAirportOnly = flight.segments.filter(segment => {
+    let hasOriginAirport = allAirportCodes.indexOf(segment.origin.code) !== -1;
+    let hasDestinationAirport =
+      allAirportCodes.indexOf(segment.destination.code) !== -1;
+    return hasOriginAirport && hasDestinationAirport;
+  });
+
+  return segmentsWithSelectedAirportOnly.length === flight.segments.length;
+}
+
+////////////////////////////////////////
 
 function _leaveOnlyAirportsOfSelectedCities(allAirports) {
   let selectedCities = allAirports
@@ -213,6 +268,8 @@ function _findTransfersInSegments(flight) {
     } else if (value.length > 2) {
       let transfers = value.slice(1);
       return transfers.map(_.path(["origin", "code"]));
+    } else if (value.length === 1) {
+      return [];
     }
   }, inGroups);
   let list = Object.values(transformedToTransfers)
