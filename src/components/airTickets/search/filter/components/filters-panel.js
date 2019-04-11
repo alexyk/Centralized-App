@@ -68,10 +68,16 @@ export default class FiltersPanel extends React.Component<Props, State> {
    * Hooks
    */
   componentDidMount() {
-    this.generateFiltersAndSelectThemByDefault();
+    if (!this.props.loading) {
+      this.generateFiltersAndSelectThemByDefault();
+    }
   }
 
   componentDidUpdate(prevProps, prevState) {
+    let justLoaded = !this.props.loading && prevProps.loading;
+    if (justLoaded) {
+      this.generateFiltersAndSelectThemByDefault();
+    }
     if (!_.equals(prevState.selectedValues, this.state.selectedValues)) {
       this.onSelectedFiltersChange();
     }
@@ -256,6 +262,31 @@ export default class FiltersPanel extends React.Component<Props, State> {
   }
 
   render() {
+    if (this.props.loading) {
+      return (
+        <div className="filter-box">
+          <div className="form-group">
+            <h6 className="filter-info">
+              Search in progress, filtering will be possible after it is
+              completed
+            </h6>
+          </div>
+        </div>
+      );
+    }
+
+    if (!this.state.selectedValues) {
+      return (
+        <div className="filter-box">
+          <div className="form-group">
+            <h6 className="filter-info">
+              No availbale filters for this search.
+            </h6>
+          </div>
+        </div>
+      );
+    }
+
     return (
       this.state.selectedValues && (
         <div>
@@ -278,6 +309,7 @@ export default class FiltersPanel extends React.Component<Props, State> {
 
           <PriceFilter
             selectedValues={this.state.selectedValues}
+            filterOptions={this.state.filterOptions}
             handlePriceRangeChange={this.handlePriceRangeChange}
           />
 
