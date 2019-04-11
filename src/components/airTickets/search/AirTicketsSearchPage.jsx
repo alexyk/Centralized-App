@@ -38,6 +38,8 @@ function sortFlightsByPrice(flights){
   return flights.sort((r1, r2) => r1.price.total - r2.price.total);
 }
 
+// TODO Refactor to remove unnecessary data, previously used in the FiltersPanel
+
 class AirTicketsSearchPage extends Component {
   constructor(props) {
     super(props);
@@ -615,17 +617,12 @@ class AirTicketsSearchPage extends Component {
           <AsideContentPage>
             <AsideContentPage.Aside>
               <div className="air-tickets-search-filter-panel">
-
-                  <FiltersPanel
-                    searchId={this.searchId}
-                    onSelectedFiltersChange={this.applyFilters}
-                    windowWidth={windowWidth}
-                    showFiltersMobile={showFiltersMobile}
-                    loading={!allElements}
-                    handleShowFilters={this.handleShowFilters}
-                    results={allElements && Object.values(this.results)}
-                  />
-
+                <FiltersPanel
+                  searchId={this.searchId}
+                  onSelectedFiltersChange={this.applyFilters}
+                  loading={!allElements}
+                  results={allElements && Object.values(this.results)}
+                />
               </div>
             </AsideContentPage.Aside>
             <AsideContentPage.Content>
