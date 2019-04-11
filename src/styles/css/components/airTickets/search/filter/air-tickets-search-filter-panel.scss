@@ -27,10 +27,49 @@ $media-expressions: (
 $light-gray: #898c8d;
 $white: #fff;
 
+.air-tickets-search-filter-panel {
+  width: 100%;
+  background: $white;
+  display: inline-block;
+  padding: 0 10px;
+
+  .price-range-filters,
+  .waiting-range-filters,
+  .departure-range-filters,
+  .arrival-range-filters,
+  .journey-range-filters {
+      font-size: 14px;
+      width: 100%;
+      margin-bottom: 30px;
+
+      h5 {
+        padding-left: 0;
+      }
+
+    input {
+      margin-bottom: 12px;
+    }
+    .labels {
+      font-size: 14px;
+      display: flex;
+      justify-content: space-between;
+    }
+    h5 {
+      margin-bottom: 10px;
+    }
+    .select {
+      margin-bottom: 9px;
+    }
+
+    [class*=-end-time]{
+      float: right;
+    }
+  }
+}
 .filter-box {
   background: #fff;
   border-radius: 4px;
-  padding: 20px 10px;
+  padding: 20px 0;
   margin-bottom: 10px;
 
   .filter {
@@ -125,46 +164,6 @@ $white: #fff;
 					padding: 8px;
 				}
       }
-    }
-  }
-
-  .price-range-filters,
-  .waiting-range-filters,
-  .departure-range-filters,
-  .arrival-range-filters,
-  .journey-range-filters {
-
-    &.departure-range-filters,
-    &.arrival-range-filters,
-    &.journey-range-filters {
-      padding: 10px;
-      font-size: 14px;
-      width: 100%;
-      margin: 0 auto;
-
-      h5 {
-        padding-left: 0;
-      }
-    }
-
-    margin-bottom: 25px;
-    input {
-      margin-bottom: 12px;
-    }
-    .labels {
-      font-size: 14px;
-      display: flex;
-      justify-content: space-between;
-    }
-    h5 {
-      margin-bottom: 10px;
-    }
-    .select {
-      margin-bottom: 9px;
-    }
-
-    .time-range-min-end {
-      float: right;
     }
   }
 
