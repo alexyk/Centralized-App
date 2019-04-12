@@ -19,7 +19,7 @@ import {
   Filters as FiltersForFilteringFunction,
   Flight,
   makeFiltersObjectFromResults,
-  makeDefaultOptionsForFilterGenaration
+  options as defaultFilterMakingOptions
 } from "../filtering-function";
 
 /**
@@ -102,9 +102,7 @@ export default class FiltersPanel extends React.Component<Props, State> {
   async _generateFiltersOptionsObject(
     results: [Flight]
   ): GeneratedFilterOptions {
-    let options: OptionsForGeneratingFilters = makeDefaultOptionsForFilterGenaration(
-      this.props.searchId
-    );
+    let options: OptionsForGeneratingFilters = defaultFilterMakingOptions;
     return await makeFiltersObjectFromResults(results, options);
   }
 

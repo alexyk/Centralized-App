@@ -22,17 +22,13 @@ export type GeneratedFilterOptions = {
 };
 
 export type OptionsForGeneratingFilters = {
-  getCityNameForAirport: (airportId: string) => Promise<string>,
-  getAirlines: () => Promise<[{ airlineId: string, airlineName: string }]>
+  getCityNameForAirport: (airportId: string) => Promise<string>
 };
 
 export async function makeFiltersObjectFromResults(
   flightResults: [Flight],
   options: OptionsForGeneratingFilters = {
-    getCityNameForAirport() {},
-    getAirlines() {
-      return [];
-    }
+    getCityNameForAirport() {}
   }
 ): GeneratedFilterOptions {
   /**
@@ -44,8 +40,7 @@ export async function makeFiltersObjectFromResults(
   );
   let prices = _gatherPrices(flightResults);
   let journeyTimes = _gatherJourneyTimes(flightResults);
-  let allAirlines = await _gatherAirlines(options);
-  let airlines = _removeUnusedAirlines(allAirlines, flightResults);
+  let airlines = _gatherAirlinesFromResults(flightResults);
   /**
    * End result
    */
@@ -62,21 +57,20 @@ export async function makeFiltersObjectFromResults(
   };
 }
 
-function _removeUnusedAirlines(allAirlines, results) {
-  let allAirlinesInResults = results.map(flight => {
+function _gatherAirlinesFromResults(results) {
+  let allAirlinesInResults = _findAirlinesInResults(results);
+  return allAirlinesInResults.map(a => {
+    return { airlineName: a, airlineId: a };
+  });
+}
+
+function _findAirlinesInResults(flights) {
+  let allAirlinesInResults = flights.map(flight => {
     return flight.segments.map(segment => segment.carrier.name);
   });
   allAirlinesInResults = allAirlinesInResults.reduce(_.concat);
   allAirlinesInResults = _.uniq(allAirlinesInResults);
-
-  return allAirlines.filter(
-    airline => allAirlinesInResults.indexOf(airline.airlineName) !== -1
-  );
-}
-
-async function _gatherAirlines(options) {
-  const getAirlines = options.getAirlines || function() {};
-  return await getAirlines();
+  return allAirlinesInResults;
 }
 
 /**
