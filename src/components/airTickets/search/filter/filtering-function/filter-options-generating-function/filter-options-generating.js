@@ -1,5 +1,6 @@
 import * as _ from "ramda";
 import type { Flight } from "../flights.type.flow";
+
 /**
  * Generating The Filters Object
  */
@@ -27,7 +28,12 @@ export type OptionsForGeneratingFilters = {
 
 export async function makeFiltersObjectFromResults(
   flightResults: [Flight],
-  options: OptionsForGeneratingFilters
+  options: OptionsForGeneratingFilters = {
+    getCityNameForAirport() {},
+    getAirlines() {
+      return [];
+    }
+  }
 ): GeneratedFilterOptions {
   /**
    * Gather options
@@ -77,18 +83,21 @@ async function _gatherAirlines(options) {
  * Journey Time
  */
 function _gatherJourneyTimes(results) {
-  let times = results.map(_calculateJourneyTime);
-  let sorted = times.sort((a, b) => a - b);
+  let topTimesOfAllFlights = results.map(_findLargestJourneyTimeInFlight);
+  let sortedTopTimesOfAllFlights = _.sort(
+    (a, b) => a - b,
+    topTimesOfAllFlights
+  );
   return {
-    min: sorted[0],
-    max: sorted[sorted.length - 1]
+    min: sortedTopTimesOfAllFlights[0],
+    max: sortedTopTimesOfAllFlights[sortedTopTimesOfAllFlights.length - 1]
   };
 }
-function _calculateJourneyTime(flight) {
-  let groups = Object.keys(flight.orderedSegments);
-  return groups.reduce((acc, groupIndex) => {
-    return acc + flight.orderedSegments[groupIndex][0].journeyTime;
-  }, 0);
+function _findLargestJourneyTimeInFlight(flight) {
+  let flightSegmentsSortedByTime = flight.segments
+    .map(_.prop("journeyTime"))
+    .sort((a, b) => a - b);
+  return flightSegmentsSortedByTime[flightSegmentsSortedByTime.length - 1];
 }
 
 /**
