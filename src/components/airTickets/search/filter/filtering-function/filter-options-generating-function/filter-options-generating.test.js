@@ -26,6 +26,12 @@ describe("filter options gathering from flight results - makeFilterObjectFromRes
   };
   let journeyTime = { max: 1830, min: 1685 };
 
+  let allAirlines = [
+    { airlineName: "Turkish Airlines", airlineId: "Turkish Airlines" },
+    { airlineName: "Aegean Air", airlineId: "Aegean Air" },
+    { airlineName: "Helvetic Airways", airlineId: "Helvetic Airways" }
+  ];
+
   let results = [
     {
       id: "5ca346876ddc006486ea329f",
@@ -1389,7 +1395,7 @@ describe("filter options gathering from flight results - makeFilterObjectFromRes
       segments: [
         {
           group: "0",
-          carrier: { name: "Turkish Airlines" },
+          carrier: { name: "Aegean Air" },
           origin: {
             code: "SOF",
             name: "Sofia",
@@ -1728,7 +1734,7 @@ describe("filter options gathering from flight results - makeFilterObjectFromRes
       segments: [
         {
           group: "0",
-          carrier: { name: "Turkish Airlines" },
+          carrier: { name: "Helvetic Airways" },
           origin: {
             code: "SOF",
             name: "Sofia",
@@ -2140,8 +2146,8 @@ describe("filter options gathering from flight results - makeFilterObjectFromRes
       let fixture_airlines = [
         { airlineId: "0B", airlineName: "Blue Air" },
         { airlineId: "2L", airlineName: "Helvetic Airways" },
-        { airlineId: "A3", airlineName: "Aegean Air" },
-        { airlineId: "AF", airlineName: "Air France" }
+        { airlineId: "A3", airlineName: "Aegean Air" }
+        // { airlineId: "AF", airlineName: "Air France" }
       ];
 
       const getAirlines = () => {
@@ -2155,7 +2161,7 @@ describe("filter options gathering from flight results - makeFilterObjectFromRes
       let filtersObject = await makeFiltersObjectFromResults(results, {
         getAirlines
       });
-      expect(filtersObject.airlines).toEqual(fixture_airlines);
+      expect(filtersObject.airlines).toEqual(allAirlines);
     });
   });
 
