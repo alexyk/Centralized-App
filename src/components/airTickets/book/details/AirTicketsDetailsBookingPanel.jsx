@@ -13,6 +13,24 @@ import { isLogged } from '../../../../selectors/userInfo';
 import { selectFlightRouting } from '../../../../selectors/airTicketsSearchSelector';
 import { getStartDate, getEndDate } from '../../../../selectors/searchDatesInfo';
 import { LOGIN } from '../../../../constants/modals.js';
+import queryString from "query-string";
+
+
+function calculateNumberOfPassengers(props){
+  const {adults, children} = queryString.parse(props.location.search);
+
+  let numberOfChildren = 0;
+  try {
+    numberOfChildren =  JSON.parse(children).length;
+  } catch (e) {
+  }
+
+  let numberOfAdults = 0;
+  if(!isNaN(Number(adults))){
+    numberOfAdults = Number(adults);
+  }
+  return numberOfChildren + numberOfAdults;
+}
 
 function AirTicketsDetailsBookingPanel(props) {
 
@@ -37,6 +55,7 @@ function AirTicketsDetailsBookingPanel(props) {
   const priceWithoutTax = (fiatPriceInCurrentCurrency - taxPriceInCurrentCurrency).toFixed(2);
   const showPrice = !taxPriceInCurrentCurrency ? fiatPriceInCurrentCurrency : priceWithoutTax;
   const taxAndFeesCalc = isUserLogged && currencySign ? taxPriceInCurrentCurrency.toFixed(2) : 0;
+let totalNumberOfPeople = calculateNumberOfPassengers(props);
 
   const getFlightRoutingPreview = (flightRouting) => {
     if (flightRouting === '1') {
@@ -61,7 +80,7 @@ function AirTicketsDetailsBookingPanel(props) {
   return (
     <div className="air-tickets-details-booking-panel">
       <div className="box" id="test">
-        <p className="default-price"><span className="main-fiat">{currencySign}{fiatPriceInCurrentCurrency.toFixed(2)}</span> <LocPrice fiat={fiatPriceInRoomsXMLCurrency} /> /per 1 adult</p>
+        <p className="default-price"><span className="main-fiat">{currencySign}{fiatPriceInCurrentCurrency.toFixed(2)}</span> <LocPrice fiat={fiatPriceInRoomsXMLCurrency} /> for {totalNumberOfPeople} people</p>
         <div className="booking-dates">
           <div className="air-tickets-form-check-wrap">
             <div className="check">
