@@ -15,7 +15,7 @@ import * as _ from "ramda";
 
 export function orderFlightsAsAnArray(arrayOfStopsToSort) {
   let ordered = orderFlights(arrayOfStopsToSort);
-  return Object.values(ordered).reduce(_.concat);
+  return Object.values(ordered).reduce(_.concat, []);
 }
 
 export default function orderFlights(arrayOfStopsToSort) {
