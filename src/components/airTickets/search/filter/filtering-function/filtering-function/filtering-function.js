@@ -23,47 +23,23 @@ export type Filters = {
 
 export function filterFlights(filters: Filters, flights: [Flight]) {
   if (filters.price) {
-    // let before = flights.length;
     flights = filterByPrice(filters, flights);
-    // let after = flights.length;
-    // let total = before - after;
-    // console.log("[FILTER: price] filtered out " + total + " items");
   }
   if (filters.changes) {
-    // let before = flights.length;
     flights = filterByChanges(filters, flights);
-    // let after = flights.length;
-    // let total = before - after;
-    // console.log("[FILTER: stops] filtered out " + total + " items");
   }
   if (filters.airlines) {
-    // let before = flights.length;
     flights = filterByAirlines(filters, flights);
-    // let after = flights.length;
-    // let total = before - after;
-    // console.log("[FILTER: airlines] filtered out " + total + " items");
   }
   if (filters.journeyTime) {
-    // let before = flights.length;
     flights = filterByJourneyTime(filters, flights);
-    // let after = flights.length;
-    // let total = before - after;
-    // console.log("[FILTER: journeyTime] filtered out " + total + " items");
   }
 
   if (filters.airports && filters.airports.all) {
-    // let before = flights.length;
     flights = filterByAirports(filters, flights);
-    // let after = flights.length;
-    // let total = before - after;
-    // console.log("[FILTER: airports] filtered out " + total + " items");
   }
   if (filters.airports && filters.airports.transfers) {
-    // let before = flights.length;
     flights = filterByTransfers(filters, flights);
-    // let after = flights.length;
-    // let total = before - after;
-    // console.log("[FILTER: transfers] filtered out " + total + " items");
   }
   return flights;
 }

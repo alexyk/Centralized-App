@@ -1,14 +1,8 @@
 import React from "react";
 import InputRange from "react-input-range";
-
 import { CurrencyConverter } from "../../../../../services/utilities/currencyConverter";
-import { getCurrencyExchangeRates } from "../../../../../selectors/exchangeRatesInfo.js";
-import {
-  getCurrency,
-  getCurrencySign
-} from "../../../../../selectors/paymentInfo";
 import type { GeneratedFilterOptions } from "../filtering-function";
-import connect from "react-redux/es/connect/connect";
+import { debounceFn } from "./_debounce-function";
 
 type Props = {
   selectedValues: GeneratedFilterOptions,
@@ -17,7 +11,7 @@ type Props = {
 };
 const STEP = 1;
 
-class PriceFilter extends React.Component<Props> {
+export default class PriceFilter extends React.Component<Props> {
   constructor(props) {
     super(props);
 
@@ -25,13 +19,26 @@ class PriceFilter extends React.Component<Props> {
     this._formatPriceFromEurToTheSelectedCurrency = this._formatPriceFromEurToTheSelectedCurrency.bind(
       this
     );
+    this.debouncedChangeHandler = debounceFn(
+      this.props.handlePriceRangeChange,
+      100
+    );
+    this.state = {
+      min: props.filterOptions.price.min,
+      max: props.filterOptions.price.max
+    };
   }
 
   handleChange(value) {
-    this.props.handlePriceRangeChange({
-      min: value.min - STEP,
-      max: value.max + STEP
-    });
+    this.setState(
+      {
+        min: value.min - STEP,
+        max: value.max + STEP
+      },
+      () => {
+        this.debouncedChangeHandler(this.state);
+      }
+    );
   }
 
   render() {
@@ -45,22 +52,18 @@ class PriceFilter extends React.Component<Props> {
           <InputRange
             minValue={this.props.filterOptions.price.min}
             maxValue={this.props.filterOptions.price.max}
-            value={this.props.selectedValues.price}
+            value={this.state}
             onChange={this.handleChange}
             name={"priceRange"}
             step={STEP}
           />
           <span className="waiting-start-time">
             {this.props.currencySign}
-            {this._formatPriceFromEurToTheSelectedCurrency(
-              this.props.selectedValues.price.min
-            )}
+            {this._formatPriceFromEurToTheSelectedCurrency(this.state.min)}
           </span>
           <span className="waiting-end-time">
             {this.props.currencySign}
-            {this._formatPriceFromEurToTheSelectedCurrency(
-              this.props.selectedValues.price.max
-            )}
+            {this._formatPriceFromEurToTheSelectedCurrency(this.state.max)}
           </span>
         </div>
       </div>
@@ -77,14 +80,3 @@ class PriceFilter extends React.Component<Props> {
     return fiatPriceInCurrentCurrency.toFixed(2);
   }
 }
-
-function mapStateToProps(state) {
-  const { paymentInfo, exchangeRatesInfo } = state;
-
-  return {
-    currency: getCurrency(paymentInfo),
-    currencySign: getCurrencySign(paymentInfo),
-    currencyExchangeRates: getCurrencyExchangeRates(exchangeRatesInfo)
-  };
-}
-export default connect(mapStateToProps)(PriceFilter);
