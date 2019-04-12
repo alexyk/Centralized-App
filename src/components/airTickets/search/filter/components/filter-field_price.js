@@ -15,19 +15,29 @@ type Props = {
   filterOptions: GeneratedFilterOptions,
   handlePriceRangeChange: (priceRange: { max: number, min: number }) => void
 };
+const STEP = 1;
 
 class PriceFilter extends React.Component<Props> {
   constructor(props) {
     super(props);
 
+    this.handleChange = this.handleChange.bind(this);
     this._formatPriceFromEurToTheSelectedCurrency = this._formatPriceFromEurToTheSelectedCurrency.bind(
       this
     );
   }
 
+  handleChange(value) {
+    this.props.handlePriceRangeChange({
+      min: value.min - STEP,
+      max: value.max + STEP
+    });
+  }
+
   render() {
     if (!this.props.selectedValues.price) return null;
     if (!this.props.filterOptions.price) return null;
+
     return (
       <div className="price-range-filters">
         <h5>Price</h5>
@@ -36,9 +46,9 @@ class PriceFilter extends React.Component<Props> {
             minValue={this.props.filterOptions.price.min}
             maxValue={this.props.filterOptions.price.max}
             value={this.props.selectedValues.price}
-            onChange={this.props.handlePriceRangeChange}
+            onChange={this.handleChange}
             name={"priceRange"}
-            step={1}
+            step={STEP}
           />
           <span className="waiting-start-time">
             {this.props.currencySign}
