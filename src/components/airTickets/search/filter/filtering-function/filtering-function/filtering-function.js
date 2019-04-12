@@ -210,14 +210,23 @@ export function filterByPrice(filters, flights) {
  */
 export function filterByJourneyTime(filters, flights) {
   return flights.filter(flight => {
-    let journeyTime = _calculateJourneyTime(flight);
-    return journeyTime <= filters.journeyTime;
+    return _allSegmentGroupsAreLessOrEqual(flight, filters.journeyTime);
   });
 }
 
-function _calculateJourneyTime(flight) {
-  let groups = Object.keys(flight.orderedSegments);
-  return groups.reduce((acc, groupIndex) => {
-    return acc + flight.orderedSegments[groupIndex][0].journeyTime;
-  }, 0);
+function _allSegmentGroupsAreLessOrEqual(flight, maxJourneyTime) {
+  let segmentsByGroup = _.groupBy(_.prop("group"), flight.segments);
+  let journeyTimePerSegmentGroup = _.mapObjIndexed(
+    _.path([0, "journeyTime"]),
+    segmentsByGroup
+  );
+  let onlyGroupsWithAllowedJourneyTime = _.filter(
+    currentJourneyTime => currentJourneyTime <= maxJourneyTime,
+    journeyTimePerSegmentGroup
+  );
+
+  return (
+    _.keys(onlyGroupsWithAllowedJourneyTime).length ===
+    _.keys(segmentsByGroup).length
+  );
 }

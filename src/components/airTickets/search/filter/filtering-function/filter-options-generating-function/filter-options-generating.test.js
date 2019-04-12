@@ -16,6 +16,16 @@ describe("filter options gathering from flight results - makeFilterObjectFromRes
     { airportId: "AYT", airportName: "Antalya" }
   ];
 
+  let largestJourneyTimePerFlight = {
+    "5ca346876ddc006486ea329f": 1685,
+    "5ca346876ddc006486ea32a0": 1685,
+    "5ca346876ddc006486ea32a1": 1830,
+    "5ca346876ddc006486ea32a2": 1830,
+    "5ca346876ddc006486ea32a3": 1685,
+    "5ca346886ddc006486ea32a4": 1685
+  };
+  let journeyTime = { max: 1830, min: 1685 };
+
   let results = [
     {
       id: "5ca346876ddc006486ea329f",
@@ -2052,13 +2062,10 @@ describe("filter options gathering from flight results - makeFilterObjectFromRes
       }
     }
   ];
-
   let prices = {
     min: 100.5,
     max: 2222
   };
-
-  let journeyTime = { max: 4140, min: 3390 };
 
   describe("airports", () => {
     test("collects the airports from the results", async () => {
