@@ -7,7 +7,7 @@ import "../../../../../styles/css/components/airTickets/search/filter/air-ticket
 import StopsFilter from "./filter-field_stops";
 import AirlinesFilter from "./filter-field_airlines";
 import JourneyTimeFilter from "./filter-field_journey-time";
-import PriceFilter from "./filter-field_price";
+import PriceFilter from "./filter-field_price_container";
 import AirportsFilter from "./filter-field_airports";
 import TransfersFilter from "./filter-field_transfers";
 /**
