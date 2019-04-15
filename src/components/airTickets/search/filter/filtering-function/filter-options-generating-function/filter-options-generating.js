@@ -69,7 +69,10 @@ function _findAirlinesInResults(flights) {
     return flight.segments.map(segment => segment.carrier.name);
   });
   allAirlinesInResults = allAirlinesInResults.reduce(_.concat);
-  allAirlinesInResults = _.uniq(allAirlinesInResults);
+  allAirlinesInResults = _.compose(
+    _.uniq,
+    _.map(_.trim)
+  )(allAirlinesInResults);
   return allAirlinesInResults;
 }
 
