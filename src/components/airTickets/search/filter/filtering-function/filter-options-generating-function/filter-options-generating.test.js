@@ -62,7 +62,7 @@ describe("filter options gathering from flight results - makeFilterObjectFromRes
         },
         {
           group: "0",
-          carrier: { name: "Turkish Airlines" },
+          carrier: { name: "Turkish Airlines   " },
           origin: {
             code: "IST",
             name: "Istanbul",
