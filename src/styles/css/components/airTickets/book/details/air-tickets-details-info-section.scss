@@ -46,6 +46,12 @@ $media-expressions: (
     }
     .air-tickets-details-content {
       grid-area: content;
+
+      .air-tickets-details-content-item > .farerules {
+        padding: 15px;
+        border: 1px solid $gray;
+      }
+
       &-item {
         margin-bottom: 40px;
       }
@@ -62,6 +68,10 @@ $media-expressions: (
           h5 {
             font-weight: 400;
             margin-bottom: 20px;
+            .icon-arrow-right {
+              font-size: 0.6em;
+              margin: 0 10px;
+            }
           }
 
           h6 {

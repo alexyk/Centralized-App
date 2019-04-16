@@ -1,18 +1,17 @@
-import React, {Component} from "react";
-import {withRouter} from "react-router-dom";
-import {NotificationManager} from "react-notifications";
+import React, { Component } from "react";
+import { withRouter } from "react-router-dom";
+import { NotificationManager } from "react-notifications";
 import PropTypes from "prop-types";
 import moment from "moment";
 import requester from "../../../../requester";
-import {LONG} from "../../../../constants/notificationDisplayTimes.js";
-import {BOOKING_UPDATED} from "../../../../constants/successMessages";
+import { LONG } from "../../../../constants/notificationDisplayTimes.js";
+import { BOOKING_UPDATED } from "../../../../constants/successMessages";
 import sa from "superagent";
 import "../../../../styles/css/components/profile/admin/reservations/admin-reservations-edit-form.css";
-import {Config} from "../../../../config";
+import { Config } from "../../../../config";
 import * as _ from "ramda";
 
-type
-FlightBooking = {
+type FlightBooking = {
   pnr: string,
   tripId: number,
   status: string,
@@ -28,8 +27,7 @@ FlightBooking = {
   paymentMethod: string
 };
 
-type
-State = {
+type State = {
   booking: FlightBooking
 };
 
@@ -81,7 +79,7 @@ class AdminReservationsFlightsEditForm extends Component<State> {
   }
 
   onChange(e) {
-    const {booking} = this.state;
+    const { booking } = this.state;
     this.setState({
       booking: {
         ...booking,
@@ -108,27 +106,36 @@ class AdminReservationsFlightsEditForm extends Component<State> {
     if (e) {
       e.preventDefault();
     }
-    sa.post(`/admin/panel/flights/${this.props.match.params.id}`)
+    if (!this.state.booking) {
+      return;
+    }
+    let body = {
+      pnr: this.state.booking.pnr,
+      reservationStatus: this.state.booking.status
+    };
+    sa.post(
+      `${Config.getValue("apiHost")}/admin/panel/flights/${
+        this.props.match.params.id
+      }`
+    )
       .set(
         "Authorization",
         localStorage[Config.getValue("domainPrefix") + ".auth.locktrip"]
       )
-      .send({
-        pnr: this.state.pnr,
-        reservationStatus: this.state.reservationStatus
-      })
+      .send(body)
       .then(res => {
-        this.setState({
-          booking: res.body
-        });
+        NotificationManager.success("Edited successfully!");
+      })
+      .catch(e => {
+        NotificationManager.error("Editing failed!");
       });
   }
 
   render() {
-    const {booking} = this.state;
+    const { booking } = this.state;
 
     if (!booking) {
-      return <div className="loading"/>;
+      return <div className="loading" />;
     }
 
     let passengerInfo = JSON.parse(booking.passengerInfo);
@@ -186,7 +193,10 @@ class AdminReservationsFlightsEditForm extends Component<State> {
           <div>
             <span>Trip Id</span>
             {": "}
-            <span>{booking.tripId}</span>
+            <span>
+              {booking.tripId}
+              -FL-LT
+            </span>
           </div>
           <div>
             <span>Date</span>
@@ -211,7 +221,7 @@ class AdminReservationsFlightsEditForm extends Component<State> {
 
           <div>
             {/*"passengerInfo": "{\"flightReservationId\":\"244-FL\",\"flightId\":\"5caf4039e6b1481770d10309\",\"contact\":{\"title\":\"Mrs\",\"lastName\":\"Dikova-Kirova\",\"firstName\":\"Asya\",\"email\":\"asya.iv.dikova@gmail.com\",\"phone\":null,\"country\":\"BG\",\"zip\":null,\"city\":\"Sofia, Bulgaria\",\"address\":\"Test address 1\"},\"invoice\":{\"name\":null,\"country\":null,\"zip\":null,\"city\":null,\"address\":null},\"options\":[],\"passengers\":[{\"type\":\"ADT\",\"title\":\"Mrs\",\"firstName\":\"Nevena\",\"lastName\":\"Petrova\",\"birthDate\":\"1980-03-17\",\"nationality\":\"BG\",\"passport\":{\"type\":\"P\",\"number\":\"384853244\",\"issueCountry\":\"BG\",\"expiry\":\"2022-09-7\"},\"options\":[{\"id\":\"OutwardLuggageOptions\",\"value\":\"1\"}]}],\"uuid\":\"6a352aa0-3fdd-48fc-a58c-0091d5fbc2de-517235432775\"}",*/}
-            <br/>
+            <br />
             <h4>Passenger Info</h4>
             <div>
               <span>Email</span>
@@ -234,7 +244,7 @@ class AdminReservationsFlightsEditForm extends Component<State> {
               <span>{passengerInfo.flightId}</span>
             </div>
 
-            <br/>
+            <br />
             <h5>Contact</h5>
             <div>
               <span>Title</span>
@@ -282,7 +292,7 @@ class AdminReservationsFlightsEditForm extends Component<State> {
               <span>{passengerInfo.contact.address}</span>
             </div>
 
-            <br/>
+            <br />
             <h5>Passengers</h5>
             <div>
               {passengerInfo.passengers.map(passenger => {
@@ -325,7 +335,7 @@ class AdminReservationsFlightsEditForm extends Component<State> {
                     </div>
 
                     <div>
-                      <br/>
+                      <br />
                       <h6>Options</h6>
                       <span>
                         {Object.values(passenger.options).map(prop => {
@@ -340,7 +350,7 @@ class AdminReservationsFlightsEditForm extends Component<State> {
                       </span>
                     </div>
                     <div>
-                      <br/>
+                      <br />
                       <h6>Passport</h6>
                       <div>
                         <span>Expiry</span>
@@ -363,23 +373,23 @@ class AdminReservationsFlightsEditForm extends Component<State> {
                         <span>{passenger.passport.type}</span>
                       </div>
                     </div>
-                    <hr/>
+                    <hr />
                   </div>
                 );
               })}
             </div>
           </div>
 
-          <br/>
+          <br />
           <div>
             <span>Tickets</span>
             {": "}
             <span>{booking.tickets}</span>
           </div>
 
-          <br/>
+          <br />
           <div>
-            <br/>
+            <br />
             <h4>Fare</h4>
             {": "}
             <span>
@@ -456,14 +466,16 @@ class AdminReservationsFlightsEditForm extends Component<State> {
                       {": "}
                       <span>{f.originTimezone}</span>
                     </div>
-                    <hr/>
+                    <hr />
                   </div>
                 );
               })}
             </span>
           </div>
           <div className="button-holder">
-            <button className="btn"  onClick={this.editBooking}>Edit</button>
+            <button className="btn" onClick={this.editBooking}>
+              Edit
+            </button>
           </div>
         </form>
       </div>

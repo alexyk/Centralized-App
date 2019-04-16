@@ -61,17 +61,17 @@ class AirTicketsBookingProfilePassengersForm extends Component {
   getSelectionNameByServiceType(serviceTypeName, serviceOption) {
     switch (serviceTypeName) {
       case 'Baggage':
-        return `${serviceOption.bags ? `Bags - ${serviceOption.bags}.` : ''}${serviceOption.maxWeight ? ` Max weight - ${serviceOption.maxWeight}.` : ''}${serviceOption.price ? ` Price - ${this.getCurrencySign(this.props.currency)}${serviceOption.price}.` : ''}`;
+        return `${serviceOption.maxWeight ? `${serviceOption.maxWeight}.` : `${serviceOption.bags ? `Bags - ${serviceOption.bags}.` : ''}`}${serviceOption.price ? ` Price - ${this.getCurrencySign(this.props.currency)}${serviceOption.price}` : ''}`;
       case 'Checkin bag for outward':
-        return `${serviceOption.bags ? `Bags - ${serviceOption.bags}.` : ''}${serviceOption.maxWeight ? ` Max weight - ${serviceOption.maxWeight}.` : ''}${serviceOption.price ? ` Price - ${this.getCurrencySign(this.props.currency)}${serviceOption.price}.` : ''}`;
+        return `${serviceOption.maxWeight ? `${serviceOption.maxWeight}.` : `${serviceOption.bags ? `Bags - ${serviceOption.bags}.` : ''}`}${serviceOption.price ? ` Price - ${this.getCurrencySign(this.props.currency)}${serviceOption.price}` : ''}`;
       case 'Checking bag for return':
-        return `${serviceOption.bags ? `Bags - ${serviceOption.bags}.` : ''}${serviceOption.maxWeight ? ` Max weight - ${serviceOption.maxWeight}.` : ''}${serviceOption.price ? ` Price - ${this.getCurrencySign(this.props.currency)}${serviceOption.price}.` : ''}`;
+        return `${serviceOption.maxWeight ? `${serviceOption.maxWeight}.` : `${serviceOption.bags ? `Bags - ${serviceOption.bags}.` : ''}`}${serviceOption.price ? ` Price - ${this.getCurrencySign(this.props.currency)}${serviceOption.price}` : ''}`;
       case 'Hand baggage':
-        return 'Hand baggage is not formatted.';
+        return `${serviceOption.type ? `${serviceOption.type}` : ''}${serviceOption.price ? ` Price - ${this.getCurrencySign(this.props.currency)}${serviceOption.price}` : ''}`;
       case 'Checkin':
-        return 'Checkin is not formatted.';
+        return `${serviceOption.type ? `${serviceOption.type}` : ''}${serviceOption.price ? ` Price - ${this.getCurrencySign(this.props.currency)}${serviceOption.price}` : ''}`;
       case 'Priority boarding':
-        return `${serviceOption.bags ? `Bags - ${serviceOption.bags}.` : ''}${serviceOption.maxWeight ? ` Max weight - ${serviceOption.maxWeight}.` : ''}${serviceOption.price ? ` Price - ${this.getCurrencySign(this.props.currency)}${serviceOption.price}.` : ''}`;
+        return `${serviceOption.price ? `Price - ${this.getCurrencySign(this.props.currency)}${serviceOption.price}` : ''}`;
       case 'Dining/meal':
         return 'Dining/meal is not formatted.';
       case 'Cabins':

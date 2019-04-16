@@ -198,6 +198,7 @@ class AdminReservationsTable extends Component {
                   <th>Date Of Purchase</th>
                   <th>Payment Method</th>
                   <th>Nationality</th>
+                  <th>Action</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -247,6 +248,7 @@ class AdminReservationsTable extends Component {
                       <td>{moment(booking.date).utc().format('DD/MM/YYYY')}</td>
                       <td>{booking.paymentMethod}</td>
                       <td>{booking.nationality}</td>
+                      <td><Link to={`/profile/admin/reservation/booking/${booking.tripId}/flights`}>Edit</Link></td>
                     </tr>
                   );
                 })}

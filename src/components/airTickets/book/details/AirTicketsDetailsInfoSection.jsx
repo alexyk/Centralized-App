@@ -1,4 +1,4 @@
-import React, { Component, Fragment } from 'react';
+import React, {Component, Fragment} from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment';
 import AirTicketsDetailsBookingPanel from './AirTicketsDetailsBookingPanel';
@@ -12,10 +12,12 @@ class AirTicketsDetailsInfoSection extends Component {
     super(props);
 
     this.state = {
-      fareRulesIndex: -1
+      fareRulesIndex: -1,
+      brandInfoIndex: -1
     };
 
     this.toggleFareRule = this.toggleFareRule.bind(this);
+    this.toggleBrandInfoRule = this.toggleBrandInfoRule.bind(this);
   }
 
   convertMinutesToTime(minutes) {
@@ -43,7 +45,7 @@ class AirTicketsDetailsInfoSection extends Component {
       time: segments[segments.length - 1].destination.time
     };
 
-    return { departure, arrival };
+    return {departure, arrival};
   }
 
   getDepartureInfo(departureInfo) {
@@ -60,12 +62,13 @@ class AirTicketsDetailsInfoSection extends Component {
     for (let i = 0; i < departureInfo.length - 1; i++) {
       middleStopsBulets.push(
         <Fragment key={i}>
-          <div key={i} className="bulet-container" style={{ left: `${((i + 1) * buletIndex) + 8}px` }}><span className="bulet"></span></div>
-          <div className="middle-stop" style={{ left: `${(((i + 1) * buletIndex) + 8) - 11}px` }}>
+          <div key={i} className="bulet-container" style={{left: `${((i + 1) * buletIndex) + 8}px`}}><span
+            className="bulet"></span></div>
+          <div className="middle-stop" style={{left: `${(((i + 1) * buletIndex) + 8) - 11}px`}}>
             {departureInfo[i].destination.code}
             <div className="tooltip-content">
               <div>Transfer</div>
-              <hr />
+              <hr/>
               <div>{departureInfo[i].destination.name} ({departureInfo[i].destination.code})</div>
             </div>
           </div>
@@ -83,8 +86,9 @@ class AirTicketsDetailsInfoSection extends Component {
             <h5 className="carrier">{departureInfo[0].carrier.name}</h5>
           </div>
           <div className="flight-duration-wrapper">
-            <img width="20" src={TimeIcon} alt="time" />
-            <span className="duration">{this.convertMinutesToTime(departureInfo[departureInfo.length - 1].journeyTime)}</span>
+            <img width="20" src={TimeIcon} alt="time"/>
+            <span
+              className="duration">{this.convertMinutesToTime(departureInfo[departureInfo.length - 1].journeyTime)}</span>
           </div>
           <div className="flight-stops-count">
             <span>{departureInfo.length - 1 === 0 ? 'direct flight' : `${departureInfo.length - 1} stops`}</span>
@@ -94,14 +98,16 @@ class AirTicketsDetailsInfoSection extends Component {
           <div className="flight">
             <div className="item flight-date-times">
               <div className="flight-date-time">
-                <span className="date-in-day">{departureDate.departure.day}</span> {departureDate.departure.month}, {departureDate.departure.year}
+                <span
+                  className="date-in-day">{departureDate.departure.day}</span> {departureDate.departure.month}, {departureDate.departure.year}
                 <div className="time">{departureDate.departure.time}</div>
               </div>
               <div className="arrow-icon-container">
-                <img src="/images/icon-arrow.png" alt="icon-arrow" />
+                <img src="/images/icon-arrow.png" alt="icon-arrow"/>
               </div>
               <div className="flight-date-time">
-                <span className="date-out-day">{departureDate.arrival.day}</span> {departureDate.arrival.month}, {departureDate.arrival.year}
+                <span
+                  className="date-out-day">{departureDate.arrival.day}</span> {departureDate.arrival.month}, {departureDate.arrival.year}
                 <div className="time">{departureDate.arrival.time}</div>
               </div>
             </div>
@@ -110,28 +116,28 @@ class AirTicketsDetailsInfoSection extends Component {
                 {departureInfo[0].origin.code}
                 <div className="tooltip-content">
                   <div>Departure</div>
-                  <hr />
+                  <hr/>
                   <div>{departureInfo[0].origin.name} ({departureInfo[0].origin.code})</div>
                 </div>
               </div>
               <div className="stops-container horizontal">
                 <div className="bulet-container"><span className="bulet"></span></div>
-                <hr className="line" />
+                <hr className="line"/>
                 {departureInfo.length === 1 ? null : middleStopsBulets}
-                <div className="bulet-container" style={{ left: '180px' }}><span className="bulet"></span></div>
+                <div className="bulet-container" style={{left: '180px'}}><span className="bulet"></span></div>
               </div>
               <div className="stop">
                 {departureInfo[departureInfo.length - 1].destination.code}
                 <div className="tooltip-content">
                   <div>Arrival</div>
-                  <hr />
+                  <hr/>
                   <div>{departureInfo[departureInfo.length - 1].destination.name} ({departureInfo[departureInfo.length - 1].destination.code})</div>
                 </div>
               </div>
             </div>
           </div>
         </div>
-      </Fragment >
+      </Fragment>
     );
   }
 
@@ -149,12 +155,13 @@ class AirTicketsDetailsInfoSection extends Component {
     for (let i = 0; i < returnInfo.length - 1; i++) {
       middleStopsBulets.push(
         <Fragment key={i}>
-          <div key={i} className="bulet-container" style={{ left: `${((i + 1) * buletIndex) + 8}px` }}><span className="bulet"></span></div>
-          <div className="middle-stop" style={{ left: `${(((i + 1) * buletIndex) + 8) - 11}px` }}>
+          <div key={i} className="bulet-container" style={{left: `${((i + 1) * buletIndex) + 8}px`}}><span
+            className="bulet"></span></div>
+          <div className="middle-stop" style={{left: `${(((i + 1) * buletIndex) + 8) - 11}px`}}>
             {returnInfo[i].destination.code}
             <div className="tooltip-content">
               <div>Transfer</div>
-              <hr />
+              <hr/>
               <div>{returnInfo[i].destination.name} ({returnInfo[i].destination.code})</div>
             </div>
           </div>
@@ -172,7 +179,7 @@ class AirTicketsDetailsInfoSection extends Component {
             <h5 className="carrier">{returnInfo[0].carrier.name}</h5>
           </div>
           <div className="flight-duration-wrapper">
-            <img width="20" src={TimeIcon} alt="time" />
+            <img width="20" src={TimeIcon} alt="time"/>
             <span className="duration">
               {this.convertMinutesToTime(returnInfo[returnInfo.length - 1].journeyTime)}
             </span>
@@ -190,10 +197,11 @@ class AirTicketsDetailsInfoSection extends Component {
                 <div className="time">{returnDate.departure.time}</div>
               </div>
               <div className="arrow-icon-container">
-                <img src="/images/icon-arrow.png" alt="icon-arrow" />
+                <img src="/images/icon-arrow.png" alt="icon-arrow"/>
               </div>
               <div className="flight-date-time">
-                <span className="date-out-day">{returnDate.arrival.day}</span> {returnDate.arrival.month}, {returnDate.arrival.year}
+                <span
+                  className="date-out-day">{returnDate.arrival.day}</span> {returnDate.arrival.month}, {returnDate.arrival.year}
                 <div className="time">{returnDate.arrival.time}</div>
               </div>
             </div>
@@ -202,28 +210,28 @@ class AirTicketsDetailsInfoSection extends Component {
                 {returnInfo[0].origin.code}
                 <div className="tooltip-content">
                   <div>Departure</div>
-                  <hr />
+                  <hr/>
                   <div>{returnInfo[0].origin.name} ({returnInfo[0].origin.code})</div>
                 </div>
               </div>
               <div className="stops-container horizontal">
                 <div className="bulet-container"><span className="bulet"></span></div>
-                <hr className="line" />
+                <hr className="line"/>
                 {returnInfo.length === 1 ? null : middleStopsBulets}
-                <div className="bulet-container" style={{ left: '180px' }}><span className="bulet"></span></div>
+                <div className="bulet-container" style={{left: '180px'}}><span className="bulet"></span></div>
               </div>
               <div className="stop">
                 {returnInfo[returnInfo.length - 1].destination.code}
                 <div className="tooltip-content">
                   <div>Arrival</div>
-                  <hr />
+                  <hr/>
                   <div>{returnInfo[returnInfo.length - 1].destination.name} ({returnInfo[returnInfo.length - 1].destination.code})</div>
                 </div>
               </div>
             </div>
           </div>
         </div>
-      </Fragment >
+      </Fragment>
     );
   }
 
@@ -233,8 +241,14 @@ class AirTicketsDetailsInfoSection extends Component {
     });
   }
 
+  toggleBrandInfoRule(brandInfoIndex) {
+    this.setState({
+      brandInfoIndex: brandInfoIndex
+    });
+  }
+
   render() {
-    const { result, fareRules } = this.props;
+    const {result, fareRules} = this.props;
 
     if (!result || !fareRules) {
       return <div className="loader"></div>;
@@ -245,7 +259,8 @@ class AirTicketsDetailsInfoSection extends Component {
 
     const isLowCost = result.propertiesInfo.isLowCost;
 
-    const { fareRulesIndex } = this.state;
+    const {fareRulesIndex} = this.state;
+    const {brandInfoIndex} = this.state;
 
     const departureInfo = this.getDepartureInfo(resultDepartureInfo);
     const returnInfo = this.getReturnInfo(resultReturnInfo);
@@ -265,14 +280,15 @@ class AirTicketsDetailsInfoSection extends Component {
             </div>
             <div className="air-tickets-details-content-item">
               <h2>Flight details</h2>
-              <hr />
+              <hr/>
               <div className="flight-details">
                 <div className="departure">
                   <h5>Departure</h5>
                   {resultDepartureInfo.map((segment, index) => {
                     return (
                       <div className="departure-segment" key={index}>
-                        <h5>{segment.origin.name} <span className="icon-arrow-right arrow"></span> {segment.destination.name}</h5>
+                        <h5>{segment.origin.name} <span
+                          className="icon-arrow-right arrow"></span> {segment.destination.name}</h5>
                         <div className="departure-segment-item">
                           <div>Flight number:</div>
                           <div>{segment.carrier.flightNumber}</div>
@@ -286,141 +302,154 @@ class AirTicketsDetailsInfoSection extends Component {
                           <div>{this.convertMinutesToTime(segment.flightTime)}</div>
                         </div>
                         {!!segment.techStops &&
-                          <div className="departure-segment-item">
-                            <div>Tech stops:</div>
-                            <div>{segment.techStops}</div>
-                          </div>}
+                        <div className="departure-segment-item">
+                          <div>Tech stops:</div>
+                          <div>{segment.techStops}</div>
+                        </div>}
                         {!!segment.waitTime &&
-                          <div className="departure-segment-item stop-over-wrapper">
-                            <div>Stop-over time:</div>
-                            <div>{this.convertMinutesToTime(segment.waitTime)}</div>
-                          </div>}
+                        <div className="departure-segment-item stop-over-wrapper">
+                          <div>Stop-over time:</div>
+                          <div>{this.convertMinutesToTime(segment.waitTime)}</div>
+                        </div>}
                       </div>
                     );
                   })}
                 </div>
                 {resultReturnInfo.length > 0 &&
-                  <div className="return">
-                    <h5>Return</h5>
-                    {resultReturnInfo.map((segment, index) => {
-                      return (
-                        <div className="departure-segment" key={index}>
-                          <h5>{segment.origin.name} <span className="icon-arrow-right arrow"></span> {segment.destination.name}</h5>
-                          <div className="departure-segment-item">
-                            <div>Flight number:</div>
-                            <div>{segment.carrier.flightNumber}</div>
-                          </div>
-                          <div className="departure-segment-item">
-                            <div>Service class:</div>
-                            <div>{segment.classFlightInfo.name}</div>
-                          </div>
-                          <div className="departure-segment-item">
-                            <div>Duration:</div>
-                            <div>{this.convertMinutesToTime(segment.flightTime)}</div>
-                          </div>
-                          {!!segment.techStops &&
-                            <div className="departure-segment-item">
-                              <div>Tech stops:</div>
-                              <div>{segment.techStops}</div>
-                            </div>}
-                          {!!segment.waitTime &&
-                            <div className="departure-segment-item stop-over-wrapper">
-                              <div>Stop-over time:</div>
-                              <div>{this.convertMinutesToTime(segment.waitTime)}</div>
-                            </div>}
+                <div className="return">
+                  <h5>Return</h5>
+                  {resultReturnInfo.map((segment, index) => {
+                    return (
+                      <div className="departure-segment" key={index}>
+                        <h5>{segment.origin.name} <span
+                          className="icon-arrow-right arrow"></span> {segment.destination.name}</h5>
+                        <div className="departure-segment-item">
+                          <div>Flight number:</div>
+                          <div>{segment.carrier.flightNumber}</div>
                         </div>
-                      );
-                    })}
-                  </div>}
+                        <div className="departure-segment-item">
+                          <div>Service class:</div>
+                          <div>{segment.classFlightInfo.name}</div>
+                        </div>
+                        <div className="departure-segment-item">
+                          <div>Duration:</div>
+                          <div>{this.convertMinutesToTime(segment.flightTime)}</div>
+                        </div>
+                        {!!segment.techStops &&
+                        <div className="departure-segment-item">
+                          <div>Tech stops:</div>
+                          <div>{segment.techStops}</div>
+                        </div>}
+                        {!!segment.waitTime &&
+                        <div className="departure-segment-item stop-over-wrapper">
+                          <div>Stop-over time:</div>
+                          <div>{this.convertMinutesToTime(segment.waitTime)}</div>
+                        </div>}
+                      </div>
+                    );
+                  })}
+                </div>}
               </div>
             </div>
             {fareRules.length > 0 &&
-              <div className="air-tickets-details-content-item">
-                <h2>Fare Rules</h2>
-                <hr />
-                <div className="farerules">
-                  {fareRules.map((rule, ruleIndex) => {
-                    const rules = rule.fareRulesInfo.map((ruleInfo, ruleInfoIndex) => {
-                      return (
-                        <div key={ruleInfoIndex} className="rule">
-                          <h5>{ruleInfo.title}</h5>
-                          <h5>{ruleInfo.text}</h5>
-                        </div>
-                      );
-                    });
+            <div className="air-tickets-details-content-item">
+              <h2>Fare Rules</h2>
+              <hr/>
+              <div className="farerules">
+                {fareRules.map((rule, ruleIndex) => {
+                  const rules = rule.fareRulesInfo.map((ruleInfo, ruleInfoIndex) => {
                     return (
-                      <Fragment key={ruleIndex}>
-                        <div className="flight-rule-title">
-                          <h5><div className="flight-rule-origin">{rule.origin.name}</div> <span className="icon-arrow-right arrow"></span> <div className="flight-rule-destination">{rule.destination.name}</div></h5>
-                          {fareRulesIndex === ruleIndex ? <div className="toggle"><span className="fa fa-angle-down" onClick={() => this.toggleFareRule(-1)} /></div> : <div className="toggle"><span className="fa fa-angle-right" onClick={() => this.toggleFareRule(ruleIndex)} /></div>}
-                        </div>
-                        {fareRulesIndex === ruleIndex &&
-                          <div className="flight-rules">
-                            {rules}
-                          </div>}
-                      </Fragment>
-                    );
-                  })}
-                </div>
-              </div>
-            }
-            {brandInfo.length > 0 &&
-              <div className="air-tickets-details-content-item">
-                <h2>Brand Info</h2>
-                <hr />
-                <div className="farerules">
-                  {brandInfo.map((rule, ruleIndex) => {
-                    const styleToggle = {
-                      width: '5%',
-                      display: 'inline-block',
-                      float: 'right'
-                    };
-                    const services = rule.services.map((service, i) => {
-                      return `<p>${service.name}</p><p>${service.description}</p>`;
-                    });
-                    return (
-                      <div key={ruleIndex} className="rule">
-                        <h5>{rule.brandName}</h5>
-                        <h5 style={{ width: '95%', display: 'inline-block' }}></h5>
-                        <h5 style={{ width: '95%', display: 'inline-block' }}>
-                          <span className="flight-rule-origin">{rule.origin.name}</span>
-                          <span className="icon-arrow-right arrow"></span>
-                          <span className="flight-rule-destination">{rule.destination.name}</span>
-                        </h5>
-                        {fareRulesIndex === ruleIndex
-                          ? <div className="toggle" style={styleToggle}><span className="fa fa-angle-down" onClick={() => this.toggleFareRule(-1)} /></div> :
-                            <div className="toggle" style={styleToggle}><span className="fa fa-angle-right" onClick={() => this.toggleFareRule(ruleIndex)} /></div>
-                          }
-                        {fareRulesIndex === ruleIndex &&
-                          <div className="flight-rules">
-                            {services}
-                          </div>}
+                      <div key={ruleInfoIndex} className="rule">
+                        <h6>{ruleInfo.title}</h6>
+                        <p>{ruleInfo.text}</p>
                       </div>
                     );
-                  })}
-                </div>
+                  });
+                  return (
+                    <Fragment key={ruleIndex}>
+                      <div className="flight-rule-title">
+                        <h5>
+                          <div className="flight-rule-origin">{rule.origin.name}</div>
+                          <span className="icon-arrow-right arrow"></span>
+                          <div className="flight-rule-destination">{rule.destination.name}</div>
+                        </h5>
+                        {fareRulesIndex === ruleIndex ? <div className="toggle"><span className="fa fa-angle-down"
+                                                                                      onClick={() => this.toggleFareRule(-1)}/>
+                        </div> : <div className="toggle"><span className="fa fa-angle-right"
+                                                               onClick={() => this.toggleFareRule(ruleIndex)}/></div>}
+                      </div>
+                      {fareRulesIndex === ruleIndex &&
+                      <div className="flight-rules">
+                        {rules}
+                      </div>}
+                    </Fragment>
+                  );
+                })}
               </div>
+            </div>
+            }
+            {brandInfo.length > 0 &&
+            <div className="air-tickets-details-content-item">
+              <h2>Brand Info</h2>
+              <hr/>
+              <div className="farerules">
+                {brandInfo.map((rule, ruleIndex) => {
+                  const services = rule.services.map((service, i) => {
+                    return <div key={i}>{service.name}: {service.description}</div>;
+                  });
+                  return (
+                    <Fragment key={ruleIndex}>
+                      <div className="flight-rule-title">
+                        <h5>
+                          <div className="flight-rule-origin">{rule.origin.name}</div>
+                          <span className="icon-arrow-right arrow"></span>
+                          <div className="flight-rule-destination">{rule.destination.name}</div>
+                        </h5>
+                        {brandInfoIndex === ruleIndex ? <div className="toggle"><span className="fa fa-angle-down"
+                                                                                      onClick={() => this.toggleBrandInfoRule(-1)}/>
+                        </div> : <div className="toggle"><span className="fa fa-angle-right"
+                                                               onClick={() => this.toggleBrandInfoRule(ruleIndex)}/></div>}
+                      </div>
+                      {brandInfoIndex === ruleIndex &&
+                      <div className="flight-rules">
+                        <h5>{rule.brandName}</h5>
+                        <p>{rule.description}</p>
+                        {services}
+                      </div>}
+                    </Fragment>
+                  );
+                })}
+              </div>
+            </div>
             }
             {supplierInfo.length > 0 &&
-              <div className="air-tickets-details-content-item">
-                <h2>Brand Info</h2>
-                <hr />
-                <div className="farerules">
-                  {supplierInfo.map((rule, ruleIndex) => {
+            <div className="air-tickets-details-content-item">
+              <h2>Supplier Info</h2>
+              <hr/>
+              <div className="farerules">
+                {supplierInfo.map((rule, ruleIndex) => {
+                  if (rule.value.indexOf("http") !== -1) {
+                    return (
+                      <div key={ruleIndex} className="rule">
+                        <h5><a href={rule.value} target="_blank">{rule.name}</a></h5>
+                      </div>
+                    );
+                  } else {
                     return (
                       <div key={ruleIndex} className="rule">
                         <h5>{rule.name}</h5>
-                        <h5>{rule.value}</h5>
+                        <p> {rule.value}</p>
                       </div>
                     );
-                  })}
-                </div>
+                  }
+                })}
               </div>
+            </div>
             }
           </div>
-          <AirTicketsDetailsBookingPanel result={result} />
+          <AirTicketsDetailsBookingPanel result={result}/>
         </div>
-      </section >
+      </section>
     );
   }
 }

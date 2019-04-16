@@ -82,7 +82,7 @@ function AirTicketsBookingProfileRouterPage(props) {
                           initBooking={props.initBooking}
                           countries={countries}
                           services={passengersServices}
-                          currency={result.price.currency}
+                          currency={props.currency}
                           isBookingProccess={isBookingProccess}
                           enableNextSection={props.enableNextSection}
                         />
