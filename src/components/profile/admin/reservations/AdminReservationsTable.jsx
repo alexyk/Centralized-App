@@ -185,19 +185,34 @@ class AdminReservationsTable extends Component {
                     {/*paymentMethod,*/}
                   {/*}*/}
 
+                  {/*<th>PNR</th>*/}
+                  {/*<th>Trip ID</th>*/}
+                  {/*<th>Status</th>*/}
+                  {/*<th>Email</th>*/}
+                  {/*<th>Phone</th>*/}
+                  {/*<th>Names</th>*/}
+                  {/*<th>Tickets</th>*/}
+                  {/*<th>Fare</th>*/}
+                  {/*<th>Price</th>*/}
+                  {/*<th>Transaction ID</th>*/}
+                  {/*<th>Date Of Purchase</th>*/}
+                  {/*<th>Payment Method</th>*/}
+                  {/*<th>Nationality</th>*/}
+                  {/*<th>Action</th>*/}
+
                   <th>PNR</th>
                   <th>Trip ID</th>
                   <th>Status</th>
+                  <th>Transaction ID</th>
+                  <th>Payment Method</th>
                   <th>Email</th>
                   <th>Phone</th>
-                  <th>Names</th>
-                  <th>Tickets</th>
                   <th>Fare</th>
+                  <th>Passenger Names</th>
+                  <th>Tickets</th>
                   <th>Price</th>
-                  <th>Transaction ID</th>
                   <th>Date Of Purchase</th>
-                  <th>Payment Method</th>
-                  <th>Nationality</th>
+                  <th>Provider</th>
                   <th>Action</th>
                 </tr>
                 </thead>
@@ -212,20 +227,14 @@ class AdminReservationsTable extends Component {
                       <td>{booking.pnr}</td>
                       <td>{booking.tripId}</td>
                       <td>{booking.status}</td>
+                      <td>{booking.transactionId}</td>
+                      <td>{booking.paymentMethod}</td>
                       <td>{booking.email}</td>
                       <td>{booking.phone}</td>
-                      <td>{passengerInfo && (
-                        (passengerInfo.passengers || []).map(passenger=>{
-                          return <div>{passenger.title} {passenger.firstName} {passenger.lastName}</div>
-                        })
-                      )}</td>
-
-                      <td>{booking.tickets}</td>
-
                       <td style={{    maxWidth: "none",
                         whiteSpace: "nowrap"}}>{
-                         (()=>{
-                           let group = 0;
+                        (()=>{
+                          let group = 0;
                           return (fare || []).map(f=>{
                             let groupLine = null;
 
@@ -233,21 +242,24 @@ class AdminReservationsTable extends Component {
                               group = f.group;
                               groupLine = <hr />
                             }
-                            let line = <div>{f.origin} - {f.destination} {f.originDate} {f.originTime}</div>;
+                            let line = <div>{f.origin} - {f.destination}, {moment(f.originDate).utc().format('DD MMM YYYY')} {f.originTime}</div>;
                             return <React.Fragment>
-                                {groupLine}
-                                {line}
+                              {groupLine}
+                              {line}
                             </React.Fragment>
                           })
                         })()
 
-                    }</td>
+                      }</td>
+                      <td>{passengerInfo && (
+                        (passengerInfo.passengers || []).map(passenger=>{
+                          return <div>{passenger.title} {passenger.firstName} {passenger.lastName}</div>
+                        })
+                      )}</td>
+                      <td>{booking.tickets}</td>
                       <td>{booking.price} {booking.currency}</td>
-
-                      <td>{booking.transactionId}</td>
                       <td>{moment(booking.date).utc().format('DD/MM/YYYY')}</td>
-                      <td>{booking.paymentMethod}</td>
-                      <td>{booking.nationality}</td>
+                      <td>{booking.provider}</td>
                       <td><Link to={`/profile/admin/reservation/booking/${booking.tripId}/flights`}>Edit</Link></td>
                     </tr>
                   );
