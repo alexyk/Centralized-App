@@ -326,6 +326,7 @@ class AirTicketsSearchResult extends Component {
     const endOfSearch = search.indexOf('&filters=') !== -1 ? search.indexOf('&filters=') : search.length;
     const bookingUrl = redirectURL + '/' + result.id + '/details' + search.substr(0, endOfSearch);
     const adultsCount = queryString.parse(search).adults;
+    const travellersCount = Number(queryString.parse(search).adults) + JSON.parse(queryString.parse(search).children).length;
     const routing = queryString.parse(search).routing;
 
     return (
@@ -361,7 +362,7 @@ class AirTicketsSearchResult extends Component {
 
         <div className="air-tickets-result-pricing">
           <div className="price-for">
-            <div>Price for {adultsCount} adult{adultsCount > '1' ? 's' : ''}</div>
+            <div>Price for {travellersCount} traveller{travellersCount > '1' ? 's' : ''}</div>
             {routing === '1' ? <div>one way</div> : <div>round trip</div>}
           </div>
           {!isPriceLoaded

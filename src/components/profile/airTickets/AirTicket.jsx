@@ -4,7 +4,20 @@ import moment from 'moment';
 import ProfileFlexContainer from '../flexContainer/ProfileFlexContainer';
 import PlaneIcon from '../../../styles/images/plane-icon.png';
 
-const STATUS = ['PENDING', 'PREPARE']
+const STATUS = ['PENDING', 'PREPARE'];
+
+const STATUS_LAST = {
+  DONE: "DONE",
+  FINALIZE: "RESERVATION",
+  FAILED: "FAILED",
+  FAILED_PAYMENT_WITH_LOC : "UNSUCCESSFUL",
+  SUCCESS_PAYMENT_WITH_LOC: "PENDING",
+  PAYMENT_PROCESSOR_FOR_REVIEW: "REVIEW",
+  PENDING_PAYMENT_PROCESSOR_CONFIRMATION: "PENDING",
+  PAYMENT_PROCESSOR_FAILED: "UNSUCCESSFUL",
+  PAYMENT_PROCESSOR_CONFIRMED: "PENDING"
+};
+
 class AirTicket extends Component {
   extractDatesData(segments) {
     const startDateMoment = moment(segments[0].originDate);
@@ -128,18 +141,19 @@ class AirTicket extends Component {
       return 'PENDING';
     }
 
-    const statusPreview = status.split('_').join(' ');
-    let statusName = '';
-
-    if (STATUS.indexOf(statusPreview[0])) {
-      statusName = 'PENDING';
-    } else if (statusName[0] === 'FAILED') {
-      statusName = 'FAILED';
-    } else {
-      statusName = 'DONE';
-    }
-
-    return statusName;
+    // const statusPreview = status.split('_').join(' ');
+    // let statusName = '';
+    //
+    // if (STATUS.indexOf(statusPreview[0])) {
+    //   statusName = 'PENDING';
+    // } else if (statusName[0] === 'FAILED') {
+    //   statusName = 'FAILED';
+    // } else {
+    //   statusName = 'DONE';
+    // }
+    //
+    // return statusName;
+    return STATUS_LAST[status];
   }
 
   getDetails(e) {

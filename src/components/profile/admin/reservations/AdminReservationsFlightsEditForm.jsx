@@ -184,10 +184,12 @@ class AdminReservationsFlightsEditForm extends Component<State> {
                 <option value="FINALIZE">FINALIZE</option>
                 <option value="FAILED">FAILED</option>
                 <option value="FAILED_PAYMENT_WITH_LOC">FAILED_PAYMENT_WITH_LOC</option>
-                <option value="SUCCESS_PAYМЕNТ_WITH_LOC">SUCCESS_PAYМЕNТ_WITH_LOC</option>
+                <option value="SUCCESS_PAYМЕNТ_WITH_LOC">SUCCESS_PAYMENT_WITH_LOC</option>
                 <option value="PAYMENT_PROCESSOR_FOR_REVIEW">PAYMENT_PROCESSOR_FOR_REVIEW</option>
                 <option value="PAYMENT_PROCESSOR_FAILED">PAYMENT_PROCESSOR_FAILED</option>
                 <option value="PAYMENT_PROCESSOR_CONFIRMED">PAYMENT_PROCESSOR_CONFIRMED</option>
+                <option value="PENDING_PAYMENT_PROCESSOR_CONFIRMATION">PENDING_PAYMENT_PROCESSOR_CONFIRMATION</option>
+                <option value="PREPARE_FLIGHT_RESERVATION">PREPARE_FLIGHT_RESERVATION</option>
               </select>
             </div>
           </div>

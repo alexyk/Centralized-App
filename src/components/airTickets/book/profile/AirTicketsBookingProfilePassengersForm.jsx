@@ -253,7 +253,7 @@ class AirTicketsBookingProfilePassengersForm extends Component {
                     </div>
                     <div className="passport-exp">
                       <div className="passport-exp-month">
-                        <label htmlFor="passportExpMonth">Passport expired <span className="mandatory">*</span></label>
+                        <label htmlFor="passportExpMonth">Passport expiry <span className="mandatory">*</span></label>
                         <div className='select'>
                           <select name="passportExpMonth" id="passportExpMonth" onChange={this.onChange} value={passenger.passportExpMonth} required>
                             <option disabled value="">Month</option>
