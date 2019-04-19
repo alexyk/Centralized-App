@@ -94,7 +94,7 @@ function mapStateToProps(state, ownProps) {
   const { userInfo, exchangerSocketInfo, locAmountsInfo, exchangeRatesInfo } = state;
 
   const currencyExchangeRates = getCurrencyExchangeRates(exchangeRatesInfo);
-  const fiatInEur = currencyExchangeRates && CurrencyConverter.convert(currencyExchangeRates, RoomsXMLCurrency.get(), DEFAULT_CRYPTO_CURRENCY, fiat);
+  const fiatInEur = currencyExchangeRates && CurrencyConverter.convert(currencyExchangeRates, localStorage.getItem('currency'), DEFAULT_CRYPTO_CURRENCY, fiat);
   let locAmount = getLocAmountById(locAmountsInfo, fiatInEur);
 
   if (!locAmount) {
