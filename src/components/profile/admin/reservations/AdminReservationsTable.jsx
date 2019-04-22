@@ -203,15 +203,15 @@ class AdminReservationsTable extends Component {
                   <th>PNR</th>
                   <th>Trip ID</th>
                   <th>Status</th>
-                  <th>Transaction ID</th>
-                  <th>Payment Method</th>
                   <th>Email</th>
-                  <th>Phone</th>
-                  <th>Fare</th>
-                  <th>Passenger Names</th>
+                  <th>Payment Method</th>
+                  <th>Payment ID</th>
                   <th>Tickets</th>
+                  <th>Fare</th>
                   <th>Price</th>
-                  <th>Date Of Purchase</th>
+                  <th>Created on</th>
+                  <th>Passenger Names</th>
+                  <th>Phone</th>
                   <th>Provider</th>
                   <th>Action</th>
                 </tr>
@@ -227,10 +227,10 @@ class AdminReservationsTable extends Component {
                       <td>{booking.pnr}</td>
                       <td>{booking.tripId}</td>
                       <td>{booking.status}</td>
-                      <td>{booking.transactionId}</td>
-                      <td>{booking.paymentMethod}</td>
                       <td>{booking.email}</td>
-                      <td>{booking.phone}</td>
+                      <td>{booking.paymentMethod}</td>
+                      <td>{booking.transactionId}</td>
+                      <td>{booking.tickets}</td>
                       <td style={{    maxWidth: "none",
                         whiteSpace: "nowrap"}}>{
                         (()=>{
@@ -251,14 +251,14 @@ class AdminReservationsTable extends Component {
                         })()
 
                       }</td>
+                      <td>{booking.price} {booking.currency}</td>
+                      <td>{moment(booking.date).utc().format('DD/MM/YYYY')}</td>
                       <td>{passengerInfo && (
                         (passengerInfo.passengers || []).map(passenger=>{
                           return <div>{passenger.title} {passenger.firstName} {passenger.lastName}</div>
                         })
                       )}</td>
-                      <td>{booking.tickets}</td>
-                      <td>{booking.price} {booking.currency}</td>
-                      <td>{moment(booking.date).utc().format('DD/MM/YYYY')}</td>
+                      <td>{booking.phone}</td>
                       <td>{booking.provider}</td>
                       <td><Link to={`/profile/admin/reservation/booking/${booking.tripId}/flights`}>Edit</Link></td>
                     </tr>
