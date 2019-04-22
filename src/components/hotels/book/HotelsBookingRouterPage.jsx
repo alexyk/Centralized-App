@@ -14,7 +14,7 @@ import requester from '../../../requester';
 import _ from 'lodash';
 import validator from 'validator';
 import { getCurrency } from '../../../selectors/paymentInfo';
-
+import xregexp from "xregexp";
 const QUOTE_ID_POLLING_INTERVAL_TIME = 10000;
 
 class HotelsBookingRouterPage extends React.Component {
@@ -362,10 +362,11 @@ class HotelsBookingRouterPage extends React.Component {
   handleAdultChange(event, roomIndex, adultIndex) {
     const name = event.target.name;
     const value = event.target.value;
-    const regexp = /^[a-zA-Z]+(-[a-zA-Z]*)?$/;
-    if (value === '' || validator.matches(value, regexp)) {
+    // const regexp = /^[a-zA-Z]+(-[a-zA-Z]*)?$/;
+    const regexp = xregexp("^\\pL+([- ']?\\pL*)?([- ']?\\pL*)$");
+    if (value === '' || regexp.test(value)) {
       const guests = this.state.guests.slice();
-      guests[roomIndex].adults[adultIndex][name] = value.trim();
+      guests[roomIndex].adults[adultIndex][name] = value;
       this.setState({ guests });
     }
   }
