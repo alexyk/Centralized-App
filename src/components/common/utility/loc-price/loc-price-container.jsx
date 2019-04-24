@@ -39,23 +39,36 @@ export default connect(
  * Redux Connection
  */
 function mapStateToProps(state, ownProps) {
-  let { locAmount, fiatAmountInEur } = evaluateLocAndEuroAmounts({
-    inputFiatAmount: ownProps.fiat,
-    inputFiatCurrency: ownProps.inputCurrency,
-    currencyExchangeRates: getCurrencyExchangeRates(state.exchangeRatesInfo),
-    locEurRate: getLocEurRate(state.exchangeRatesInfo),
-    getCachedLocEurRateForAmount: amountInEur =>
-      getStoredLocAmountForPriceInEur(state, amountInEur)
-  });
+  let  currencyExchangeRates = getCurrencyExchangeRates(state.exchangeRatesInfo);
 
-  return {
-    locAmount: locAmount,
-    fiatInEur: fiatAmountInEur,
-    isUserLogged: isLogged(state.userInfo),
-    isExchangerWebsocketConnected: isExchangerWebsocketConnected(
-      state.exchangerSocketInfo
-    )
-  };
+  if(currencyExchangeRates){
+    let { locAmount, fiatAmountInEur } = evaluateLocAndEuroAmounts({
+      inputFiatAmount: ownProps.fiat,
+      inputFiatCurrency: ownProps.inputCurrency,
+      currencyExchangeRates: currencyExchangeRates,
+      locEurRate: getLocEurRate(state.exchangeRatesInfo),
+      getCachedLocEurRateForAmount: amountInEur =>
+        getStoredLocAmountForPriceInEur(state.locAmountsInfo, amountInEur)
+    });
+
+    return {
+      locAmount: locAmount,
+      fiatInEur: fiatAmountInEur,
+      isUserLogged: isLogged(state.userInfo),
+      isExchangerWebsocketConnected: isExchangerWebsocketConnected(
+        state.exchangerSocketInfo
+      )
+    };
+  } else {
+    return {
+      locAmount: null,
+      fiatInEur: null,
+      isUserLogged: isLogged(state.userInfo),
+      isExchangerWebsocketConnected: isExchangerWebsocketConnected(
+        state.exchangerSocketInfo
+      )
+    };
+  }
 }
 
 function mapDispatchToProps(dispatch) {

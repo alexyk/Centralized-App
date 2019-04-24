@@ -6,7 +6,7 @@ import React, { PureComponent } from "react";
 type _LocPriceComponentProps = {
   fiatInEur: number,
   isExchangerWebsocketConnected: boolean,
-  openAConnectionThisAmountInEuro: Function,
+  openAConnectionForThisAmountInEuro: Function,
   endConnectionForCurrentAmountInEuroAndClearStoredLocAmount: Function,
   brackets: boolean
 };
@@ -20,7 +20,7 @@ export default class _LocPriceComponent extends PureComponent<
    */
   componentDidMount() {
     if (this.props.isExchangerWebsocketConnected) {
-      this.props.openAConnectionThisAmountInEuro(this.props.fiatInEur);
+      this.props.openAConnectionForThisAmountInEuro(this.props.fiatInEur);
     }
   }
   componentDidUpdate(prevProps) {
@@ -42,7 +42,8 @@ export default class _LocPriceComponent extends PureComponent<
     const bracket = this.props.brackets && this.props.isUserLogged;
     return (
       <span>
-        {bracket && "("}LOC {this.props.locAmount && this.props.locAmount}
+        {bracket && "("}LOC{" "}
+        {this.props.locAmount && this.props.locAmount.toFixed(2)}
         {bracket && ")"}
       </span>
     );

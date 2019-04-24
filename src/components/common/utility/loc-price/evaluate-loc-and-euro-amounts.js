@@ -8,12 +8,13 @@ export default function evaluateLocAndEuroAmounts({
   locEurRate,
   getCachedLocEurRateForAmount
 }) {
-  let currentPriceInEur = CurrencyConverter.convert({
-    inputFiatAmount,
-    inputFiatCurrency: inputFiatCurrency || RoomsXMLCurrency.get(),
-    outputFiatCurrency: "EUR",
-    fiatExchangeRates: currencyExchangeRates
-  });
+  let outputFiatCurrency = "EUR";
+  let currentPriceInEur = CurrencyConverter.convert(
+    currencyExchangeRates,
+    inputFiatCurrency || RoomsXMLCurrency.get(),
+    outputFiatCurrency,
+    inputFiatAmount
+  );
 
   const calculateLocAmount = () => currentPriceInEur / locEurRate;
   let locAmount =
