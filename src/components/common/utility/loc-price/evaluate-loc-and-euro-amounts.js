@@ -5,7 +5,6 @@ export default function evaluateLocAndEuroAmounts({
   inputFiatAmount,
   inputFiatCurrency,
   currencyExchangeRates,
-  locEurRate,
   getCachedLocEurRateForAmount
 }) {
   let outputFiatCurrency = "EUR";
@@ -15,10 +14,7 @@ export default function evaluateLocAndEuroAmounts({
     outputFiatCurrency,
     inputFiatAmount
   );
-
-  const calculateLocAmount = () => currentPriceInEur / locEurRate;
-  let locAmount =
-    getCachedLocEurRateForAmount(currentPriceInEur) || calculateLocAmount();
+  let locAmount = getCachedLocEurRateForAmount(currentPriceInEur);
 
   return {
     locAmount,

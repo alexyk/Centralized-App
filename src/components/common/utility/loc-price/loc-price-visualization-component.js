@@ -19,15 +19,12 @@ export default class _LocPriceComponent extends PureComponent<
    * Hooks
    */
   componentDidMount() {
-    if (this.props.isExchangerWebsocketConnected) {
+    if (this.props.fiatInEur) {
       this.props.openAConnectionForThisAmountInEuro(this.props.fiatInEur);
     }
   }
   componentDidUpdate(prevProps) {
-    if (
-      this.props.isExchangerWebsocketConnected &&
-      !prevProps.isExchangerWebsocketConnected
-    ) {
+    if (this.props.fiatInEur !== prevProps.fiatInEur) {
       this.props.openAConnectionForThisAmountInEuro(this.props.fiatInEur);
     }
   }

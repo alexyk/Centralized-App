@@ -1,16 +1,25 @@
 import React from "react";
 import { connect } from "react-redux";
 import { ExchangerWebsocket } from "../../../../services/socket/exchangerWebsocket";
-import { removeLocAmount } from "../../../../actions/locAmountsInfo";
+import { removeLocAmount, thunk_getLocAmountFor } from "../../../../actions/locAmountsInfo";
 import { isLogged } from "../../../../selectors/userInfo";
 import { getLocAmountById as getStoredLocAmountForPriceInEur } from "../../../../selectors/locAmountsInfo";
-import {
-  getCurrencyExchangeRates,
-  getLocEurRate
-} from "../../../../selectors/exchangeRatesInfo";
+import { getCurrencyExchangeRates } from "../../../../selectors/exchangeRatesInfo";
 import { isExchangerWebsocketConnected } from "../../../../selectors/exchangerSocketInfo";
 import evaluateLocAndEuroAmounts from "./evaluate-loc-and-euro-amounts";
 import _LocPriceComponent from "./loc-price-visualization-component";
+
+
+/**
+ * Helpers
+ */
+function endTheConnectionForThisAmountInEuro(fiatInEur) {
+  ExchangerWebsocket.sendMessage(fiatInEur, "unsubscribe");
+}
+function openAConnectionForThisAmountInEuro(fiatInEur) {
+  ExchangerWebsocket.sendMessage(fiatInEur, null, { fiatAmount: fiatInEur });
+}
+
 /**
  * Behavior
  * --------
@@ -46,7 +55,6 @@ function mapStateToProps(state, ownProps) {
       inputFiatAmount: ownProps.fiat,
       inputFiatCurrency: ownProps.inputCurrency,
       currencyExchangeRates: currencyExchangeRates,
-      locEurRate: getLocEurRate(state.exchangeRatesInfo),
       getCachedLocEurRateForAmount: amountInEur =>
         getStoredLocAmountForPriceInEur(state.locAmountsInfo, amountInEur)
     });
@@ -73,7 +81,9 @@ function mapStateToProps(state, ownProps) {
 
 function mapDispatchToProps(dispatch) {
   return {
-    openAConnectionForThisAmountInEuro,
+    openAConnectionForThisAmountInEuro(amountInEur){
+      return dispatch(thunk_getLocAmountFor(amountInEur, "EUR"))
+    },
     endConnectionForCurrentAmountInEuroAndClearStoredLocAmount(fiatInEur) {
       // websocket-related
       endTheConnectionForThisAmountInEuro(fiatInEur);
@@ -81,14 +91,4 @@ function mapDispatchToProps(dispatch) {
       dispatch(removeLocAmount(fiatInEur));
     }
   };
-}
-
-/**
- * Helpers
- */
-function endTheConnectionForThisAmountInEuro(fiatInEur) {
-  ExchangerWebsocket.sendMessage(fiatInEur, "unsubscribe");
-}
-function openAConnectionForThisAmountInEuro(fiatInEur) {
-  ExchangerWebsocket.sendMessage(fiatInEur, null, { fiatAmount: fiatInEur });
 }
