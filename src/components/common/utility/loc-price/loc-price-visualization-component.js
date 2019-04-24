@@ -5,7 +5,6 @@ import React, { PureComponent } from "react";
 
 type _LocPriceComponentProps = {
   fiatInEur: number,
-  isExchangerWebsocketConnected: boolean,
   requestLocPriceForThisAmountInEur: Function,
   endRequestForLocPriceOfThisAmountOfEur: Function,
   brackets: boolean

@@ -4,7 +4,6 @@ import { removeLocAmount, thunk_getLocAmountFor } from "../../../../actions/locA
 import { isLogged } from "../../../../selectors/userInfo";
 import { getLocAmountById as getStoredLocAmountForPriceInEur } from "../../../../selectors/locAmountsInfo";
 import { getCurrencyExchangeRates } from "../../../../selectors/exchangeRatesInfo";
-import { isExchangerWebsocketConnected } from "../../../../selectors/exchangerSocketInfo";
 import evaluateLocAndEuroAmounts from "./evaluate-loc-and-euro-amounts";
 import _LocPriceComponent from "./loc-price-visualization-component";
 
@@ -36,8 +35,11 @@ export default connect(
  * Redux Connection
  */
 function mapStateToProps(state, ownProps) {
-  let  currencyExchangeRates = getCurrencyExchangeRates(state.exchangeRatesInfo);
+  let commonProps = {
+    isUserLogged: isLogged(state.userInfo)
+  };
 
+  let  currencyExchangeRates = getCurrencyExchangeRates(state.exchangeRatesInfo);
   if(currencyExchangeRates){
     let { locAmount, fiatAmountInEur } = evaluateLocAndEuroAmounts({
       inputFiatAmount: ownProps.fiat,
@@ -50,19 +52,13 @@ function mapStateToProps(state, ownProps) {
     return {
       locAmount: locAmount,
       fiatInEur: fiatAmountInEur,
-      isUserLogged: isLogged(state.userInfo),
-      isExchangerWebsocketConnected: isExchangerWebsocketConnected(
-        state.exchangerSocketInfo
-      )
+     ...commonProps
     };
   } else {
     return {
       locAmount: null,
       fiatInEur: null,
-      isUserLogged: isLogged(state.userInfo),
-      isExchangerWebsocketConnected: isExchangerWebsocketConnected(
-        state.exchangerSocketInfo
-      )
+      ...commonProps
     };
   }
 }
