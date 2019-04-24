@@ -1,6 +1,5 @@
 import React from "react";
 import { connect } from "react-redux";
-import { ExchangerWebsocket } from "../../../../services/socket/exchangerWebsocket";
 import { removeLocAmount, thunk_getLocAmountFor } from "../../../../actions/locAmountsInfo";
 import { isLogged } from "../../../../selectors/userInfo";
 import { getLocAmountById as getStoredLocAmountForPriceInEur } from "../../../../selectors/locAmountsInfo";
@@ -9,31 +8,20 @@ import { isExchangerWebsocketConnected } from "../../../../selectors/exchangerSo
 import evaluateLocAndEuroAmounts from "./evaluate-loc-and-euro-amounts";
 import _LocPriceComponent from "./loc-price-visualization-component";
 
-
-/**
- * Helpers
- */
-function endTheConnectionForThisAmountInEuro(fiatInEur) {
-  ExchangerWebsocket.sendMessage(fiatInEur, "unsubscribe");
-}
-function openAConnectionForThisAmountInEuro(fiatInEur) {
-  ExchangerWebsocket.sendMessage(fiatInEur, null, { fiatAmount: fiatInEur });
-}
-
 /**
  * Behavior
  * --------
  * 1. Initially the component receive a fiat amount and a fiat currency
  * - by default the initial fiat currency is the result of RoomsXMLCurrency.get()
  * 2. The input price is converted to EUR
+ * 3. The EUR price is sent to the server for conversion
+ * 4. The returned loc amount value is set in the store
+ * 5. The component is re-rendered with the new loc amount value
  */
 
 type LocPriceProps = {
-  fiatInEur: number,
-  isExchangerWebsocketConnected: boolean,
-  openAConnectionThisAmountInEuro: Function,
-  endConnectionForCurrentAmountInEuroAndClearStoredLocAmount: Function,
-  brackets: boolean
+  fiat: number,
+  inputCurrency: "EUR" | "GBP" | "USD"
 };
 
 /**
@@ -81,14 +69,11 @@ function mapStateToProps(state, ownProps) {
 
 function mapDispatchToProps(dispatch) {
   return {
-    openAConnectionForThisAmountInEuro(amountInEur){
+    requestLocPriceForThisAmountInEur(amountInEur){
       return dispatch(thunk_getLocAmountFor(amountInEur, "EUR"))
     },
-    endConnectionForCurrentAmountInEuroAndClearStoredLocAmount(fiatInEur) {
-      // websocket-related
-      endTheConnectionForThisAmountInEuro(fiatInEur);
-      // redux-related
-      dispatch(removeLocAmount(fiatInEur));
+    endRequestForLocPriceOfThisAmountOfEur(fiatInEur) {
+      return dispatch(removeLocAmount(fiatInEur));
     }
   };
 }

@@ -6,8 +6,8 @@ import React, { PureComponent } from "react";
 type _LocPriceComponentProps = {
   fiatInEur: number,
   isExchangerWebsocketConnected: boolean,
-  openAConnectionForThisAmountInEuro: Function,
-  endConnectionForCurrentAmountInEuroAndClearStoredLocAmount: Function,
+  requestLocPriceForThisAmountInEur: Function,
+  endRequestForLocPriceOfThisAmountOfEur: Function,
   brackets: boolean
 };
 
@@ -20,18 +20,16 @@ export default class _LocPriceComponent extends PureComponent<
    */
   componentDidMount() {
     if (this.props.fiatInEur) {
-      this.props.openAConnectionForThisAmountInEuro(this.props.fiatInEur);
+      this.props.requestLocPriceForThisAmountInEur(this.props.fiatInEur);
     }
   }
   componentDidUpdate(prevProps) {
     if (this.props.fiatInEur !== prevProps.fiatInEur) {
-      this.props.openAConnectionForThisAmountInEuro(this.props.fiatInEur);
+      this.props.requestLocPriceForThisAmountInEur(this.props.fiatInEur);
     }
   }
   componentWillUnmount() {
-    this.props.endConnectionForCurrentAmountInEuroAndClearStoredLocAmount(
-      this.props.fiatInEur
-    );
+    this.props.endRequestForLocPriceOfThisAmountOfEur(this.props.fiatInEur);
   }
 
   render() {
