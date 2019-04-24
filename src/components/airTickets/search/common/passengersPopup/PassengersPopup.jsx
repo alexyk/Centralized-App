@@ -188,7 +188,7 @@ class PassengersPopup extends Component {
           <p>Age limits and policies for travelling with children may vary so please check with the airline before booking.</p>
         </div>
         <div className="button-holder">
-          <div className="passengers-apply-button" onClick={this.applyPassengersChoose}>Apply</div>
+          <div className="button air-tickets-button-search" onClick={this.applyPassengersChoose}>Apply</div>
         </div>
       </div>
     );
