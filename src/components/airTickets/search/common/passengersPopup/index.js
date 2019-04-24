@@ -1,3 +1,3 @@
-import PassengersPopup from './PassengersPopup';
+import PassengersPopup from "./PassengersPopup";
 
 export default PassengersPopup;

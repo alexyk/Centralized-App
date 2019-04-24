@@ -1,13 +1,13 @@
-import { airTicketsSearchInfo } from '../actions/actionTypes';
+import { airTicketsSearchInfo } from "../actions/actionTypes";
 
 const initialState = {
-  flightRouting: '1',
-  flightClass: '0',
-  stops: '-1',
-  departureTime: '',
+  flightRouting: "1",
+  flightClass: "0",
+  stops: "-1",
+  departureTime: "",
   origin: null,
   destination: null,
-  adultsCount: '1',
+  adultsCount: "1",
   children: [],
   flexSearch: false,
   multiStopsDestinations: []
@@ -41,7 +41,7 @@ export default function reducer(state = initialState, action) {
       });
     case airTicketsSearchInfo.SET_ADULTS:
       return Object.assign({}, state, {
-        adultsCount: action.adultsCount,
+        adultsCount: action.adultsCount
       });
     case airTicketsSearchInfo.SET_CHILDREN:
       return Object.assign({}, state, {
