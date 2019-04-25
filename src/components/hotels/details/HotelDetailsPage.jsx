@@ -18,6 +18,7 @@ import { parse } from 'query-string';
 import requester from '../../../requester';
 import { setHotelsSearchInfo } from '../../../actions/hotelsSearchInfo';
 import { asyncSetStartDate, asyncSetEndDate } from '../../../actions/searchDatesInfo';
+import { setCurrency } from "../../../actions/paymentInfo";
 import { getCurrency } from '../../../selectors/paymentInfo';
 import { getStartDate, getEndDate } from '../../../selectors/searchDatesInfo';
 import { getRegion, getRooms } from '../../../selectors/hotelsSearchInfo';
@@ -37,11 +38,24 @@ class HotelDetailsPage extends React.Component {
     let startDate = moment().add(1, 'day');
     let endDate = moment().add(2, 'day');
 
+    this.isMobile = (this.props.location.pathname.indexOf("/mobile") !== -1);
+    let queryParams = parse(this.props.location.search);
+
     if (this.props) {
-      let queryParams = parse(this.props.location.search);
       if (queryParams.startDate && queryParams.endDate) {
         startDate = moment(queryParams.startDate, 'DD/MM/YYYY');
         endDate = moment(queryParams.endDate, 'DD/MM/YYYY');
+      }
+    }
+
+    if (this.isMobile) {
+      const currency = queryParams.currency;
+      localStorage.setItem('currency', currency);
+      try {
+        this.props.dispatch(setCurrency(currency));
+        console.info(`[HotelDetailsRage] CURRENCY, before: ${this.props.currency}, after: ${currency}`,{queryParams, props:this.props});
+      } catch (e) {
+        console.error.apply(e);
       }
     }
 
