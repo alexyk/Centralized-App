@@ -12,7 +12,6 @@ $breakpoints: (
 @import "../../../base/variables";
 
 .tickets-flex-container {
-
   margin-bottom: 40px;
   .ticket-flex-container {
     flex-direction: row;
@@ -127,7 +126,7 @@ $breakpoints: (
       }
     }
     .tickets-actions {
-      width: 15%;
+      width: 10%;
       display: flex;
       align-items: center;
       .content-row {
@@ -146,13 +145,20 @@ $breakpoints: (
       }
     }
     .tickets-status {
-      width: 10%;
+      width: 15%;
       display: flex;
       align-items: center;
-      span {
+      .status {
         font-weight: 400;
+        font-size: 18px;
+      }
+      .icon-question {
+        margin: 0 5px;
       }
     }
+    @include dashboardTooltip();
+
+
     @include media("<=desktop") {
       flex-direction: column;
       &.flex-container-header {
@@ -223,6 +229,9 @@ $breakpoints: (
     width: 100%;
     flex-wrap: wrap;
 
+    .is-low-cost {
+      color: $moderate-red;
+    }
 
     span {
       @include sansFont();
