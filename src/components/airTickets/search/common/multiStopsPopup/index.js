@@ -1,3 +1,3 @@
-import MultiStopsPopup from './MultiStopsPopup';
+import MultiStopsPopup from "./MultiStopsPopup";
 
 export default MultiStopsPopup;
