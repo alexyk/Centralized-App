@@ -304,7 +304,7 @@ class AirTicketsSearchBar extends Component {
                 onChange={() => this.setDirectFlight()}
                 value="0"
                 checked={stops === '0'}/>
-              <span>Direct flight</span>
+              <span>Direct flights</span>
             </label>
             <label className="custom-radio">
               <input
@@ -312,7 +312,7 @@ class AirTicketsSearchBar extends Component {
                 onChange={() => this.props.dispatch(setFlexSearch())}
                 checked={flexSearch}
               />
-              <span>Flex search</span>
+              <span>+/- 3 days</span>
             </label>
           </div>
           <div className="air-tickets-form">
@@ -368,7 +368,7 @@ class AirTicketsSearchBar extends Component {
             <div className="air-tickets-form-passengers-wrap">
               <div className="passengers-title" onClick={this.openPassengersPopup}>
                 <span className="travelers-count">{ totalTravelers }</span>
-                { totalTravelers === 1 ? 'Traveller' : 'Travellers'} ,
+                { totalTravelers === 1 ? 'Traveller' : 'Travellers'},{" "}
                 {this.mapFlightClassByValue(flightClass)}
               </div>
               <PassengersPopup showPassengersPopup={this.state.showPassengersPopup} closePassengersPopup={this.closePassengersPopup} />
