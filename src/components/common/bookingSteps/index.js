@@ -1,3 +1,3 @@
-import BookingSteps from './BookingSteps';
+import BookingSteps from "./BookingSteps";
 
 export default BookingSteps;
