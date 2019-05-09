@@ -32,6 +32,28 @@ function calculateNumberOfPassengers(props){
   return numberOfChildren + numberOfAdults;
 }
 
+function calculateNumberOfAdultsAndChildren(props){
+  const {adults, children} = queryString.parse(props.location.search);
+
+  let numberOfChildren = 0;
+  let childrenArray = JSON.parse(children);
+  console.log(childrenArray);
+
+  childrenArray.filter(c => {
+    if(c.age >= 2){
+      ++numberOfChildren;
+    }
+  });
+
+  console.log(numberOfChildren);
+
+  let numberOfAdults = 0;
+  if(!isNaN(Number(adults))){
+    numberOfAdults = Number(adults);
+  }
+  return numberOfChildren + numberOfAdults;
+}
+
 function AirTicketsDetailsBookingPanel(props) {
 
   const { currencyExchangeRates } = props;
@@ -52,10 +74,13 @@ function AirTicketsDetailsBookingPanel(props) {
   const taxPriceInCurrentCurrency = CurrencyConverter.convert(currencyExchangeRates, currencyCode, currency, taxPrice);
   const taxPriceInRoomsXMLCurrency = CurrencyConverter.convert(currencyExchangeRates, currencyCode, RoomsXMLCurrency.get(), taxPrice);
 
+  let totalNumberOfPeople = calculateNumberOfPassengers(props);
+  let totalNumberOfAdultsAndChildren = calculateNumberOfAdultsAndChildren(props);
+
+
   const priceWithoutTax = (fiatPriceInCurrentCurrency - taxPriceInCurrentCurrency).toFixed(2);
-  const showPrice = !taxPriceInCurrentCurrency ? fiatPriceInCurrentCurrency : priceWithoutTax;
+  const showPrice = !taxPriceInCurrentCurrency ? fiatPriceInCurrentCurrency/totalNumberOfAdultsAndChildren : priceWithoutTax/totalNumberOfAdultsAndChildren;
   const taxAndFeesCalc = isUserLogged && currencySign ? taxPriceInCurrentCurrency.toFixed(2) : 0;
-let totalNumberOfPeople = calculateNumberOfPassengers(props);
 
   const getFlightRoutingPreview = (flightRouting) => {
     if (flightRouting === '1') {
@@ -80,7 +105,7 @@ let totalNumberOfPeople = calculateNumberOfPassengers(props);
   return (
     <div className="air-tickets-details-booking-panel">
       <div className="box" id="test">
-        <p className="default-price"><span className="main-fiat">{currencySign}{fiatPriceInCurrentCurrency.toFixed(2)}</span> <LocPrice fiat={fiatPriceInRoomsXMLCurrency} /> for {totalNumberOfPeople} people</p>
+        <p className="default-price"><span className="main-fiat">{currencySign}{fiatPriceInCurrentCurrency.toFixed(2)}</span> <LocPrice fiat={fiatPriceInRoomsXMLCurrency} /> total for {totalNumberOfPeople} passenger{totalNumberOfPeople > '1' ? 's' : ''}</p>
         <div className="booking-dates">
           <div className="air-tickets-form-check-wrap">
             <div className="check">
@@ -97,9 +122,9 @@ let totalNumberOfPeople = calculateNumberOfPassengers(props);
         </div>
         <div className="fiat-price-box">
           <div className="without-fees">
-            <p>Passengers</p>
-            <span className="icon-question" tooltip={'Some message'}></span>
-            <p>{isUserLogged && `${currencySign} ${showPrice.toFixed(2)}`} <LocPrice fiat={fiatPriceInRoomsXMLCurrency} /></p>
+            <p>Single price</p>
+            <span className="icon-question" tooltip={'Single price'}></span>
+            <p>{isUserLogged && `${currencySign} ${showPrice.toFixed(2)}`} <LocPrice fiat={fiatPriceInRoomsXMLCurrency/totalNumberOfAdultsAndChildren} /></p>
           </div>
           {!isNaN(taxAndFeesCalc) &&
             <div className="cleaning-fee">

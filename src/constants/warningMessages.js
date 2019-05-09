@@ -38,3 +38,6 @@ export const INVALID_PICTURE =
 export const MISSING_NAMES = "Name is required!";
 export const REPEATING_NAMES =
   "SAME guest names for more than one room DETECTED! If these are different persons, please CLICK ON THIS MESSAGE TO CONTINUE ON YOU OWN RESPONSIBILITY! Otherwise, please enter different guest names for any of the rooms.";
+
+export const WRONG_ORIGIN_IATA_CODE = "Wrong origin airport IATA code";
+export const WRONG_DESTINATION_IATA_CODE = "Wrong destination airport IATA code";
