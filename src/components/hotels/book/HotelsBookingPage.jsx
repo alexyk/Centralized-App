@@ -1,36 +1,48 @@
 import "../../../styles/css/components/hotels/book/hotel-booking-page.css";
 
-import { LONG } from "../../../constants/notificationDisplayTimes.js";
+import {LONG} from "../../../constants/notificationDisplayTimes.js";
 import {
   INVALID_CHILD_AGE,
   INVALID_GUEST_NAME,
   REPEATING_NAMES
 } from "../../../constants/warningMessages.js";
 
-import { Config } from "../../../config";
-import { CurrencyConverter } from "../../../services/utilities/currencyConverter";
-import { NotificationManager } from "react-notifications";
+import {Config} from "../../../config";
+import {CurrencyConverter} from "../../../services/utilities/currencyConverter";
+import {NotificationManager} from "react-notifications";
 import PropTypes from "prop-types";
 import React from "react";
-import { connect } from "react-redux";
+import {connect} from "react-redux";
 import moment from "moment";
 import queryString from "query-string";
-import { withRouter } from "react-router-dom";
+import {withRouter} from "react-router-dom";
 import BookingSteps from "../../common/utility/BookingSteps";
-import { RoomsXMLCurrency } from "../../../services/utilities/roomsXMLCurrency";
+import {RoomsXMLCurrency} from "../../../services/utilities/roomsXMLCurrency";
 import LocPrice from "../../common/utility/LocPrice";
 import xregexp from "xregexp";
-import { DEFAULT_LISTING_IMAGE_URL } from "../../../constants/images";
+import {DEFAULT_LISTING_IMAGE_URL} from "../../../constants/images";
 import AsideContentPage from "../../common/asideContentPage";
-import { getCurrency, getCurrencySign } from "../../../selectors/paymentInfo";
-import { getCurrencyExchangeRates } from "../../../selectors/exchangeRatesInfo";
+import {getCurrency, getCurrencySign} from "../../../selectors/paymentInfo";
+import {getCurrencyExchangeRates} from "../../../selectors/exchangeRatesInfo";
+import requester from "../../../requester";
+import {getCountries} from "../../../selectors/countriesInfo";
+import {ROOM_NO_LONGER_AVAILABLE} from "../../../constants/warningMessages";
 
 class HotelsBookingPage extends React.Component {
   constructor(props) {
     super(props);
 
+    this.state = {
+      country: ""
+    };
+
+
+    this.updateCountry = this.updateCountry.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.getQueryString = this.getQueryString.bind(this);
+    this.redirectToHotelDetailsPage = this.redirectToHotelDetailsPage.bind(this);
+    this.getCleanQueryString = this.getCleanQueryString.bind(this);
+    this.stringifyRoomsExcludingGuestNames = this.stringifyRoomsExcludingGuestNames.bind(this);
   }
 
   calculateRoomsTotalPrice(rooms) {
@@ -76,9 +88,57 @@ class HotelsBookingPage extends React.Component {
         this.processSubmit();
       });
     }
+    if (!this.state.country) {
+      proceed = false;
+      NotificationManager.error("Please select nationality!", "", LONG * 2);
+    }
     if (proceed) {
+      // let obj = {
+      //   "quoteId": this.props.quoteId,
+      //   "rooms": this.props.guests,
+      //   "nat": this.state.country.id
+      // };
+      // console.log(obj);
+      // requester.getQuoteIdExpirationFlag(this.state.quoteId).then(res => res.body).then(data => {
+      //   // if (false) {
+      //     if (!data.is_quote_valid) {
+      //       this.processSubmit();
+      //   } else {
+      //     this.redirectToHotelDetailsPage();
+      //   }
+      // });
       this.processSubmit();
     }
+  }
+
+  redirectToHotelDetailsPage() {
+    NotificationManager.warning(ROOM_NO_LONGER_AVAILABLE, '', LONG);
+    const id = this.props.match.params.id;
+    const pathname = this.props.location.pathname.indexOf('/mobile') !== -1 ? '/mobile/hotels/listings' : '/hotels/listings';
+    const search = this.getCleanQueryString(queryString.parse(this.props.location.search));
+    this.props.history.push(`${pathname}/${id}${search}`);
+  }
+
+  getCleanQueryString() {
+    const queryStringParameters = queryString.parse(this.props.location.search);
+
+    let result = '?';
+    result += 'region=' + encodeURI(queryStringParameters.region);
+    result += '&currency=' + encodeURI(queryStringParameters.currency);
+    result += '&startDate=' + encodeURI(queryStringParameters.startDate);
+    result += '&endDate=' + encodeURI(queryStringParameters.endDate);
+    result += '&rooms=' + encodeURI(this.stringifyRoomsExcludingGuestNames(queryStringParameters.rooms));
+
+    return result;
+  }
+
+  stringifyRoomsExcludingGuestNames(rooms) {
+    rooms = JSON.parse(rooms);
+    rooms.forEach((room) => {
+      room.adults = room.adults.length ? room.adults.length : room.adults;
+    });
+
+    return JSON.stringify(rooms);
   }
 
   getQueryString(queryStringParameters) {
@@ -89,6 +149,7 @@ class HotelsBookingPage extends React.Component {
     queryString += "&endDate=" + encodeURI(queryStringParameters.endDate);
     queryString += "&rooms=" + encodeURI(JSON.stringify(this.props.guests));
     queryString += "&quoteId=" + encodeURI(queryStringParameters.quoteId);
+    queryString += "&nat=" + encodeURI(this.state.country.id);
     return queryString;
   }
 
@@ -145,21 +206,30 @@ class HotelsBookingPage extends React.Component {
     return true;
   }
 
+  updateCountry(e) {
+    let value = JSON.parse(e.target.value);
+
+    this.setState({
+      country: value,
+      city: ''
+    });
+  }
+
   render() {
     if (!this.props.hotel) {
-      return <div className="loader" />;
+      return <div className="loader"/>;
     }
 
     if (!this.props.rooms) {
-      return <div className="loader" />;
+      return <div className="loader"/>;
     }
 
     if (!this.props.currencyExchangeRates) {
-      return <div className="loader" />;
+      return <div className="loader"/>;
     }
 
     if (!this.props.guests) {
-      return <div className="loader" />;
+      return <div className="loader"/>;
     }
 
     const {
@@ -217,29 +287,29 @@ class HotelsBookingPage extends React.Component {
                     &nbsp;
                     {city}
                   </h6>
-                  <hr />
+                  <hr/>
                   {rooms.map((room, index) => {
                     return (
                       <h6 key={index}>
                         {room.name}, {nights} nights: {currencySign}
                         {currencyExchangeRates &&
-                          CurrencyConverter.convert(
-                            currencyExchangeRates,
-                            RoomsXMLCurrency.get(),
-                            currency,
-                            room.price
-                          ).toFixed(2)}{" "}
-                        <LocPrice fiat={room.price} />
+                        CurrencyConverter.convert(
+                          currencyExchangeRates,
+                          RoomsXMLCurrency.get(),
+                          currency,
+                          room.price
+                        ).toFixed(2)}{" "}
+                        <LocPrice fiat={room.price}/>
                       </h6>
                     );
                   })}
-                  <hr />
+                  <hr/>
                   <h6 className="total-price">
                     Total: {currencySign}
                     {priceInSelectedCurrency}{" "}
-                    {roomsTotalPrice && <LocPrice fiat={roomsTotalPrice} />}
+                    {roomsTotalPrice && <LocPrice fiat={roomsTotalPrice}/>}
                   </h6>
-                  <div className="clearfix" />
+                  <div className="clearfix"/>
                 </div>
               </AsideContentPage.Aside>
               <AsideContentPage.Content width={"65%"}>
@@ -248,80 +318,92 @@ class HotelsBookingPage extends React.Component {
                     return (
                       <div className="room" key={roomIndex}>
                         <h4>Room</h4>
-                        <hr className="sm-none" />
+                        <hr className="sm-none"/>
+                        <div className="nationality">
+                          <label htmlFor="nationality">Nationality <span className="mandatory"></span></label>
+                          <div className='select'>
+                            <select name="country" id="country" onChange={this.updateCountry}
+                                    value={JSON.stringify(this.state.country)}>
+                              <option value="">Nationality</option>
+                              {this.props.countries && this.props.countries.map((item, i) => {
+                                return <option key={i} value={JSON.stringify(item)}>{item.name}</option>;
+                              })}
+                            </select>
+                          </div>
+                        </div>
                         {room &&
-                          room.adults.map((adult, adultIndex) => {
-                            return (
-                              <div className="guest" key={adultIndex}>
-                                <label htmlFor="title">Guest</label>
-                                <select
-                                  className="title-select"
-                                  name="title"
-                                  value={
-                                    guests[roomIndex].adults[adultIndex].title
-                                  }
-                                  onChange={e => {
-                                    handleAdultChange(e, roomIndex, adultIndex);
-                                  }}
-                                >
-                                  <option value="Mr">Mr</option>
-                                  <option value="Mrs">Mrs</option>
-                                </select>
+                        room.adults.map((adult, adultIndex) => {
+                          return (
+                            <div className="guest" key={adultIndex}>
+                              <label htmlFor="title">Guest</label>
+                              <select
+                                className="title-select"
+                                name="title"
+                                value={
+                                  guests[roomIndex].adults[adultIndex].title
+                                }
+                                onChange={e => {
+                                  handleAdultChange(e, roomIndex, adultIndex);
+                                }}
+                              >
+                                <option value="Mr">Mr</option>
+                                <option value="Mrs">Mrs</option>
+                              </select>
 
-                                <input
-                                  className="guest-name"
-                                  type="text"
-                                  placeholder="First Name"
-                                  name="firstName"
-                                  value={
-                                    guests[roomIndex].adults[adultIndex]
-                                      .firstName || ""
-                                  }
-                                  onChange={e => {
-                                    handleAdultChange(e, roomIndex, adultIndex);
-                                  }}
-                                />
-                                <input
-                                  className="guest-name"
-                                  type="text"
-                                  placeholder="Last Name"
-                                  value={
-                                    guests[roomIndex].adults[adultIndex]
-                                      .lastName || ""
-                                  }
-                                  name="lastName"
-                                  onChange={e => {
-                                    handleAdultChange(e, roomIndex, adultIndex);
-                                  }}
-                                />
-                              </div>
-                            );
-                          })}
+                              <input
+                                className="guest-name"
+                                type="text"
+                                placeholder="First Name"
+                                name="firstName"
+                                value={
+                                  guests[roomIndex].adults[adultIndex]
+                                    .firstName || ""
+                                }
+                                onChange={e => {
+                                  handleAdultChange(e, roomIndex, adultIndex);
+                                }}
+                              />
+                              <input
+                                className="guest-name"
+                                type="text"
+                                placeholder="Last Name"
+                                value={
+                                  guests[roomIndex].adults[adultIndex]
+                                    .lastName || ""
+                                }
+                                name="lastName"
+                                onChange={e => {
+                                  handleAdultChange(e, roomIndex, adultIndex);
+                                }}
+                              />
+                            </div>
+                          );
+                        })}
 
                         {room &&
-                          room.children.map((child, childIndex) => {
-                            return (
-                              <div className="guest" key={childIndex}>
-                                <label htmlFor="age">Child (age)</label>
-                                <input
-                                  className="child-age"
-                                  type="number"
-                                  value={
-                                    guests[roomIndex].children[childIndex].age
-                                  }
-                                  placeholder="Age"
-                                  name="age"
-                                  onChange={e => {
-                                    handleChildAgeChange(
-                                      e,
-                                      roomIndex,
-                                      childIndex
-                                    );
-                                  }}
-                                />
-                              </div>
-                            );
-                          })}
+                        room.children.map((child, childIndex) => {
+                          return (
+                            <div className="guest" key={childIndex}>
+                              <label htmlFor="age">Child (age)</label>
+                              <input
+                                className="child-age"
+                                type="number"
+                                value={
+                                  guests[roomIndex].children[childIndex].age
+                                }
+                                placeholder="Age"
+                                name="age"
+                                onChange={e => {
+                                  handleChildAgeChange(
+                                    e,
+                                    roomIndex,
+                                    childIndex
+                                  );
+                                }}
+                              />
+                            </div>
+                          );
+                        })}
                       </div>
                     );
                   })}
@@ -358,11 +440,12 @@ HotelsBookingPage.propTypes = {
 };
 
 function mapStateToProps(state) {
-  const { paymentInfo, exchangeRatesInfo } = state;
+  const {paymentInfo, exchangeRatesInfo, countriesInfo} = state;
   return {
     currency: getCurrency(paymentInfo),
     currencySign: getCurrencySign(paymentInfo),
-    currencyExchangeRates: getCurrencyExchangeRates(exchangeRatesInfo)
+    currencyExchangeRates: getCurrencyExchangeRates(exchangeRatesInfo),
+    countries: getCountries(countriesInfo)
   };
 }
 
