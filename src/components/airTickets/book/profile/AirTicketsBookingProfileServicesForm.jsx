@@ -2,8 +2,12 @@ import React, { Component } from 'react';
 import { withRouter, NavLink } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import Loader from '../../../common/loader';
+import LocPrice from '../../../common/utility/LocPrice';
 
 import '../../../../styles/css/components/airTickets/book/profile/air-tickets-booking-profile-services-form.css';
+import {CurrencyConverter} from "../../../../services/utilities/currencyConverter";
+import {getCurrencyExchangeRates} from "../../../../selectors/exchangeRatesInfo";
+import {connect} from "react-redux";
 
 const SERVICES_TYPES_CODES = {
   3: 'Baggage',
@@ -79,7 +83,9 @@ class AirTicketsBookingProfileServicesForm extends Component {
                   <select name={service.id} value={selectedServiceValue} onChange={this.onChange}>
                     <option defaultValue="" onChange={this.onChange}></option>
                     {service.options.map((option, selectionIndex) => {
-                      return <option key={selectionIndex} value={option.value} onChange={this.onChange}>{this.getSelectionNameByServiceType(SERVICES_TYPES_CODES[service.type], option)}</option>;
+                      return <option key={selectionIndex} value={option.value} onChange={this.onChange}>
+                        {this.getSelectionNameByServiceType(SERVICES_TYPES_CODES[service.type], option)}
+                        </option>;
                     })}
                   </select>
                 </div>
@@ -107,7 +113,9 @@ AirTicketsBookingProfileServicesForm.propTypes = {
 
   // Router props
   match: PropTypes.object,
-  location: PropTypes.object
+  location: PropTypes.object,
+  currencyExchangeRates: PropTypes.object
 };
+
 
 export default withRouter(AirTicketsBookingProfileServicesForm);

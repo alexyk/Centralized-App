@@ -135,8 +135,6 @@ class AirTicketsBookingProfilePassengersForm extends Component {
       passengersServices = services.filter(service => service.perPassenger);
     }
 
-    console.log(passengersServices);
-
     return (
       <div className="air-tickets-passengers-form">
         <h2>Passenger Details</h2>

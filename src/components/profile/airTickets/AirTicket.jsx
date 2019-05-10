@@ -243,7 +243,6 @@ class AirTicket extends Component {
     }
 
     const statusMessage = STATUS_TOOLTIP[this.props.ticket.status];
-    console.log(this.props.ticket.details.isLowCost);
 
     return (
       <Fragment>

@@ -46,7 +46,6 @@ export default class _LocPriceComponent extends PureComponent<
   render() {
     if (!this.props.isUserLogged) return null;
     const bracket = this.props.brackets && this.props.isUserLogged;
-    console.log(this.props.fiatInEur, this.props.locAmount)
     return (
       <span>
         {bracket && "("}LOC{" "}

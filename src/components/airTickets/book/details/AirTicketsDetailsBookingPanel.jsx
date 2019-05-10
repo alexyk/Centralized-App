@@ -37,15 +37,12 @@ function calculateNumberOfAdultsAndChildren(props){
 
   let numberOfChildren = 0;
   let childrenArray = JSON.parse(children);
-  console.log(childrenArray);
 
   childrenArray.filter(c => {
     if(c.age >= 2){
       ++numberOfChildren;
     }
   });
-
-  console.log(numberOfChildren);
 
   let numberOfAdults = 0;
   if(!isNaN(Number(adults))){

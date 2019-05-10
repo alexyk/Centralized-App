@@ -132,6 +132,15 @@ $media-expressions: (
             }
           }
         }
+        .rule{
+          a {
+            color: $moderate-red;
+            text-decoration: underline !important;
+            &:hover {
+              color: $moderate-red;
+            }
+          }
+        }
         .flight-rules {
           margin-bottom: 30px;
           .rule {
