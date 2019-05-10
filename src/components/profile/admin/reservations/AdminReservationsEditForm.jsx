@@ -123,13 +123,17 @@ class AdminReservationsEditForm extends Component {
                 </option>
                 <option value="DONE">DONE</option>
                 <option value="FAILED">FAILED</option>
-                <option value="FAIL">FAIL</option>
-                <option value="PENDING">PENDING</option>
+                <option value="PENDING_SAFECHARGE_CONFIRMATION">N/A</option>
+                <option value="SAFECHARGE_FAILED">PP_PAYMENT_FAILED</option>
+                <option value="PAYMENT_REVIEW">PAYMENT_REVIEW</option>
+                <option value="CONFIRMED">PAYMENT_DONE</option>
+                <option value="FAIL">PAYMENT_FAILED</option>
                 <option value="QUEUED_FOR_CONFIRMATION">
-                  QUEUED_FOR_CONFIRMATION
+                  PENDING_CONFIRMATION
                 </option>
+                <option value="PENDING_CANCELLATION">PENDING_CANCELLATION</option>
                 <option value="CANCELLED">CANCELLED</option>
-                <option value="CONFIRMED">CONFIRMED</option>
+                <option value="CANCELLATION_FAILED">CANCELLATION_FAILED</option>
                 <option value="QUEUED">QUEUED</option>
               </select>
             </div>

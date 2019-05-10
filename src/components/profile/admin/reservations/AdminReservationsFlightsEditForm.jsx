@@ -180,16 +180,26 @@ class AdminReservationsFlightsEditForm extends Component<State> {
                 <option disabled value="">
                   ------------------
                 </option>
-                <option value="DONE">DONE</option>
-                <option value="FINALIZE">FINALIZE</option>
-                <option value="FAILED">FAILED</option>
-                <option value="FAILED_PAYMENT_WITH_LOC">FAILED_PAYMENT_WITH_LOC</option>
-                <option value="SUCCESS_PAYМЕNТ_WITH_LOC">SUCCESS_PAYMENT_WITH_LOC</option>
-                <option value="PAYMENT_PROCESSOR_FOR_REVIEW">PAYMENT_PROCESSOR_FOR_REVIEW</option>
-                <option value="PAYMENT_PROCESSOR_FAILED">PAYMENT_PROCESSOR_FAILED</option>
-                <option value="PAYMENT_PROCESSOR_CONFIRMED">PAYMENT_PROCESSOR_CONFIRMED</option>
-                <option value="PENDING_PAYMENT_PROCESSOR_CONFIRMATION">PENDING_PAYMENT_PROCESSOR_CONFIRMATION</option>
                 <option value="PREPARE_FLIGHT_RESERVATION">PREPARE_FLIGHT_RESERVATION</option>
+                <option value="UNSUCCESSFUL">SUPPLIER_ERROR</option>
+                <option value="PENDING_PAYMENT_PROCESSOR_CONFIRMATION">PENDING_PP_CONFIRMATION</option>
+                <option value="PAYMENT_PROCESSOR_CONFIRMED">PP_PAYMENT_DONE</option>
+                <option value="PAYMENT_PROCESSOR_FAILED">PP_PAYMENT_FAILED</option>
+                <option value="PAYMENT_PROCESSOR_FOR_REVIEW">PAYMENT_REVIEW</option>
+                <option value="PAYMENT_PROCESSOR_REJECTED">POSSIBLE_FRAUD</option>
+                <option value="SUCCESS_PAYMENT_WITH_LOC">PAYMENT_DONE</option>
+                <option value="FAILED_PAYMENT_WITH_LOC">PAYMENT_FAILED</option>
+                <option value="FAILED">FAILED</option>
+                <option value="FINALIZE">PNR_ISSUED</option>
+                <option value="DONE">TICKET_ISSUED</option>
+                <option value="PENDING_CANCELLATION">PENDING_CANCELLATION</option>
+                <option value="CANCELLED">CANCELLED</option>
+                <option value="CANCELLATION_REJECTED">CANCELLATION_REJECTED</option>
+                <option value="CANCELLATION_FAILED">CANCELLATION_FAILED</option>
+                <option value="PENDING_REFUND">PENDING_REFUND</option>
+                <option value="REFUNDED">REFUNDED</option>
+                <option value="NON_REFUNDABLE">NON_REFUNDABLE</option>
+                <option value="FAILED_REFUND">FAILED_REFUND</option>
               </select>
             </div>
           </div>

@@ -13,7 +13,7 @@ import PassengersPopup from './common/passengersPopup';
 import '../../../styles/css/components/airTickets/search/air-tickets-search-bar.css';
 import { getStartDate, getEndDate } from '../../../selectors/searchDatesInfo';
 import { NotificationManager } from 'react-notifications';
-import { MISSING_ORIGIN, MISSING_DESTINATION } from '../../../constants/errorMessages';
+import { MISSING_ORIGIN, MISSING_DESTINATION, MISSING_CHILDREN_AGE, MORE_INFANTS_THEN_ADULTS } from '../../../constants/errorMessages';
 import { flightRoutingValues } from '../../../constants/constants';
 
 const customStyles = {
@@ -77,7 +77,7 @@ class AirTicketsSearchBar extends Component {
     this.state = {
       showMultiStopsPopup: false,
       showPassengersPopup: false
-    }
+    };
 
     this.getQueryString = this.getQueryString.bind(this);
     this.handleSearch = this.handleSearch.bind(this);
@@ -172,10 +172,22 @@ class AirTicketsSearchBar extends Component {
 
     const hasMultiStops = this.props.multiStopsDestinations !== undefined && this.props.multiStopsDestinations.length;
 
+    const hasChildren = this.props.children !== undefined && this.props.children.length;
+    const adultsCount = this.props.adultsCount;
+    let infantsCount = 0;
+    for (let index in this.props.children) {
+      if(this.props.children[index].age === 1 || this.props.children[index].age === 0){
+        ++infantsCount;
+      }
+    }
+
+
     if (!hasMultiStops && !this.props.origin) {
       NotificationManager.error(MISSING_ORIGIN);
     } else if (!hasMultiStops && !this.props.destination) {
       NotificationManager.error(MISSING_DESTINATION);
+    } else if(hasChildren && infantsCount > adultsCount) {
+      NotificationManager.error(MORE_INFANTS_THEN_ADULTS);
     } else {
       this.props.search(this.getQueryString(), e);
     }
@@ -304,7 +316,7 @@ class AirTicketsSearchBar extends Component {
                 onChange={() => this.setDirectFlight()}
                 value="0"
                 checked={stops === '0'}/>
-              <span>Direct flights</span>
+              <span>Direct flight</span>
             </label>
             <label className="custom-radio">
               <input
@@ -312,7 +324,7 @@ class AirTicketsSearchBar extends Component {
                 onChange={() => this.props.dispatch(setFlexSearch())}
                 checked={flexSearch}
               />
-              <span>+/- 3 days</span>
+              <span>Flex search</span>
             </label>
           </div>
           <div className="air-tickets-form">
@@ -367,9 +379,9 @@ class AirTicketsSearchBar extends Component {
             </div>
             <div className="air-tickets-form-passengers-wrap">
               <div className="passengers-title" onClick={this.openPassengersPopup}>
-                <span className="travelers-count">{ totalTravelers }</span>
-                { totalTravelers === 1 ? 'Traveller' : 'Travellers'},{" "}
-                {this.mapFlightClassByValue(flightClass)}
+                <span className="travelers-count">{ totalTravelers } </span>
+                { totalTravelers === 1 ? 'Passenger' : 'Passengers'},
+                <span> {this.mapFlightClassByValue(flightClass)}</span>
               </div>
               <PassengersPopup showPassengersPopup={this.state.showPassengersPopup} closePassengersPopup={this.closePassengersPopup} />
             </div>

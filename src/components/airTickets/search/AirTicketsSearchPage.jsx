@@ -28,6 +28,8 @@ import { getFilters, sort } from "../../common/flights/filter";
 import orderSegments from "./order-flights/order-flights";
 import "../../../styles/css/components/airTickets/search/air-tickets-search-page.css";
 
+import {WRONG_ORIGIN_IATA_CODE, WRONG_DESTINATION_IATA_CODE} from '../../../constants/warningMessages';
+
 import {filterFlights} from "./filter/filtering-function/filtering-function/filtering-function"
 const DEFAULT_PAGE_SIZE = 10;
 
@@ -154,6 +156,10 @@ class AirTicketsSearchPage extends Component {
       .then(res => {
         if (res.ok) {
           this.connectSocketSearch();
+        // } else {
+        //   //TODO check response and displaying data
+        //   res.json().then(data => {
+        //     NotificationManager.error(data.message, "", LONG);});
         }
       })
       .catch(res => {
@@ -260,7 +266,7 @@ class AirTicketsSearchPage extends Component {
         );
       })
       .catch(() => {
-        NotificationManager.warning("Wrong origin airport IATA code", "", LONG);
+        NotificationManager.warning(WRONG_ORIGIN_IATA_CODE, "", LONG);
       });
 
     this.requestAirportInfo(destination)
@@ -276,7 +282,7 @@ class AirTicketsSearchPage extends Component {
       })
       .catch(() => {
         NotificationManager.warning(
-          "Wrong destination airport IATA code",
+          WRONG_DESTINATION_IATA_CODE,
           "",
           LONG
         );
@@ -324,7 +330,7 @@ class AirTicketsSearchPage extends Component {
           destination: dest,
           date
         }
-      }))
+      }));
 
       const flightClass = searchParams.flightClass;
       const stops = searchParams.stops;
@@ -528,7 +534,7 @@ class AirTicketsSearchPage extends Component {
 
     if (messageBody.allElements) {
       let allResults = Object.values(this.results);
-      allResults = sortFlightsByPrice(allResults)
+      allResults = sortFlightsByPrice(allResults);
       this.setState({
         allElements: messageBody.allElements,
         allResults: allResults,

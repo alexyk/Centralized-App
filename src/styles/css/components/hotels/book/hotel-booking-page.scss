@@ -19,6 +19,51 @@
     width: 100%;
     margin-bottom: 30px;
 
+    .nationality {
+      display: flex;
+      -ms-flex-align: center;
+      align-items: center;
+      margin-bottom: 10px;
+
+      @include media ('<=tablet') {
+        flex-direction: column;
+      }
+
+
+      label {
+        width: 10%;
+        font-size: 16px;
+        margin-right: 10px;
+
+        @include media ('<=tablet') {
+          width: 100%;
+          margin: 0 0 10px 0;
+        }
+      }
+
+      .select {
+        width: 90%;
+        @include media ('<=tablet') {
+          width: 100%;
+          margin: 0 0 10px 0;
+        }
+
+        select#country {
+          padding: 15px 39px 15px 15px;
+          width: 100%;
+          outline: none;
+          border-radius: 3px;
+          margin-right: 10px;
+
+
+        }
+      }
+
+    }
+
+
+
+
     .guest {
       display: flex;
       align-items: center;

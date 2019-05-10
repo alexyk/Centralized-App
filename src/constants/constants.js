@@ -11,7 +11,7 @@ export const stopIds = {
 };
 
 export const ERROR_MESSAGES = {
-  TRY_AGAIN: "Please try again"
+  TRY_AGAIN: "Please try again."
 };
 
 export const URLS = {

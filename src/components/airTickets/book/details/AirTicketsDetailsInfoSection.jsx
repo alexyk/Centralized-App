@@ -291,7 +291,7 @@ class AirTicketsDetailsInfoSection extends Component {
                           className="icon-arrow-right arrow"></span> {segment.destination.name}</h5>
                         <div className="departure-segment-item">
                           <div>Flight number:</div>
-                          <div>{segment.carrier.flightNumber}</div>
+                          <div>{segment.carrier.code} {segment.carrier.flightNumber}</div>
                         </div>
                         <div className="departure-segment-item">
                           <div>Service class:</div>

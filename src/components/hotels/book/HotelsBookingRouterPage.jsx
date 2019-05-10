@@ -383,7 +383,8 @@ class HotelsBookingRouterPage extends React.Component {
     return {
       currency: queryParams.currency,
       rooms: JSON.parse(queryParams.rooms),
-      quoteId: queryParams.quoteId
+      quoteId: queryParams.quoteId,
+      nat: queryParams.nat
     };
   }
 

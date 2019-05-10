@@ -135,16 +135,18 @@ class AirTicketsBookingProfilePassengersForm extends Component {
       passengersServices = services.filter(service => service.perPassenger);
     }
 
+    console.log(passengersServices);
+
     return (
       <div className="air-tickets-passengers-form">
-        <h2>Passengers Details</h2>
+        <h2>Passenger Details</h2>
         <hr />
         <form onSubmit={(e) => { e.preventDefault(); this.prepareFlightReservation() }}>
           {passengersInfo.map((passenger, passengerIndex) => {
             return (
               <Fragment key={passengerIndex}>
                 <div className="passenger-form-title">
-                  <h4>Passenger</h4>
+                  <h4>Passenger {passengerIndex + 1}</h4>
                   {currentPassengerIndex === passengerIndex ? <div className="toggle"><span className="fa fa-angle-down" onClick={() => this.togglePassenger(-1)} /></div> : <div className="toggle"><span className="fa fa-angle-right" onClick={() => this.togglePassenger(passengerIndex)} /></div>}
                 </div>
                 <hr />

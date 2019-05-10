@@ -10,5 +10,8 @@ export const ROOM_IS_NO_LONGER_AVAILABLE =
   "This room is no longer available. Please try another one or try again later.";
 export const USER_NOUSER = "User NOT FOUND";
 export const USER_SERVERROR = "Backend Error";
-export const MISSING_ORIGIN = "Please select from where are you travelling!";
-export const MISSING_DESTINATION = "Please select to where are you travelling!";
+
+export const MISSING_ORIGIN = "Please enter origin city.";
+export const MISSING_DESTINATION = "Please enter destination city.";
+export const MISSING_CHILDREN_AGE = "Please specify children age between 1 and 12.";
+export const MORE_INFANTS_THEN_ADULTS = "More infants then adults";

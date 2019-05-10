@@ -11,19 +11,19 @@ import { parseBookingStatus } from "../../utils/parse-booking-status";
 import { NotificationManager } from "react-notifications";
 import { LONG } from "../../../../constants/notificationDisplayTimes.js";
 
-const STATUS = {
-  DONE: "COMPLETE",
-  CONFIRMED: "PENDING",
-  FAIL: "BOOKING FAILED",
-  FAILED: "BOOKING FAILED",
-  PENDING: "PENDING",
-  QUEUED: "PENDING",
-  QUEUED_FOR_CONFIRMATION: "PENDING",
-  CANCELLED: "CANCELLED",
-  PENDING_SAFECHARGE_CONFIRMATION: "PENDING",
-  PENDING_CANCELLATION: "PENDING CANCELLATION",
-  CANCELLATION_FAILED: "CANCELLATION FAILED"
-};
+// const STATUS = {
+//   DONE: "COMPLETE",
+//   CONFIRMED: "PENDING",
+//   FAIL: "BOOKING FAILED",
+//   FAILED: "BOOKING FAILED",
+//   PENDING: "PENDING",
+//   QUEUED: "PENDING",
+//   QUEUED_FOR_CONFIRMATION: "PENDING",
+//   CANCELLED: "CANCELLED",
+//   PENDING_SAFECHARGE_CONFIRMATION: "PENDING",
+//   PENDING_CANCELLATION: "PENDING CANCELLATION",
+//   CANCELLATION_FAILED: "CANCELLATION FAILED"
+// };
 
 /*
 const STATUS_TOOLTIP = {
@@ -36,18 +36,34 @@ const STATUS_TOOLTIP = {
   CANCELLATION_FAILED: "Your booking cancellation was unsuccessful, please contact us"
 };
 */
+// const STATUS_TOOLTIP = {
+//   DONE: "Your reservation is complete",
+//   CONFIRMED: "Contact us if status is still Pending after 30 minutes",
+//   FAIL: "Your booking failed please contact us",
+//   FAILED: "Your booking failed please contact us",
+//   PENDING: "Contact us if status is still Pending after 30 minutes",
+//   QUEUED: "Contact us if status is still Pending after 30 minutes",
+//   QUEUED_FOR_CONFIRMATION: "Contact us if status is still Pending after 30 minutes",
+//   CANCELLED: "You canceled your reservation",
+//   PENDING_SAFECHARGE_CONFIRMATION: "Contact us if status is still Pending after 30 minutes",
+//   PENDING_CANCELLATION: "Your cancelation is being processed",
+//   CANCELLATION_FAILED: "Your booking cancellation was unsuccessful, please contact us"
+// };
+
+
 const STATUS_TOOLTIP = {
-  DONE: "Your reservation is complete",
-  CONFIRMED: "Contact us if status is still Pending after 30 minutes",
-  FAIL: "Your booking failed please contact us",
-  FAILED: "Your booking failed please contact us",
-  PENDING: "Contact us if status is still Pending after 30 minutes",
-  QUEUED: "Contact us if status is still Pending after 30 minutes",
-  QUEUED_FOR_CONFIRMATION: "Contact us if status is still Pending after 30 minutes",
-  CANCELLED: "You canceled your reservation",
-  PENDING_SAFECHARGE_CONFIRMATION: "Contact us if status is still Pending after 30 minutes",
-  PENDING_CANCELLATION: "Your cancelation is being processed",
-  CANCELLATION_FAILED: "Your booking cancellation was unsuccessful, please contact us"
+  PENDING_SAFECHARGE_CONFIRMATION: "Contact us if status is pending for more than 30 mins.",
+  SAFECHARGE_FAILED: "Your Credit Card payment was not successful.",
+  PAYMENT_REVIEW: "Credit Card payment is under review.",
+  CONFIRMED: "You have successfully paid and are now waiting booking confirmation.",
+  FAIL: "Payment failed. Check mail for instructions or contact us.",
+  QUEUED_FOR_CONFIRMATION: "Contact us if status is pending for more than 30 mins.",
+  DONE: "Your reservation is confirmed.",
+  FAILED: "Booking failed. Check mail for instructions or contact us.",
+  PENDING_CANCELLATION: "Cancellation is not possible at this time. Contact support.",
+  CANCELLED: "Your reservation has been cancelled.",
+  CANCELLATION_FAILED: "Your cancellation request is being processed.",
+  QUEUED: "Contact us if status is pending for more than 30 mins."
 };
 
 
@@ -105,7 +121,7 @@ class HotelTrip extends React.Component {
     // const status = STATUS[this.props.trip.status];
     const status = _parseBookingStatus(this.props.trip.status);
     const statusMessage = STATUS_TOOLTIP[this.props.trip.status];
-    const items = this.props.trip
+    const items = this.props.trip;
     const { id, hotel_id, hotel_photo, hotel_name, hostEmail, hostPhone, has_details } = items;
     const isCompleted =
       status === "COMPLETE" && this.isFutureDate(this.props.trip.arrival_date);

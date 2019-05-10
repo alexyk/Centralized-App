@@ -362,7 +362,7 @@ class AirTicketsSearchResult extends Component {
 
         <div className="air-tickets-result-pricing">
           <div className="price-for">
-            <div>Price for {travellersCount} traveller{travellersCount > '1' ? 's' : ''}</div>
+            <div>Price for {travellersCount} passenger{travellersCount > '1' ? 's' : ''}</div>
             {routing === '1' ? <div>one way</div> : <div>round trip</div>}
           </div>
           {!isPriceLoaded
