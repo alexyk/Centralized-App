@@ -6,6 +6,8 @@ import { getLocAmountById as getStoredLocAmountForPriceInEur } from "../../../..
 import { getCurrencyExchangeRates } from "../../../../selectors/exchangeRatesInfo";
 import evaluateLocAndEuroAmounts from "./evaluate-loc-and-euro-amounts";
 import _LocPriceComponent from "./loc-price-visualization-component";
+import {ExchangerWebsocket} from "../../../../services/socket/exchangerWebsocket";
+import {isExchangerWebsocketConnected} from "../../../../selectors/exchangerSocketInfo";
 
 /**
  * Behavior
@@ -39,7 +41,7 @@ function mapStateToProps(state, ownProps) {
     isUserLogged: isLogged(state.userInfo)
   };
 
-  let  currencyExchangeRates = getCurrencyExchangeRates(state.exchangeRatesInfo);
+  let currencyExchangeRates = getCurrencyExchangeRates(state.exchangeRatesInfo);
   if(currencyExchangeRates){
     let { locAmount, fiatAmountInEur } = evaluateLocAndEuroAmounts({
       inputFiatAmount: ownProps.fiat,
@@ -52,12 +54,17 @@ function mapStateToProps(state, ownProps) {
     return {
       locAmount: locAmount,
       fiatInEur: fiatAmountInEur,
-     ...commonProps
+      isExchangerWebsocketConnected: isExchangerWebsocketConnected(state.exchangerSocketInfo),
+      a: 1,
+
+      ...commonProps
     };
   } else {
     return {
       locAmount: null,
       fiatInEur: null,
+      isExchangerWebsocketConnected: isExchangerWebsocketConnected(state.exchangerSocketInfo),
+      a: 1,
       ...commonProps
     };
   }
@@ -65,8 +72,11 @@ function mapStateToProps(state, ownProps) {
 
 function mapDispatchToProps(dispatch) {
   return {
-    requestLocPriceForThisAmountInEur(amountInEur){
-      return dispatch(thunk_getLocAmountFor(amountInEur, "EUR"))
+    requestLocPriceForThisAmountInEur(amountInEur, exchangerIsConnected){
+      if(exchangerIsConnected){
+        return ExchangerWebsocket.sendMessage(amountInEur, 'getLocPrice', {fiatAmount: amountInEur});
+      }
+      return dispatch(thunk_getLocAmountFor(amountInEur))
     },
     endRequestForLocPriceOfThisAmountOfEur(fiatInEur) {
       return dispatch(removeLocAmount(fiatInEur));
