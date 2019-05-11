@@ -89,7 +89,6 @@ class AdminReservationsFlightsEditForm extends Component<State> {
   }
 
   requestBookingById(id) {
-    console.log(`${Config.getValue("apiHost")}/admin/panel/flights/${id}`);
     sa.get(`${Config.getValue("apiHost")}/admin/panel/flights/${id}`)
       .set(
         "Authorization",
@@ -139,7 +138,6 @@ class AdminReservationsFlightsEditForm extends Component<State> {
     }
 
     let passengerInfo = JSON.parse(booking.passengerInfo);
-      console.log(passengerInfo);
     let fare = JSON.parse(booking.fare);
     let maxGroup = 0;
     fare.map(f => {

@@ -366,7 +366,6 @@ class HotelsBookingConfirmPage extends Component {
     if (e) {
       e.preventDefault();
     }
-    console.log(modal);
 
     this.props.dispatch(openModal(modal));
   }
