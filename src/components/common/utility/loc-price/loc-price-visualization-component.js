@@ -44,7 +44,7 @@ export default class _LocPriceComponent extends PureComponent<
   }
 
   render() {
-    if (!this.props.isUserLogged) return null;
+    // if (!this.props.isUserLogged) return null;
     const bracket = this.props.brackets && this.props.isUserLogged;
     return (
       <span>

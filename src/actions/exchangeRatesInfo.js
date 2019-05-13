@@ -1,5 +1,7 @@
-import { exchangeRatesInfo } from "./actionTypes";
+import {exchangeRatesInfo} from "./actionTypes";
 import requester from "../requester";
+import {Config} from "../config";
+
 
 export function setCurrencyExchangeRates(currencyExchangeRates) {
   return {
@@ -24,7 +26,7 @@ export function setLocRateFiatAmount(locRateFiatAmount) {
 
 export function fetchCurrencyRates() {
   return dispatch => {
-    dispatch({ type: exchangeRatesInfo.FETCH_CURRENCY_EXCHANGE_RATES });
+    dispatch({type: exchangeRatesInfo.FETCH_CURRENCY_EXCHANGE_RATES});
     requester.getCurrencyRates().then(res => {
       res.body.then(currencyExchangeRates => {
         dispatch(setCurrencyExchangeRates(currencyExchangeRates));
@@ -36,13 +38,18 @@ export function fetchCurrencyRates() {
 export function fetchLocEurRate() {
   const baseCurrency = "EUR";
   return dispatch => {
-    dispatch({ type: exchangeRatesInfo.FETCH_LOC_EUR_RATE });
-    requester.getLocRateByCurrency(baseCurrency).then(res => {
-      res.body.then(data => {
-        dispatch(
-          setLocEurRate(Number(data[0][`price_${baseCurrency.toLowerCase()}`]))
-        );
-      });
-    });
-  };
-}
+    dispatch({type: exchangeRatesInfo.FETCH_LOC_EUR_RATE});
+    // requester.getLocRateByCurrency(baseCurrency).then(res => {
+    //   res.body.then(data => {
+    //     dispatch(
+    //       setLocEurRate(Number(data[0][`price_${baseCurrency.toLowerCase()}`]))
+    //     );
+    //   });
+    // });
+    fetch(`${Config.getValue('apiHost')}convert?amount=1&currency=` + baseCurrency).then(res => {
+      res.json().then(data => {
+        dispatch(setLocEurRate(data));
+      })
+    })
+  }
+};
