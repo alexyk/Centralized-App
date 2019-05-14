@@ -37,19 +37,14 @@ export function fetchCurrencyRates() {
 
 export function fetchLocEurRate() {
   const baseCurrency = "EUR";
+
   return dispatch => {
     dispatch({type: exchangeRatesInfo.FETCH_LOC_EUR_RATE});
-    // requester.getLocRateByCurrency(baseCurrency).then(res => {
-    //   res.body.then(data => {
-    //     dispatch(
-    //       setLocEurRate(Number(data[0][`price_${baseCurrency.toLowerCase()}`]))
-    //     );
-    //   });
-    // });
-    fetch(`${Config.getValue('apiHost')}convert?amount=1&currency=` + baseCurrency).then(res => {
-      res.json().then(data => {
-        dispatch(setLocEurRate(data));
+    requester.getLocRateByCurrency(baseCurrency).then(res => {
+      res.body.then(data => {
+        const parsedValue = 1/parseFloat(data);
+        dispatch(setLocEurRate(parsedValue));
       })
-    })
+    });
   }
 };
