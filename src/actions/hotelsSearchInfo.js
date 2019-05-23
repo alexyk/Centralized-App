@@ -34,6 +34,13 @@ export function setChildren() {
   };
 }
 
+export function setNationality(value) {
+  return {
+    type: hotelsSearchInfo.SET_NATIONALITY,
+    value
+  };
+}
+
 export function setHotelsSearchInfo(region, rooms, adults, hasChildren) {
   return {
     type: hotelsSearchInfo.SET_HOTELS_SEARCH_INFO,

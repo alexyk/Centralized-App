@@ -4,7 +4,8 @@ const initialState = {
   rooms: [{ adults: "2", children: [] }],
   adults: "2",
   hasChildren: false,
-  region: null
+  region: null,
+  nationality: null
 };
 
 export default function reducer(state = initialState, action) {
@@ -29,6 +30,10 @@ export default function reducer(state = initialState, action) {
       return Object.assign({}, state, {
         hasChildren: !state.hasChildren,
         rooms: handleToggleChildren(state.hasChildren, state.rooms)
+      });
+    case hotelsSearchInfo.SET_NATIONALITY:
+      return Object.assign({}, state, {
+        nationality: action.value
       });
     case hotelsSearchInfo.SET_HOTELS_SEARCH_INFO:
       return Object.assign({}, state, {
