@@ -18,6 +18,7 @@ import {
   getNationality
 } from "../../../selectors/hotelsSearchInfo.js";
 
+import {LONG} from "../../../constants/notificationDisplayTimes.js";
 import { CHILDREN } from "../../../constants/modals";
 import ChildrenModal from "../modals/ChildrenModal";
 import PropTypes from "prop-types";
@@ -125,8 +126,7 @@ function HotelsSearchBar(props) {
     queryString += "&startDate=" + startDate.format("DD/MM/YYYY");
     queryString += "&endDate=" + endDate.format("DD/MM/YYYY");
     queryString += "&rooms=" + encodeURI(JSON.stringify(rooms));
-    if (!isUserLogged) queryString += "&nat=" + (nationality ? nationality.id : -1);
-    console.info(`[Alex] nationality`, {nationality,props})
+    queryString += "&nat=" + (nationality ? nationality.id : -1);
 
     return queryString;
   };
@@ -205,6 +205,8 @@ function HotelsSearchBar(props) {
     if (!props.region) {
       select.focus();
       NotificationManager.info("Please choose a location.");
+    } else if (!props.nationality) {
+      NotificationManager.error("Please select nationality!", "", LONG * 2);
     } else {
       distributeAdults().then(rooms => {
         if (props.hasChildren) {
