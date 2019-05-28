@@ -180,12 +180,12 @@ class HotelsBookingConfirmPage extends Component {
     const hotelBooking = this.props.reservation.booking.hotelBooking;
     const arrivalDateString = hotelBooking[0].arrivalDate;
     const creationDateString = hotelBooking[0].creationDate;
-    const diffDaysBetweenCreationAndArrivalDates = moment(arrivalDateString, 'YYYY-MM-DD').diff(moment(creationDateString, 'YYYY-MM-DD'), 'days');
+    const diffDaysBetweenCreationAndArrivalDates = moment(arrivalDateString).diff(moment(creationDateString), 'days');
     let feeTable = Array(diffDaysBetweenCreationAndArrivalDates).fill({ from: '', amt: 0, locPrice: 0 }); // jagged array for storing all rooms fees
     const cancellationFees = [];
 
     for (let i = 0; i < hotelBooking.length; i++) {
-      const creationDate = moment(hotelBooking[i].creationDate, 'YYYY-MM-DD');
+      const creationDate = moment(hotelBooking[i].creationDate);
       if (hotelBooking[i].room.canxFees.length === 0) {
         continue;
       }
@@ -198,7 +198,6 @@ class HotelsBookingConfirmPage extends Component {
       for (let j = 0; j < earliestToLatestRoomCancellationFees.length; j++) {
         const cancellation = earliestToLatestRoomCancellationFees[j];
         let fromDate = moment(cancellation.from).utc();
-
         const daysBefore = moment(fromDate).diff(creationDate, 'days');
 
         const amt = cancellation.amount.amt;
@@ -221,14 +220,14 @@ class HotelsBookingConfirmPage extends Component {
     for (let i = 0; i < feeTable.length; i++) {
       if ((i === 0 && feeTable[i].amt !== 0) || (feeTable[i].amt !== 0 && feeTable[i - 1].from !== feeTable[i].from && feeTable[i - 1].amt !== feeTable[i].amt)) {
         if (i !== 0 && feeTable[i - 1].amt === 0) {
-          const creationDate = moment(creationDateString, 'YYYY-MM-DD');
+          const creationDate = moment(creationDateString);
           cancellationFees.push({
             from: creationDate.add(i, 'days').format('YYYY-MM-DD'),
             amt: 0,
             loc: 0
           });
         }
-        const creationDate = moment(creationDateString, 'YYYY-MM-DD');
+        const creationDate = moment(creationDateString);
         cancellationFees.push({
           from: creationDate.add(i, 'days').format('YYYY-MM-DD'),
           amt: feeTable[i].amt,
@@ -394,7 +393,7 @@ class HotelsBookingConfirmPage extends Component {
         const fiatPrice = currencyExchangeRates && (CurrencyConverter.convert(currencyExchangeRates, RoomsXMLCurrency.get(), currency, bookingRoom.room.totalSellingPrice.amt)).toFixed(2);
         rows.push(
           <tr key={(1 + index) * 1000} className="booking-room">
-            <td>{bookingRoom.room.roomType.text}</td>
+            <td>{bookingRoom.room.roomType}</td>
             <td>
               <span className="booking-price">{currency} {fiatPrice} <LocPrice fiat={bookingRoom.room.totalSellingPrice.amt} />
               </span>
@@ -503,6 +502,7 @@ class HotelsBookingConfirmPage extends Component {
     const hasLocAddress = !!userInfo.locAddress;
 
     const booking = reservation && reservation.booking.hotelBooking;
+    const essentialInformation = reservation && reservation.essentialInformation;
 
     const fiatAmountPP = currencyExchangeRates && quotePPFiatAmount && CurrencyConverter.convert(currencyExchangeRates, DEFAULT_CRYPTO_CURRENCY, currency, quotePPFiatAmount);
     const additionalFeesPP = currencyExchangeRates && quotePPAdditionalFees && CurrencyConverter.convert(currencyExchangeRates, DEFAULT_CRYPTO_CURRENCY, currency, quotePPAdditionalFees).toFixed(2);
@@ -528,8 +528,8 @@ class HotelsBookingConfirmPage extends Component {
 
               <div className="confirm-pay-info">
                 <div className="text-center room-dates">
-                  {moment(booking[0].arrivalDate, 'YYYY-MM-DD').format('DD MMM, YYYY')} <i
-                    className="fa fa-long-arrow-right"></i> {moment(booking[0].arrivalDate, 'YYYY-MM-DD').add(booking[0].nights, 'days').format('DD MMM, YYYY')}
+                  {moment(booking[0].arrivalDate).format('DD MMM, YYYY')} <i
+                    className="fa fa-long-arrow-right"></i> {moment(booking[0].arrivalDate).add(booking[0].nights, 'days').format('DD MMM, YYYY')}
                 </div>
                 <div className="tables-container">
                   <div className="confirm-and-pay-table">
@@ -552,6 +552,13 @@ class HotelsBookingConfirmPage extends Component {
                     {this.getRoomFees(reservation)}
                   </div>
                   <p className='billing-disclaimer'>The charge will appear on your bill as LockChain Ltd. (team@locktrip.com)</p>
+                  <hr className="table-splitter" />
+                  <div className="confirm-and-pay-table">
+                    <h4>Essential Information</h4>
+                    {essentialInformation.map(function(essen){
+                      return <div>{essen}</div>
+                    })}
+                  </div>
                 </div>
                 <div className="payment-methods">
                   <div className="hide">

@@ -139,22 +139,7 @@ class HotelsBookingRouterPage extends React.Component {
               });
           });
         } else {
-          res.errors.then((res) => {
-            const errors = res.errors;
-            if (errors.hasOwnProperty('RoomsXmlResponse')) {
-              if (errors['RoomsXmlResponse'].message.indexOf('QuoteNotAvailable:') !== -1) {
-                this.redirectToHotelDetailsPage();
-              }
-            } else {
-              for (let key in errors) {
-                if (typeof errors[key] !== 'function') {
-                  NotificationManager.warning(errors[key].message, '', LONG);
-                }
-              }
-            }
-
-            reject(false);
-          });
+          this.redirectToHotelDetailsPage();
         }
       });
     });

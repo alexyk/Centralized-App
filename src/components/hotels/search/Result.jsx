@@ -112,8 +112,8 @@ class Result extends React.Component {
     let {id, name, generalDescription, star, lastBestPrice} = hotel;
 
     const isPriceLoaded = !!price;
-    const priceInSelectedCurrency = currencyExchangeRates && ((CurrencyConverter.convert(currencyExchangeRates, RoomsXMLCurrency.get(), currency, price)) / nights).toFixed(2);
-    const lastBestPriceInSelectedCurrency = currencyExchangeRates && ((CurrencyConverter.convert(currencyExchangeRates, RoomsXMLCurrency.get(), currency, lastBestPrice)) / nights).toFixed(2);
+    const priceInSelectedCurrency = currencyExchangeRates && ((CurrencyConverter.convert(currencyExchangeRates, RoomsXMLCurrency.get(), currency, price))).toFixed(2);
+    const lastBestPriceInSelectedCurrency = currencyExchangeRates && ((CurrencyConverter.convert(currencyExchangeRates, RoomsXMLCurrency.get(), currency, lastBestPrice))).toFixed(2);
 
     name = name && StringUtils.shorten(name, this.state.titleLength);
     generalDescription = generalDescription && StringUtils.shorten(generalDescription, this.state.descriptionLength);
