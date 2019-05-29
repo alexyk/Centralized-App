@@ -513,6 +513,7 @@ class StaticHotelsSearchPage extends React.Component {
     search += `&startDate=${encodeURI(queryParams.startDate)}`;
     search += `&endDate=${encodeURI(queryParams.endDate)}`;
     search += `&rooms=${encodeURI(queryParams.rooms)}`;
+    search += `&nat=${encodeURI(queryParams.nat)}`;
     return search;
   }
 
