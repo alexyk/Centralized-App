@@ -171,31 +171,31 @@ function HotelsSearchBar(props) {
     props.dispatch(closeModal(modal));
   };
 
-  const nationalityWhenNotLoggedIn = () => {
-    let rendered;
-
-    if (props.countries) {
-      // Copied from HotelsBookingPage and edited a bit
-      // I've also left some code as commented out
-      // -- Alex K, 2019-05-23 --
-      rendered = (
-        // <div className="select-wrap source-panel-item">
-          // <label htmlFor="nationality">Nationality <span className="mandatory"></span></label>
-          <select name="country" id="country"
-              onChange={e => props.dispatch(setNationality(JSON.parse(e.target.value)))} 
-              value={props.nationality ? props.nationality.value : ""}
-          >
-            <option value="">{"Nationality"}</option>
-            {props.countries && props.countries.map((item, i) => {
-              return <option key={i} value={JSON.stringify(item)}>{item.name}</option>;
-            })}
-          </select>
-        // </div>
-      )
-    }
-
-    return rendered;
-  }
+  // const nationalityWhenNotLoggedIn = () => {
+  //   let rendered;
+  //
+  //   if (props.countries) {
+  //     // Copied from HotelsBookingPage and edited a bit
+  //     // I've also left some code as commented out
+  //     // -- Alex K, 2019-05-23 --
+  //     rendered = (
+  //       // <div className="select-wrap source-panel-item">
+  //         // <label htmlFor="nationality">Nationality <span className="mandatory"></span></label>
+  //         <select name="country" id="country"
+  //             onChange={e => props.dispatch(setNationality(JSON.parse(e.target.value)))}
+  //             value={props.nationality ? props.nationality.value : ""}
+  //         >
+  //           <option value="">{"Nationality"}</option>
+  //           {props.countries && props.countries.map((item, i) => {
+  //             return <option key={i} value={JSON.stringify(item)}>{item.name}</option>;
+  //           })}
+  //         </select>
+  //       // </div>
+  //     )
+  //   }
+  //
+  //   return rendered;
+  // }
 
   const handleSearch = e => {
     if (e) {
@@ -205,8 +205,8 @@ function HotelsSearchBar(props) {
     if (!props.region) {
       select.focus();
       NotificationManager.info("Please choose a location.");
-    } else if (!props.nationality) {
-      NotificationManager.error("Please select nationality!", "", LONG * 2);
+    // } else if (!props.nationality) {
+    //   NotificationManager.error("Please select nationality!", "", LONG * 2);
     } else {
       distributeAdults().then(rooms => {
         if (props.hasChildren) {
@@ -308,8 +308,8 @@ function HotelsSearchBar(props) {
           <div>{!props.hasChildren ? "No children" : "With children"}</div>
         </div>
 
-        {/* Nationality */}
-        {!props.isUserLogged && nationalityWhenNotLoggedIn()}
+        {/*/!* Nationality *!/*/}
+        {/*{nationalityWhenNotLoggedIn()}*/}
 
       </div>
       <button type="submit" className="button">

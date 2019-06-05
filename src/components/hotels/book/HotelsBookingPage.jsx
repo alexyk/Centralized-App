@@ -88,10 +88,10 @@ class HotelsBookingPage extends React.Component {
         this.processSubmit();
       });
     }
-    if (!this.state.country) {
-      proceed = false;
-      NotificationManager.error("Please select nationality!", "", LONG * 2);
-    }
+    // if (!this.state.country) {
+    //   proceed = false;
+    //   NotificationManager.error("Please select nationality!", "", LONG * 2);
+    // }
     if (proceed) {
       // let obj = {
       //   "quoteId": this.props.quoteId,
@@ -319,18 +319,18 @@ class HotelsBookingPage extends React.Component {
                       <div className="room" key={roomIndex}>
                         <h4>Room</h4>
                         <hr className="sm-none"/>
-                        <div className="nationality">
-                          <label htmlFor="nationality">Nationality <span className="mandatory"></span></label>
-                          <div className='select'>
-                            <select name="country" id="country" onChange={this.updateCountry}
-                                    value={JSON.stringify(this.state.country)}>
-                              <option value="">Nationality</option>
-                              {this.props.countries && this.props.countries.map((item, i) => {
-                                return <option key={i} value={JSON.stringify(item)}>{item.name}</option>;
-                              })}
-                            </select>
-                          </div>
-                        </div>
+                        {/*<div className="nationality">*/}
+                          {/*<label htmlFor="nationality">Nationality <span className="mandatory"></span></label>*/}
+                          {/*<div className='select'>*/}
+                            {/*<select name="country" id="country" onChange={this.updateCountry}*/}
+                                    {/*value={JSON.stringify(this.state.country)}>*/}
+                              {/*<option value="">Nationality</option>*/}
+                              {/*{this.props.countries && this.props.countries.map((item, i) => {*/}
+                                {/*return <option key={i} value={JSON.stringify(item)}>{item.name}</option>;*/}
+                              {/*})}*/}
+                            {/*</select>*/}
+                          {/*</div>*/}
+                        {/*</div>*/}
                         {room &&
                         room.adults.map((adult, adultIndex) => {
                           return (
