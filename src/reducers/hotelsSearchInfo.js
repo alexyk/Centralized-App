@@ -5,7 +5,8 @@ const initialState = {
   adults: "2",
   hasChildren: false,
   region: null,
-  nationality: null
+  nationality: null,
+  cachedSearchString: ''
 };
 
 export default function reducer(state = initialState, action) {
@@ -41,6 +42,10 @@ export default function reducer(state = initialState, action) {
         rooms: action.rooms,
         adults: action.adults,
         hasChildren: action.hasChildren
+      });
+    case hotelsSearchInfo.CACHE_CURRENT_SEARCH_STRING:
+      return Object.assign({}, state, {
+        cachedSearchString: action.searchString,
       });
     default:
       return state;
