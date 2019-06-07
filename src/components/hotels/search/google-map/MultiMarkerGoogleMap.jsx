@@ -8,6 +8,7 @@ import { CurrencyConverter } from '../../../../services/utilities/currencyConver
 import { RoomsXMLCurrency } from '../../../../services/utilities/roomsXMLCurrency';
 import { getCurrency, getCurrencySign } from '../../../../selectors/paymentInfo';
 import { getLocEurRate, getCurrencyExchangeRates } from '../../../../selectors/exchangeRatesInfo';
+import { isMobileWebView } from '../../../../services/utilities/mobileWebView';
 
 class MultiMarkerGoogleMap extends Component {
   componentDidMount() {
@@ -109,8 +110,7 @@ class MultiMarkerGoogleMap extends Component {
     const { isLogged, nights, currency, currencySign, locEurRate, currencyExchangeRates, location } = this.props;
     const locPrice = ((hotel.price / locEurRate) / nights).toFixed(2);
     const fiatPrice = currencyExchangeRates && ((CurrencyConverter.convert(currencyExchangeRates, RoomsXMLCurrency.get(), currency, hotel.price)) / nights).toFixed(2);
-    const isMobile = location.pathname.indexOf('/mobile') !== -1;
-    const rootUrl = isMobile ? '/mobile/hotels/listings' : '/hotels/listings';
+    const rootUrl = isMobileWebView ? '/mobile/hotels/listings' : '/hotels/listings';
 
     const content = ReactDOMServer.renderToString(
       <MarkerInfoWindow

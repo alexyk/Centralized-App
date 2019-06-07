@@ -1,6 +1,19 @@
+import { isMobileWebView } from './mobileWebView'
+
 class CurrencyConverter {
   static convert(exchangeRates, from, to, quantity) {
-    return quantity * exchangeRates[from][to];
+
+    if (isMobileWebView) {
+      let result = null;
+      try {
+        result = quantity * exchangeRates[from][to];
+      } catch (error) {
+        console.warn(`Error in conversion - from:${from}  to:${to}  quantity:${quantity}`)
+      }
+      return result;
+    } else {
+      return quantity * exchangeRates[from][to];
+    }
   }
 }
 

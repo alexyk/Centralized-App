@@ -15,6 +15,7 @@ import TimeIcon from '../../../styles/images/time-icon.png';
 import '../../../styles/css/components/airTickets/search/air-tickets-search-result.css';
 import { isLogged } from '../../../selectors/userInfo';
 import queryString from "query-string";
+import { isMobileWebView } from '../../../services/utilities/mobileWebView';
 
 const SCREEN_SIZE_SMALL = 'SMALL';
 const SCREEN_SIZE_MEDIUM = 'MEDIUM';
@@ -315,10 +316,8 @@ class AirTicketsSearchResult extends Component {
     const priceForLoc = currencyExchangeRates && CurrencyConverter.convert(currencyExchangeRates, priceInfo.currency, RoomsXMLCurrency.get(), price);
     const priceInSelectedCurrency = currencyExchangeRates && (CurrencyConverter.convert(currencyExchangeRates, priceInfo.currency, currency, price)).toFixed(2);
 
-    const isMobile = this.props.location.pathname.indexOf('mobile') !== -1;
-
     // TODO: add redirect path for mobile
-    const redirectURL = isMobile
+    const redirectURL = isMobileWebView
       ? '/tickets/results/initBook'
       : '/tickets/results/initBook';
 

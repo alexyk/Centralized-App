@@ -34,6 +34,7 @@ import { NotificationManager } from "react-notifications";
 import { LONG } from "../../../constants/notificationDisplayTimes";
 import { FILTERED_UNAVAILABLE_HOTELS } from "../../../constants/infoMessages";
 import AsideContentPage from "../../common/asideContentPage/AsideContentPage";
+import { isMobileWebView } from "../../../services/utilities/mobileWebView";
 
 const DEBUG_SOCKET = false;
 const DELAY_INTERVAL = 100;
@@ -45,13 +46,11 @@ class StaticHotelsSearchPage extends React.Component {
 
     let queryParams = queryString.parse(this.props.location.search);
     this.queryParams = queryParams;
-    this.isMobile = (this.props.location.pathname.indexOf("/mobile") !== -1);
 
-    if (this.isMobile) {
+    if (isMobileWebView) {
       localStorage.setItem('currency', queryParams.currency);
       try {
         this.props.dispatch(setCurrency(queryParams.currency));
-        console.info(`[StaticHotelsSearchPage] CURRENCY, before: ${props.currency}, after: ${localStorage.setItem('currency')}`,{queryParams, props:props});
       } catch (e) {
         console.error(e)
       }
@@ -127,6 +126,10 @@ class StaticHotelsSearchPage extends React.Component {
       this.updateWindowWidth.bind(this),
       DEBOUNCE_INTERVAL
     );
+  }
+
+  componentDidCatch(error) {
+    console.warn(`[StaticHotelsSearchPage] Error occurred - ${error.message}`,{error});
   }
 
   componentDidMount() {
@@ -484,6 +487,8 @@ class StaticHotelsSearchPage extends React.Component {
     const page = this.state.page ? this.state.page : 0;
     requester.getLastSearchHotelResultsByFilter(search, filters).then(res => {
       if (res.success) {
+
+
         res.body.then(data => {
           this.setState(
             {

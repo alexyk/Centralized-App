@@ -9,10 +9,10 @@ import StaticHotelsSearchPage from './search/StaticHotelsSearchPage';
 import { setCurrency } from '../../actions/paymentInfo';
 import { getCurrency } from '../../selectors/paymentInfo';
 import { connect } from 'react-redux';
+import { isMobileWebView } from '../../services/utilities/mobileWebView';
 
 function HotelsRouterPage(props) {
   const { location, history, currency } = props;
-  const isMobile = location.pathname.indexOf('/mobile') !== -1;
   const showBackButton = location.pathname !== '/mobile/hotels/listings';
 
   return (
@@ -30,7 +30,7 @@ function HotelsRouterPage(props) {
       </Switch>
 
       {/* MOBILE ONLY START */}
-      {isMobile &&
+      {isMobileWebView &&
         <div className="container">
           {showBackButton && <button className="btn" style={{ 'width': '100%', 'marginBottom': '20px' }} onClick={() => history.goBack()}>Back</button>}
           <div className="select">

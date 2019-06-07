@@ -30,6 +30,7 @@ import { ROOM_IS_NO_LONGER_AVAILABLE } from '../../../constants/errorMessages.js
 import { ALL_ROOMS_TAKEN } from '../../../constants/warningMessages.js';
 import { LONG } from '../../../constants/notificationDisplayTimes.js';
 import { DEFAULT_LISTING_IMAGE_URL } from '../../../constants/images';
+import { isMobileWebView } from '../../../services/utilities/mobileWebView';
 
 class HotelDetailsPage extends React.Component {
   constructor(props) {
@@ -37,8 +38,6 @@ class HotelDetailsPage extends React.Component {
 
     let startDate = moment().add(1, 'day');
     let endDate = moment().add(2, 'day');
-
-    this.isMobile = (this.props.location.pathname.indexOf("/mobile") !== -1);
     let queryParams = parse(this.props.location.search);
 
     if (this.props) {
@@ -48,7 +47,7 @@ class HotelDetailsPage extends React.Component {
       }
     }
 
-    if (this.isMobile) {
+    if (isMobileWebView) {
       const currency = queryParams.currency;
       localStorage.setItem('currency', currency);
       try {

@@ -22,6 +22,7 @@ import { DEFAULT_LISTING_IMAGE_URL } from '../../../constants/images';
 import { isLogged } from '../../../selectors/userInfo';
 import { getCurrency, getCurrencySign } from '../../../selectors/paymentInfo';
 import { getCurrencyExchangeRates } from '../../../selectors/exchangeRatesInfo';
+import { isMobileWebView } from '../../../services/utilities/mobileWebView';
 
 const SCREEN_SIZE_SMALL = 'SMALL';
 const SCREEN_SIZE_MEDIUM = 'MEDIUM';
@@ -164,8 +165,6 @@ class Result extends React.Component {
       }
     };
 
-    const isMobile = location.pathname.indexOf('mobile') !== -1;
-
     const redirectURL = location.pathname.indexOf('mobile') === -1
       ? '/hotels/listings'
       : '/mobile/hotels/listings';
@@ -183,7 +182,7 @@ class Result extends React.Component {
               {pictures.map((picture, i) => {
                 return (
                   <div key={i}>
-                    <Link target={isMobile === false ? '_blank' : ''} to={`${redirectURL}/${id}${search.substr(0, endOfSearch)}`} key={i}>
+                    <Link target={isMobileWebView === false ? '_blank' : ''} to={`${redirectURL}/${id}${search.substr(0, endOfSearch)}`} key={i}>
                       <div style={{ backgroundImage: 'url(' + Config.getValue('imgHost') + picture.url + ')' }}>
                       </div>
                     </Link>
@@ -195,7 +194,7 @@ class Result extends React.Component {
         </div>
         <div className="result-content">
           <div>
-            <h4><Link target={isMobile === false ? '_blank' : ''} to={`${redirectURL}/${id}${search.substr(0, endOfSearch)}`}>{name}</Link></h4>
+            <h4><Link target={isMobileWebView === false ? '_blank' : ''} to={`${redirectURL}/${id}${search.substr(0, endOfSearch)}`}>{name}</Link></h4>
             <Rating rating={star} />
           </div>
           <div className="result-description">{generalDescription && ReactHtmlParser(generalDescription)}</div>
@@ -208,7 +207,7 @@ class Result extends React.Component {
             <div>
               {!isPriceLoaded && allElements
                 ? <button disabled className="mobile-pricing-button">Unavailable</button>
-                : <Link target={isMobile === false ? '_blank' : ''} className="mobile-pricing-button" to={`${redirectURL}/${id}${search.substr(0, endOfSearch)}`}>Book now</Link>
+                : <Link target={isMobileWebView === false ? '_blank' : ''} className="mobile-pricing-button" to={`${redirectURL}/${id}${search.substr(0, endOfSearch)}`}>Book now</Link>
               }
             </div>
           </div>
@@ -223,7 +222,7 @@ class Result extends React.Component {
           {isPriceLoaded && <LocPrice fiat={price / nights} />}
           {!isPriceLoaded && allElements
             ? <button disabled className="button">Unavailable</button>
-            : <Link target={isMobile === false ? '_blank' : ''} className="button" to={`${redirectURL}/${id}${search.substr(0, endOfSearch)}`}>Book now</Link>
+            : <Link target={isMobileWebView === false ? '_blank' : ''} className="button" to={`${redirectURL}/${id}${search.substr(0, endOfSearch)}`}>Book now</Link>
           }
         </div>
       </div>
