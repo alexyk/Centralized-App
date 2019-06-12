@@ -50,3 +50,10 @@ export function setHotelsSearchInfo(region, rooms, adults, hasChildren) {
     hasChildren
   };
 }
+
+export function cacheCurrentSearchString(searchString) {
+  return {
+    type: hotelsSearchInfo.CACHE_CURRENT_SEARCH_STRING,
+    searchString
+  }
+}

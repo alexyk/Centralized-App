@@ -2,14 +2,15 @@ import "../../../styles/css/components/hotels_search/sidebar/sidebar.css";
 
 import {
   setRegion,
-  setHotelsSearchInfo
+  setHotelsSearchInfo,
+  cacheCurrentSearchString
 } from "../../../actions/hotelsSearchInfo";
 import {
   asyncSetStartDate,
   asyncSetEndDate
 } from "../../../actions/searchDatesInfo";
 import { getStartDate, getEndDate } from "../../../selectors/searchDatesInfo";
-import { getRegion } from "../../../selectors/hotelsSearchInfo";
+import { getRegion, getCachedSearchString } from "../../../selectors/hotelsSearchInfo";
 
 import { Config } from "../../../config";
 import FilterPanel from "./filter/FilterPanel";
@@ -34,6 +35,8 @@ import { NotificationManager } from "react-notifications";
 import { LONG } from "../../../constants/notificationDisplayTimes";
 import { FILTERED_UNAVAILABLE_HOTELS } from "../../../constants/infoMessages";
 import AsideContentPage from "../../common/asideContentPage/AsideContentPage";
+import { isMobileWebView, fixNatForMobileWebView } from "../../../services/utilities/mobileWebView";
+
 
 const DEBUG_SOCKET = false;
 const DELAY_INTERVAL = 100;
@@ -45,13 +48,11 @@ class StaticHotelsSearchPage extends React.Component {
 
     let queryParams = queryString.parse(this.props.location.search);
     this.queryParams = queryParams;
-    this.isMobile = (this.props.location.pathname.indexOf("/mobile") !== -1);
 
-    if (this.isMobile) {
+    if (isMobileWebView) {
       localStorage.setItem('currency', queryParams.currency);
       try {
         this.props.dispatch(setCurrency(queryParams.currency));
-        console.info(`[StaticHotelsSearchPage] CURRENCY, before: ${props.currency}, after: ${localStorage.setItem('currency')}`,{queryParams, props:props});
       } catch (e) {
         console.error(e)
       }
@@ -127,6 +128,10 @@ class StaticHotelsSearchPage extends React.Component {
       this.updateWindowWidth.bind(this),
       DEBOUNCE_INTERVAL
     );
+  }
+
+  componentDidCatch(error) {
+    console.warn(`[StaticHotelsSearchPage] Error occurred - ${error.message}`,{error});
   }
 
   componentDidMount() {
@@ -276,19 +281,30 @@ class StaticHotelsSearchPage extends React.Component {
   subscribe() {
     const id = localStorage.getItem("uuid");
     const rnd = this.getRandomInt();
-    const search = this.props.location.search;
-    const endOfSearch =
+    let search = this.props.location.search;
+
+    if (isMobileWebView) {
+      const {search: natFixedSearch} = fixNatForMobileWebView(search);
+      search = natFixedSearch;
+    }
+    const endOfSearch = (
       search.indexOf("&filters=") !== -1
         ? search.indexOf("&filters=")
-        : search.length;
+        : search.length
+    );
     const queueId = `${id}&${rnd}`;
     const destination = "search/" + queueId;
     const client = this.client;
     const handleReceiveHotelPrice = this.handleReceiveMessage;
     this.subscription = client.subscribe(destination, handleReceiveHotelPrice);
+
+    const socketSearch = search.substr(0, endOfSearch);
+    this.props.dispatch(cacheCurrentSearchString(socketSearch));
+
+
     const msgObject = {
       uuid: queueId,
-      query: search.substr(0, endOfSearch)
+      query: socketSearch
     };
 
     const msg = JSON.stringify(msgObject);
@@ -479,7 +495,7 @@ class StaticHotelsSearchPage extends React.Component {
       this.props.location.pathname.indexOf("/mobile") !== -1
         ? "/mobile/hotels/listings"
         : "/hotels/listings";
-    const search = this.getSearchString();
+    let search = ( isMobileWebView ? this.props.cachedSearchString : this.getSearchString() );
     const filters = this.getFilterString();
     const page = this.state.page ? this.state.page : 0;
     requester.getLastSearchHotelResultsByFilter(search, filters).then(res => {
@@ -506,6 +522,7 @@ class StaticHotelsSearchPage extends React.Component {
     });
   }
 
+
   getSearchString() {
     const queryParams = queryString.parse(this.props.location.search);
     let search = `?region=${encodeURI(queryParams.region)}`;
@@ -513,9 +530,13 @@ class StaticHotelsSearchPage extends React.Component {
     search += `&startDate=${encodeURI(queryParams.startDate)}`;
     search += `&endDate=${encodeURI(queryParams.endDate)}`;
     search += `&rooms=${encodeURI(queryParams.rooms)}`;
-    search += `&nat=${encodeURI(queryParams.nat)}`;
+
+    const nat = (queryParams.nat == null || isNaN(queryParams.nat) ? -1 : queryParams.nat);
+      search += `&nat=${nat}`;
+
     return search;
   }
+
 
   getFilterString() {
     const filtersObj = {
@@ -595,7 +616,7 @@ class StaticHotelsSearchPage extends React.Component {
             showMap: !showMap
           });
         } else {
-          const search = this.getSearchString();
+          const search = ( isMobileWebView ? this.props.cachedSearchString : this.getSearchString() );
           const filters = this.getFilterString();
           const page = this.state.page ? this.state.page : 0;
           this.setState({ loading: true });
@@ -808,6 +829,7 @@ StaticHotelsSearchPage.propTypes = {
   endDate: PropTypes.object
 };
 
+
 function mapStateToProps(state) {
   const { paymentInfo, userInfo, hotelsSearchInfo, searchDatesInfo } = state;
   return {
@@ -815,7 +837,8 @@ function mapStateToProps(state) {
     isUserLogged: isLogged(userInfo),
     region: getRegion(hotelsSearchInfo),
     startDate: getStartDate(searchDatesInfo),
-    endDate: getEndDate(searchDatesInfo)
+    endDate: getEndDate(searchDatesInfo),
+    cachedSearchString: getCachedSearchString(hotelsSearchInfo)
   };
 }
 
