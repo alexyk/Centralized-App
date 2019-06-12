@@ -4,7 +4,8 @@ import {
   setChildren,
   setRegion,
   setRooms,
-  setRoomsByCountOfRooms
+  setRoomsByCountOfRooms,
+  setNationality
 } from "../../../actions/hotelsSearchInfo";
 import { isActive } from "../../../selectors/modalsInfo.js";
 import { getCurrency } from "../../../selectors/paymentInfo";
@@ -13,9 +14,11 @@ import {
   getRooms,
   getAdults,
   getRegion,
-  hasChildren
+  hasChildren,
+  getNationality
 } from "../../../selectors/hotelsSearchInfo.js";
 
+import {LONG} from "../../../constants/notificationDisplayTimes.js";
 import { CHILDREN } from "../../../constants/modals";
 import ChildrenModal from "../modals/ChildrenModal";
 import PropTypes from "prop-types";
@@ -27,6 +30,8 @@ import { withRouter } from "react-router-dom";
 import Datepicker from "../../common/datepicker";
 import moment from "moment";
 import { NotificationManager } from "react-notifications";
+import { isLogged } from "../../../selectors/userInfo";
+import { getCountries } from "../../../selectors/countriesInfo";
 
 const customStyles = {
   container: styles => ({
@@ -112,13 +117,17 @@ function HotelsSearchBar(props) {
   };
 
   const getQueryString = () => {
-    const { region, rooms, currency, startDate, endDate } = props;
+    const { region, rooms, currency, startDate, endDate,
+      isUserLogged, nationality
+    } = props;
     let queryString = "?";
     queryString += "region=" + region.id;
     queryString += "&currency=" + currency;
     queryString += "&startDate=" + startDate.format("DD/MM/YYYY");
     queryString += "&endDate=" + endDate.format("DD/MM/YYYY");
     queryString += "&rooms=" + encodeURI(JSON.stringify(rooms));
+    queryString += "&nat=" + (nationality ? nationality.id : -1);
+
     return queryString;
   };
 
@@ -162,6 +171,32 @@ function HotelsSearchBar(props) {
     props.dispatch(closeModal(modal));
   };
 
+  // const nationalityWhenNotLoggedIn = () => {
+  //   let rendered;
+  //
+  //   if (props.countries) {
+  //     // Copied from HotelsBookingPage and edited a bit
+  //     // I've also left some code as commented out
+  //     // -- Alex K, 2019-05-23 --
+  //     rendered = (
+  //       // <div className="select-wrap source-panel-item">
+  //         // <label htmlFor="nationality">Nationality <span className="mandatory"></span></label>
+  //         <select name="country" id="country"
+  //             onChange={e => props.dispatch(setNationality(JSON.parse(e.target.value)))}
+  //             value={props.nationality ? props.nationality.value : ""}
+  //         >
+  //           <option value="">{"Nationality"}</option>
+  //           {props.countries && props.countries.map((item, i) => {
+  //             return <option key={i} value={JSON.stringify(item)}>{item.name}</option>;
+  //           })}
+  //         </select>
+  //       // </div>
+  //     )
+  //   }
+  //
+  //   return rendered;
+  // }
+
   const handleSearch = e => {
     if (e) {
       e.preventDefault();
@@ -170,6 +205,8 @@ function HotelsSearchBar(props) {
     if (!props.region) {
       select.focus();
       NotificationManager.info("Please choose a location.");
+    // } else if (!props.nationality) {
+    //   NotificationManager.error("Please select nationality!", "", LONG * 2);
     } else {
       distributeAdults().then(rooms => {
         if (props.hasChildren) {
@@ -225,6 +262,8 @@ function HotelsSearchBar(props) {
       </div>
 
       <div className="guest-wrap guests source-panel-item">
+
+        {/* Guests */}
         <select
           className="guest-select "
           name={"rooms"}
@@ -242,6 +281,8 @@ function HotelsSearchBar(props) {
           <option value="9">9 rooms</option>
           <option value="10">10 rooms</option>*/}
         </select>
+
+        {/* Adults */}
         <select
           name={"adults"}
           value={props.adults}
@@ -258,12 +299,18 @@ function HotelsSearchBar(props) {
           <option value="9">9 adults</option>
           <option value="10">10 adults</option>
         </select>
+
+        {/* Children */}
         <div
           className="select-children"
           onClick={() => props.dispatch(setChildren())}
         >
           <div>{!props.hasChildren ? "No children" : "With children"}</div>
         </div>
+
+        {/*/!* Nationality *!/*/}
+        {/*{nationalityWhenNotLoggedIn()}*/}
+
       </div>
       <button type="submit" className="button">
         Search
@@ -287,11 +334,15 @@ HotelsSearchBar.propTypes = {
   startDate: PropTypes.object,
   endDate: PropTypes.object,
   currency: PropTypes.string,
+  isUserLogged: PropTypes.bool,
   isActive: PropTypes.object
 };
 
 function mapStateToProps(state) {
-  const { hotelsSearchInfo, searchDatesInfo, paymentInfo, modalsInfo } = state;
+  const {
+    hotelsSearchInfo, searchDatesInfo, paymentInfo, modalsInfo, userInfo,
+    countriesInfo
+  } = state;
 
   return {
     rooms: getRooms(hotelsSearchInfo),
@@ -301,6 +352,9 @@ function mapStateToProps(state) {
     startDate: getStartDate(searchDatesInfo),
     endDate: getEndDate(searchDatesInfo),
     currency: getCurrency(paymentInfo),
+    countries: getCountries(countriesInfo),
+    nationality: getNationality(hotelsSearchInfo),
+    isUserLogged: isLogged(userInfo),
     isActive: isActive(modalsInfo)
   };
 }

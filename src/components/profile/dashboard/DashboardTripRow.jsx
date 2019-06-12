@@ -8,11 +8,26 @@ import "../../../styles/css/components/profile/dashboard/dashboard-trips.css";
 import { parseAccommodationDates } from "../utils/parse-accomodation-dates";
 import { parseBookingStatus } from "../utils/parse-booking-status";
 
+// const STATUS_TOOLTIP = {
+//   COMPLETE: "Your reservation is complete",
+//   PENDING: "Contact us if status is still Pending after 30 minutes",
+//   "BOOKING FAILED": "Your booking failed please contact us",
+//   CANCELLED: "You canceled your reservation"
+// };
+
 const STATUS_TOOLTIP = {
-  COMPLETE: "Your reservation is complete",
-  PENDING: "Contact us if status is still Pending after 30 minutes",
-  "BOOKING FAILED": "Your booking failed please contact us",
-  CANCELLED: "You canceled your reservation"
+  PENDING_SAFECHARGE_CONFIRMATION: "Contact us if status is pending for more than 30 mins.",
+  SAFECHARGE_FAILED: "Your Credit Card payment was not successful.",
+  PAYMENT_REVIEW: "Credit Card payment is under review.",
+  CONFIRMED: "You have successfully paid and are now waiting booking confirmation.",
+  FAIL: "Payment failed. Check mail for instructions or contact us.",
+  QUEUED_FOR_CONFIRMATION: "Contact us if status is pending for more than 30 mins.",
+  DONE: "Your reservation is confirmed.",
+  FAILED: "Booking failed. Check mail for instructions or contact us.",
+  PENDING_CANCELLATION: "Cancellation is not possible at this time. Contact support.",
+  CANCELLED: "Your reservation has been cancelled.",
+  CANCELLATION_FAILED: "Your cancellation request is being processed.",
+  QUEUED: "Contact us if status is pending for more than 30 mins."
 };
 
 function DashboardTripRow(props) {
@@ -94,7 +109,7 @@ function DashboardTripRow(props) {
         {status && (
           <span
             className="icon-question"
-            tooltip={error ? error : statusMessage}
+            tooltip={statusMessage}
           />
         )}
         {status &&

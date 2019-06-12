@@ -1,15 +1,15 @@
 import "../../../../styles/css/components/profile/trips/hotel-trips-table.css";
 
-import { Config } from "../../../../config";
-import { Link } from "react-router-dom";
+import {Config} from "../../../../config";
+import {Link} from "react-router-dom";
 import ProfileFlexContainer from "../../flexContainer/ProfileFlexContainer";
 import PropTypes from "prop-types";
 import React from "react";
 import moment from "moment";
-import { parseAccommodationDates } from "../../utils/parse-accomodation-dates";
-import { parseBookingStatus } from "../../utils/parse-booking-status";
-import { NotificationManager } from "react-notifications";
-import { LONG } from "../../../../constants/notificationDisplayTimes.js";
+import {parseAccommodationDates} from "../../utils/parse-accomodation-dates";
+import {parseBookingStatus} from "../../utils/parse-booking-status";
+import {NotificationManager} from "react-notifications";
+import {LONG} from "../../../../constants/notificationDisplayTimes.js";
 
 // const STATUS = {
 //   DONE: "COMPLETE",
@@ -122,7 +122,7 @@ class HotelTrip extends React.Component {
     const status = _parseBookingStatus(this.props.trip.status);
     const statusMessage = STATUS_TOOLTIP[this.props.trip.status];
     const items = this.props.trip;
-    const { id, hotel_id, hotel_photo, hotel_name, hostEmail, hostPhone, has_details } = items;
+    const {id, hotel_id, hotel_photo, hotel_name, hostEmail, hostPhone, has_details} = items;
     const isCompleted =
       status === "COMPLETE" && this.isFutureDate(this.props.trip.arrival_date);
     var _dates = this.getDates();
@@ -138,7 +138,7 @@ class HotelTrip extends React.Component {
                 className="image-host"
                 src={`${Config.getValue("imgHost")}${
                   JSON.parse(hotel_photo).original
-                }`}
+                  }`}
                 alt="host-profile"
               />
             )}
@@ -150,7 +150,7 @@ class HotelTrip extends React.Component {
               <div className="phoneNumber">{hostPhone}</div>
               {hostEmail ? (
                 <div>
-                  <span className="send-message-icon" />
+                  <span className="send-message-icon"/>
                   <a href={`mailto:${hostEmail}`}>
                     Send Message
                   </a>
@@ -163,35 +163,39 @@ class HotelTrip extends React.Component {
         </div>
         <div className="tablet-col-2">
           <div className="flex-row-child trips-location">
-            <i className="fa fa-info-circle icon" />
+            <i className="fa fa-info-circle icon"/>
             <Link
               className="trips-location-link content-row"
               to={`/hotels/listings/${
                 hotel_id
-              }?currency=GBP&startDate=${this.props.today}&endDate=${
+                }?currency=GBP&startDate=${this.props.today}&endDate=${
                 this.props.afterTomorrow
-              }&rooms=%5B%7B"adults":2,"children":%5B%5D%7D%5D`}
+                }&rooms=%5B%7B"adults":2,"children":%5B%5D%7D%5D`}
             >
               {this.getHostName(hotel_name)}
             </Link>
           </div>
           <div className="flex-row-child trips-dates">
-            <span className="icon-calendar icon" />
+            <span className="icon-calendar icon"/>
             <div className="content-row">
               <span className="date-in-day">{_dates.startDate.date}</span>{" "}
               {_dates.startDate.month}, {_dates.startDate.year}{" "}
-              <i aria-hidden="true" className="fa fa-long-arrow-right" />{" "}
+              <i aria-hidden="true" className="fa fa-long-arrow-right"/>{" "}
               <span className="date-out-day">{_dates.endDate.date}</span>{" "}
               {_dates.endDate.month}, {_dates.endDate.year}
             </div>
           </div>
           <div className="flex-row-child trips-actions">
             {(isCompleted || has_details === 1) && (
-              <i className="fa fa-bolt icon" />
+              <i className="fa fa-bolt icon"/>
             )}
             <div className="content-row">
-              {this.props.trip.status !== "CANCELLED" && (
-                <button type="submit" onClick={e => { e.preventDefault(); this.props.onTripSelect(id); this.props.handleCancelReservation(id); }}>Cancel Trip</button>
+              {this.props.trip.status === "DONE" && (
+                <button type="submit" onClick={e => {
+                  e.preventDefault();
+                  this.props.onTripSelect(id);
+                  this.props.handleCancelReservation(id);
+                }}>Cancel Trip</button>
               )}
               {this.props.trip.has_details === 1 && (
                 <Link to={`/profile/trips/hotels/${this.props.trip.id}`}>
@@ -207,15 +211,14 @@ class HotelTrip extends React.Component {
             {this.props.trip.status && (
               <span
                 className="icon-question"
-                tooltip={
-                  (this.props.trip.error && !this.props.trip.error.includes('{') && !this.props.trip.error.includes('}')) ? this.props.trip.error : statusMessage
-                }
+                tooltip=
+                  {statusMessage}
               />
             )}
             {this.props.trip.status &&
-              this.props.trip.status.toUpperCase() === "DONE" && (
-                <div>Reference No.: {this.props.trip.booking_id}</div>
-              )}
+            this.props.trip.status.toUpperCase() === "DONE" && (
+              <div>Reference No.: {this.props.trip.booking_id}</div>
+            )}
           </div>
         </div>
       </ProfileFlexContainer>

@@ -4,7 +4,9 @@ const initialState = {
   rooms: [{ adults: "2", children: [] }],
   adults: "2",
   hasChildren: false,
-  region: null
+  region: null,
+  nationality: null,
+  cachedSearchString: ''
 };
 
 export default function reducer(state = initialState, action) {
@@ -30,12 +32,20 @@ export default function reducer(state = initialState, action) {
         hasChildren: !state.hasChildren,
         rooms: handleToggleChildren(state.hasChildren, state.rooms)
       });
+    case hotelsSearchInfo.SET_NATIONALITY:
+      return Object.assign({}, state, {
+        nationality: action.value
+      });
     case hotelsSearchInfo.SET_HOTELS_SEARCH_INFO:
       return Object.assign({}, state, {
         region: action.region,
         rooms: action.rooms,
         adults: action.adults,
         hasChildren: action.hasChildren
+      });
+    case hotelsSearchInfo.CACHE_CURRENT_SEARCH_STRING:
+      return Object.assign({}, state, {
+        cachedSearchString: action.searchString,
       });
     default:
       return state;

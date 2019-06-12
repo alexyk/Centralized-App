@@ -158,7 +158,7 @@ class HotelTripDetails extends React.Component {
       case "FAIL":
         return "Your reservation failed. Please contact our support";
       case "CANCELLED":
-        return "Your reservation has been canelled";
+        return "Your reservation has been cancelled";
       default:
         return "Reservation details";
     }
@@ -306,7 +306,7 @@ class HotelTripDetails extends React.Component {
                 bookingData.latitude
               },${
                 bookingData.longitude
-              }&key=AIzaSyChkMMG4T3hm2JyHHskUDCqLZWf9svbPGU`}
+              }&key=AIzaSyBLMYRyzRm83mQIUj3hsO-UVz8-yzfAvmU`}
               alt="static-map-address"
             />
           </div>

@@ -74,7 +74,7 @@ export class LoginManager extends React.Component {
     if (queryParams.token) {
       this.setState({ recoveryToken: queryParams.token });
       // this.openModal(ENTER_RECOVERY_TOKEN);
-      this.openRecoveryTokenModal();
+      this.props.openRecoveryTokenModal();
     }
 
     /*
@@ -241,7 +241,7 @@ export class LoginManager extends React.Component {
           this.setState({ isUpdatingCountry: true, isLogging: false }, () => {
             this.closeModal(LOGIN);
             // this.openModal(UPDATE_COUNTRY);
-            this.openUpdateCountryModal();
+            this.props.openUpdateCountryModal();
           });
         } else {
           for (let key in errors) {

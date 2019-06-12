@@ -9,6 +9,8 @@ import BigCalendar from "react-big-calendar";
 import moment from "moment";
 import referralIdPersister from "../profile/affiliates/service/persist-referral-id";
 import appImports from "./app-defaults";
+import { setIsMobileWebView, isMobileWebView } from "../../services/utilities/mobileWebView";
+
 
 const {
   MainNav,
@@ -41,7 +43,14 @@ export default class defApp extends React.Component {
 
   constructor(props) {
     super(props);
+
     this.isAuthenticated = this.isAuthenticated.bind(this);
+    const location = this.props.location
+    const isMobile = (location.pathname.indexOf("/mobile") !== -1);
+
+    if (isMobile) {
+      setIsMobileWebView('AppREF', isMobile);
+    }
   }
 
   componentDidMount() {
@@ -63,11 +72,10 @@ export default class defApp extends React.Component {
   }
 
   render() {
-    const isWebView = this.props.location.pathname.indexOf("/mobile") !== -1;
     return (
       <div data-testid="app">
-        {!isWebView && <MainNav />}
-        {!isWebView &&
+      {!isMobileWebView && <MainNav />}
+        {!isMobileWebView &&
           this.props.location.pathname !== "/affiliate-terms" && (
             <LocalizationNav />
           )}
@@ -141,7 +149,7 @@ export default class defApp extends React.Component {
 
           <Route render={() => <HomeRouterPage />} />
         </Switch>
-        {!isWebView && <Footer />}
+        {!isMobileWebView && <Footer />}
       </div>
     );
   }
