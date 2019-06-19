@@ -409,7 +409,7 @@ class HotelsBookingConfirmPage extends Component {
   addFreeClauseRow(rows, date) {
     rows.push(
       <tr key={1}>
-        <td>{`Cancelling on or before ${moment(date).format('DD MMM YYYY')} will cost you`}</td>
+        <td>{`Cancelling before ${moment(date).format('DD MMM YYYY')} will cost you`}</td>
         <td><span
           className="booking-price">{this.props.currency} 0.00 (0.00 LOC)</span>
         </td>
@@ -438,6 +438,7 @@ class HotelsBookingConfirmPage extends Component {
     const arrivalDate = reservation.booking.hotelBooking[0].arrivalDate;
     const rows = [];
     const fees = this.getCancellationFees();
+    console.log(fees);
     const { currency, currencyExchangeRates } = this.props;
 
     if (fees.length === 0) {
