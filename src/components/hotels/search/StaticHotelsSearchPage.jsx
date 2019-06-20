@@ -10,7 +10,7 @@ import {
   asyncSetEndDate
 } from "../../../actions/searchDatesInfo";
 import { getStartDate, getEndDate } from "../../../selectors/searchDatesInfo";
-import { getRegion, getCachedSearchString } from "../../../selectors/hotelsSearchInfo";
+import {getRegion, getCachedSearchString, getSearchHotel} from "../../../selectors/hotelsSearchInfo";
 
 import { Config } from "../../../config";
 import FilterPanel from "./filter/FilterPanel";
@@ -85,7 +85,9 @@ class StaticHotelsSearchPage extends React.Component {
       showMap: false,
       windowWidth: 0,
       showFiltersMobile: false,
-      nights
+      nights,
+      sch: null,
+      scHotel: {}
     };
 
     this.onPageChange = this.onPageChange.bind(this);
@@ -173,6 +175,7 @@ class StaticHotelsSearchPage extends React.Component {
       const regionId = searchParams.region;
       const region = { id: regionId };
       const page = searchParams.page;
+      const sch = searchParams.sch;
 
       this.props.dispatch(asyncSetStartDate(startDate));
       this.props.dispatch(asyncSetEndDate(endDate));
@@ -185,7 +188,8 @@ class StaticHotelsSearchPage extends React.Component {
       }
 
       this.setState({
-        page: page ? Number(page) : 0
+        page: page ? Number(page) : 0,
+        sch: sch
       });
 
       this.getCityLocation(regionId);
@@ -197,15 +201,20 @@ class StaticHotelsSearchPage extends React.Component {
     requester.getStaticHotels(region).then(res => {
       res.body.then(data => {
         const { content } = data;
+        let scHotel = null;
         content.forEach(l => {
           if (this.hotelInfoById[l.id]) {
             l.price = this.hotelInfoById[l.id];
+          }
+
+          if(this.state.sch && l.id === Number(this.state.sch)) {
+            scHotel = l;
           }
         });
 
         const hotels = content;
         this.setState(
-          { hotels, totalElements: data.totalElements, loading: false },
+          { hotels, totalElements: data.totalElements, loading: false, scHotel },
           () => {
             this.connectSocket();
           }
@@ -322,6 +331,7 @@ class StaticHotelsSearchPage extends React.Component {
     requester.getRegionNameById(regionId).then(res => {
       res.body.then(data => {
         this.props.dispatch(setRegion(data));
+
         const address = data.query;
 
         this.geocoder.geocode({ address: address }, (results, status) => {
@@ -362,13 +372,21 @@ class StaticHotelsSearchPage extends React.Component {
 
     this.props.history.push("/hotels/listings" + query);
 
-    const region = this.props.region.id;
+    // const region = this.props.region.id;
+
+    let region = null;
+    if (this.props.region.id.includes("_")) {
+      region = this.props.region.id.split("_")[0];
+    } else {
+      region  = this.props.region.id;
+    }
 
     this.getCityLocation(region);
     const queryParams = queryString.parse(query);
     const startDate = moment(queryParams.startDate, "DD/MM/YYYY");
     const endDate = moment(queryParams.endDate, "DD/MM/YYYY");
     const nights = endDate.diff(startDate, "days");
+    const sch = queryParams.sch;
 
     this.setState(
       {
@@ -379,14 +397,24 @@ class StaticHotelsSearchPage extends React.Component {
         mapInfo: [],
         allElements: false,
         stars: [false, false, false, false, false],
-        nights
+        nights,
+        sch: sch,
+        scHotel: null
       },
       () => {
         requester.getStaticHotels(region).then(res => {
           res.body.then(data => {
             const hotels = data.content;
+            let scHotel = null;
+
+            hotels.forEach(h => {
+              if(this.state.sch && Number(this.state.sch) === h.id){
+                scHotel = h;
+              }
+            });
+
             this.setState(
-              { hotels, totalElements: data.totalElements, loading: false },
+              { hotels, totalElements: data.totalElements, loading: false, scHotel },
               () => {
                 this.connectSocket();
               }
@@ -534,6 +562,10 @@ class StaticHotelsSearchPage extends React.Component {
     const nat = (queryParams.nat == null || isNaN(queryParams.nat) ? -1 : queryParams.nat);
       search += `&nat=${nat}`;
 
+    if(queryParams.sch) {
+      search += `&sch=${encodeURI(queryParams.sch)}`;
+    }
+
     return search;
   }
 
@@ -676,10 +708,14 @@ class StaticHotelsSearchPage extends React.Component {
     } else {
       requester.getStaticHotels(region, page - 1).then(res => {
         res.body.then(data => {
+          let scHotel = null;
           const listings = data.content;
           listings.forEach(l => {
             if (this.hotelInfoById[l.id]) {
               l.price = this.hotelInfoById[l.id].price;
+            }
+            if(this.state.sch && l.id === this.state.sch ){
+              scHotel = l;
             }
           });
           const hotels = listings;
@@ -687,7 +723,8 @@ class StaticHotelsSearchPage extends React.Component {
           this.setState({
             hotels,
             totalElements: data.totalElements,
-            loading: false
+            loading: false,
+            scHotel
           });
         });
       });
@@ -793,6 +830,8 @@ class StaticHotelsSearchPage extends React.Component {
                       allElements={this.state.allElements}
                       nights={nights}
                       loading={this.state.loading}
+                      sch={this.state.sch}
+                      scHotel={this.state.scHotel}
                     />
                   )}
 
@@ -838,7 +877,8 @@ function mapStateToProps(state) {
     region: getRegion(hotelsSearchInfo),
     startDate: getStartDate(searchDatesInfo),
     endDate: getEndDate(searchDatesInfo),
-    cachedSearchString: getCachedSearchString(hotelsSearchInfo)
+    cachedSearchString: getCachedSearchString(hotelsSearchInfo),
+    sch: getSearchHotel(hotelsSearchInfo),
   };
 }
 

@@ -108,7 +108,7 @@ class Result extends React.Component {
   }
 
   render() {
-    let {currency, currencySign, currencyExchangeRates, isUserLogged, hotel, price, nights, allElements, location,} = this.props;
+    let {currency, currencySign, currencyExchangeRates, isUserLogged, hotel, price, nights, allElements, location, searchHotel, sch} = this.props;
     let {id, name, generalDescription, star, lastBestPrice} = hotel;
 
     const isPriceLoaded = !!price;
@@ -173,9 +173,10 @@ class Result extends React.Component {
 
     const search = location.search;
     const endOfSearch = search.indexOf('&filters=') !== -1 ? search.indexOf('&filters=') : search.length;
+    const isSearchHotel = sch && sch === true;
 
     return (
-      <div className={`${this.state.ready === true ? 'ready' : ''} result`}>
+      <div className={`${this.state.ready === true ? 'ready' : ''} result`} style={{ borderColor: isSearchHotel ? "red" : "" ,  color: isSearchHotel ? "red" : "" }}>
         <div className="result-images">
           {loadedPictures ?
             <Slider

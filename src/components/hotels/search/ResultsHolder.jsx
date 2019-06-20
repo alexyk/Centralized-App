@@ -12,25 +12,41 @@ function ResultsHolder(props) {
   }
 
   if (props.hotels && props.hotels.length === 0 && props.loading) {
-    return <div className="text-center"><h2 style={{ margin: '80px 0' }}>Looking for the best rates for your trip...</h2></div>;
+    return <div className="text-center"><h2 style={{margin: '80px 0'}}>Looking for the best rates for your trip...</h2>
+    </div>;
   }
 
   if (props.hotels && props.hotels.length === 0 && !props.loading) {
     // return <div className="text-center"><h2 style={{ margin: '80px 0' }}>No Results</h2></div>;
-    return <NoEntriesMessage text='No Results' />;
+    return <NoEntriesMessage text='No Results'/>;
   }
 
+  const haveSearchHotel = props.sch && props.scHotel;
+  let scHotel = null;
+
   const hotels = props.hotels && props.hotels.map((hotel) => {
-    return <Result
-      key={hotel.id}
-      hotel={hotel}
-      nights={props.nights}
-      allElements={props.allElements}
-      price={hotel.price} />;
+    if(props.sch && hotel.id === Number(props.sch)){
+      scHotel = hotel;
+    } else {
+      return <Result
+        key={hotel.id}
+        hotel={hotel}
+        nights={props.nights}
+        allElements={props.allElements}
+        price={hotel.price}
+        sch={false}/>;
+    }
   });
 
   return (
     <div className="results-holder">
+      {scHotel && <Result
+        key={scHotel.id}
+        hotel={scHotel}
+        nights={props.nights}
+        allElements={props.allElements}
+        price={scHotel.price}
+        sch={true}/>}
       {hotels}
     </div>
   );

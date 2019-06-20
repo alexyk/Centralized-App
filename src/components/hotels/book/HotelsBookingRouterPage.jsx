@@ -307,6 +307,7 @@ class HotelsBookingRouterPage extends React.Component {
     rooms = JSON.parse(rooms);
     rooms.forEach((room) => {
       room.adults = room.adults.length ? room.adults.length : room.adults;
+      room.children = room.children.length ? room.children.map( c => { return {"age" : c.age}; }) : room.children;
     });
 
     return JSON.stringify(rooms);
@@ -330,8 +331,19 @@ class HotelsBookingRouterPage extends React.Component {
 
         adults.push(adult);
       }
+      const children = [];
+      const childrenCount = searchRoom.children.length ? searchRoom.children.length : searchRoom.children;
+      for (let guestIndex = 0; guestIndex < childrenCount; guestIndex++) {
+        const firstName = searchRoom.children.length ? searchRooms[roomIndex].children[guestIndex].firstName : '';
+        const lastName = searchRoom.children.length ? searchRooms[roomIndex].children[guestIndex].lastName : '';
+        const child = {
+          firstName: firstName ? firstName : (guestIndex > 0 ? 'Optional' : ''),
+          lastName: lastName ? lastName : (guestIndex > 0 ? 'Optional' : ''),
+          age: searchRooms[roomIndex].children[guestIndex].age
+        };
+        children.push(child);
+      }
 
-      const children = searchRoom.children;
       const room = {
         adults: adults,
         children: children

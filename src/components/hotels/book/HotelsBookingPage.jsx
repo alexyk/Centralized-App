@@ -136,6 +136,7 @@ class HotelsBookingPage extends React.Component {
     rooms = JSON.parse(rooms);
     rooms.forEach((room) => {
       room.adults = room.adults.length ? room.adults.length : room.adults;
+      room.children = room.children.length ? room.children.map( c => { return {"age" : c.age}; }) : room.children;
     });
 
     return JSON.stringify(rooms);
@@ -399,6 +400,33 @@ class HotelsBookingPage extends React.Component {
                                     roomIndex,
                                     childIndex
                                   );
+                                }}
+                              />
+
+                              <input
+                                className="guest-name"
+                                type="text"
+                                placeholder="First Name"
+                                name="firstName"
+                                value={
+                                  guests[roomIndex].children[childIndex]
+                                    .firstName || ""
+                                }
+                                onChange={e => {
+                                  handleChildAgeChange(e, roomIndex, childIndex);
+                                }}
+                              />
+                              <input
+                                className="guest-name"
+                                type="text"
+                                placeholder="Last Name"
+                                value={
+                                  guests[roomIndex].children[childIndex]
+                                    .lastName || ""
+                                }
+                                name="lastName"
+                                onChange={e => {
+                                  handleChildAgeChange(e, roomIndex, childIndex);
                                 }}
                               />
                             </div>
