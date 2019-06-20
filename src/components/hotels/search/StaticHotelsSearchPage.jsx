@@ -374,11 +374,9 @@ class StaticHotelsSearchPage extends React.Component {
 
     // const region = this.props.region.id;
 
-    let region = null;
-    if (this.props.region.id.includes("_")) {
+    let region = this.props.region.id;
+    if ((this.props.region.id + "").includes("_")) {
       region = this.props.region.id.split("_")[0];
-    } else {
-      region  = this.props.region.id;
     }
 
     this.getCityLocation(region);
