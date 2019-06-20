@@ -21,21 +21,22 @@ function ResultsHolder(props) {
     return <NoEntriesMessage text='No Results'/>;
   }
 
-  const haveSearchHotel = props.sch && props.scHotel;
   let scHotel = null;
+  props.hotels && props.hotels.map((h, index) => {
+    if (props.sch && h.id === Number(props.sch)) {
+      scHotel = h;
+      props.hotels.slice(index, 1);
+    }
+  });
 
   const hotels = props.hotels && props.hotels.map((hotel) => {
-    if(props.sch && hotel.id === Number(props.sch)){
-      scHotel = hotel;
-    } else {
-      return <Result
-        key={hotel.id}
-        hotel={hotel}
-        nights={props.nights}
-        allElements={props.allElements}
-        price={hotel.price}
-        sch={false}/>;
-    }
+    return <Result
+      key={hotel.id}
+      hotel={hotel}
+      nights={props.nights}
+      allElements={props.allElements}
+      price={hotel.price}
+      sch={false}/>;
   });
 
   return (
