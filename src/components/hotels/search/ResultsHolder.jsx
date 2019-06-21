@@ -30,13 +30,15 @@ function ResultsHolder(props) {
   });
 
   const hotels = props.hotels && props.hotels.map((hotel) => {
-    return <Result
-      key={hotel.id}
-      hotel={hotel}
-      nights={props.nights}
-      allElements={props.allElements}
-      price={hotel.price}
-      sch={false}/>;
+    if(scHotel && hotel.id !== Number(props.sch)) {
+      return <Result
+        key={hotel.id}
+        hotel={hotel}
+        nights={props.nights}
+        allElements={props.allElements}
+        price={hotel.price}
+        sch={false}/>;
+    }
   });
 
   return (

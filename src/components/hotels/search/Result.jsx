@@ -175,8 +175,12 @@ class Result extends React.Component {
     const endOfSearch = search.indexOf('&filters=') !== -1 ? search.indexOf('&filters=') : search.length;
     const isSearchHotel = sch && sch === true;
 
+    const searchHotelStyle = {
+      boxShadow: '-.4px -.5px 8px 8px #D87A61FF',
+    };
+
     return (
-      <div className={`${this.state.ready === true ? 'ready' : ''} result`} style={{ borderColor: isSearchHotel ? "red" : "" ,  color: isSearchHotel ? "red" : "" }}>
+      <div className={`${this.state.ready === true ? 'ready' : ''} result`} style={isSearchHotel ? searchHotelStyle : {}}>
         <div className="result-images">
           {loadedPictures ?
             <Slider
