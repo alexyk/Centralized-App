@@ -30,7 +30,7 @@ function ResultsHolder(props) {
   });
 
   const hotels = props.hotels && props.hotels.map((hotel) => {
-    if(scHotel && hotel.id !== Number(props.sch)) {
+    if(hotel.id !== Number(props.sch)) {
       return <Result
         key={hotel.id}
         hotel={hotel}

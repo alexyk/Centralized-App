@@ -223,6 +223,7 @@ class StaticHotelsSearchPage extends React.Component {
         });
 
         const hotels = scHotel ? [scHotel, ...content] : content;
+
         this.setState(
           {hotels, totalElements: data.totalElements, loading: false, scHotel},
           () => {
