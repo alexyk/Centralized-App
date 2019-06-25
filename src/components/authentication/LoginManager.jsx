@@ -95,15 +95,11 @@ export class LoginManager extends React.Component {
 
 
   removeVerificationCodeFromURL() {
-    console.log(this.props.location.pathname);
-    console.log(this.props.location.search);
-
     const path = this.props.location.pathname;
     const search = this.props.location.search;
     const indexOfSecurityCode = search.indexOf('&emailVerificationSecurityCode=');
     const pushURL = path + search.substring(0, indexOfSecurityCode);
 
-    console.log(pushURL);
     this.props.history.push(pushURL);
   }
 
@@ -335,15 +331,12 @@ export class LoginManager extends React.Component {
   }
 
   requestVerificationEmail() {
-    console.log(this.props);
-
     const emailVerificationRedirectURL =
       this.props.location.pathname + this.props.location.search;
 
     requester.sendVerificationEmail({emailVerificationRedirectURL})
       .then(res => res.body)
       .then(data => {
-        console.log(data);
         if (data.isVerificationEmailSent) {
           NotificationManager.success(VERIFICATION_EMAIL_SENT, "", LONG);
         } else {
