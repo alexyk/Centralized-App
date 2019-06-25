@@ -3,45 +3,83 @@ import '../../../../styles/css/components/profile/admin/unpublished-item.css';
 import { Config } from '../../../../config.js';
 import PropTypes from 'prop-types';
 import React from 'react';
+import RulesModal from './rules/RulesModal';
 
-function ListItem(props) {
-  const { firstName, id, lastName, city, country, email, phoneNumber, idCardPicture, idCardHolderPicture, address, zipCode } = props.item;
-  const verified = props.verified;
 
-  return (
-    <div className="unpublished-item">
-      <div className="unpublished-item_images">
-        {idCardPicture && <img alt="id-card" src={Config.getValue('imgHost') + idCardPicture} />}
-      </div>
-      <div className="unpublished-item_content">
-        <div className="header">
-          <h2><span>{firstName} {lastName}</span></h2>
-          <h6>{email}</h6>
+export default class ListItem extends React.Component {
+  constructor(props) {
+    super(props);
 
-          <p>Phone number: {phoneNumber ? phoneNumber : 'Missing'}</p>
-          <p>Country: {country && country.name ? country.name : 'Missing'}</p>
-          <p>City: {city ? city : 'Missing'}</p>
-          <p>Address: {address ? address : 'Missing'}</p>
-          <p>Zip code: {zipCode ? zipCode : 'Missing'}</p>
-          {idCardHolderPicture && <img alt="id-card-and-holder" src={Config.getValue('imgHost') + idCardHolderPicture} style={{width: '50%'}} />}
+    this.state = { rulesModal:false };
+
+    this.onRulesClick = this.onRulesClick.bind(this);
+    this.onRulesModelClose = this.onRulesModelClose.bind(this);
+  }
+
+
+  onRulesModelClose(...args) {
+    console.log('onRulesModelClose',{args})
+    this.setState({rulesModal: false});
+  }
+
+
+  onRulesClick(e) {
+    if (e) {
+      e.preventDefault();
+    }
+
+    this.setState({rulesModal: !this.state.rulesModal});
+  }
+
+
+  render() {
+    const {
+      firstName, id, lastName, city, country, email, phoneNumber, idCardPicture, idCardHolderPicture, address, zipCode
+    } = this.props.item;
+    const {verified} = this.props;
+
+    const { rulesModal, updateUserStatus } = this.state;
+
+    return (
+      <div className="unpublished-item">
+        <div className="unpublished-item_images">
+          {idCardPicture && <img alt="id-card" src={Config.getValue('imgHost') + idCardPicture} />}
         </div>
+        <div className="unpublished-item_content">
+          <div className="header">
+            <h2><span>{firstName} {lastName}</span></h2>
+            <h6>{email}</h6>
 
-        <div className="unpublished-item_actions">
-          <div className="minor-actions">
-
+            <p>Phone number: {phoneNumber ? phoneNumber : 'Missing'}</p>
+            <p>Country: {country && country.name ? country.name : 'Missing'}</p>
+            <p>City: {city ? city : 'Missing'}</p>
+            <p>Address: {address ? address : 'Missing'}</p>
+            <p>Zip code: {zipCode ? zipCode : 'Missing'}</p>
+            {idCardHolderPicture && <img alt="id-card-and-holder" src={Config.getValue('imgHost') + idCardHolderPicture} style={{width: '50%'}} />}
           </div>
-          <div className="major-actions">
-            {verified === false &&
-              <div><a href="" onClick={(e) => props.updateUserStatus(e, id, true)}>Verify</a></div>
-            }
-            {verified === true &&
-              <div><a href="" onClick={(e) => props.updateUserStatus(e, id, false)}>Unverify</a></div>
-            }
+
+          <div>
+            { <RulesModal isActive={rulesModal} user={id} email={email} onClose={this.onRulesModelClose} /> }
+          </div>
+
+          <div className="unpublished-item_actions">
+            <div className="minor-actions">
+
+            </div>
+            <div className="major-actions">
+              {verified === false &&
+                <div><a href="" onClick={(e) => updateUserStatus(e, id, true)}>Verify</a></div>
+              }
+              {verified === true &&
+                <div><a href="" onClick={(e) => updateUserStatus(e, id, false)}>Unverify</a></div>
+              }
+              <div><a href="" onClick={ this.onRulesClick }>Rules</a></div>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-  );
+    );
+  }
 }
 
 ListItem.propTypes = {
@@ -49,5 +87,3 @@ ListItem.propTypes = {
   updateUserStatus: PropTypes.func,
   verified: PropTypes.bool
 };
-
-export default ListItem;
