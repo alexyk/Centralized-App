@@ -77,6 +77,7 @@ class ProfileVerificationPage extends React.Component {
   }
 
   splitVerificationData(data) {
+    console.log(data);
     let verifiedFields = [];
     let unverifiedFields = [];
 
