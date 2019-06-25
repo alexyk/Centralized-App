@@ -25,6 +25,7 @@ class UnverifiedList extends React.Component {
     this.onPageChange = this.onPageChange.bind(this);
     this.updateUserStatus = this.updateUserStatus.bind(this);
     this.onChange = this.onChange.bind(this);
+    this._renderUserRulesModal = this._renderUserRulesModal.bind(this);
   }
 
   componentDidMount() {
@@ -87,6 +88,7 @@ class UnverifiedList extends React.Component {
       }
     });
   }
+
 
   render() {
     if (this.state.loading) {
@@ -153,6 +155,7 @@ class UnverifiedList extends React.Component {
                 pageSize={20}
                 totalElements={this.state.totalElements}
               />
+
             </div>
           </section>
         </div>
