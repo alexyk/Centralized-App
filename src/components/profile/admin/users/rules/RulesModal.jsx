@@ -34,6 +34,11 @@ export default class RulesModal extends Component {
     Axios.get(url, getAxiosConfig())
       .then( data => {
         console.log(`[SERVER] getRules: ${data}`, {data})
+        let rules = [];
+        for (let name in data) {
+          rules.push({name, value:data[name]})
+        }
+        this.setState({rules});
       })
       .catch(error => {
         console.warn(`[SERVER] getRules error: ${error.message}`, {error});
