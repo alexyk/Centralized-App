@@ -28,12 +28,31 @@ export default class RulesModal extends Component {
   getRules(props) {
     const apiHost = Config.getValue('apiHost');
     const { user } = props;
-    Axios.get(`${apiHost}admin/users/${user}/rules`)
+    const url = `${apiHost}admin/users/${user}/rules`;
+
+    Axios.get(url)
       .then( data => {
         console.log(`[SERVER] getRules: ${data}`, {data})
       })
       .catch(error => {
         console.warn(`[SERVER] getRules error: ${error.message}`, {error});
+      });
+  }
+
+
+  setRules(props) {
+    const apiHost = Config.getValue('apiHost');
+    const { user } = props;
+    const url = `${apiHost}admin/users/${user}/rules`;
+    const data = {};
+    this.state.rules.forEach(({name,value},index) => data[name] = value);
+
+    Axios.post(url, data)
+      .then( data => {
+        console.log(`[SERVER] setting rules: ${data}`, {data})
+      })
+      .catch(error => {
+        console.warn(`[SERVER] setting rules error: ${error.message}`, {error});
       });
   }
 

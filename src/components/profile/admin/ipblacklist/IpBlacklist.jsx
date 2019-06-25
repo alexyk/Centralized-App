@@ -12,6 +12,8 @@ import {ADD_IP_IN_BLACKLIST} from "../../../../constants/successMessages";
 import {IP_NOT_ADD_IN_BLACKLIST, USER_SERVERROR} from "../../../../constants/errorMessages";
 
 import "../../../../styles/css/components/profile/admin/reservations/admin-reservations-edit-form.css";
+import {Config} from "../../../../config";
+import Axios from "axios";
 
 class IpBlacklist extends React.Component {
   constructor(props) {
@@ -24,17 +26,23 @@ class IpBlacklist extends React.Component {
 
     this.onChange = this.onChange.bind(this);
     this.addIpAddressInBlacklist = this.addIpAddressInBlacklist.bind(this);
+    this.getIpBlacklist = this.getIpBlacklist(this);
   }
 
   componentDidMount() {
-    requester.getIpBlacklist().then(res => {
-      res.body.then(data => {
-        console.log(data);
+    const apiHost = Config.getValue('apiHost');
+    const url = `${apiHost}admin/ipBlacklist`;
+
+    Axios.get(url)
+      .then(data => {
+        console.log(`[SERVER] getIPBlacklist: ${data}`, {data});
         this.setState({
-          ipBlacklist: data
+          ipBlacklist: data.data
         });
+      })
+      .catch(error => {
+        console.warn(`[SERVER] getIPBlacklist error: ${error.message}`, {error});
       });
-    });
   }
 
   onChange(e) {
@@ -58,42 +66,50 @@ class IpBlacklist extends React.Component {
 
       console.log(this.state.ipAddress);
 
-      requester.addInIpBlacklist({"ipAddress" : this.state.ipAddress}).then(res => {
-        if (res.success) {
-          res.body.then(data => {
-            if (data.success) {
-              NotificationManager.success(ADD_IP_IN_BLACKLIST, "", LONG);
-            } else {
-              NotificationManager.error(
-                IP_NOT_ADD_IN_BLACKLIST + " " + this.state.ipAddress,
-                "",
-                LONG
-              );
-            }
-            this.props.history.push("/profile/admin/ipBlacklist");
-          });
-        } else {
-          res.errors.then(err => {
-            if (err["errors"]["UnsuccessfulOperation"]["message"] != null) {
-              NotificationManager.warning(
-                USER_SERVERROR,
-                err["errors"]["UnsuccessfulOperation"]["message"],
-                LONG
-              );
-            } else {
-              NotificationManager.error(
-                USER_SERVERROR,
-                "Contact the dev support.",
-                LONG
-              );
-            }
-          });
-        }
+    const apiHost = Config.getValue('apiHost');
+    const url = `${apiHost}admin/ipBlacklist`;
+
+    Axios.post(url, {"ipAddress": this.state.ipAddress})
+      .then(data => {
+        console.log(`[SERVER] addIPBlacklist: ${data}`, {data});
+        NotificationManager.success(ADD_IP_IN_BLACKLIST, "", LONG);
+
+        this.props.history.push("/profile/admin/ipBlacklist");
+      })
+      .catch(error => {
+        console.warn(`[SERVER] addIPBlacklist error: ${error.message}`, {error});
+        NotificationManager.error(IP_NOT_ADD_IN_BLACKLIST + " " + this.state.ipAddress, "", LONG);
+      });
+  }
+
+  getIpBlacklist(){
+    const apiHost = Config.getValue('apiHost');
+    const url = `${apiHost}admin/ipBlacklist`;
+
+    Axios.get(url)
+      .then(data => {
+        console.log(`[SERVER] getIPBlacklist: ${data}`, {data});
+        this.setState({
+          ipBlacklist: data.data
+        });
+      })
+      .catch(error => {
+        console.warn(`[SERVER] getIPBlacklist error: ${error.message}`, {error});
       });
   }
 
   render() {
     const ipList = this.state.ipBlacklist;
+
+    const style = {
+      root: {
+        width: '100%',
+        overflowX: 'auto',
+      },
+      table: {
+        minWidth: 650,
+      },
+    };
 
     console.log(ipList);
 
@@ -101,7 +117,7 @@ class IpBlacklist extends React.Component {
       return <div className="loader" style={{marginBottom: "40px"}}/>;
     }
     return (
-      <div className="container">
+      <div className="container style.root">
         <AdminNav>
           <div>
             <li>
@@ -163,41 +179,41 @@ class IpBlacklist extends React.Component {
           </form>
         </div>
 
-        <div className="my-reservations">
-            <div>
-              {!ipList ? (
-                <NoEntriesMessage text="No IP Addresses in Blacklist"/>
-              ) : (
-                <div>
-                  <table>
-                    <thead>
-                    <tr>
-                      <th>#</th>
-                      <th>IP Address</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {Object.keys(ipList).map((key) => {
-                      return (
-                        <tr>
-                          <td>{key}</td>
-                          <td>{ipList[key]}</td>
-                        </tr>
-                      );
-                    })}
-                    </tbody>
-                  </table>
-                </div>
-              )}
+        <div className="table-container">
+          <div>
+            {!ipList ? (
+              <NoEntriesMessage text="No IP Addresses in Blacklist"/>
+            ) : (
+              <div className="reservations-table">
+                <table className={style.table}>
+                  <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>IP Address</th>
+                  </tr>
+                  </thead>
+                  <tbody>
+                  {Object.keys(ipList).map((key) => {
+                    return (
+                      <tr>
+                        <td>{key}</td>
+                        <td>{ipList[key]}</td>
+                      </tr>
+                    );
+                  })}
+                  </tbody>
+                </table>
+              </div>
+            )}
 
-              {/*<Pagination*/}
-                {/*loading={this.state.totalReservations === 0}*/}
-                {/*onPageChange={this.onPageChange}*/}
-                {/*currentPage={this.state.currentPage + 1}*/}
-                {/*pageSize={20}*/}
-                {/*totalElements={this.state.totalElements}*/}
-              {/*/>*/}
-            </div>
+            {/*<Pagination*/}
+            {/*loading={this.state.totalReservations === 0}*/}
+            {/*onPageChange={this.onPageChange}*/}
+            {/*currentPage={this.state.currentPage + 1}*/}
+            {/*pageSize={20}*/}
+            {/*totalElements={this.state.totalElements}*/}
+            {/*/>*/}
+          </div>
         </div>
       </div>
     );
