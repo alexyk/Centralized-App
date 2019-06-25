@@ -9,6 +9,8 @@ import PropTypes from "prop-types";
 import React from "react";
 import queryString from "query-string";
 import requester from "../../../../requester";
+import UsersTopBar from "./UsersTopBar"
+
 
 class VerifiedList extends React.Component {
   constructor(props) {
@@ -95,37 +97,7 @@ class VerifiedList extends React.Component {
 
     return (
       <div className="container">
-        <AdminNav>
-          <div>
-            <li>
-              <NavLink
-                exact
-                activeClassName="active"
-                to="/profile/admin/users/unverified"
-              >
-                <h2>Unverified</h2>
-              </NavLink>
-            </li>
-            <li>
-              <NavLink
-                exact
-                activeClassName="active"
-                to="/profile/admin/users/verified"
-              >
-                <h2>Verified</h2>
-              </NavLink>
-            </li>
-            <li>
-              <NavLink
-                exact
-                activeClassName="active"
-                to="/profile/admin/users/eraseprofile"
-              >
-                <h2>Delete User</h2>
-              </NavLink>
-            </li>
-          </div>
-        </AdminNav>
+        <UsersTopBar/>
         <div className="my-reservations">
           <section id="profile-my-reservations">
             <div>
