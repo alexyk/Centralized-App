@@ -7,6 +7,7 @@ import Axios from "axios";
 import { Config } from "../../../../../config";
 
 import "../../../../../styles/css/components/modals/modal.css";
+import { getAxiosConfig } from "../../utils/adminUtils";
 
 
 export default class RulesModal extends Component {
@@ -30,7 +31,7 @@ export default class RulesModal extends Component {
     const { user } = props;
     const url = `${apiHost}admin/users/${user}/rules`;
 
-    Axios.get(url)
+    Axios.get(url, getAxiosConfig())
       .then( data => {
         console.log(`[SERVER] getRules: ${data}`, {data})
       })
@@ -47,7 +48,7 @@ export default class RulesModal extends Component {
     const data = {};
     this.state.rules.forEach(({name,value},index) => data[name] = value);
 
-    Axios.post(url, data)
+    Axios.post(url, data, getAxiosConfig())
       .then( data => {
         console.log(`[SERVER] setting rules: ${data}`, {data})
       })
