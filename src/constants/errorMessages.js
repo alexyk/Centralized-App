@@ -16,4 +16,4 @@ export const MISSING_DESTINATION = "Please enter destination city.";
 export const MISSING_CHILDREN_AGE = "Please specify children age between 1 and 12.";
 export const MORE_INFANTS_THEN_ADULTS = "More infants then adults";
 
-export const IP_NOT_ADD_IN_BLACKLIST = "IP Address not added in blacklist.";
+export const IP_NOT_ADD_TO_BLACKLIST = "IP Address not added to blacklist.";

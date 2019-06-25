@@ -34,6 +34,24 @@ export default function UsersTopBar(props) {
             <h2>Delete User</h2>
           </NavLink>
         </li>
+        <li>
+          <NavLink
+            exact
+            activeClassName="active"
+            to="/profile/admin/ipBlacklist"
+          >
+            <h2>Ip Blacklist</h2>
+          </NavLink>
+        </li>
+        <li>
+          <NavLink
+            exact
+            activeClassName="active"
+            to="/profile/admin/countryBlacklist"
+          >
+            <h2>Country Blacklist</h2>
+          </NavLink>
+        </li>
       </div>
     </AdminNav>
   )
