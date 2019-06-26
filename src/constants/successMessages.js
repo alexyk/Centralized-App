@@ -22,3 +22,6 @@ export const RESERVATION_DELETED = "Your reservation was deleted.";
 export const RESERVATION_CANCELLED = "Your reservation was cancelled.";
 export const BOOKING_UPDATED = "Booking was successfully updated.";
 export const USER_ERADICATED = "User successfuly ERADICATED.";
+
+export const ADDED_TO_BLACKLIST = "successfuly added to blacklist.";
+export const REMOVED_FROM_BLACKLIST = "successfuly removed from blacklist.";

@@ -1,5 +1,5 @@
 import HotelDetailsReviewBox from './HotelDetailsReviewBox';
-import { LOGIN } from '../../../constants/modals.js';
+import { LOGIN, EMAIL_VERIFICATION } from '../../../constants/modals.js';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
@@ -13,6 +13,7 @@ import { RoomsXMLCurrency } from '../../../services/utilities/roomsXMLCurrency';
 import Facilities from './Facilities';
 import LocPrice from '../../common/utility/LocPrice';
 import Rating from '../../common/rating';
+import requester from "../../../requester";
 
 function HotelDetailsInfoSection(props) {
   const getTotalPrice = (room) => {
@@ -35,15 +36,16 @@ function HotelDetailsInfoSection(props) {
   // };
 
   const hangleBookNowClick = (resultIndex) => {
-    // requester.getUserInfo().then(res => res.body)
-    //   .then(data => {
-    //     const { isEmailVerified } = data;
-    //     if (!isEmailVerified) {
-    //       props.dispatch(openModal(EMAIL_VERIFICATION));
-    //     } else {
-    props.handleBookRoom(roomsResults.slice(resultIndex));
-    //   }
-    // });
+    requester.getUserInfo().then(res => res.body)
+      .then(data => {
+        console.log(data);
+        const { isEmailVerified } = data;
+        if (!isEmailVerified) {
+          props.dispatch(openModal(EMAIL_VERIFICATION));
+        } else {
+          props.handleBookRoom(roomsResults.slice(resultIndex));
+      }
+    });
   };
 
   const getButton = (resultIndex) => {

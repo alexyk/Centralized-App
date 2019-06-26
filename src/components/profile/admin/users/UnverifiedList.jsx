@@ -1,6 +1,5 @@
 import { NavLink, withRouter } from "react-router-dom";
 
-import AdminNav from "../AdminNav";
 import ListItem from "./ListItem";
 import NoEntriesMessage from "../../../common/messages/NoEntriesMessage";
 import { NotificationManager } from "react-notifications";
@@ -9,6 +8,8 @@ import PropTypes from "prop-types";
 import React from "react";
 import queryString from "query-string";
 import requester from "../../../../requester";
+import UsersTopBar from "./UsersTopBar"
+
 
 class UnverifiedList extends React.Component {
   constructor(props) {
@@ -88,6 +89,7 @@ class UnverifiedList extends React.Component {
     });
   }
 
+
   render() {
     if (this.state.loading) {
       return <div className="loader" style={{ marginBottom: "40px" }} />;
@@ -95,37 +97,7 @@ class UnverifiedList extends React.Component {
 
     return (
       <div className="container">
-        <AdminNav>
-          <div>
-            <li>
-              <NavLink
-                exact
-                activeClassName="active"
-                to="/profile/admin/users/unverified"
-              >
-                <h2>Unverified</h2>
-              </NavLink>
-            </li>
-            <li>
-              <NavLink
-                exact
-                activeClassName="active"
-                to="/profile/admin/users/verified"
-              >
-                <h2>Verified</h2>
-              </NavLink>
-            </li>
-            <li>
-              <NavLink
-                exact
-                activeClassName="active"
-                to="/profile/admin/users/eraseprofile"
-              >
-                <h2>Delete User</h2>
-              </NavLink>
-            </li>
-          </div>
-        </AdminNav>
+        <UsersTopBar/>
         <div className="my-reservations">
           <section id="profile-my-reservations">
             <div>
@@ -153,6 +125,7 @@ class UnverifiedList extends React.Component {
                 pageSize={20}
                 totalElements={this.state.totalElements}
               />
+
             </div>
           </section>
         </div>

@@ -9,6 +9,8 @@ import EraseUser from "./users/EraseUser";
 import VerifiedList from "./users/VerifiedList";
 import AdminSafecharge from "./safecharge/AdminSafecharge";
 import AdminReservationsRouter from "./reservations/AdminReservationsRouter";
+import IpBlacklist from "./ipblacklist/IpBlacklist";
+import CountryBlacklist from "./countryblacklist/CountryBlacklist";
 import requester from "../../../requester";
 
 class AdminPage extends Component {
@@ -108,6 +110,16 @@ class AdminPage extends Component {
         <Route
           path="/profile/admin/reservation/booking"
           render={() => <AdminReservationsRouter />}
+        />
+        <Route
+          exact
+          path="/profile/admin/ipBlacklist"
+          render={() => <IpBlacklist />}
+        />
+        <Route
+          exact
+          path="/profile/admin/countryBlacklist"
+          render={() => <CountryBlacklist />}
         />
       </Switch>
     );
