@@ -7,8 +7,8 @@ import PropTypes from "prop-types";
 import React from "react";
 
 import {LONG} from "../../../../constants/notificationDisplayTimes.js";
-import {ADD_IP_TO_BLACKLIST, REMOVE_IP_FROM_BLACKLIST} from "../../../../constants/successMessages";
-import {IP_NOT_ADD_TO_BLACKLIST, USER_SERVERROR} from "../../../../constants/errorMessages";
+import {ADDED_TO_BLACKLIST, REMOVED_FROM_BLACKLIST} from "../../../../constants/successMessages";
+import {NOT_ADDED_TO_BLACKLIST, USER_SERVERROR, NOT_REMOVED_FROM_BLACKLIST} from "../../../../constants/errorMessages";
 
 import "../../../../styles/css/components/profile/admin/reservations/admin-reservations-edit-form.css";
 import {Config} from "../../../../config";
@@ -52,7 +52,7 @@ class IpBlacklist extends React.Component {
         });
       })
       .catch(error => {
-        NotificationManager.error(USER_SERVERROR + " " + this.state.ipAddress, "", LONG);
+        NotificationManager.error(USER_SERVERROR + " " + error, "", LONG);
       });
   }
 
@@ -81,13 +81,13 @@ class IpBlacklist extends React.Component {
 
       Axios.post(url, {"ipAddress": this.state.ipAddress}, getAxiosConfig())
         .then(data => {
-          NotificationManager.success(ADD_IP_TO_BLACKLIST, "", LONG);
+          NotificationManager.success(this.state.ipAddress + " " + ADDED_TO_BLACKLIST, "", LONG);
 
           this.setState({ipAddress: ""});
           this.props.history.push("/profile/admin/ipBlacklist");
         })
         .catch(error => {
-          NotificationManager.error(IP_NOT_ADD_TO_BLACKLIST + " " + this.state.ipAddress, "", LONG);
+          NotificationManager.error(this.state.ipAddress + " " + NOT_ADDED_TO_BLACKLIST + " " + this.state.ipAddress, "", LONG);
         });
     }
   }
@@ -112,16 +112,17 @@ class IpBlacklist extends React.Component {
   addIpToWhitelist(e, ip) {
     const apiHost = Config.getValue('apiHost');
     const url = `${apiHost}admin/ipBlacklist/remove`;
+    const ipAddressToRemove = ip[Object.getOwnPropertyNames(ip)[0]];
 
     Axios.post(url, ip, getAxiosConfig())
       .then(data => {
-        NotificationManager.success(REMOVE_IP_FROM_BLACKLIST, "", LONG);
+        NotificationManager.success(ipAddressToRemove + " " + REMOVED_FROM_BLACKLIST, "", LONG);
 
         this.setState({ipAddress: ""});
         this.props.history.push("/profile/admin/ipBlacklist");
       })
       .catch(error => {
-        NotificationManager.error(IP_NOT_ADD_TO_BLACKLIST + " " + this.state.ipAddress, "", LONG);
+        NotificationManager.error(ipAddressToRemove + " " + NOT_REMOVED_FROM_BLACKLIST + " " + this.state.ipAddress, "", LONG);
       });
   }
 
@@ -182,8 +183,6 @@ class IpBlacklist extends React.Component {
     const styleButton = {
       margin: '5px 0 5px 5px',
     };
-
-    console.log(ipList);
 
     // if (this.state.loading) {
     //   return <div className="loader" style={{marginBottom: "40px"}}/>;

@@ -7,8 +7,8 @@ import PropTypes from "prop-types";
 import React from "react";
 
 import {LONG} from "../../../../constants/notificationDisplayTimes.js";
-import {ADD_IP_TO_BLACKLIST, REMOVE_IP_FROM_BLACKLIST, USER_ERADICATED} from "../../../../constants/successMessages";
-import {IP_NOT_ADD_TO_BLACKLIST, USER_NOUSER, USER_SERVERROR} from "../../../../constants/errorMessages";
+import {ADDED_TO_BLACKLIST, REMOVED_FROM_BLACKLIST} from "../../../../constants/successMessages";
+import {NOT_ADDED_TO_BLACKLIST, NOT_REMOVED_FROM_BLACKLIST, USER_SERVERROR} from "../../../../constants/errorMessages";
 
 import "../../../../styles/css/components/profile/admin/reservations/admin-reservations-edit-form.css";
 import {Config} from "../../../../config";
@@ -16,7 +16,6 @@ import Axios from "axios";
 import UsersTopBar from "../users/UsersTopBar";
 import {getAxiosConfig} from "../utils/adminUtils";
 import queryString from "query-string";
-import requester from "../../../../requester";
 
 class CountryBlacklist extends React.Component {
   constructor(props) {
@@ -26,8 +25,8 @@ class CountryBlacklist extends React.Component {
 
     this.state = {
       country: {},
-      countryBlacklist: {},
-      loading: true,
+      countryBlacklist: [],
+      loading: false,
       page: !queryParams.page ? 0 : Number(queryParams.page),
       totalElements: '',
       totalPages: '',
@@ -43,51 +42,18 @@ class CountryBlacklist extends React.Component {
   }
 
   componentDidMount() {
-    // requester.getCountries().then(res => {
-    //   if (res.success) {
-    //     res.body.then(data => {
-    //       console.log(data);
-    //
-    //       if (data.success) {
-    //         NotificationManager.success(USER_ERADICATED, "", LONG);
-    //         this.setState({
-    //           countries: data
-    //         });
-    //       }
-    //       this.props.history.push("/profile/admin/countryBlacklist");
-    //     });
-    //   } else {
-    //     res.errors.then(err => {
-    //       if (err["errors"]["UnsuccessfulOperation"]["message"] != null) {
-    //         NotificationManager.warning(
-    //           USER_SERVERROR,
-    //           err["errors"]["UnsuccessfulOperation"]["message"],
-    //           LONG
-    //         );
-    //       } else {
-    //         NotificationManager.error(
-    //           USER_SERVERROR,
-    //           "Contact the dev support.",
-    //           LONG
-    //         );
-    //       }
-    //     });
-    //   }
-    // });
-
     const apiHost = Config.getValue('apiHost');
     const url = `${apiHost}admin/countryBlacklist`;
     const countryUrl = `${apiHost}countries`;
 
     Axios.get(countryUrl, getAxiosConfig())
       .then(data => {
-        console.log(data.data);
         this.setState({
           countries: data.data
         });
       })
       .catch(error => {
-        NotificationManager.error(USER_SERVERROR + " " + this.state.ipAddress, "", LONG);
+        NotificationManager.error(USER_SERVERROR + " " + error, "", LONG);
       });
 
     Axios.get(url, getAxiosConfig())
@@ -97,10 +63,8 @@ class CountryBlacklist extends React.Component {
         });
       })
       .catch(error => {
-        NotificationManager.error(USER_SERVERROR + " " + this.state.ipAddress, "", LONG);
+        NotificationManager.error(USER_SERVERROR + " " + error, "", LONG);
       });
-
-    console.log(this.state.countries);
   }
 
   onChange(e) {
@@ -122,52 +86,52 @@ class CountryBlacklist extends React.Component {
     ) {
 
       const apiHost = Config.getValue('apiHost');
-      const url = `${apiHost}admin/ipBlacklist`;
+      const url = `${apiHost}admin/countryBlacklist`;
 
 
       Axios.post(url, this.state.country, getAxiosConfig())
         .then(data => {
-          NotificationManager.success(ADD_IP_TO_BLACKLIST, "", LONG);
+          NotificationManager.success(this.state.country.name + " " + ADDED_TO_BLACKLIST, "", LONG);
 
-          this.setState({ipAddress: ""});
+          this.setState({country: {}});
           this.props.history.push("/profile/admin/countryBlacklist");
         })
         .catch(error => {
-          NotificationManager.error(IP_NOT_ADD_TO_BLACKLIST + " " + this.state.ipAddress, "", LONG);
+          NotificationManager.error(this.state.country.name + " " + NOT_ADDED_TO_BLACKLIST, "", LONG);
         });
     }
   }
 
   getCountryBlacklist(page) {
     const apiHost = Config.getValue('apiHost');
-    const url = `${apiHost}admin/ipBlacklist?page=${page}`;
+    const url = `${apiHost}admin/countryBlacklist?page=${page}`;
 
     Axios.get(url, getAxiosConfig())
       .then(data => {
         this.setState({
           loading: false,
           totalElements: data.totalElements,
-          ipBlacklist: data.data
+          countryBlacklist: data.data
         });
       })
       .catch(error => {
-        NotificationManager.error(USER_SERVERROR + " " + this.state.ipAddress, "", LONG);
+        NotificationManager.error(USER_SERVERROR + " " + error, "", LONG);
       });
   }
 
-  addCountryToWhitelist(e, ip) {
+  addCountryToWhitelist(e, country) {
     const apiHost = Config.getValue('apiHost');
     const url = `${apiHost}admin/countryBlacklist/remove`;
 
-    Axios.post(url, ip, getAxiosConfig())
+    Axios.post(url, country, getAxiosConfig())
       .then(data => {
-        NotificationManager.success(REMOVE_IP_FROM_BLACKLIST, "", LONG);
+        NotificationManager.success(JSON.parse(country).name + " " + REMOVED_FROM_BLACKLIST, "", LONG);
 
-        this.setState({ipAddress: ""});
+        this.setState({country: {}});
         this.props.history.push("/profile/admin/countryBlacklist");
       })
       .catch(error => {
-        NotificationManager.error(IP_NOT_ADD_TO_BLACKLIST + " " + this.state.ipAddress, "", LONG);
+        NotificationManager.error(JSON.parse(country).name + " " + NOT_REMOVED_FROM_BLACKLIST, "", LONG);
       });
   }
 
@@ -191,13 +155,10 @@ class CountryBlacklist extends React.Component {
   }
 
   render() {
-    const countryList = this.state.countryBlacklist;
-    const { countries} = this.props;
-    const country = this.state.country;
 
-    console.log(countries);
+    const {countryBlacklist, countries, country} = this.state;
+
     // const { totalElements, loading } = this.state;
-
     // if (loading) {
     //   return <div className="loader"></div>;
     // }
@@ -224,14 +185,6 @@ class CountryBlacklist extends React.Component {
       borderBottom: '1px solid #C0C0C0'
     };
 
-    const styleInput = {
-      border: '1px solid #cfcfcf',
-      borderRadius: '5px',
-      backgroundColor: 'white',
-      padding: '15px',
-      width: '50%'
-    };
-
     const styleLabel = {
       display: 'block',
       margin: '10px 0 5px 5px'
@@ -240,6 +193,17 @@ class CountryBlacklist extends React.Component {
     const styleButton = {
       margin: '5px 0 5px 5px',
     };
+
+    const styleOption = {
+      width: '50%',
+      border: '1px solid #cfcfcf',
+      borderRadius: '5px',
+      backgroundColor: 'white',
+      padding: '15px',
+      webkitAppearance: 'menulist',
+      appearance: 'menulist'
+    };
+
 
     // if (this.state.loading) {
     //   return <div className="loader" style={{marginBottom: "40px"}}/>;
@@ -252,25 +216,24 @@ class CountryBlacklist extends React.Component {
             <div className="country">
               <label htmlFor="country" style={styleLabel}>Country:</label>
 
-                <div className='select'>
-                  <select name="country" id="address" onChange={this.updateCountry} value={JSON.stringify(country)}>
-                    <option disabled value="">Country</option>
-                    {countries && countries.map((item, i) => {
-                      return <option key={i} value={JSON.stringify(item)}>{item.name}</option>;
-                    })}
-                  </select>
-                </div>
-
+              <select name="country" id="address" onChange={this.updateCountry} value={JSON.stringify(country)}
+                      style={styleOption}>
+                <option disabled value="">Country</option>
+                {countries && countries.map((item, i) => {
+                  return <option key={i} value={JSON.stringify(item)}>{item.name}</option>;
+                })}
+              </select>
               <button className="btn" id="btnText" name="btnText" style={styleButton}>
-                Add IP to Blacklist
+                Add Country to Blacklist
               </button>
+
             </div>
           </form>
         </div>
 
         <div className="container reservations-edit-form">
           <div>
-            {!countryList ? (
+            {!countryBlacklist ? (
               <NoEntriesMessage text="No IP Addresses in Blacklist"/>
             ) : (
               <div className="reservations-table">
@@ -278,18 +241,21 @@ class CountryBlacklist extends React.Component {
                   <thead>
                   <tr>
                     <th style={styleTh}>#</th>
-                    <th style={styleTh}>IP Address</th>
+                    <th style={styleTh}>Country Name</th>
+                    <th style={styleTh}>Country Code</th>
                     <th style={styleTh}>Action</th>
                   </tr>
                   </thead>
                   <tbody>
-                  {Object.keys(countryList).map((key) => {
+                  {countryBlacklist && countryBlacklist.map((item, i) => {
                     return (
-                      <tr key={key}>
-                        <td style={styleTd}>{key}</td>
-                        <td style={styleTd}>{countryList[key]}</td>
+                      <tr key={i}>
+                        <td style={styleTd}>{item.id}</td>
+                        <td style={styleTd}>{item.name}</td>
+                        <td style={styleTd}>{item.code}</td>
                         <td style={styleTd}>
-                          <button onClick={(e) => this.addCountryToWhitelist(e, {[key]: countryList[key]})} className="btn"
+                          <button onClick={(e) => this.addCountryToWhitelist(e, JSON.stringify(item))}
+                                  className="btn"
                                   id="btnText" name="btnText">Whitelist
                           </button>
                         </td>
@@ -300,11 +266,11 @@ class CountryBlacklist extends React.Component {
                 </table>
 
                 {/*<Pagination*/}
-                  {/*loading={this.state.totalReservations === 0}*/}
-                  {/*onPageChange={this.onPageChange}*/}
-                  {/*currentPage={this.state.currentPage + 1}*/}
-                  {/*pageSize={20}*/}
-                  {/*totalElements={this.state.totalElements}*/}
+                {/*loading={this.state.totalReservations === 0}*/}
+                {/*onPageChange={this.onPageChange}*/}
+                {/*currentPage={this.state.currentPage + 1}*/}
+                {/*pageSize={20}*/}
+                {/*totalElements={this.state.totalElements}*/}
                 {/*/>*/}
               </div>
             )}
