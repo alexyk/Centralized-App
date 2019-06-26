@@ -1,13 +1,13 @@
-import React, { Component } from "react";
-import { Modal } from "react-bootstrap";
+import React, {Component} from "react";
+import {Modal} from "react-bootstrap";
 import PropTypes from "prop-types";
 
 import RuleComponent from "./RuleComponent";
 import Axios from "axios";
-import { Config } from "../../../../../config";
+import {Config} from "../../../../../config";
 
 import "../../../../../styles/css/components/modals/modal.css";
-import { getAxiosConfig } from "../../utils/adminUtils";
+import {getAxiosConfig} from "../../utils/adminUtils";
 
 
 export default class RulesModal extends Component {
@@ -16,7 +16,7 @@ export default class RulesModal extends Component {
 
     this.state = {
       isActive: true,
-      rules: [ ]
+      rules: []
     }
 
     this.onHide = this.onHide.bind(this);
@@ -28,15 +28,15 @@ export default class RulesModal extends Component {
 
   getRules(props) {
     const apiHost = Config.getValue('apiHost');
-    const { user } = props;
+    const {user} = props;
     const url = `${apiHost}admin/users/${user}/rules`;
 
     Axios.get(url, getAxiosConfig())
-      .then( data => {
+      .then(data => {
         console.log(`[SERVER] getRules: ${data}`, {data})
         let rules = [];
-        for (let name in data) {
-          rules.push({name, value:data[name]})
+        for (let name in data.data) {
+          rules.push({name, value: data.data[name]})
         }
         this.setState({rules});
       })
@@ -45,17 +45,21 @@ export default class RulesModal extends Component {
       });
   }
 
-
   setRules(props) {
     const apiHost = Config.getValue('apiHost');
-    const { user } = props;
+    const {user} = props;
     const url = `${apiHost}admin/users/${user}/rules`;
     const data = {};
-    this.state.rules.forEach(({name,value},index) => data[name] = value);
-
+    this.state.rules.forEach(({name, value}, index) => data[name] = value);
+    console.log(data);
     Axios.post(url, data, getAxiosConfig())
-      .then( data => {
+      .then(data => {
         console.log(`[SERVER] setting rules: ${data}`, {data})
+        let rules = [];
+        for (let name in data.data) {
+          rules.push({name, value: data.data[name]})
+        }
+        this.setState({rules});
       })
       .catch(error => {
         console.warn(`[SERVER] setting rules error: ${error.message}`, {error});
@@ -68,17 +72,17 @@ export default class RulesModal extends Component {
   }
 
 
-  onRuleToggle(value,index) {
+  onRuleToggle(value, index) {
     const rules = this.state.rules.concat(); // make a shallow copy
     rules[index].value = !value;
-
     this.setState({rules});
   }
 
 
   onSubmit(e) {
     if (e) e.preventDefault();
-    // TODO sumbit
+    this.setRules(this.props);
+    this.props.onClose(this.props);
   }
 
 
@@ -88,9 +92,10 @@ export default class RulesModal extends Component {
     }
 
     return (
-      this.state.rules.map( (item,index) => {
-        const { name, value, } = item;
-        return <RuleComponent key={`${index}_${this.state.isActive}`} name={name} value={value} onToggle={() => this.onRuleToggle(value,index)} />
+      this.state.rules.map((item, index) => {
+        const {name, value,} = item;
+        return <RuleComponent key={`${index}_${this.state.isActive}`} name={name} value={value}
+                              onToggle={() => this.onRuleToggle(value, index)}/>
       })
     )
   }
@@ -104,15 +109,15 @@ export default class RulesModal extends Component {
         onHide={this.props.onClose}
       >
         <Modal.Header>
-          <h1>Edit Rules</h1><br />
-          <h5>{this.props.user}</h5>
+          <h1>Edit Rules</h1><br/>
+          <h5>User Id: {this.props.user}</h5>
           <button type="button" className="close" onClick={this.props.onClose}>
             &times;
           </button>
         </Modal.Header>
         <Modal.Body>
-          { this._renderItems() }
-          <br /> <br />
+          {this._renderItems()}
+          <br/> <br/>
           <div className="btn" onClick={this.onSubmit}>Apply</div>
         </Modal.Body>
       </Modal>

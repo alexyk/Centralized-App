@@ -16,6 +16,7 @@ import Axios from "axios";
 import UsersTopBar from "../users/UsersTopBar";
 import {getAxiosConfig} from "../utils/adminUtils";
 import queryString from "query-string";
+import RuleComponent from "../users/rules/RuleComponent";
 
 class IpBlacklist extends React.Component {
   constructor(props) {
@@ -25,7 +26,7 @@ class IpBlacklist extends React.Component {
 
     this.state = {
       ipAddress: "",
-      ipBlacklist: {},
+      ipBlacklist: [],
       loading: true,
       page: !queryParams.page ? 0 : Number(queryParams.page),
       totalElements: '',
@@ -47,8 +48,14 @@ class IpBlacklist extends React.Component {
 
     Axios.get(url, getAxiosConfig())
       .then(data => {
+
+        let ipBlacklist = [];
+        for (let i = 0, l = data.data.length; i < l; i++) {
+          ipBlacklist.push({id: data.data[i].id, ipAddress: data.data[i].ip})
+
+        }
         this.setState({
-          ipBlacklist: data.data
+          ipBlacklist: ipBlacklist
         });
       })
       .catch(error => {
@@ -79,8 +86,9 @@ class IpBlacklist extends React.Component {
       const url = `${apiHost}admin/ipBlacklist`;
 
 
-      Axios.post(url, {"ipAddress": this.state.ipAddress}, getAxiosConfig())
+      Axios.post(url, {"ip": this.state.ipAddress}, getAxiosConfig())
         .then(data => {
+
           NotificationManager.success(this.state.ipAddress + " " + ADDED_TO_BLACKLIST, "", LONG);
 
           this.setState({ipAddress: ""});
@@ -137,6 +145,27 @@ class IpBlacklist extends React.Component {
     this.getIpBlacklist(page - 1);
   }
 
+  _renderItems() {
+    return (
+      this.state.ipBlacklist.map((ipList, index) => {
+        const {id, ipAddress} = ipList;
+        const styleTd = {
+          borderBottom: '1px solid #C0C0C0'
+        };
+
+        return <tr key={id}>
+          <td style={styleTd}>{id}</td>
+          <td style={styleTd}>{ipAddress}</td>
+          <td style={styleTd}>
+            <button onClick={(e) => this.addIpToWhitelist(e, {[id]: ipAddress})} className="btn"
+                    id="btnText" name="btnText">Whitelist
+            </button>
+          </td>
+        </tr>
+      })
+    )
+  }
+
   render() {
     const ipList = this.state.ipBlacklist;
     // const { totalElements, loading } = this.state;
@@ -161,10 +190,6 @@ class IpBlacklist extends React.Component {
       textAlign: 'center',
       font: '18px Futura, Arial, Helvetica Neue, Helvetica',
       height: '30px'
-    };
-
-    const styleTd = {
-      borderBottom: '1px solid #C0C0C0'
     };
 
     const styleInput = {
@@ -225,28 +250,16 @@ class IpBlacklist extends React.Component {
                   </tr>
                   </thead>
                   <tbody>
-                  {Object.keys(ipList).map((key) => {
-                    return (
-                      <tr key={key}>
-                        <td style={styleTd}>{key}</td>
-                        <td style={styleTd}>{ipList[key]}</td>
-                        <td style={styleTd}>
-                          <button onClick={(e) => this.addIpToWhitelist(e, {[key]: ipList[key]})} className="btn"
-                                  id="btnText" name="btnText">Whitelist
-                          </button>
-                        </td>
-                      </tr>
-                    );
-                  })}
+                  {this._renderItems()}
                   </tbody>
                 </table>
 
                 {/*<Pagination*/}
-                  {/*loading={this.state.totalReservations === 0}*/}
-                  {/*onPageChange={this.onPageChange}*/}
-                  {/*currentPage={this.state.currentPage + 1}*/}
-                  {/*pageSize={20}*/}
-                  {/*totalElements={this.state.totalElements}*/}
+                {/*loading={this.state.totalReservations === 0}*/}
+                {/*onPageChange={this.onPageChange}*/}
+                {/*currentPage={this.state.currentPage + 1}*/}
+                {/*pageSize={20}*/}
+                {/*totalElements={this.state.totalElements}*/}
                 {/*/>*/}
               </div>
             )}
