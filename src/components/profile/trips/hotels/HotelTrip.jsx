@@ -63,7 +63,8 @@ const STATUS_TOOLTIP = {
   PENDING_CANCELLATION: "Cancellation is not possible at this time. Contact support.",
   CANCELLED: "Your reservation has been cancelled.",
   CANCELLATION_FAILED: "Your cancellation request is being processed.",
-  QUEUED: "Contact us if status is pending for more than 30 mins."
+  QUEUED: "Contact us if status is pending for more than 30 mins.",
+  BOOKING_REVIEW: "Booking request is under review."
 };
 
 
