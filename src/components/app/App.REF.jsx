@@ -9,7 +9,9 @@ import BigCalendar from "react-big-calendar";
 import moment from "moment";
 import referralIdPersister from "../profile/affiliates/service/persist-referral-id";
 import appImports from "./app-defaults";
-import { setIsMobileWebView, isMobileWebView } from "../../services/utilities/mobileWebView";
+import {
+  setIsMobileWebView, isMobileWebView, mobileProcessQueryString
+} from "../../services/utilities/mobileWebView";
 
 
 const {
@@ -50,6 +52,7 @@ export default class defApp extends React.Component {
 
     if (isMobile) {
       setIsMobileWebView('AppREF', isMobile);
+      mobileProcessQueryString(location);
     }
   }
 

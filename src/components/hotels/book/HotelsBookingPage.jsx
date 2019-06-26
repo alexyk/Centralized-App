@@ -24,7 +24,6 @@ import {DEFAULT_LISTING_IMAGE_URL} from "../../../constants/images";
 import AsideContentPage from "../../common/asideContentPage";
 import {getCurrency, getCurrencySign} from "../../../selectors/paymentInfo";
 import {getCurrencyExchangeRates} from "../../../selectors/exchangeRatesInfo";
-import requester from "../../../requester";
 import {getCountries} from "../../../selectors/countriesInfo";
 import {ROOM_NO_LONGER_AVAILABLE} from "../../../constants/warningMessages";
 

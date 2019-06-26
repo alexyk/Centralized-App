@@ -1,4 +1,4 @@
-import queryString from 'query-string'
+import queryStringUtil from 'query-string'
 import StringUtils from './stringUtilities';
 
 export var isMobileWebView = false;
@@ -9,6 +9,33 @@ export function setIsMobileWebView(origin, value) {
     isMobileWebView = value;
   } else {
     console.warn(`[Mobile-Web-View] [${origin}] Trying to set isMobileWebView: ${summary} - resulting in no change of value`);
+  }
+}
+
+const mobileCacheDefault = {
+  isBooking: false
+};
+export function updateMobileCache(obj, caller) {
+  if (obj == null) {
+    mobileCache = {...mobileCacheDefault};
+  } else {
+    mobileCache = {...mobileCache, ...obj};
+  }
+}
+export var mobileCache = {...mobileCacheDefault};
+
+
+/**
+ * Used to process query string in App.REF for webview.
+ * Caches parsed params in the following cases:
+ *  - booking step (Confirm and Pay)
+ *  -
+ * @param {Object} location
+ */
+export function mobileProcessQueryString({pathname, search}) {
+  if (pathname.indexOf('mobile/hotels/listings/book') > -1) {
+    const bookingParams = queryStringUtil.parse(search);
+    updateMobileCache({bookingParams,isBooking: true});
   }
 }
 
@@ -31,7 +58,7 @@ export function fixNatForMobileWebView(location) {
     pathname = pathnameInput;
   }
 
-  const queryParams = queryString.parse(search);
+  const queryParams = queryStringUtil.parse(search);
   const nationalityParam = parseInt(queryParams.nat);
   const indexOfNat = search.indexOf('&nat=');
   const isNatNan = isNaN(nationalityParam);

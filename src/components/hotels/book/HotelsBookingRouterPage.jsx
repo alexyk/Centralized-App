@@ -6,15 +6,15 @@ import { connect } from 'react-redux';
 import HotelsBookingPage from './HotelsBookingPage';
 import HotelsBookingConfirmPage from './HotelsBookingConfirmPage';
 import ConfirmProfilePage from './ConfirmProfilePage';
-import queryString from 'query-string';
+import queryStringUitl from 'query-string';
 import { NotificationManager } from 'react-notifications';
 import { ROOM_NO_LONGER_AVAILABLE } from '../../../constants/warningMessages';
 import { LONG } from '../../../constants/notificationDisplayTimes.js';
 import requester from '../../../requester';
 import _ from 'lodash';
-import validator from 'validator';
 import { getCurrency } from '../../../selectors/paymentInfo';
 import xregexp from "xregexp";
+import { mobileCache } from '../../../services/utilities/mobileWebView';
 const QUOTE_ID_POLLING_INTERVAL_TIME = 10000;
 
 class HotelsBookingRouterPage extends React.Component {
@@ -23,9 +23,16 @@ class HotelsBookingRouterPage extends React.Component {
 
     this.quoteIdPollingInterval = null;
 
+    let quoteId;
+    if (mobileCache.isBooking) {
+      quoteId = mobileCache.bookingParams.quoteId;
+    } else {
+      quoteId = queryStringUitl.parse(props.location.search).quoteId;
+    }
+
     this.state = {
       hotelId: props.match.params.id,
-      quoteId: queryString.parse(props.location.search).quoteId,
+      quoteId,
       guests: [],
       reservation: null,
       hotelsRooms: [],
@@ -88,7 +95,12 @@ class HotelsBookingRouterPage extends React.Component {
 
   findAndSetUserRequestedRoomsByQuoteId(hasAvailableRooms) {
     if (hasAvailableRooms) {
-      const quoteId = queryString.parse(this.props.location.search).quoteId;
+      const urlParams = (
+        mobileCache.isBooking
+        ? mobileCache.bookingParams
+        : queryStringUitl.parse(this.props.location.search)
+      );
+      const quoteId = urlParams.quoteId;
       const rooms = this.state.hotelRooms.filter(r => r.quoteId === quoteId)[0];
       if (rooms) {
         this.setState({ rooms: rooms.roomsResults });
@@ -118,7 +130,7 @@ class HotelsBookingRouterPage extends React.Component {
   }
 
   requestCreateReservation() {
-    const query = queryString.parse(this.props.location.search);
+    const query = queryStringUitl.parse(this.props.location.search);
     const booking = this.getBooking(query);
     return requester.createReservation(booking).then(res => {
       return new Promise((resolve, reject) => {
@@ -275,12 +287,12 @@ class HotelsBookingRouterPage extends React.Component {
     NotificationManager.warning(ROOM_NO_LONGER_AVAILABLE, '', LONG);
     const id = this.props.match.params.id;
     const pathname = this.props.location.pathname.indexOf('/mobile') !== -1 ? '/mobile/hotels/listings' : '/hotels/listings';
-    const search = this.getCleanQueryString(queryString.parse(this.props.location.search));
+    const search = this.getCleanQueryString(queryStringUitl.parse(this.props.location.search));
     this.props.history.push(`${pathname}/${id}${search}`);
   }
 
   getQueryString() {
-    const queryStringParameters = queryString.parse(this.props.location.search);
+    const queryStringParameters = queryStringUitl.parse(this.props.location.search);
 
     let result = '?';
     result += 'region=' + encodeURI(queryStringParameters.region);
@@ -293,7 +305,7 @@ class HotelsBookingRouterPage extends React.Component {
   }
 
   getCleanQueryString() {
-    const queryStringParameters = queryString.parse(this.props.location.search);
+    const queryStringParameters = queryStringUitl.parse(this.props.location.search);
 
     let result = '?';
     result += 'region=' + encodeURI(queryStringParameters.region);
@@ -306,7 +318,11 @@ class HotelsBookingRouterPage extends React.Component {
   }
 
   getRequestSearchParams() {
-    const query = queryString.parse(this.getCleanQueryString());
+    const query = (
+      mobileCache.isBooking
+        ? mobileCache.bookingParams
+        : queryStringUitl.parse(this.getCleanQueryString())
+    );
 
     const params = [];
     params.push(`region=${encodeURI(query.region)}`);
@@ -328,7 +344,7 @@ class HotelsBookingRouterPage extends React.Component {
   }
 
   async getGuestsFromSearchString() {
-    const searchRooms = JSON.parse(queryString.parse(this.props.location.search).rooms);
+    const searchRooms = JSON.parse(queryStringUitl.parse(this.props.location.search).rooms);
     const guests = [];
     for (let roomIndex = 0; roomIndex < searchRooms.length; roomIndex++) {
       const searchRoom = searchRooms[roomIndex];
