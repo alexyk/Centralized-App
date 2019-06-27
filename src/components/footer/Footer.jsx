@@ -7,6 +7,8 @@ import PropTypes from "prop-types";
 import React from "react";
 import { connect } from "react-redux";
 import { Link, withRouter } from "react-router-dom";
+import packageJson from '../../../package.json';
+
 
 class Footer extends React.Component {
   componentDidMount() {
@@ -136,6 +138,8 @@ class Footer extends React.Component {
             </span>
             <span>Copyright &copy; 2018 LockTrip. </span>
             <span>All Rights Reserved. </span>
+            &nbsp;&nbsp;&nbsp;
+            <span style={{fontSize: "10px",float:"right"}}>v{packageJson.version} </span>
           </div>
         </div>
       </footer>
