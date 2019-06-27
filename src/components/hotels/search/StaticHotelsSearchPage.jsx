@@ -192,7 +192,7 @@ class StaticHotelsSearchPage extends React.Component {
         sch: sch
       });
 
-      this.getCityLocation(regionId);
+      this.getCityLocation(sch ? (regionId + "_" + sch) : regionId);
     }
   }
 
@@ -205,7 +205,6 @@ class StaticHotelsSearchPage extends React.Component {
     if (sch) {
       requester.getStaticSingleHotel(sch).then(res => {
         res.body.then(data => {
-          const {contentH} = data;
           scHotel = data;
         });
       });
@@ -391,7 +390,8 @@ class StaticHotelsSearchPage extends React.Component {
       region = this.props.region.id.split("_")[0];
     }
 
-    this.getCityLocation(region);
+    this.getCityLocation(this.props.region.id);
+
     const queryParams = queryString.parse(query);
     const startDate = moment(queryParams.startDate, "DD/MM/YYYY");
     const endDate = moment(queryParams.endDate, "DD/MM/YYYY");
