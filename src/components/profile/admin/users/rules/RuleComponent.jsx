@@ -20,7 +20,7 @@ export default class RuleComponent extends Component {
           onChange={onToggle}
           checked={value}
         />
-        <span>{name}</span>
+        <span className="rule-text">{name}</span>
       </div>
     )
   }

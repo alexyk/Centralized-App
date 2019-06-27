@@ -38,6 +38,25 @@
   .important-text {
     font-weight: 400;
   }
+  .subtitle-label-text {
+    font-size: 17px;
+    color: #BBB;
+  }
+  .subtitle-value-text {
+    font-size: 17px;
+    font-weight: 500;
+    color: #BBB;
+  }
+  .rule-text {
+    font-size: 17px;
+  }
+  .two-column {
+    flex-direction: column;
+    align-content: flex-start;
+  }
+  .right-align-flex {
+    align-self: right;
+  }
   button.close {
     position: absolute;
     top: 5px;
