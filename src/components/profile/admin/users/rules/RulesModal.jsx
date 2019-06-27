@@ -40,7 +40,7 @@ export default class RulesModal extends Component {
     Axios.get(url, getAxiosConfig())
       .then(response => {
         const {data: responseData} = response;
-        console.log(`[SERVER] getRules response`, {responseData, response})
+        // console.log(`[SERVER] getRules response`, {responseData, response})
 
         let rules = [];
         for (let name in responseData) {
@@ -61,12 +61,11 @@ export default class RulesModal extends Component {
     // prepare post data
     const postData = {};
     this.state.rules.forEach(({name, value}, index) => postData[name] = value);
-    console.log(postData);
 
     Axios.post(url, postData, getAxiosConfig())
       .then(response => {
         const {data:responseData} = response;
-        console.log(`[SERVER] setting rules`, {responseData,postData,response})
+        //console.log(`[SERVER] setting rules`, {responseData,postData,response})
 
         let rules = [];
         for (let name in responseData) {
