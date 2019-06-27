@@ -192,6 +192,9 @@ class StaticHotelsSearchPage extends React.Component {
         sch: sch
       });
 
+      console.log(region);
+      console.log(this.props);
+
       this.getCityLocation(sch ? (regionId + "_" + sch) : regionId);
     }
   }

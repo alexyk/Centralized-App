@@ -3,33 +3,33 @@ import '../../../styles/css/components/carousel-component.css';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 
-import { Config } from '../../../config';
+import {Config} from '../../../config';
 import HotelDetailsInfoSection from './HotelDetailsInfoSection';
 import HotelsSearchBar from '../search/HotelsSearchBar';
 import Lightbox from 'react-images';
-import { NotificationManager } from 'react-notifications';
+import {NotificationManager} from 'react-notifications';
 import PropTypes from 'prop-types';
 import React from 'react';
 import Slider from 'react-slick';
 import _ from 'lodash';
-import { connect } from 'react-redux';
+import {connect} from 'react-redux';
 import moment from 'moment';
-import { parse } from 'query-string';
+import {parse} from 'query-string';
 import requester from '../../../requester';
-import { setHotelsSearchInfo } from '../../../actions/hotelsSearchInfo';
-import { asyncSetStartDate, asyncSetEndDate } from '../../../actions/searchDatesInfo';
-import { setCurrency } from "../../../actions/paymentInfo";
-import { getCurrency } from '../../../selectors/paymentInfo';
-import { getStartDate, getEndDate } from '../../../selectors/searchDatesInfo';
-import { getRegion, getRooms } from '../../../selectors/hotelsSearchInfo';
-import { withRouter } from 'react-router-dom';
+import {setHotelsSearchInfo, setRegion} from '../../../actions/hotelsSearchInfo';
+import {asyncSetStartDate, asyncSetEndDate} from '../../../actions/searchDatesInfo';
+import {setCurrency} from "../../../actions/paymentInfo";
+import {getCurrency} from '../../../selectors/paymentInfo';
+import {getStartDate, getEndDate} from '../../../selectors/searchDatesInfo';
+import {getRegion, getRooms} from '../../../selectors/hotelsSearchInfo';
+import {withRouter} from 'react-router-dom';
 import queryString from 'query-string';
 
-import { CHECKING_ROOM_AVAILABILITY, SIMILAR_ROOM_GIVEN } from '../../../constants/infoMessages.js';
-import { ROOM_IS_NO_LONGER_AVAILABLE } from '../../../constants/errorMessages.js';
-import { ALL_ROOMS_TAKEN } from '../../../constants/warningMessages.js';
-import { LONG } from '../../../constants/notificationDisplayTimes.js';
-import { DEFAULT_LISTING_IMAGE_URL } from '../../../constants/images';
+import {CHECKING_ROOM_AVAILABILITY, SIMILAR_ROOM_GIVEN} from '../../../constants/infoMessages.js';
+import {ROOM_IS_NO_LONGER_AVAILABLE} from '../../../constants/errorMessages.js';
+import {ALL_ROOMS_TAKEN} from '../../../constants/warningMessages.js';
+import {LONG} from '../../../constants/notificationDisplayTimes.js';
+import {DEFAULT_LISTING_IMAGE_URL} from '../../../constants/images';
 
 class HotelDetailsPage extends React.Component {
   constructor(props) {
@@ -42,6 +42,7 @@ class HotelDetailsPage extends React.Component {
     let queryParams = parse(this.props.location.search);
 
     if (this.props) {
+      console.log(this.props);
       if (queryParams.startDate && queryParams.endDate) {
         startDate = moment(queryParams.startDate, 'DD/MM/YYYY');
         endDate = moment(queryParams.endDate, 'DD/MM/YYYY');
@@ -53,7 +54,10 @@ class HotelDetailsPage extends React.Component {
       localStorage.setItem('currency', currency);
       try {
         this.props.dispatch(setCurrency(currency));
-        console.info(`[HotelDetailsRage] CURRENCY, before: ${this.props.currency}, after: ${currency}`,{queryParams, props:this.props});
+        console.info(`[HotelDetailsRage] CURRENCY, before: ${this.props.currency}, after: ${currency}`, {
+          queryParams,
+          props: this.props
+        });
       } catch (e) {
         console.error.apply(e);
       }
@@ -70,7 +74,7 @@ class HotelDetailsPage extends React.Component {
       loading: true,
       isShownContactHostModal: false,
       hotelRooms: null,
-      loadingRooms: true,
+      loadingRooms: true
     };
 
     this.requestHotel = this.requestHotel.bind(this);
@@ -86,6 +90,8 @@ class HotelDetailsPage extends React.Component {
     this.next = this.next.bind(this);
     this.previous = this.previous.bind(this);
     this.search = this.search.bind(this);
+    this.getRegion = this.getRegion.bind(this);
+    this.getCityLocation = this.getCityLocation.bind(this);
   }
 
   componentDidMount() {
@@ -102,10 +108,16 @@ class HotelDetailsPage extends React.Component {
       const rooms = JSON.parse(decodeURI(searchParams.get('rooms')));
       const adults = this.getAdults(rooms);
       const hasChildren = this.getHasChildren(rooms);
+      const region = {id: searchParams.get('region')};
+      console.log(region);
+      console.log(this.props.region);
 
       this.props.dispatch(asyncSetStartDate(startDate));
       this.props.dispatch(asyncSetEndDate(endDate));
-      this.props.dispatch(setHotelsSearchInfo(this.props.region, rooms, adults, hasChildren));
+      this.props.dispatch(setHotelsSearchInfo(region, rooms, adults, hasChildren));
+
+      this.getCityLocation(searchParams.get('sch') ? searchParams.get('region') + "_" + searchParams.get('sch') : searchParams.get('region'));
+      console.log(this.props);
     }
   }
 
@@ -115,7 +127,7 @@ class HotelDetailsPage extends React.Component {
 
     requester.getHotelById(id, searchParams).then(res => {
       res.body.then(data => {
-        this.setState({ hotel: data, loading: false });
+        this.setState({hotel: data, loading: false});
       });
     });
   }
@@ -126,9 +138,26 @@ class HotelDetailsPage extends React.Component {
 
     requester.getHotelRooms(id, searchParams).then(res => {
       res.body.then(data => {
-        this.setState({ hotelRooms: data, loadingRooms: false });
+        this.setState({hotelRooms: data, loadingRooms: false});
       });
     });
+  }
+
+  getRegion(regionId, sch){
+    let region = regionId;
+
+    if (regionId) {
+      if (sch) {
+        region = regionId + "_" + sch;
+      }
+
+      requester.getRegionNameById(region).then(res => {
+        res.body.then(data => {
+          console.log(data);
+          return data;
+        });
+      });
+    }
   }
 
   findQuoteIdByRoomSearchQuote(roomSearchQuote, availableHotelRooms) {
@@ -151,7 +180,23 @@ class HotelDetailsPage extends React.Component {
   }
 
   search(queryString) {
+    console.log(queryString);
     this.props.history.push('/hotels/listings' + queryString);
+
+    if(this.props.region.id) {
+      this.getCityLocation(this.props.region.id);
+    } else {
+      const queryParams = queryString.parse(queryString);
+      this.getCityLocation(queryParams.sch ? queryParams.region + "_" + queryParams.sch : queryParams.region);
+    }
+  }
+
+  getCityLocation(regionId) {
+    requester.getRegionNameById(regionId).then(res => {
+      res.body.then(data => {
+        this.props.dispatch(setRegion(data));
+      });
+    });
   }
 
   getSearchParams() {
@@ -291,9 +336,9 @@ class HotelDetailsPage extends React.Component {
   // }
 
   handleBookRoom(roomsResults) {
-    const { currency } = this.props;
+    const {currency} = this.props;
 
-    this.setState({ loadingRooms: true });
+    this.setState({loadingRooms: true});
     NotificationManager.info(CHECKING_ROOM_AVAILABILITY, '', LONG);
     const rooms = this.props.rooms.map((room) => {
       const adults = [];
@@ -371,6 +416,7 @@ class HotelDetailsPage extends React.Component {
   next() {
     this.slider.slickNext();
   }
+
   previous() {
     this.slider.slickPrev();
   }
@@ -384,14 +430,14 @@ class HotelDetailsPage extends React.Component {
       if (this.state.hotel.hotelPhotos) {
         let sortedImages = _.orderBy(this.state.hotel.hotelPhotos, ['url'], ['asc']);
         images = sortedImages.map((image, index) => {
-          return { src: Config.getValue('imgHost') + image.url, index };
+          return {src: Config.getValue('imgHost') + image.url, index};
         });
       }
     }
 
     if (images && images.length < 3) {
       while (images.length < 3) {
-        images.push({ src: Config.getValue('imgHost') + DEFAULT_LISTING_IMAGE_URL });
+        images.push({src: Config.getValue('imgHost') + DEFAULT_LISTING_IMAGE_URL});
       }
     }
 
@@ -411,12 +457,13 @@ class HotelDetailsPage extends React.Component {
       ]
     };
 
-    const { startDate, endDate } = this.props;
+    const {startDate, endDate, region} = this.props;
+    console.log(this.props);
 
     return (
       <div>
         <div className="container sm-none">
-          <HotelsSearchBar search={this.search} />
+          <HotelsSearchBar search={this.search}/>
         </div>
         {loading ?
           <div className="loader"></div> :
@@ -437,7 +484,7 @@ class HotelDetailsPage extends React.Component {
                 {images && images.map((image, index) => {
                   return (
                     <div key={index} onClick={(e) => this.openLightbox(e, image.index)}>
-                      <div className='slide' style={{ 'backgroundImage': 'url("' + image.src + '")' }}></div>
+                      <div className='slide' style={{'backgroundImage': 'url("' + image.src + '")'}}></div>
                     </div>
                   );
                 })}
@@ -459,14 +506,14 @@ class HotelDetailsPage extends React.Component {
                     <a href="#facilities">Facilities</a>
                   </li>
                   {this.state.hotel.descriptionsAccessInfo &&
-                    <li>
-                      <a href="#reviews">Access Info</a>
-                    </li>
+                  <li>
+                    <a href="#reviews">Access Info</a>
+                  </li>
                   }
                   {this.state.hotel.reviews && this.state.hotel.reviews.length > 0 &&
-                    <li>
-                      <a href="#reviews">Reviews</a>
-                    </li>
+                  <li>
+                    <a href="#reviews">Reviews</a>
+                  </li>
                   }
                   <li>
                     <a href="#map">Location</a>
@@ -508,7 +555,7 @@ HotelDetailsPage.propTypes = {
 };
 
 function mapStateToProps(state) {
-  const { paymentInfo, hotelsSearchInfo, searchDatesInfo } = state;
+  const {paymentInfo, hotelsSearchInfo, searchDatesInfo} = state;
 
   return {
     currency: getCurrency(paymentInfo),

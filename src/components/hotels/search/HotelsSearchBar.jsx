@@ -227,6 +227,7 @@ function HotelsSearchBar(props) {
   };
 
   const region = props.region;
+  console.log(props);
   let selectedOption = null;
   if (region) {
     selectedOption = {
