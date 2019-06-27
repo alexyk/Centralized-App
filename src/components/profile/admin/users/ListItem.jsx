@@ -1,16 +1,18 @@
 import '../../../../styles/css/components/profile/admin/unpublished-item.css';
 
-import { Config } from '../../../../config.js';
+import {Config} from '../../../../config.js';
 import PropTypes from 'prop-types';
 import React from 'react';
 import RulesModal from './rules/RulesModal';
+import Axios from "axios";
+import {getAxiosConfig} from "../utils/adminUtils";
 
 
 export default class ListItem extends React.Component {
   constructor(props) {
     super(props);
 
-    this.state = { rulesModal:false };
+    this.state = {rulesModal: false};
 
     this.onRulesClick = this.onRulesClick.bind(this);
     this.onRulesModelClose = this.onRulesModelClose.bind(this);
@@ -18,10 +20,9 @@ export default class ListItem extends React.Component {
 
 
   onRulesModelClose(...args) {
-    console.log('onRulesModelClose',{args})
+    console.log('onRulesModelClose', {args});
     this.setState({rulesModal: false});
   }
-
 
   onRulesClick(e) {
     if (e) {
@@ -31,19 +32,18 @@ export default class ListItem extends React.Component {
     this.setState({rulesModal: !this.state.rulesModal});
   }
 
-
   render() {
     const {
       firstName, id, lastName, city, country, email, phoneNumber, idCardPicture, idCardHolderPicture, address, zipCode
     } = this.props.item;
     const {verified} = this.props;
 
-    const { rulesModal, updateUserStatus } = this.state;
+    const {rulesModal, updateUserStatus} = this.state;
 
     return (
       <div className="unpublished-item">
         <div className="unpublished-item_images">
-          {idCardPicture && <img alt="id-card" src={Config.getValue('imgHost') + idCardPicture} />}
+          {idCardPicture && <img alt="id-card" src={Config.getValue('imgHost') + idCardPicture}/>}
         </div>
         <div className="unpublished-item_content">
           <div className="header">
@@ -55,11 +55,12 @@ export default class ListItem extends React.Component {
             <p>City: {city ? city : 'Missing'}</p>
             <p>Address: {address ? address : 'Missing'}</p>
             <p>Zip code: {zipCode ? zipCode : 'Missing'}</p>
-            {idCardHolderPicture && <img alt="id-card-and-holder" src={Config.getValue('imgHost') + idCardHolderPicture} style={{width: '50%'}} />}
+            {idCardHolderPicture && <img alt="id-card-and-holder" src={Config.getValue('imgHost') + idCardHolderPicture}
+                                         style={{width: '50%'}}/>}
           </div>
 
           <div>
-            { <RulesModal isActive={rulesModal} user={id} email={email} onClose={this.onRulesModelClose} /> }
+            {<RulesModal isActive={rulesModal} user={id} email={email} onClose={this.onRulesModelClose}/>}
           </div>
 
           <div className="unpublished-item_actions">
@@ -68,12 +69,12 @@ export default class ListItem extends React.Component {
             </div>
             <div className="major-actions">
               {verified === false &&
-                <div><a href="" onClick={(e) => updateUserStatus(e, id, true)}>Verify</a></div>
+              <div><a href="" onClick={(e) => updateUserStatus(e, id, true)}>Verify</a></div>
               }
               {verified === true &&
-                <div><a href="" onClick={(e) => updateUserStatus(e, id, false)}>Unverify</a></div>
+              <div><a href="" onClick={(e) => updateUserStatus(e, id, false)}>Unverify</a></div>
               }
-              <div><a href="" onClick={ this.onRulesClick }>Rules</a></div>
+              <div><a href="" onClick={this.onRulesClick}>Rules</a></div>
             </div>
           </div>
         </div>

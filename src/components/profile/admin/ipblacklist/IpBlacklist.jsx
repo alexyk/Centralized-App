@@ -16,6 +16,7 @@ import Axios from "axios";
 import UsersTopBar from "../users/UsersTopBar";
 import {getAxiosConfig} from "../utils/adminUtils";
 import queryString from "query-string";
+import RuleComponent from "../users/rules/RuleComponent";
 
 class IpBlacklist extends React.Component {
   constructor(props) {
@@ -25,7 +26,7 @@ class IpBlacklist extends React.Component {
 
     this.state = {
       ipAddress: "",
-      ipBlacklist: {},
+      ipBlacklist: [],
       loading: true,
       page: !queryParams.page ? 0 : Number(queryParams.page),
       totalElements: '',
@@ -47,9 +48,10 @@ class IpBlacklist extends React.Component {
 
     Axios.get(url, getAxiosConfig())
       .then(data => {
+
         this.setState({
           ipBlacklist: data.data
-        });
+        })
       })
       .catch(error => {
         NotificationManager.error(USER_SERVERROR + " " + error, "", LONG);
@@ -79,11 +81,14 @@ class IpBlacklist extends React.Component {
       const url = `${apiHost}admin/ipBlacklist`;
 
 
-      Axios.post(url, {"ipAddress": this.state.ipAddress}, getAxiosConfig())
+      Axios.post(url, {"ip": this.state.ipAddress}, getAxiosConfig())
         .then(data => {
+
           NotificationManager.success(this.state.ipAddress + " " + ADDED_TO_BLACKLIST, "", LONG);
 
           this.setState({ipAddress: ""});
+          this.getIpBlacklist();
+
           this.props.history.push("/profile/admin/ipBlacklist");
         })
         .catch(error => {
@@ -92,15 +97,30 @@ class IpBlacklist extends React.Component {
     }
   }
 
-  getIpBlacklist(page) {
+  // getIpBlacklist(page) {
+  //   const apiHost = Config.getValue('apiHost');
+  //   const url = `${apiHost}admin/ipBlacklist?page=${page}`;
+  //
+  //   Axios.get(url, getAxiosConfig())
+  //     .then(data => {
+  //       this.setState({
+  //         loading: false,
+  //         totalElements: data.totalElements,
+  //         ipBlacklist: data.data
+  //       });
+  //     })
+  //     .catch(error => {
+  //       NotificationManager.error(USER_SERVERROR + " " + this.state.ipAddress, "", LONG);
+  //     });
+  // }
+
+  getIpBlacklist() {
     const apiHost = Config.getValue('apiHost');
-    const url = `${apiHost}admin/ipBlacklist?page=${page}`;
+    const url = `${apiHost}admin/ipBlacklist`;
 
     Axios.get(url, getAxiosConfig())
       .then(data => {
         this.setState({
-          loading: false,
-          totalElements: data.totalElements,
           ipBlacklist: data.data
         });
       })
@@ -117,8 +137,7 @@ class IpBlacklist extends React.Component {
     Axios.post(url, ip, getAxiosConfig())
       .then(data => {
         NotificationManager.success(ipAddressToRemove + " " + REMOVED_FROM_BLACKLIST, "", LONG);
-
-        this.setState({ipAddress: ""});
+        this.getIpBlacklist();
         this.props.history.push("/profile/admin/ipBlacklist");
       })
       .catch(error => {
@@ -163,10 +182,6 @@ class IpBlacklist extends React.Component {
       height: '30px'
     };
 
-    const styleTd = {
-      borderBottom: '1px solid #C0C0C0'
-    };
-
     const styleInput = {
       border: '1px solid #cfcfcf',
       borderRadius: '5px',
@@ -182,6 +197,10 @@ class IpBlacklist extends React.Component {
 
     const styleButton = {
       margin: '5px 0 5px 5px',
+    };
+
+    const styleTd = {
+      borderBottom: '1px solid #C0C0C0'
     };
 
     // if (this.state.loading) {
@@ -225,28 +244,26 @@ class IpBlacklist extends React.Component {
                   </tr>
                   </thead>
                   <tbody>
-                  {Object.keys(ipList).map((key) => {
-                    return (
-                      <tr key={key}>
-                        <td style={styleTd}>{key}</td>
-                        <td style={styleTd}>{ipList[key]}</td>
-                        <td style={styleTd}>
-                          <button onClick={(e) => this.addIpToWhitelist(e, {[key]: ipList[key]})} className="btn"
-                                  id="btnText" name="btnText">Whitelist
-                          </button>
-                        </td>
-                      </tr>
-                    );
+                  {ipList && ipList.map(item => {
+                    return <tr key={item.id}>
+                      <td style={styleTd}>{item.id}</td>
+                      <td style={styleTd}>{item.ip}</td>
+                      <td style={styleTd}>
+                        <button onClick={(e) => this.addIpToWhitelist(e, {[item.id]: item.ip})} className="btn"
+                                id="btnText" name="btnText">Whitelist
+                        </button>
+                      </td>
+                    </tr>
                   })}
                   </tbody>
                 </table>
 
                 {/*<Pagination*/}
-                  {/*loading={this.state.totalReservations === 0}*/}
-                  {/*onPageChange={this.onPageChange}*/}
-                  {/*currentPage={this.state.currentPage + 1}*/}
-                  {/*pageSize={20}*/}
-                  {/*totalElements={this.state.totalElements}*/}
+                {/*loading={this.state.totalReservations === 0}*/}
+                {/*onPageChange={this.onPageChange}*/}
+                {/*currentPage={this.state.currentPage + 1}*/}
+                {/*pageSize={20}*/}
+                {/*totalElements={this.state.totalElements}*/}
                 {/*/>*/}
               </div>
             )}

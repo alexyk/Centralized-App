@@ -1,42 +1,50 @@
-import React, { Component } from "react";
-import { Modal } from "react-bootstrap";
+import React, {Component} from "react";
+import {Modal} from "react-bootstrap";
 import PropTypes from "prop-types";
 
 import RuleComponent from "./RuleComponent";
 import Axios from "axios";
-import { Config } from "../../../../../config";
+import {Config} from "../../../../../config";
+import {getAxiosConfig} from "../../utils/adminUtils";
 
 import "../../../../../styles/css/components/modals/modal.css";
-import { getAxiosConfig } from "../../utils/adminUtils";
 
 
 export default class RulesModal extends Component {
   constructor(props) {
     super(props);
 
+    /**
+     * uiState - used in key when rendering items
+     */
     this.state = {
-      isActive: true,
-      rules: [ ]
+      uiState: 0,
+      rules: []
     }
 
-    this.onHide = this.onHide.bind(this);
     this.onRuleToggle = this.onRuleToggle.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
-
-    this.getRules(props);
   }
 
-  getRules(props) {
+  getSnapshotBeforeUpdate(prevProps, prevState) {
+    if (this.props.isActive) {
+      this.serviceGetRules();
+    }
+  }
+
+  serviceGetRules(props) {
     const apiHost = Config.getValue('apiHost');
-    const { user } = props;
+    const {user} = this.props;
     const url = `${apiHost}admin/users/${user}/rules`;
 
     Axios.get(url, getAxiosConfig())
-      .then( data => {
-        console.log(`[SERVER] getRules: ${data}`, {data})
+      .then(response => {
+        const {data: responseData} = response;
+        // console.log(`[SERVER] getRules response`, {responseData, response})
+
         let rules = [];
-        for (let name in data) {
-          rules.push({name, value:data[name]})
+        for (let name in responseData) {
+          rules.push({name, value: responseData[name]})
         }
         this.setState({rules});
       })
@@ -45,17 +53,25 @@ export default class RulesModal extends Component {
       });
   }
 
-
-  setRules(props) {
+  serviceSetRules(props) {
     const apiHost = Config.getValue('apiHost');
-    const { user } = props;
+    const {user} = props;
     const url = `${apiHost}admin/users/${user}/rules`;
-    const data = {};
-    this.state.rules.forEach(({name,value},index) => data[name] = value);
 
-    Axios.post(url, data, getAxiosConfig())
-      .then( data => {
-        console.log(`[SERVER] setting rules: ${data}`, {data})
+    // prepare post data
+    const postData = {};
+    this.state.rules.forEach(({name, value}, index) => postData[name] = value);
+
+    Axios.post(url, postData, getAxiosConfig())
+      .then(response => {
+        const {data:responseData} = response;
+        //console.log(`[SERVER] setting rules`, {responseData,postData,response})
+
+        let rules = [];
+        for (let name in responseData) {
+          rules.push({name, value: responseData[name]})
+        }
+        this.setState({rules});
       })
       .catch(error => {
         console.warn(`[SERVER] setting rules error: ${error.message}`, {error});
@@ -63,40 +79,46 @@ export default class RulesModal extends Component {
   }
 
 
-  onHide() {
-    // nothing so far
-  }
-
-
-  onRuleToggle(value,index) {
+  onRuleToggle(value, index) {
     const rules = this.state.rules.concat(); // make a shallow copy
     rules[index].value = !value;
 
-    this.setState({rules});
+    this.setState({rules, uiState: this.state.uiState+1});
   }
 
 
   onSubmit(e) {
-    if (e) e.preventDefault();
-    // TODO sumbit
+    if (e) {
+      e.preventDefault();
+    }
+
+    this.serviceSetRules(this.props);
+    this.props.onClose(this.props);
   }
 
 
   _renderItems() {
     if (this.state.rules.length == 0) {
-      return <span>{"Loading ..."}</span>;
+      return <span>{"Loading available rules ..."}</span>;
     }
 
     return (
-      this.state.rules.map( (item,index) => {
-        const { name, value, } = item;
-        return <RuleComponent key={`${index}_${this.state.isActive}`} name={name} value={value} onToggle={() => this.onRuleToggle(value,index)} />
+      this.state.rules.map((item, index) => {
+        const {name, value} = item;
+        return <RuleComponent
+                key={`${index}_${this.state.uiState}`}
+                name={name}
+                value={value}
+                onToggle={() => this.onRuleToggle(value, index)}
+        />
       })
     )
   }
 
 
   render() {
+    const { user:userId, email } = this.props;
+
     return (
       <Modal
         show={this.props.isActive}
@@ -104,15 +126,19 @@ export default class RulesModal extends Component {
         onHide={this.props.onClose}
       >
         <Modal.Header>
-          <h1>Edit Rules</h1><br />
-          <h5>{this.props.user}</h5>
-          <button type="button" className="close" onClick={this.props.onClose}>
-            &times;
-          </button>
+          <button type="button" className="close" onClick={this.props.onClose}>&times;</button>
+          <h1>Edit User Rules</h1>
+          <hr />
+          <span className="subtitle-label-text">E-mail</span>:
+          <span className="subtitle-value-text"> {email}</span> &nbsp;&nbsp;
+          <span className="subtitle-label-text">User Id</span>:
+          <span className="subtitle-value-text"> {userId}</span>
+          <hr />
         </Modal.Header>
         <Modal.Body>
-          { this._renderItems() }
-          <br /> <br />
+          {this._renderItems()}
+          <br/> <br/>
+          <hr />
           <div className="btn" onClick={this.onSubmit}>Apply</div>
         </Modal.Body>
       </Modal>
