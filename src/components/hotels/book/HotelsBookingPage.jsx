@@ -16,7 +16,7 @@ import {connect} from "react-redux";
 import moment from "moment";
 import queryString from "query-string";
 import {withRouter} from "react-router-dom";
-import BookingSteps from "../../common/utility/BookingSteps";
+import BookingSteps, { BookingStepsMobile } from "../../common/bookingSteps";
 import {RoomsXMLCurrency} from "../../../services/utilities/roomsXMLCurrency";
 import LocPrice from "../../common/utility/LocPrice";
 import xregexp from "xregexp";
@@ -26,10 +26,14 @@ import {getCurrency, getCurrencySign} from "../../../selectors/paymentInfo";
 import {getCurrencyExchangeRates} from "../../../selectors/exchangeRatesInfo";
 import {getCountries} from "../../../selectors/countriesInfo";
 import {ROOM_NO_LONGER_AVAILABLE} from "../../../constants/warningMessages";
+import { isMobileWebView, updateMobileCache, MOBILE_STEPS } from "../../../services/utilities/mobileWebView";
+
 
 class HotelsBookingPage extends React.Component {
   constructor(props) {
     super(props);
+
+    console.log(`[Webview] HotelsBookingPage - constructor`, {props});
 
     this.state = {
       country: ""
@@ -64,8 +68,7 @@ class HotelsBookingPage extends React.Component {
     const queryParams = queryString.parse(this.props.location.search);
     const id = this.props.match.params.id;
     const query = this.getQueryString(queryParams);
-    const isWebView = this.props.location.pathname.indexOf("/mobile") !== -1;
-    const rootURL = !isWebView
+    const rootURL = !isMobileWebView
       ? `/hotels/listings/book/${id}/confirm`
       : `/mobile/hotels/listings/book/${id}/confirm`;
     this.props.history.push(`${rootURL}${query}`);
@@ -215,22 +218,6 @@ class HotelsBookingPage extends React.Component {
   }
 
   render() {
-    if (!this.props.hotel) {
-      return <div className="loader"/>;
-    }
-
-    if (!this.props.rooms) {
-      return <div className="loader"/>;
-    }
-
-    if (!this.props.currencyExchangeRates) {
-      return <div className="loader"/>;
-    }
-
-    if (!this.props.guests) {
-      return <div className="loader"/>;
-    }
-
     const {
       hotel,
       rooms,
@@ -242,6 +229,18 @@ class HotelsBookingPage extends React.Component {
       handleChildAgeChange,
       location
     } = this.props;
+
+    const isLoading = (!hotel || !rooms || !currencyExchangeRates || !guests);
+
+    if (isLoading) {
+      if (isMobileWebView) {
+        updateMobileCache({isLoading});
+        return <div className="loader" style={{width:"100%",height:"100%"}}></div>;
+      } else {
+        return <div className="loader"/>;
+      }
+    }
+
     const city = hotel.city;
     const address = hotel.additionalInfo.mainAddress;
     const roomsTotalPrice = this.calculateRoomsTotalPrice(rooms);
@@ -261,14 +260,10 @@ class HotelsBookingPage extends React.Component {
 
     return (
       <div>
-        <BookingSteps
-          steps={[
-            "Provide Guest Information",
-            "Review Room Details",
-            "Confirm and Pay"
-          ]}
-          currentStepIndex={1}
-        />
+        { isMobileWebView
+            ? <BookingStepsMobile steps={MOBILE_STEPS} currentStepIndex={1} />
+            : <BookingSteps steps={["Provide Guest Information", "Review Room Details", "Confirm and Pay"]} currentStepIndex={1} />
+        }
         <section id="room-book">
           <div className="container">
             <AsideContentPage>

@@ -1,5 +1,17 @@
-import queryStringUtil from 'query-string'
+import React from 'react';
+import queryStringUtil from 'query-string';
 import StringUtils from './stringUtilities';
+import store from '../../reduxStore';
+import { setCurrency } from '../../actions/paymentInfo';
+import packageJson from '../../../package.json';
+
+
+export const MOBILE_STEPS = ['Guest Info', 'Choose Payment', 'Booking Details', 'Confirm and Pay'];
+
+const showMobileFooterBackButton = false;
+const showMobileFooterVersion = true;
+const showMobileFooterCurrencySelection = true;
+
 
 export var isMobileWebView = false;
 export function setIsMobileWebView(origin, value) {
@@ -13,7 +25,8 @@ export function setIsMobileWebView(origin, value) {
 }
 
 const mobileCacheDefault = {
-  isBooking: false
+  isBooking: false,
+  isLoading: false
 };
 export function updateMobileCache(obj, caller) {
   if (obj == null) {
@@ -33,9 +46,15 @@ export var mobileCache = {...mobileCacheDefault};
  * @param {Object} location
  */
 export function mobileProcessQueryString({pathname, search}) {
+  const params = queryStringUtil.parse(search);
+  const { currency } = params;
+
   if (pathname.indexOf('mobile/hotels/listings/book') > -1) {
-    const bookingParams = queryStringUtil.parse(search);
-    updateMobileCache({bookingParams,isBooking: true});
+    updateMobileCache({bookingParams: params,isBooking: true});
+  }
+  if (currency) {
+    localStorage.setItem('currency', currency);
+    store.dispatch(setCurrency(currency));
   }
 }
 
@@ -90,4 +109,44 @@ export function fixNatForMobileWebView(location) {
   }
 
   return result;
+}
+
+
+export function renderMobileFooter(props) {
+  if (!isMobileWebView) return null;
+
+  const { history, currency } = props;
+
+  const isBackButtonVisible = (showMobileFooterBackButton && !mobileCache.isBooking);
+  const isCurrencySelectionVisible = (showMobileFooterCurrencySelection && !mobileCache.isLoading);
+  const isVersionVisible = (showMobileFooterVersion);
+
+  return (
+      <div className="container" style={{'marginBottom': '50px'}}>
+        { isBackButtonVisible
+            && <button className="btn" style={{ 'width': '100%', 'marginBottom': '20px' }} onClick={() => history.goBack()}>Back</button>
+        }
+        { isCurrencySelectionVisible
+            && <div className="select">
+                <select
+                  className="currency"
+                  value={currency}
+                  style={{ 'height': '40px', 'margin': '10px 0', 'textAlignLast': 'right', 'paddingRight': '45%', 'direction': 'rtl', display: "block"}}
+                  onChange={(e) => props.dispatch(setCurrency(e.target.value))}
+                >
+                  <option value="EUR">EUR</option>
+                  <option value="USD">USD</option>
+                  <option value="GBP">GBP</option>
+                </select>
+              </div>
+        }
+        { isVersionVisible
+        && (
+          <div>
+            &nbsp;&nbsp;&nbsp;
+            <span style={{fontSize: "10px",float:"right"}}>v{packageJson.version} </span>
+          </div>
+        )}
+      </div>
+  )
 }

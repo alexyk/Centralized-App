@@ -8,6 +8,7 @@ import {Config} from "../../../../../config";
 import {getAxiosConfig} from "../../utils/adminUtils";
 
 import "../../../../../styles/css/components/modals/modal.css";
+import { NotificationManager } from "react-notifications";
 
 
 export default class RulesModal extends Component {
@@ -19,7 +20,9 @@ export default class RulesModal extends Component {
      */
     this.state = {
       uiState: 0,
-      rules: []
+      rules: [],
+      message: "Loading available rules ...",
+      isLoadedFromServer: false
     }
 
     this.onRuleToggle = this.onRuleToggle.bind(this);
@@ -46,10 +49,21 @@ export default class RulesModal extends Component {
         for (let name in responseData) {
           rules.push({name, value: responseData[name]})
         }
-        this.setState({rules});
+        if (rules.length == 0) {
+          this.setState({isLoadedFromServer: false});
+          NotificationManager.warn(`Loading rules failed - 0 rules found!`,"No result",7000);
+        } else {
+          this.setState({rules,isLoadedFromServer: true});
+          NotificationManager.info(`Loading rules success!`,"Success!",7000);
+        }
       })
       .catch(error => {
         console.warn(`[SERVER] getRules error: ${error.message}`, {error});
+        const errorMsg = "(No rules loaded)";
+        if (errorMsg != this.state.message) {
+          this.setState({message: errorMsg,isLoadedFromServer: false});
+          NotificationManager.error(`Getting rules failed`+"\n"+`ERROR: ${error.message}`,"Error",7000);
+        }
       });
   }
 
@@ -99,7 +113,7 @@ export default class RulesModal extends Component {
 
   _renderItems() {
     if (this.state.rules.length == 0) {
-      return <span>{"Loading available rules ..."}</span>;
+      return <span>{this.state.message}</span>;
     }
 
     return (
@@ -118,28 +132,34 @@ export default class RulesModal extends Component {
 
   render() {
     const { user:userId, email } = this.props;
+    const hasRulesLoaded = (this.state.isLoadedFromServer);
 
     return (
       <Modal
-        show={this.props.isActive}
+        show={this.props.isActive && hasRulesLoaded}
         className="modal fade myModal"
         onHide={this.props.onClose}
       >
         <Modal.Header>
           <button type="button" className="close" onClick={this.props.onClose}>&times;</button>
           <h1>Edit User Rules</h1>
-          <hr />
+          <hr style={{width:600}} />
           <span className="subtitle-label-text">E-mail</span>:
           <span className="subtitle-value-text"> {email}</span> &nbsp;&nbsp;
-          <span className="subtitle-label-text">User Id</span>:
-          <span className="subtitle-value-text"> {userId}</span>
+          <span style={{float:'right',display:'block'}}>
+            <span className="subtitle-label-text">User Id</span>:
+            <span className="subtitle-value-text"> {userId}</span>
+          </span>
           <hr />
         </Modal.Header>
         <Modal.Body>
           {this._renderItems()}
           <br/> <br/>
-          <hr />
-          <div className="btn" onClick={this.onSubmit}>Apply</div>
+
+          {hasRulesLoaded
+            ? [<hr />,<div className="btn" onClick={this.onSubmit}>Apply</div>]
+            : null
+          }
         </Modal.Body>
       </Modal>
     )

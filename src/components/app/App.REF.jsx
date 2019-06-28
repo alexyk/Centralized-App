@@ -46,6 +46,9 @@ export default class defApp extends React.Component {
   constructor(props) {
     super(props);
 
+    console.log(`[App.REF] props`, {props});
+    
+
     this.isAuthenticated = this.isAuthenticated.bind(this);
     const location = this.props.location
     const isMobile = (location.pathname.indexOf("/mobile") !== -1);

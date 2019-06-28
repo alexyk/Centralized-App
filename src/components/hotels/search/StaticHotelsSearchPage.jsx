@@ -50,12 +50,12 @@ class StaticHotelsSearchPage extends React.Component {
     this.queryParams = queryParams;
 
     if (isMobileWebView) {
-      localStorage.setItem('currency', queryParams.currency);
-      try {
-        this.props.dispatch(setCurrency(queryParams.currency));
-      } catch (e) {
-        console.error(e)
-      }
+      // localStorage.setItem('currency', queryParams.currency);
+      // try {
+      //   this.props.dispatch(setCurrency(queryParams.currency));
+      // } catch (e) {
+      //   console.error(e)
+      // }
     }
 
     this.client = null;

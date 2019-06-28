@@ -40,11 +40,11 @@ function HotelDetailsInfoSection(props) {
       .then(data => {
         console.log(data);
         const { isEmailVerified } = data;
-        if (!isEmailVerified) {
-          props.dispatch(openModal(EMAIL_VERIFICATION));
-        } else {
+        // if (!isEmailVerified) {
+          // props.dispatch(openModal(EMAIL_VERIFICATION));
+        // } else {
           props.handleBookRoom(roomsResults.slice(resultIndex));
-      }
+      // }
     });
   };
 

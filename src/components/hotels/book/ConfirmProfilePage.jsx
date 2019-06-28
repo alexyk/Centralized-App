@@ -7,12 +7,13 @@ import moment from 'moment';
 import { Config } from '../../../config.js';
 import requester from '../../../requester';
 import { LONG } from '../../../constants/notificationDisplayTimes';
-import BookingSteps from '../../common/bookingSteps';
+import BookingSteps, {BookingStepsMobile} from '../../common/bookingSteps';
 import Select from '../../common/google/GooglePlacesAutocomplete';
 import StringUtils from '../../../services/utilities/stringUtilities';
 import { getCountries } from '../../../selectors/countriesInfo';
 
 import '../../../styles/css/components/hotels/book/profile-confirm-form.css';
+import { isMobileWebView, MOBILE_STEPS } from '../../../services/utilities/mobileWebView.js';
 
 class ConfirmProfilePage extends React.Component {
   constructor(props) {
@@ -162,6 +163,8 @@ class ConfirmProfilePage extends React.Component {
 
     return (
       <React.Fragment>
+        { isMobileWebView && <BookingStepsMobile steps={MOBILE_STEPS} currentStepIndex={3} /> }
+
         <div className="sm-none">
           <BookingSteps steps={['Provide Guest Information', 'Review Room Details', 'Confirm and Pay']} currentStepIndex={2} />
         </div>
@@ -253,7 +256,7 @@ ConfirmProfilePage.propTypes = {
 
   // Router props
   location: PropTypes.object,
-  
+
   // Redux props
   countries: PropTypes.array
 };

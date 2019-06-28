@@ -21,6 +21,8 @@ class HotelsBookingRouterPage extends React.Component {
   constructor(props) {
     super(props);
 
+    console.log(`[HotelsBookingRouterPage] props`,props);
+
     this.quoteIdPollingInterval = null;
 
     let quoteId;
@@ -58,6 +60,7 @@ class HotelsBookingRouterPage extends React.Component {
   componentDidMount() {
     this.requestHotel();
     this.requestHotelRooms().then((hasAvailableRooms) => {
+      console.log(`[HotelsBookingRouterPage] componentDidMount - requestHotelRooms`, {hasAvailableRooms,props:this.props})
       this.findAndSetUserRequestedRoomsByQuoteId(hasAvailableRooms);
     });
     this.setQuoteIdPollingInterval();
@@ -105,6 +108,7 @@ class HotelsBookingRouterPage extends React.Component {
       if (rooms) {
         this.setState({ rooms: rooms.roomsResults });
       } else {
+        console.log(`REDIRECT 1 - findAndSetUserRequestedRoomsByQuoteId`, {quoteId,rooms,state:this.state,props:this.props,urlParams})
         this.redirectToHotelDetailsPage();
       }
     }
@@ -145,6 +149,7 @@ class HotelsBookingRouterPage extends React.Component {
                       resolve(true);
                     });
                   } else {
+                    console.log(`REDIRECT 2 - requestCreateReservation`)
                     this.redirectToHotelDetailsPage();
                   }
                 });
@@ -155,6 +160,7 @@ class HotelsBookingRouterPage extends React.Component {
             const errors = res.errors;
             if (errors.hasOwnProperty('RoomsXmlResponse')) {
               if (errors['RoomsXmlResponse'].message.indexOf('QuoteNotAvailable:') !== -1) {
+                console.log(`REDIRECT 3 - requestCreateReservation 2`)
                 this.redirectToHotelDetailsPage();
               }
             } else {
@@ -257,6 +263,7 @@ class HotelsBookingRouterPage extends React.Component {
                     NotificationManager.warning('Quote expire', '', LONG);
                   }
                 } else {
+                  console.log(`REDIRECT 4 - requestUpdateOnQuoteId`)
                   this.redirectToHotelDetailsPage();
                 }
               }
@@ -275,6 +282,7 @@ class HotelsBookingRouterPage extends React.Component {
           if (res.success) {
             resolve(true);
           } else {
+            console.log(`REDIRECT 5 - requestLockOnQuoteId`)
             this.redirectToHotelDetailsPage();
             reject(false);
           }

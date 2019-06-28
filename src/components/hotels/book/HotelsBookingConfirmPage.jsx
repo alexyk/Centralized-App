@@ -14,7 +14,7 @@ import { HotelReservation } from '../../../services/blockchain/hotelReservation'
 import { RoomsXMLCurrency } from '../../../services/utilities/roomsXMLCurrency';
 import { CurrencyConverter } from '../../../services/utilities/currencyConverter';
 import requester from '../../../requester';
-import BookingSteps from '../../common/bookingSteps';
+import BookingSteps, { BookingStepsMobile } from '../../common/bookingSteps';
 import LocPrice from '../../common/utility/LocPrice';
 import QuoteLocPrice from '../../common/utility/QuoteLocPrice';
 import QuoteLocPricePP from '../../common/utility/QuoteLocPricePP';
@@ -28,6 +28,7 @@ import { getSeconds } from '../../../selectors/locPriceUpdateTimerInfo.js';
 import { getLocAmountById, getQuotePPFiatAmount, getQuotePPAdditionalFees, getQuotePPFundsSufficient } from '../../../selectors/locAmountsInfo.js';
 import RecoverWallerPassword from '../../common/utility/RecoverWallerPassword';
 import { ExchangerWebsocket } from '../../../services/socket/exchangerWebsocket';
+import { isMobileWebView, MOBILE_STEPS } from "../../../services/utilities/mobileWebView";
 
 import '../../../styles/css/components/hotels/book/hotel-booking-confirm-page.css';
 import ConfirmPaymentWithLocModal from './modals/ConfirmPaymentWithLocModal';
@@ -45,6 +46,8 @@ const SAFECHARGE_VAR = 'SCPaymentModeOn';
 class HotelsBookingConfirmPage extends Component {
   constructor(props) {
     super(props);
+
+    console.log(`[HotelsBookingConfirmPage] props`,props);
 
     this.timer = null;
 
@@ -114,14 +117,14 @@ class HotelsBookingConfirmPage extends Component {
 
   stopQuote() {
     ExchangerWebsocket.sendMessage(
-      DEFAULT_QUOTE_LOC_ID, 
-      'approveQuote', 
+      DEFAULT_QUOTE_LOC_ID,
+      'approveQuote',
       { bookingId: this.props.reservation.preparedBookingId }
     );
 
     ExchangerWebsocket.sendMessage(
-      DEFAULT_QUOTE_LOC_PP_ID, 
-      'approveQuote', 
+      DEFAULT_QUOTE_LOC_PP_ID,
+      'approveQuote',
       { bookingId: this.props.reservation.preparedBookingId + PAYMENT_PROCESSOR_IDENTIFICATOR }
     );
 
@@ -166,8 +169,7 @@ class HotelsBookingConfirmPage extends Component {
     };
 
     const id = match.params.id;
-    const isWebView = location.pathname.indexOf('/mobile') !== -1;
-    const rootURL = !isWebView ? `/hotels/listings/book/${id}/profile` : `/mobile/hotels/listings/book/${id}/profile`;
+    const rootURL = !isMobileWebView ? `/hotels/listings/book/${id}/profile` : `/mobile/hotels/listings/book/${id}/profile`;
     const search = location.search;
     this.props.history.push({
       pathname: rootURL,
@@ -495,7 +497,11 @@ class HotelsBookingConfirmPage extends Component {
 
   render() {
     if (!this.props.userInfo || !this.props.reservation) {
-      return <div className="loader"></div>;
+      if (isMobileWebView) {
+        return <div className="loader" style={{width:"100%",height:"100%"}}></div>;
+      } else {
+        return <div className="loader"></div>;
+      }
     }
 
     const { reservation, isActive, currency, currencySign, quoteLocAmount, quotePPFiatAmount, quotePPAdditionalFees, quotePPFundsSufficient, currencyExchangeRates, userInfo, seconds } = this.props;
@@ -510,10 +516,13 @@ class HotelsBookingConfirmPage extends Component {
 
     return (
       <React.Fragment>
+        { isMobileWebView && <BookingStepsMobile steps={MOBILE_STEPS} currentStepIndex={1} /> }
         <LocPriceUpdateTimer />
 
         <div className="sm-none">
-          <BookingSteps steps={['Provide Guest Information', 'Review Room Details', 'Confirm and Pay']} currentStepIndex={2} />
+          { !isMobileWebView
+              && <BookingSteps steps={['Provide Guest Information', 'Review Booking Details', 'Confirm and Pay']} currentStepIndex={2} />
+          }
         </div>
 
         <div id="room-book-confirm">
@@ -612,19 +621,6 @@ class HotelsBookingConfirmPage extends Component {
               </div>
             </div>
           </div>
-          <ConfirmPaymentWithLocModal
-            isActive={isActive[CONFIRM_PAYMENT_WITH_LOC]}
-            text={'Enter your wallet password'}
-            placeholder={'Wallet password'}
-            handleSubmit={() => this.payWithLocSingleWithdrawer()}
-            openModal={this.openModal}
-            closeModal={this.closeModal}
-            password={password}
-            onChange={this.onChange}
-          />
-          <RecoverWallerPassword />
-          <PendingBookingLocModal isActive={isActive[PENDING_BOOKING_LOC]} openModal={this.openModal} closeModal={this.closeModal} />
-          <PendingBookingFiatModal isActive={isActive[PENDING_BOOKING_FIAT]} openModal={this.openModal} closeModal={this.closeModal} handleSubmit={() => this.payWithCard(fiatAmountPP)} />
         </div>
       </React.Fragment>
     );
