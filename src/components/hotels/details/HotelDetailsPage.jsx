@@ -42,7 +42,6 @@ class HotelDetailsPage extends React.Component {
     let queryParams = parse(this.props.location.search);
 
     if (this.props) {
-      console.log(this.props);
       if (queryParams.startDate && queryParams.endDate) {
         startDate = moment(queryParams.startDate, 'DD/MM/YYYY');
         endDate = moment(queryParams.endDate, 'DD/MM/YYYY');
@@ -109,15 +108,12 @@ class HotelDetailsPage extends React.Component {
       const adults = this.getAdults(rooms);
       const hasChildren = this.getHasChildren(rooms);
       const region = {id: searchParams.get('region')};
-      console.log(region);
-      console.log(this.props.region);
 
       this.props.dispatch(asyncSetStartDate(startDate));
       this.props.dispatch(asyncSetEndDate(endDate));
       this.props.dispatch(setHotelsSearchInfo(region, rooms, adults, hasChildren));
 
       this.getCityLocation(searchParams.get('sch') ? searchParams.get('region') + "_" + searchParams.get('sch') : searchParams.get('region'));
-      console.log(this.props);
     }
   }
 
@@ -153,7 +149,6 @@ class HotelDetailsPage extends React.Component {
 
       requester.getRegionNameById(region).then(res => {
         res.body.then(data => {
-          console.log(data);
           return data;
         });
       });
@@ -180,7 +175,6 @@ class HotelDetailsPage extends React.Component {
   }
 
   search(queryString) {
-    console.log(queryString);
     this.props.history.push('/hotels/listings' + queryString);
 
     if(this.props.region.id) {
@@ -206,7 +200,6 @@ class HotelDetailsPage extends React.Component {
       let pair = pairs[i].split('=');
       map.set(pair[0], this.parseParam(pair[1]));
     }
-
     return map;
   }
 
@@ -218,6 +211,7 @@ class HotelDetailsPage extends React.Component {
     params.push(`startDate=${encodeURI(query.startDate)}`);
     params.push(`endDate=${encodeURI(query.endDate)}`);
     params.push(`rooms=${encodeURI(query.rooms)}`);
+    params.push(`nat=${encodeURI(query.nat)}`);
     return params;
   }
 
@@ -458,7 +452,6 @@ class HotelDetailsPage extends React.Component {
     };
 
     const {startDate, endDate, region} = this.props;
-    console.log(this.props);
 
     return (
       <div>

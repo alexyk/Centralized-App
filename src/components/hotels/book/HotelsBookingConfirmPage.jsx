@@ -109,7 +109,7 @@ class HotelsBookingConfirmPage extends Component {
     const id = match.params.id;
     rooms = encodeURI(JSON.stringify(rooms));
 
-    return `hotels/listings/${id}?region=${queryParams.region}&currency=${currency}&startDate=${queryParams.startDate}&endDate=${queryParams.endDate}&rooms=${rooms}`;
+    return `hotels/listings/${id}?region=${queryParams.region}&currency=${currency}&startDate=${queryParams.startDate}&endDate=${queryParams.endDate}&rooms=${rooms}&nat=${queryParams.nat}`;
   }
 
   stopQuote() {

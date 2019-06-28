@@ -128,6 +128,7 @@ class HotelsBookingPage extends React.Component {
     result += '&startDate=' + encodeURI(queryStringParameters.startDate);
     result += '&endDate=' + encodeURI(queryStringParameters.endDate);
     result += '&rooms=' + encodeURI(this.stringifyRoomsExcludingGuestNames(queryStringParameters.rooms));
+    result += '&nat=' + encodeURI(queryStringParameters.nat);
 
     return result;
   }
@@ -150,7 +151,7 @@ class HotelsBookingPage extends React.Component {
     queryString += "&endDate=" + encodeURI(queryStringParameters.endDate);
     queryString += "&rooms=" + encodeURI(JSON.stringify(this.props.guests));
     queryString += "&quoteId=" + encodeURI(queryStringParameters.quoteId);
-    queryString += "&nat=" + encodeURI(this.state.country.id);
+    queryString += "&nat=" + encodeURI(queryStringParameters.nat);
     return queryString;
   }
 
@@ -162,6 +163,15 @@ class HotelsBookingPage extends React.Component {
       for (let j = 0; j < adults.length; j++) {
         const first = adults[j].firstName;
         const last = adults[j].lastName;
+        if (!(regexp.test(first) && regexp.test(last))) {
+          return false;
+        }
+      }
+
+      const children = rooms[i].children;
+      for(let c = 0; c < children.length; c++){
+        const first = children[c].firstName;
+        const last = children[c].lastName;
         if (!(regexp.test(first) && regexp.test(last))) {
           return false;
         }

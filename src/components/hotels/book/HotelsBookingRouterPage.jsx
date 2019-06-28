@@ -273,6 +273,7 @@ class HotelsBookingRouterPage extends React.Component {
     result += '&startDate=' + encodeURI(queryStringParameters.startDate);
     result += '&endDate=' + encodeURI(queryStringParameters.endDate);
     result += '&rooms=' + encodeURI(queryStringParameters.rooms);
+    result += '&nat=' + encodeURI(queryStringParameters.nat);
 
     return result;
   }
@@ -286,6 +287,7 @@ class HotelsBookingRouterPage extends React.Component {
     result += '&startDate=' + encodeURI(queryStringParameters.startDate);
     result += '&endDate=' + encodeURI(queryStringParameters.endDate);
     result += '&rooms=' + encodeURI(this.stringifyRoomsExcludingGuestNames(queryStringParameters.rooms));
+    result += '&nat=' + encodeURI(queryStringParameters.nat);
 
     return result;
   }
@@ -299,6 +301,7 @@ class HotelsBookingRouterPage extends React.Component {
     params.push(`startDate=${encodeURI(query.startDate)}`);
     params.push(`endDate=${encodeURI(query.endDate)}`);
     params.push(`rooms=${encodeURI(query.rooms)}`);
+    params.push(`nat=${encodeURI(query.nat)}`);
 
     return params;
   }
@@ -325,8 +328,10 @@ class HotelsBookingRouterPage extends React.Component {
         const lastName = searchRoom.adults.length ? searchRooms[roomIndex].adults[guestIndex].lastName : '';
         const adult = {
           title: 'Mr',
-          firstName: firstName ? firstName : (guestIndex > 0 ? 'Optional' : ''),
-          lastName: lastName ? lastName : (guestIndex > 0 ? 'Optional' : ''),
+          // firstName: firstName ? firstName : (guestIndex > 0 ? 'Optional' : ''),
+          // lastName: lastName ? lastName : (guestIndex > 0 ? 'Optional' : ''),
+          firstName: firstName ? firstName : '',
+          lastName: lastName ? lastName : '',
         };
 
         adults.push(adult);
@@ -337,8 +342,10 @@ class HotelsBookingRouterPage extends React.Component {
         const firstName = searchRoom.children.length ? searchRooms[roomIndex].children[guestIndex].firstName : '';
         const lastName = searchRoom.children.length ? searchRooms[roomIndex].children[guestIndex].lastName : '';
         const child = {
-          firstName: firstName ? firstName : (guestIndex > 0 ? 'Optional' : ''),
-          lastName: lastName ? lastName : (guestIndex > 0 ? 'Optional' : ''),
+        //   firstName: firstName ? firstName : (guestIndex > 0 ? 'Optional' : ''),
+        //   lastName: lastName ? lastName : (guestIndex > 0 ? 'Optional' : ''),
+          firstName: firstName ? firstName : '',
+          lastName: lastName ? lastName : '',
           age: searchRooms[roomIndex].children[guestIndex].age
         };
         children.push(child);
