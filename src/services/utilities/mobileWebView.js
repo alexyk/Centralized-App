@@ -6,7 +6,7 @@ import { setCurrency } from '../../actions/paymentInfo';
 import packageJson from '../../../package.json';
 
 
-export const MOBILE_STEPS = ['Guest Info', 'Choose Payment', 'Booking Details', 'Confirm and Pay'];
+export const MOBILE_STEPS = ['Guest Info', 'Choose Payment', 'Billing Info', 'Confirm and Pay'];
 
 const showMobileFooterBackButton = false;
 const showMobileFooterVersion = true;

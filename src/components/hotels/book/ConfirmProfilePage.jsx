@@ -163,7 +163,7 @@ class ConfirmProfilePage extends React.Component {
 
     return (
       <React.Fragment>
-        { isMobileWebView && <BookingStepsMobile steps={MOBILE_STEPS} currentStepIndex={3} /> }
+        { isMobileWebView && <BookingStepsMobile steps={MOBILE_STEPS} currentStepIndex={2} /> }
 
         <div className="sm-none">
           <BookingSteps steps={['Provide Guest Information', 'Review Room Details', 'Confirm and Pay']} currentStepIndex={2} />
