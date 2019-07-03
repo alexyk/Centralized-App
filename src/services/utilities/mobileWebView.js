@@ -3,7 +3,7 @@ import queryStringUtil from 'query-string';
 import StringUtils from './stringUtilities';
 import store from '../../reduxStore';
 import { setCurrency } from '../../actions/paymentInfo';
-import packageJson from '../../../package.json';
+import Version from '../../components/common/version'
 
 
 export const MOBILE_STEPS = ['Guest Info', 'Choose Payment', 'Billing Info', 'Confirm and Pay'];
@@ -140,13 +140,7 @@ export function renderMobileFooter(props) {
                 </select>
               </div>
         }
-        { isVersionVisible
-        && (
-          <div>
-            &nbsp;&nbsp;&nbsp;
-            <span style={{fontSize: "10px",float:"right"}}>v{packageJson.version} </span>
-          </div>
-        )}
+        { isVersionVisible && <Version /> }
       </div>
   )
 }
