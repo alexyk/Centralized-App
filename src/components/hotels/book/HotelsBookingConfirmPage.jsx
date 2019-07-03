@@ -509,8 +509,6 @@ class HotelsBookingConfirmPage extends Component {
     const fiatPriceInUserCurrency = currencyExchangeRates && CurrencyConverter.convert(currencyExchangeRates, reservation.currency, currency, reservation.fiatPrice).toFixed(2);
 
     const addFeePP = Number(additionalFeesPP) + fiatAmountPP - reservation.fiatPrice;
-    console.log(fiatAmountPP);
-    console.log(reservation);
 
     return (
       <React.Fragment>
