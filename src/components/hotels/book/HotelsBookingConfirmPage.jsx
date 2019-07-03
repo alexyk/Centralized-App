@@ -508,6 +508,10 @@ class HotelsBookingConfirmPage extends Component {
     const additionalFeesPP = currencyExchangeRates && quotePPAdditionalFees && CurrencyConverter.convert(currencyExchangeRates, DEFAULT_CRYPTO_CURRENCY, currency, quotePPAdditionalFees).toFixed(2);
     const fiatPriceInUserCurrency = currencyExchangeRates && CurrencyConverter.convert(currencyExchangeRates, reservation.currency, currency, reservation.fiatPrice).toFixed(2);
 
+    const addFeePP = Number(additionalFeesPP) + fiatAmountPP - reservation.fiatPrice;
+    console.log(fiatAmountPP);
+    console.log(reservation);
+
     return (
       <React.Fragment>
         <LocPriceUpdateTimer />
@@ -569,9 +573,11 @@ class HotelsBookingConfirmPage extends Component {
                     <div className="payment-methods-card">
                       <div className="details">
                         <p className="booking-card-price">
-                          Pay with Credit Card: Current Market Price: <span className="important">{currencySign} {fiatAmountPP && (fiatAmountPP).toFixed(2)}</span>
+                          {/*Pay with Credit Card: Current Market Price: <span className="important">{currencySign} {fiatAmountPP && (fiatAmountPP).toFixed(2)}</span>*/}
+                          Pay with Credit Card: Current Market Price: <span className="important">{currencySign} {fiatAmountPP && (reservation.fiatPrice).toFixed(2)}</span>
                         </p>
-                        <p>Additional Fees: <span className="important">{additionalFeesPP > 0 ? (currencySign + ' ' + additionalFeesPP) : 'No fees'}</span></p>
+                        {/*<p>Additional Fees: <span className="important">{additionalFeesPP > 0 ? (currencySign + ' ' + additionalFeesPP) : 'No fees'}</span></p>*/}
+                        <p>Additional Fees: <span className="important">{(additionalFeesPP > 0 &&  addFeePP > 0 )? (currencySign + ' ' + addFeePP.toFixed(2)) : 'No fees'}</span></p>
                         <div className="price-update-timer" tooltip="Seconds until we update your quoted price">
                           {!isQuoteStopped ? <span>Market Price will update in <i className="fa fa-clock-o" aria-hidden="true"></i>&nbsp;{seconds} sec &nbsp;</span> : 'Price will not update during payment'}
                         </div>
