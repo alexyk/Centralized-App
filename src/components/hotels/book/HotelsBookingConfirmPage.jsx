@@ -438,6 +438,7 @@ class HotelsBookingConfirmPage extends Component {
     const arrivalDate = reservation.booking.hotelBooking[0].arrivalDate;
     const rows = [];
     const fees = this.getCancellationFees();
+    console.log(fees);
     const { currency, currencyExchangeRates } = this.props;
 
     if (fees.length === 0) {

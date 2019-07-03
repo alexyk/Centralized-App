@@ -213,8 +213,7 @@ class StaticHotelsSearchPage extends React.Component {
 
     requester.getStaticHotels(region).then(res => {
       res.body.then(data => {
-        const {content} = data;
-
+        const { content } = data;
         content.forEach(l => {
           if (this.hotelInfoById[l.id]) {
             l.price = this.hotelInfoById[l.id];
@@ -312,29 +311,39 @@ class StaticHotelsSearchPage extends React.Component {
         ? search.indexOf("&filters=")
         : search.length
     );
-    const queueId = `${id}&${rnd}`;
-    const destination = "search/" + queueId;
-    const client = this.client;
-    const handleReceiveHotelPrice = this.handleReceiveMessage;
-    this.subscription = client.subscribe(destination, handleReceiveHotelPrice);
+    const queueId = `${id}amp;${rnd}`;
+    let s = (isMobileWebView ? this.props.cachedSearchString : this.getSearchString());
+    requester.getSearchHotelResults(`${s}&uuid=${queueId}`).then(res => {
+      res.body.then(data => {
 
-    const socketSearch = search.substr(0, endOfSearch);
-    this.props.dispatch(cacheCurrentSearchString(socketSearch));
+        if (data.success) {
+          const destination = "search/" + queueId;
+          const client = this.client;
+          const handleReceiveHotelPrice = this.handleReceiveMessage;
+          this.subscription = client.subscribe(destination, handleReceiveHotelPrice);
+
+          const socketSearch = search.substr(0, endOfSearch);
+          this.props.dispatch(cacheCurrentSearchString(socketSearch));
+        }
+
+      });
+    });
 
 
-    const msgObject = {
-      uuid: queueId,
-      query: socketSearch
-    };
 
-    const msg = JSON.stringify(msgObject);
-
-    const sendDestination = "search";
-    const headers = {
-      "content-length": false
-    };
-
-    client.send(sendDestination, headers, msg);
+    // const msgObject = {
+    //   uuid: queueId,
+    //   query: socketSearch
+    // };
+    //
+    // const msg = JSON.stringify(msgObject);
+    //
+    // const sendDestination = "search";
+    // const headers = {
+    //   "content-length": false
+    // };
+    //
+    // client.send(sendDestination, headers, msg);
   }
 
   getCityLocation(regionId) {
@@ -342,7 +351,6 @@ class StaticHotelsSearchPage extends React.Component {
     requester.getRegionNameById(regionId).then(res => {
       res.body.then(data => {
         this.props.dispatch(setRegion(data));
-
         const address = data.query;
 
         this.geocoder.geocode({address: address}, (results, status) => {
