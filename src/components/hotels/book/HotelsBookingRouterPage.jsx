@@ -37,7 +37,7 @@ class HotelsBookingRouterPage extends React.Component {
       quoteId,
       guests: [],
       reservation: null,
-      hotelsRooms: [],
+      hotelRooms: [],
       roomSearchQuote: [],
       isQuoteLocValid: false
     };

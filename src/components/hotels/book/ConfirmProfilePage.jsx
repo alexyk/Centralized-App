@@ -13,7 +13,7 @@ import StringUtils from '../../../services/utilities/stringUtilities';
 import { getCountries } from '../../../selectors/countriesInfo';
 
 import '../../../styles/css/components/hotels/book/profile-confirm-form.css';
-import { isMobileWebView, MOBILE_STEPS } from '../../../services/utilities/mobileWebView.js';
+import { isMobileWebView, MOBILE_STEPS, showMobileBookingSteps } from '../../../services/utilities/mobileWebView.js';
 
 class ConfirmProfilePage extends React.Component {
   constructor(props) {
@@ -163,7 +163,7 @@ class ConfirmProfilePage extends React.Component {
 
     return (
       <React.Fragment>
-        { isMobileWebView && <BookingStepsMobile steps={MOBILE_STEPS} currentStepIndex={2} /> }
+        {/* { (isMobileWebView && showMobileBookingSteps) && <BookingStepsMobile steps={MOBILE_STEPS} currentStepIndex={2} /> } */}
 
         <div className="sm-none">
           <BookingSteps steps={['Provide Guest Information', 'Review Room Details', 'Confirm and Pay']} currentStepIndex={2} />

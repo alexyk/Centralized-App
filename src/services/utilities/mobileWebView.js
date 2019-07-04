@@ -6,7 +6,8 @@ import { setCurrency } from '../../actions/paymentInfo';
 import Version from '../../components/common/version'
 
 
-export const MOBILE_STEPS = ['Guest Info', 'Choose Payment', 'Billing Info', 'Confirm and Pay'];
+export const MOBILE_STEPS = ['Guest Info', 'Confirm and Pay'];
+export const showMobileBookingSteps = true;
 
 const showMobileFooterBackButton = false;
 const showMobileFooterVersion = true;

@@ -26,14 +26,14 @@ import {getCurrency, getCurrencySign} from "../../../selectors/paymentInfo";
 import {getCurrencyExchangeRates} from "../../../selectors/exchangeRatesInfo";
 import {getCountries} from "../../../selectors/countriesInfo";
 import {ROOM_NO_LONGER_AVAILABLE} from "../../../constants/warningMessages";
-import { isMobileWebView, updateMobileCache, MOBILE_STEPS } from "../../../services/utilities/mobileWebView";
+import { isMobileWebView, updateMobileCache, MOBILE_STEPS, showMobileBookingSteps } from "../../../services/utilities/mobileWebView";
 
 
 class HotelsBookingPage extends React.Component {
   constructor(props) {
     super(props);
 
-    console.log(`[Webview] HotelsBookingPage - constructor`, {props});
+    console.log(`[HotelsBookingPage] - constructor`, {props});
 
     this.state = {
       country: ""
@@ -261,7 +261,7 @@ class HotelsBookingPage extends React.Component {
     return (
       <div>
         { isMobileWebView
-            ? <BookingStepsMobile steps={MOBILE_STEPS} currentStepIndex={1} />
+            ? (showMobileBookingSteps ? <BookingStepsMobile steps={MOBILE_STEPS} currentStepIndex={1} /> : null)
             : <BookingSteps steps={["Provide Guest Information", "Review Room Details", "Confirm and Pay"]} currentStepIndex={1} />
         }
         <section id="room-book">

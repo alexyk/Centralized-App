@@ -4,7 +4,7 @@ import { withRouter } from 'react-router-dom';
 import { NotificationManager } from 'react-notifications';
 import PropTypes from 'prop-types';
 import moment from 'moment';
-import queryString from 'query-string';
+import queryStringUtil from 'query-string';
 import { Config } from '../../../config.js';
 import { CONFIRM_PAYMENT_WITH_LOC, CREATE_WALLET, PENDING_BOOKING_LOC, PENDING_BOOKING_FIAT } from '../../../constants/modals.js';
 import { PROCESSING_TRANSACTION } from '../../../constants/infoMessages.js';
@@ -28,7 +28,7 @@ import { getSeconds } from '../../../selectors/locPriceUpdateTimerInfo.js';
 import { getLocAmountById, getQuotePPFiatAmount, getQuotePPAdditionalFees, getQuotePPFundsSufficient } from '../../../selectors/locAmountsInfo.js';
 import RecoverWallerPassword from '../../common/utility/RecoverWallerPassword';
 import { ExchangerWebsocket } from '../../../services/socket/exchangerWebsocket';
-import { isMobileWebView, MOBILE_STEPS } from "../../../services/utilities/mobileWebView";
+import { isMobileWebView, MOBILE_STEPS, showMobileBookingSteps } from "../../../services/utilities/mobileWebView";
 
 import '../../../styles/css/components/hotels/book/hotel-booking-confirm-page.css';
 import ConfirmPaymentWithLocModal from './modals/ConfirmPaymentWithLocModal';
@@ -47,7 +47,7 @@ class HotelsBookingConfirmPage extends Component {
   constructor(props) {
     super(props);
 
-    console.log(`[HotelsBookingConfirmPage] props`,props);
+    console.log(`[HotelsBookingConfirmPage] props`,{props,qstr:queryStringUtil.parse(props.location.search)});
 
     this.timer = null;
 
@@ -103,7 +103,7 @@ class HotelsBookingConfirmPage extends Component {
 
   createBackUrl() {
     const { currency, location, match } = this.props;
-    const queryParams = queryString.parse(location.search);
+    const queryParams = queryStringUtil.parse(location.search);
     let rooms = JSON.parse(queryParams.rooms);
     rooms.forEach((room) => {
       room.adults = room.adults.length;
@@ -516,7 +516,7 @@ class HotelsBookingConfirmPage extends Component {
 
     return (
       <React.Fragment>
-        { isMobileWebView && <BookingStepsMobile steps={MOBILE_STEPS} currentStepIndex={1} /> }
+        { (isMobileWebView && showMobileBookingSteps) && <BookingStepsMobile steps={MOBILE_STEPS} currentStepIndex={1} /> }
         <LocPriceUpdateTimer />
 
         <div className="sm-none">
