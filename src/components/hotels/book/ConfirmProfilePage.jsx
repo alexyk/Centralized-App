@@ -34,6 +34,8 @@ class ConfirmProfilePage extends React.Component {
       },
     };
 
+    console.log(`[ConfirmProfilePage] constructor`)
+
     this.onChange = this.onChange.bind(this);
     this.handleCitySelect = this.handleCitySelect.bind(this);
     this.updateCountry = this.updateCountry.bind(this);

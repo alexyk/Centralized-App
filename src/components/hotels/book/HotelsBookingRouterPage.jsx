@@ -14,14 +14,15 @@ import requester from '../../../requester';
 import _ from 'lodash';
 import { getCurrency } from '../../../selectors/paymentInfo';
 import xregexp from "xregexp";
-import { mobileCache } from '../../../services/utilities/mobileWebView';
+import { mobileCache, isMobileWebView } from '../../../services/utilities/mobileWebView';
 const QUOTE_ID_POLLING_INTERVAL_TIME = 10000;
 
 class HotelsBookingRouterPage extends React.Component {
   constructor(props) {
     super(props);
 
-    console.log(`[HotelsBookingRouterPage] props`,props);
+    // console.log(`[HotelsBookingRouterPage] constructor`,props);
+    console.log(`[HotelsBookingRouterPage] constructor`);
 
     this.quoteIdPollingInterval = null;
 
@@ -59,8 +60,8 @@ class HotelsBookingRouterPage extends React.Component {
 
   componentDidMount() {
     this.requestHotel();
-    this.requestHotelRooms().then((hasAvailableRooms) => {
-      console.log(`[HotelsBookingRouterPage] componentDidMount - requestHotelRooms`, {hasAvailableRooms,props:this.props})
+    this.requestHotelRooms().then((hasAvailableRooms,rooms) => {
+      //console.log(`[HotelsBookingRouterPage] componentDidMount - requestHotelRooms`, {hasAvailableRooms,props:this.props,rooms,state:this.state})
       this.findAndSetUserRequestedRoomsByQuoteId(hasAvailableRooms);
     });
     this.setQuoteIdPollingInterval();
@@ -103,12 +104,16 @@ class HotelsBookingRouterPage extends React.Component {
         ? mobileCache.bookingParams
         : queryStringUitl.parse(this.props.location.search)
       );
+
+      // console.log(`findAndSetUserRequestedRoomsByQuoteId`, {state:this.state,urlParams})
+
       const quoteId = urlParams.quoteId;
       const rooms = this.state.hotelRooms.filter(r => r.quoteId === quoteId)[0];
       if (rooms) {
         this.setState({ rooms: rooms.roomsResults });
       } else {
-        console.log(`REDIRECT 1 - findAndSetUserRequestedRoomsByQuoteId`, {quoteId,rooms,state:this.state,props:this.props,urlParams})
+        // console.log(`REDIRECT 1 - findAndSetUserRequestedRoomsByQuoteId`, {quoteId,rooms,state:this.state,props:this.props,urlParams})
+        console.log(`REDIRECT 1 - findAndSetUserRequestedRoomsByQuoteId`)
         this.redirectToHotelDetailsPage();
       }
     }
@@ -117,12 +122,14 @@ class HotelsBookingRouterPage extends React.Component {
   requestHotelRooms() {
     const id = this.props.match.params.id;
     const searchParams = this.getRequestSearchParams();
+    // console.log(`ROOMS 1, searchParams: ${searchParams} id: ${id}`);
 
     return requester.getHotelRooms(id, searchParams)
       .then(res => res.body)
       .then(data => {
         return new Promise((resolve, reject) => {
           if (data) {
+            // console.log(`ROOMS 2 [requestHotelRooms] data:`,data);
             this.setState({ hotelRooms: data }, () => {
               resolve(true);
             });
@@ -292,11 +299,15 @@ class HotelsBookingRouterPage extends React.Component {
   }
 
   redirectToHotelDetailsPage() {
-    NotificationManager.warning(ROOM_NO_LONGER_AVAILABLE, '', LONG);
-    const id = this.props.match.params.id;
-    const pathname = this.props.location.pathname.indexOf('/mobile') !== -1 ? '/mobile/hotels/listings' : '/hotels/listings';
-    const search = this.getCleanQueryString(queryStringUitl.parse(this.props.location.search));
-    this.props.history.push(`${pathname}/${id}${search}`);
+    if (isMobileWebView) {
+      alert(`Booking was not successful. Please go back and try again or go 'Back To Hotel Details' to choose another room.`)
+    } else {
+      NotificationManager.warning(ROOM_NO_LONGER_AVAILABLE, '', LONG);
+      const id = this.props.match.params.id;
+      const pathname = this.props.location.pathname.indexOf('/mobile') !== -1 ? '/mobile/hotels/listings' : '/hotels/listings';
+      const search = this.getCleanQueryString(queryStringUitl.parse(this.props.location.search));
+      this.props.history.push(`${pathname}/${id}${search}`);
+    }
   }
 
   getQueryString() {
