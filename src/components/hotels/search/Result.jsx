@@ -109,6 +109,7 @@ class Result extends React.Component {
 
   render() {
     let {currency, currencySign, currencyExchangeRates, isUserLogged, hotel, price, nights, allElements, location, searchHotel, sch} = this.props;
+
     let {id, name, generalDescription, star, lastBestPrice} = hotel;
 
     const isPriceLoaded = !!price;
@@ -178,7 +179,7 @@ class Result extends React.Component {
     const searchHotelStyle = {
       boxShadow: '-.4px -.5px 8px 8px #D87A61FF',
     };
-
+    console.log(price);
     return (
       <div className={`${this.state.ready === true ? 'ready' : ''} result`} style={isSearchHotel ? searchHotelStyle : {}}>
         <div className="result-images">
@@ -212,7 +213,7 @@ class Result extends React.Component {
               ? (!allElements ? <div className="price">Loading price...</div> : <div></div>)
               : <div className="price">{isUserLogged && `${currencySign} ${priceInSelectedCurrency}`}</div>
             }
-            {isPriceLoaded && <div className="price">1 night: <LocPrice fiat={price / nights}/></div>}
+            {isPriceLoaded && <div className="price">1 night: <LocPrice fiat={price}/></div>}
             <div>
               {!isPriceLoaded && allElements
                 ? <button disabled className="mobile-pricing-button">Unavailable</button>
@@ -236,7 +237,7 @@ class Result extends React.Component {
               className="price">{isUserLogged && priceInSelectedCurrency && `${currencySign} ${priceInSelectedCurrency}`}</span>
             </div>
           }
-          {isPriceLoaded && <LocPrice fiat={price / nights}/>}
+          {isPriceLoaded && <LocPrice fiat={price}/>}
           {!isPriceLoaded && allElements
             ? <button disabled className="button">Unavailable</button>
             : <Link target={isMobile === false ? '_blank' : ''} className="button"

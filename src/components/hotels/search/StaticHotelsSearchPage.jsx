@@ -245,6 +245,7 @@ class StaticHotelsSearchPage extends React.Component {
         NotificationManager.info(FILTERED_UNAVAILABLE_HOTELS, "", LONG);
       });
     } else {
+
       const {id} = messageBody;
       this.hotelInfoById[id] = messageBody;
       this.hotelInfo.push(messageBody);
@@ -316,15 +317,13 @@ class StaticHotelsSearchPage extends React.Component {
     requester.getSearchHotelResults(`${s}&uuid=${queueId}`).then(res => {
       res.body.then(data => {
 
-        if (data.success) {
-          const destination = "search/" + queueId;
-          const client = this.client;
-          const handleReceiveHotelPrice = this.handleReceiveMessage;
-          this.subscription = client.subscribe(destination, handleReceiveHotelPrice);
+        const destination = "search/" + queueId;
+        const client = this.client;
+        const handleReceiveHotelPrice = this.handleReceiveMessage;
+        this.subscription = client.subscribe(destination, handleReceiveHotelPrice);
 
-          const socketSearch = search.substr(0, endOfSearch);
-          this.props.dispatch(cacheCurrentSearchString(socketSearch));
-        }
+        const socketSearch = search.substr(0, endOfSearch);
+        this.props.dispatch(cacheCurrentSearchString(socketSearch));
 
       });
     });
