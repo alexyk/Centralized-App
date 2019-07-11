@@ -1,32 +1,32 @@
 import React from "react";
 import requester from "../../requester";
-import { Config } from "../../config";
+import {Config} from "../../config";
 import PropTypes from "prop-types";
-import { withRouter } from "react-router-dom";
-import { connect } from "react-redux";
-import { NotificationManager } from "react-notifications";
-import { LONG } from "../../constants/notificationDisplayTimes.js";
+import {withRouter} from "react-router-dom";
+import {connect} from "react-redux";
+import {NotificationManager} from "react-notifications";
+import {LONG} from "../../constants/notificationDisplayTimes.js";
 import LoginModal from "./modals/LoginModal";
-import { closeModal, openModal } from "../../actions/modalsInfo";
-import { isActive } from "../../selectors/modalsInfo";
-import { setUserInfo } from "../../actions/userInfo";
-import { Wallet } from "../../services/blockchain/wallet.js";
-import { VERIFICATION_EMAIL_SENT } from "../../constants/infoMessages.js";
+import {closeModal, openModal} from "../../actions/modalsInfo";
+import {isActive} from "../../selectors/modalsInfo";
+import {setUserInfo} from "../../actions/userInfo";
+import {Wallet} from "../../services/blockchain/wallet.js";
+import {VERIFICATION_EMAIL_SENT} from "../../constants/infoMessages.js";
 import UpdateCountryModal from "./modals/UpdateCountryModal";
 import EmailVerificationModal from "./modals/EmailVerificationModal";
 import EnterEmailVerificationTokenModal from "./modals/EnterEmailVerificationTokenModal";
-import { executeWithToken } from "../../services/grecaptcha/grecaptcha";
+import {executeWithToken} from "../../services/grecaptcha/grecaptcha";
 import queryString from "query-string";
 import {
   EMAIL_VERIFICATION,
   ENTER_RECOVERY_TOKEN
 } from "../../constants/modals.js";
-import { INVALID_SECURITY_CODE } from "../../constants/warningMessages";
-import { ENTER_EMAIL_VERIFICATION_SECURITY_TOKEN } from "../../constants/modals.js";
+import {INVALID_SECURITY_CODE} from "../../constants/warningMessages";
+import {ENTER_EMAIL_VERIFICATION_SECURITY_TOKEN} from "../../constants/modals.js";
 
-import { LOGIN, UPDATE_COUNTRY, REGISTER } from "../../constants/modals.js";
+import {LOGIN, UPDATE_COUNTRY, REGISTER} from "../../constants/modals.js";
 import * as _ from "ramda";
-import { SEND_RECOVERY_EMAIL } from "../../constants/modals";
+import {SEND_RECOVERY_EMAIL} from "../../constants/modals";
 
 export class LoginManager extends React.Component {
   constructor(props) {
@@ -72,7 +72,7 @@ export class LoginManager extends React.Component {
     const queryParams = queryString.parse(this.props.location.search);
 
     if (queryParams.token) {
-      this.setState({ recoveryToken: queryParams.token });
+      this.setState({recoveryToken: queryParams.token});
       // this.openModal(ENTER_RECOVERY_TOKEN);
       this.props.openRecoveryTokenModal();
     }
@@ -107,23 +107,23 @@ export class LoginManager extends React.Component {
     requester
       .getStates(id)
       .then(response => response.body)
-      .then(data => this.setState({ states: data }));
+      .then(data => this.setState({states: data}));
   }
 
   onChange(e) {
-    this.setState({ [e.target.name]: e.target.value });
+    this.setState({[e.target.name]: e.target.value});
   }
 
   handleChangeCountry(e) {
     if (!e.target.value) {
-      this.setState({ country: null });
+      this.setState({country: null});
     } else {
       const countryHasMandatoryState = [
         "Canada",
         "India",
         "United States of America"
       ].includes(JSON.parse(e.target.value).name);
-      this.setState({ country: JSON.parse(e.target.value) });
+      this.setState({country: JSON.parse(e.target.value)});
       if (countryHasMandatoryState) {
         this.requestStates(JSON.parse(e.target.value).id);
       }
@@ -146,7 +146,7 @@ export class LoginManager extends React.Component {
   }
 
   handleLoginClick() {
-    this.setState({ isLogging: true }, () => {
+    this.setState({isLogging: true}, () => {
       executeWithToken(this.login);
     });
   }
@@ -203,14 +203,14 @@ export class LoginManager extends React.Component {
 
   handleMobileAuthorization() {
     const queryStringParameters = queryString.parse(this.props.location.search);
-    const { authEmail, authToken } = queryStringParameters;
+    const {authEmail, authToken} = queryStringParameters;
     if (authEmail && authToken) {
       localStorage[
-        Config.getValue("domainPrefix") + ".auth.username"
-      ] = authEmail;
+      Config.getValue("domainPrefix") + ".auth.username"
+        ] = authEmail;
       localStorage[
-        Config.getValue("domainPrefix") + ".auth.locktrip"
-      ] = decodeURI(authToken);
+      Config.getValue("domainPrefix") + ".auth.locktrip"
+        ] = decodeURI(authToken);
       this.setUserInfo();
       const url = this.props.location.pathname;
       const search = LoginManager.getQueryStringForMobile(queryStringParameters);
@@ -221,13 +221,13 @@ export class LoginManager extends React.Component {
   static getQueryStringForMobile(queryStringParameters) {
     let result = "?";
 
-    const {region,currency,startDate,endDate,rooms,guests} = queryStringParameters;
-    if (region)    result += "region="     + encodeURI(region);
-    if (currency)  result += "&currency="  + encodeURI(currency);
+    const {region, currency, startDate, endDate, rooms, guests} = queryStringParameters;
+    if (region) result += "region=" + encodeURI(region);
+    if (currency) result += "&currency=" + encodeURI(currency);
     if (startDate) result += "&startDate=" + encodeURI(startDate);
-    if (endDate)   result += "&endDate="   + encodeURI(endDate);
-    if (rooms)     result += "&rooms="     + encodeURI(rooms);
-    if (guests)    result += "&guests="    + encodeURI(guests);
+    if (endDate) result += "&endDate=" + encodeURI(endDate);
+    if (rooms) result += "&rooms=" + encodeURI(rooms);
+    if (guests) result += "&guests=" + encodeURI(guests);
 
     return result;
   }
@@ -238,7 +238,7 @@ export class LoginManager extends React.Component {
         const errors = res.errors;
         if (errors.hasOwnProperty("CountryNull")) {
           NotificationManager.warning(errors["CountryNull"].message, "", LONG);
-          this.setState({ isUpdatingCountry: true, isLogging: false }, () => {
+          this.setState({isUpdatingCountry: true, isLogging: false}, () => {
             this.closeModal(LOGIN);
             // this.openModal(UPDATE_COUNTRY);
             this.props.openUpdateCountryModal();
@@ -262,7 +262,7 @@ export class LoginManager extends React.Component {
           NotificationManager.warning(errors[e].message, "", LONG);
         }
 
-        this.setState({ loginEmail: "", loginPassword: "" });
+        this.setState({loginEmail: "", loginPassword: ""});
       });
   }
 
@@ -276,7 +276,7 @@ export class LoginManager extends React.Component {
       ) {
         NotificationManager.error("Please select a valid state.", "", LONG);
       } else {
-        this.setState({ isLogging: true }, () => {
+        this.setState({isLogging: true}, () => {
           executeWithToken(this.login);
         });
       }
@@ -288,43 +288,50 @@ export class LoginManager extends React.Component {
   setUserInfo() {
     requester.getUserInfo().then(res => {
       res.body.then(_data => {
-        let data = _.pick(
-          [
-            "firstName",
-            "lastName",
-            "phoneNumber",
-            "email",
-            "locAddress",
-            "gender",
-            "isEmailVerified",
-            "id"
-          ],
-          _data
-        );
-        const isAdmin = _data.roles.findIndex(r => r.name === "ADMIN") !== -1;
 
-        if (data.locAddress) {
-          Wallet.getBalance(data.locAddress).then(eth => {
-            const ethBalance = eth / Math.pow(10, 18);
-            Wallet.getTokenBalance(data.locAddress).then(loc => {
-              const locBalance = loc / Math.pow(10, 18);
-              this.props.setUserInfo({
-                ...data,
-                ethBalance,
-                locBalance,
-                isAdmin
+        if (_data.country === null) {
+          localStorage.clear();
+        } else {
+
+          let data = _.pick(
+            [
+              "firstName",
+              "lastName",
+              "phoneNumber",
+              "email",
+              "locAddress",
+              "gender",
+              "isEmailVerified",
+              "id"
+            ],
+            _data
+          );
+
+          const isAdmin = _data.roles.findIndex(r => r.name === "ADMIN") !== -1;
+
+          if (data.locAddress) {
+            Wallet.getBalance(data.locAddress).then(eth => {
+              const ethBalance = eth / Math.pow(10, 18);
+              Wallet.getTokenBalance(data.locAddress).then(loc => {
+                const locBalance = loc / Math.pow(10, 18);
+                this.props.setUserInfo({
+                  ...data,
+                  ethBalance,
+                  locBalance,
+                  isAdmin
+                });
               });
             });
-          });
-        } else {
-          const ethBalance = 0;
-          const locBalance = 0;
-          this.props.setUserInfo({
-            ...data,
-            ethBalance,
-            locBalance,
-            isAdmin
-          });
+          } else {
+            const ethBalance = 0;
+            const locBalance = 0;
+            this.props.setUserInfo({
+              ...data,
+              ethBalance,
+              locBalance,
+              isAdmin
+            });
+          }
         }
       });
     });
@@ -334,7 +341,7 @@ export class LoginManager extends React.Component {
     const emailVerificationRedirectURL =
       this.props.location.pathname + this.props.location.search;
     requester
-      .sendVerificationEmail({ emailVerificationRedirectURL })
+      .sendVerificationEmail({emailVerificationRedirectURL})
       .then(res => res.body)
       .then(data => {
         if (data.isVerificationEmailSent) {
@@ -411,7 +418,7 @@ LoginManager.propTypes = {
 };
 
 function mapStateToProps(state) {
-  const { modalsInfo } = state;
+  const {modalsInfo} = state;
   return {
     isActive: isActive(modalsInfo)
   };
@@ -422,7 +429,8 @@ function mapDispatchToProps(dispatch) {
     openRecoveryEmailModal: () => dispatch(openModal(SEND_RECOVERY_EMAIL)),
     openRecoveryTokenModal: () => dispatch(openModal(ENTER_RECOVERY_TOKEN)),
     openUpdateCountryModal: () => dispatch(openModal(UPDATE_COUNTRY)),
-    onRecoverPasswordClicked: () => {},
+    onRecoverPasswordClicked: () => {
+    },
     openModal: modal => dispatch(openModal(modal)),
     closeModal: modal => dispatch(closeModal(modal)),
     setUserInfo: info => dispatch(setUserInfo(info))
