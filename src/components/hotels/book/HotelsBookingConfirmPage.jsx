@@ -314,7 +314,6 @@ class HotelsBookingConfirmPage extends Component {
       const wei = (this.tokensToWei(locAmount.toString()));
       const booking = reservation.booking.hotelBooking;
       const endDate = moment.utc(booking[0].arrivalDate).add(booking[0].nights, 'days');
-      console.log(endDate);
       NotificationManager.info(PROCESSING_TRANSACTION, 'Transactions', 60000);
       this.setState({userConfirmedPaymentWithLOC: true});
       this.closeModal(CONFIRM_PAYMENT_WITH_LOC);
@@ -330,7 +329,6 @@ class HotelsBookingConfirmPage extends Component {
               wei.toString(),
               endDate.unix().toString(),
             ).then(transaction => {
-              console.log(transaction);
               const bookingConfirmObj = {
                 bookingId: preparedBookingId,
                 transactionHash: transaction.hash,
@@ -457,7 +455,6 @@ class HotelsBookingConfirmPage extends Component {
     const arrivalDate = reservation.booking.hotelBooking[0].arrivalDate;
     const rows = [];
     const fees = this.getCancellationFees();
-    console.log(fees);
     const {currency, currencyExchangeRates} = this.props;
 
     if (fees.length === 0) {
@@ -529,7 +526,7 @@ class HotelsBookingConfirmPage extends Component {
     const additionalFeesPP = currencyExchangeRates && quotePPAdditionalFees && CurrencyConverter.convert(currencyExchangeRates, DEFAULT_CRYPTO_CURRENCY, currency, quotePPAdditionalFees).toFixed(2);
     const fiatPriceInUserCurrency = currencyExchangeRates && CurrencyConverter.convert(currencyExchangeRates, reservation.currency, currency, reservation.fiatPrice).toFixed(2);
 
-    const addFeePP = Number(additionalFeesPP) + fiatAmountPP - reservation.fiatPrice;
+    const additionalFeePP = Number(additionalFeesPP) + fiatAmountPP - fiatPriceInUserCurrency;
 
     return (
       <React.Fragment>
@@ -598,12 +595,11 @@ class HotelsBookingConfirmPage extends Component {
                     <div className="details">
                       <p className="booking-card-price">
                         {/*Pay with Credit Card: Current Market Price: <span className="important">{currencySign} {fiatAmountPP && (fiatAmountPP).toFixed(2)}</span>*/}
-                        Pay with Credit Card: Current Market Price: <span
-                        className="important">{currencySign} {fiatAmountPP && (reservation.fiatPrice).toFixed(2)}</span>
+                        Pay with Credit Card: Current Market Price: <span className="important">{currencySign} {(fiatAmountPP && fiatPriceInUserCurrency) && fiatPriceInUserCurrency}</span>
                       </p>
                       {/*<p>Additional Fees: <span className="important">{additionalFeesPP > 0 ? (currencySign + ' ' + additionalFeesPP) : 'No fees'}</span></p>*/}
                       <p>Additional Fees: <span
-                        className="important">{(additionalFeesPP > 0 && addFeePP > 0) ? (currencySign + ' ' + addFeePP.toFixed(2)) : 'No fees'}</span>
+                        className="important">{(additionalFeesPP > 0 && additionalFeePP > 0) ? (currencySign + ' ' + additionalFeePP.toFixed(2)) : 'No fees'}</span>
                       </p>
                       <div className="price-update-timer" tooltip="Seconds until we update your quoted price">
                         {!isQuoteStopped ? <span>Market Price will update in <i className="fa fa-clock-o"

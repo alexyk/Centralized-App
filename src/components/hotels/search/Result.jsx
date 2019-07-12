@@ -179,6 +179,7 @@ class Result extends React.Component {
     const searchHotelStyle = {
       boxShadow: '-.4px -.5px 8px 8px #D87A61FF',
     };
+
     return (
       <div className={`${this.state.ready === true ? 'ready' : ''} result`} style={isSearchHotel ? searchHotelStyle : {}}>
         <div className="result-images">

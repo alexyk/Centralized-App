@@ -649,6 +649,7 @@ class StaticHotelsSearchPage extends React.Component {
       });
       return;
     }
+
     requester.getMapInfo(this.props.location.search).then(res => {
       res.body.then(data => {
         if (!data.isCacheExpired) {
