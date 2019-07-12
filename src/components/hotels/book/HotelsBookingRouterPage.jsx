@@ -80,10 +80,8 @@ class HotelsBookingRouterPage extends React.Component {
     const id = this.props.match.params.id;
 
     requester.getHotelById(id).then(res => {
-      console.log("hotel");
       res.body.then(hotel => {
         this.setState({ hotel });
-        console.log(hotel);
       });
     });
 
@@ -175,11 +173,9 @@ class HotelsBookingRouterPage extends React.Component {
 
   setQuoteIdPollingInterval() {
     const isQuoteIdPollingIntervalSet = !!this.quoteIdPollingInterval;
-    console.log("polling interval");
     if (!isQuoteIdPollingIntervalSet) {
       this.quoteIdPollingInterval = setInterval(() => {
         this.requestUpdateOnQuoteId();
-        console.log("polling");
       }, QUOTE_ID_POLLING_INTERVAL_TIME);
     }
   }
@@ -190,12 +186,8 @@ class HotelsBookingRouterPage extends React.Component {
 
   requestUpdateOnQuoteId() {
     if (this.state) {
-      console.log(this.state);
       requester.getQuoteIdExpirationFlag(this.state.quoteId).then(res => res.body).then(data => {
-        console.log("is valid");
-        console.log(data.is_quote_valid);
         if (!data.is_quote_valid) {
-          console.log("Is realy quote valid");
           this.requestHotelRooms()
             .then((success) => {
               if (success) {
@@ -219,11 +211,9 @@ class HotelsBookingRouterPage extends React.Component {
                           });
                         });
                       } else {
-                        console.log("again in 215");
                         this.requestUpdateOnQuoteId();
                       }
                     }).catch(() => {
-                      console.log("and again in 219");
                       this.requestUpdateOnQuoteId();
                     });
                   } else if (this.props.location.pathname === `/hotels/listings/book/${this.state.hotelId}/confirm`) {
