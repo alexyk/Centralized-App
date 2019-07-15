@@ -1,11 +1,13 @@
-import React, { Component } from 'react';
-import { Link, withRouter } from 'react-router-dom';
+import React, {Component} from 'react';
+import {Link, withRouter} from 'react-router-dom';
 import PropTypes from 'prop-types';
 import moment from 'moment';
 import queryString from 'query-string';
 import AdminNav from '../AdminNav';
 import requester from '../../../../requester';
 import Pagination from '../../../common/pagination/Pagination';
+import Axios from "axios";
+import {getAxiosConfig} from "../utils/adminUtils";
 
 import sa from "superagent";
 
@@ -24,7 +26,7 @@ class AdminReservationsTable extends Component {
       page: !queryParams.page ? 0 : Number(queryParams.page),
       totalElements: '',
       totalPages: '',
-      tab: 'hotels'
+      tab: 'hotels-hs'
     };
 
     this.requestBookings = this.requestBookings.bind(this);
@@ -35,15 +37,32 @@ class AdminReservationsTable extends Component {
     this.requestBookings(this.state.page);
   }
 
-  componentDidUpdate(prevProps, prevState){
-    if(prevState.tab !== this.state.tab){
+  componentDidUpdate(prevProps, prevState) {
+    if (prevState.tab !== this.state.tab) {
       this.requestBookings(this.state.page);
     }
   }
 
   requestBookings(page) {
 
-    if(this.state.tab === "hotels"){
+    if (this.state.tab === "hotels-hs") {
+      const apiHost = Config.getValue('apiHost');
+      const url = `${apiHost}/admin/panel/booking/hs/all?page=${page}&sort=id,desc`;
+
+      Axios.get(url, getAxiosConfig())
+        .then(data => {
+
+          this.setState({
+            loading: false,
+            bookings: data.data.content,
+            totalElements: data.data.totalElements
+          });
+        })
+        .catch(error => {
+
+        });
+
+    } else if (this.state.tab === "hotels") {
       requester.getAllBookingsWithTransactionHash([`page=${page}`])
         .then((res) => {
           if (res.success) {
@@ -61,7 +80,7 @@ class AdminReservationsTable extends Component {
       let host = Config.getValue("apiHost");
       let token = localStorage.getItem(Config.getValue("domainPrefix") + ".auth.locktrip");
 
-      sa.get(`${host}/admin/panel/flights/all?page=${page}&sort=id,desc`).set('Authorization', token).then(response=>{
+      sa.get(`${host}/admin/panel/flights/all?page=${page}&sort=id,desc`).set('Authorization', token).then(response => {
         let data = response.body;
         this.setState({
           loading: false,
@@ -86,7 +105,7 @@ class AdminReservationsTable extends Component {
   }
 
   render() {
-    const { bookings, totalElements, loading } = this.state;
+    const {bookings, totalElements, loading} = this.state;
 
     if (loading) {
       return <div className="loader"></div>;
@@ -99,17 +118,93 @@ class AdminReservationsTable extends Component {
           <h2 className="navigation-tab">All Booking With Transaction Hash</h2>
         </AdminNav>
 
-        <button className="a" style={this.state.tab === "hotels" ? activeButtonStyle : {}} onClick={()=>{this.setState({tab: "hotels", totalElements: '', bookings: []})}}>Hotels</button>
-        <button className="a" style={this.state.tab === "flights" ? activeButtonStyle : {}} onClick={()=>{this.setState({tab: "flights", totalElements: '', bookings: []})}}>Flights</button>
+        <button className="a" style={this.state.tab === "hotels-hs" ? activeButtonStyle : {}} onClick={() => {
+          this.setState({tab: "hotels-hs", totalElements: '', bookings: []})
+        }}>Hotels-HS
+        </button>
+        <button className="a" style={this.state.tab === "hotels" ? activeButtonStyle : {}} onClick={() => {
+          this.setState({tab: "hotels", totalElements: '', bookings: []})
+        }}>Hotels
+        </button>
+        <button className="a" style={this.state.tab === "flights" ? activeButtonStyle : {}} onClick={() => {
+          this.setState({tab: "flights", totalElements: '', bookings: []})
+        }}>Flights
+        </button>
 
+        {
+          this.state.tab === "hotels-hs" && (
+            <div className="reservations-table">
+              <table>
+                <thead>
+                <tr>
+
+                  <th>Booking ID (REF No)</th>
+                  <th>Booking Status</th>
+                  <th>Transaction Hash</th>
+                  <th>Payment Method</th>
+                  <th>User Email</th>
+                  <th>Rooms</th>
+                  <th>Hotel Name</th>
+                  <th>Checkin Date</th>
+                  <th>Checkout Date</th>
+                  <th>Nationality</th>
+                  <th>Children Year</th>
+                  <th>Adults name</th>
+                  <th>Created On Date</th>
+                  <th>Provider</th>
+                  <th>Action</th>
+                </tr>
+                </thead>
+                <tbody>
+                {bookings.map((booking, bookingIndex) => {
+                  const isValidHash = booking.transactionHash.startsWith('0x');
+                  let txHash = booking.transactionHash;
+                  if (isValidHash) {
+                    txHash = <a target='_blank' rel="noopener noreferrer"
+                                href={'https://etherscan.io/tx/' + booking.transactionHash}>{booking.transactionHash}</a>;
+                  }
+
+                  const bookingId = booking.bookingId ? `${booking.bookingId} (${booking.id})` : `${booking.id}`;
+
+                  return (
+                    <tr key={bookingIndex}>
+                      <td>{bookingId}</td>
+                      <td>{booking.bookingStatus}</td>
+                      <td>{txHash}</td>
+                      <td>{booking.paymentMethod}</td>
+                      <td>{booking.userEmail}</td>
+                      <td>{booking.roomsNumber}</td>
+                      <td>{booking.hotelName}</td>
+                      <td>{moment(booking.checkinDate).utc().format('DD/MM/YYYY')}</td>
+                      <td>{moment(booking.checkoutDate).utc().format('DD/MM/YYYY')}</td>
+                      <td>{booking.nationality}</td>
+                      <td>{booking.childrenYears}</td>
+                      <td>{booking.adultNames}</td>
+                      <td>{moment(booking.createdOn).utc().format('DD/MM/YYYY')}</td>
+                      <td>{booking.provider}</td>
+                      <td><Link to={`/profile/admin/reservation/booking/hs/${booking.id}`}>Edit</Link></td>
+                    </tr>
+                  );
+                })}
+                </tbody>
+              </table>
+              <Pagination
+                loading={loading}
+                onPageChange={this.onPageChange}
+                currentPage={this.state.page + 1}
+                pageSize={10}
+                totalElements={totalElements}
+              />
+            </div>
+          )
+        }
         {
           this.state.tab === "hotels" && (
             <div className="reservations-table">
               <table>
                 <thead>
                 <tr>
-
-                  <th>Rooms Booking Id</th>
+                  <th>Booking ID</th>
                   <th>Booking Status</th>
                   <th>Transaction Hash</th>
                   <th>Payment Method</th>
@@ -130,7 +225,8 @@ class AdminReservationsTable extends Component {
                   const isValidHash = booking.transactionHash.startsWith('0x');
                   let txHash = booking.transactionHash;
                   if (isValidHash) {
-                    txHash = <a target='_blank' rel="noopener noreferrer" href={'https://etherscan.io/tx/' + booking.transactionHash}>{booking.transactionHash}</a>;
+                    txHash = <a target='_blank' rel="noopener noreferrer"
+                                href={'https://etherscan.io/tx/' + booking.transactionHash}>{booking.transactionHash}</a>;
                   }
                   return (
                     <tr key={bookingIndex}>
@@ -170,19 +266,19 @@ class AdminReservationsTable extends Component {
                 <thead>
                 <tr>
                   {/*{*/}
-                    {/*pnr,*/}
-                    {/*tripId -> id PK,*/}
-                    {/*status,*/}
-                    {/*email,*/}
-                    {/*phone,*/}
-                    {/*passengerInfo,*/}
-                    {/*tickets -> count,*/}
-                    {/*fare -> dashboardViewModel (include: departure,arrival),*/}
-                    {/*price,*/}
-                    {/*currency,*/}
-                    {/*transactionId,*/}
-                    {/*date -> createdOn,*/}
-                    {/*paymentMethod,*/}
+                  {/*pnr,*/}
+                  {/*tripId -> id PK,*/}
+                  {/*status,*/}
+                  {/*email,*/}
+                  {/*phone,*/}
+                  {/*passengerInfo,*/}
+                  {/*tickets -> count,*/}
+                  {/*fare -> dashboardViewModel (include: departure,arrival),*/}
+                  {/*price,*/}
+                  {/*currency,*/}
+                  {/*transactionId,*/}
+                  {/*date -> createdOn,*/}
+                  {/*paymentMethod,*/}
                   {/*}*/}
 
                   {/*<th>PNR</th>*/}
@@ -231,18 +327,21 @@ class AdminReservationsTable extends Component {
                       <td>{booking.paymentMethod}</td>
                       <td>{booking.transactionId}</td>
                       <td>{booking.tickets}</td>
-                      <td style={{    maxWidth: "none",
-                        whiteSpace: "nowrap"}}>{
-                        (()=>{
+                      <td style={{
+                        maxWidth: "none",
+                        whiteSpace: "nowrap"
+                      }}>{
+                        (() => {
                           let group = 0;
-                          return (fare || []).map(f=>{
+                          return (fare || []).map(f => {
                             let groupLine = null;
 
-                            if(Number(group) !== Number(f.group)){
+                            if (Number(group) !== Number(f.group)) {
                               group = f.group;
-                              groupLine = <hr />
+                              groupLine = <hr/>
                             }
-                            let line = <div>{f.origin} - {f.destination}, {moment(f.originDate).utc().format('DD MMM YYYY')} {f.originTime}</div>;
+                            let line =
+                              <div>{f.origin} - {f.destination}, {moment(f.originDate).utc().format('DD MMM YYYY')} {f.originTime}</div>;
                             return <React.Fragment>
                               {groupLine}
                               {line}
@@ -254,7 +353,7 @@ class AdminReservationsTable extends Component {
                       <td>{booking.price} {booking.currency}</td>
                       <td>{moment(booking.date).utc().format('DD/MM/YYYY')}</td>
                       <td>{passengerInfo && (
-                        (passengerInfo.passengers || []).map(passenger=>{
+                        (passengerInfo.passengers || []).map(passenger => {
                           return <div>{passenger.title} {passenger.firstName} {passenger.lastName}</div>
                         })
                       )}</td>
