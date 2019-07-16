@@ -11,7 +11,7 @@ import {getAxiosConfig} from "../utils/adminUtils";
 import "../../../../styles/css/components/profile/admin/reservations/admin-reservations-edit-form.css";
 import {Config} from "../../../../config";
 
-class AdminReservationsEditForm extends Component {
+class AdminHSReservationsEditForm extends Component {
   constructor(props) {
     super(props);
 
@@ -131,9 +131,7 @@ class AdminReservationsEditForm extends Component {
                 <option value="PAYMENT_REVIEW">PAYMENT_REVIEW</option>
                 <option value="CONFIRMED">PAYMENT_DONE</option>
                 <option value="FAIL">PAYMENT_FAILED</option>
-                <option value="QUEUED_FOR_CONFIRMATION">
-                  PENDING_CONFIRMATION
-                </option>
+                <option value="QUEUED_FOR_CONFIRMATION">PENDING_CONFIRMATION</option>
                 <option value="PENDING_CANCELLATION">PENDING_CANCELLATION</option>
                 <option value="CANCELLED">CANCELLED</option>
                 <option value="CANCELLATION_FAILED">CANCELLATION_FAILED</option>
@@ -209,10 +207,10 @@ class AdminReservationsEditForm extends Component {
   }
 }
 
-AdminReservationsEditForm.propTypes = {
+AdminHSReservationsEditForm.propTypes = {
   // Router props
   match: PropTypes.object,
   history: PropTypes.object
 };
 
-export default withRouter(AdminReservationsEditForm);
+export default withRouter(AdminHSReservationsEditForm);

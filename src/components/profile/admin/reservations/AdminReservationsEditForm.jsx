@@ -128,9 +128,7 @@ class AdminReservationsEditForm extends Component {
                 <option value="PAYMENT_REVIEW">PAYMENT_REVIEW</option>
                 <option value="CONFIRMED">PAYMENT_DONE</option>
                 <option value="FAIL">PAYMENT_FAILED</option>
-                <option value="QUEUED_FOR_CONFIRMATION">
-                  PENDING_CONFIRMATION
-                </option>
+                <option value="QUEUED_FOR_CONFIRMATION">PENDING_CONFIRMATION</option>
                 <option value="PENDING_CANCELLATION">PENDING_CANCELLATION</option>
                 <option value="CANCELLED">CANCELLED</option>
                 <option value="CANCELLATION_FAILED">CANCELLATION_FAILED</option>
