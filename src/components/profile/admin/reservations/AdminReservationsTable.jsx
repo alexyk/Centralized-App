@@ -112,6 +112,10 @@ class AdminReservationsTable extends Component {
     }
 
     const activeButtonStyle = {background: "#d87a61", color: "white"};
+
+    const activeButton = this.state.tab;
+    console.log(activeButton);
+
     return (
       <div className="reservations-container">
         <AdminNav>
@@ -119,15 +123,21 @@ class AdminReservationsTable extends Component {
         </AdminNav>
 
         <button className="a" style={this.state.tab === "hotels-hs" ? activeButtonStyle : {}} onClick={() => {
-          this.setState({tab: "hotels-hs", totalElements: '', bookings: []})
+          if (this.state.tab !== "hotels-hs") {
+            this.setState({tab: "hotels-hs", totalElements: '', bookings: []})
+          }
         }}>Hotels-HS
         </button>
         <button className="a" style={this.state.tab === "hotels" ? activeButtonStyle : {}} onClick={() => {
-          this.setState({tab: "hotels", totalElements: '', bookings: []})
+          if (this.state.tab !== "hotels") {
+            this.setState({tab: "hotels", totalElements: '', bookings: []})
+          }
         }}>Hotels
         </button>
         <button className="a" style={this.state.tab === "flights" ? activeButtonStyle : {}} onClick={() => {
-          this.setState({tab: "flights", totalElements: '', bookings: []})
+          if (this.state.tab !== "flights") {
+            this.setState({tab: "flights", totalElements: '', bookings: []})
+          }
         }}>Flights
         </button>
 
