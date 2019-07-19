@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "axios": "^0.18.0",
+    "axios": "^0.19.0",
     "b64-to-blob": "^1.2.19",
     "big-rational": "^0.10.9",
     "bootstrap-daterangepicker": "^2.1.30",
@@ -12,10 +12,10 @@
     "ethers": "^3.0.29",
     "imagetracerjs": "^1.2.5",
     "javascript-time-ago": "^1.0.35",
-    "jquery": "^3.3.1",
+    "jquery": "^3.4.1",
     "json-fetch": "^7.5.1",
-    "locktrip-svc-layer": "git://github.com/LockTrip/Service-Layer.git#v1.1.0",
-    "lodash": "^4.17.11",
+    "locktrip-svc-layer": "git+https://github.com/LockTrip/Service-Layer.git#1.0.55",
+    "lodash": "^4.17.15",
     "moment": "^2.24.0",
     "npm-run-all": "^4.1.5",
     "prop-types": "^15.6.2",
@@ -58,7 +58,7 @@
     "react-redux": "^5.1.1",
     "react-router": "^4.3.1",
     "react-router-dom": "^4.3.1",
-    "react-scripts": "^1.1.5",
+    "react-scripts": "^3.0.1",
     "react-select": "^2.3.0",
     "react-slick": "^0.23.2",
     "react-sortable-hoc": "^0.6.8",
@@ -75,6 +75,7 @@
     "slick-carousel": "^1.8.1",
     "stompjs": "^2.3.3",
     "superagent": "^3.8.3",
+    "terser": "^3.14.1",
     "toggle-selection": "^1.0.6",
     "uuid": "^3.3.2",
     "validator": "^9.4.1",
@@ -103,10 +104,10 @@
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",
-    "babel-eslint": "^8.2.6",
+    "babel-eslint": "^10.0.1",
     "enzyme": "^3.8.0",
     "enzyme-adapter-react-16": "^1.9.1",
-    "eslint": "^5.13.0",
+    "eslint": "^5.16.0",
     "eslint-config-airbnb": "^16.1.0",
     "eslint-friendly-formatter": "^3.0.0",
     "eslint-loader": "^1.9.0",
@@ -114,7 +115,7 @@
     "eslint-plugin-jsx-a11y": "^5.1.1",
     "eslint-plugin-react": "^7.12.4",
     "flow-bin": "^0.89.0",
-    "node-sass-chokidar": "~1.2.2",
+    "node-sass-chokidar": "^1.3.4",
     "npm-run-all": "^4.1.5",
     "prettier-eslint": "^8.8.2",
     "react-test-renderer": "^16.8.1",
@@ -125,5 +126,17 @@
       "parser": "babylon",
       "style": "eslint"
     }
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
   }
 }

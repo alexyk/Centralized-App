@@ -53,6 +53,8 @@ class ProfileEditForm extends React.Component {
     requester.getUserInfo()
       .then(res => res.body)
       .then(data => {
+        // if(data.country === null){
+
         let day = '';
         let month = '';
         let year = '';
@@ -130,19 +132,23 @@ class ProfileEditForm extends React.Component {
 
     Object.keys(userInfo).forEach((key) => (userInfo[key] === null || userInfo[key] === '') && delete userInfo[key]);
 
-    requester.updateUserInfo(userInfo).then(res => {
-      if (res.success) {
-        NotificationManager.success(PROFILE_SUCCESSFULLY_UPDATED, '', LONG);
-        this.componentDidMount();
-      }
-      else {
-        NotificationManager.error(PROFILE_UPDATE_ERROR, '', LONG);
-      }
-    }).catch(errors => {
-      for (var e in errors) {
-        NotificationManager.warning(errors[e].message, '', LONG);
-      }
-    });
+    if(country === null || country === ''){
+      NotificationManager.error("Please select country.", '', LONG);
+    } else {
+
+      requester.updateUserInfo(userInfo).then(res => {
+        if (res.success) {
+          NotificationManager.success(PROFILE_SUCCESSFULLY_UPDATED, '', LONG);
+          this.componentDidMount();
+        } else {
+          NotificationManager.error(PROFILE_UPDATE_ERROR, '', LONG);
+        }
+      }).catch(errors => {
+        for (var e in errors) {
+          NotificationManager.warning(errors[e].message, '', LONG);
+        }
+      });
+    }
   }
 
   updateCountry(e) {
@@ -288,8 +294,8 @@ class ProfileEditForm extends React.Component {
             <div className="address">
               <label htmlFor="address">Where do you live <span className="mandatory">*</span></label>
               <div className='select'>
-                <select name="country" id="address" onChange={this.updateCountry} value={JSON.stringify(country)}>
-                  <option disabled value="">Country</option>
+                <select name="country" id="address" onChange={this.updateCountry} value={JSON.stringify(country)} required>
+                  {(!country || country === '') && <option value="">Country</option> }
                   {countries && countries.map((item, i) => {
                     return <option key={i} value={JSON.stringify(item)}>{item.name}</option>;
                   })}
@@ -305,7 +311,7 @@ class ProfileEditForm extends React.Component {
                 name="city"
                 onPlaceSelected={this.handleCitySelect}
                 types={['(cities)']}
-                componentRestrictions={{ country: country.code.toLowerCase() }}
+                componentRestrictions={country && {country: country.code.toLowerCase()} }
                 disabled={!country}
                 placeholder='Choose your city'
               />

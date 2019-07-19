@@ -254,7 +254,8 @@ class HotelTripDetails extends React.Component {
             {this.renderHotelStars(bookingData.hotelScore)}
             <hr />
             <div className="visit-info">
-              <div className="check-in">
+              {/*<div className="check-in">*/}
+              <div className="check-out">
                 <h3 className="check-in-header">Check In</h3>
                 <h5 className="check-in-content">
                   <div style={{ marginBottom: "5%" }}>

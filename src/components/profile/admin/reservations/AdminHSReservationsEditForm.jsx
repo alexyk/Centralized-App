@@ -3,13 +3,15 @@ import { withRouter } from "react-router-dom";
 import { NotificationManager } from "react-notifications";
 import PropTypes from "prop-types";
 import moment from "moment";
-import requester from "../../../../requester";
 import { LONG } from "../../../../constants/notificationDisplayTimes.js";
 import { BOOKING_UPDATED } from "../../../../constants/successMessages";
+import Axios from "axios";
+import {getAxiosConfig} from "../utils/adminUtils";
 
 import "../../../../styles/css/components/profile/admin/reservations/admin-reservations-edit-form.css";
+import {Config} from "../../../../config";
 
-class AdminReservationsEditForm extends Component {
+class AdminHSReservationsEditForm extends Component {
   constructor(props) {
     super(props);
 
@@ -37,16 +39,16 @@ class AdminReservationsEditForm extends Component {
   }
 
   requestBookingById(id) {
-    requester.getBookingWithTransactionHashById(id).then(res => {
-      if (res.success) {
-        res.body.then(data => {
-          this.setState({
-            booking: data
-          });
-        });
-      } else {
-      }
-    });
+    const apiHost = Config.getValue('apiHost');
+    const url = `${apiHost}/admin/panel/booking/hs/${id}`;
+
+    Axios.get(url, getAxiosConfig())
+      .then(data => {
+        this.setState({booking: data.data});
+      })
+      .catch(error => {
+
+      });
   }
 
   editBooking(e) {
@@ -62,18 +64,19 @@ class AdminReservationsEditForm extends Component {
       provider: booking.provider
     };
 
-    requester
-      .updateBookingWithTransaction(this.props.match.params.id, updatedBooking)
-      .then(res => {
-        if (res.success) {
-          res.body.then(data => {
-            if (data.success) {
-              NotificationManager.success(BOOKING_UPDATED, "", LONG);
-              this.props.history.push("/profile/admin/reservation/booking/all");
-            }
-          });
-        } else {
+    const apiHost = Config.getValue('apiHost');
+    const url = `${apiHost}admin/panel/booking/hs/${this.props.match.params.id}`;
+
+
+    Axios.post(url, updatedBooking, getAxiosConfig())
+      .then(data => {
+        if(data.data.success){
+          NotificationManager.success(BOOKING_UPDATED, "", LONG);
+          this.props.history.push("/profile/admin/reservation/booking/all");
         }
+      })
+      .catch(error => {
+
       });
   }
 
@@ -159,8 +162,7 @@ class AdminReservationsEditForm extends Component {
                 return (
                   <div key={adultIndex}>
                     <div>
-                      Guest name:{" "}
-                      <span>{`${adult.firstName} ${adult.lastName}`}</span>
+                      <span>{`- ${adult.title} ${adult.firstName} ${adult.lastName}`}</span>
                     </div>
                   </div>
                 );
@@ -169,19 +171,28 @@ class AdminReservationsEditForm extends Component {
                 return (
                   <div key={childIndex}>
                     <div>
-                      Child age: <span>{child.age}</span>
+                      <span>{`- ${child.firstName} ${child.lastName}, age: ${child.age}`}</span>
                     </div>
                   </div>
                 );
               });
+
+              const haveChildren = room.children.length > 0;
+
               return (
                 <div className="admin-booking-room" key={roomIndex}>
                   <div>{`Room ${roomIndex + 1}`}</div>
-                  <div className="room-adults">{adults}</div>
                   <div className="room-children">
-                    <div>{`Children count: ${room.children.length}`}</div>
-                    {children}
+                    <div>{`Adults: `}</div>
+                      {adults}
                   </div>
+
+                  {haveChildren && (
+                    <div className="room-children">
+                      <div>{`Children: `}</div>
+                        {children}
+                    </div>
+                  )}
                 </div>
               );
             })}
@@ -196,10 +207,10 @@ class AdminReservationsEditForm extends Component {
   }
 }
 
-AdminReservationsEditForm.propTypes = {
+AdminHSReservationsEditForm.propTypes = {
   // Router props
   match: PropTypes.object,
   history: PropTypes.object
 };
 
-export default withRouter(AdminReservationsEditForm);
+export default withRouter(AdminHSReservationsEditForm);

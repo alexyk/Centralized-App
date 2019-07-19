@@ -3,25 +3,25 @@ import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import '../../../styles/css/components/hotels_search/result/results_holder__hotels.css';
 
-import { Link, withRouter } from 'react-router-dom';
+import {Link, withRouter} from 'react-router-dom';
 
-import { Config } from '../../../config';
-import { CurrencyConverter } from '../../../services/utilities/currencyConverter';
+import {Config} from '../../../config';
+import {CurrencyConverter} from '../../../services/utilities/currencyConverter';
 import PropTypes from 'prop-types';
 import React from 'react';
 import ReactHtmlParser from 'react-html-parser';
-import { RoomsXMLCurrency } from '../../../services/utilities/roomsXMLCurrency';
+import {RoomsXMLCurrency} from '../../../services/utilities/roomsXMLCurrency';
 import Slider from 'react-slick';
 import StringUtils from '../../../services/utilities/stringUtilities';
 import _ from 'lodash';
-import { connect } from 'react-redux';
+import {connect} from 'react-redux';
 import requester from '../../../requester';
 import LocPrice from '../../common/utility/LocPrice';
 import Rating from '../../common/rating';
-import { DEFAULT_LISTING_IMAGE_URL } from '../../../constants/images';
-import { isLogged } from '../../../selectors/userInfo';
-import { getCurrency, getCurrencySign } from '../../../selectors/paymentInfo';
-import { getCurrencyExchangeRates } from '../../../selectors/exchangeRatesInfo';
+import {DEFAULT_LISTING_IMAGE_URL} from '../../../constants/images';
+import {isLogged} from '../../../selectors/userInfo';
+import {getCurrency, getCurrencySign} from '../../../selectors/paymentInfo';
+import {getCurrencyExchangeRates} from '../../../selectors/exchangeRatesInfo';
 
 const SCREEN_SIZE_SMALL = 'SMALL';
 const SCREEN_SIZE_MEDIUM = 'MEDIUM';
@@ -51,14 +51,14 @@ class Result extends React.Component {
 
     const screenWidth = window.innerWidth;
     const screenSize = this.getScreenSize(screenWidth);
-    const { hotel } = this.props;
+    const {hotel} = this.props;
     const photoUrl = hotel.hotelPhoto && hotel.hotelPhoto.url ? hotel.hotelPhoto.url : hotel.hotelPhoto;
 
     this.state = {
       screenWidth: screenWidth,
       titleLength: this.getTitleLength(screenSize),
       descriptionLength: this.getDescriptionLength(screenSize),
-      pictures: photoUrl ? [{ url: photoUrl }, { url: photoUrl }] : [],
+      pictures: photoUrl ? [{url: photoUrl}, {url: photoUrl}] : [],
       loadedPictures: true,
       ready: false
     };
@@ -74,7 +74,7 @@ class Result extends React.Component {
   }
 
   setReady() {
-    this.setState({ ready: true });
+    this.setState({ready: true});
   }
 
   componentWillUnmount() {
@@ -86,7 +86,7 @@ class Result extends React.Component {
     const screenSize = this.getScreenSize(width);
     const titleLength = this.getTitleLength(screenSize);
     const descriptionLength = this.getDescriptionLength(screenSize);
-    this.setState({ screenWidth: window.innerWidth, titleLength, descriptionLength });
+    this.setState({screenWidth: window.innerWidth, titleLength, descriptionLength});
   }
 
   getScreenSize(screenWidth) {
@@ -108,37 +108,39 @@ class Result extends React.Component {
   }
 
   render() {
-    let { currency, currencySign, currencyExchangeRates, isUserLogged, hotel, price, nights, allElements, location } = this.props;
-    let { id, name, generalDescription, star } = hotel;
+    let {currency, currencySign, currencyExchangeRates, isUserLogged, hotel, price, nights, allElements, location, searchHotel, sch} = this.props;
+
+    let {id, name, generalDescription, star, lastBestPrice} = hotel;
 
     const isPriceLoaded = !!price;
-    const priceInSelectedCurrency = currencyExchangeRates && ((CurrencyConverter.convert(currencyExchangeRates, RoomsXMLCurrency.get(), currency, price)) / nights).toFixed(2);
+    const priceInSelectedCurrency = currencyExchangeRates && ((CurrencyConverter.convert(currencyExchangeRates, RoomsXMLCurrency.get(), currency, price))).toFixed(2);
+    const lastBestPriceInSelectedCurrency = currencyExchangeRates && ((CurrencyConverter.convert(currencyExchangeRates, RoomsXMLCurrency.get(), currency, lastBestPrice))).toFixed(2);
 
     name = name && StringUtils.shorten(name, this.state.titleLength);
     generalDescription = generalDescription && StringUtils.shorten(generalDescription, this.state.descriptionLength);
 
     const pictures = this.state.pictures || [];
-    const { loadedPictures } = this.state;
+    const {loadedPictures} = this.state;
     if (pictures.length < 1) {
-      pictures.push({ url: DEFAULT_LISTING_IMAGE_URL });
+      pictures.push({url: DEFAULT_LISTING_IMAGE_URL});
     }
 
-    const SlickButtonLoad = ({ currentSlide, slideCount, ...props }) => (
+    const SlickButtonLoad = ({currentSlide, slideCount, ...props}) => (
       <button {...props} onClick={() => {
-        this.setState({ loadedPictures: false });
+        this.setState({loadedPictures: false});
         requester.getHotelPictures(hotel.id).then(res => {
           res.body.then(data => {
             let images = _.orderBy(data, ['url'], ['asc']);
             images.push(images.shift());
-            this.setState({ pictures: images, loadedPictures: true, calledBackendForAllImages: true }, () => {
+            this.setState({pictures: images, loadedPictures: true, calledBackendForAllImages: true}, () => {
               props.onClick();
             });
           });
         });
-      }} />
+      }}/>
     );
 
-    const SlickButton = ({ currentSlide, slideCount, ...props }) => (
+    const SlickButton = ({currentSlide, slideCount, ...props}) => (
       <button {...props} />
     );
 
@@ -147,16 +149,16 @@ class Result extends React.Component {
       speed: 300,
       slidesToShow: 1,
       slidesToScroll: 1,
-      nextArrow: this.state.calledBackendForAllImages === true ? <SlickButton /> : <SlickButtonLoad />,
-      prevArrow: this.state.calledBackendForAllImages === true ? <SlickButton /> : <SlickButtonLoad />,
+      nextArrow: this.state.calledBackendForAllImages === true ? <SlickButton/> : <SlickButtonLoad/>,
+      prevArrow: this.state.calledBackendForAllImages === true ? <SlickButton/> : <SlickButtonLoad/>,
       beforeChange: () => {
         if (!this.state.calledBackendForAllImages) {
-          this.setState({ loadedPictures: false });
+          this.setState({loadedPictures: false});
           requester.getHotelPictures(hotel.id).then(res => {
             res.body.then(data => {
               let images = _.orderBy(data, ['url'], ['asc']);
               images.push(images.shift());
-              this.setState({ pictures: images, loadedPictures: true, calledBackendForAllImages: true }, () => {
+              this.setState({pictures: images, loadedPictures: true, calledBackendForAllImages: true}, () => {
               });
             });
           });
@@ -172,9 +174,14 @@ class Result extends React.Component {
 
     const search = location.search;
     const endOfSearch = search.indexOf('&filters=') !== -1 ? search.indexOf('&filters=') : search.length;
+    const isSearchHotel = sch && sch === true;
+
+    const searchHotelStyle = {
+      boxShadow: '-.4px -.5px 8px 8px #D87A61FF',
+    };
 
     return (
-      <div className={`${this.state.ready === true ? 'ready' : ''} result`}>
+      <div className={`${this.state.ready === true ? 'ready' : ''} result`} style={isSearchHotel ? searchHotelStyle : {}}>
         <div className="result-images">
           {loadedPictures ?
             <Slider
@@ -183,20 +190,22 @@ class Result extends React.Component {
               {pictures.map((picture, i) => {
                 return (
                   <div key={i}>
-                    <Link target={isMobile === false ? '_blank' : ''} to={`${redirectURL}/${id}${search.substr(0, endOfSearch)}`} key={i}>
-                      <div style={{ backgroundImage: 'url(' + Config.getValue('imgHost') + picture.url + ')' }}>
+                    <Link target={isMobile === false ? '_blank' : ''}
+                          to={`${redirectURL}/${id}${search.substr(0, endOfSearch)}`} key={i}>
+                      <div style={{backgroundImage: 'url(' + Config.getValue('imgHost') + picture.url + ')'}}>
                       </div>
                     </Link>
                   </div>
                 );
               })}
-            </Slider> : <div style={{ width: '240px' }} />
+            </Slider> : <div style={{width: '240px'}}/>
           }
         </div>
         <div className="result-content">
           <div>
-            <h4><Link target={isMobile === false ? '_blank' : ''} to={`${redirectURL}/${id}${search.substr(0, endOfSearch)}`}>{name}</Link></h4>
-            <Rating rating={star} />
+            <h4><Link target={isMobile === false ? '_blank' : ''}
+                      to={`${redirectURL}/${id}${search.substr(0, endOfSearch)}`}>{name}</Link></h4>
+            <Rating rating={star}/>
           </div>
           <div className="result-description">{generalDescription && ReactHtmlParser(generalDescription)}</div>
           <div className="result-mobile-pricing">
@@ -204,11 +213,12 @@ class Result extends React.Component {
               ? (!allElements ? <div className="price">Loading price...</div> : <div></div>)
               : <div className="price">{isUserLogged && `${currencySign} ${priceInSelectedCurrency}`}</div>
             }
-            {isPriceLoaded && <div className="price">1 night: <LocPrice fiat={price / nights} /></div>}
+            {isPriceLoaded && <div className="price">1 night: <LocPrice fiat={price}/></div>}
             <div>
               {!isPriceLoaded && allElements
                 ? <button disabled className="mobile-pricing-button">Unavailable</button>
-                : <Link target={isMobile === false ? '_blank' : ''} className="mobile-pricing-button" to={`${redirectURL}/${id}${search.substr(0, endOfSearch)}`}>Book now</Link>
+                : <Link target={isMobile === false ? '_blank' : ''} className="mobile-pricing-button"
+                        to={`${redirectURL}/${id}${search.substr(0, endOfSearch)}`}>Book now</Link>
               }
             </div>
           </div>
@@ -217,13 +227,21 @@ class Result extends React.Component {
         <div className="result-pricing">
           <div className="price-for">Price for 1 night</div>
           {!isPriceLoaded
-            ? (!allElements ? <div className="loader" style={{ width: '100%' }}></div> : <span style={{ padding: '20px 10px 10px 10px' }}>Unavailable</span>)
-            : <span className="price">{isUserLogged && priceInSelectedCurrency && `${currencySign} ${priceInSelectedCurrency}`}</span>
+            ? (!allElements ? (<div>
+              <div className="loader" style={{width: '100%'}}></div><br />
+              <div className="price-for">Last best search price</div><br /> <span className="price">{isUserLogged && lastBestPriceInSelectedCurrency && `${currencySign} ${lastBestPriceInSelectedCurrency}`}</span>
+            </div>) : <span style={{padding: '20px 10px 10px 10px'}}>Unavailable</span>)
+            : <div>
+
+              < br/> <span
+              className="price">{isUserLogged && priceInSelectedCurrency && `${currencySign} ${priceInSelectedCurrency}`}</span>
+            </div>
           }
-          {isPriceLoaded && <LocPrice fiat={price / nights} />}
+          {isPriceLoaded && <LocPrice fiat={price}/>}
           {!isPriceLoaded && allElements
             ? <button disabled className="button">Unavailable</button>
-            : <Link target={isMobile === false ? '_blank' : ''} className="button" to={`${redirectURL}/${id}${search.substr(0, endOfSearch)}`}>Book now</Link>
+            : <Link target={isMobile === false ? '_blank' : ''} className="button"
+                    to={`${redirectURL}/${id}${search.substr(0, endOfSearch)}`}>Book now</Link>
           }
         </div>
       </div>
@@ -248,7 +266,7 @@ Result.propTypes = {
 };
 
 function mapStateToProps(state) {
-  const { paymentInfo, userInfo, exchangeRatesInfo } = state;
+  const {paymentInfo, userInfo, exchangeRatesInfo} = state;
   return {
     currency: getCurrency(paymentInfo),
     currencySign: getCurrencySign(paymentInfo),

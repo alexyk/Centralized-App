@@ -288,43 +288,50 @@ export class LoginManager extends React.Component {
   setUserInfo() {
     requester.getUserInfo().then(res => {
       res.body.then(_data => {
-        let data = _.pick(
-          [
-            "firstName",
-            "lastName",
-            "phoneNumber",
-            "email",
-            "locAddress",
-            "gender",
-            "isEmailVerified",
-            "id"
-          ],
-          _data
-        );
-        const isAdmin = _data.roles.findIndex(r => r.name === "ADMIN") !== -1;
 
-        if (data.locAddress) {
-          Wallet.getBalance(data.locAddress).then(eth => {
-            const ethBalance = eth / Math.pow(10, 18);
-            Wallet.getTokenBalance(data.locAddress).then(loc => {
-              const locBalance = loc / Math.pow(10, 18);
-              this.props.setUserInfo({
-                ...data,
-                ethBalance,
-                locBalance,
-                isAdmin
+        if (_data.country === null) {
+          localStorage.clear();
+        } else {
+
+          let data = _.pick(
+            [
+              "firstName",
+              "lastName",
+              "phoneNumber",
+              "email",
+              "locAddress",
+              "gender",
+              "isEmailVerified",
+              "id"
+            ],
+            _data
+          );
+
+          const isAdmin = _data.roles.findIndex(r => r.name === "ADMIN") !== -1;
+
+          if (data.locAddress) {
+            Wallet.getBalance(data.locAddress).then(eth => {
+              const ethBalance = eth / Math.pow(10, 18);
+              Wallet.getTokenBalance(data.locAddress).then(loc => {
+                const locBalance = loc / Math.pow(10, 18);
+                this.props.setUserInfo({
+                  ...data,
+                  ethBalance,
+                  locBalance,
+                  isAdmin
+                });
               });
             });
-          });
-        } else {
-          const ethBalance = 0;
-          const locBalance = 0;
-          this.props.setUserInfo({
-            ...data,
-            ethBalance,
-            locBalance,
-            isAdmin,
-          });
+          } else {
+            const ethBalance = 0;
+            const locBalance = 0;
+            this.props.setUserInfo({
+              ...data,
+              ethBalance,
+              locBalance,
+              isAdmin
+            });
+          }
         }
       });
     });
@@ -422,7 +429,8 @@ function mapDispatchToProps(dispatch) {
     openRecoveryEmailModal: () => dispatch(openModal(SEND_RECOVERY_EMAIL)),
     openRecoveryTokenModal: () => dispatch(openModal(ENTER_RECOVERY_TOKEN)),
     openUpdateCountryModal: () => dispatch(openModal(UPDATE_COUNTRY)),
-    onRecoverPasswordClicked: () => {},
+    onRecoverPasswordClicked: () => {
+    },
     openModal: modal => dispatch(openModal(modal)),
     closeModal: modal => dispatch(closeModal(modal)),
     setUserInfo: info => dispatch(setUserInfo(info))

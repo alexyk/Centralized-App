@@ -151,22 +151,7 @@ class HotelsBookingRouterPage extends React.Component {
               });
           });
         } else {
-          res.errors.then((res) => {
-            const errors = res.errors;
-            if (errors.hasOwnProperty('RoomsXmlResponse')) {
-              if (errors['RoomsXmlResponse'].message.indexOf('QuoteNotAvailable:') !== -1) {
-                this.redirectToHotelDetailsPage();
-              }
-            } else {
-              for (let key in errors) {
-                if (typeof errors[key] !== 'function') {
-                  NotificationManager.warning(errors[key].message, '', LONG);
-                }
-              }
-            }
-
-            reject(false);
-          });
+          this.redirectToHotelDetailsPage();
         }
       });
     });
@@ -300,6 +285,7 @@ class HotelsBookingRouterPage extends React.Component {
     result += '&startDate=' + encodeURI(queryStringParameters.startDate);
     result += '&endDate=' + encodeURI(queryStringParameters.endDate);
     result += '&rooms=' + encodeURI(queryStringParameters.rooms);
+    result += '&nat=' + encodeURI(queryStringParameters.nat);
 
     return result;
   }
@@ -313,6 +299,7 @@ class HotelsBookingRouterPage extends React.Component {
     result += '&startDate=' + encodeURI(queryStringParameters.startDate);
     result += '&endDate=' + encodeURI(queryStringParameters.endDate);
     result += '&rooms=' + encodeURI(this.stringifyRoomsExcludingGuestNames(queryStringParameters.rooms));
+    result += '&nat=' + encodeURI(queryStringParameters.nat);
 
     return result;
   }
@@ -330,6 +317,7 @@ class HotelsBookingRouterPage extends React.Component {
     params.push(`startDate=${encodeURI(query.startDate)}`);
     params.push(`endDate=${encodeURI(query.endDate)}`);
     params.push(`rooms=${encodeURI(query.rooms)}`);
+    params.push(`nat=${encodeURI(query.nat)}`);
 
     return params;
   }
@@ -338,6 +326,7 @@ class HotelsBookingRouterPage extends React.Component {
     rooms = JSON.parse(rooms);
     rooms.forEach((room) => {
       room.adults = room.adults.length ? room.adults.length : room.adults;
+      room.children = room.children.length ? room.children.map( c => { return {"age" : c.age}; }) : room.children;
     });
 
     return JSON.stringify(rooms);
@@ -355,14 +344,29 @@ class HotelsBookingRouterPage extends React.Component {
         const lastName = searchRoom.adults.length ? searchRooms[roomIndex].adults[guestIndex].lastName : '';
         const adult = {
           title: 'Mr',
-          firstName: firstName ? firstName : (guestIndex > 0 ? 'Optional' : ''),
-          lastName: lastName ? lastName : (guestIndex > 0 ? 'Optional' : ''),
+          // firstName: firstName ? firstName : (guestIndex > 0 ? 'Optional' : ''),
+          // lastName: lastName ? lastName : (guestIndex > 0 ? 'Optional' : ''),
+          firstName: firstName ? firstName : '',
+          lastName: lastName ? lastName : '',
         };
 
         adults.push(adult);
       }
+      const children = [];
+      const childrenCount = searchRoom.children.length ? searchRoom.children.length : searchRoom.children;
+      for (let guestIndex = 0; guestIndex < childrenCount; guestIndex++) {
+        const firstName = searchRoom.children.length ? searchRooms[roomIndex].children[guestIndex].firstName : '';
+        const lastName = searchRoom.children.length ? searchRooms[roomIndex].children[guestIndex].lastName : '';
+        const child = {
+        //   firstName: firstName ? firstName : (guestIndex > 0 ? 'Optional' : ''),
+        //   lastName: lastName ? lastName : (guestIndex > 0 ? 'Optional' : ''),
+          firstName: firstName ? firstName : '',
+          lastName: lastName ? lastName : '',
+          age: searchRooms[roomIndex].children[guestIndex].age
+        };
+        children.push(child);
+      }
 
-      const children = searchRoom.children;
       const room = {
         adults: adults,
         children: children

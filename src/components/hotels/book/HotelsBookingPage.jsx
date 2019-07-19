@@ -127,6 +127,7 @@ class HotelsBookingPage extends React.Component {
     result += '&startDate=' + encodeURI(queryStringParameters.startDate);
     result += '&endDate=' + encodeURI(queryStringParameters.endDate);
     result += '&rooms=' + encodeURI(this.stringifyRoomsExcludingGuestNames(queryStringParameters.rooms));
+    result += '&nat=' + encodeURI(queryStringParameters.nat);
 
     return result;
   }
@@ -135,6 +136,7 @@ class HotelsBookingPage extends React.Component {
     rooms = JSON.parse(rooms);
     rooms.forEach((room) => {
       room.adults = room.adults.length ? room.adults.length : room.adults;
+      room.children = room.children.length ? room.children.map( c => { return {"age" : c.age}; }) : room.children;
     });
 
     return JSON.stringify(rooms);
@@ -148,7 +150,7 @@ class HotelsBookingPage extends React.Component {
     queryString += "&endDate=" + encodeURI(queryStringParameters.endDate);
     queryString += "&rooms=" + encodeURI(JSON.stringify(this.props.guests));
     queryString += "&quoteId=" + encodeURI(queryStringParameters.quoteId);
-    queryString += "&nat=" + encodeURI(this.state.country.id);
+    queryString += "&nat=" + encodeURI(queryStringParameters.nat);
     return queryString;
   }
 
@@ -160,6 +162,15 @@ class HotelsBookingPage extends React.Component {
       for (let j = 0; j < adults.length; j++) {
         const first = adults[j].firstName;
         const last = adults[j].lastName;
+        if (!(regexp.test(first) && regexp.test(last))) {
+          return false;
+        }
+      }
+
+      const children = rooms[i].children;
+      for(let c = 0; c < children.length; c++){
+        const first = children[c].firstName;
+        const last = children[c].lastName;
         if (!(regexp.test(first) && regexp.test(last))) {
           return false;
         }
@@ -398,6 +409,33 @@ class HotelsBookingPage extends React.Component {
                                     roomIndex,
                                     childIndex
                                   );
+                                }}
+                              />
+
+                              <input
+                                className="guest-name"
+                                type="text"
+                                placeholder="First Name"
+                                name="firstName"
+                                value={
+                                  guests[roomIndex].children[childIndex]
+                                    .firstName || ""
+                                }
+                                onChange={e => {
+                                  handleChildAgeChange(e, roomIndex, childIndex);
+                                }}
+                              />
+                              <input
+                                className="guest-name"
+                                type="text"
+                                placeholder="Last Name"
+                                value={
+                                  guests[roomIndex].children[childIndex]
+                                    .lastName || ""
+                                }
+                                name="lastName"
+                                onChange={e => {
+                                  handleChildAgeChange(e, roomIndex, childIndex);
                                 }}
                               />
                             </div>
