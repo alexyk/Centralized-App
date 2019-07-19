@@ -34,7 +34,7 @@ class UnverifiedList extends React.Component {
   }
 
   componentDidMount() {
-    requester.getAllUnverifiedUsers().then(res => {
+    requester.getAllUnverifiedUsers([`page=0`]).then(res => {
       res.body.then(data => {
         this.setState({
           users: data.content,

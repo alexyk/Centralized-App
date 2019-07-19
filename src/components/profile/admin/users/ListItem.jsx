@@ -39,9 +39,9 @@ export default class ListItem extends React.Component {
     const {
       firstName, id, lastName, city, country, email, phoneNumber, idCardPicture, idCardHolderPicture, address, zipCode
     } = this.props.item;
-    const {verified, blocked, updateUserBlockedStatus} = this.props;
+    const {verified, blocked, updateUserBlockedStatus, updateUserStatus} = this.props;
 
-    const {rulesModal, updateUserStatus} = this.state;
+    const {rulesModal} = this.state;
 
     return (
       <div className="unpublished-item">
@@ -62,10 +62,7 @@ export default class ListItem extends React.Component {
                                          style={{width: '50%'}}/>}
           </div>
 
-          <div>
-            {<RulesModal isActive={rulesModal} user={id} email={email} onClose={this.onRulesModelClose}/>}
-          </div>
-
+          {rulesModal && rulesModal === true && <div> <RulesModal isActive={rulesModal} user={id} email={email} onClose={this.onRulesModelClose}/></div>}
           <div className="unpublished-item_actions">
             <div className="minor-actions">
 
