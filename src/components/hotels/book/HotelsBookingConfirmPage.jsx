@@ -43,6 +43,7 @@ import '../../../styles/css/components/hotels/book/hotel-booking-confirm-page.cs
 import ConfirmPaymentWithLocModal from './modals/ConfirmPaymentWithLocModal';
 import PendingBookingLocModal from './modals/PendingBookingLocModal';
 import PendingBookingFiatModal from './modals/PendingBookingFiatModal';
+import { setQuoteIdIsValidPollingEnabled } from '../../../actions/paymentInfo.js';
 
 const ERROR_MESSAGE_TIME = 20000;
 const DEFAULT_CRYPTO_CURRENCY = 'EUR';
