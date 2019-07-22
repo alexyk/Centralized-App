@@ -195,6 +195,7 @@ class HotelsBookingRouterPage extends React.Component {
   }
 
   startQuoteIdIsValidPolling() {
+    // stop checking if quote-id is valid
     this.props.setQuoteIdIsValidPollingEnabled(true);
 
     const isQuoteIdPollingIntervalSet = (this.quoteIdPollingInterval != null);
