@@ -322,6 +322,9 @@ class HotelsBookingConfirmPage extends Component {
 
       requester.getMyJsonFile().then(res => {
         res.body.then(data => {
+          // stop checking if quote-id is valid
+          this.props.setQuoteIdIsValidPollingEnabled(false);
+
           setTimeout(() => {
             HotelReservation.createSimpleReservationSingleWithdrawer(
               data.jsonFile,
@@ -711,6 +714,12 @@ HotelsBookingConfirmPage.propTypes = {
   seconds: PropTypes.number
 };
 
+function mapDispatchToProps(dispatch) {
+  return {
+    setQuoteIdIsValidPollingEnabled: () => dispatch(setQuoteIdIsValidPollingEnabled())
+  }
+}
+
 function mapStateToProps(state) {
   const {paymentInfo, modalsInfo, exchangeRatesInfo, locAmountsInfo, locPriceUpdateTimerInfo} = state;
 
@@ -729,4 +738,4 @@ function mapStateToProps(state) {
   };
 }
 
-export default withRouter(connect(mapStateToProps)(HotelsBookingConfirmPage));
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(HotelsBookingConfirmPage));
