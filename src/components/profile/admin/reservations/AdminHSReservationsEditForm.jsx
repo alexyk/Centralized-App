@@ -84,7 +84,7 @@ class AdminHSReservationsEditForm extends Component {
 
   generateTransaction(bookingId) {
     const apiHost = Config.getValue('apiHost');
-    const url = `${apiHost}admin/booking/hs/generateTransaction`;
+    const url = `${apiHost}admin/panel/booking/hs/generateTransaction`;
 
 
     Axios.post(url, {"bookingId": bookingId}, getAxiosConfig())
@@ -100,7 +100,7 @@ class AdminHSReservationsEditForm extends Component {
 
   retryBooking(bookingId){
     const apiHost = Config.getValue('apiHost');
-    const url = `${apiHost}admin/booking/hs/retryBooking`;
+    const url = `${apiHost}admin/panel/booking/hs/retryBooking`;
 
     Axios.post(url, {"bookingId": bookingId}, getAxiosConfig())
       .then(data => {
@@ -112,6 +112,15 @@ class AdminHSReservationsEditForm extends Component {
   }
 
   render() {
+    const styleButton = {
+      margin: '5px 5px 5px 5px',
+      padding: '2px 2px 2px 2px'
+    };
+
+    const styleButtonHolder = {
+      margin: '5px 0 20px 0'
+    };
+
     const { booking } = this.state;
 
     if (!booking) {
@@ -233,12 +242,12 @@ class AdminHSReservationsEditForm extends Component {
             <button className="btn">Edit</button>
           </div>
         </form>
-        <div className="button-holder">
-          <button className="btn" onClick={() => this.generateTransaction(booking.bookingId)}>Generate Transaction
+        <div className="button-holder" style={styleButtonHolder}>
+          <button className="btn" style={styleButton} onClick={() => this.generateTransaction(booking.bookingId)}>Generate Transaction
           </button>
         </div>
-        <div className="button-holder">
-          <button className="btn" onClick={() => this.retryBooking(booking.bookingId)}>Retry Booking</button>
+        <div className="button-holder" style={styleButtonHolder}>
+          <button className="btn" style={styleButton} onClick={() => this.retryBooking(booking.bookingId)}>Retry Booking</button>
         </div>
       </div>
     );
