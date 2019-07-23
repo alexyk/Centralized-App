@@ -38,7 +38,6 @@ function HotelDetailsInfoSection(props) {
   const hangleBookNowClick = (resultIndex) => {
     requester.getUserInfo().then(res => res.body)
       .then(data => {
-        console.log(data);
         const { isEmailVerified } = data;
         if (!isEmailVerified) {
           props.dispatch(openModal(EMAIL_VERIFICATION));

@@ -114,7 +114,6 @@ class AdminReservationsTable extends Component {
     const activeButtonStyle = {background: "#d87a61", color: "white"};
 
     const activeButton = this.state.tab;
-    console.log(activeButton);
 
     return (
       <div className="reservations-container">

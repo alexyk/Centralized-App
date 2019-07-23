@@ -25,3 +25,5 @@ export const USER_ERADICATED = "User successfuly ERADICATED.";
 
 export const ADDED_TO_BLACKLIST = "successfuly added to blacklist.";
 export const REMOVED_FROM_BLACKLIST = "successfuly removed from blacklist.";
+
+export const SEND_EMAIL_VERIFICATION = "To enable booking features on LockTrip, please check your registrered email address and click the verification link.";

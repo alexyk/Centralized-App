@@ -39,6 +39,8 @@ export default class ListItem extends React.Component {
     const {
       firstName, id, lastName, city, country, email, phoneNumber, idCardPicture, idCardHolderPicture, address, zipCode
     } = this.props.item;
+
+
     const {verified, blocked, updateUserBlockedStatus, updateUserStatus} = this.props;
 
     const {rulesModal} = this.state;

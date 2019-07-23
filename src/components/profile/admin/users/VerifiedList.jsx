@@ -1,9 +1,8 @@
-import { NavLink, withRouter } from "react-router-dom";
+import {NavLink, withRouter} from "react-router-dom";
 
-import AdminNav from "../AdminNav";
 import ListItem from "./ListItem";
 import NoEntriesMessage from "../../../common/messages/NoEntriesMessage";
-import { NotificationManager } from "react-notifications";
+import {NotificationManager} from "react-notifications";
 import Pagination from "../../../common/pagination/Pagination";
 import PropTypes from "prop-types";
 import React from "react";
@@ -25,7 +24,8 @@ class VerifiedList extends React.Component {
       users: [],
       loading: true,
       totalElements: 0,
-      currentPage: !searchMap.page ? 0 : Number(searchMap.page)
+      currentPage: !searchMap.page ? 0 : Number(searchMap.page),
+      searchEmail: ''
     };
 
     this.onPageChange = this.onPageChange.bind(this);
@@ -37,7 +37,6 @@ class VerifiedList extends React.Component {
   componentDidMount() {
     requester.getAllVerifiedUsers().then(res => {
       res.body.then(data => {
-        console.log(data.content);
         this.setState({
           users: data.content,
           loading: false,
@@ -61,9 +60,6 @@ class VerifiedList extends React.Component {
 
     requester.getAllVerifiedUsers([`page=${page - 1}`]).then(res => {
       res.body.then(data => {
-
-        console.log(data);
-
         this.setState({
           users: data.content,
           totalElements: data.totalElements,
@@ -89,7 +85,7 @@ class VerifiedList extends React.Component {
         const allUsers = this.state.users;
         const newUsers = allUsers.filter(x => x.id !== id);
         const totalElements = this.state.totalElements;
-        this.setState({ users: newUsers, totalElements: totalElements - 1 });
+        this.setState({users: newUsers, totalElements: totalElements - 1});
         if (newUsers.length === 0 && totalElements > 0) {
           this.onPageChange(1);
         }
@@ -99,7 +95,7 @@ class VerifiedList extends React.Component {
     });
   }
 
-  updateUserBlockedStatus(e, id, email, blockedStatus){
+  updateUserBlockedStatus(e, id, email, blockedStatus) {
     if (e) {
       e.preventDefault();
     }
@@ -122,7 +118,7 @@ class VerifiedList extends React.Component {
 
       Axios.post(url, objToSend, getAxiosConfig())
         .then(data => {
-          if(data.data.success){
+          if (data.data.success) {
             NotificationManager.success(`You successfuly ${blocked} user: ${email}.`, "", LONG);
           } else {
             NotificationManager.error(`Unsuccessful ${blocked} user: ${email}.`, "", LONG);
@@ -137,7 +133,7 @@ class VerifiedList extends React.Component {
 
   render() {
     if (this.state.loading) {
-      return <div className="loader" style={{ marginBottom: "40px" }} />;
+      return <div className="loader" style={{marginBottom: "40px"}}/>;
     }
 
     return (
@@ -147,7 +143,7 @@ class VerifiedList extends React.Component {
           <section id="profile-my-reservations">
             <div>
               {this.state.users.length === 0 ? (
-                <NoEntriesMessage text="No users to show" />
+                <NoEntriesMessage text="No users to show"/>
               ) : (
                 <div>
                   {this.state.users.map((item, i) => {

@@ -76,6 +76,10 @@ function RegisterModal(props) {
               <img src={Config.getValue('basePath') + 'images/login-user.png'} className="user-image" alt="user" />
               <input type="text" required="required" name="signUpLastName" value={props.signUpLastName} onChange={props.onChange} className="with-icon" placeholder="Last Name" />
             </div>
+            <div className="input-container">
+              <img src={Config.getValue('basePath') + 'images/login-user.png'} className="user-image" alt="user" />
+              <input type="text" required="required" name="signUpPhoneNumber" value={props.signUpPhoneNumber} onChange={props.onChange} className="with-icon" placeholder="Phone Number" />
+            </div>
             <div className="input-container select">
               <img src={Config.getValue('basePath') + 'images/login-user.png'} className="user-image" alt="user" />
               <select name="country" id="country" onChange={props.handleChangeCountry} value={JSON.stringify(props.country)} style={{ padding: '10px', maxWidth: '100%', marginBottom: '10px', minHeight: '50px', paddingLeft: '40px' }} placeholder='Enter your country' required>
@@ -116,6 +120,7 @@ RegisterModal.propTypes = {
   signUpFirstName: PropTypes.string,
   signUpLastName: PropTypes.string,
   signUpPassword: PropTypes.string,
+  signUpPhoneNumber: PropTypes.string,
   country: PropTypes.object,
   states: PropTypes.array,
   countryState: PropTypes.number,

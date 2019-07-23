@@ -32,6 +32,7 @@ function EmailVerificationModal(props) {
           <form
             onSubmit={e => {
               e.preventDefault();
+              props.closeModal(EMAIL_VERIFICATION);
               props.requestVerificationEmail();
             }}
           >

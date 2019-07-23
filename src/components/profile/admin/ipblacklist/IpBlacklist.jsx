@@ -16,7 +16,6 @@ import Axios from "axios";
 import UsersTopBar from "../users/UsersTopBar";
 import {getAxiosConfig} from "../utils/adminUtils";
 import queryString from "query-string";
-import RuleComponent from "../users/rules/RuleComponent";
 
 class IpBlacklist extends React.Component {
   constructor(props) {

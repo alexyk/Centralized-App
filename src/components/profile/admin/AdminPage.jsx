@@ -7,6 +7,7 @@ import UnpublishedList from "./listings/UnpublishedList";
 import UnverifiedList from "./users/UnverifiedList";
 import EraseUser from "./users/EraseUser";
 import VerifiedList from "./users/VerifiedList";
+import SearchUser from "./users/SearchUser";
 import AdminSafecharge from "./safecharge/AdminSafecharge";
 import AdminReservationsRouter from "./reservations/AdminReservationsRouter";
 import IpBlacklist from "./ipblacklist/IpBlacklist";
@@ -81,6 +82,11 @@ class AdminPage extends Component {
           exact
           path="/profile/admin/listings/unpublished"
           render={() => <UnpublishedList />}
+        />
+        <Route
+          exact
+          path="/profile/admin/users/email"
+          render={() => <SearchUser />}
         />
         <Route
           exact
