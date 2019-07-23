@@ -15,6 +15,7 @@ import _ from 'lodash';
 import { getCurrency } from '../../../selectors/paymentInfo';
 import xregexp from "xregexp";
 import { mobileCache } from '../../../services/utilities/mobileWebView';
+import { setQuoteIdIsValidPollingEnabled } from '../../../actions/paymentInfo';
 const QUOTE_ID_POLLING_INTERVAL_TIME = 10000;
 
 class HotelsBookingRouterPage extends React.Component {
@@ -44,8 +45,10 @@ class HotelsBookingRouterPage extends React.Component {
     this.requestUserInfo = this.requestUserInfo.bind(this);
     this.requestCreateReservation = this.requestCreateReservation.bind(this);
 
-    this.setQuoteIdPollingInterval = this.setQuoteIdPollingInterval.bind(this);
-    this.clearQuoteIdPollingInterval = this.clearQuoteIdPollingInterval.bind(this);
+    this.quoteIdIsValidCheck = this.checkIsQuoteIdValid.bind(this);
+    this.startQuoteIdIsValidPolling = this.startQuoteIdIsValidPolling.bind(this);
+    this.stopQuoteIdIsValidPolling = this.stopQuoteIdIsValidPolling.bind(this);
+
     this.requestUpdateOnQuoteId = this.requestUpdateOnQuoteId.bind(this);
     this.requestLockOnQuoteId = this.requestLockOnQuoteId.bind(this);
     this.redirectToHotelDetailsPage = this.redirectToHotelDetailsPage.bind(this);
@@ -60,7 +63,7 @@ class HotelsBookingRouterPage extends React.Component {
     this.requestHotelRooms().then((hasAvailableRooms) => {
       this.findAndSetUserRequestedRoomsByQuoteId(hasAvailableRooms);
     });
-    this.setQuoteIdPollingInterval();
+    this.startQuoteIdIsValidPolling();
     this.requestUpdateOnQuoteId();
     this.getGuestsFromSearchString().then(() => {
       this.requestUserInfo();
@@ -68,7 +71,7 @@ class HotelsBookingRouterPage extends React.Component {
   }
 
   componentWillUnmount() {
-    this.clearQuoteIdPollingInterval();
+    this.stopQuoteIdIsValidPolling();
   }
 
   requestUserInfo() {
@@ -182,17 +185,33 @@ class HotelsBookingRouterPage extends React.Component {
     return null;
   }
 
-  setQuoteIdPollingInterval() {
-    const isQuoteIdPollingIntervalSet = !!this.quoteIdPollingInterval;
-    if (!isQuoteIdPollingIntervalSet) {
-      this.quoteIdPollingInterval = setInterval(() => {
-        this.requestUpdateOnQuoteId();
-      }, QUOTE_ID_POLLING_INTERVAL_TIME);
+  checkIsQuoteIdValid() {
+    if (this.props.quoteIdIsValidPollingEnabled) {
+      this.requestUpdateOnQuoteId();
+    } else {
+      console.warn(`[IsValid] Stopping quote-id is-valid polling`);
+      this.stopQuoteIdIsValidPolling();
     }
   }
 
-  clearQuoteIdPollingInterval() {
-    clearInterval(this.quoteIdPollingInterval);
+  startQuoteIdIsValidPolling() {
+    // stop checking if quote-id is valid
+    this.props.setQuoteIdIsValidPollingEnabled(true);
+
+    const isQuoteIdPollingIntervalSet = (this.quoteIdPollingInterval != null);
+    if (!isQuoteIdPollingIntervalSet) {
+      this.quoteIdPollingInterval = setInterval(() => this.checkIsQuoteIdValid(), QUOTE_ID_POLLING_INTERVAL_TIME);
+    }
+  }
+
+  stopQuoteIdIsValidPolling() {
+    if (this.quoteIdPollingInterval != null) {
+      clearInterval(this.quoteIdPollingInterval);
+      this.quoteIdPollingInterval = null;
+      this.props.setQuoteIdIsValidPollingEnabled(false);
+    } else {
+      console.warn(`[IsValid] Failure to stop quote-id check - INVALID TIMER`);
+    }
   }
 
   requestUpdateOnQuoteId() {
@@ -440,12 +459,19 @@ HotelsBookingRouterPage.propTypes = {
   currency: PropTypes.string
 };
 
+function mapDispatchToProps(dispatch) {
+  return {
+    setQuoteIdIsValidPollingEnabled: (value) => dispatch(setQuoteIdIsValidPollingEnabled(value))
+  };
+}
+
 const mapStateToProps = (state) => {
   const { paymentInfo } = state;
 
   return {
-    currency: getCurrency(paymentInfo)
+    currency: getCurrency(paymentInfo),
+    quoteIdIsValidPollingEnabled: paymentInfo.quoteIdIsValidPollingEnabled
   };
 };
 
-export default withRouter(connect(mapStateToProps)(HotelsBookingRouterPage));
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(HotelsBookingRouterPage));

@@ -42,7 +42,7 @@ function RegisterModal(props) {
           NotificationManager.warning(INVALID_FIRST_NAME, '', LONG);
         } else if (validator.isEmpty(props.signUpLastName)) {
           NotificationManager.warning(INVALID_LAST_NAME, '', LONG);
-        } else if (props.signUpPassword.length < 6) {
+        } else if (props.signUpPassword.length < 8) {
           NotificationManager.warning(PROFILE_INVALID_PASSWORD_LENGTH, '', LONG);
         } else if (!props.signUpPassword.match('^([^\\s]*[a-zA-Z]+.*?[0-9]+[^\\s]*|[^\\s]*[0-9]+.*?[a-zA-Z]+[^\\s]*)$')) {
           NotificationManager.warning(PROFILE_PASSWORD_REQUIREMENTS, '', LONG);
