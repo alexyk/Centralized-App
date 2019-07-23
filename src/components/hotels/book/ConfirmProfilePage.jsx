@@ -13,6 +13,7 @@ import StringUtils from '../../../services/utilities/stringUtilities';
 import { getCountries } from '../../../selectors/countriesInfo';
 
 import '../../../styles/css/components/hotels/book/profile-confirm-form.css';
+import { setQuoteIdIsValidPollingEnabled } from '../../../actions/paymentInfo.js';
 
 class ConfirmProfilePage extends React.Component {
   constructor(props) {
@@ -117,6 +118,8 @@ class ConfirmProfilePage extends React.Component {
   }
 
   updateUserProfile() {
+    this.props.setQuoteIdIsValidPollingEnabled(false);
+
     const userInfo = { ...this.state.userInfo };
     userInfo.preferredCurrency = userInfo.preferredCurrency ? userInfo.preferredCurrency.id : 1;
     userInfo.country = userInfo.country && userInfo.country.id;
@@ -253,11 +256,16 @@ ConfirmProfilePage.propTypes = {
 
   // Router props
   location: PropTypes.object,
-  
+
   // Redux props
   countries: PropTypes.array
 };
 
+const mapDispatchToProps = (dispatch) => {
+  return {
+    setQuoteIdIsValidPollingEnabled: () => dispatch(setQuoteIdIsValidPollingEnabled())
+  }
+}
 const mapStateToProps = (state) => {
   const { countriesInfo } = state;
 
@@ -266,4 +274,4 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default withRouter(connect(mapStateToProps)(ConfirmProfilePage));
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(ConfirmProfilePage));
