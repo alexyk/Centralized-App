@@ -27,7 +27,7 @@ import {ENTER_EMAIL_VERIFICATION_SECURITY_TOKEN} from "../../constants/modals.js
 import {LOGIN, UPDATE_COUNTRY, REGISTER} from "../../constants/modals.js";
 import * as _ from "ramda";
 import {SEND_RECOVERY_EMAIL} from "../../constants/modals";
-import {EMAIL_VERIFIED, SEND_EMAIL_VERIFICATION} from "../../constants/successMessages";
+import {EMAIL_VERIFIED} from "../../constants/successMessages";
 
 export class LoginManager extends React.Component {
   constructor(props) {

@@ -4,7 +4,8 @@ import { NotificationManager } from "react-notifications";
 import PropTypes from "prop-types";
 import moment from "moment";
 import { LONG } from "../../../../constants/notificationDisplayTimes.js";
-import { BOOKING_UPDATED } from "../../../../constants/successMessages";
+import { BOOKING_UPDATED, GENERATE_TRANSACTION_IN_PROGRESS, RETRY_BOOKING_IN_PROGRESS } from "../../../../constants/successMessages";
+import {GENERATE_TRANSACTION_PROBLEM, RETRY_BOOKING_PROBLEM } from "../../../../constants/warningMessages.js";
 import Axios from "axios";
 import {getAxiosConfig} from "../utils/adminUtils";
 
@@ -89,10 +90,10 @@ class AdminHSReservationsEditForm extends Component {
 
     Axios.post(url, {"bookingId": bookingId}, getAxiosConfig())
       .then(data => {
-        NotificationManager.success("Generate transaction process started.", "", LONG);
+        NotificationManager.success(GENERATE_TRANSACTION_IN_PROGRESS, "", LONG);
       })
       .catch(error => {
-        NotificationManager.error("Problem. Generate transaction not started.", "", LONG);
+        NotificationManager.error(GENERATE_TRANSACTION_PROBLEM, "", LONG);
       });
 
   }
@@ -104,10 +105,10 @@ class AdminHSReservationsEditForm extends Component {
 
     Axios.post(url, {"bookingId": bookingId}, getAxiosConfig())
       .then(data => {
-        NotificationManager.success("Process for retry booking started.", "", LONG);
+        NotificationManager.success(RETRY_BOOKING_IN_PROGRESS, "", LONG);
       })
       .catch(error => {
-        NotificationManager.error("Problem. Process for retry booking not started.", "", LONG);
+        NotificationManager.error(RETRY_BOOKING_PROBLEM, "", LONG);
       });
   }
 

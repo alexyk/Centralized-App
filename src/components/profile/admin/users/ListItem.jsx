@@ -80,7 +80,7 @@ export default class ListItem extends React.Component {
               <div><a href="" onClick={(e) => updateUserBlockedStatus(e, id, email, true)}>Blocked</a></div>
               }
               {blocked === true &&
-              <div><a href="" onClick={(e) => updateUserBlockedStatus(e, id, email, false)}>Unblocked</a></div>
+              <div><a href="" onClick={(e) => updateUserBlockedStatus(e, id, email, false)}>Unblock</a></div>
               }
               <div><a href="" onClick={this.onRulesClick}>Rules</a></div>
             </div>
