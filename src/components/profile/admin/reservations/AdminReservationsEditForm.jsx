@@ -5,7 +5,7 @@ import PropTypes from "prop-types";
 import moment from "moment";
 import requester from "../../../../requester";
 import { LONG } from "../../../../constants/notificationDisplayTimes.js";
-import { BOOKING_UPDATED } from "../../../../constants/successMessages";
+import {BOOKING_UPDATED} from "../../../../constants/successMessages";
 
 import "../../../../styles/css/components/profile/admin/reservations/admin-reservations-edit-form.css";
 

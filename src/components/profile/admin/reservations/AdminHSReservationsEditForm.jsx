@@ -22,6 +22,8 @@ class AdminHSReservationsEditForm extends Component {
     this.requestBookingById = this.requestBookingById.bind(this);
     this.onChange = this.onChange.bind(this);
     this.editBooking = this.editBooking.bind(this);
+    this.retryBooking = this.retryBooking.bind(this);
+    this.generateTransaction = this.generateTransaction.bind(this);
   }
 
   componentDidMount() {
@@ -77,6 +79,35 @@ class AdminHSReservationsEditForm extends Component {
       })
       .catch(error => {
 
+      });
+  }
+
+  generateTransaction(bookingId) {
+    const apiHost = Config.getValue('apiHost');
+    const url = `${apiHost}admin/booking/hs/generateTransaction`;
+
+
+    Axios.post(url, {"bookingId": bookingId}, getAxiosConfig())
+      .then(data => {
+        NotificationManager.success("Generate transaction process started.", "", LONG);
+      })
+      .catch(error => {
+        NotificationManager.error("Problem. Generate transaction not started.", "", LONG);
+      });
+
+  }
+
+
+  retryBooking(bookingId){
+    const apiHost = Config.getValue('apiHost');
+    const url = `${apiHost}admin/booking/hs/retryBooking`;
+
+    Axios.post(url, {"bookingId": bookingId}, getAxiosConfig())
+      .then(data => {
+        NotificationManager.success("Process for retry booking started.", "", LONG);
+      })
+      .catch(error => {
+        NotificationManager.error("Problem. Process for retry booking not started.", "", LONG);
       });
   }
 
@@ -202,6 +233,13 @@ class AdminHSReservationsEditForm extends Component {
             <button className="btn">Edit</button>
           </div>
         </form>
+        <div className="button-holder">
+          <button className="btn" onClick={() => this.generateTransaction(booking.bookingId)}>Generate Transaction
+          </button>
+        </div>
+        <div className="button-holder">
+          <button className="btn" onClick={() => this.retryBooking(booking.bookingId)}>Retry Booking</button>
+        </div>
       </div>
     );
   }
