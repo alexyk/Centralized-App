@@ -15,7 +15,8 @@ import {
   getAdults,
   getRegion,
   hasChildren,
-  getNationality
+  getNationality,
+  getSearchHotel
 } from "../../../selectors/hotelsSearchInfo.js";
 
 import {LONG} from "../../../constants/notificationDisplayTimes.js";
@@ -121,13 +122,20 @@ function HotelsSearchBar(props) {
       isUserLogged, nationality
     } = props;
     let queryString = "?";
-    queryString += "region=" + region.id;
+    if((region.id + "").includes("_")){
+      queryString += "region=" + region.id.split("_")[0];
+    } else {
+      queryString += "region=" + region.id;
+    }
+    // queryString += "region=" + region.id;
     queryString += "&currency=" + currency;
     queryString += "&startDate=" + startDate.format("DD/MM/YYYY");
     queryString += "&endDate=" + endDate.format("DD/MM/YYYY");
     queryString += "&rooms=" + encodeURI(JSON.stringify(rooms));
     queryString += "&nat=" + (nationality ? nationality.id : -1);
-
+    if((region.id + "").includes("_")){
+      queryString += "&sch=" + region.id.split("_")[1];
+    }
     return queryString;
   };
 
@@ -355,7 +363,8 @@ function mapStateToProps(state) {
     countries: getCountries(countriesInfo),
     nationality: getNationality(hotelsSearchInfo),
     isUserLogged: isLogged(userInfo),
-    isActive: isActive(modalsInfo)
+    isActive: isActive(modalsInfo),
+    sch: getSearchHotel(hotelsSearchInfo)
   };
 }
 

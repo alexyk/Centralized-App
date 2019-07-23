@@ -10,15 +10,9 @@ import { isActive } from '../../selectors/modalsInfo';
 import RegisterModal from './modals/RegisterModal';
 import { executeWithToken } from '../../services/grecaptcha/grecaptcha';
 import referralIdPersister from "../profile/affiliates/service/persist-referral-id";
-import {
-  REGISTER
-} from '../../constants/modals.js';
-import {
-  PROFILE_SUCCESSFULLY_CREATED,
-} from '../../constants/successMessages.js';
-import {
-  LOGIN,
-} from '../../constants/modals.js';
+import {REGISTER} from '../../constants/modals.js';
+import {PROFILE_SUCCESSFULLY_CREATED, SEND_EMAIL_VERIFICATION} from '../../constants/successMessages.js';
+import {LOGIN} from '../../constants/modals.js';
 
 class RegisterManager extends React.Component {
   constructor(props) {
@@ -30,6 +24,7 @@ class RegisterManager extends React.Component {
       signUpLastName: '',
       signUpPassword: '',
       signUpLocAddress: '',
+      signUpPhoneNumber: '',
       country: null,
       states: []
     };
@@ -87,6 +82,7 @@ class RegisterManager extends React.Component {
       firstName: this.state.signUpFirstName,
       lastName: this.state.signUpLastName,
       password: this.state.signUpPassword,
+      phoneNumber: this.state.signUpPhoneNumber,
       country: this.state.country.id,
       countryState: this.state.countryState,
       image: 'images/default.png',
@@ -102,6 +98,7 @@ class RegisterManager extends React.Component {
         });
         this.openModal(LOGIN);
         NotificationManager.success(PROFILE_SUCCESSFULLY_CREATED, '', LONG);
+        NotificationManager.success(SEND_EMAIL_VERIFICATION, '', LONG);
       } else {
         res.errors.then(res => {
           const errors = res.errors;
@@ -132,6 +129,7 @@ class RegisterManager extends React.Component {
           signUpFirstName={this.state.signUpFirstName} 
           signUpLastName={this.state.signUpLastName} 
           signUpPassword={this.state.signUpPassword}
+          signUpPhoneNumber={this.state.signUpPhoneNumber}
           country={this.state.country} 
           states={this.state.states} 
           onChange={this.onChange} 

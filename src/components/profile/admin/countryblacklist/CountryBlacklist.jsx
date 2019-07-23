@@ -77,40 +77,67 @@ class CountryBlacklist extends React.Component {
     if (e) {
       e.preventDefault();
     }
-    if (
-      window.confirm(
-        "Are you sure you wish to add Country: " +
-        this.state.country.name +
-        " to blacklist?"
-      )
-    ) {
 
-      const apiHost = Config.getValue('apiHost');
-      const url = `${apiHost}admin/countryBlacklist`;
+    if (!this.state.country.id) {
+      NotificationManager.info("Please select country.");
+    } else {
+      if (
+        window.confirm(
+          "Are you sure you wish to add Country: " +
+          this.state.country.name +
+          " to blacklist?"
+        )
+      ) {
 
+        const apiHost = Config.getValue('apiHost');
+        const url = `${apiHost}admin/countryBlacklist`;
 
-      Axios.post(url, this.state.country, getAxiosConfig())
-        .then(data => {
-          NotificationManager.success(this.state.country.name + " " + ADDED_TO_BLACKLIST, "", LONG);
+        const country = {
+          countryId: this.state.country.id,
+          code: this.state.country.code,
+          name: this.state.country.name
+        };
 
-          this.setState({country: {}});
-          this.props.history.push("/profile/admin/countryBlacklist");
-        })
-        .catch(error => {
-          NotificationManager.error(this.state.country.name + " " + NOT_ADDED_TO_BLACKLIST, "", LONG);
-        });
+        Axios.post(url, country, getAxiosConfig())
+          .then(data => {
+            NotificationManager.success(this.state.country.name + " " + ADDED_TO_BLACKLIST, "", LONG);
+
+            this.setState({country: {}});
+            this.getCountryBlacklist();
+
+            this.props.history.push("/profile/admin/countryBlacklist");
+          })
+          .catch(error => {
+            NotificationManager.error(this.state.country.name + " " + NOT_ADDED_TO_BLACKLIST, "", LONG);
+          });
+      }
     }
   }
 
-  getCountryBlacklist(page) {
+  // getCountryBlacklist(page) {
+  //   const apiHost = Config.getValue('apiHost');
+  //   const url = `${apiHost}admin/countryBlacklist?page=${page}`;
+  //
+  //   Axios.get(url, getAxiosConfig())
+  //     .then(data => {
+  //       this.setState({
+  //         loading: false,
+  //         totalElements: data.totalElements,
+  //         countryBlacklist: data.data
+  //       });
+  //     })
+  //     .catch(error => {
+  //       NotificationManager.error(USER_SERVERROR + " " + error, "", LONG);
+  //     });
+  // }
+
+  getCountryBlacklist() {
     const apiHost = Config.getValue('apiHost');
-    const url = `${apiHost}admin/countryBlacklist?page=${page}`;
+    const url = `${apiHost}admin/countryBlacklist`;
 
     Axios.get(url, getAxiosConfig())
       .then(data => {
         this.setState({
-          loading: false,
-          totalElements: data.totalElements,
           countryBlacklist: data.data
         });
       })
@@ -123,15 +150,19 @@ class CountryBlacklist extends React.Component {
     const apiHost = Config.getValue('apiHost');
     const url = `${apiHost}admin/countryBlacklist/remove`;
 
-    Axios.post(url, country, getAxiosConfig())
-      .then(data => {
-        NotificationManager.success(JSON.parse(country).name + " " + REMOVED_FROM_BLACKLIST, "", LONG);
+    const sendCountry = {
+      [country.id]: country.countryId
+    };
 
-        this.setState({country: {}});
+    Axios.post(url, sendCountry, getAxiosConfig())
+      .then(data => {
+        NotificationManager.success(country.name + " " + REMOVED_FROM_BLACKLIST, "", LONG);
+
+        this.getCountryBlacklist();
         this.props.history.push("/profile/admin/countryBlacklist");
       })
       .catch(error => {
-        NotificationManager.error(JSON.parse(country).name + " " + NOT_REMOVED_FROM_BLACKLIST, "", LONG);
+        NotificationManager.error(country.name + " " + NOT_REMOVED_FROM_BLACKLIST, "", LONG);
       });
   }
 
@@ -157,6 +188,8 @@ class CountryBlacklist extends React.Component {
   render() {
 
     const {countryBlacklist, countries, country} = this.state;
+
+    // const countriesArray = [{id: -1, name: 'Country'}, ...countries];
 
     // const { totalElements, loading } = this.state;
     // if (loading) {
@@ -218,7 +251,7 @@ class CountryBlacklist extends React.Component {
 
               <select name="country" id="address" onChange={this.updateCountry} value={JSON.stringify(country)}
                       style={styleOption}>
-                <option disabled value="">Country</option>
+                <option value="">Country</option>
                 {countries && countries.map((item, i) => {
                   return <option key={i} value={JSON.stringify(item)}>{item.name}</option>;
                 })}
@@ -254,7 +287,7 @@ class CountryBlacklist extends React.Component {
                         <td style={styleTd}>{item.name}</td>
                         <td style={styleTd}>{item.code}</td>
                         <td style={styleTd}>
-                          <button onClick={(e) => this.addCountryToWhitelist(e, JSON.stringify(item))}
+                          <button onClick={(e) => this.addCountryToWhitelist(e, item)}
                                   className="btn"
                                   id="btnText" name="btnText">Whitelist
                           </button>

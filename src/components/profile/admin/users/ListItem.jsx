@@ -6,13 +6,16 @@ import React from 'react';
 import RulesModal from './rules/RulesModal';
 import Axios from "axios";
 import {getAxiosConfig} from "../utils/adminUtils";
+import {NotificationManager} from "react-notifications";
 
 
 export default class ListItem extends React.Component {
   constructor(props) {
     super(props);
 
-    this.state = {rulesModal: false};
+    this.state = {
+      rulesModal: false
+    };
 
     this.onRulesClick = this.onRulesClick.bind(this);
     this.onRulesModelClose = this.onRulesModelClose.bind(this);
@@ -36,9 +39,11 @@ export default class ListItem extends React.Component {
     const {
       firstName, id, lastName, city, country, email, phoneNumber, idCardPicture, idCardHolderPicture, address, zipCode
     } = this.props.item;
-    const {verified} = this.props;
 
-    const {rulesModal, updateUserStatus} = this.state;
+
+    const {verified, blocked, updateUserBlockedStatus, updateUserStatus} = this.props;
+
+    const {rulesModal} = this.state;
 
     return (
       <div className="unpublished-item">
@@ -59,10 +64,7 @@ export default class ListItem extends React.Component {
                                          style={{width: '50%'}}/>}
           </div>
 
-          <div>
-            {<RulesModal isActive={rulesModal} user={id} email={email} onClose={this.onRulesModelClose}/>}
-          </div>
-
+          {rulesModal && rulesModal === true && <div> <RulesModal isActive={rulesModal} user={id} email={email} onClose={this.onRulesModelClose}/></div>}
           <div className="unpublished-item_actions">
             <div className="minor-actions">
 
@@ -73,6 +75,12 @@ export default class ListItem extends React.Component {
               }
               {verified === true &&
               <div><a href="" onClick={(e) => updateUserStatus(e, id, false)}>Unverify</a></div>
+              }
+              {blocked === false &&
+              <div><a href="" onClick={(e) => updateUserBlockedStatus(e, id, email, true)}>Blocked</a></div>
+              }
+              {blocked === true &&
+              <div><a href="" onClick={(e) => updateUserBlockedStatus(e, id, email, false)}>Unblocked</a></div>
               }
               <div><a href="" onClick={this.onRulesClick}>Rules</a></div>
             </div>
@@ -86,5 +94,7 @@ export default class ListItem extends React.Component {
 ListItem.propTypes = {
   item: PropTypes.object,
   updateUserStatus: PropTypes.func,
-  verified: PropTypes.bool
+  verified: PropTypes.bool,
+  blocked: PropTypes.bool,
+  updateUserBlockedStatus: PropTypes.func
 };

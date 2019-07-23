@@ -27,7 +27,7 @@ import {ENTER_EMAIL_VERIFICATION_SECURITY_TOKEN} from "../../constants/modals.js
 import {LOGIN, UPDATE_COUNTRY, REGISTER} from "../../constants/modals.js";
 import * as _ from "ramda";
 import {SEND_RECOVERY_EMAIL} from "../../constants/modals";
-import {EMAIL_VERIFIED} from "../../constants/successMessages";
+import {EMAIL_VERIFIED, SEND_EMAIL_VERIFICATION} from "../../constants/successMessages";
 
 export class LoginManager extends React.Component {
   constructor(props) {
@@ -288,6 +288,9 @@ export class LoginManager extends React.Component {
   setUserInfo() {
     requester.getUserInfo().then(res => {
       res.body.then(_data => {
+        if (_data.country === null) {
+          localStorage.clear();
+        }
         let data = _.pick(
           [
             "firstName",
@@ -301,6 +304,7 @@ export class LoginManager extends React.Component {
           ],
           _data
         );
+
         const isAdmin = _data.roles.findIndex(r => r.name === "ADMIN") !== -1;
 
         if (data.locAddress) {
@@ -323,7 +327,7 @@ export class LoginManager extends React.Component {
             ...data,
             ethBalance,
             locBalance,
-            isAdmin,
+            isAdmin
           });
         }
       });
@@ -422,7 +426,8 @@ function mapDispatchToProps(dispatch) {
     openRecoveryEmailModal: () => dispatch(openModal(SEND_RECOVERY_EMAIL)),
     openRecoveryTokenModal: () => dispatch(openModal(ENTER_RECOVERY_TOKEN)),
     openUpdateCountryModal: () => dispatch(openModal(UPDATE_COUNTRY)),
-    onRecoverPasswordClicked: () => {},
+    onRecoverPasswordClicked: () => {
+    },
     openModal: modal => dispatch(openModal(modal)),
     closeModal: modal => dispatch(closeModal(modal)),
     setUserInfo: info => dispatch(setUserInfo(info))

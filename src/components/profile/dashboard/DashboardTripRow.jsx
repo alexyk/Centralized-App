@@ -96,7 +96,7 @@ function DashboardTripRow(props) {
           <span className="date-in-day">{_dates.startDate.date}</span>{" "}
           {_dates.startDate.month}, {_dates.startDate.year}{" "}
           <i aria-hidden="true" className="fa fa-long-arrow-right" />{" "}
-          <span className="date-out-day">{_dates.endDate.day}</span>{" "}
+          <span className="date-out-day">{_dates.endDate.date}</span>{" "}
           {_dates.endDate.month}, {_dates.endDate.year}
         </div>
       </div>

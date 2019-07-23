@@ -9,6 +9,10 @@ import React from "react";
 import queryString from "query-string";
 import requester from "../../../../requester";
 import UsersTopBar from "./UsersTopBar"
+import {Config} from "../../../../config";
+import Axios from "axios";
+import {getAxiosConfig} from "../utils/adminUtils";
+import {LONG} from "../../../../constants/notificationDisplayTimes";
 
 
 class UnverifiedList extends React.Component {
@@ -20,16 +24,18 @@ class UnverifiedList extends React.Component {
       users: [],
       loading: true,
       totalElements: 0,
-      currentPage: !searchMap.page ? 0 : Number(searchMap.page)
+      currentPage: !searchMap.page ? 0 : Number(searchMap.page),
+      searchEmail: ''
     };
 
     this.onPageChange = this.onPageChange.bind(this);
     this.updateUserStatus = this.updateUserStatus.bind(this);
     this.onChange = this.onChange.bind(this);
+    this.updateUserBlockedStatus = this.updateUserBlockedStatus.bind(this);
   }
 
   componentDidMount() {
-    requester.getAllUnverifiedUsers().then(res => {
+    requester.getAllUnverifiedUsers([`page=0`]).then(res => {
       res.body.then(data => {
         this.setState({
           users: data.content,
@@ -89,6 +95,41 @@ class UnverifiedList extends React.Component {
     });
   }
 
+  updateUserBlockedStatus(e, id, email, blockedStatus){
+    if (e) {
+      e.preventDefault();
+    }
+
+    let blocked = blockedStatus ? "Blocked" : "Unblocked";
+
+    if (
+      window.confirm(
+        `Are you sure you want to ${blocked} user: ${email} ?`
+      )
+    ) {
+
+      const apiHost = Config.getValue('apiHost');
+      const url = `${apiHost}admin/users/blocked`;
+
+      const objToSend = {
+        id: id,
+        blocked: blockedStatus
+      };
+
+      Axios.post(url, objToSend, getAxiosConfig())
+        .then(data => {
+          if(data.data.success){
+            NotificationManager.success(`You successfuly ${blocked} user: ${email}.`, "", LONG);
+          } else {
+            NotificationManager.error(`Unsuccessful ${blocked} user: ${email}.`, "", LONG);
+          }
+          this.onPageChange(this.state.currentPage + 1);
+        })
+        .catch(error => {
+          NotificationManager.error(`Server error.`, "", LONG);
+        });
+    }
+  }
 
   render() {
     if (this.state.loading) {
@@ -112,6 +153,8 @@ class UnverifiedList extends React.Component {
                         item={item}
                         verified={false}
                         updateUserStatus={this.updateUserStatus}
+                        blocked={item.blocked}
+                        updateUserBlockedStatus={this.updateUserBlockedStatus}
                       />
                     );
                   })}
@@ -122,7 +165,7 @@ class UnverifiedList extends React.Component {
                 loading={this.state.totalReservations === 0}
                 onPageChange={this.onPageChange}
                 currentPage={this.state.currentPage + 1}
-                pageSize={20}
+                pageSize={10}
                 totalElements={this.state.totalElements}
               />
 

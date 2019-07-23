@@ -16,7 +16,6 @@ import Axios from "axios";
 import UsersTopBar from "../users/UsersTopBar";
 import {getAxiosConfig} from "../utils/adminUtils";
 import queryString from "query-string";
-import RuleComponent from "../users/rules/RuleComponent";
 
 class IpBlacklist extends React.Component {
   constructor(props) {
@@ -24,6 +23,7 @@ class IpBlacklist extends React.Component {
 
     let queryParams = queryString.parse(this.props.location.search);
 
+    this.isValidIp = true;
     this.state = {
       ipAddress: "",
       ipBlacklist: [],
@@ -38,6 +38,7 @@ class IpBlacklist extends React.Component {
     this.getIpBlacklist = this.getIpBlacklist.bind(this);
     this.addIpToWhitelist = this.addIpToWhitelist.bind(this);
     this.onPageChange = this.onPageChange.bind(this);
+    this.validateIpAddress = this.validateIpAddress.bind(this);
   }
 
   componentDidMount() {
@@ -69,32 +70,56 @@ class IpBlacklist extends React.Component {
     if (e) {
       e.preventDefault();
     }
-    if (
-      window.confirm(
-        "Are you sure you wish to add IP: " +
-        this.state.ipAddress +
-        " to blacklist?"
-      )
-    ) {
 
-      const apiHost = Config.getValue('apiHost');
-      const url = `${apiHost}admin/ipBlacklist`;
+    this.validateIpAddress(this.state.ipAddress);
+
+    if (!this.isValidIp) {
+      NotificationManager.info("IP Address: " + this.state.ipAddress + " is not correct.");
+    } else {
+
+      if (
+        window.confirm(
+          "Are you sure you wish to add IP: " +
+          this.state.ipAddress +
+          " to blacklist?"
+        )
+      ) {
+
+        const apiHost = Config.getValue('apiHost');
+        const url = `${apiHost}admin/ipBlacklist`;
 
 
-      Axios.post(url, {"ip": this.state.ipAddress}, getAxiosConfig())
-        .then(data => {
+        Axios.post(url, {"ip": this.state.ipAddress}, getAxiosConfig())
+          .then(data => {
 
-          NotificationManager.success(this.state.ipAddress + " " + ADDED_TO_BLACKLIST, "", LONG);
+            NotificationManager.success(this.state.ipAddress + " " + ADDED_TO_BLACKLIST, "", LONG);
 
-          this.setState({ipAddress: ""});
-          this.getIpBlacklist();
+            this.setState({ipAddress: ""});
+            this.getIpBlacklist();
 
-          this.props.history.push("/profile/admin/ipBlacklist");
-        })
-        .catch(error => {
-          NotificationManager.error(this.state.ipAddress + " " + NOT_ADDED_TO_BLACKLIST + " " + this.state.ipAddress, "", LONG);
-        });
+            this.props.history.push("/profile/admin/ipBlacklist");
+          })
+          .catch(error => {
+            NotificationManager.error(this.state.ipAddress + " " + NOT_ADDED_TO_BLACKLIST + " " + this.state.ipAddress, "", LONG);
+          });
+      }
     }
+  }
+
+  validateIpAddress(ip) {
+    const ipSplit = ip.split("\.");
+    let a = true;
+    if (ipSplit.length !== 4) {
+      a = false;
+    }
+
+    ipSplit && ipSplit.map(e => {
+      if (isNaN(e) || Number(e) < 0 || Number(e) > 255) {
+        a = false;
+      }
+    });
+    this.isValidIp = a;
+
   }
 
   // getIpBlacklist(page) {

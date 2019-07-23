@@ -11,6 +11,15 @@ export default function UsersTopBar(props) {
           <NavLink
             exact
             activeClassName="active"
+            to="/profile/admin/users/email"
+          >
+            <h2>Search User</h2>
+          </NavLink>
+        </li>
+        <li>
+          <NavLink
+            exact
+            activeClassName="active"
             to="/profile/admin/users/unverified"
           >
             <h2>Unverified</h2>

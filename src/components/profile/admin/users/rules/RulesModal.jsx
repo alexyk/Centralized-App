@@ -24,12 +24,16 @@ export default class RulesModal extends Component {
 
     this.onRuleToggle = this.onRuleToggle.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
+    this.serviceGetRules = this.serviceGetRules.bind(this);
   }
 
-  getSnapshotBeforeUpdate(prevProps, prevState) {
-    if (this.props.isActive) {
-      this.serviceGetRules();
-    }
+  // getSnapshotBeforeUpdate(prevProps, prevState) {
+  //   if (this.props.isActive) {
+  //     this.serviceGetRules();
+  //   }
+  // }
+  componentDidMount() {
+    this.serviceGetRules();
   }
 
   serviceGetRules(props) {
@@ -64,7 +68,7 @@ export default class RulesModal extends Component {
 
     Axios.post(url, postData, getAxiosConfig())
       .then(response => {
-        const {data:responseData} = response;
+        const {data: responseData} = response;
         //console.log(`[SERVER] setting rules`, {responseData,postData,response})
 
         let rules = [];
@@ -83,7 +87,7 @@ export default class RulesModal extends Component {
     const rules = this.state.rules.concat(); // make a shallow copy
     rules[index].value = !value;
 
-    this.setState({rules, uiState: this.state.uiState+1});
+    this.setState({rules, uiState: this.state.uiState + 1});
   }
 
 
@@ -106,10 +110,10 @@ export default class RulesModal extends Component {
       this.state.rules.map((item, index) => {
         const {name, value} = item;
         return <RuleComponent
-                key={`${index}_${this.state.uiState}`}
-                name={name}
-                value={value}
-                onToggle={() => this.onRuleToggle(value, index)}
+          key={`${index}_${this.state.uiState}`}
+          name={name}
+          value={value}
+          onToggle={() => this.onRuleToggle(value, index)}
         />
       })
     )
@@ -117,7 +121,7 @@ export default class RulesModal extends Component {
 
 
   render() {
-    const { user:userId, email } = this.props;
+    const {user: userId, email} = this.props;
 
     return (
       <Modal
@@ -128,17 +132,17 @@ export default class RulesModal extends Component {
         <Modal.Header>
           <button type="button" className="close" onClick={this.props.onClose}>&times;</button>
           <h1>Edit User Rules</h1>
-          <hr />
+          <hr/>
           <span className="subtitle-label-text">E-mail</span>:
           <span className="subtitle-value-text"> {email}</span> &nbsp;&nbsp;
           <span className="subtitle-label-text">User Id</span>:
           <span className="subtitle-value-text"> {userId}</span>
-          <hr />
+          <hr/>
         </Modal.Header>
         <Modal.Body>
           {this._renderItems()}
           <br/> <br/>
-          <hr />
+          <hr/>
           <div className="btn" onClick={this.onSubmit}>Apply</div>
         </Modal.Body>
       </Modal>
