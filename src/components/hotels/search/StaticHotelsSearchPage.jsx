@@ -51,9 +51,7 @@ class StaticHotelsSearchPage extends React.Component {
     this.queryParams = queryParams;
 
     if (isMobileWebView) {
-      // alert(`query before: ${this.queryString}`)
       this.queryString = fixQueryStringWithSchParam(this.queryString, queryParams);
-      // alert(`query after: ${this.queryString}`)
 
       localStorage.setItem('currency', queryParams.currency);
       try {
@@ -214,9 +212,6 @@ class StaticHotelsSearchPage extends React.Component {
       });
     }
 
-    // alert(`region: ${region}, sch: ${sch}`);
-    console.log(`query params before search: ...`, {queryParams});
-
     requester.getStaticHotels(region).then(res => {
       res.body.then(data => {
         const { content } = data;
@@ -329,8 +324,6 @@ class StaticHotelsSearchPage extends React.Component {
     );
 
     const searchTerm = `${s}&uuid=${queueId}`;
-    // alert(`[MobileWebviewStartHotels] searchString1:${s},searchString2:${this.getSearchString()}`);
-    // alert(`searchTerm:${searchTerm}`);
 
     requester.getSearchHotelResults(searchTerm).then(res => {
       res.body.then(data => {
@@ -365,9 +358,6 @@ class StaticHotelsSearchPage extends React.Component {
     this.geocoder = new window.google.maps.Geocoder();
     requester.getRegionNameById(regionId).then(res => {
       res.body.then(data => {
-        // alert(`get region name by id: ${regionId}`);
-        console.log(`[haha] `, {data})
-
         this.props.dispatch(setRegion(data));
         const address = data.query;
 
@@ -412,11 +402,9 @@ class StaticHotelsSearchPage extends React.Component {
     // const region = this.props.region.id;
 
     let region = this.props.region.id;
-    // alert(`region 1: ${region}`)
     if ((this.props.region.id + "").includes("_")) {
       region = this.props.region.id.split("_")[0];
     }
-    // alert(`region 2: ${region}`)
 
     this.getCityLocation(this.props.region.id);
 
