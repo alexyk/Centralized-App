@@ -1,6 +1,7 @@
 import { paymentInfo } from "../actions/actionTypes";
 
 const initialState = {
+  quoteIdIsValidPollingEnabled: true,
   currency: localStorage["currency"] ? localStorage["currency"] : "USD",
   currencySign: localStorage["currencySign"]
     ? localStorage["currencySign"]
@@ -15,6 +16,12 @@ export default function reducer(state = initialState, action) {
         ...state,
         currency: action.currency,
         currencySign: getCurrencySign(action.currency)
+      };
+
+    case paymentInfo.SET_QUOTEID_ISVALID_POLLING_ENABLED:
+      return {
+        ...state,
+        quoteIdIsValidPollingEnabled: action.value,
       };
 
     default:

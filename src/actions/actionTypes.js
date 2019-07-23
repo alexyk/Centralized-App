@@ -6,7 +6,8 @@ export const userInfo = {
 
 // paymentInfo actions
 export const paymentInfo = {
-  SET_CURRENCY: "SET_CURRENCY"
+  SET_CURRENCY: "SET_CURRENCY",
+  SET_QUOTEID_ISVALID_POLLING_ENABLED: "SET_QUOTEID_ISVALID_POLLING_ENABLED"
 };
 
 // paymentInfo actions
