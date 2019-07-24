@@ -256,7 +256,7 @@ class IpBlacklist extends React.Component {
 
         <div className="container reservations-edit-form">
           <div>
-            {!ipList ? (
+            {(!ipList || ipList.length === 0) ? (
               <NoEntriesMessage text="No IP Addresses in Blacklist"/>
             ) : (
               <div className="reservations-table">

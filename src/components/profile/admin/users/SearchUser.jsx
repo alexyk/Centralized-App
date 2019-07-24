@@ -12,6 +12,7 @@ import {Config} from "../../../../config";
 import Axios from "axios";
 import {getAxiosConfig} from "../utils/adminUtils";
 import {LONG} from "../../../../constants/notificationDisplayTimes";
+import Pagination from "../../../common/pagination/Pagination";
 
 
 class SearchUser extends React.Component {
@@ -20,22 +21,35 @@ class SearchUser extends React.Component {
 
     let searchMap = queryString.parse(this.props.location.search);
     this.state = {
-      user: '',
+      users: [],
       loading: true,
-      searchEmail: ''
+      searchEmail: '',
+      totalElements: 0,
+      currentPage: !searchMap.page ? 0 : Number(searchMap.page)
     };
 
+    this.onPageChange = this.onPageChange.bind(this);
     this.updateUserStatus = this.updateUserStatus.bind(this);
     this.onChange = this.onChange.bind(this);
     this.updateUserBlockedStatus = this.updateUserBlockedStatus.bind(this);
     this.searchUser = this.searchUser.bind(this);
-    this.getUserByEmail = this.getUserByEmail.bind(this);
+    this.getUsersByEmail = this.getUsersByEmail.bind(this);
   }
+
 
   onChange(e) {
     this.setState({
       [e.target.name]: e.target.value
     });
+  }
+
+  onPageChange(page) {
+    this.setState({
+      currentPage: page - 1,
+      loading: true
+    });
+
+    this.getUsersByEmail(this.state.searchEmail, page);
   }
 
 
@@ -49,12 +63,17 @@ class SearchUser extends React.Component {
       verified: verified
     };
 
-    const email = this.state.user.email;
+    let userEmail;
+    this.state.users.map(u => {
+      if(u.id === id){
+        userEmail = u.email;
+      }
+    });
 
     requester.changeUserStatus(userObj).then(res => {
       if (res.success) {
-        NotificationManager.info("You successfully changed user status");
-        this.getUserByEmail(email);
+        NotificationManager.success("You successfully changed user status for user: " + userEmail);
+        this.getUsersByEmail(this.state.searchEmail, this.state.currentPage);
       } else {
         NotificationManager.error("Something went wrong", "Users Operations");
       }
@@ -103,22 +122,25 @@ class SearchUser extends React.Component {
 
     const email = this.state.searchEmail;
 
-    this.getUserByEmail(email);
-
+    this.getUsersByEmail(email, this.state.currentPage);
   }
 
-  getUserByEmail(email){
+  getUsersByEmail(email, page) {
     const apiHost = Config.getValue('apiHost');
-    const url = `${apiHost}admin/users/email`;
+    const url = `${apiHost}admin/users/email?page=${page - 1}`;
 
     Axios.post(url, {'email': email}, getAxiosConfig())
       .then(data => {
         if (data.data) {
-          this.setState({user: data.data, searchEmail: ''});
+          this.setState({
+            users: data.data.content,
+            searchEmail: email,
+            totalElements: data.data.totalElements,
+            loading: false});
         }
       })
       .catch(error => {
-        NotificationManager.error(`User not found`, "", LONG)
+        NotificationManager.error(`Not found user with email contains ` + email, "", LONG)
       });
   }
 
@@ -163,26 +185,38 @@ class SearchUser extends React.Component {
           </form>
         </div>
 
-        <div className="my-reservations">
+        {!this.state.loading && <div className="my-reservations">
           <section id="profile-my-reservations">
             <div>
-              {this.state.user === '' ? (
-                <NoEntriesMessage text="No user to show"/>
+              {this.state.users.length === 0 ? (
+                <NoEntriesMessage text="No users to show"/>
               ) : (
                 <div>
-                  <ListItem
-                    key={this.state.user.id}
-                    item={this.state.user}
-                    verified={this.state.user.verify}
-                    updateUserStatus={this.updateUserStatus}
-                    blocked={this.state.user.blocked}
-                    updateUserBlockedStatus={this.updateUserBlockedStatus}
-                  />
+                  {this.state.users.map((item, i) => {
+                    return (
+                      <ListItem
+                        key={i}
+                        item={item}
+                        verified={item.verify}
+                        updateUserStatus={this.updateUserStatus}
+                        blocked={item.blocked}
+                        updateUserBlockedStatus={this.updateUserBlockedStatus}
+                      />
+                    );
+                  })}
                 </div>
               )}
+
+              <Pagination
+                loading={this.state.totalReservations === 0}
+                onPageChange={this.onPageChange}
+                currentPage={this.state.currentPage + 1}
+                pageSize={10}
+                totalElements={this.state.totalElements}
+              />
             </div>
           </section>
-        </div>
+        </div>}
       </div>
     );
   }
