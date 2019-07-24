@@ -403,13 +403,6 @@ class HotelsBookingPage extends React.Component {
                                 }
                                 placeholder="Age"
                                 name="age"
-                                onChange={e => {
-                                  handleChildAgeChange(
-                                    e,
-                                    roomIndex,
-                                    childIndex
-                                  );
-                                }}
                               />
 
                               <input

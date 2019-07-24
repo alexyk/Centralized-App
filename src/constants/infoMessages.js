@@ -10,5 +10,3 @@ export const CANCELLING_RESERVATION = "Your reservation cancellation is being pr
 export const RESERVATION_CANCELLED = "Your reservation has been cancelled. You will receive an email confirming your cancellation.";
 export const FILTERED_UNAVAILABLE_HOTELS = "We have filtered out the unavailable hotels for your dates.";
 export const WITHDRAW_REQUEST_SUCCESSFUL = "You have successfully issued a withdraw request.";
-
-export const SEND_EMAIL_VERIFICATION = "To enable booking features on LockTrip, please check your registrered email address and click the verification link.";

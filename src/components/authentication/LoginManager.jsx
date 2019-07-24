@@ -11,19 +11,14 @@ import {closeModal, openModal} from "../../actions/modalsInfo";
 import {isActive} from "../../selectors/modalsInfo";
 import {setUserInfo} from "../../actions/userInfo";
 import {Wallet} from "../../services/blockchain/wallet.js";
-import {VERIFICATION_EMAIL_SENT} from "../../constants/infoMessages.js";
 import UpdateCountryModal from "./modals/UpdateCountryModal";
 import EmailVerificationModal from "./modals/EmailVerificationModal";
 import EnterEmailVerificationTokenModal from "./modals/EnterEmailVerificationTokenModal";
 import {executeWithToken} from "../../services/grecaptcha/grecaptcha";
 import queryString from "query-string";
-import {
-  EMAIL_VERIFICATION,
-  ENTER_RECOVERY_TOKEN
-} from "../../constants/modals.js";
-import {INVALID_SECURITY_CODE} from "../../constants/warningMessages";
+import { EMAIL_VERIFICATION, ENTER_RECOVERY_TOKEN} from "../../constants/modals.js";
+import {INVALID_SECURITY_CODE, SEND_EMAIL_VERIFICATION} from "../../constants/warningMessages";
 import {ENTER_EMAIL_VERIFICATION_SECURITY_TOKEN} from "../../constants/modals.js";
-
 import {LOGIN, UPDATE_COUNTRY, REGISTER} from "../../constants/modals.js";
 import * as _ from "ramda";
 import {SEND_RECOVERY_EMAIL} from "../../constants/modals";
@@ -342,7 +337,7 @@ export class LoginManager extends React.Component {
       .then(res => res.body)
       .then(data => {
         if (data.isVerificationEmailSent) {
-          NotificationManager.success(VERIFICATION_EMAIL_SENT, "", LONG);
+          NotificationManager.warning(SEND_EMAIL_VERIFICATION, "", LONG);
         } else {
           NotificationManager.error(INVALID_SECURITY_CODE, "", LONG);
         }

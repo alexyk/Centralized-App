@@ -12,7 +12,7 @@ import { executeWithToken } from '../../services/grecaptcha/grecaptcha';
 import referralIdPersister from "../profile/affiliates/service/persist-referral-id";
 import {REGISTER} from '../../constants/modals.js';
 import {PROFILE_SUCCESSFULLY_CREATED} from '../../constants/successMessages.js';
-import {SEND_EMAIL_VERIFICATION} from '../../constants/infoMessages.js';
+import {SEND_EMAIL_VERIFICATION} from '../../constants/warningMessages.js';
 import {LOGIN} from '../../constants/modals.js';
 
 class RegisterManager extends React.Component {
@@ -99,7 +99,7 @@ class RegisterManager extends React.Component {
         });
         this.openModal(LOGIN);
         NotificationManager.success(PROFILE_SUCCESSFULLY_CREATED, '', LONG);
-        NotificationManager.info(SEND_EMAIL_VERIFICATION, '', LONG);
+        NotificationManager.warning(SEND_EMAIL_VERIFICATION, '', LONG);
       } else {
         res.errors.then(res => {
           const errors = res.errors;

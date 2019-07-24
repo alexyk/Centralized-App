@@ -33,3 +33,6 @@ export const WRONG_DESTINATION_IATA_CODE = "Wrong destination airport IATA code"
 
 export const GENERATE_TRANSACTION_PROBLEM = "Problem. Generate transaction not started.";
 export const RETRY_BOOKING_PROBLEM = "Problem. Process for retry booking not started.";
+
+export const SEND_EMAIL_VERIFICATION = "To enable booking features on LockTrip, please check your registrered email address and click the verification link.";
+
