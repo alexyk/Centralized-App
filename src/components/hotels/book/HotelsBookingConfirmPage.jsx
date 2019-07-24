@@ -717,6 +717,7 @@ HotelsBookingConfirmPage.propTypes = {
 
 function mapDispatchToProps(dispatch) {
   return {
+    dispatch,
     setQuoteIdIsValidPollingEnabled: () => dispatch(setQuoteIdIsValidPollingEnabled())
   }
 }
