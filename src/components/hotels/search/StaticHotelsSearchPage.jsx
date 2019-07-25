@@ -200,8 +200,7 @@ class StaticHotelsSearchPage extends React.Component {
   }
 
   requestStaticHotels(queryParams) {
-
-    let {region, sch} = queryParams;
+    const {region, sch} = queryParams;
     let scHotel = null;
 
     if (sch) {
