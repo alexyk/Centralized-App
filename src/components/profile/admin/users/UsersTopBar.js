@@ -49,7 +49,7 @@ export default function UsersTopBar(props) {
             activeClassName="active"
             to="/profile/admin/ipBlacklist"
           >
-            <h2>Ip Blacklist</h2>
+            <h2>IP Blacklist</h2>
           </NavLink>
         </li>
         <li>

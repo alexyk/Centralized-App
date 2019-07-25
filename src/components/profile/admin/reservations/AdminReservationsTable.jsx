@@ -118,7 +118,7 @@ class AdminReservationsTable extends Component {
     return (
       <div className="reservations-container">
         <AdminNav>
-          <h2 className="navigation-tab">All Booking With Transaction Hash</h2>
+          <h2 className="navigation-tab">All Bookings With Transaction Hash</h2>
         </AdminNav>
 
         <button className="a" style={this.state.tab === "hotels-hs" ? activeButtonStyle : {}} onClick={() => {

@@ -24,8 +24,7 @@ class VerifiedList extends React.Component {
       users: [],
       loading: true,
       totalElements: 0,
-      currentPage: !searchMap.page ? 0 : Number(searchMap.page),
-      searchEmail: ''
+      currentPage: !searchMap.page ? 0 : Number(searchMap.page)
     };
 
     this.onPageChange = this.onPageChange.bind(this);

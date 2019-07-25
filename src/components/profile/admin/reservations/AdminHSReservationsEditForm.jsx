@@ -4,7 +4,8 @@ import { NotificationManager } from "react-notifications";
 import PropTypes from "prop-types";
 import moment from "moment";
 import { LONG } from "../../../../constants/notificationDisplayTimes.js";
-import { BOOKING_UPDATED } from "../../../../constants/successMessages";
+import { BOOKING_UPDATED, GENERATE_TRANSACTION_IN_PROGRESS, RETRY_BOOKING_IN_PROGRESS } from "../../../../constants/successMessages";
+import {GENERATE_TRANSACTION_PROBLEM, RETRY_BOOKING_PROBLEM } from "../../../../constants/warningMessages.js";
 import Axios from "axios";
 import {getAxiosConfig} from "../utils/adminUtils";
 
@@ -84,15 +85,15 @@ class AdminHSReservationsEditForm extends Component {
 
   generateTransaction(bookingId) {
     const apiHost = Config.getValue('apiHost');
-    const url = `${apiHost}admin/booking/hs/generateTransaction`;
+    const url = `${apiHost}admin/panel/booking/hs/generateTransaction`;
 
 
     Axios.post(url, {"bookingId": bookingId}, getAxiosConfig())
       .then(data => {
-        NotificationManager.success("Generate transaction process started.", "", LONG);
+        NotificationManager.success(GENERATE_TRANSACTION_IN_PROGRESS, "", LONG);
       })
       .catch(error => {
-        NotificationManager.error("Problem. Generate transaction not started.", "", LONG);
+        NotificationManager.error(GENERATE_TRANSACTION_PROBLEM, "", LONG);
       });
 
   }
@@ -100,18 +101,27 @@ class AdminHSReservationsEditForm extends Component {
 
   retryBooking(bookingId){
     const apiHost = Config.getValue('apiHost');
-    const url = `${apiHost}admin/booking/hs/retryBooking`;
+    const url = `${apiHost}admin/panel/booking/hs/retryBooking`;
 
     Axios.post(url, {"bookingId": bookingId}, getAxiosConfig())
       .then(data => {
-        NotificationManager.success("Process for retry booking started.", "", LONG);
+        NotificationManager.success(RETRY_BOOKING_IN_PROGRESS, "", LONG);
       })
       .catch(error => {
-        NotificationManager.error("Problem. Process for retry booking not started.", "", LONG);
+        NotificationManager.error(RETRY_BOOKING_PROBLEM, "", LONG);
       });
   }
 
   render() {
+    const styleButton = {
+      margin: '5px 5px 5px 5px',
+      padding: '2px 2px 2px 2px'
+    };
+
+    const styleButtonHolder = {
+      margin: '5px 0 20px 0'
+    };
+
     const { booking } = this.state;
 
     if (!booking) {
@@ -233,12 +243,12 @@ class AdminHSReservationsEditForm extends Component {
             <button className="btn">Edit</button>
           </div>
         </form>
-        <div className="button-holder">
-          <button className="btn" onClick={() => this.generateTransaction(booking.bookingId)}>Generate Transaction
+        <div className="button-holder" style={styleButtonHolder}>
+          <button className="btn" style={styleButton} onClick={() => this.generateTransaction(booking.bookingId)}>Generate Transaction
           </button>
         </div>
-        <div className="button-holder">
-          <button className="btn" onClick={() => this.retryBooking(booking.bookingId)}>Retry Booking</button>
+        <div className="button-holder" style={styleButtonHolder}>
+          <button className="btn" style={styleButton} onClick={() => this.retryBooking(booking.bookingId)}>Retry Booking</button>
         </div>
       </div>
     );

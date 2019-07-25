@@ -266,8 +266,8 @@ class CountryBlacklist extends React.Component {
 
         <div className="container reservations-edit-form">
           <div>
-            {!countryBlacklist ? (
-              <NoEntriesMessage text="No IP Addresses in Blacklist"/>
+            {(!countryBlacklist || countryBlacklist.length === 0) ? (
+              <NoEntriesMessage text="No Countries in Blacklist"/>
             ) : (
               <div className="reservations-table">
                 <table style={styleTable}>
