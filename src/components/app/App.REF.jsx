@@ -11,7 +11,7 @@ import referralIdPersister from "../profile/affiliates/service/persist-referral-
 import appImports from "./app-defaults";
 import {
   setIsMobileWebView, isMobileWebView, mobileProcessQueryString
-} from "../../services/utilities/mobileWebView";
+} from "../../services/utilities/mobileWebViewUtils";
 
 
 const {

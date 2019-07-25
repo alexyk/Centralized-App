@@ -91,3 +91,35 @@ export function fixNatForMobileWebView(location) {
 
   return result;
 }
+
+
+export function fixQueryStringWithSchParam(queryString, queryParams) {
+  let result = '';
+
+  const index1 = queryString.indexOf(`&`);
+  let index2 = queryString.indexOf(`&authEmail`);
+  // if (index2 == -1) index2 = queryString.length;
+  //alert(`query: ${queryString} index: ${index1}/${index2}/${queryString.length}`);
+
+  const queryUnchangedPortion = queryString.substr(index1, index2);
+  const regionOrig = queryParams.region;
+
+  let region = null;
+  let sch = null;
+  if (regionOrig.includes('_')) {
+    const asArray = regionOrig.split('_');
+    region = asArray[0];
+    sch = asArray[1];
+  } else {
+    return queryString;
+  }
+
+  result = `?region=${region}${queryUnchangedPortion}`;
+  if (sch != null) {
+    result += `&sch=${sch}`;
+  }
+
+  console.log(`[fix] `, {queryString, queryParams, result});
+
+  return result;
+}

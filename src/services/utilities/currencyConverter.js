@@ -1,4 +1,4 @@
-import { isMobileWebView } from './mobileWebView'
+import { isMobileWebView } from './mobileWebViewUtils'
 
 class CurrencyConverter {
   static convert(exchangeRates, from, to, quantity) {
@@ -10,7 +10,7 @@ class CurrencyConverter {
       } catch (error) {
         console.warn(`Error in conversion - from:${from}  to:${to}  quantity:${quantity}`)
       }
-      
+
       return result;
     }
 

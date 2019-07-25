@@ -14,7 +14,7 @@ import requester from '../../../requester';
 import _ from 'lodash';
 import { getCurrency } from '../../../selectors/paymentInfo';
 import xregexp from "xregexp";
-import { mobileCache } from '../../../services/utilities/mobileWebView';
+import { mobileCache } from '../../../services/utilities/mobileWebViewUtils';
 import { setQuoteIdIsValidPollingEnabled } from '../../../actions/paymentInfo';
 const QUOTE_ID_POLLING_INTERVAL_TIME = 10000;
 const ROOM_PRICE_DEVIATION = 1;

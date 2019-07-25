@@ -1,7 +1,7 @@
 export const PASSWORDS_DONT_MATCH = "Passwords do not match.";
-export const INVALID_PASSWORD = "Passwords must be at least 6 characters in length, containing letters, and a minimum of one number and one special character.";
+export const INVALID_PASSWORD = "Passwords must be at least 8 characters in length, containing letters, and a minimum of one number and one special character.";
 export const WALLET_INVALID_PASSWORD_LENGTH = "Passwords must be at least 8 characters in length.";
-export const PROFILE_INVALID_PASSWORD_LENGTH = "Passwords must be at least 6 characters in length.";
+export const PROFILE_INVALID_PASSWORD_LENGTH = "Passwords must be at least 8 characters in length.";
 export const PROFILE_PASSWORD_REQUIREMENTS = "Password must contain both latin letters and digits.";
 export const MNEMONIC_LAST_CALL = "Last chance to save your mnemonic words!";
 export const WRONG_MNEMONIC_WORDS = "Wrong mnemonic words. This is your last chance to save them!";

@@ -9,6 +9,7 @@ import StaticHotelsSearchPage from './search/StaticHotelsSearchPage';
 import { setCurrency } from '../../actions/paymentInfo';
 import { getCurrency } from '../../selectors/paymentInfo';
 import { connect } from 'react-redux';
+import Version from '../../components/common/version'
 
 function HotelsRouterPage(props) {
   const { location, history, currency } = props;
@@ -45,6 +46,7 @@ function HotelsRouterPage(props) {
               <option value="GBP">GBP</option>
             </select>
           </div>
+          <Version />
         </div>
       }
       {/* MOBILE ONLY END */}
