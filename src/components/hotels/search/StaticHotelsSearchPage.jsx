@@ -634,7 +634,7 @@ class StaticHotelsSearchPage extends React.Component {
       this.setState({showMap: !showMap});
       return;
     }
-alert('here 1')
+
     if (!this.isSearchReady()) {
       // Use partial information from socket
       this.setState({
@@ -643,10 +643,8 @@ alert('here 1')
       });
       return;
     }
-    alert('here 2')
     requester.getMapInfo(this.queryString).then(res => {
       res.body.then(data => {
-        alert('here 3')
         if (!data.isCacheExpired) {
           let mapInfo = [];
           mapInfo = data.content.map(hotel => {
