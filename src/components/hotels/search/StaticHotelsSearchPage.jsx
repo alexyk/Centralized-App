@@ -308,22 +308,9 @@ class StaticHotelsSearchPage extends React.Component {
       const {search: natFixedSearch} = fixNatForMobileWebView(search);
       search = natFixedSearch;
     }
-    const endOfSearch = (
-      search.indexOf("&filters=") !== -1
-        ? search.indexOf("&filters=")
-        : search.length
-    );
     const queueId = `${id}amp;${rnd}`;
-    let s = (isMobileWebView
-      ? (
-          this.props.cachedSearchString
-            ? this.props.cachedSearchString
-            : this.queryString
-      )
-      : this.getSearchString()
-    );
-
-    const searchTerm = `${s}&uuid=${queueId}`;
+    const searchBase = this.getSearchString();
+    const searchTerm = `${searchBase}&uuid=${queueId}`;
 
     requester.getSearchHotelResults(searchTerm).then(res => {
       res.body.then(data => {
@@ -331,9 +318,7 @@ class StaticHotelsSearchPage extends React.Component {
         const client = this.client;
         const handleReceiveHotelPrice = this.handleReceiveMessage;
         this.subscription = client.subscribe(destination, handleReceiveHotelPrice);
-
-        const socketSearch = search.substr(0, endOfSearch);
-        this.props.dispatch(cacheCurrentSearchString(socketSearch));
+        this.props.dispatch(cacheCurrentSearchString(searchTerm+'&lala=21'));
       });
     });
 
@@ -554,7 +539,7 @@ class StaticHotelsSearchPage extends React.Component {
       this.props.location.pathname.indexOf("/mobile") !== -1
         ? "/mobile/hotels/listings"
         : "/hotels/listings";
-    let search = (isMobileWebView ? this.queryString : this.getSearchString());
+    let search = this.getSearchString();
     const filters = this.getFilterString();
     const page = this.state.page ? this.state.page : 0;
     requester.getLastSearchHotelResultsByFilter(search, filters).then(res => {
@@ -649,7 +634,7 @@ class StaticHotelsSearchPage extends React.Component {
       this.setState({showMap: !showMap});
       return;
     }
-
+alert('here 1')
     if (!this.isSearchReady()) {
       // Use partial information from socket
       this.setState({
@@ -658,9 +643,10 @@ class StaticHotelsSearchPage extends React.Component {
       });
       return;
     }
-
+    alert('here 2')
     requester.getMapInfo(this.queryString).then(res => {
       res.body.then(data => {
+        alert('here 3')
         if (!data.isCacheExpired) {
           let mapInfo = [];
           mapInfo = data.content.map(hotel => {
@@ -680,10 +666,11 @@ class StaticHotelsSearchPage extends React.Component {
             showMap: !showMap
           });
         } else {
-          const search = (isMobileWebView ? this.props.cachedSearchString : this.getSearchString());
+          const search = this.getSearchString();
           const filters = this.getFilterString();
           const page = this.state.page ? this.state.page : 0;
           this.setState({loading: true});
+
           requester
             .getLastSearchHotelResultsByFilter(search, filters)
             .then(res => {
@@ -771,7 +758,7 @@ class StaticHotelsSearchPage extends React.Component {
   }
 
   isSearchReady() {
-    return this.queryString.indexOf("&filters=") !== -1;
+    return this.props.location.search.indexOf("&filters=") !== -1;
   }
 
   getRandomInt() {
