@@ -1,4 +1,4 @@
-import { fixNatForMobileWebView } from "../services/utilities/mobileWebView"
+import { fixNatForMobileWebView } from "../services/utilities/mobileWebViewUtils"
 
 test('nat patch', () => {
   let res, location

@@ -97,7 +97,7 @@ class PasswordRecoveryManager extends React.Component {
     const { newPassword, confirmNewPassword } = this.state;
     if (newPassword !== confirmNewPassword) {
       NotificationManager.warning(PASSWORDS_DONT_MATCH, '', LONG);
-    } else if (newPassword.length < 6 || newPassword.length > 30) {
+    } else if (newPassword.length < 8 || newPassword.length > 30) {
       NotificationManager.warning(INVALID_PASSWORD, '', LONG);
     } else if (!newPassword.match('^([^\\s]*[a-zA-Z]+.*?[0-9]+[^\\s]*|[^\\s]*[0-9]+.*?[a-zA-Z]+[^\\s]*)$')) {
       NotificationManager.warning(PROFILE_PASSWORD_REQUIREMENTS, '', LONG);
