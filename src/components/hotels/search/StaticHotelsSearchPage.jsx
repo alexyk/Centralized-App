@@ -35,7 +35,7 @@ import {NotificationManager} from "react-notifications";
 import {LONG} from "../../../constants/notificationDisplayTimes";
 import {FILTERED_UNAVAILABLE_HOTELS} from "../../../constants/infoMessages";
 import AsideContentPage from "../../common/asideContentPage/AsideContentPage";
-import {isMobileWebView, fixNatForMobileWebView, fixQueryStringWithSchParam} from "../../../services/utilities/mobileWebView";
+import {isMobileWebView, fixNatForMobileWebView, fixQueryStringWithSchParam} from "../../../services/utilities/mobileWebViewUtils";
 
 
 const DEBUG_SOCKET = false;
