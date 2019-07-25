@@ -77,7 +77,7 @@ export default class ListItem extends React.Component {
               <div><a href="" onClick={(e) => updateUserStatus(e, id, false)}>Unverify</a></div>
               }
               {blocked === false &&
-              <div><a href="" onClick={(e) => updateUserBlockedStatus(e, id, email, true)}>Blocked</a></div>
+              <div><a href="" onClick={(e) => updateUserBlockedStatus(e, id, email, true)}>Block</a></div>
               }
               {blocked === true &&
               <div><a href="" onClick={(e) => updateUserBlockedStatus(e, id, email, false)}>Unblock</a></div>

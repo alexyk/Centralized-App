@@ -17,6 +17,7 @@ import xregexp from "xregexp";
 import { mobileCache } from '../../../services/utilities/mobileWebView';
 import { setQuoteIdIsValidPollingEnabled } from '../../../actions/paymentInfo';
 const QUOTE_ID_POLLING_INTERVAL_TIME = 10000;
+const ROOM_PRICE_DEVIATION = 1;
 
 class HotelsBookingRouterPage extends React.Component {
   constructor(props) {
@@ -167,17 +168,21 @@ class HotelsBookingRouterPage extends React.Component {
   }
 
   findQuoteIdByRoomSearchQuote(roomSearchQuote, availableHotelRooms) {
+    let searchRoomPrice = 0.0;
     const searchRoom = roomSearchQuote.map(room => {
-      return `${room.name} ${room.mealType} ${room.price.toFixed()}`;
+      searchRoomPrice = searchRoomPrice + room.price;
+      return `${room.name} ${room.mealType}`;
     }).sort();
 
     for (let index = 0; index < availableHotelRooms.length; index++) {
+      let currentRoomPrice = 0.0;
       const quote = availableHotelRooms[index];
       const currentRoom = quote.roomsResults.map(room => {
-        return `${room.name} ${room.mealType} ${room.price.toFixed()}`;
+        currentRoomPrice = currentRoomPrice + room.price;
+        return `${room.name} ${room.mealType}`;
       }).sort();
 
-      if (_.isEqual(searchRoom, currentRoom)) {
+      if (_.isEqual(searchRoom, currentRoom) && Math.abs(currentRoomPrice - searchRoomPrice)<= ROOM_PRICE_DEVIATION ) {
         return quote.quoteId;
       }
     }
@@ -227,8 +232,19 @@ class HotelsBookingRouterPage extends React.Component {
                     const queryString = `${this.getCleanQueryString()}&quoteId=${newQuoteId}`;
                     this.props.history.replace(`${this.props.location.pathname}${queryString}`);
 
+                    let newGuests = this.state.guests.map(r => {
+                      const adt = r.adults.map(a => {
+                          return {title: a.title, firstName: (a.firstName === "" ? null : a.firstName), lastName: (a.lastName === "" ? null : a.lastName)}
+                      });
+
+                      const chd = r.children.map(c => {
+                          return {age: c.age, firstName: (c.firstName === "" ? null : c.firstName), lastName: ( c.lastName === "" ? null : c.lastName) };
+                      });
+                      return {adults: adt, children: chd}
+                    });
+
                     const booking = {
-                      rooms: this.state.guests,
+                      rooms: newGuests,
                       currency: this.props.currency,
                       quoteId: newQuoteId
                     };
