@@ -1,3 +1,10 @@
+export var WVOPTIONS = {
+  WVDEBUG_SKIP_ALERT: false
+}
+export function setWVDebugOption(name, value) {
+  WVOPTIONS[name] = value;
+}
+
 export const dlog = console.log;
 
 
@@ -11,7 +18,9 @@ export function dalert(title, qstringOrObject, caller = null) {
     asStr = debugFormatQueryString(qstringOrObject);
   }
 
-  alert(`${caller ? `[${caller}] ` : ''}${title}:\n${asStr}`);
+  if (!WVOPTIONS.WVDEBUG_SKIP_ALERT) {
+    alert(`${caller ? `[${caller}] ` : ''}${title}:\n${asStr}`);
+  }
   console.log(`[alert] ${title}\n${asStr.substr(0,10)}...`,{qstringOrObject, caller, asStr})
 }
 

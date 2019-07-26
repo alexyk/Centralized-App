@@ -576,7 +576,17 @@ class StaticHotelsSearchPage extends React.Component {
 
   getSearchString() {
     const queryParams = queryStringTool.parse(this.getLatestQuery());
-    let search = `?region=${encodeURI(queryParams.region)}`;
+    let region = queryParams.region;
+    let sch = queryParams.sch;
+    if (isMobileWebView) {
+      if (region.includes('_')) {
+        const asArray = region.split('_');
+        region = asArray[0];
+        sch = asArray[1];
+      }
+    }
+
+    let search = `?region=${encodeURI(region)}`;
     search += `&currency=${encodeURI(queryParams.currency)}`;
     search += `&startDate=${encodeURI(queryParams.startDate)}`;
     search += `&endDate=${encodeURI(queryParams.endDate)}`;
@@ -585,8 +595,8 @@ class StaticHotelsSearchPage extends React.Component {
     const nat = (queryParams.nat == null || isNaN(queryParams.nat) ? -1 : queryParams.nat);
     search += `&nat=${nat}`;
 
-    if (queryParams.sch) {
-      search += `&sch=${encodeURI(queryParams.sch)}`;
+    if (sch) {
+      search += `&sch=${encodeURI(sch)}`;
     }
 
     return search;
