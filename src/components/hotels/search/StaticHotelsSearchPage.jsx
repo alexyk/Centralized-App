@@ -46,15 +46,15 @@ class StaticHotelsSearchPage extends React.Component {
   constructor(props) {
     super(props);
 
-    this.queryString = this.props.location.search;
+    this.queryStringOriginal = this.props.location.search;
     let queryParams = queryStringTool.parse(this.props.location.search);
     this.queryParams = queryParams;
 
     if (isMobileWebView) {
       // fix sch and nat params
-      let schFixed = fixSearchQueryWithSchParam(this.queryString, queryParams);
+      let schFixed = fixSearchQueryWithSchParam(this.queryStringOriginal, queryParams);
       const { search:allFixed } = fixNatForMobileWebView(schFixed);
-      this.queryString = allFixed;
+      this.queryStringOriginal = allFixed;
 
       localStorage.setItem('currency', queryParams.currency);
       try {
@@ -143,7 +143,7 @@ class StaticHotelsSearchPage extends React.Component {
   }
 
   componentDidMount() {
-    const query = this.queryString;
+    const query = this.queryStringOriginal;
     const queryParams = queryStringTool.parse(query);
 
     this.distributeSearchParameters();
@@ -170,9 +170,19 @@ class StaticHotelsSearchPage extends React.Component {
     this.hotelInfoById = {};
   }
 
+  // TODO: Review and fix the pattern of changing history.
+  // Make sure changes are obvious - either by using redux or a wrapper instead of direct calls of history push, pop, replace etc.
+  getLatestQuery() {
+    // changed by using this.props.history methods
+    // examples:
+    //    this.props.history.replace(...)
+    //    this.props.history.push(...)
+    return this.props.location.search;
+  }
+
   distributeSearchParameters() {
-    if (this.queryString) {
-      const searchParams = queryStringTool.parse(this.queryString);
+    if (this.queryStringOriginal) {
+      const searchParams = queryStringTool.parse(this.queryStringOriginal);
       const rooms = JSON.parse(decodeURI(searchParams.rooms));
       const adults = this.getAdults(rooms);
       const hasChildren = this.getHasChildren(rooms);
@@ -506,7 +516,7 @@ class StaticHotelsSearchPage extends React.Component {
   }
 
   populateFilters() {
-    const params = queryStringTool.parse(this.queryString);
+    const params = queryStringTool.parse(this.getLatestQuery());
     const filters = JSON.parse(params.filters);
     const stars = [false, false, false, false, false];
     if (filters.stars.length < 6) {
@@ -565,7 +575,7 @@ class StaticHotelsSearchPage extends React.Component {
 
 
   getSearchString() {
-    const queryParams = queryStringTool.parse(this.queryString);
+    const queryParams = queryStringTool.parse(this.getLatestQuery());
     let search = `?region=${encodeURI(queryParams.region)}`;
     search += `&currency=${encodeURI(queryParams.currency)}`;
     search += `&startDate=${encodeURI(queryParams.startDate)}`;
@@ -641,10 +651,7 @@ class StaticHotelsSearchPage extends React.Component {
       return;
     }
 
-    let mapQuery = this.queryString;
-    if (isMobileWebView && !mapQuery.includes('&filters=')) {
-      mapQuery += this.getFilterString();
-    }
+    let mapQuery = this.getLatestQuery();
 
     requester.getMapInfo(mapQuery).then(res => {
       res.body.then(data => {
@@ -717,7 +724,7 @@ class StaticHotelsSearchPage extends React.Component {
       loading: true
     });
 
-    const query = this.queryString;
+    const query = this.getLatestQuery();
     const searchParams = queryStringTool.parse(query);
     const {region, sch} = searchParams;
 
