@@ -58,6 +58,8 @@ class SearchUser extends React.Component {
       event.preventDefault();
     }
 
+    const status = verified ? 'verified' : 'unverified';
+
     let userObj = {
       id: id,
       verified: verified
@@ -72,10 +74,10 @@ class SearchUser extends React.Component {
 
     requester.changeUserStatus(userObj).then(res => {
       if (res.success) {
-        NotificationManager.success("You successfully changed user status for user: " + userEmail);
+        NotificationManager.success(`You successfuly ${status} user: ${userEmail}`);
         this.getUsersByEmail(this.state.searchEmail, this.state.currentPage);
       } else {
-        NotificationManager.error("Something went wrong", "Users Operations");
+        NotificationManager.error(`Unsuccessful ${status} user: ${userEmail}`, "", LONG);
       }
     });
   }
@@ -85,7 +87,7 @@ class SearchUser extends React.Component {
       e.preventDefault();
     }
 
-    let blocked = blockedStatus ? "Blocked" : "Unblocked";
+    let blocked = blockedStatus ? "Block" : "Unblock";
 
     if (
       window.confirm(
@@ -104,9 +106,9 @@ class SearchUser extends React.Component {
       Axios.post(url, objToSend, getAxiosConfig())
         .then(data => {
           if (data.data.success) {
-            NotificationManager.success(`You successfuly ${blocked} user: ${email}.`, "", LONG);
+            NotificationManager.success(`You successfuly ${blocked}ed user: ${email}.`, "", LONG);
           } else {
-            NotificationManager.error(`Unsuccessful ${blocked} user: ${email}.`, "", LONG);
+            NotificationManager.error(`Unsuccessful ${blocked}ed user: ${email}.`, "", LONG);
           }
         })
         .catch(error => {
@@ -140,7 +142,7 @@ class SearchUser extends React.Component {
         }
       })
       .catch(error => {
-        NotificationManager.error(`Not found user with email contains ` + email, "", LONG)
+        NotificationManager.error(`Not found user contains in email: ${email}.`, "", LONG)
       });
   }
 
