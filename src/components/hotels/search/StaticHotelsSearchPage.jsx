@@ -35,7 +35,7 @@ import {NotificationManager} from "react-notifications";
 import {LONG} from "../../../constants/notificationDisplayTimes";
 import {FILTERED_UNAVAILABLE_HOTELS} from "../../../constants/infoMessages";
 import AsideContentPage from "../../common/asideContentPage/AsideContentPage";
-import {isMobileWebView, fixNatForMobileWebView, fixQueryStringWithSchParam} from "../../../services/utilities/mobileWebViewUtils";
+import {isMobileWebView, fixNatForMobileWebView, fixSearchQueryWithSchParam} from "../../../services/utilities/mobileWebViewUtils";
 
 
 const DEBUG_SOCKET = false;
@@ -51,7 +51,10 @@ class StaticHotelsSearchPage extends React.Component {
     this.queryParams = queryParams;
 
     if (isMobileWebView) {
-      this.queryString = fixQueryStringWithSchParam(this.queryString, queryParams);
+      // fix sch and nat params
+      let schFixed = fixSearchQueryWithSchParam(this.queryString, queryParams);
+      const { search:allFixed } = fixNatForMobileWebView(schFixed);
+      this.queryString = allFixed;
 
       localStorage.setItem('currency', queryParams.currency);
       try {
@@ -301,15 +304,10 @@ class StaticHotelsSearchPage extends React.Component {
   subscribe() {
     const id = localStorage.getItem("uuid");
     const rnd = this.getRandomInt();
-    let search = this.queryString;
-
-    if (isMobileWebView) {
-      const {search: natFixedSearch} = fixNatForMobileWebView(search);
-      search = natFixedSearch;
-    }
     const queueId = `${id}amp;${rnd}`;
     const searchBase = this.getSearchString();
     const searchTerm = `${searchBase}&uuid=${queueId}`;
+    this.props.dispatch(cacheCurrentSearchString(searchBase));
 
     requester.getSearchHotelResults(searchTerm).then(res => {
       res.body.then(data => {
@@ -317,7 +315,6 @@ class StaticHotelsSearchPage extends React.Component {
         const client = this.client;
         const handleReceiveHotelPrice = this.handleReceiveMessage;
         this.subscription = client.subscribe(destination, handleReceiveHotelPrice);
-        this.props.dispatch(cacheCurrentSearchString(searchTerm+'&lala=21'));
       });
     });
 
@@ -538,9 +535,10 @@ class StaticHotelsSearchPage extends React.Component {
       this.props.location.pathname.indexOf("/mobile") !== -1
         ? "/mobile/hotels/listings"
         : "/hotels/listings";
-    let search = this.getSearchString();
+    const search = (isMobileWebView ? this.props.cachedSearchString : this.getSearchString());
     const filters = this.getFilterString();
     const page = this.state.page ? this.state.page : 0;
+
     requester.getLastSearchHotelResultsByFilter(search, filters).then(res => {
       if (res.success) {
         res.body.then(data => {
@@ -642,7 +640,13 @@ class StaticHotelsSearchPage extends React.Component {
       });
       return;
     }
-    requester.getMapInfo(this.queryString).then(res => {
+
+    let mapQuery = this.queryString;
+    if (isMobileWebView && !mapQuery.includes('&filters=')) {
+      mapQuery += this.getFilterString();
+    }
+
+    requester.getMapInfo(mapQuery).then(res => {
       res.body.then(data => {
         if (!data.isCacheExpired) {
           let mapInfo = [];
@@ -663,7 +667,7 @@ class StaticHotelsSearchPage extends React.Component {
             showMap: !showMap
           });
         } else {
-          const search = this.getSearchString();
+          const search = (isMobileWebView ? this.props.cachedSearchString : this.getSearchString());
           const filters = this.getFilterString();
           const page = this.state.page ? this.state.page : 0;
           this.setState({loading: true});
@@ -815,14 +819,15 @@ class StaticHotelsSearchPage extends React.Component {
                   handleShowUnavailable={this.handleShowUnavailable}
                   handleShowFilters={this.handleShowFilters}
                 />
-
-                <div className="map">
-                  <div className="img-holder">
-                    <a href="" onClick={this.toggleMap}>
-                      See Results {this.state.showMap ? "List" : "on Map"}
-                    </a>
+                { ( (isMobileWebView && this.isSearchReady()) || !isMobileWebView) &&
+                  <div className="map">
+                    <div className="img-holder">
+                      <a href="" onClick={this.toggleMap}>
+                        See Results {this.state.showMap ? "List" : "on Map"}
+                      </a>
+                    </div>
                   </div>
-                </div>
+                }
               </div>
             </AsideContentPage.Aside>
 

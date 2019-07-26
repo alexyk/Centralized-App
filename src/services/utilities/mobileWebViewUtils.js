@@ -1,6 +1,7 @@
 import queryStringUtil from 'query-string'
 import StringUtils from './stringUtilities';
 
+
 export var isMobileWebView = false;
 export function setIsMobileWebView(origin, value) {
   const summary = `${isMobileWebView} -> ${value}`;
@@ -39,7 +40,10 @@ export function mobileProcessQueryString({pathname, search}) {
   }
 }
 
-
+/**
+ * Adds nat parameter
+ * @param {String|Object} location
+ */
 export function fixNatForMobileWebView(location) {
   const isString = (typeof(location) == 'string');
   if ( location == null || (!isString && location.search == null && location.pathname == null) ) {
@@ -59,9 +63,9 @@ export function fixNatForMobileWebView(location) {
   }
 
   const queryParams = queryStringUtil.parse(search);
-  const nationalityParam = parseInt(queryParams.nat);
+  const natParam = parseInt(queryParams.nat);
   const indexOfNat = search.indexOf('&nat=');
-  const isNatNan = isNaN(nationalityParam);
+  const isNatNan = isNaN(natParam);
 
   if (isNatNan || indexOfNat == -1) {
 
@@ -93,33 +97,33 @@ export function fixNatForMobileWebView(location) {
 }
 
 
-export function fixQueryStringWithSchParam(queryString, queryParams) {
+export function fixSearchQueryWithSchParam(search, queryParams) {
   let result = '';
 
-  const index1 = queryString.indexOf(`&`);
-  let index2 = queryString.indexOf(`&authEmail`);
-  // if (index2 == -1) index2 = queryString.length;
-  //alert(`query: ${queryString} index: ${index1}/${index2}/${queryString.length}`);
+  const { authEmail, authToken, region:regionOrig } = queryParams;
 
-  const queryUnchangedPortion = queryString.substr(index1, index2);
-  const regionOrig = queryParams.region;
+  const index1 = search.indexOf(`&`); // region param end (at first '&')
+  let queryBase = search.substring(index1);
 
-  let region = null;
+  if (authEmail) {
+    queryBase = queryBase.replace(`&authEmail=${encodeURI(authEmail)}`,'');
+  }
+  if (authToken) {
+    queryBase = queryBase.replace(`&authToken=${encodeURI(authToken)}`,'');
+  }
+
+  let region = regionOrig;
   let sch = null;
   if (regionOrig.includes('_')) {
     const asArray = regionOrig.split('_');
     region = asArray[0];
     sch = asArray[1];
-  } else {
-    return queryString;
   }
 
-  result = `?region=${region}${queryUnchangedPortion}`;
+  result = `?region=${region}${queryBase}`;
   if (sch != null) {
     result += `&sch=${sch}`;
   }
-
-  console.log(`[fix] `, {queryString, queryParams, result});
 
   return result;
 }
